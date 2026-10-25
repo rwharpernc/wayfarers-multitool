@@ -27,7 +27,7 @@ import tkinter as tk
 import myNotebook as nb
 from config import appname, config
 
-from . import discovery, notable_rules, overlay, overlay_appearance, overlay_placement
+from . import discovery, notable_rules, overlay, overlay_appearance, overlay_link, overlay_placement
 from .overlay_style import LEGACY, Look
 from .overlay import OverlayClient
 
@@ -372,6 +372,7 @@ class NotableController:
                 "Shows a violet alert on your in-game overlay when a body you scan matches one of the "
                 "rules below - via EDMCModernOverlay. A match is a lead from the scan data, not a promise: "
                 "check the body in the system map. Connection settings are on the Overlay Connection tab."
+                + (" " + overlay_link.NOT_FOUND if overlay_link.missing() else "")
             ),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=0, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(10, 4))

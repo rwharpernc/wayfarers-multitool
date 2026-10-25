@@ -671,14 +671,18 @@ def build_settings(notebook: nb.Notebook) -> None:
 
     cfg = load_config()
 
+    top = nb.Frame(frame)
+    top.grid(row=0, column=0, sticky=tk.W)
     nb.Label(
-        frame,
+        top,
         text=(
             "Connection to EDMCModernOverlay (Windows and Linux). It is a separate, optional helper app that WFMT does not "
             "install or launch itself, used by the on-screen features. Every feature works without one."
         ),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 8))
+    from . import overlay_link
+    overlay_link.add_notice(top, row=1)
 
     _build_backend_choice(frame)
 

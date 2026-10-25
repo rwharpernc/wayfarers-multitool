@@ -22,6 +22,7 @@ WFMT runs on Linux wherever EDMC does. It has been tested on one real install: K
 - WFMT's own built-in overlay is **Windows only**, and a Linux version is not planned for now (it needs window handling that differs between X11 and Wayland).
 - Linux has no built-in overlay to switch to, so install [EDMCModernOverlay](https://github.com/SweetJonnySauce/EDMCModernOverlay) (step 5) for every WFMT on-screen display.
 - Without it everything else in WFMT still works.
+- If EDMCModernOverlay is not found, the overlay settings pages say so, in orange at the top. The settings can still be changed and are kept; nothing appears on screen until it is installed.
 
 Elite runs under Steam Proton or Wine on Linux, which needs a few extras. **Work through the steps in order.**
 

@@ -50,6 +50,7 @@ Connector) and puts its tools in one panel of eight modes, with optional on-scre
 - A built-in overlay on Windows (a transparent window over Elite, with its own fonts and cards sized from
   the measured text) and support for EDMCModernOverlay on Windows and Linux, with a layout editor, panel
   opacity and a Color-blind safe palette.
+- When EDMCModernOverlay is the overlay in use and is not installed (always the case for a fresh Linux install), the overlay settings pages say so.
 - Every overlay is off until you turn it on. The screen size comes from the game's own files or the overlay's
   log, and when those are not there from the operating system's primary display (Windows and Linux), so an
   ultrawide or a 4K screen is not taken for 1080p. 1920 x 1080 is the smallest screen the default layout is

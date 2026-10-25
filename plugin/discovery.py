@@ -40,7 +40,7 @@ import tkinter as tk
 import myNotebook as nb
 from config import appname, config
 
-from . import neutron_finder, overlay, overlay_appearance, overlay_placement, panelkit
+from . import neutron_finder, overlay, overlay_appearance, overlay_link, overlay_placement, panelkit
 from .overlay import OverlayClient
 from .overlay_style import CARD_PAD_X, CARD_PAD_Y, LEGACY, Look
 
@@ -583,6 +583,7 @@ class DiscoveryController:
                 "Shows a gold alert on your in-game overlay the moment you jump into a system nobody's "
                 "ever scanned before, and a cyan alert the moment you're the first to scan or map a "
                 "body — via EDMCModernOverlay. Connection settings are on the Overlay Connection tab."
+                + (" " + overlay_link.NOT_FOUND if overlay_link.missing() else "")
             ),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=0, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(10, 4))
