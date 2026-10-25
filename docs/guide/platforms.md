@@ -27,7 +27,7 @@ Each of those features' Settings tab says which systems it works on and whether 
 | **Screenshot auto-timer** and **Thargoid-scan capture** (press the screenshot key for you) | Yes | Yes, needs **`xdotool`** |
 | Screenshot conversion and renaming | Yes | Yes (Elite's `Pictures` folder inside the Proton/Wine folder) |
 | Pickup **sound** (Field Ops → Inventory) | Yes (system beep) | Yes, needs `canberra-gtk-play` or `paplay` |
-| On-screen overlay features | WFMT's built-in overlay (nothing to install), or EDMCModernOverlay | **EDMCModernOverlay is required** (the built-in overlay is Windows only and not planned for Linux) |
+| On-screen overlay features | WFMT's built-in overlay (nothing to install), or EDMCModernOverlay | **EDMCModernOverlay is required** (the built-in overlay is Windows only for now; a Linux version is being researched) |
 | The Mining radar over the game (a picture on the overlay) | Yes, with WFMT's built-in overlay | No (EDMCModernOverlay cannot draw a picture; use the Surface Live window) |
 | Keyboard shortcuts (CTR, BRD, radar range, Live window, hide overlays) | Yes (Ctrl+Alt+Shift plus a key) | No (use the chat commands, which work on both) |
 | Chat commands (`!wf center` and the rest, typed in Elite's chat) | Yes | Yes |

@@ -31,7 +31,7 @@ on-screen extras.
 
 **Linux: the built-in overlay does not exist for you.**
 
-- It is Windows only and a Linux version is not planned for now.
+- It is Windows only for now; a Linux version is being researched.
 - On Linux you install and use EDMCModernOverlay for every WFMT on-screen display.
 
 There are two, and you pick one under **Settings → WFMT → Overlays → Overlay Connection → Which overlay draws**.
@@ -52,7 +52,7 @@ There are two, and you pick one under **Settings → WFMT → Overlays → Overl
 ### Do I need EDMCModernOverlay?
 
 - **For WFMT's displays on Windows: no.** Choose the built-in overlay and WFMT needs nothing else. It does not require EDMCModernOverlay.
-- **On Linux: yes, always.** The built-in overlay is Windows only and not planned for Linux, so Linux must use EDMCModernOverlay.
+- **On Linux: yes, always.** The built-in overlay is Windows only for now, so Linux must use EDMCModernOverlay.
 - **For other plugins' overlays: yes.** The built-in overlay draws WFMT's displays and nothing else. A plugin that draws through EDMCModernOverlay (or the older EDMCOverlay) still needs it,
   and it will keep drawing there whatever WFMT does.
 

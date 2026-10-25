@@ -19,7 +19,7 @@ WFMT runs on Linux wherever EDMC does. It has been tested on one real install: K
 
 **On-screen overlays on Linux need EDMCModernOverlay.**
 
-- WFMT's own built-in overlay is **Windows only**, and a Linux version is not planned for now (it needs window handling that differs between X11 and Wayland).
+- WFMT's own built-in overlay is **Windows only**, and a Linux version is being researched (it needs window handling that differs between X11 and Wayland). Until one exists, this is the overlay to use.
 - Linux has no built-in overlay to switch to, so install [EDMCModernOverlay](https://github.com/SweetJonnySauce/EDMCModernOverlay) (step 5) for every WFMT on-screen display.
 - Without it everything else in WFMT still works.
 - If EDMCModernOverlay is not found, the overlay settings pages say so, in orange at the top. The settings can still be changed and are kept; nothing appears on screen until it is installed.
@@ -51,7 +51,7 @@ Elite runs under Steam Proton or Wine on Linux, which needs a few extras. **Work
 - **EDMCModernOverlay** draws the on-screen cards. Install it as an EDMC plugin from its
   [project page](https://github.com/SweetJonnySauce/EDMCModernOverlay).
   WFMT's default connection settings (`127.0.0.1`, port 5010) already match it.
-  - **Required for every WFMT on-screen display on Linux:** WFMT's own built-in overlay is **Windows only** and is not planned for Linux, so this is the only overlay you can use.
+  - **Required for every WFMT on-screen display on Linux:** WFMT's own built-in overlay is **Windows only** for now, so this is the only overlay you can use on Linux.
   - Its default font has capital letters only. **Settings → WFMT → Overlays → Appearance → Overlay font** can put a lower case font first in its list (restart EDMC afterwards).
 - Optional: `canberra-gtk-play` or `paplay` for notification sounds.
 
