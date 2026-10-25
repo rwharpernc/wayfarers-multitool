@@ -93,7 +93,7 @@ Confirmed in the game: the cards line up, converted and captured screenshots inc
 2. **Text size and weight**: a text size that is not tied to EDMCModernOverlay's step sizes, and bold or other weights of the same family.
 3. **Per-pixel quality**: text drawn over transparent areas (a few cards have text outside a panel), sub-pixel positioning, and a draw-on-change guard so a busy scene costs little.
 4. **Reliability**: what happens when Elite restarts, the display changes or EDMC is slow; log and report problems in Check connection and Copy diagnostics.
-5. **Linux**: not planned for now. It needs a compositor-aware window and input-shape handling that differs between X11 and Wayland.
+5. **Linux**: being researched, not built. It needs a compositor-aware window and input-shape handling that differs between X11 and Wayland. The options, open questions and experiments are in [LINUX_OVERLAY_RESEARCH.md](LINUX_OVERLAY_RESEARCH.md).
 
 ## Decisions to revisit
 
