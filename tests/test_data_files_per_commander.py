@@ -1,0 +1,140 @@
+"""
+Every data file WFMT keeps is either per commander or has a stated reason it is not.
+
+Two commanders on one install must never share data about their own play. This lists every file the updater protects
+(`_OWN_DATA_FILES`) and how each one keeps commanders apart; a new data file fails this test until it is classified here, so
+nobody can add a shared one by accident. The behavior behind each entry is tested where it lives (see
+`test_per_commander_data.py` and the per-feature suites).
+
+It reads the sources instead of importing them, so it needs no EDMC stand-ins and behaves the same on Windows and Linux.
+"""
+from __future__ import annotations
+
+import os
+import re
+import unittest
+
+ROOT = os.path.join(os.path.dirname(__file__), "..")
+
+# file -> how the commander's data is kept apart
+PER_COMMANDER = {
+    "mission_pins.json": "keyed by commander (commander_data.py, mission_pins.PinBook): only mission ids",
+    "sessions.json": "every session records its commander; the history window and its totals show only the active commander's, "
+                     "and the 200-session limit is per commander (store.sessions_of / trim)",
+    "boxel_state.json": "keyed by commander (boxel_state.py)",
+    "survey_log.json": "one log per commander (commander_data.py, survey_log.load_log/save_log)",
+    "region_sweep_state.json": "keyed by commander (region_sweep_state.py)",
+    "waypoint_route_state.json": "keyed by commander (waypoint_route_state.py)",
+    "visited_systems.json": "keyed by commander (visited_systems.py)",
+    "organic_scan_state.json": "keyed by commander (organic_scan_state.py)",
+    "expedition_log.json": "one archive of expeditions per commander (commander_data.py, expedition_log.LogBook)",
+    "system_history.json": "one record of visited systems per commander (commander_data.py, system_history.SystemHistory); another commander's journals are skipped",
+    "system_surveys.json": "one set of surveyed systems per commander (commander_data.py, system_survey_store.SurveyStore)",
+    "codex_completionist_state.json": "one tally per commander (codex_completionist_state.py)",
+    "bgs_state.json": "keyed by commander (bgs_state.py)",
+    "powerplay_state.json": "keyed by commander (powerplay_state.py)",
+    "mining_hotspots.json": "one list per commander (commander_data.py, HotspotRepository.set_commander)",
+    "mining_coverage.json": "one map per commander (commander_data.py, CoverageRepository.set_commander)",
+    "mining_body_cache.json": "one set of looked-up systems per commander (commander_data.py, mining_body_cache.BodyCache.set_commander)",
+    "mining_history.json": "one record of mining runs per commander (commander_data.py, mining_history.MiningHistory); another commander's journals are skipped",
+    "ship_builds.json": "keyed by commander (ship_builds_data.py)",
+    "stored_modules.json": "one list of stored modules per commander (commander_data.py, stored_modules.ModuleBook); another commander's journals are skipped",
+    "colonization_sites.json": "keyed by commander (colonization_data.py)",
+    "colonization_carrier.json": "one record per commander (commander_data.py, colonization_carrier.py)",
+    "rcc_keys.json": "one key per commander (commander_data.py, rcc_keys.py)",
+    "surface_marks.json": "one list and one target per commander (commander_data.py, surface_marks.MarkBook)",
+    "notes.json": "one list per commander (commander_data.py, notes_data.NoteBook)",
+    "materials.json": "one set of counts per commander (commander_data.py, materials.MaterialBook)",
+    "blueprint_wishlist.json": "one list per commander (commander_data.py, blueprint_wishlist.WishBook)",
+    "mining_ring_notes.json": "one set of ring notes per commander (commander_data.py, mining_rings.RingNotes)",
+    "carrier_route.json": "one plotted carrier route per commander (commander_data.py, carrier_route_state.RouteStore)",
+    "route_planner_route.json": "one plotted route per commander (commander_data.py, route_planner_state.RouteStore)",
+    "engineers.json": "one set of standings per commander (commander_data.py, engineers.EngineerBook)",
+    "expeditions.json": "one set of expeditions per commander (commander_data.py, expedition.ExpeditionBook)",
+    "trade_watch.json": "one list and its prices per commander (commander_data.py, trade_watch_data.WatchBook)",
+    "income_ledger.json": "one record per commander (commander_data.py, income_ledger.IncomeBook)",
+    "colonization_history.json": "one record per commander (commander_data.py, colonization_history.py)",
+    "trade_ledger.json": "one session per commander (trade_ledger.LedgerBook)",
+    "trade_carrier.json": "keyed by commander (trade_carrier.py)",
+    "trade_route_start.json": "keyed by commander (trade_route_start.py)",
+    "trade_stock.json": "keyed by commander (trade_stock.py)",
+    "trade_history.json": "every saved session records its commander; the window opens on the active commander's",
+    "overlay_settings.json": "one set of overlay choices per commander (commander_data.py, overlay_profile.OverlayProfiles); "
+                             "the active commander's are loaded into EDMC's config when they are seen",
+}
+
+# file -> why it holds no commander's play
+NOT_COMMANDER_DATA = {
+    "boxel_survey_export.csv": "an on-demand export of the active commander's survey finds; running it for another "
+                               "commander overwrites it",
+    "codex_catalog.json": "a cache of Canonn's public list of Codex entries",
+    "session_credits.json": "the current login only: one record that names its commander and is replaced when another "
+                            "commander logs in (session_credits.sync_session)",
+    "trade_journal_scan.json": "which journal files have been read (a fact about files, not about a commander)",
+    "exo_observations.json": "facts about bodies (their conditions and the species confirmed on them) pooled on purpose to check the prediction; "
+                             "it stores no commander name or journal path (exo_observations.py)",
+}
+
+
+# folder (in update._OWN_DIRS) -> why it is shared by every commander
+SHARED_FOLDERS = {
+    "star_index": "the optional local star index: facts about neutron stars (system address, position, name) built from a public download; "
+                  "it holds no play data and no commander name, and is left out of Back up my data (star_index.py, data_backup.LEFT_OUT_DIRS)",
+}
+
+
+def _protected_files() -> set:
+    with open(os.path.join(ROOT, "plugin", "update.py"), "r", encoding="utf-8") as handle:
+        source = handle.read()
+    block = source[source.index("_OWN_DATA_FILES: set"):source.index("_OWN_DIRS =")]
+    return set(re.findall(r'"([^"]+\.(?:json|csv))"', block))
+
+
+class DataFilesPerCommanderTests(unittest.TestCase):
+    def test_every_protected_data_file_is_classified(self) -> None:
+        protected = _protected_files()
+        self.assertIn("sessions.json", protected, "the parse found nothing; the test is broken")
+        classified = set(PER_COMMANDER) | set(NOT_COMMANDER_DATA)
+        self.assertEqual(protected - classified, set(),
+                         "a new data file: say in this test how it keeps commanders apart (or why it holds no commander's play)")
+        self.assertEqual(classified - protected, set(), "listed here but not a protected data file any more")
+
+    def test_a_shared_folder_is_protected_by_the_updater_and_says_why(self) -> None:
+        with open(os.path.join(ROOT, "plugin", "update.py"), "r", encoding="utf-8") as handle:
+            source = handle.read()
+        folders = source[source.index("_OWN_DIRS ="):]
+        for name, why in SHARED_FOLDERS.items():
+            self.assertIn(f'"{name}"', folders, f"{name} is not in update._OWN_DIRS")
+            self.assertGreater(len(why.strip()), 10, name)
+
+    def test_the_star_index_modules_do_not_deal_in_commanders(self) -> None:
+        """Its records are system address, position and name only, and its header names the source file; nothing from the player's journals goes in."""
+        for module in ("star_index.py", "star_index_build.py", "star_index_download.py", "star_index_job.py"):
+            with open(os.path.join(ROOT, "plugin", module), "r", encoding="utf-8") as handle:
+                text = handle.read()
+            self.assertIsNone(re.search(r"\b(cmdr|commander)\b", text, re.IGNORECASE), module)
+
+    def test_no_file_is_in_both_lists(self) -> None:
+        self.assertEqual(set(PER_COMMANDER) & set(NOT_COMMANDER_DATA), set())
+
+    def test_every_entry_says_how(self) -> None:
+        for table in (PER_COMMANDER, NOT_COMMANDER_DATA):
+            for name, how in table.items():
+                self.assertGreater(len(how.strip()), 10, name)
+
+    def test_commander_names_never_become_file_names_outside_the_run_archive(self) -> None:
+        """A file named after a commander would behave differently on Windows (case-insensitive, reserved characters) and
+        Linux (case-sensitive). Only the mining run archive does it, through its filename sanitizer."""
+        offenders = []
+        for name in sorted(os.listdir(os.path.join(ROOT, "plugin"))):
+            if not name.endswith(".py") or name == "mining_session_archive.py":
+                continue
+            with open(os.path.join(ROOT, "plugin", name), "r", encoding="utf-8") as handle:
+                text = handle.read()
+            if re.search(r'os\.path\.join\([^)]*\b(cmdr|commander)\b[^)]*\)', text):
+                offenders.append(name)
+        self.assertEqual(offenders, [])
+
+
+if __name__ == "__main__":
+    unittest.main()

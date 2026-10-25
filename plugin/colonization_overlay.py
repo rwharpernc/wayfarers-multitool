@@ -1,0 +1,378 @@
+"""
+The Colonization shopping list on the in-game overlay: a table of the commodities a
+construction site still needs, with the columns Commodity, Required, Remaining, FC, Cargo and To buy.
+
+- **Required** is the site's full requirement for the commodity.
+- **Remaining** is what the site still requires (required less delivered). It does not fall as you load up, so you can see
+  how much you need and how much you have side by side.
+- **FC** (only for a commander with a fleet carrier) is what has been transferred to the carrier (`colonization_carrier`).
+- **Cargo** is what is in the ship's hold now.
+- **To buy** is what is left to get after the hold and the carrier (0 shows blank). A ✓ marks a commodity the hold plus the fleet carrier already cover (the
+  same rule as the Colonization window's green rows); the row turns amber when together they are more than is needed.
+
+Order: at a construction site the rows are alphabetical; anywhere else (a market, the carrier's inventory) they are
+grouped under the market's categories, a heading line for each, alphabetical within a group. While docked at a market, a commodity it does
+not sell is dimmed (unless the hold and the carrier already cover it), so what to buy here stands out.
+
+A footer gives the tons remaining and the trips in the current ship (from its cargo capacity): trips to buy and to haul with a fleet
+carrier, one "to finish" figure without one. Commodities are
+alphabetical, so rows stay put as the numbers change.
+
+Which site: the commander's most recently updated active site (the one the Colonization page names as the current project).
+
+The card is shown while the commander is in a commodity market, or in the carrier's inventory (Carrier Management /
+cargo transfer), at a station or carrier, or docked at a construction site: that is `Visibility`. The journal says which
+service was opened (`Market`, `CarrierStats`, `CargoTransfer`), and `Status.json`'s `GuiFocus` says whether a
+station-services screen is open at all (it drops to another value when the commander leaves it, or undocks). Neither
+alone is enough: `GuiFocus` cannot tell the commodity market from outfitting, and the journal does not say when a screen
+is closed.
+
+Pure layout (`build_card`) is kept apart from the drawing (`render` / `clear`) so it can be tested without an overlay.
+Drawing goes through the shared `overlay.OverlayClient`, like every other WFMT overlay; the card registers an
+EDMCModernOverlay Plugin Group (`GROUP_NAME` / `GROUP_PREFIX`, wired up in load.py) so its background renders.
+"""
+from __future__ import annotations
+
+import math
+from dataclasses import dataclass
+from typing import Collection, List, Mapping, Optional, Tuple
+
+from . import colonization, commodity_categories, overlay
+from .overlay_style import CARD_PAD_X, CARD_PAD_Y, LEGACY, Look
+from .colonization import Site
+from .screenshot_gui_focus import GUI_FOCUS_STATION_SERVICES
+
+ID_PREFIX = "wfmt_colonization_"
+GROUP_NAME = "wfmt_colonization"
+GROUP_PREFIX = ID_PREFIX
+CARD_ID = f"{ID_PREFIX}card"
+
+DEFAULT_X = 20
+DEFAULT_Y = 300
+DEFAULT_ROWS = 0   # 0 = every commodity
+MIN_ROWS = 0
+MAX_ROWS = 60
+
+# The card's own geometry at the default look. A `Look` (overlay_style.py) changes the text size, padding, line spacing and colors,
+# and the card is sized from the text it will show, so a bigger size makes a bigger card and nothing runs past the border.
+LINE_HEIGHT = 20
+PAD_X = CARD_PAD_X
+PAD_Y = CARD_PAD_Y
+TTL = 3600          # persistent; re-sent whenever the list changes, and before this runs out
+RESEND_AFTER_S = TTL / 2
+
+MARKET_EVENT = "Market"                                       # opening the commodity market
+CARRIER_EVENTS = ("CarrierStats", "CargoTransfer")            # opening Carrier Management, moving cargo to or from it
+OTHER_SERVICE_EVENTS = ("Outfitting", "Shipyard", "StoreCargo")   # another station service screen opened
+RESET_EVENTS = ("Docked", "Undocked", "LoadGame", "StartUp", "Shutdown")
+GUI_FOCUS_NONE = 0
+GUI_FOCUS_RIGHT_PANEL = 1   # "InternalPanel": the right-hand cockpit panel (cargo, modules, transfer to a carrier)
+# Station types of a construction depot (the colonization ship is one too); a depot's own market-free screens count.
+DEPOT_STATION_TYPES = ("SpaceConstructionDepot", "PlanetaryConstructionDepot", "ColonisationShip")
+CARRIER_MANAGEMENT_TRACK = "FleetCarrier_Managment"   # sic: the game's spelling
+CARRIER_STATION_TYPES = ("FleetCarrier", "SquadronCarrier")
+
+
+class Visibility:
+    """Should the card show right now? Fed every journal event and every `Status.json` change. Two cases:
+
+    - in a commodity market: a station-services screen is open (`GuiFocus`) and the service opened last was the market.
+      Backing out of the market to the station-services menu cannot be seen, so the card stays until that menu is left.
+      At the commander's own carrier the game writes no `Market` event when its market is opened, so there any
+      station-services screen counts unless Outfitting or the Shipyard was the last one opened (they do write events);
+    - docked at a carrier with the right-hand cockpit panel open (`GuiFocus` 1), where the ship's cargo and the transfer to
+      the carrier live. The game writes nothing when that is opened (`CargoTransfer` comes only after a transfer is made),
+      so the open panel is the signal;
+    - docked at a construction depot (where the shopping list is what the commander is there for), whether looking at
+      the ship's view or the station services, but not in a map or another panel;
+    - in the carrier's management screen: the game writes a `Music` event with the track `FleetCarrier_Managment` when it
+      opens and another track when it closes, so (unlike the other screens) both ends are known;
+    - with the right-hand panel open anywhere, if `right_panel_anywhere` is set.
+
+    `forced` is the commander's manual "show now", which `visible` does not include (the caller decides how it combines
+    with the enabled setting)."""
+
+    def __init__(self) -> None:
+        self._service = ""
+        self._focus = 0
+        self._at_depot = False
+        self._at_carrier = False
+        self._managing = False
+        self.right_panel_anywhere = False
+        self.forced = False
+
+    def feed(self, entry: Mapping[str, object]) -> None:
+        event = entry.get("event")
+        if event in RESET_EVENTS:
+            self._service = ""
+            self._at_depot = False
+            self._at_carrier = False
+            self._managing = False
+        if event == "Music":
+            self._managing = entry.get("MusicTrack") == CARRIER_MANAGEMENT_TRACK
+        if event in ("Docked", "Location"):
+            docked = event == "Docked" or bool(entry.get("Docked"))
+            self._at_carrier = docked and entry.get("StationType") in CARRIER_STATION_TYPES
+            self._at_depot = docked and (entry.get("StationType") in DEPOT_STATION_TYPES
+                                         or "Construction Site" in str(entry.get("StationName") or ""))
+        elif event == colonization.EVENT_DEPOT:
+            self._at_depot = True   # the game writes this when docked at a depot, whatever its station type says
+        elif event == MARKET_EVENT:
+            self._service = "market"
+        elif event in CARRIER_EVENTS:
+            self._service = "carrier"
+        elif event in OTHER_SERVICE_EVENTS:
+            self._service = "other"
+
+    @property
+    def at_depot(self) -> bool:
+        """Docked at a construction depot (where the list is alphabetical; elsewhere it is grouped by market category)."""
+        return self._at_depot
+
+    def market_file_changed(self) -> None:
+        """`Market.json` was rewritten, which the game does the moment a commodity market opens. The journal's `Market` event
+        can reach EDMC several seconds later (seen on Linux under Proton), by which time the screen may be closed, so the file is
+        the faster signal. Counts only while a station-services screen is open."""
+        if self._focus == GUI_FOCUS_STATION_SERVICES and self._service != "other":
+            self._service = "market"
+
+    def set_focus(self, focus: object) -> None:
+        self._focus = focus if isinstance(focus, int) else 0
+        if self._focus != GUI_FOCUS_STATION_SERVICES:
+            self._service = ""   # the screen was closed; the next one opened announces itself
+
+    def describe(self) -> str:
+        """The state behind `visible`, for the debug log."""
+        return (f"focus={self._focus} service={self._service or '-'} depot={self._at_depot} carrier={self._at_carrier} "
+                f"mgmt={self._managing} anywhere={self.right_panel_anywhere} forced={self.forced}")
+
+    @property
+    def visible(self) -> bool:
+        if self._focus == GUI_FOCUS_STATION_SERVICES and (
+                self._service in ("market", "carrier") or (self._at_carrier and self._service != "other")):
+            return True
+        if self._managing:
+            return True
+        if self._focus == GUI_FOCUS_RIGHT_PANEL and (self._at_carrier or self.right_panel_anywhere):
+            return True
+        return self._at_depot and self._focus in (GUI_FOCUS_NONE, GUI_FOCUS_STATION_SERVICES)
+
+
+def text_units(text: str) -> float:
+    """Width of `text` in digit widths: a comma or full stop is about half a digit, so right-aligned columns line up on this
+    rather than on the number of characters."""
+    return sum(0.5 if c in ",." else 1.0 for c in text)
+
+
+def _clip(text: str, limit: int) -> str:
+    return text if len(text) <= limit else text[:limit - 1] + "…"
+
+
+# Colors come from the look's roles: border and fill (the card), title (the card's title and the category headings), header (column
+# headings), text, ok (the ship plus the fleet carrier already cover what is needed), warn (they are more than is needed), info (the
+# carrier column once it covers the need), muted (the carrier column while it does not) and faint (a commodity the market does not sell).
+CHECK = "✓"
+NAME_CHARS = 30
+TITLE_CHARS = 64            # the title is the game's full site name ("Orbital Construction Site: ..."), so it needs room; this bounds the card's width
+NOT_SOLD = "  not available"    # beside a commodity the market here does not sell
+INDENT_CHARS = 2             # a commodity sits this far in from its category heading when the card is grouped
+# The wire protocol has no text metrics, so widths are estimated from character counts. Headings and numbers in the overlay font run
+# wider than the plain estimate (capitals, digits), so this card measures a little wide and the box always holds the text.
+CHAR_SCALE = 1.2
+MAX_COLUMNS = 6   # name plus up to five number columns
+
+
+@dataclass(frozen=True)
+class Row:
+    name: str
+    need: int       # remaining
+    ship: int       # in the hold
+    fc: int
+    required: int = 0   # the site's full requirement (0 when not known)
+    category: str = ""  # the market category, for the grouped order ("" when the card is not grouped)
+    available: bool = True    # False when the market the commander is docked at does not sell it
+
+    @property
+    def to_buy(self) -> int:
+        """Still to get after the hold and the fleet carrier."""
+        return max(0, self.need - self.ship - self.fc)
+
+    @property
+    def covered(self) -> bool:
+        """The hold plus the fleet carrier cover the need, exactly or with room to spare."""
+        return self.ship + self.fc >= self.need
+
+    @property
+    def surplus(self) -> bool:
+        """The hold plus the fleet carrier are more than the need."""
+        return self.ship + self.fc > self.need
+
+
+@dataclass(frozen=True)
+class Card:
+    title: str
+    rows: Tuple[Row, ...]
+    hidden: int          # commodities beyond the row limit
+    remaining: int       # tons still needed in total
+    trips: int           # trips to carry all of that to the site in the current ship (0 when its capacity is unknown)
+    show_fc: bool
+    buy_trips: int = 0   # trips to gather what is still to get, after the ship and the carrier (0 once it is all stocked)
+    grouped: bool = False    # rows sit under a heading line for each market category (away from a construction site)
+
+    def footer_text(self) -> str:
+        """The last line. With a fleet carrier building has two legs, so it gives both (the same words as the COL page and the
+        sites window: to buy, to haul); without one a single trip buys and delivers, so there is one figure."""
+        footer = f"► {self.remaining:,} remaining"
+        if self.trips:
+            if self.show_fc:
+                footer += f"  ► {self.buy_trips:,} to buy  ► {self.trips:,} to haul"
+            else:
+                footer += f"  ► {self.trips:,} trip{'s' if self.trips != 1 else ''} to finish"
+        return footer
+
+    @property
+    def slot_count(self) -> int:
+        """Text lines drawn: title, column headings, one per row (and a heading before each category when grouped), an optional
+        "+N more", the footer."""
+        headings = len({r.category for r in self.rows}) if self.grouped else 0
+        return 2 + len(self.rows) + headings + (1 if self.hidden else 0) + 1
+
+
+def build_card(site: Optional[Site], hold: Mapping[str, int], on_carrier: Mapping[str, int], show_fc: bool,
+               capacity: int = 0, max_rows: int = DEFAULT_ROWS, grouped: bool = False,
+               market_keys: Optional[Collection[str]] = None) -> Optional[Card]:
+    """The card for `site`, or None when there is nothing to draw (no site, a finished site, nothing still needed).
+    `grouped` orders the rows by market category (the caller says so away from a construction site); `market_keys` is what the market
+    the commander is docked at sells (None when not at one), and a commodity outside it is marked unavailable."""
+    if site is None or not site.active:
+        return None
+    needed = [r for r in site.resources if r.remaining > 0]
+    if not needed:
+        return None
+    if grouped:
+        needed.sort(key=lambda r: (commodity_categories.sort_key(commodity_categories.category_for(r.key)), r.label.casefold()))
+    else:
+        needed.sort(key=lambda r: r.label.casefold())
+    limit = max_rows if max_rows > 0 else len(needed)
+    rows = tuple(Row(r.label, r.remaining, hold.get(r.key, 0), on_carrier.get(r.key, 0), r.required,
+                     commodity_categories.category_for(r.key) if grouped else "",
+                     market_keys is None or not market_keys or r.key in market_keys) for r in needed[:limit])
+    remaining = sum(r.remaining for r in needed)
+    known = bool(capacity and capacity > 0)
+    trips = math.ceil(remaining / capacity) if known else 0
+    # What is still to get is counted over every commodity, not only the rows shown, and takes off the ship and the carrier
+    # (the same sum as the sites window's "trips to buy").
+    to_get = sum(max(0, r.remaining - hold.get(r.key, 0) - on_carrier.get(r.key, 0)) for r in needed)
+    buy_trips = math.ceil(to_get / capacity) if known and to_get > 0 else 0
+    return Card(_clip(site.display_name(), TITLE_CHARS), rows, max(0, len(needed) - limit), remaining, trips, show_fc, buy_trips, grouped)
+
+
+def _name_text(row: Row) -> str:
+    """The commodity's name cell: clipped, a tick when covered, and a note when the market here does not sell it (unless covered)."""
+    return _clip(row.name, NAME_CHARS) + (f" {CHECK}" if row.covered else "") + ("" if row.available or row.covered else NOT_SOLD)
+
+
+def _columns(card: Card) -> List[Tuple[str, str]]:
+    """(heading, Row attribute) of each number column, left to right; FC only for a commander with a carrier."""
+    return ([("Required", "required"), ("Remaining", "need")] + ([("FC", "fc")] if card.show_fc else [])
+            + [("Cargo", "ship"), ("To buy", "to_buy")])
+
+
+def _layout(card: Card, look: Look = LEGACY) -> Tuple[int, List[int], int]:
+    """(x of the name column relative to the card, right edges of the number columns, total text width) in px,
+    from character counts at the look's text size - the wire protocol has no text metrics, so this errs a little wide."""
+    char = look.char_px("normal") * CHAR_SCALE
+    indent = INDENT_CHARS if card.grouped else 0
+    name_chars = max([len("Commodity")] + [len(_name_text(r)) + 2 + indent for r in card.rows])
+    columns = [(head, [getattr(r, attr) for r in card.rows]) for head, attr in _columns(card)]
+    widths = [max([len(head)] + [len(f"{v:,}") for v in values]) + 2 for head, values in columns]
+    edges, edge = [], name_chars
+    for width in widths:
+        edge += width
+        edges.append(edge * char)
+    chars = max(name_chars + sum(widths), len(card.footer_text()), len(card.title), 12)
+    return 0, edges, int(round(chars * char))
+
+
+def block_rect(card: Card, x: int = 0, y: int = 0, look: Look = LEGACY) -> Tuple[int, int, int, int]:
+    """(left, top, width, height) of the card as `render` draws it with its text origin at (x, y): the panel rectangle.
+    The global overlay placement uses this to move the card to wherever the commander put it."""
+    _x0, _edges, text_width = _layout(card, look)
+    pad_x, pad_y = look.pad_x(PAD_X), look.pad_y(PAD_Y)
+    return x - pad_x, y - pad_y, text_width + 2 * pad_x, card.slot_count * look.line_px("normal") + 2 * pad_y
+
+
+def _id(slot: int, column: int) -> str:
+    return f"{ID_PREFIX}s{slot}_{column}"
+
+
+def render(client: overlay.OverlayClient, card: Card, x: int, y: int, previous_slots: int = 0, look: Look = LEGACY) -> int:
+    """Draw the card; returns how many text lines it used. Raises OSError if the overlay cannot be reached (the caller
+    decides whether that is silent). Lines left over from a longer previous card are cleared."""
+    _x0, edges, text_width = _layout(card, look)
+    left, top, width, height = block_rect(card, x, y, look)
+    line = look.line_px("normal")
+    size = look.size("normal")
+    char = look.char_px("normal")    # alignment uses the true estimate; only the box is measured wide (CHAR_SCALE)
+    client.send_shape(CARD_ID, "rect", look.color("border"), look.color("fill"), left, top, width, height, ttl=TTL, thickness=2)
+
+    slots: List[List[Tuple[int, str, str, int]]] = []   # per line: (column, text, color, x)
+
+    def right(text: str, edge: int) -> int:
+        return int(round(x + edge - text_units(text) * char))
+
+    slots.append([(0, card.title, look.color("title"), x)])
+    heads = [(head, edge) for (head, _attr), edge in zip(_columns(card), edges)]
+    header = look.color("header")
+    slots.append([(0, "Commodity", header, x)] + [(i + 1, h, header, right(h, e)) for i, (h, e) in enumerate(heads)])
+    category = None
+    for row in card.rows:
+        if card.grouped and row.category != category:
+            category = row.category
+            slots.append([(0, category.upper(), look.color("title"), x)])
+        # Covered rows keep their green or amber; otherwise a commodity the market here does not sell is dimmed.
+        color = (look.color("warn") if row.surplus else look.color("ok") if row.covered
+                  else look.color("text") if row.available else look.color("faint"))
+        cells = [(0, _name_text(row), color, x + (int(round(INDENT_CHARS * char)) if card.grouped else 0))]
+        for column, ((head, attr), edge) in enumerate(zip(_columns(card), edges), start=1):
+            value = getattr(row, attr)
+            if not value:
+                continue    # a zero is left blank: nothing in the hold, on the carrier or left to buy
+            text = f"{value:,}"
+            cell_color = color
+            if attr == "fc":
+                cell_color = look.color("info") if row.fc >= row.need else look.color("muted")
+            elif attr == "to_buy":
+                cell_color = look.color("text") if row.available else look.color("faint")
+            cells.append((column, text, cell_color, right(text, edge)))
+        slots.append(cells)
+    if card.hidden:
+        slots.append([(0, f"+{card.hidden} more", look.color("title"), x)])
+    slots.append([(0, card.footer_text(), look.color("text"), x)])
+
+    for index, cells in enumerate(slots):
+        used = {column for column, _t, _c, _x in cells}
+        for column, text, color, cell_x in cells:
+            client.send_message(_id(index, column), text, color, cell_x, y + index * line, ttl=TTL, size=size)
+        for column in range(MAX_COLUMNS):
+            if column not in used and (index < previous_slots):
+                client.send_message(_id(index, column), "", "white", x, y + index * line, ttl=1)
+    for index in range(len(slots), previous_slots):
+        for column in range(MAX_COLUMNS):
+            client.send_message(_id(index, column), "", "white", x, y + index * line, ttl=1)
+    return len(slots)
+
+
+def clear(client: overlay.OverlayClient, x: int, y: int, slots: int) -> None:
+    client.send_shape(CARD_ID, "rect", "", "", x, y, 0, 0, ttl=1)
+    for index in range(slots):
+        for column in range(MAX_COLUMNS):
+            client.send_message(_id(index, column), "", "white", x, y + index * LINE_HEIGHT, ttl=1)
+
+
+def preview_card() -> Card:
+    """Sample content for the Settings "Test Overlay" button."""
+    return Card("Preview Construction Site",
+                (Row("Water", 1609, 1609, 0, 2000, "Chemicals"), Row("Aluminium", 10055, 0, 0, 12000, "Metals", available=False),
+                 Row("Steel", 12900, 14000, 1265, 15000, "Metals"), Row("Titanium", 8205, 300, 9000, 8205, "Metals")),
+                hidden=0, remaining=32769, trips=33, show_fc=True, buy_trips=21, grouped=True)

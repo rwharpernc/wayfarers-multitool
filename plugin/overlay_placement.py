@@ -1,0 +1,704 @@
+"""Global overlay placement for WFMT: one place to say where every overlay display goes, the same on any screen.
+
+`overlay_layout.py` holds the model (anchors, converting a display's pixel size to canvas units, shifting a display). This
+module joins it to the real world:
+
+- **The screen.** The overlay window's size, mode and the operating system's display scaling decide how big a pixel is on the
+  overlay's canvas. They are read from, in order: EDMCModernOverlay's own log (its newest "Overlay scaling updated" line is
+  exactly what it is using, display scaling included), then Elite's `Options/Graphics/DisplaySettings.xml` for the size
+  (found on Windows and inside a Wine/Proton prefix on Linux) with Windows' own display scaling and EDMCModernOverlay's
+  `overlay_settings.json` for the mode, and, when none of those can be read, the operating system's own size for the primary display
+  (`platform_support.primary_display_size`), before 1920 x 1080 is assumed. The mode and the scaling can be overridden in Settings.
+- **The displays.** `SLOTS` lists every display that can be placed, with its default spot. Each display asks `client_for`
+  (or `origin_for`) for where it goes right now.
+- **The Settings tab** ("Overlay Placement"): one row per display, a menu of nine spots, two offsets in screen pixels, and a
+  button that draws a labeled box for every display so a position can be judged on the real screen.
+
+Old per-feature x/y settings are read once, so a position somebody set by hand is kept as an exact position.
+"""
+
+from __future__ import annotations
+
+import dataclasses
+import json
+import logging
+import os
+import sys
+import threading
+import time
+import tkinter as tk
+from typing import Any, Dict, List, Optional, Tuple
+
+import myNotebook as nb
+from config import appname, config
+
+from . import overlay, overlay_appearance, overlay_grid, overlay_layout as layout, overlay_native, overlay_profile, overlay_style, platform_support
+
+plugin_name = os.path.basename(os.path.dirname(__file__))
+logger = logging.getLogger(f"{appname}.{plugin_name}")
+
+CFG_SCALING = "wfmt_overlay_display_scaling"   # "auto" or one of layout.SCALING_CHOICES such as "125%"
+CFG_MODE = "wfmt_overlay_scale_mode"           # "auto", "fit" or "fill"
+CFG_HIDDEN_PREFIX = "wfmt_overlay_hidden_"          # + the display's key: "1" while the commander has hidden that display
+CFG_EDITOR_SIZE = "wfmt_overlay_editor_size"      # the layout picture's size on the Overlay Placement tab: Default, Large or Extra large
+CFG_OFFSETS = "wfmt_overlay_group_offsets"     # whether right-hand displays are carried past the overlay's clamp (default on)
+AUTO = "auto"
+
+DISPLAY_SETTINGS_FILE = "DisplaySettings.xml"
+MODERN_OVERLAY_FOLDER = "EDMCModernOverlay"
+MODERN_OVERLAY_SETTINGS = "overlay_settings.json"
+MODERN_OVERLAY_LOG = os.path.join("logs", MODERN_OVERLAY_FOLDER, "overlay_client.log")
+LOG_TAIL_BYTES = 400_000                      # the newest scaling line is near the end of the overlay's log
+ASSUMED_SCREEN = (1920, 1080)                 # used only when nothing can be read
+
+SCREEN_CACHE_S = 30.0                         # the files are not re-read more often than this
+PREVIEW_SECONDS = 12
+
+
+# --- the displays that can be placed -------------------------------------------------------------------------------
+
+def _slot(key: str, label: str, h: str, v: str, dx: int, dy: int, size: Tuple[int, int],
+          legacy_x: str = "", legacy_y: str = "", legacy_default: Tuple[int, int] = (0, 0),
+          group: str = "", group_prefix: str = "") -> layout.Slot:
+    return layout.Slot(key, label, layout.Placement(h, v, dx, dy), size, legacy_x, legacy_y, legacy_default, group, group_prefix)
+
+
+# Sizes are the block each display occupies, in the pixels the display is drawn in (used to preview it and to anchor it to
+# a right or bottom edge). Offsets are screen pixels in from the edge.
+SLOTS: Dict[str, layout.Slot] = {s.key: s for s in (
+    _slot("colonization", "Colonization shopping list", "left", "middle", 40, 0, (840, 300),
+          "wfmt_colonization_overlay_x", "wfmt_colonization_overlay_y", (20, 300), "wfmt_colonization", "wfmt_colonization_"),
+    _slot("discovery", "Discovery alerts", "center", "top", 0, 150, (460, 234),
+          "wfmt_discovery_x", "wfmt_discovery_y", (700, 60), "wfmt_discovery", "wfmt_discovery_"),
+    _slot("notable", "Notable find card", "right", "top", 40, 40, (460, 84),
+          "wfmt_notable_x", "wfmt_notable_y", (700, 560), "wfmt_notable", "wfmt_notable_"),
+    _slot("flight_alerts", "Flight alerts (carrier jump, fuel)", "right", "top", 40, 550, (440, 110),
+          group="wfmt_flight", group_prefix="wfmt_flight_"),
+    _slot("route", "Route and ship status", "left", "top", 40, 40, (380, 340),
+          group="wfmt_route", group_prefix="wfmt_route_"),
+    _slot("system_targets", "System targets (what to map and sample)", "center", "bottom", 240, 370, (400, 250),
+          group="wfmt_targets", group_prefix="wfmt_targets_"),
+    _slot("body_info", "Body info", "center", "bottom", 240, 40, (420, 320),
+          group="wfmt_body_info", group_prefix="wfmt_body_info_"),
+    _slot("exobiology", "Biology (predicted species)", "center", "bottom", -230, 40, (420, 300),
+          group="wfmt_exo_pred", group_prefix="wfmt_exo_pred_"),
+    _slot("bio_status", "Bio status (samples and progress)", "center", "top", 0, 0, (440, 90),
+          group="wfmt_exo_status", group_prefix="wfmt_exo_status_"),
+    _slot("bio_radar", "Bio radar (sample circles, ship, SRV)", "left", "middle", 40, 0, (300, 320),
+          group="wfmt_exo_radar", group_prefix="wfmt_exo_radar_"),
+    _slot("bio_popup", "Sample popup", "center", "bottom", -230, 350, (360, 130),
+          group="wfmt_exo_popup", group_prefix="wfmt_exo_popup_"),
+    _slot("expedition_log", "Expedition Log (totals of the running expedition)", "left", "top", 430, 40, (300, 330),
+          group="wfmt_expedition_log", group_prefix="wfmt_expedition_log_"),
+    _slot("missions", "Missions list", "right", "bottom", 40, 120, (440, 300),
+          group="wfmt_missions", group_prefix="wfmt_missions_"),
+    _slot("interdiction", "Interdiction warning", "center", "top", 0, 20, (600, 116),
+          group="wfmt_interdiction", group_prefix="wfmt_interdiction_"),
+    _slot("landing", "Landing assist", "left", "bottom", 40, 40, (466, 324),
+          group="wfmt_landing", group_prefix="wfmt_landing_"),
+    _slot("inventory", "Inventory pickups and bars", "right", "top", 40, 200, (420, 226),
+          "wfmt_inventory_overlay_x", "wfmt_inventory_overlay_y", (900, 120), "wfmt_inventory", "wfmt_inventory_"),
+    _slot("mining_stats", "Mining stats", "right", "top", 40, 440, (400, 100)),
+    _slot("mining_radar", "Mining radar (Rhino, marks, deposits)", "left", "middle", 40, 10, (340, 316)),
+    _slot("surface_compass", "Surface compass", "right", "top", 40, 128, (400, 70),
+          group="wfmt_compass", group_prefix="wfmt_compass_"),
+    _slot("screenshots", "Screenshot messages", "right", "bottom", 40, 40, (420, 78),
+          group="wfmt_screenshot", group_prefix="wfmt_screenshot_"),
+)}
+
+# Placement, the Show ticks and the screen choices are each commander's own (overlay_profile.py).
+overlay_profile.register(
+    [layout.setting_key(key) for key in SLOTS] + [CFG_HIDDEN_PREFIX + key for key in SLOTS] + [CFG_SCALING, CFG_MODE, CFG_OFFSETS])
+
+
+_measured: Dict[str, Tuple[overlay_style.Look, Tuple[int, int]]] = {}
+
+
+def note_measured_size(slot_key: str, size: Tuple[int, int], look: Optional[overlay_style.Look] = None) -> bool:
+    """A display that knows its own real size (a card that grows with its columns and text size) says so here, and right-anchoring
+    and the group offset use that instead of the nominal slot size, which has to guess the worst case and so strands a display well
+    away from its edge at the larger text sizes. The size only grows for a given look, so the card does not shift as its numbers
+    change; a new look starts again. True when the size used changed (the caller then re-applies the group offsets)."""
+    look = look or overlay_appearance.current_look()
+    old = _measured.get(slot_key)
+    if old is not None and old[0] == look:
+        size = (max(size[0], old[1][0]), max(size[1], old[1][1]))
+        if size == old[1]:
+            return False
+    _measured[slot_key] = (look, size)
+    return True
+
+
+def slot_size(slot_key: str, look: Optional[overlay_style.Look] = None) -> Tuple[int, int]:
+    """A display's nominal size at the current look: the slot's size at the default text size, scaled to the chosen text size (its
+    width by the estimated character width, its height by the line height) and grown by the padding on every side. It is what
+    right- and bottom-anchoring, centering and the overlay group offsets are worked out from, so they stay right when the text
+    size or padding changes."""
+    look = look or overlay_appearance.current_look()
+    measured = _measured.get(slot_key)
+    if measured is not None and measured[0] == look:
+        return measured[1]
+    width, height = SLOTS[slot_key].size
+    char_ratio = look.char_px("normal") / overlay_style.LEGACY.char_px("normal")
+    line_ratio = look.line_px("normal") / overlay_style.LEGACY.line_px("normal")
+    return int(round(width * char_ratio + 2 * look.pad_extra)), int(round(height * line_ratio + 2 * look.pad_extra))
+
+
+# --- the screen ----------------------------------------------------------------------------------------------------
+
+_screen_cache: Dict[str, Any] = {"at": 0.0, "screen": None}
+
+
+def _plugins_dir() -> str:
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _modern_overlay_installed() -> bool:
+    return os.path.isdir(os.path.join(_plugins_dir(), MODERN_OVERLAY_FOLDER))
+
+
+def read_display_settings() -> Optional[Tuple[int, int, Optional[int]]]:
+    """The game's screen size and mode from DisplaySettings.xml, or None when the file can't be found or read."""
+    folder = platform_support.elite_graphics_dir(platform_support.get_prefix_override() or None)
+    if not folder:
+        return None
+    try:
+        with open(os.path.join(folder, DISPLAY_SETTINGS_FILE), "r", encoding="utf-8") as handle:
+            return layout.parse_display_settings(handle.read())
+    except OSError:
+        return None
+
+
+def _file_time(path: Optional[str]) -> float:
+    try:
+        return os.path.getmtime(path) if path else 0.0
+    except OSError:
+        return 0.0
+
+
+def _overlay_log_tail() -> Tuple[str, float]:
+    """The end of EDMCModernOverlay's log and its file time ('' and 0.0 when it can't be read)."""
+    path = os.path.join(os.path.dirname(_plugins_dir()), MODERN_OVERLAY_LOG)   # EDMC's data folder holds plugins/ and logs/
+    try:
+        with open(path, "rb") as handle:
+            handle.seek(0, os.SEEK_END)
+            handle.seek(max(0, handle.tell() - LOG_TAIL_BYTES))
+            return handle.read().decode("utf-8", errors="replace"), _file_time(path)
+    except OSError:
+        return "", 0.0
+
+
+def read_overlay_scaling() -> Optional[Tuple[int, int, str, float, float]]:
+    """(window width, window height, mode, display scaling, log file time) from the newest scaling line in
+    EDMCModernOverlay's log, or None when it has none (the overlay never ran, or its log is somewhere else)."""
+    tail, time_ = _overlay_log_tail()
+    parsed = layout.parse_scaling_line(tail)
+    return (*parsed, time_) if parsed else None
+
+
+def read_overlay_window_size() -> Optional[Tuple[int, int]]:
+    """The overlay window's size from EDMCModernOverlay's log, which always has it (the scaling line is debug-only), or None."""
+    return layout.parse_window_size(_overlay_log_tail()[0])
+
+
+def windows_display_scaling() -> Optional[float]:
+    """The primary display's scaling on Windows (1.25 for 125%), or None elsewhere or when it can't be read."""
+    if sys.platform != "win32":
+        return None
+    try:
+        import ctypes
+        percent = ctypes.windll.shcore.GetScaleFactorForDevice(0)   # 0 = the primary display; returns 100, 125, 150 ...
+        return percent / 100.0 if percent and percent > 0 else None
+    except Exception:
+        return None
+
+
+def detect_scale_mode() -> Tuple[str, str]:
+    """(mode, where it came from): EDMCModernOverlay's own scale mode when its settings file is there, otherwise fill."""
+    path = os.path.join(_plugins_dir(), MODERN_OVERLAY_FOLDER, MODERN_OVERLAY_SETTINGS)
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            mode = str(json.load(handle).get("scale_mode", "")).strip().lower()
+        if mode in (layout.MODE_FIT, layout.MODE_FILL):
+            return mode, "EDMCModernOverlay settings"
+    except (OSError, ValueError, AttributeError):
+        pass
+    return layout.MODE_FILL, "assumed"
+
+
+def _scaling_choice_value(label: str) -> Optional[float]:
+    for text, ratio in layout.SCALING_CHOICES:
+        if label == text:
+            return ratio
+    return None
+
+
+def screen_for(scaling_choice: str, mode_choice: str) -> layout.Screen:
+    """The screen for the given Settings choices ("auto" reads the overlay's log and the game's files). With the built-in overlay it is the game window's own size and scaling."""
+    own = overlay_native.screen()
+    if own is not None:
+        chosen = _scaling_choice_value(scaling_choice)
+        return own if chosen is None else dataclasses.replace(own, ratio=chosen, source=own.source + ", scaling chosen")
+    chosen_ratio = _scaling_choice_value(scaling_choice)
+    chosen_mode = mode_choice if mode_choice in (layout.MODE_FIT, layout.MODE_FILL) else None
+    modern = _modern_overlay_installed()
+    display = read_display_settings()
+    display_time = _file_time(os.path.join(
+        platform_support.elite_graphics_dir(platform_support.get_prefix_override() or None) or "", DISPLAY_SETTINGS_FILE))
+
+    logged = read_overlay_scaling() if modern else None
+    if logged and display and logged[4] < display_time:
+        logged = None          # the game's screen settings changed after the overlay last logged: its numbers are old
+
+    if logged:
+        width, height, log_mode, log_ratio, _time = logged
+        mode = chosen_mode or log_mode
+        ratio = chosen_ratio or log_ratio
+        source = f"{MODERN_OVERLAY_FOLDER} log" + (", scaling chosen" if chosen_ratio else "") + (", mode chosen" if chosen_mode else "")
+        return layout.Screen(width, height, mode, source, display[2] if display else None, ratio, True)
+
+    if display:
+        width, height, full_screen = display
+        mode, mode_source = (chosen_mode, "chosen") if chosen_mode else detect_scale_mode()
+        detected = windows_display_scaling()
+        ratio = chosen_ratio or detected or 1.0
+        scaling_source = "chosen" if chosen_ratio else "Windows" if detected else "assumed 100%"
+        return layout.Screen(width, height, mode, f"{DISPLAY_SETTINGS_FILE}, mode {mode_source}, scaling {scaling_source}",
+                             full_screen, ratio, modern)
+
+    mode, _source = (chosen_mode, "chosen") if chosen_mode else detect_scale_mode()
+    window = read_overlay_window_size() if modern else None
+    if window:      # Elite's DisplaySettings.xml can't be read (a Flatpak EDMC without access to it, say) but the overlay knows its window
+        return layout.Screen(*window, mode, f"{MODERN_OVERLAY_FOLDER} log (window size only; {DISPLAY_SETTINGS_FILE} not readable)",
+                             None, chosen_ratio or windows_display_scaling() or 1.0, True)
+    monitor = platform_support.primary_display_size()
+    if monitor:     # nothing from the game or the overlay: the primary monitor's own size, so an ultrawide or a 4K screen is not taken for 1080p
+        return layout.Screen(*monitor, mode, f"game files not found, using the primary display ({monitor[0]} x {monitor[1]})",
+                             None, chosen_ratio or windows_display_scaling() or 1.0, modern)
+    return layout.Screen(*ASSUMED_SCREEN, mode, "game files not found, assuming 1920 x 1080", None, chosen_ratio or 1.0, modern)
+
+
+def current_screen() -> layout.Screen:
+    """The screen as configured now, re-read from the files at most every SCREEN_CACHE_S seconds. If it changed (a new
+    resolution, say) the group offsets are worked out again, since they depend on it."""
+    now = time.monotonic()
+    cached = _screen_cache["screen"]
+    if cached is None or now - _screen_cache["at"] > SCREEN_CACHE_S:
+        fresh = screen_for(config.get_str(CFG_SCALING) or AUTO, config.get_str(CFG_MODE) or AUTO)
+        changed = cached is not None and fresh != cached
+        cached = fresh
+        _screen_cache.update(at=now, screen=cached)
+        if changed:
+            threading.Thread(target=apply_group_offsets, name="WFMT-overlay-offsets", daemon=True).start()
+    return cached
+
+
+def refresh() -> None:
+    """Forget the cached screen so the next placement re-reads the files (after Settings change)."""
+    _screen_cache.update(at=0.0, screen=None)
+
+
+# --- saved placements ----------------------------------------------------------------------------------------------
+
+def _legacy_int(key: str) -> Optional[int]:
+    if not key:
+        return None
+    try:
+        raw = config.get_str(key)
+        return int(raw) if raw else None
+    except (TypeError, ValueError):
+        return None
+
+
+_warned_off_canvas: set = set()
+
+
+def placement_for(slot_key: str) -> layout.Placement:
+    """Where `slot_key`'s display goes: its saved placement, else the old x/y it used to have, else its default."""
+    slot = SLOTS[slot_key]
+    default = layout.migrated_placement(slot, _legacy_int(slot.legacy_x), _legacy_int(slot.legacy_y))
+    raw = config.get_str(layout.setting_key(slot_key))
+    placement = layout.parse_placement(raw, default) if raw else default
+    if not layout.on_canvas(placement):
+        # A saved exact position off the canvas (an old setting, or one made for another screen) would hide the display; use the
+        # default instead, and leave the saved text alone.
+        if slot_key not in _warned_off_canvas:
+            _warned_off_canvas.add(slot_key)
+            logger.warning("Saved overlay position %s for %s is off the overlay's canvas; using the default placement",
+                           layout.format_placement(placement), slot_key)
+        return slot.default
+    return placement
+
+
+def save_placement(slot_key: str, placement: layout.Placement) -> None:
+    config.set(layout.setting_key(slot_key), layout.format_placement(placement))
+
+
+def is_hidden(slot_key: str) -> bool:
+    """Whether the commander has hidden this display on the Overlay Placement tab (Show unticked). Every display is shown unless so."""
+    try:
+        return config.get_str(CFG_HIDDEN_PREFIX + slot_key) == "1"
+    except Exception:
+        return False
+
+
+def save_hidden(slot_key: str, hidden: bool) -> None:
+    config.set(CFG_HIDDEN_PREFIX + slot_key, "1" if hidden else "0")
+
+
+def offsets_enabled() -> bool:
+    """The Settings switch for carrying displays past the overlay's right-hand clamp (on unless turned off)."""
+    return config.get_str(CFG_OFFSETS) != "0"
+
+
+def can_offset(slot_key: str) -> bool:
+    """Whether a display can be carried past the overlay's right-hand clamp by an offset of its overlay group."""
+    if overlay_native.accepting():
+        return False                       # WFMT's own overlay has no clamp to carry a display past
+    return bool(SLOTS[slot_key].group) and offsets_enabled() and overlay.group_offsets_available()
+
+
+def shift_for(slot_key: str, block: Tuple[int, int, int, int]) -> Tuple[int, int]:
+    """How far to move a display drawn in the rectangle `block` = (left, top, width, height) to reach its place. For a display
+    with an overlay group this is only as far as the clamp allows; the group's offset (apply_group_offsets) does the rest."""
+    return layout.shift_for(placement_for(slot_key), block, current_screen(), slot_size(slot_key), can_offset(slot_key))
+
+
+def client_for(slot_key: str, client: Any, block: Tuple[int, int, int, int]) -> Any:
+    """`client` wrapped so everything drawn through it lands where `slot_key` is placed. A failure to work out the
+    placement (damaged settings, say) leaves the display where it was drawn rather than hiding it. A display the commander has hidden
+    gets a client that draws nothing."""
+    if is_hidden(slot_key):
+        return layout.HiddenClient(client)
+    try:
+        dx, dy = shift_for(slot_key, block)
+    except Exception:
+        logger.exception("Overlay placement for %s failed; drawing it where it is", slot_key)
+        return client
+    return client if (dx, dy) == (0, 0) else layout.ShiftedClient(client, dx, dy)
+
+
+def client_for_measured(slot_key: str, client: Any, block: Tuple[int, int, int, int], look: Optional[overlay_style.Look] = None) -> Any:
+    """Like `client_for`, for a card that knows its real size: `block` is the rectangle the card occupies *now* (so a bottom or middle anchor sits on
+    the card's real edge, not on a worst-case guess), and the size is noted so a right-hand edge and the group offset are worked out from it too."""
+    if note_measured_size(slot_key, (block[2], block[3]), look):
+        threading.Thread(target=apply_group_offsets, name="WFMT-overlay-offsets", daemon=True).start()
+    return client_for(slot_key, client, block)
+
+
+def origin_for(slot_key: str, size: Tuple[int, int]) -> Tuple[int, int]:
+    """Top left corner for a display of `size` that positions itself from an origin rather than being shifted (as far as the
+    clamp allows, when its group's offset carries it the rest of the way)."""
+    plan = layout.plan_origin(placement_for(slot_key), size, slot_size(slot_key) if SLOTS[slot_key].group else size,
+                              current_screen(), can_offset(slot_key))
+    return plan.x, plan.y
+
+
+def group_offsets(placements: Optional[Dict[str, layout.Placement]] = None,
+                  screen: Optional[layout.Screen] = None) -> Dict[str, float]:
+    """The overlay group offset (canvas units to the right) each display needs for its placement, by group name. Only displays
+    with a group are listed; most are 0."""
+    screen = screen or current_screen()
+    wanted = placements if placements is not None else {key: placement_for(key) for key in SLOTS}
+    use = offsets_enabled() if placements is None else _offsets_typed()
+    return {slot.group: (layout.plan_origin(wanted[key], slot_size(key), slot_size(key), screen, True).offset_x if use else 0.0)
+            for key, slot in SLOTS.items() if slot.group and key in wanted}
+
+
+def apply_group_offsets(placements: Optional[Dict[str, layout.Placement]] = None,
+                        screen: Optional[layout.Screen] = None) -> bool:
+    """Sends the group offsets for the saved placements (or the given ones) to EDMCModernOverlay. False when it can't be done,
+    in which case displays simply stop where the overlay's clamp allows."""
+    try:
+        return overlay.set_group_offsets(group_offsets(placements, screen))
+    except Exception:
+        logger.exception("Could not apply the overlay group offsets")
+        return False
+
+
+# --- Settings tab --------------------------------------------------------------------------------------------------
+
+_SCALING_AUTO_LABEL = "Automatic (from the overlay and Windows)"
+_MODE_AUTO_LABEL = "Automatic (from the overlay's settings)"
+_MODE_LABELS = {layout.MODE_FIT: "Fit (canvas keeps its shape)", layout.MODE_FILL: "Fill (canvas stretched over the screen)"}
+SCREEN_HELP = (
+    "Display scaling is the percentage Windows applies to the monitor Elite is on (Settings > System > Display > Scale). Displays are sized in "
+    "pixels, so WFMT needs it to know how much room each one takes; where it cannot be read, it uses the value you choose here. Leave "
+    "it on Automatic unless the line above is wrong.\n"
+    "Overlay mode is how the overlay's 1280 x 960 canvas is laid over the game window. Fit keeps the canvas's 4:3 shape, with bars on a "
+    "wider screen; Fill stretches it over the whole window. Automatic follows EDMCModernOverlay's own setting. The built-in overlay "
+    "draws exactly where it is told and ignores the mode.\n"
+    "Text size, on the Appearance tab, is separate: it only makes the text, and so each display, larger."
+)
+_PREVIEW_COLORS = ("#f97316", "#22d3ee", "#a3e635", "#f472b6", "#facc15", "#60a5fa", "#fb7185", "#34d399", "#c084fc")
+
+_hidden_vars: Dict[str, tk.BooleanVar] = {}
+_rows: Dict[str, Tuple[tk.StringVar, tk.StringVar, tk.StringVar]] = {}
+_scaling_var: Optional[tk.StringVar] = None
+_mode_var: Optional[tk.StringVar] = None
+_info_var: Optional[tk.StringVar] = None
+_result_var: Optional[tk.StringVar] = None
+_frame: Optional[tk.Misc] = None
+_offsets_var: Optional[tk.BooleanVar] = None
+
+
+def _offsets_typed() -> bool:
+    """The offsets switch as currently ticked on the tab (not yet saved), or the saved one when the tab isn't built."""
+    return bool(_offsets_var.get()) if _offsets_var is not None else offsets_enabled()
+
+
+def _scaling_value(label: str) -> str:
+    return AUTO if label == _SCALING_AUTO_LABEL else label
+
+
+def _mode_value(label: str) -> str:
+    for value, text in _MODE_LABELS.items():
+        if label == text:
+            return value
+    return AUTO
+
+
+def _number(var: tk.StringVar, default: int = 0) -> int:
+    try:
+        return int(var.get().strip())
+    except ValueError:
+        return default
+
+
+def _typed_placement(slot_key: str) -> layout.Placement:
+    """The placement as currently typed into a row (not yet saved)."""
+    choice, first, second = _rows[slot_key]
+    return layout.placement_from_choice(choice.get(), _number(first), _number(second))
+
+
+def _typed_screen() -> layout.Screen:
+    if _scaling_var is None or _mode_var is None:
+        return current_screen()
+    return screen_for(_scaling_value(_scaling_var.get()), _mode_value(_mode_var.get()))
+
+
+def _show_info() -> None:
+    if _info_var is not None:
+        _info_var.set(layout.describe_screen(_typed_screen()))
+
+
+def build_settings(notebook: tk.Misc) -> None:
+    global _scaling_var, _mode_var, _info_var, _result_var, _frame, _offsets_var
+
+    frame = nb.Frame(notebook)
+    _frame = frame
+    frame.columnconfigure(0, weight=1)
+    notebook.add(frame, text="Overlay Placement")
+
+    nb.Label(
+        frame,
+        text=("Where each on-screen display goes, for every overlay feature in WFMT. Pick one of nine spots and an "
+              "offset in screen pixels: \"Bottom right\" is the bottom right corner of your screen on any monitor, however "
+              "big the display. For the edge spots the offset moves the display inward from the edge; for Center and "
+              "Middle it nudges it. \"Exact position\" uses the two numbers as the overlay's own x and y (a 1280 x 960 "
+              "canvas stretched over the screen) instead.\n\n" + overlay_profile.profiles.note()),
+        wraplength=460, justify=tk.LEFT,
+    ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 6))
+
+    _info_var = tk.StringVar(value="")
+    nb.Label(frame, textvariable=_info_var, wraplength=460, justify=tk.LEFT).grid(
+        row=1, column=0, sticky=tk.W, padx=10, pady=(0, 6))
+
+    screen_box = tk.Frame(frame)
+    screen_box.grid(row=2, column=0, sticky=tk.W, padx=10, pady=2)
+    nb.Label(screen_box, text="Display scaling:").grid(row=0, column=0, sticky=tk.W)
+    saved_scaling = config.get_str(CFG_SCALING) or AUTO
+    _scaling_var = tk.StringVar(value=saved_scaling if _scaling_choice_value(saved_scaling) else _SCALING_AUTO_LABEL)
+    tk.OptionMenu(screen_box, _scaling_var, _SCALING_AUTO_LABEL, *[label for label, _r in layout.SCALING_CHOICES],
+                  command=lambda _v: _show_info()).grid(row=0, column=1, sticky=tk.W, padx=(6, 0))
+    nb.Label(screen_box, text="Overlay mode:").grid(row=1, column=0, sticky=tk.W)
+    saved_mode = config.get_str(CFG_MODE) or AUTO
+    _mode_var = tk.StringVar(value=_MODE_LABELS.get(saved_mode, _MODE_AUTO_LABEL))
+    tk.OptionMenu(screen_box, _mode_var, _MODE_AUTO_LABEL, *_MODE_LABELS.values(),
+                  command=lambda _v: _show_info()).grid(row=1, column=1, sticky=tk.W, padx=(6, 0))
+
+    nb.Label(screen_box, text=SCREEN_HELP, wraplength=460, justify=tk.LEFT).grid(
+        row=2, column=0, columnspan=2, sticky=tk.W, pady=(6, 0))
+
+    _offsets_var = tk.BooleanVar(value=offsets_enabled())
+    nb.Checkbutton(
+        screen_box, text=("Carry displays on the right to the screen edge (sets an offset on their EDMCModernOverlay group; "
+                          "untick if they end up in the wrong place)"),
+        variable=_offsets_var, command=_show_info,
+    ).grid(row=3, column=0, columnspan=2, sticky=tk.W, pady=(6, 0))
+
+    editor_holder = tk.Frame(frame)
+    editor_holder.grid(row=3, column=0, sticky=tk.W, padx=10, pady=(10, 0))
+    grid = tk.Frame(frame)
+    grid.grid(row=4, column=0, sticky=tk.W, padx=10, pady=(10, 4))
+    for column, heading in enumerate(("Display", "Spot", "Offset X", "Offset Y", "Show")):
+        nb.Label(grid, text=heading).grid(row=0, column=column, sticky=tk.W, padx=(0, 8))
+    _rows.clear()
+    _hidden_vars.clear()
+    for row_index, (key, slot) in enumerate(SLOTS.items(), start=1):
+        placement = placement_for(key)
+        first, second = (placement.x, placement.y) if placement.custom else (placement.dx, placement.dy)
+        choice, first_var, second_var = (
+            tk.StringVar(value=layout.preset_label(placement)), tk.StringVar(value=str(first)), tk.StringVar(value=str(second)))
+        _rows[key] = (choice, first_var, second_var)
+        nb.Label(grid, text=slot.label).grid(row=row_index, column=0, sticky=tk.W, padx=(0, 8), pady=1)
+        tk.OptionMenu(grid, choice, *layout.PRESET_LABELS).grid(row=row_index, column=1, sticky=tk.W, padx=(0, 8), pady=1)
+        nb.EntryMenu(grid, textvariable=first_var, width=6).grid(row=row_index, column=2, sticky=tk.W, padx=(0, 8), pady=1)
+        nb.EntryMenu(grid, textvariable=second_var, width=6).grid(row=row_index, column=3, sticky=tk.W, padx=(0, 8), pady=1)
+        _hidden_vars[key] = tk.BooleanVar(value=not is_hidden(key))      # ticked = shown
+        nb.Checkbutton(grid, variable=_hidden_vars[key]).grid(row=row_index, column=4, sticky=tk.W, pady=1)
+
+    _build_editor(editor_holder)
+
+    buttons = tk.Frame(frame)
+    buttons.grid(row=5, column=0, sticky=tk.W, padx=10, pady=(8, 2))
+    tk.Button(buttons, text="Show placement preview", command=_preview).pack(side=tk.LEFT)
+    tk.Button(buttons, text="Reset all to defaults", command=_reset_all).pack(side=tk.LEFT, padx=(8, 0))
+    tk.Button(buttons, text="Detect screen again", command=_redetect).pack(side=tk.LEFT, padx=(8, 0))
+    _result_var = tk.StringVar(value="")
+    nb.Label(frame, textvariable=_result_var, wraplength=460, justify=tk.LEFT).grid(
+        row=6, column=0, sticky=tk.W, padx=10, pady=(2, 10))
+    _show_info()
+
+
+_editor: Optional[overlay_grid.LayoutEditor] = None
+
+
+def _build_editor(holder: tk.Misc) -> None:
+    """The drag-and-drop layout picture above the table (see overlay_grid.py): it reads and writes the same rows, so the table and the picture agree."""
+    global _editor
+    _editor = None
+    try:
+        screen = current_screen()
+        logical = screen.logical if screen.pixel_sizes else (float(layout.BASE_WIDTH), float(layout.BASE_HEIGHT))
+
+        def get(key: str) -> Optional[layout.Placement]:
+            try:
+                return _typed_placement(key)
+            except (KeyError, ValueError):
+                return None
+
+        def put(key: str, placement: layout.Placement) -> None:
+            choice, first, second = _rows[key]
+            choice.set(layout.preset_label(placement))
+            first.set(str(placement.x if placement.custom else placement.dx))
+            second.set(str(placement.y if placement.custom else placement.dy))
+
+        slots = {key: (slot.label, slot_size(key)) for key, slot in SLOTS.items()}
+        _editor = overlay_grid.LayoutEditor(holder, logical, slots, get, put, lambda key: key in _hidden_vars and not _hidden_vars[key].get(), _PREVIEW_COLORS,
+                                           size=config.get_str(CFG_EDITOR_SIZE) or overlay_grid.DEFAULT_SIZE,
+                                           on_size=lambda choice: config.set(CFG_EDITOR_SIZE, choice))
+        _editor.frame.pack(anchor=tk.W)
+        for choice, first, second in _rows.values():
+            for var in (choice, first, second):
+                var.trace_add("write", lambda *_a: _editor.redraw() if _editor is not None else None)
+        for var in _hidden_vars.values():
+            var.trace_add("write", lambda *_a: _editor.redraw() if _editor is not None else None)
+    except Exception:
+        logger.exception("Could not build the layout editor")
+
+
+def save_settings() -> None:
+    if _scaling_var is None or _mode_var is None or not _rows:
+        return
+    config.set(CFG_SCALING, _scaling_value(_scaling_var.get()))
+    config.set(CFG_MODE, _mode_value(_mode_var.get()))
+    if _offsets_var is not None:
+        config.set(CFG_OFFSETS, "1" if _offsets_var.get() else "0")
+    for key in SLOTS:
+        if key in _rows:
+            save_placement(key, _typed_placement(key))
+        if key in _hidden_vars:
+            save_hidden(key, not _hidden_vars[key].get())
+    refresh()
+    apply_group_offsets()
+
+
+def _redetect() -> None:
+    refresh()
+    apply_group_offsets()
+    _show_info()
+    if _result_var is not None:
+        _result_var.set("Read the overlay's log and the game's files again.")
+
+
+def _reset_all() -> None:
+    """Puts every row back to its default (shown now; kept when Settings is saved)."""
+    for key, slot in SLOTS.items():
+        if key not in _rows:
+            continue
+        choice, first, second = _rows[key]
+        default = slot.default
+        choice.set(layout.preset_label(default))
+        first.set(str(default.dx))
+        second.set(str(default.dy))
+        if key in _hidden_vars:
+            _hidden_vars[key].set(True)      # shown again
+    if _scaling_var is not None:
+        _scaling_var.set(_SCALING_AUTO_LABEL)
+    if _mode_var is not None:
+        _mode_var.set(_MODE_AUTO_LABEL)
+    if _offsets_var is not None:
+        _offsets_var.set(True)
+    _show_info()
+    if _result_var is not None:
+        _result_var.set("Defaults are shown. Press OK in Settings to keep them.")
+
+
+def preview_shapes(placements: Dict[str, layout.Placement], screen: layout.Screen,
+                   use_groups: bool = False) -> List[Dict[str, Any]]:
+    """What the preview draws: a small marker at the screen's top left corner, then a labeled box for each display at its
+    placed position and at its real size. Positions are canvas units and sizes are pixels, as the overlay takes them. (There
+    is no full-screen outline: the overlay squashes a box wider than the canvas, so it could not be drawn truthfully.) Plain
+    data so it can be tested without an overlay."""
+    items: List[Dict[str, Any]] = [{"id": "wfmt_placeprev_edge", "x": 0, "y": 0, "w": 150, "h": 36,
+                                    "label": "Screen top left", "color": "#ffffff"}]
+    for index, (key, placement) in enumerate(placements.items()):
+        slot = SLOTS[key]
+        grouped = use_groups and bool(slot.group)     # drawn inside its group, so its offset applies, as for the real display
+        size = slot_size(key)
+        plan = layout.plan_origin(placement, size, size, screen, grouped)
+        items.append({"id": f"{slot.group_prefix}placeprev" if grouped else f"wfmt_placeprev_{key}",
+                      "x": plan.x, "y": plan.y, "w": size[0], "h": size[1], "offset_x": plan.offset_x,
+                      "label": slot.label, "color": _PREVIEW_COLORS[index % len(_PREVIEW_COLORS)]})
+    return items
+
+
+def _preview() -> None:
+    """Draws a labeled outline for every display at the positions typed now, for a few seconds."""
+    if _result_var is None:
+        return
+    try:
+        typed = {key: _typed_placement(key) for key in SLOTS if key in _rows}
+        screen = _typed_screen()
+        grouped = overlay.group_offsets_available() and screen.pixel_sizes and _offsets_typed()
+        items = preview_shapes(typed, screen, use_groups=grouped)
+        if grouped:
+            apply_group_offsets(typed, screen)    # the typed values, until the preview ends and the saved ones return
+    except ValueError:
+        _result_var.set("One of the offsets is not a number.")
+        return
+    _result_var.set("Drawing the preview...")
+
+    def worker() -> None:
+        try:
+            client = overlay.OverlayClient(overlay.load_config())
+            for item in items:
+                client.send_shape(item["id"], "rect", item["color"], "#33000000", item["x"], item["y"], item["w"], item["h"],
+                                  ttl=PREVIEW_SECONDS, thickness=2)
+                client.send_message(f"{item['id']}_label", item["label"], item["color"], item["x"] + 8, item["y"] + 6,
+                                    ttl=PREVIEW_SECONDS)
+            message = f"Preview drawn for {PREVIEW_SECONDS} seconds."
+            if grouped:
+                timer = threading.Timer(PREVIEW_SECONDS + 1, apply_group_offsets)   # the saved placements again
+                timer.daemon = True
+                timer.start()
+        except OSError as exc:
+            message = f"Could not reach the overlay: {exc}"
+        try:
+            if _frame is not None:
+                _frame.after(0, lambda: _result_var.set(message) if _result_var is not None else None)
+        except (tk.TclError, RuntimeError):
+            pass   # the Settings window was closed while drawing
+
+    threading.Thread(target=worker, name="WFMT-overlay-placement-preview", daemon=True).start()

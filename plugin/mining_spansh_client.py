@@ -1,0 +1,448 @@
+"""
+Opt-in lookup against Spansh's (https://spansh.co.uk) body-search API to
+find nearby rings with a confirmed hotspot for a given commodity - "where
+do I go next" once the current ring's worth is exhausted. Gated behind
+the "Spansh Nearby Hotspot Finder" setting (default off, like WFMT's own
+shared updater) - a real outbound network call unlike anything else
+Mining mode does by default.
+
+Spansh doesn't publish this endpoint's request shape (major API calls
+are still undocumented). The shape used below was worked out from live
+`POST /api/bodies/search` calls and checked against real responses before
+trusting it. If Spansh ever changes this endpoint, this is the one place
+to fix.
+
+Also wraps Spansh's `/api/stations/search` endpoint
+(search_best_price_stations()) - a best-price station finder. This endpoint's shape was worked out
+the same way as bodies/search: from live calls, checked against real
+responses.
+
+Uses only the standard library (`urllib`) rather than `requests`. Every
+request goes through spansh_courtesy.py (paced, retried when Spansh is
+busy, refused while it keeps failing), so a failure can also be a
+`spansh_courtesy.SpanshBusy` (an OSError) saying how long to wait.
+"""
+from __future__ import annotations
+
+import json
+import urllib.request
+from dataclasses import dataclass
+from typing import Optional, Sequence
+
+from . import http_identity, spansh_courtesy, trade_commodities
+
+BODIES_SEARCH_URL = "https://spansh.co.uk/api/bodies/search"
+STATIONS_SEARCH_URL = "https://spansh.co.uk/api/stations/search"
+REQUEST_TIMEOUT_S = 20
+_USER_AGENT = http_identity.user_agent("mining-finder")
+_TRADER_AGENT = http_identity.user_agent("material-trader")
+
+KNOWN_RING_HOTSPOT_MATERIALS: tuple[str, ...] = tuple(sorted([
+    "Alexandrite", "Bauxite", "Benitoite", "Bromellite", "Cobalt", "Coltan",
+    "Gallite", "Grandidierite", "Indite", "Lepidolite", "Lithium Hydroxide",
+    "Low Temperature Diamonds", "Methane Clathrate", "Monazite", "Musgravite",
+    "Painite", "Platinum", "Rhodplumsite", "Rutile", "Samarium", "Serendibite",
+    "Tritium", "Uraninite", "Void Opals",
+]))
+"""Every commodity confirmed (empirically - see module docstring) to
+actually return matches from Spansh's `ring_signals` filter, out of the
+full ~65-entry commodity list tested against it. Common ring metals
+that are NOT ring-hotspot materials in-game - Gold, Silver, Palladium,
+Osmium among them - correctly returned zero matches even at a 5000 ly
+radius, so their absence here isn't a gap in testing. Used to populate
+mining_hotspot_finder_dialog.py's material dropdown; the field stays
+editable rather than locked to this list, since Spansh or the game
+itself could add another hotspot material later.
+
+"Void Opals" (plural, matching mining_methods.py and the journal's own
+Type_Localised convention) is the one display name that doesn't match
+Spansh's own field value ("Void Opal", singular) - see
+_to_spansh_material_name()."""
+
+_DISPLAY_TO_SPANSH_NAME = {
+    "Void Opals": "Void Opal",
+}
+
+
+def _to_spansh_material_name(material: str) -> str:
+    return _DISPLAY_TO_SPANSH_NAME.get(material, material)
+
+
+KNOWN_MINING_COMMODITIES: tuple[str, ...] = tuple(sorted(set(KNOWN_RING_HOTSPOT_MATERIALS) | {
+    "Gold", "Silver", "Palladium", "Osmium",
+}))
+"""KNOWN_RING_HOTSPOT_MATERIALS plus the common ring metals this module's
+own docstring notes are NOT ring-hotspot materials (Gold, Silver,
+Palladium, Osmium) but are still commonly ship-mined and worth a price
+check. Prepopulates mining_price_finder_dialog.py's commodity dropdown
+(merged with whatever the current run has actually refined) and anchors
+_normalize_commodity_name()'s case-insensitive matching below - not
+exhaustive of every tradeable commodity in the game, just the ones
+Mining mode's own pages are likely to have just refined."""
+
+
+def _normalize_commodity_name(commodity: str) -> str:
+    """Matches `commodity` case-insensitively against
+    KNOWN_MINING_COMMODITIES, returning the correctly-cased canonical
+    name if found (the price finder's commodity search is deliberately
+    not case-sensitive; the response-side filtering in
+    search_best_price_stations() below already compares case-
+    insensitively, so this specifically guards the outgoing request's
+    filter instead). Falls back to `.title()` (matches the in-game
+    casing convention for the large majority of commodity names) for
+    anything not in the known list, rather than sending whatever case
+    the commander happened to type straight through."""
+    known = trade_commodities.resolve(commodity)
+    if known:
+        return known  # Spansh's market search is case-sensitive: use the game's exact name
+    query = commodity.strip().casefold()
+    for name in KNOWN_MINING_COMMODITIES:
+        if name.casefold() == query:
+            return name
+    return commodity.strip().title()
+
+
+@dataclass
+class RingHotspot:
+    """One ring (not body - a body can have more than one ring, and only
+    some may carry the requested material) confirmed by Spansh to have at
+    least one hotspot for the searched material."""
+    system: str
+    body: str
+    ring_name: str
+    distance_ly: float
+    distance_to_arrival_ls: float
+    reserve_level: str
+    hotspot_count: int
+
+
+def search_ring_hotspots(reference_system: str, material: str,
+                         max_distance_ly: float, max_results: int = 10) -> list[RingHotspot]:
+    """Queries Spansh for the nearest rings to `reference_system` with a
+    confirmed `material` hotspot, closest first. Raises on any network/
+    parse failure - this is a synchronous, blocking call (real network
+    I/O), so callers must run it off the Tk main thread and catch
+    exceptions themselves (see mining_hotspot_finder_dialog.py) rather
+    than this module swallowing them, since there's no sensible fallback
+    value for "the search failed" other than telling the commander why."""
+    spansh_material = _to_spansh_material_name(material)
+    request_body = {
+        "filters": {
+            "distance": {"min": "0", "max": str(max_distance_ly)},
+            "ring_signals": [
+                {"name": spansh_material, "value": [1, 99], "comparison": "<=>"},
+            ],
+        },
+        "sort": [{"distance": {"direction": "asc"}}],
+        "size": max_results,
+        "page": 0,
+        "reference_system": reference_system,
+    }
+    request = urllib.request.Request(
+        BODIES_SEARCH_URL,
+        data=json.dumps(request_body).encode("utf8"),
+        headers={"User-Agent": _USER_AGENT, "Content-Type": "application/json"},
+        method="POST",
+    )
+    data = json.loads(spansh_courtesy.call(request, REQUEST_TIMEOUT_S).decode("utf-8"))
+
+    results: list[RingHotspot] = []
+    for body in data.get("results", []):
+        for ring in body.get("rings") or []:
+            signals = ring.get("signals") or []
+            count = next((s.get("count", 0) for s in signals
+                         if str(s.get("name", "")).casefold() == spansh_material.casefold()), 0)
+            if count > 0:
+                results.append(RingHotspot(
+                    system=body.get("system_name", "?"),
+                    body=body.get("name", "?"),
+                    ring_name=ring.get("name", "?"),
+                    distance_ly=body.get("distance", 0.0),
+                    distance_to_arrival_ls=body.get("distance_to_arrival", 0.0),
+                    reserve_level=body.get("reserve_level") or "Unknown",
+                    hotspot_count=count,
+                ))
+    return results
+
+
+@dataclass
+class StationPrice:
+    """One station Spansh confirms trades `commodity`, closest first
+    unless sorted by price. `price`/`quantity` mean sell_price/demand for
+    a Sell search (where the commander sells to the station) or buy_price/
+    supply for a Buy search (where the commander buys from the station) -
+    see search_best_price_stations()."""
+    station: str
+    system: str
+    station_type: str
+    distance_ly: float
+    distance_to_arrival_ls: float
+    is_planetary: bool
+    price: int
+    quantity: int
+    small_pads: Optional[int] = None    # pad counts as Spansh reports them; None = not given
+    medium_pads: Optional[int] = None
+    large_pads: Optional[int] = None
+
+
+def _count(value) -> Optional[int]:
+    return int(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else None
+
+
+_MARKET_DAYS_OLD_DEFAULT = 30
+"""Excludes stale market snapshots - confirmed empirically that a query
+with no freshness filter returned Fleet Carrier markets over 5 years old
+ranked ahead of active stations (carriers can sit indefinitely without
+anyone updating their market), which would recommend a station that's
+since moved or stopped trading."""
+
+
+def _post_station_search(request_body: dict, agent: Optional[str] = None) -> dict:
+    """POSTs one station search to Spansh and returns the parsed answer; raises on any network or parse failure."""
+    request = urllib.request.Request(
+        STATIONS_SEARCH_URL,
+        data=json.dumps(request_body).encode("utf8"),
+        headers={"User-Agent": agent or _USER_AGENT, "Content-Type": "application/json"},
+        method="POST",
+    )
+    return json.loads(spansh_courtesy.call(request, REQUEST_TIMEOUT_S).decode("utf-8"))
+
+
+def search_stations_selling_all(reference_system: str, commodities: Sequence[str], max_distance_ly: Optional[float],
+                                max_results: int = 10, market_days_old: int = _MARKET_DAYS_OLD_DEFAULT,
+                                station_types: Optional[Sequence[str]] = None, required_pad: Optional[str] = None,
+                                also: Sequence[str] = (),
+                                ) -> list[tuple[StationPrice, dict[str, tuple[int, int]]]]:
+    """One query for the closest stations that have EVERY one of `commodities` in stock (Spansh ANDs several `market`
+    filters, and a station's whole market comes back with it; checked live 2026-10-13, 16 filters accepted). Each result is
+    the station (its `price`/`quantity` are those of the first commodity) with `{commodity: (price, supply)}` for all of
+    them, keyed by the names as passed in. Usually empty for a long list: it is a "can I do this in one stop" check.
+    `also` names more commodities that are not required: any of them the station has in stock are added to its offers,
+    from the same whole-market answer (no extra request)."""
+    if required_pad not in (None, "medium", "large"):
+        raise ValueError('required_pad must be None, "medium" or "large"')
+    wanted = [(name, _normalize_commodity_name(name)) for name in commodities]
+    if not wanted:
+        return []
+    filters: dict = {
+        "market_updated_at": {"comparison": "<=>", "value": [f"now-{market_days_old}d", "now"]},
+        "market": [{"name": spansh, "supply": {"value": ["1", "999999999"], "comparison": "<=>"}} for _, spansh in wanted],
+    }
+    if max_distance_ly is not None:
+        filters["distance"] = {"min": "0", "max": str(max_distance_ly)}
+    if required_pad:
+        filters[f"{required_pad}_pads"] = {"comparison": "<=>", "value": [1, 999]}
+    if station_types:
+        filters["type"] = {"value": list(station_types)}
+    data = _post_station_search({"filters": filters, "sort": [{"distance": {"direction": "asc"}}], "size": max_results,
+                                 "page": 0, "reference_system": reference_system})
+    out: list[tuple[StationPrice, dict[str, tuple[int, int]]]] = []
+    for station in data.get("results", []):
+        market = {str(c.get("commodity", "")).casefold(): c for c in station.get("market") or []}
+        offers: dict[str, tuple[int, int]] = {}
+        for name, spansh in wanted:
+            entry = market.get(spansh.casefold())
+            if entry is None or entry.get("buy_price", 0) <= 0 or entry.get("supply", 0) <= 0:
+                break
+            offers[name] = (entry["buy_price"], entry["supply"])
+        else:
+            first = offers[wanted[0][0]]
+            for name in also:
+                entry = market.get(_normalize_commodity_name(name).casefold())
+                if entry is not None and entry.get("buy_price", 0) > 0 and entry.get("supply", 0) > 0:
+                    offers.setdefault(name, (entry["buy_price"], entry["supply"]))
+            out.append((StationPrice(
+                station=station.get("name", "?"), system=station.get("system_name", "?"),
+                station_type=station.get("type") or "?", distance_ly=station.get("distance", 0.0),
+                distance_to_arrival_ls=station.get("distance_to_arrival", 0.0),
+                is_planetary=bool(station.get("is_planetary", False)), price=first[0], quantity=first[1],
+                small_pads=_count(station.get("small_pads")), medium_pads=_count(station.get("medium_pads")),
+                large_pads=_count(station.get("large_pads"))), offers))
+    return out
+
+
+def search_best_price_stations(reference_system: str, commodity: str, transaction: str,
+                               max_distance_ly: Optional[float], max_results: int = 10,
+                               market_days_old: int = _MARKET_DAYS_OLD_DEFAULT,
+                               station_types: Optional[Sequence[str]] = None,
+                               sort_by: str = "price", required_pad: Optional[str] = None,
+                               min_quantity: int = 1, price_range: Optional[tuple[int, int]] = None,
+                               this_system_only: bool = False, exclude_carriers: bool = False) -> list[StationPrice]:
+    """Queries Spansh for the best-price stations trading `commodity`
+    within `max_distance_ly` of `reference_system` (None = no distance limit,
+    i.e. the whole galaxy, still sorted by price; Spansh accepts that,
+    checked live 2026-10-09). `transaction` is
+    "Sell" (commander sells to the station - sorted by highest sell
+    price) or "Buy" (commander buys from the station - sorted by lowest
+    buy price); anything else raises ValueError. Raises on any network/
+    parse failure - synchronous, blocking call, same calling convention
+    as search_ring_hotspots().
+
+    `sort_by` is "price" (the default: best price first) or "distance" (closest first, checked live 2026-10-11).
+    `required_pad` is None (any station) or "medium" / "large": only stations with at least one pad of that size
+    (Spansh filters on `medium_pads` / `large_pads`, checked live 2026-10-11). A small-pad ship fits anywhere, so
+    there is no "small".
+
+    `min_quantity` is the least stock (Buy) or demand (Sell) a station must show, 1 by default. `price_range` is
+    (lowest, highest) price the station must show for the commodity, both included (Spansh filters on `buy_price` /
+    `sell_price`, checked live 2026-10-15); with `sort_by="distance"` it finds the closest station inside a price band.
+
+    `exclude_carriers` drops fleet carriers from the answer, as `search_system_stations` does (a station whose type names a carrier is skipped). That only trims the page Spansh sent: carrier
+    markets rank ahead of real stations (see `_MARKET_DAYS_OLD_DEFAULT`), so a caller that wants real stations to fill the page also passes `station_types` (the kinds of station to ask for,
+    `trade_prices.station_types`), which Spansh applies before it sorts.
+
+    `this_system_only` asks for the stations in `reference_system` itself (a distance of 0.01 ly, as `search_system_stations` does,
+    checked live 2026-10-17, and with the price sort on Sol 2026-10-19), best price first, and keeps only stations whose system name is that system; `max_distance_ly` is then ignored."""
+    if transaction not in ("Sell", "Buy"):
+        raise ValueError('transaction must be "Sell" or "Buy"')
+    if sort_by not in ("price", "distance"):
+        raise ValueError('sort_by must be "price" or "distance"')
+    if required_pad not in (None, "medium", "large"):
+        raise ValueError('required_pad must be None, "medium" or "large"')
+
+    commodity = _normalize_commodity_name(commodity)
+    minimum = str(max(1, int(min_quantity)))
+    market_filter: dict = {"name": commodity}
+    if transaction == "Sell":
+        market_filter["demand"] = {"value": [minimum, "999999999"], "comparison": "<=>"}
+        sort_object = {"market_sell_price": [{"name": commodity, "direction": "desc"}]}
+    else:
+        market_filter["supply"] = {"value": [minimum, "999999999"], "comparison": "<=>"}
+        sort_object = {"market_buy_price": [{"name": commodity, "direction": "asc"}]}
+    if price_range is not None:
+        low, high = sorted(int(v) for v in price_range)
+        market_filter["sell_price" if transaction == "Sell" else "buy_price"] = {"value": [str(low), str(high)], "comparison": "<=>"}
+
+    filters: dict = {
+        "market_updated_at": {"comparison": "<=>", "value": [f"now-{market_days_old}d", "now"]},
+        "market": [market_filter],
+    }
+    if this_system_only:
+        filters["distance"] = {"min": "0", "max": "0.01"}
+    elif max_distance_ly is not None:
+        filters["distance"] = {"min": "0", "max": str(max_distance_ly)}
+    if required_pad:
+        filters[f"{required_pad}_pads"] = {"comparison": "<=>", "value": [1, 999]}
+    if station_types:
+        # Only these kinds of station (Spansh's own names). Used to ask for stations and fleet carriers
+        # separately: carriers are priced very differently, so in one price-sorted list they can crowd
+        # every real station out of the first page of results (checked live, 2026-10-09).
+        filters["type"] = {"value": list(station_types)}
+    if sort_by == "distance":
+        sort_object = {"distance": {"direction": "asc"}}
+    request_body = {
+        "filters": filters,
+        "sort": [sort_object],
+        "size": max_results,
+        "page": 0,
+        "reference_system": reference_system,
+    }
+    data = _post_station_search(request_body)
+
+    results: list[StationPrice] = []
+    wanted_system = reference_system.strip().casefold()
+    for station in data.get("results", []):
+        if this_system_only and str(station.get("system_name", "")).strip().casefold() != wanted_system:
+            continue
+        if exclude_carriers and "carrier" in str(station.get("type", "")).casefold():
+            continue
+        # Spansh's own filter only restricts which stations match, not
+        # which commodities come back per station - the response's
+        # "market" is that station's *entire* market, so the specific
+        # commodity searched for still has to be picked out here
+        # (confirmed empirically).
+        entry = next((c for c in station.get("market") or []
+                     if str(c.get("commodity", "")).casefold() == commodity.casefold()), None)
+        if entry is None:
+            continue
+        price = entry.get("sell_price", 0) if transaction == "Sell" else entry.get("buy_price", 0)
+        quantity = entry.get("demand", 0) if transaction == "Sell" else entry.get("supply", 0)
+        if price <= 0:
+            continue
+        results.append(StationPrice(
+            station=station.get("name", "?"),
+            system=station.get("system_name", "?"),
+            station_type=station.get("type") or "?",
+            distance_ly=station.get("distance", 0.0),
+            distance_to_arrival_ls=station.get("distance_to_arrival", 0.0),
+            is_planetary=bool(station.get("is_planetary", False)),
+            price=price,
+            quantity=quantity,
+            small_pads=_count(station.get("small_pads")),
+            medium_pads=_count(station.get("medium_pads")),
+            large_pads=_count(station.get("large_pads")),
+        ))
+    return results
+
+
+SYSTEM_STATIONS_PAGE = 100
+"""Stations asked for in one page. A system with more than this shows only the first page (the caller says so)."""
+
+
+def search_system_stations(system: str, market_days_old: int = _MARKET_DAYS_OLD_DEFAULT,
+                           ) -> tuple[list[dict], int]:
+    """(the stations in `system` that have a market, how many stations Spansh counted there).
+
+    One request: a station search with a distance of 0 from `system` returns the stations in it, each with its whole market
+    and when that was last updated (checked live 2026-10-17 on Sol: 44 stations, all with `market`). Fleet carriers are left
+    out (they move and their markets go stale), as are stations whose market is older than `market_days_old` days or missing.
+    Only the system's name is sent. Raises on any network or parse failure, like the other searches here."""
+    filters = {"distance": {"min": "0", "max": "0.01"},
+               "market_updated_at": {"comparison": "<=>", "value": [f"now-{market_days_old}d", "now"]}}
+    data = _post_station_search({"filters": filters, "sort": [{"distance": {"direction": "asc"}}],
+                                 "size": SYSTEM_STATIONS_PAGE, "page": 0, "reference_system": system})
+    wanted = system.strip().casefold()
+    stations = [st for st in data.get("results", [])
+                if isinstance(st, dict) and str(st.get("system_name", "")).strip().casefold() == wanted
+                and st.get("market") and "carrier" not in str(st.get("type", "")).casefold()]
+    count = data.get("count")
+    return stations, int(count) if isinstance(count, (int, float)) else len(stations)
+
+
+TRADER_TYPES = ("Raw", "Manufactured", "Encoded")
+
+
+@dataclass
+class MaterialTrader:
+    """One station Spansh lists with a material trader of `trader_type` (Raw, Manufactured or Encoded), closest first."""
+    station: str
+    system: str
+    station_type: str
+    distance_ly: float
+    distance_to_arrival_ls: float
+    is_planetary: bool
+    trader_type: str
+    small_pads: Optional[int] = None    # pad counts as Spansh reports them; None = not given
+    medium_pads: Optional[int] = None
+    large_pads: Optional[int] = None
+
+
+def search_material_traders(reference_system: str, trader_type: str, max_distance_ly: Optional[float], max_results: int = 10,
+                            required_pad: Optional[str] = None) -> list[MaterialTrader]:
+    """The closest stations with a material trader of `trader_type` to `reference_system`, within `max_distance_ly` (None = no limit).
+    Spansh's station search has a `material_trader` filter whose values are "Raw", "Manufactured" and "Encoded", and every station it returns
+    carries the same field (checked live 2026-10-13: 373 Raw, 813 Manufactured and 444 Encoded traders; the closest Raw one to Sol was in 61 Cygni). `required_pad` is None, "medium" or
+    "large" (a small-pad ship fits anywhere). Raises on any network or parse failure, like the other searches here."""
+    if trader_type not in TRADER_TYPES:
+        raise ValueError("trader_type must be one of " + ", ".join(TRADER_TYPES))
+    if required_pad not in (None, "medium", "large"):
+        raise ValueError('required_pad must be None, "medium" or "large"')
+    filters: dict = {"material_trader": {"value": [trader_type]}}
+    if max_distance_ly is not None:
+        filters["distance"] = {"min": "0", "max": str(max_distance_ly)}
+    if required_pad:
+        filters[f"{required_pad}_pads"] = {"comparison": "<=>", "value": [1, 999]}
+    data = _post_station_search({"filters": filters, "sort": [{"distance": {"direction": "asc"}}], "size": max_results, "page": 0,
+                                 "reference_system": reference_system}, _TRADER_AGENT)
+    found: list[MaterialTrader] = []
+    for station in data.get("results", []):
+        if not isinstance(station, dict) or station.get("material_trader") != trader_type:
+            continue          # the filter should make this impossible; a result that does not carry the trader is not shown as one
+        found.append(MaterialTrader(
+            station=str(station.get("name") or "?"), system=str(station.get("system_name") or "?"),
+            station_type=str(station.get("type") or "?"), distance_ly=float(station.get("distance") or 0.0),
+            distance_to_arrival_ls=float(station.get("distance_to_arrival") or 0.0),
+            is_planetary=bool(station.get("is_planetary", False)), trader_type=trader_type,
+            small_pads=_count(station.get("small_pads")), medium_pads=_count(station.get("medium_pads")),
+            large_pads=_count(station.get("large_pads"))))
+    return found

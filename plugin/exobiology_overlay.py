@@ -1,0 +1,471 @@
+"""Exobiology overlay cards for the body you are on, built from Organic Scanning's own prediction and sample tracking.
+
+Four cards, each switched on separately in Settings -> Overlays -> Exobiology and placed on Overlay Placement:
+
+- **Bio status**: how many of the body's biological signals you have analyzed (with a progress bar); while you are sampling a genus, its species and
+  color variant with three circles for the samples taken, what it pays (five times as much on a first footfall) and how far you are from the last
+  sample against the distance the genus needs; with nothing in progress, each genus with its distance and whether it is done.
+- **Biology**: every genus on the body with the species it could be (or is) and what each pays, and what the body could pay in all.
+- **Bio radar**: where you are against the places you took samples, with a circle at each as wide as the genus's minimum distance (red while you are
+  inside it, green once you are clear), the ship and the SRV, and the distance to the first two samples. See `exo_radar.py`.
+- **Sample popup**: for a few seconds after each sample, the species, its estimated value, the distance the genus needs and what the sample was.
+
+All read `organic_scan_panel.overlay_view()` (the controller's per-body state: genera from the journal, predictions from the scan conditions, sample
+positions and the commander's position from Status.json), so they never disagree with the Organic Scanning panel. Nothing is sent anywhere.
+"""
+
+from __future__ import annotations
+
+import dataclasses
+import logging
+import os
+import threading
+import time
+from dataclasses import dataclass
+from typing import Any, Dict, Mapping, Optional
+
+import tkinter as tk
+
+import myNotebook as nb
+from config import appname, config
+
+from . import exo_radar, organic_scan, organic_species_data, overlay, overlay_appearance, overlay_link, overlay_placement, restore, system_survey
+from .overlay import OverlayClient
+from .overlay_card import Card, CardLayout, LiveCard, Ticker, WideCardLayout
+from .overlay_style import LEGACY, Look
+from .system_survey import credits_text, short_name
+
+plugin_name = os.path.basename(os.path.dirname(__file__))
+logger = logging.getLogger(f"{appname}.{plugin_name}")
+
+PANEL_PLACEMENT = None   # Settings-tab-only, no main-panel widget
+
+_CFG = {"status": "wfmt_exo_status_enabled", "list": "wfmt_exo_list_enabled", "radar": "wfmt_exo_radar_enabled", "popup": "wfmt_exo_popup_enabled"}
+
+OVERLAY_TTL = 4
+POPUP_SECONDS = 10.0
+NAME_CHARS = 24
+TITLE_CHARS = 44                   # "Bio signals " and the body's name; a body outside the current system is named in full
+STATUS_CHARS = 54                  # the Bio status card is one wide strip
+GROUPS = {"status": ("wfmt_exo_status", "wfmt_exo_status_"), "list": ("wfmt_exo_pred", "wfmt_exo_pred_"),
+          "radar": ("wfmt_exo_radar", "wfmt_exo_radar_"), "popup": ("wfmt_exo_popup", "wfmt_exo_popup_")}
+LAYOUT_STATUS = WideCardLayout(GROUPS["status"][1], x=650, y=100, width_chars=STATUS_CHARS, sample_lines=4)       # short and wide, to sit above the game's compass
+LAYOUT_LIST = CardLayout(GROUPS["list"][1], x=650, y=100, max_header=1, max_rows=12, name_chars=NAME_CHARS, tag_chars=14, sample_tag="up to 12.3M CR", sample_lines=8,
+                         title_chars=TITLE_CHARS, sample_badge="12 of 12 done")
+LAYOUT_POPUP = CardLayout(GROUPS["popup"][1], x=650, y=100, max_header=3, max_rows=4, name_chars=NAME_CHARS, tag_chars=14, sample_tag="5,000,000 cr", sample_lines=4,
+                          title_chars=TITLE_CHARS, sample_badge="12 of 12 done")
+_CFG_RADAR_SIZE = "wfmt_exo_radar_size"
+_CFG_RADAR_FILL = "wfmt_exo_radar_fill"
+_CFG_RADAR_LINE = "wfmt_exo_radar_line"
+
+
+def _setting(name: str, low: int, high: int, default: int) -> int:
+    try:
+        return max(low, min(high, int(str(config.get_str(name)).strip())))
+    except (TypeError, ValueError):
+        return default
+
+
+def radar_size() -> int:
+    """The Bio radar plot's size in pixels (the Radar size setting; 260 is the default, 520 twice that)."""
+    return _setting(_CFG_RADAR_SIZE, *exo_radar.SIZE_RANGE, exo_radar.SIZE)
+
+
+def radar_fill() -> int:
+    """How opaque (percent) a sample circle is filled while you are inside it."""
+    return _setting(_CFG_RADAR_FILL, *exo_radar.FILL_RANGE, exo_radar.FILL_DEFAULT)
+
+
+def radar_line() -> int:
+    """The thickness in pixels of the radar circles' outlines."""
+    return _setting(_CFG_RADAR_LINE, *exo_radar.LINE_RANGE, exo_radar.LINE_DEFAULT)
+
+
+LAYOUT_RADAR = exo_radar.RadarLayout(GROUPS["radar"][1], x=650, y=100, size_fn=radar_size, fill_fn=radar_fill, line_fn=radar_line)
+
+
+@dataclass
+class ExoConfig:
+    status: bool = False
+    list: bool = False
+    radar: bool = False
+    popup: bool = False
+
+
+def load_config() -> ExoConfig:
+    return ExoConfig(**{key: config.get_bool(name, default=False) for key, name in _CFG.items()})
+
+
+def save_config(cfg: ExoConfig) -> None:
+    for key, name in _CFG.items():
+        config.set(name, getattr(cfg, key))
+
+
+# --- what the cards say (pure) ---------------------------------------------------------------------------------------
+
+def _credits(value: Optional[int]) -> str:
+    return f"{credits_text(value)} CR" if value else "?"
+
+
+def _range(low: int, high: int) -> str:
+    """'4.2M - 9.8M CR', or '5.0M CR' when it can only be one amount."""
+    return _credits(low) if low == high else f"{credits_text(low)} - {_credits(high)}"
+
+
+def _meters(meters: float) -> str:
+    return f"{meters:.0f} m"
+
+
+def _short(view: organic_scan.BodyView, system: str) -> str:
+    return short_name(view.body_name, system) if system else view.body_name
+
+
+def _distance_line(genus: organic_scan.GenusView) -> Optional[tuple]:
+    """(text, role) for how far you are from the last sample against what the genus needs, or None before the first sample or without a position."""
+    if genus.distance_m is None or not genus.min_distance_m:
+        return None
+    if genus.distance_m >= genus.min_distance_m:
+        return f"Clear: {_meters(genus.distance_m)} from the last sample, {_meters(genus.min_distance_m)} needed", "ok"
+    return f"Move {_meters(genus.min_distance_m - genus.distance_m)} further: {_meters(genus.distance_m)} of {_meters(genus.min_distance_m)}", "warn"
+
+
+def build_status_card(view: Optional[organic_scan.BodyView], system: str = "", scanned: Optional[tuple] = None) -> Card:
+    """The Bio status card. `scanned` is (name, value) of the plant the Composition Scanner last identified, shown until it is sampled."""
+    if view is None:
+        return Card()
+    total = view.signal_count or len(view.genera)
+    title = ("Biological signals", "title")
+    badge = f"{view.analyzed} of {total} analyzed" if total else ""
+    progress = view.progress if total else None
+    if not view.genera:
+        return Card((("Map this body with the surface scanner to learn what lives here", "muted"),), title=title, badge=f"{total} signals", progress=None)
+    active = view.active_genus
+    if active is not None:
+        filled = min(organic_scan.REQUIRED_SAMPLES, max(len(active.positions), active.stage))
+        header = []
+        span = active.value_range
+        if span:
+            reward = _range(span[0] * view.multiplier, span[1] * view.multiplier)
+            header.append((reward + ("  ·  FF 5x" if view.first_footfall else ""), "info" if view.first_footfall else "text"))
+        header.append(_distance_line(active) or (f"Samples must be {_meters(active.min_distance_m)} apart", "muted"))
+        return Card(tuple(header), title=title, badge=badge, progress=progress, headline=(active.title, "title"), side=tuple(_tracking(view)),
+                    dots=tuple(i < filled for i in range(organic_scan.REQUIRED_SAMPLES)))
+    rows = []
+    for genus in view.genera:
+        if genus.complete:
+            rows.append((genus.title, "Done", "ok"))
+        else:
+            rows.append((genus.title, f"{_meters(genus.min_distance_m)} apart" if genus.min_distance_m else "", "muted"))
+    if scanned and not (total and view.analyzed >= total):
+        name, value = scanned
+        footer = (f"Scanned: {name}" + (f"  {_credits(value * view.multiplier)}" if value else "") + (" (first footfall bonus)" if value and view.first_footfall else ""), "info")
+    elif total and view.analyzed >= total:
+        footer = ("All samples analyzed" + (": first footfall paid five times" if view.first_footfall else ""), "ok")
+    elif view.first_footfall:
+        footer = ("First footfall: every reward here is five times as much", "info")
+    else:
+        footer = ("Use the Composition Scanner on a plant to begin", "muted")
+    return Card((), tuple(rows), footer, title=title, badge=badge, progress=progress, side=tuple(_tracking(view)))
+
+
+def _tracking(view: organic_scan.BodyView) -> list:
+    """A line for each plant being tracked, in the color it has on the radar: 'Tussock: 342 m, 30° right'."""
+    return [(line, f"series{t.color}") for t, line in zip(exo_radar.tracked(view), exo_radar.track_lines(view))]
+
+
+def build_list_card(view: Optional[organic_scan.BodyView], system: str = "") -> Card:
+    """The Biology card: each genus with the species it could be, or is, and what it pays."""
+    if view is None or not view.genera:
+        return Card()
+    rows = []
+    for genus in view.genera:
+        color = f"\nLikely color: {genus.variant_hint}" if genus.variant_hint else ""       # from the star or the surface materials, until a sample names the real one
+        if genus.species:
+            rows.append(((genus.variant or genus.species) + ("" if genus.variant else color), _credits(genus.value), "ok" if genus.complete else "title" if genus.stage else "text"))
+        elif len(genus.candidates) == 1:
+            name, value = genus.candidates[0]
+            rows.append((name + color, "~" + _credits(value), "info"))
+        elif genus.candidates:
+            lines = "\n".join(f"{name}  {_credits(value)}  ~{percent}%" for name, value, percent in sorted(genus.odds(), key=lambda c: -c[1]))
+            span = genus.value_range
+            rows.append((f"{genus.name}\n{lines}{color}", _range(*span) if span else "?", "info"))
+        else:
+            rows.append((genus.name, "unknown", "muted"))
+    span = view.reward_range
+    footer = None
+    if span and span[1]:
+        text = f"Rewards: {_range(*span)}"
+        if view.first_footfall:                                    # the reason for the larger figure goes on its own line so nothing wraps
+            text += f"\nFirst footfall (5x): {_range(span[0] * view.multiplier, span[1] * view.multiplier)}"
+        footer = (text, "title")
+    count = view.signal_count or len(view.genera)
+    return Card((), tuple(rows), footer, title=(f"Bio signals {_short(view, system)}", "title"), badge=f"{view.analyzed} of {count} done")
+
+
+def build_popup_card(info: Optional[Mapping[str, Any]]) -> Card:
+    """The card shown for a few seconds after a sample. `info` has `name`, `value`, `range_m`, `scan` and `first_footfall`."""
+    if not info:
+        return Card()
+    value = info.get("value") or 0
+    paid = value * (organic_scan.FIRST_FOOTFALL_MULTIPLIER if info.get("first_footfall") else 1)
+    rows = []
+    if value:
+        rows.append(("Estimated value", f"{paid:,} cr" + (" (FF bonus)" if info.get("first_footfall") else ""), "title"))
+    if info.get("range_m"):
+        rows.append(("Colony range", _meters(info["range_m"]), "text"))
+    stage = {"Log": "Logged", "Sample": "Sampled", "Analyse": "Analyzed"}.get(str(info.get("scan")), str(info.get("scan") or ""))
+    return Card((), tuple(rows), (stage, "ok"), title=(str(info.get("name") or "Sample"), "title"))
+
+
+def sample_view() -> organic_scan.BodyView:
+    """A made-up body for the Test Cards: sampling a Tussock, standing 78 m from its second sample and 209 m from its first."""
+    return organic_scan.BodyView(
+        "Sample System 2 d", (
+            organic_scan.GenusView("b", "Bacterium", 500.0, candidates=(("Bacterium aurasus", 1_000_000), ("Bacterium nebulus", 5_289_900))),
+            organic_scan.GenusView("f", "Frutexa", 150.0, candidates=(("Frutexa fera", 1_632_500),)),
+            organic_scan.GenusView("t", "Tussock", 200.0, species="Tussock pennatis", value=1_000_000, stage=2, distance_m=78.0,
+                                   variant="Tussock pennatis - Lime", positions=((0.0, 0.0), (0.0, 0.0125))),
+            organic_scan.GenusView("o", "Osseus", 800.0, species="Osseus fractus", value=4_000_000, stage=3, variant="Osseus fractus - Red")),
+        first_footfall=True, signal_count=4, here=(0.0, 0.0200), heading=30.0, radius_m=600_000.0, ship=(0.0, 0.0215), srv=None, active="t",
+        waypoints=(organic_scan.Waypoint("t", "Tussock Pennatis - Lime", 0.0, 0.0290),), focus="t")
+
+
+def sample_popup() -> Dict[str, Any]:
+    return {"name": "Tussock pennatis - Lime", "value": 1_000_000, "range_m": 200, "scan": "Sample", "first_footfall": True}
+
+
+# --- state and the live path -----------------------------------------------------------------------------------------
+
+_overlay_client = overlay.OverlayClient()
+_popup: Dict[str, Any] = {"info": None, "until": 0.0}
+
+
+def set_overlay_client(client: overlay.OverlayClient) -> None:
+    global _overlay_client
+    _overlay_client = client
+
+
+def _view() -> Optional[organic_scan.BodyView]:
+    """Organic Scanning's view of the body, with the first footfall flag also taken from the system survey when Organic Scanning has not seen the body's
+    scan (it was made before this session or before the flag was kept): the survey is rebuilt from the journals, scan included."""
+    from . import organic_scan_panel
+    view = organic_scan_panel.overlay_view()
+    if view is not None and not view.first_footfall:
+        body = system_survey.survey.find(name=view.body_name)
+        if body is not None and body.first_footfall:
+            view = dataclasses.replace(view, first_footfall=True)
+    return view
+
+
+def current_view() -> Optional[organic_scan.BodyView]:
+    """The exobiology of the body the commander is at, as the cards see it (for the Exploration Dashboard)."""
+    return _view()
+
+
+class _Display:
+    """One card: its layout, its Overlay Placement slot, how it is built and whether it is switched on."""
+
+    def __init__(self, slot: str, layout: Any, build: Any, enabled: Any) -> None:
+        self.slot, self.layout, self._build_card = slot, layout, build
+        self.live = LiveCard(self._build, enabled, self._draw_live)
+
+    def block_rect(self, look: Look = LEGACY, card: Any = None) -> tuple:
+        return self.layout.block_rect(look, card) if isinstance(self.layout, exo_radar.RadarLayout) else self.layout.block_rect(look, card)
+
+    def placed_client(self, client: OverlayClient, look: Look = LEGACY, card: Any = None) -> OverlayClient:
+        """`client` moved to where this card is placed, from the card's real size (so a bottom or right edge is the card's own edge)."""
+        return overlay_placement.client_for_measured(self.slot, client, self.block_rect(look, card), look)
+
+    def render(self, card: Any, client: OverlayClient, look: Look = LEGACY) -> None:
+        self.layout.render(card, client, look, ttl=OVERLAY_TTL)
+
+    def _build(self) -> Any:
+        if not system_survey.survey.visible:
+            return Card() if not isinstance(self.layout, exo_radar.RadarLayout) else exo_radar.Plan()
+        return self._build_card(_view(), system_survey.survey.name)
+
+    def _draw_live(self, card: Any) -> None:
+        look = overlay_appearance.current_look()
+
+        def worker() -> None:
+            try:
+                self.render(card, self.placed_client(_overlay_client, look, card), look)
+            except OSError:
+                logger.debug("Could not reach the overlay for the %s card", self.slot, exc_info=True)
+
+        threading.Thread(target=worker, name=f"WFMT-{self.slot}-render", daemon=True).start()
+
+
+def _popup_card(_view_: Any, _system: str) -> Card:
+    return build_popup_card(_popup["info"]) if time.time() < _popup["until"] else Card()
+
+
+status = _Display("bio_status", LAYOUT_STATUS, lambda view, system: build_status_card(view, system, _codex_scan()), lambda: load_config().status)
+listing = _Display("exobiology", LAYOUT_LIST, build_list_card, lambda: load_config().list)
+radar = _Display("bio_radar", LAYOUT_RADAR, lambda view, system: exo_radar.build_plan(view, radar_size()), lambda: load_config().radar)
+popup = _Display("bio_popup", LAYOUT_POPUP, _popup_card, lambda: load_config().popup)
+DISPLAYS = (status, listing, radar, popup)
+
+
+def _refresh_all() -> None:
+    for display in DISPLAYS:
+        display.live.refresh()
+
+
+_ticker = Ticker("WFMT-exobiology-tick", lambda: [d.live.refresh() for d in DISPLAYS if d.live.showing()], 1.0, logger)
+
+
+def start(plugin_dir: str) -> None:
+    _ticker.start()
+
+
+def stop() -> None:
+    _ticker.stop()
+
+
+def handle_event(entry: Dict[str, Any], cmdr: str, system: Optional[str], station: Optional[str], state: Dict[str, Any]) -> None:
+    """Runs after Organic Scanning and the system survey have taken the event."""
+    event = entry.get("event")
+    if event == "ScanOrganic":
+        _note_sample(entry)
+        _codex.clear()
+    elif event == "CodexEntry":
+        _note_codex(entry)
+    elif event in ("FSDJump", "Location", "CarrierJump"):
+        _codex.clear()
+    if event in ("ScanOrganic", "SAASignalsFound", "FSSBodySignals", "Scan", "SAAScanComplete", "Touchdown", "Liftoff", "LaunchSRV", "DockSRV",
+                 "Disembark", "Embark", "StartUp", "Shutdown", restore.RESTORE_EVENT) or event in system_survey.EVENTS:
+        _refresh_all()
+
+
+_codex: Dict[str, Any] = {}      # the plant the Composition Scanner last identified: {"name": ..., "value": ...}
+
+
+def _codex_scan() -> Optional[tuple]:
+    return (_codex["name"], _codex["value"]) if _codex else None
+
+
+def _note_codex(entry: Mapping[str, Any]) -> None:
+    """An organism identified with the Composition Scanner (a CodexEntry of the organic-structures sub-category), before any sample is taken: its name and what it pays."""
+    if entry.get("SubCategory") != "$Codex_SubCategory_Organic_Structures;":
+        return
+    name = str(entry.get("Name_Localised") or "")
+    if not name:
+        return
+    value = next((s.value for s in organic_species_data.SPECIES.values() if name.casefold().startswith(s.name.casefold())), 0)
+    _codex.clear()
+    _codex.update({"name": organic_scan.display_species(name), "value": value})
+    _refresh_all()
+
+
+def _note_sample(entry: Mapping[str, Any]) -> None:
+    """Remembers a sample for the popup: the species' value and the distance its genus needs between samples."""
+    genus_key, species_key = entry.get("Genus"), entry.get("Species")
+    info = organic_species_data.SPECIES.get(f"{genus_key}|{species_key}")
+    genus = organic_species_data.GENUS.get(str(genus_key))
+    view = _view()
+    _popup["info"] = {"name": organic_scan.display_species(entry.get("Variant_Localised") or entry.get("Species_Localised")) or entry.get("Genus_Localised") or "Sample",
+                      "value": info.value if info else 0, "range_m": genus.min_distance_m if genus else 0, "scan": entry.get("ScanType"),
+                      "first_footfall": bool(view and view.first_footfall)}
+    _popup["until"] = time.time() + POPUP_SECONDS
+
+
+def dashboard_status(entry: Mapping[str, Any]) -> None:
+    """Status.json (about once a second): the commander's position moves, so the distances and the radar do."""
+    _refresh_all()
+
+
+# --- Settings tab ----------------------------------------------------------------------------------------------------------
+
+_vars: Dict[str, Any] = {}
+_result_label: Optional[nb.Label] = None
+_LABELS = {"status": "Enable the Bio status card (progress, current species, distance to the last sample)",
+           "list": "Enable the Biology card (predicted species and what they pay)",
+           "radar": "Enable the Bio radar (samples, their circles, your ship and SRV)",
+           "popup": "Enable the Sample popup (a few seconds after each sample)"}
+
+
+def build_settings(notebook: nb.Notebook) -> None:
+    global _result_label
+    frame = nb.Frame(notebook)
+    frame.columnconfigure(0, weight=1)
+    notebook.add(frame, text="Exobiology")
+    cfg = load_config()
+
+    nb.Label(
+        frame,
+        text=("Four cards on your in-game overlay, through the overlay (WFMT's built-in one on Windows, or EDMCModernOverlay: a separate, optional helper WFMT does not install or launch; its connection "
+              "settings are on the Overlay Connection tab), for the body you are on, whether you are in the ship, the SRV or on foot. They use Organic "
+              "Scanning's prediction and sample tracking, so the genera appear once you have mapped the body. Everything comes from your journal and the "
+              "game's Status.json; nothing is sent anywhere."),
+        wraplength=440, justify=tk.LEFT,
+    ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
+    overlay_link.add(frame)
+
+    for row, key in enumerate(_CFG, start=2):
+        _vars[key] = tk.BooleanVar(value=getattr(cfg, key))
+        nb.Checkbutton(frame, text=_LABELS[key], variable=_vars[key]).grid(row=row, column=0, sticky=tk.W, padx=10, pady=2)
+
+    radar_box = tk.Frame(frame)
+    radar_box.grid(row=6, column=0, sticky=tk.W, padx=(30, 10), pady=2)
+    for row, (key, label, low, high, step, value, note) in enumerate((
+            ("radar_size", "Radar size:", *exo_radar.SIZE_RANGE, 20, radar_size(), "pixels across (260 is the default; 520 is twice that); a larger plot draws the sample circles larger"),
+            ("radar_fill", "Circle fill:", *exo_radar.FILL_RANGE, 5, radar_fill(), "% solid while you are inside a circle (0 leaves it an outline)"),
+            ("radar_line", "Circle outline:", *exo_radar.LINE_RANGE, 1, radar_line(), "pixels thick"))):
+        _vars[key] = tk.StringVar(value=str(value))
+        nb.Label(radar_box, text=label).grid(row=row, column=0, sticky=tk.W)
+        tk.Spinbox(radar_box, from_=low, to=high, increment=step, width=5, textvariable=_vars[key]).grid(row=row, column=1, padx=4, pady=1)
+        nb.Label(radar_box, text=note).grid(row=row, column=2, sticky=tk.W)
+
+    nb.Label(
+        frame,
+        text=("What WFMT cannot know: species are predicted from the body's conditions (the same prediction as the Organic Scanning panel), so a body can "
+              "show several candidates until a sample names the species, and the color variant is known only after the first sample. A sample's "
+              "position is known only for samples taken while EDMC was running, and the SRV's only from where you launched or left it."),
+        wraplength=440, justify=tk.LEFT,
+    ).grid(row=7, column=0, sticky=tk.W, padx=10, pady=(6, 4))
+
+    action_row = tk.Frame(frame)
+    action_row.grid(row=8, column=0, sticky=tk.W, padx=10, pady=(6, 2))
+    tk.Button(action_row, text="Test Cards", command=_test_cards).pack(side=tk.LEFT)
+    _result_label = nb.Label(action_row, text="", wraplength=320, justify=tk.LEFT)
+    _result_label.pack(side=tk.LEFT, padx=(10, 0))
+    nb.Label(frame, text="(Test Cards works even while disabled above, and reports whether the overlay was actually reachable.)",
+             wraplength=440, justify=tk.LEFT).grid(row=9, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+
+
+def _test_cards() -> None:
+    if _result_label is None:
+        return
+    cfg = overlay.load_config()
+    client = overlay.OverlayClient(cfg)
+    label = _result_label
+    look = overlay_appearance.current_look()
+    view = sample_view()
+
+    def worker() -> None:
+        try:
+            for display, card in ((status, build_status_card(view, "Sample System")), (listing, build_list_card(view, "Sample System")),
+                                  (radar, exo_radar.build_plan(view, radar_size())), (popup, build_popup_card(sample_popup()))):
+                display.render(card, display.placed_client(client, look, card), look)
+            outcome, color = "Sent: check your overlay.", "#2e7d32"
+        except OSError as err:
+            outcome, color = f"Could not reach the overlay at {cfg.host}:{cfg.port} ({err}).", "#c07000"
+        try:
+            label.after(0, lambda: label.configure(text=outcome, foreground=color))
+        except tk.TclError:
+            pass   # the Settings dialog was closed before the test finished
+
+    threading.Thread(target=worker, name="WFMT-exobiology-test", daemon=True).start()
+
+
+def save_settings() -> None:
+    if _vars:
+        save_config(ExoConfig(**{key: bool(_vars[key].get()) for key in _CFG}))
+        for key, name, low, high, default in (("radar_size", _CFG_RADAR_SIZE, *exo_radar.SIZE_RANGE, exo_radar.SIZE), ("radar_fill", _CFG_RADAR_FILL, *exo_radar.FILL_RANGE, exo_radar.FILL_DEFAULT),
+                                              ("radar_line", _CFG_RADAR_LINE, *exo_radar.LINE_RANGE, exo_radar.LINE_DEFAULT)):
+            if key in _vars:
+                try:
+                    config.set(name, str(max(low, min(high, int(str(_vars[key].get()).strip())))))
+                except ValueError:
+                    config.set(name, str(default))

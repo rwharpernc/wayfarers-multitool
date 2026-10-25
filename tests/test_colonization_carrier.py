@@ -1,0 +1,188 @@
+"""
+Tons transferred to the fleet carrier (colonization_carrier.py): only transfers made docked at a fleet carrier count,
+a transfer is never counted twice, and each commander's figures are their own.
+"""
+from __future__ import annotations
+
+import json
+import os
+import sys
+import tempfile
+import types
+import unittest
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+if "config" not in sys.modules:
+    _stub = types.ModuleType("config")
+    _stub.appname = "EDMarketConnector"
+    _stub.config = types.SimpleNamespace(get_str=lambda key: "", default_journal_dir="")
+    sys.modules["config"] = _stub
+
+from plugin import colonization_carrier as cc  # noqa: E402
+
+
+def docked(station_type: str = "FleetCarrier") -> dict:
+    return {"event": "Docked", "StationType": station_type, "MarketID": 3700000001, "timestamp": "2026-10-01T10:00:00Z"}
+
+
+def transfer(ts: str, *moves) -> dict:
+    return {"event": "CargoTransfer", "timestamp": ts,
+            "Transfers": [{"Type": t, "Count": n, "Direction": d} for t, n, d in moves]}
+
+
+class CarrierCargoTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.cargo = cc.CarrierCargo()
+        self.feed = cc.Feeder(self.cargo, "Alice")
+
+    def test_net_tons_per_commodity(self) -> None:
+        self.feed.feed(docked())
+        self.feed.feed(transfer("2026-10-01T10:01:00Z", ("steel", 100, "tocarrier"), ("titanium", 40, "tocarrier")))
+        self.feed.feed(transfer("2026-10-01T10:02:00Z", ("steel", 30, "toship")))
+        self.assertEqual(self.cargo.tons("Alice"), {"steel": 70, "titanium": 40})
+        self.assertTrue(self.cargo.has_carrier("Alice"))
+
+    def test_never_below_zero(self) -> None:
+        self.feed.feed(docked())
+        self.feed.feed(transfer("2026-10-01T10:01:00Z", ("steel", 10, "tocarrier")))
+        self.feed.feed(transfer("2026-10-01T10:02:00Z", ("steel", 50, "toship")))
+        self.assertEqual(self.cargo.tons("Alice"), {})
+
+    def test_ignored_away_from_a_fleet_carrier(self) -> None:
+        self.feed.feed(docked("Orbis"))
+        self.assertFalse(self.feed.feed(transfer("2026-10-01T10:01:00Z", ("steel", 10, "tocarrier"))))
+        self.feed.feed(docked("SquadronCarrier"))
+        self.feed.feed(transfer("2026-10-01T10:02:00Z", ("steel", 10, "tocarrier")))
+        self.assertEqual(self.cargo.tons("Alice"), {})
+        self.assertFalse(self.cargo.has_carrier("Alice"))
+
+    def test_undock_stops_counting(self) -> None:
+        self.feed.feed(docked())
+        self.feed.feed({"event": "Undocked"})
+        self.feed.feed(transfer("2026-10-01T10:01:00Z", ("steel", 10, "tocarrier")))
+        self.assertEqual(self.cargo.tons("Alice"), {})
+
+    def test_a_transfer_is_not_counted_twice(self) -> None:
+        self.feed.feed(docked())
+        event = transfer("2026-10-01T10:01:00Z", ("steel", 10, "tocarrier"))
+        self.feed.feed(event)
+        self.assertFalse(self.feed.feed(event))
+        self.assertEqual(self.cargo.tons("Alice"), {"steel": 10})
+
+    def test_commanders_are_separate(self) -> None:
+        self.feed.feed(docked())
+        self.feed.feed(transfer("2026-10-01T10:01:00Z", ("steel", 10, "tocarrier")))
+        self.assertEqual(self.cargo.tons("Bob"), {})
+        self.assertFalse(self.cargo.has_carrier("Bob"))
+        self.assertEqual(self.cargo.tons("ALICE"), {"steel": 10})
+
+    def test_carrier_stats_marks_a_carrier_without_transfers(self) -> None:
+        self.feed.feed({"event": "CarrierStats", "CarrierType": "FleetCarrier"})
+        self.feed.feed({"event": "CarrierStats", "CarrierType": "SquadronCarrier"})
+        self.assertTrue(self.cargo.has_carrier("Alice"))
+        self.assertEqual(self.cargo.tons("Alice"), {})
+
+    def test_squadron_stats_alone_is_not_a_fleet_carrier(self) -> None:
+        self.feed.feed({"event": "CarrierStats", "CarrierType": "SquadronCarrier"})
+        self.assertFalse(self.cargo.has_carrier("Alice"))
+
+    def test_saved_and_reloaded(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            self.cargo.load(folder)
+            self.feed.feed(docked())
+            self.feed.feed(transfer("2026-10-01T10:01:00Z", ("steel", 10, "tocarrier")))
+            self.cargo.commit()
+            again = cc.CarrierCargo()
+            again.load(folder)
+            self.assertEqual(again.tons("Alice"), {"steel": 10})
+            self.assertTrue(again.has_carrier("Alice"))
+
+
+class ExternalCheckTests(unittest.TestCase):
+    def test_trade_knowing_wins_both_ways(self) -> None:
+        cargo = cc.CarrierCargo()
+        cargo.set_external_check(lambda cmdr: True)
+        self.assertTrue(cargo.has_carrier("Alice"))            # Trade says yes before anything was seen here
+        cargo.set_external_check(lambda cmdr: False)
+        cc.Feeder(cargo, "Alice").feed({"event": "CarrierStats", "CarrierType": "FleetCarrier"})
+        self.assertFalse(cargo.has_carrier("Alice"))           # their choice of "no carrier" in Trade applies here too
+
+    def test_unknown_falls_back_to_what_was_seen_here(self) -> None:
+        cargo = cc.CarrierCargo()
+        cargo.set_external_check(lambda cmdr: None)
+        self.assertFalse(cargo.has_carrier("Alice"))
+        cc.Feeder(cargo, "Alice").feed({"event": "CarrierBuy", "CarrierType": "FleetCarrier"})
+        self.assertTrue(cargo.has_carrier("Alice"))
+
+    def test_a_failing_check_is_ignored(self) -> None:
+        def boom(_cmdr):
+            raise RuntimeError("x")
+        cargo = cc.CarrierCargo()
+        cargo.set_external_check(boom)
+        self.assertFalse(cargo.has_carrier("Alice"))
+
+
+class CatchUpTests(unittest.TestCase):
+    def test_catch_up_then_live_event_does_not_double_count(self) -> None:
+        lines = [
+            {"event": "Commander", "Name": "Alice", "timestamp": "2026-10-01T09:59:00Z"},
+            docked(),
+            transfer("2026-10-01T10:01:00Z", ("steel", 25, "tocarrier")),
+        ]
+        with tempfile.TemporaryDirectory() as folder:
+            with open(os.path.join(folder, "Journal.2026-10-01T090000.01.log"), "w", encoding="utf-8") as handle:
+                handle.write("\n".join(json.dumps(line) for line in lines) + "\n")
+            cargo = cc.CarrierCargo()
+            self.assertEqual(cc.catch_up(cargo, ["Alice"], folder), 1)
+            self.assertEqual(cargo.tons("Alice"), {"steel": 25})
+            self.assertEqual(cc.catch_up(cargo, ["Alice"], folder), 0)   # a second pass over the same file adds nothing
+            self.assertEqual(cargo.tons("Alice"), {"steel": 25})
+            live = cc.Feeder(cargo, "Alice")
+            live.feed(docked())
+            self.assertFalse(live.feed(lines[2]))
+
+
+class RescanTests(unittest.TestCase):
+    def write_journal(self, folder: str, lines: list) -> None:
+        with open(os.path.join(folder, "Journal.2026-10-01T090000.01.log"), "w", encoding="utf-8") as handle:
+            handle.write("\n".join(json.dumps(line) for line in lines) + "\n")
+
+    def test_a_rescan_rebuilds_from_the_journals_and_ignores_the_saved_tally(self) -> None:
+        lines = [
+            {"event": "Commander", "Name": "Alice", "timestamp": "2026-10-01T09:59:00Z"},
+            docked(),
+            transfer("2026-10-01T10:01:00Z", ("steel", 100, "tocarrier"), ("copper", 60, "tocarrier")),
+            transfer("2026-10-01T10:05:00Z", ("steel", 30, "toship")),
+        ]
+        with tempfile.TemporaryDirectory() as folder:
+            self.write_journal(folder, lines)
+            cargo = cc.CarrierCargo()
+            cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 5000}])      # a Frontier snapshot that lost the copper
+            rebuilt = cc.scan_journals("Alice", folder)
+            self.assertTrue(cargo.replace_from_journals("Alice", rebuilt))
+            self.assertEqual(cargo.tons("Alice"), {"steel": 70, "copper": 60})
+            self.assertNotIn("from_capi", cargo._record("Alice"))
+            # a live transfer after the rescan still counts
+            live = cc.Feeder(cargo, "Alice")
+            live.feed(docked())
+            live.feed(transfer("2026-10-01T11:00:00Z", ("copper", 5, "tocarrier")))
+            self.assertEqual(cargo.tons("Alice")["copper"], 65)
+
+    def test_a_rescan_counts_only_the_one_commander(self) -> None:
+        lines = [
+            {"event": "Commander", "Name": "Bob", "timestamp": "2026-10-01T09:58:00Z"},
+            docked(), transfer("2026-10-01T10:00:00Z", ("tritium", 9, "tocarrier")),
+            {"event": "Commander", "Name": "Alice", "timestamp": "2026-10-01T10:30:00Z"},
+            docked(), transfer("2026-10-01T10:31:00Z", ("steel", 7, "tocarrier")),
+        ]
+        with tempfile.TemporaryDirectory() as folder:
+            self.write_journal(folder, lines)
+            self.assertEqual(cc.scan_journals("Alice", folder)["tons"], {"steel": 7})
+
+    def test_nothing_in_the_journals_gives_an_empty_tally(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            self.assertEqual(cc.scan_journals("Alice", folder)["tons"], {})
+
+
+if __name__ == "__main__":
+    unittest.main()

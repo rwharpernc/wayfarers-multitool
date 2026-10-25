@@ -1,0 +1,1070 @@
+"""Tkinter UI for WFMT: main-window mode-switching panel and the Settings
+tab.
+
+This file is deliberately a thin orchestrator, not a place where feature
+widgets get built — each feature module (`powerplay.py`, `interdiction.py`,
+`landing.py`, `autohonk.py`, `discovery.py`, and shared `overlay.py`) owns
+its own main-panel widgets and Settings-tab section, per this shared
+feature-module contract:
+
+- `PANEL_PLACEMENT` (module attribute): a mode key (build into that mode's
+  frame), `"always"` (build once, outside any mode frame), or `None`
+  (Settings-tab-only, no main-panel widget).
+- `build_panel(parent)` (only when `PANEL_PLACEMENT is not None`)
+- `build_settings(notebook)` / `save_settings()`
+- `handle_event(entry, cmdr, system, station, state)` — called from
+  `load.py`, not from here.
+
+This module never reaches into a feature module's internals beyond calling
+those functions — new modes/features register themselves in `FEATURES`
+below and ui.py never needs to change to accommodate them.
+"""
+
+from __future__ import annotations
+
+import logging
+import os
+import webbrowser
+from typing import Callable, Dict, List, Optional, Tuple
+
+import tkinter as tk
+from tkinter import filedialog, ttk
+
+import myNotebook as nb
+from config import appname, config
+from theme import theme
+from ttkHyperlinkLabel import HyperlinkLabel
+
+from . import (
+    __version__, autohonk, bgs_panel, boxel_survey, poi_reference_panel, codex_completionist_panel, colonization_panel, discovery,
+    exploration_value, flight_alerts, interdiction, inventory_panel, landing, materials_panel, mining_panel, missions, missions_overlay,
+    notable, notes_panel, expedition_panel, expedition_log_panel, expedition_log_overlay, explore_dashboard, route_planner_panel, landing_finder_panel, surface_compass, organic_scan_panel, exobiology_overlay, overlay, overlay_appearance, overlay_placement, overlay_visibility, shortcuts, catchup_status, panelkit, powerplay, route_overlay, targets_overlay, body_info_overlay, screenshots, ship_builds_panel,
+    credits_ledger, game_mode, session_credits, session_merits, settings_scroll, system_names, trade_panel, trade_watch_panel,
+)
+from . import __version__, data_backup, issue_report, settings_online
+from .uikit import dialogs
+from .update import CONFIG_AUTO_UPDATE, RELEASES_PAGE_URL
+
+plugin_name = os.path.basename(os.path.dirname(__file__))
+logger = logging.getLogger(f"{appname}.{plugin_name}")
+
+# Every feature module contributing main-panel widgets and/or a Settings
+# tab. Order here is Settings-tab order; main-panel placement is driven by
+# each module's own PANEL_PLACEMENT.
+FEATURES = (
+    powerplay, missions,
+    # Each mode's sections are listed in alphabetical order of their names, which is also the order they are shown
+    # (tests/test_panel_order.py checks it). Exploration: Auto-Honk with Discovery Alerts (side by side - see
+    # _SIDE_BY_SIDE_PAIRS below, which is why those two must stay adjacent), Boxel Survey, Codex Completionist, Compass,
+    # Dashboard (with the Exploration Value lines), Expedition (with the Expedition Log's figures and buttons: expedition_log_panel has no section of its own), Nearest place to land, Notes,
+    # Organic Scanning, POI Reference, Route Planner.
+    autohonk, discovery, boxel_survey, codex_completionist_panel, surface_compass, explore_dashboard,
+    expedition_panel, expedition_log_panel, exploration_value, landing_finder_panel,
+    notes_panel, organic_scan_panel, poi_reference_panel, route_planner_panel, notable,
+    # Field Ops: Inventory, Materials, Screenshots, Ship Builds.
+    inventory_panel, materials_panel, screenshots, ship_builds_panel,
+    colonization_panel,
+    mining_panel,
+    trade_panel, trade_watch_panel,
+    bgs_panel,
+    interdiction, flight_alerts, route_overlay, targets_overlay, body_info_overlay, exobiology_overlay, expedition_log_overlay, missions_overlay, landing,
+)
+
+# Feature pairs built into a single shared row (side by side) instead of
+# each getting its own full-width row - only Auto-Honk/Discovery Alerts
+# (the only pair so far): both are just a single toggle button (plus,
+# for Discovery, a short status line), narrow enough that stacking them
+# wastes vertical space. Keyed by the first module in the pair; both must
+# stay adjacent in FEATURES above for this to take effect.
+_SIDE_BY_SIDE_PAIRS = {autohonk: discovery}
+
+CONFIG_PANEL_MODE = "wfmt_active_panel_mode"
+CONFIG_MODE_HIDDEN = "wfmt_mode_hidden_"     # + the mode key: that mode's button is hidden from the main panel
+CONFIG_FIT_HEIGHT = "wfmt_fit_window_height"
+_DEFAULT_FIT_HEIGHT = True
+
+# (mode key, button label) - order here is left-to-right button order.
+# A mode with no feature module registered for it just shows a placeholder.
+PANEL_MODES: Tuple[Tuple[str, str], ...] = (
+    ("powerplay", "Powerplay"),
+    ("bgs", "BGS"),
+    ("exploration", "Exploration"),
+    ("mining", "Mining"),
+    ("trade", "Trade"),
+    ("missions", "Missions"),
+    ("fieldops", "Field Ops"),
+    ("colonization", "Colony"),
+)
+# Short text for the mode-select buttons - EDMC's main window is small and shared
+# with every other plugin - with the full label plus a one-line description (_MODE_TOOLTIPS) as the tooltip.
+_MODE_BUTTON_TEXT = {
+    "powerplay": "P.P.", "bgs": "BGS", "exploration": "EXP", "mining": "MIN", "trade": "TRD", "missions": "MSN",
+    "fieldops": "OPS", "colonization": "COL",
+}
+_MODE_TOOLTIPS = {
+    "powerplay": "Powerplay - merits and Control Points you earn for your Power, and the rare goods finder",
+    "bgs": "BGS - faction states in the Background Simulation, and what your own activity does to them",
+    "exploration": "Exploration - auto-honk, first-discovery alerts, boxel survey, scan values, exobiology help and Codex tally",
+    "mining": "Mining - space and surface (SRV) mining, and your own catalogue of mining hotspots",
+    "trade": "Trade - what you bought and sold this session, the value of your hold, and Spansh route and price lookups",
+    "missions": "Missions - every mission you have in one view, with kill-progress bars for massacres",
+    "fieldops": "Field Ops - screenshots, backpack/locker/cargo and saved ship builds",
+    "colonization": "Colonization - the project you are building now (progress, what is left, trips); history is in the HISTORY window",
+}
+_DEFAULT_PANEL_MODE = PANEL_MODES[0][0]
+_MODE_KEYS = {key for key, _ in PANEL_MODES}
+
+_UPDATED_COLOR = "#2e7d32"
+_ATTENTION_BG = "#ff8c0d"       # Elite orange, black text: the line that says a restart is needed
+_ATTENTION_FG = "#000000"
+_ATTENTION_REASSERT_MS = 3_000
+_UPDATED_MESSAGE_DURATION_MS = 15_000
+
+_frame: Optional[tk.Frame] = None
+_version_label: Optional[tk.Label] = None
+_version_natural: Optional[Tuple[str, str, str]] = None   # the label's own (background, foreground, font) before an override
+
+_panel_mode: str = _DEFAULT_PANEL_MODE
+_mode_buttons: Dict[str, tk.Button] = {}
+_mode_frames: Dict[str, tk.Frame] = {}
+_mode_holder: Optional[tk.Frame] = None
+_always_frame: Optional[tk.Frame] = None
+_toggle_off_colors: Tuple[str, str] = ("", "")
+
+_auto_update_var: Optional[tk.BooleanVar] = None
+_fit_height_var: Optional[tk.BooleanVar] = None
+_suggest_var: Optional[tk.BooleanVar] = None
+
+PLUGIN_DISPLAY_NAME = "Wayfarer's Multitool (WFMT)"
+
+
+def _stack_features(frame: tk.Frame, placement_key: str, placeholder_text: Optional[str] = None) -> None:
+    """Builds every feature matching `placement_key` into its *own* child
+    frame of `frame`, stacked top to bottom with a separator between
+    consecutive features (never before the first) - each feature no longer
+    needs to hand-pick a row number that avoids colliding with whichever
+    siblings happen to share its placement key, the root cause of both a
+    real collision bug and a "too jumbled, no visual separation between
+    features" report earlier in this project's history. If nothing
+    matches `placement_key` and `placeholder_text` is given (mode frames
+    only, not "always"), shows that instead."""
+    row = 0
+    built = False
+    features = list(FEATURES)
+    i = 0
+    while i < len(features):
+        feature = features[i]
+        if getattr(feature, "PANEL_PLACEMENT", None) != placement_key:
+            i += 1
+            continue
+        if built:
+            row = panelkit.add_separator(frame, row)
+
+        partner = _SIDE_BY_SIDE_PAIRS.get(feature)
+        if partner is not None and i + 1 < len(features) and features[i + 1] is partner:
+            # Both members of the pair share one row instead of each
+            # getting its own - see _SIDE_BY_SIDE_PAIRS's own docstring.
+            pair_frame = tk.Frame(frame)
+            pair_frame.grid(row=row, column=0, columnspan=3, sticky="ew")
+            left_frame = tk.Frame(pair_frame)
+            left_frame.grid(row=0, column=0, sticky="nw")
+            feature.build_panel(left_frame)
+            right_frame = tk.Frame(pair_frame)
+            right_frame.grid(row=0, column=1, sticky="nw", padx=(6, 0))  # same 6px gap as the mode-select buttons
+            partner.build_panel(right_frame)
+            if partner is discovery:
+                # Boxel Survey's "Random" button shares this button row (its
+                # status line goes below Discovery's, in row 3); Boxel Survey
+                # itself is built later in this stack, which the button copes with).
+                boxel_survey.build_random_button(
+                    discovery.controller.button_row, discovery.controller.panel_frame, 3)
+            row += 1
+            built = True
+            i += 2
+            continue
+
+        feature_frame = tk.Frame(frame)
+        # sticky="ew" (not tk.W) plus the weighted middle column below: a
+        # feature that only ever left-aligns its own widgets in column 0
+        # looks identical either way, but a feature that centers something
+        # via columnspan=3 (e.g. landing.py's pad diagram) needs this frame
+        # actually stretched to the real content width for that centering
+        # to mean anything - sticky=W left it pinned to its own minimum
+        # natural size, so a spanning child had no spare room to center
+        # within.
+        feature_frame.columnconfigure(1, weight=1)
+        feature_frame.grid(row=row, column=0, columnspan=3, sticky="ew")
+        feature.build_panel(feature_frame)
+        row += 1
+        built = True
+        i += 1
+    if not built and placeholder_text:
+        placeholder = panelkit.wrap_label(frame, text=placeholder_text)
+        placeholder.grid(row=0, column=0, sticky=tk.W, pady=(4, 0))
+
+
+def _mode_row_full_label_size(frame: tk.Frame) -> Tuple[int, int]:
+    """(width, height) the mode-button row had when the buttons carried their full
+    labels. EDMC sizes its main window to the widest row across every plugin, and
+    that row used to be what set WFMT's width - shortening the labels
+    (_MODE_BUTTON_TEXT) alone made the whole EDMC window open much narrower. Measured
+    from a throwaway, never-displayed row of full-label buttons, so it follows the
+    user's font/DPI and is fixed by the six labels in PANEL_MODES: nothing external
+    can make it grow."""
+    probe = tk.Frame(frame)
+    for _key, label in PANEL_MODES:
+        tk.Button(probe, text=label).pack(side=tk.LEFT, padx=(0, 6))
+    probe.update_idletasks()
+    size = (probe.winfo_reqwidth(), probe.winfo_reqheight())
+    probe.destroy()
+    return size
+
+
+def create_plugin_app(parent: tk.Frame) -> tk.Frame:
+    """Create the main-window frame for EDMC."""
+    global _frame, _version_label
+    global _panel_mode, _toggle_off_colors, _always_frame, _mode_holder
+
+    _frame = tk.Frame(parent)
+    _frame.columnconfigure(1, weight=1)
+    _frame.bind("<Configure>", panelkit.on_frame_configure)
+
+    _panel_mode = config.get_str(CONFIG_PANEL_MODE) or _DEFAULT_PANEL_MODE
+    if _panel_mode not in _MODE_KEYS:
+        _panel_mode = _DEFAULT_PANEL_MODE
+
+    # The row itself is held at the full-label size (see _mode_row_full_label_size) with
+    # the short buttons left-justified inside it - no extra widget sits over the buttons.
+    row_width, row_height = _mode_row_full_label_size(_frame)
+    mode_row = tk.Frame(_frame, width=row_width, height=row_height)
+    mode_row.pack_propagate(False)
+    mode_row.grid(row=1, column=0, columnspan=3, sticky=tk.W, pady=(6, 0))
+    mode_buttons_frame = tk.Frame(mode_row)
+    mode_buttons_frame.place(relx=0, rely=0.5, anchor=tk.W)
+    for key, label in PANEL_MODES:
+        btn = tk.Button(mode_buttons_frame, text=_MODE_BUTTON_TEXT.get(key, label), command=lambda k=key: _on_panel_mode_click(k))
+        panelkit.add_tooltip(btn, _MODE_TOOLTIPS.get(key, label))
+        _mode_buttons[key] = btn
+    _apply_mode_buttons()
+
+    # Session strip (game mode, then credits this session) + a separator,
+    # directly under the buttons and before any page content: visible in every
+    # mode (it is not part of one), always shown (the main panel no longer collapses).
+    # Each line is its own module (game_mode.py, session_credits.py, session_merits.py).
+    session_strip = tk.Frame(_frame)
+    session_strip.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(6, 0))
+    _version_label = panelkit.wrap_label(session_strip, anchor="w", cursor="hand2")   # "Plugin: v1.8.0" / "v1.8.1 download - Restart EDMC"
+    _version_label.grid(row=0, column=0, columnspan=3, sticky=tk.W)
+    _version_label.bind("<Button-1>", lambda _e: webbrowser.open(RELEASES_PAGE_URL))
+    _show_version_state()          # an update may already have finished before the panel existed
+    _schedule_clear_updated()
+    game_mode.build(session_strip, row=1)          # "You are in Solo mode."
+    credits_label = session_credits.build(session_strip, row=2)    # "Credits this session: +N cr earned"
+    credits_label.configure(cursor="hand2")
+    panelkit.add_tooltip(credits_label, "Click to open the Credits Ledger: income by activity, by day, and your lifetime totals")
+    credits_ledger.attach(credits_label)
+    session_merits.build(session_strip, row=3)     # "Merits this session: +N (+N merits/hr)", once there is a merit
+    shortcuts.set_tk_widget(session_strip)                        # so a key combination pressed in the game runs its action on this thread
+    overlay_visibility.build_panel_line(session_strip, row=4)     # "Overlays shown (click to hide)"
+    catchup_status.build_panel_line(session_strip, row=5)         # "Reading your journals to catch up (...)", only while it is running
+    panelkit.add_separator(_frame, 3)
+
+    # Every mode's content lives in one holder whose WIDTH is pinned to the
+    # mode-button row's and whose height follows whichever mode is showing.
+    # EDMC sizes its main window to the widest row of every plugin, so without
+    # this the window grew and shrank as you switched modes (each mode asked
+    # for a different width). The holder never lets a mode ask for more than
+    # the button row; content wraps to the available width instead. See
+    # docs/TECHNICAL.md section 5.
+    _mode_holder = tk.Frame(_frame)
+    _mode_holder.grid(row=4, column=0, columnspan=3, sticky="ew")
+    _mode_holder.columnconfigure(0, weight=1)
+    _mode_holder.grid_propagate(False)
+    try:
+        mode_row.update_idletasks()
+        _mode_holder.configure(width=mode_row.winfo_reqwidth(), height=1)
+    except tk.TclError:
+        _mode_holder.configure(width=1, height=1)
+    mode_row.bind("<Configure>", lambda e: _mode_holder.configure(width=max(1, e.width)) if _mode_holder else None)
+
+    for key, label in PANEL_MODES:
+        mode_frame = tk.Frame(_mode_holder)
+        mode_frame.columnconfigure(0, weight=1)
+        mode_frame.grid(row=0, column=0, sticky="new")
+        mode_frame.bind("<Configure>", lambda _e: _sync_mode_holder_height())
+        _stack_features(mode_frame, key, placeholder_text=f"{label} — coming soon.")
+        _mode_frames[key] = mode_frame
+
+    # Mode-independent features ("always" placement, e.g. Landing) build
+    # once into their own frame, gridded after every mode frame - visible
+    # regardless of which mode is selected, gated only on the master
+    # collapse toggle.
+    _always_frame = tk.Frame(_frame)
+    _always_frame.columnconfigure(1, weight=1)
+    _always_frame.grid(row=5, column=0, columnspan=3, sticky="ew")
+    _stack_features(_always_frame, "always")
+
+    _apply_panel_mode_visibility()
+
+    theme.update(_frame)
+    _toggle_off_colors = panelkit.capture_toggle_off_colors(_mode_buttons[_DEFAULT_PANEL_MODE])
+    _apply_panel_mode_button_colors()
+
+    # This first theme.update(_frame) call happens while EDMC is still
+    # building every plugin's panel (create_plugin_app() runs from
+    # EDMarketConnector.py's _config_plugins(), which always runs before
+    # its own first theme.apply() call - confirmed by reading EDMC's real
+    # theme.py: theme.update(widget) is a documented no-op ("No need to
+    # call this for widgets created in plugin_app()") that returns *before*
+    # ever calling self.register(widget) whenever theme.current is still
+    # empty, which it always is at this point). So this call above may
+    # have silently registered nothing at all - inventory_panel.py's own
+    # bar-track-color fix hit exactly this for its own widgets
+    # specifically; retrying here covers the rest
+    # of WFMT's frame tree the same way, once theme.current is actually
+    # populated. Uses apply_theme_deep(), not a second bare theme.update()
+    # call - EDMC's own theme.update() only recolors *direct* children
+    # even once registration succeeds (its own register() recurses the
+    # whole subtree, but _update_widget() is only applied one level deep),
+    # so a bare retry would still leave grandchildren (e.g. a mode's own
+    # nested labels several frames deep) registered but never actually
+    # recolored until some later, not-guaranteed EDMC-triggered sweep.
+    for delay_ms in (500, 1500, 3000, 6000):
+        _frame.after(delay_ms, lambda: panelkit.apply_theme_deep(_frame))
+
+    return _frame
+
+
+def hidden_modes() -> set:
+    """The modes whose buttons the commander chose to hide (Settings → General → Window). Never all of them: with every mode ticked off none is hidden."""
+    hidden = {key for key, _label in PANEL_MODES if config.get_bool(CONFIG_MODE_HIDDEN + key, default=False)}
+    return set() if len(hidden) >= len(PANEL_MODES) else hidden
+
+
+def _apply_mode_buttons() -> None:
+    """Show the buttons of the modes not hidden, in order (the row keeps its full width, so hiding one never resizes EDMC's window), and move off a hidden mode.
+    A hidden mode keeps running: its overlays and tracking work as before, only its panel and button are not shown."""
+    global _panel_mode
+    hidden = hidden_modes()
+    visible = [key for key, _label in PANEL_MODES if key not in hidden and key in _mode_buttons]
+    for button in _mode_buttons.values():
+        button.pack_forget()
+    for key in visible:
+        _mode_buttons[key].pack(side=tk.LEFT, padx=(0, 6) if key != visible[-1] else (0, 0))
+    if _panel_mode in hidden and visible:
+        _panel_mode = visible[0]
+        config.set(CONFIG_PANEL_MODE, _panel_mode)
+        if _toggle_off_colors is not None:        # not while the panel is still being built: it applies these itself afterwards
+            _apply_panel_mode_button_colors()
+            _apply_panel_mode_visibility()
+
+
+def _sync_mode_holder_height() -> None:
+    """The holder's width is pinned, so its height has to follow the visible
+    mode's content by hand."""
+    if _mode_holder is None or _panel_mode not in _mode_frames:
+        return
+    height = max(1, _mode_frames[_panel_mode].winfo_reqheight())
+    if int(_mode_holder.cget("height")) != height:
+        _mode_holder.configure(height=height)
+    _schedule_window_fit()
+
+
+_fit_pending = False
+
+
+def _schedule_window_fit() -> None:
+    """Asks for one window re-fit once Tk is idle; several height changes in a
+    row (a mode switch redraws a few frames) collapse into a single resize."""
+    global _fit_pending
+    if _fit_pending or _frame is None:
+        return
+    _fit_pending = True
+    _frame.after_idle(_fit_window_height)
+
+
+def _fit_window_height() -> None:
+    """Resizes EDMC's main window to the height its content needs, keeping its
+    current width and position. Once a window has been given an explicit size
+    (EDMC restores the last one, and dragging it does the same), Tk stops
+    fitting it to its content, so switching to a taller mode or expanding a
+    section left the bottom cut off until the window was dragged taller; this
+    does that automatically, and shrinks it back when the content gets shorter.
+    Left alone when the window is maximized/minimized or not yet on screen."""
+    global _fit_pending
+    _fit_pending = False
+    if _frame is None or not config.get_bool(CONFIG_FIT_HEIGHT, default=_DEFAULT_FIT_HEIGHT):
+        return
+    try:
+        top = _frame.winfo_toplevel()
+        if top.state() != "normal" or not top.winfo_viewable():
+            return
+        top.update_idletasks()
+        wanted = top.winfo_reqheight()
+        if abs(wanted - top.winfo_height()) > 1:
+            top.geometry(f"{top.winfo_width()}x{wanted}")
+    except tk.TclError:
+        logger.debug("Could not fit the EDMC window to its content", exc_info=True)
+
+
+def _apply_panel_mode_visibility() -> None:
+    for key, frame in _mode_frames.items():
+        if key == _panel_mode:
+            frame.grid()
+        else:
+            frame.grid_remove()
+    _sync_mode_holder_height()
+
+
+def _apply_panel_mode_button_colors() -> None:
+    for key, btn in _mode_buttons.items():
+        panelkit.apply_toggle_button_state(btn, key == _panel_mode, _toggle_off_colors)
+
+
+def _on_panel_mode_click(mode: str) -> None:
+    global _panel_mode
+    if mode == _panel_mode:
+        return
+    _panel_mode = mode
+    config.set(CONFIG_PANEL_MODE, _panel_mode)
+    _apply_panel_mode_button_colors()
+    _apply_panel_mode_visibility()
+
+
+# --- Settings tab ----------------------------------------------------------
+
+_SETTINGS_NOTEBOOK_STYLE = "WFMT.TNotebook"
+_BAR_NOTEBOOK_STYLE = "WFMT.Bar.TNotebook"   # a notebook whose own tab strip is hidden: _TabBar draws the tabs, so none can be clipped
+
+
+def _style_settings_notebook() -> None:
+    """The active ttk theme's default Notebook styling renders tabs with
+    little to no visible border against the page background, so the tab
+    strip doesn't read as a set of clickable tabs. Scoped to our own style
+    name so this doesn't bleed into EDMC's own outer plugin-tabs notebook or
+    any other plugin's notebook."""
+    style = ttk.Style()
+    style.configure(f"{_SETTINGS_NOTEBOOK_STYLE}.Tab", padding=(10, 4), borderwidth=1, relief=tk.RAISED)
+    style.map(f"{_SETTINGS_NOTEBOOK_STYLE}.Tab", relief=[("selected", tk.SUNKEN)])
+    style.layout(f"{_BAR_NOTEBOOK_STYLE}.Tab", [])      # the tab strip takes no room
+
+
+def create_prefs(parent: tk.Frame) -> nb.Frame:
+    outer = nb.Frame(parent)
+    outer.columnconfigure(0, weight=1)
+    outer.rowconfigure(1, weight=1)
+
+    HyperlinkLabel(
+        outer, text=f"{PLUGIN_DISPLAY_NAME} v{__version__}", background=nb.Label().cget("background"),
+        url=RELEASES_PAGE_URL, underline=True,
+    ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 6))
+
+    notebook_border = tk.Frame(outer, relief=tk.GROOVE, borderwidth=2)
+    notebook_border.grid(row=1, column=0, sticky=tk.NSEW, padx=10, pady=(0, 10))
+    notebook_border.columnconfigure(0, weight=1)
+    notebook_border.rowconfigure(0, weight=1)
+
+    _style_settings_notebook()
+    notebook_border.rowconfigure(0, weight=0)
+    notebook_border.rowconfigure(1, weight=1)
+    tabs = nb.Notebook(notebook_border, style=_BAR_NOTEBOOK_STYLE)
+    tabs.grid(row=1, column=0, sticky=tk.NSEW, padx=4, pady=(0, 4))
+
+    page_bg = _page_background(outer)
+    _build_settings_tabs(tabs, page_bg)
+    _add_cross_links(tabs)
+    _hold_spinboxes_to_range(outer)
+    _TabBar(notebook_border, tabs).grid(row=0, column=0, sticky=tk.EW, padx=4, pady=(4, 2))
+    _match_page_background(tabs, page_bg)
+
+    return outer
+
+
+def _page_background(widget: tk.Misc) -> str:
+    """The color EDMC paints Settings pages with (white on Windows, the theme's on Linux). Read from a real
+    nb.Label, which EDMC colors to match its pages."""
+    probe = nb.Label(widget)
+    try:
+        color = str(probe.cget("background"))
+    finally:
+        probe.destroy()
+    return color or str(ttk.Style().lookup("TFrame", "background") or "")
+
+
+def _match_page_background(widget: tk.Misc, background: str) -> None:
+    """Give every plain tk.Frame on the Settings pages the page color. A tk.Frame (used where a row needs `pack`,
+    which an nb.Frame can't take) is painted the system button gray by default, which showed as odd gray bands
+    on the white pages. ttk frames (class TFrame) already follow the page and are left alone."""
+    for child in widget.winfo_children():
+        if background and child.winfo_class() == "Frame":
+            child.configure(background=background)
+        _match_page_background(child, background)
+
+
+_TAB_BAR_FIRST_WIDTH = 640
+
+
+class _TabBar(tk.Frame):
+    """The tab strip for a Settings notebook, drawn as buttons that wrap onto more rows when they do not fit the width. A ttk tab strip cannot wrap:
+    when its tabs are wider than the window it cuts their text (the Overlays group alone has twenty). The notebook keeps its pages and its tab
+    labels (it is a real ttk.Notebook with its own strip hidden); this chooses which page shows. Build it after the notebook's tabs are final and
+    sorted. Padding is generous so the whole label always has room."""
+
+    def __init__(self, parent: tk.Misc, notebook: ttk.Notebook) -> None:
+        super().__init__(parent)
+        self._notebook = notebook
+        self._choice = tk.StringVar(value=str(notebook.select()))
+        self._buttons: List[tk.Radiobutton] = []
+        for tab in notebook.tabs():
+            button = tk.Radiobutton(
+                self, text=str(notebook.tab(tab, "text")), variable=self._choice, value=str(tab), indicatoron=False,
+                relief=tk.RAISED, borderwidth=1, padx=12, pady=5, command=lambda t=tab: notebook.select(t))
+            self._buttons.append(button)
+        notebook.bind("<<NotebookTabChanged>>", lambda _e: self._choice.set(str(notebook.select())), add="+")
+        self.bind("<Configure>", lambda _e: self._reflow())
+        self._reflow()
+
+    def _reflow(self) -> None:
+        """Place the tabs in rows that fit the bar's width and size the bar to the rows. They are placed, not gridded: a grid keeps every row's
+        columns the same width, which spreads the tabs out and pushes the last one past the edge."""
+        width = self.winfo_width() - 6              # a little slack so the last tab on a row is never touching the edge
+        if width <= 1:
+            width = _TAB_BAR_FIRST_WIDTH            # not laid out yet: wrap at a modest width; <Configure> brings the real one
+        used = row = 0
+        height = max((b.winfo_reqheight() for b in self._buttons), default=0)
+        for button in self._buttons:
+            needed = button.winfo_reqwidth() + 2
+            if used and used + needed > width:
+                row, used = row + 1, 0
+            button.place(x=used, y=row * (height + 2))
+            used += needed
+        rows = row + 1 if self._buttons else 0
+        self.configure(height=rows * (height + 2))
+
+
+class _SectionStack(nb.Frame):
+    """A Settings page that stacks several features' settings one under another
+    (with a rule between). Each feature's `build_settings(notebook)` builds a frame
+    of its own and calls `notebook.add(frame, text=...)`; handing it one of these
+    instead of a real notebook makes `add` stack that frame as a section. Frames are
+    only ever placed with `grid` - never `pack` into an nb.Frame (the development
+    guide's Settings rule)."""
+
+    def __init__(self, parent: tk.Misc) -> None:
+        super().__init__(parent)
+        self.columnconfigure(0, weight=1)
+        self._next_row = 1  # row 0 is nb.Frame's own gridded spacer
+
+    def add(self, child: tk.Misc, **_options: object) -> None:
+        if self._next_row > 1:
+            ttk.Separator(self, orient=tk.HORIZONTAL).grid(
+                row=self._next_row, column=0, sticky=tk.EW, padx=10, pady=4)
+            self._next_row += 1
+        child.grid(row=self._next_row, column=0, sticky=tk.EW)
+        self._next_row += 1
+
+
+# A feature's settings are sometimes on two pages (the feature's own, and its overlay under Overlays). Each page names the other as a link at its foot, so there is
+# no hunting for it. Page paths are "Tab" or "Group > Tab", as the tab bars show them; a path that does not exist is skipped, so a renamed tab never breaks a page.
+CROSS_LINKS: Dict[str, Tuple[str, ...]] = {
+    "Colonization": ("Overlays > Colonization",), "Overlays > Colonization": ("Colonization",),
+    "Field Ops > Inventory": ("Overlays > Inventory",), "Overlays > Inventory": ("Field Ops > Inventory",),
+    "Mining": ("Overlays > Mining", "Overlays > Surface Compass"), "Overlays > Mining": ("Mining",), "Overlays > Surface Compass": ("Mining",),
+    "Missions": ("Overlays > Missions",), "Overlays > Missions": ("Missions",),
+    "Field Ops > Screenshots": ("Overlays > Screenshots",), "Overlays > Screenshots": ("Field Ops > Screenshots",),
+    "Exploration > Organic Scanning": ("Overlays > Exobiology",), "Overlays > Exobiology": ("Exploration > Organic Scanning",),
+    "Exploration > Expedition": ("Overlays > Expedition Log", "Overlays > Route"), "Overlays > Expedition Log": ("Exploration > Expedition",),
+}
+_settings_top: Optional[ttk.Notebook] = None
+
+
+def goto_settings_page(path: str) -> bool:
+    """Show the Settings page at `path` ("Tab" or "Group > Tab"). Returns whether it exists."""
+    if _settings_top is None:
+        return False
+    first, _sep, second = (part.strip() for part in path.partition(">"))
+    for tab in _settings_top.tabs():
+        if str(_settings_top.tab(tab, "text")) != first:
+            continue
+        if not second:
+            _settings_top.select(tab)
+            return True
+        for group in (w for w in _settings_top.nametowidget(tab).winfo_children() if isinstance(w, ttk.Notebook)):
+            for inner in group.tabs():
+                if str(group.tab(inner, "text")) == second:
+                    _settings_top.select(tab)
+                    group.select(inner)
+                    return True
+    return False
+
+
+def _page_paths(top: ttk.Notebook) -> Dict[str, tk.Misc]:
+    """Every Settings page by its path."""
+    pages: Dict[str, tk.Misc] = {}
+    for tab in top.tabs():
+        name = str(top.tab(tab, "text"))
+        page = top.nametowidget(tab)
+        groups = [w for w in page.winfo_children() if isinstance(w, ttk.Notebook)]
+        if groups:
+            for inner in groups[0].tabs():
+                pages[f"{name} > {groups[0].tab(inner, 'text')}"] = groups[0].nametowidget(inner)
+        else:
+            pages[name] = page
+    return pages
+
+
+def _add_cross_links(top: ttk.Notebook) -> None:
+    global _settings_top
+    _settings_top = top
+    pages = _page_paths(top)
+    for path, targets in CROSS_LINKS.items():
+        page = pages.get(path)
+        content = getattr(page, "content", None)
+        shown = [target for target in targets if target in pages]
+        if content is None or not shown:
+            continue
+        row = tk.Frame(content)
+        row.grid(row=content.grid_size()[1], column=0, sticky=tk.W, padx=10, pady=(0, 10))
+        nb.Label(row, text="Related settings:").pack(side=tk.LEFT, padx=(0, 6))
+        for target in shown:
+            link = HyperlinkLabel(row, text=target, background=nb.Label().cget("background"), underline=True,
+                                  url=lambda _text, t=target: goto_settings_page(t) and None)    # a link that goes to a page, not to a web address
+            link.pack(side=tk.LEFT, padx=(0, 12))
+
+
+def _hold_spinboxes_to_range(widget: tk.Misc) -> None:
+    """Every number box on the Settings pages that has a range (a Spinbox with `from_` and `to`) snaps a typed value back inside it when you leave the box
+    or press Enter, so typing 900 into a 200 to 800 box shows 800 at once instead of being quietly changed when Settings is saved. Something that is not
+    a number goes back to what the box held before. One place for every page, so a new Spinbox gets it without doing anything."""
+    for child in widget.winfo_children():
+        if child.winfo_class() == "Spinbox":
+            _hold_to_range(child)
+        _hold_spinboxes_to_range(child)
+
+
+def _hold_to_range(box: tk.Spinbox) -> None:
+    try:
+        low, high = float(box.cget("from")), float(box.cget("to"))
+    except (TypeError, ValueError, tk.TclError):
+        return
+    if not low < high:
+        return
+    whole = low.is_integer() and high.is_integer()
+    last = [box.get()]
+
+    def settle(_event: object = None) -> None:
+        text = box.get().strip()
+        try:
+            value = min(high, max(low, float(text)))
+        except ValueError:
+            value = None
+        shown = last[0] if value is None else (str(int(value)) if whole else f"{value:g}")
+        if shown != box.get():
+            box.delete(0, tk.END)
+            box.insert(0, shown)
+        last[0] = shown
+
+    box.bind("<FocusOut>", settle, add="+")
+    box.bind("<Return>", settle, add="+")
+
+
+def _sort_tabs(notebook: ttk.Notebook, lead: Tuple[str, ...] = ()) -> None:
+    """Put a notebook's tabs in alphabetical order by their label (case-insensitive), after any tabs named in `lead`, which come
+    first in that order. Done after the tabs are built, from the labels each feature gave its own tab, so a new tab lands in the
+    right place without being listed anywhere."""
+    def rank(tab: str) -> Tuple[int, str]:
+        label = str(notebook.tab(tab, "text"))
+        return (lead.index(label) if label in lead else len(lead), label.casefold())
+    ordered = sorted(notebook.tabs(), key=rank)
+    for index, tab in enumerate(ordered):
+        notebook.insert(index, tab)
+
+
+def _settings_group(tabs: nb.Notebook, title: str, builders: List[Callable[[tk.Misc], None]], page_bg: str,
+                    lead: Tuple[str, ...] = ()) -> None:
+    """One top-level Settings tab holding its own row of tabs, so the strip across
+    the top stays short instead of listing every feature. The tabs named in `lead` come first, in that order."""
+    page = nb.Frame(tabs)
+    page.columnconfigure(0, weight=1)
+    tabs.add(page, text=title)
+    page.rowconfigure(2, weight=1)
+    inner = nb.Notebook(page, style=_BAR_NOTEBOOK_STYLE)
+    inner.grid(row=2, column=0, sticky=tk.NSEW, padx=4, pady=4)
+    for build in builders:
+        settings_scroll.scrolled_page(inner, build, page_bg)
+    _sort_tabs(inner, lead)
+    if inner.tabs():
+        inner.select(inner.tabs()[0])               # a group opens on the first tab its bar shows, not on whichever was built first
+    _TabBar(page, inner).grid(row=1, column=0, sticky=tk.EW, padx=4, pady=(4, 0))
+
+
+def _stacked_page(title: str, builders: List[Callable[[tk.Misc], None]]) -> Callable[[tk.Misc], None]:
+    """A builder that adds ONE tab called `title` holding all of `builders`' settings stacked."""
+    def build(notebook: tk.Misc) -> None:
+        stack = _SectionStack(notebook)
+        notebook.add(stack, text=title)
+        for build_section in builders:
+            build_section(stack)
+    return build
+
+
+def _build_settings_tabs(tabs: nb.Notebook, page_bg: str) -> None:
+    """Top-level Settings tabs: General, then one per mode (modes with several
+    features get a row of tabs inside), then the always-on overlays. Small related
+    Exploration pages are merged: the three point-of-interest/codex pages into one,
+    Auto-Honk, Discovery and Notable Bodies into one. Any feature with settings that is not listed
+    here lands in "Other", so a new feature can never lose its Settings tab."""
+    placed = set()
+
+    def settings_of(*features) -> List[Callable[[tk.Misc], None]]:
+        placed.update(features)
+        return [feature.build_settings for feature in features]
+
+    _settings_group(tabs, "General", [_create_window_tab, _create_updates_tab, _create_backup_tab, _create_help_tab, settings_online.build_settings, shortcuts.build_settings], page_bg)
+    for feature in (powerplay, missions):
+        for build in settings_of(feature):
+            settings_scroll.scrolled_page(tabs, build, page_bg)
+    _settings_group(tabs, "Exploration", [
+        *settings_of(exploration_value, expedition_panel, landing_finder_panel, organic_scan_panel),
+        _stacked_page("POI Reference", settings_of(poi_reference_panel, codex_completionist_panel)),
+        *settings_of(boxel_survey),
+        *settings_of(autohonk),
+    ], page_bg)
+    for feature in (mining_panel, trade_panel, bgs_panel, colonization_panel):
+        for build in settings_of(feature):
+            settings_scroll.scrolled_page(tabs, build, page_bg)
+    _settings_group(tabs, "Field Ops", settings_of(screenshots, inventory_panel, ship_builds_panel), page_bg)
+    # Every overlay setting and toggle lives together: the shared connection, appearance and placement first, then one tab per
+    # feature that draws on the overlay. (Interdiction, Landing, Discovery and Notable Bodies are overlay features
+    # through and through, so their whole tab is here; the others keep their non-overlay settings in their own tab.)
+    _settings_group(tabs, "Overlays", [
+        overlay.build_settings,
+        overlay_appearance.build_settings,
+        overlay_placement.build_settings,
+        overlay_visibility.build_settings,
+        colonization_panel.build_overlay_settings,
+        *settings_of(discovery),
+        inventory_panel.build_overlay_settings,
+        *settings_of(interdiction, flight_alerts, route_overlay, targets_overlay, body_info_overlay, exobiology_overlay, expedition_log_overlay, missions_overlay, landing, surface_compass),
+        mining_panel.build_overlay_settings,
+        *settings_of(notable),
+        screenshots.build_overlay_settings,
+    ], page_bg, lead=("Overlay Connection", "Appearance", "Overlay Placement"))
+
+    leftovers = [f for f in FEATURES if hasattr(f, "build_settings") and f not in placed]
+    if leftovers:
+        _settings_group(tabs, "Other", settings_of(*leftovers), page_bg)
+    _sort_tabs(tabs)
+
+
+def _create_window_tab(notebook: nb.Notebook) -> None:
+    """Window behavior. Everything here is placed with `grid` (never `pack`) - an
+    nb.Frame already holds a gridded child, and packing into it makes the whole
+    WFMT Settings tab vanish (tests/test_settings_layout.py)."""
+    global _fit_height_var, _suggest_var
+
+    frame = nb.Frame(notebook)
+    frame.columnconfigure(0, weight=1)
+    notebook.add(frame, text="Window")
+
+    _fit_height_var = tk.BooleanVar(value=config.get_bool(CONFIG_FIT_HEIGHT, default=_DEFAULT_FIT_HEIGHT))
+    nb.Checkbutton(
+        frame, text="Resize the EDMC window's height to fit WFMT automatically", variable=_fit_height_var,
+    ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 2))
+    nb.Label(
+        frame,
+        text=(
+            "When you open EDMC, switch modes, or expand or collapse a section, the window grows or shrinks "
+            "to show everything, so you don't have to drag it taller. Your width and window position are "
+            "never changed. Turn this off if you prefer to set the height yourself."
+        ),
+        wraplength=440, justify=tk.LEFT,
+    ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+
+    _suggest_var = tk.BooleanVar(value=config.get_bool(system_names.CFG_REMOTE, default=False))
+    nb.Checkbutton(
+        frame, text="Suggest system names from Spansh while typing", variable=_suggest_var,
+    ).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(10, 2))
+    nb.Label(
+        frame,
+        text=(
+            "Boxes that take a system name (the Expedition window, the trader finder, Where to buy and others) always suggest the systems you "
+            "have been in and ones WFMT already holds. Ticking this also asks Spansh for matching systems as you type, from the third letter "
+            "and after a short pause. What you have typed so far goes to Spansh, nothing else. Off until you tick it."
+        ),
+        wraplength=440, justify=tk.LEFT,
+    ).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+
+    nb.Label(frame, text="Mode buttons on the main panel", font=("TkDefaultFont", 9, "bold")).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(10, 2))
+    nb.Label(
+        frame,
+        text=("Untick a mode you do not use to hide its button and panel. A hidden mode keeps working in the background (its overlays and tracking run as before). "
+              "At least one stays; if you untick them all, none is hidden."),
+        wraplength=440, justify=tk.LEFT,
+    ).grid(row=5, column=0, sticky=tk.W, padx=10, pady=(0, 4))
+    _mode_vars.clear()
+    modes_row = tk.Frame(frame)
+    modes_row.grid(row=6, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+    for index, (key, label) in enumerate(PANEL_MODES):
+        _mode_vars[key] = tk.BooleanVar(value=not config.get_bool(CONFIG_MODE_HIDDEN + key, default=False))
+        nb.Checkbutton(modes_row, text=label, variable=_mode_vars[key]).grid(row=index // 4, column=index % 4, sticky=tk.W, padx=(0, 12))
+
+
+def _create_updates_tab(notebook: nb.Notebook) -> None:
+    global _auto_update_var
+
+    frame = nb.Frame(notebook)
+    frame.columnconfigure(0, weight=1)
+    notebook.add(frame, text="Updates")
+
+    _auto_update_var = tk.BooleanVar(value=config.get_bool(CONFIG_AUTO_UPDATE, default=False))
+    nb.Checkbutton(
+        frame, text="Automatically download and install updates", variable=_auto_update_var,
+    ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 2))
+
+    HyperlinkLabel(
+        frame, text="Release notes", background=nb.Label().cget("background"), url=RELEASES_PAGE_URL, underline=True,
+    ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(2, 10))
+
+
+def _create_backup_tab(notebook: nb.Notebook) -> None:
+    global _auto_backup_vars
+    frame = nb.Frame(notebook)
+    frame.columnconfigure(0, weight=1)
+    notebook.add(frame, text="Backup")
+    plugin_dir = os.path.dirname(os.path.abspath(__file__))
+    status = tk.StringVar(value="")
+
+    def back_up() -> None:
+        result = data_backup.run_dialog(plugin_dir, __version__, filedialog.askdirectory, config.get_str(data_backup.CFG_FOLDER))
+        if result.ok:
+            config.set(data_backup.CFG_FOLDER, os.path.dirname(result.path))
+        if result.ok or result.error:
+            status.set(result.summary())
+
+    nb.Button(frame, text="Back up my data", command=back_up).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
+    nb.Label(
+        frame, justify=tk.LEFT, wraplength=420,
+        text="Saves everything WFMT has recorded about your play (expeditions and the Expedition Log, system surveys and "
+             "visit history, Boxel Survey, Exobiology, the Codex tally, missions, trade, ledgers, mining, notes and more) "
+             "into one zip in a folder you choose. Nothing is changed or sent anywhere. Choose a folder outside the "
+             "WFMT plugin folder, such as Documents or a cloud-synced folder. Raven Colonial keys are left out.",
+    ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+
+    pending_text = tk.StringVar(value="")
+    restore_status = tk.StringVar(value="")
+
+    def show_pending() -> None:
+        waiting = data_backup.pending_restore(plugin_dir)
+        pending_text.set(f"A restore is waiting for the next EDMC start: {waiting.describe()}" if waiting else "")
+        if waiting:
+            cancel_button.grid()
+        else:
+            cancel_button.grid_remove()
+
+    def restore() -> None:
+        path = filedialog.askopenfilename(title="Choose a WFMT data backup", filetypes=[("Zip files", "*.zip"), ("All files", "*.*")],
+                                          initialdir=config.get_str(data_backup.CFG_FOLDER) or os.path.expanduser("~"))
+        if not path:
+            return
+        info = data_backup.inspect_backup(path)
+        if not info.ok:
+            restore_status.set(f"Restore not started: {info.error}")
+            return
+        if not dialogs.confirm(
+                frame, "Restore my data",
+                "Restore this backup?\n\n" + info.describe() + "\n\n"
+                "The files in it replace WFMT's current copies of them when EDMC next starts, for every commander in those files. "
+                "The files they replace are kept in the plugin's backups folder. Nothing changes until you restart EDMC."):
+            return
+        result = data_backup.stage_restore(path, plugin_dir)
+        restore_status.set("Restore ready. Restart EDMC to apply it." if result.error == "" and result.path else f"Restore failed: {result.error}")
+        show_pending()
+
+    def cancel() -> None:
+        data_backup.cancel_pending(plugin_dir)
+        restore_status.set("The waiting restore was cancelled.")
+        show_pending()
+
+    nb.Button(frame, text="Restore my data...", command=restore).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(0, 4))
+    nb.Label(
+        frame, justify=tk.LEFT, wraplength=420,
+        text="Pick a zip made by Back up my data. WFMT checks that it is a WFMT data backup, then applies it the next time EDMC "
+             "starts (it cannot replace files while EDMC is using them). The files it replaces are kept in the plugin's backups "
+             "folder, so a restore can be undone.",
+    ).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(0, 4))
+    nb.Label(frame, textvariable=pending_text, justify=tk.LEFT, wraplength=420).grid(row=5, column=0, sticky=tk.W, padx=10)
+    cancel_button = nb.Button(frame, text="Cancel the waiting restore", command=cancel)
+    cancel_button.grid(row=6, column=0, sticky=tk.W, padx=10, pady=(2, 0))
+    nb.Label(frame, textvariable=restore_status, justify=tk.LEFT, wraplength=420).grid(row=7, column=0, sticky=tk.W, padx=10, pady=(2, 10))
+    show_pending()
+
+    auto = data_backup.auto_settings(config)
+    enabled_var = tk.BooleanVar(value=auto.enabled)
+    folder_var = tk.StringVar(value=auto.folder)
+    days_var = tk.StringVar(value=str(auto.days))
+    _auto_backup_vars = (enabled_var, folder_var, days_var)
+
+    def choose_folder() -> None:
+        chosen = filedialog.askdirectory(title="Choose where automatic backups go", initialdir=folder_var.get() or os.path.expanduser("~"))
+        if chosen:
+            folder_var.set(chosen)
+
+    nb.Checkbutton(frame, text="Back up automatically", variable=enabled_var).grid(row=8, column=0, sticky=tk.W, padx=10, pady=(0, 2))
+    row = nb.Frame(frame)
+    row.grid(row=9, column=0, sticky=tk.W, padx=10)
+    nb.Label(row, text="Every").grid(row=0, column=0)
+    tk.Spinbox(row, from_=1, to=90, width=4, textvariable=days_var).grid(row=0, column=1, padx=4)
+    nb.Label(row, text="days, when EDMC starts, into").grid(row=0, column=2)
+    nb.Button(row, text="Choose folder...", command=choose_folder).grid(row=0, column=3, padx=(6, 0))
+    nb.Label(frame, textvariable=folder_var, justify=tk.LEFT, wraplength=420).grid(row=10, column=0, sticky=tk.W, padx=10, pady=(2, 0))
+    nb.Label(
+        frame, justify=tk.LEFT, wraplength=420,
+        text=f"Needs a folder outside the plugin folder. A backup is also made just before an update installs. Automatic backups are named "
+             f"WFMT-data-auto-... and only the newest {data_backup.AUTO_KEEP} are kept; backups you make with the button are never deleted.",
+    ).grid(row=11, column=0, sticky=tk.W, padx=10, pady=(2, 10))
+
+
+_auto_backup_vars: Optional[Tuple[tk.BooleanVar, tk.StringVar, tk.StringVar]] = None
+
+
+def _create_help_tab(notebook: nb.Notebook) -> None:
+    frame = nb.Frame(notebook)
+    frame.columnconfigure(0, weight=1)
+    notebook.add(frame, text="Help")
+
+    nb.Button(frame, text="Report an issue", command=issue_report.open_report).grid(
+        row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
+    nb.Label(
+        frame, justify=tk.LEFT, wraplength=420,
+        text="Opens a new bug report on GitHub in your browser, with the WFMT, EDMC and Python versions and your "
+             "operating system already filled in. Nothing is sent until you submit it there with your own GitHub "
+             "account; you can read and change everything first. No commander name, system or file path is included.",
+    ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+
+    copy_status = tk.StringVar(value="")
+
+    def copy_diagnostics() -> None:
+        copy_status.set("Copied. Paste it into the report's log box." if issue_report.copy_diagnostics(frame)
+                        else "Could not copy to the clipboard.")
+
+    nb.Button(frame, text="Copy diagnostics", command=copy_diagnostics).grid(
+        row=2, column=0, sticky=tk.W, padx=10, pady=(0, 4))
+    nb.Label(
+        frame, justify=tk.LEFT, wraplength=420,
+        text="Copies the same version lines plus the newest WFMT lines from EDMC's log to the clipboard, to paste into "
+             "the report. Your commander name is replaced by <commander> and your home folder by ~ before copying. "
+             "Nothing leaves your computer until you paste it into a report and submit it.",
+    ).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(0, 4))
+    nb.Label(frame, textvariable=copy_status).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+
+
+_mode_vars: Dict[str, tk.BooleanVar] = {}
+
+
+def save_prefs() -> None:
+    if _mode_vars:
+        shown = {key for key, var in _mode_vars.items() if var.get()} or set(_mode_vars)     # all unticked: show every mode
+        for key in _mode_vars:
+            config.set(CONFIG_MODE_HIDDEN + key, key not in shown)
+        _apply_mode_buttons()
+    if _fit_height_var is not None:
+        config.set(CONFIG_FIT_HEIGHT, bool(_fit_height_var.get()))
+        if _fit_height_var.get() and _frame is not None:
+            _schedule_window_fit()
+    if _auto_update_var is not None:
+        config.set(CONFIG_AUTO_UPDATE, bool(_auto_update_var.get()))
+    if _suggest_var is not None:
+        config.set(system_names.CFG_REMOTE, bool(_suggest_var.get()))
+    if _auto_backup_vars is not None:
+        enabled, folder, days = _auto_backup_vars
+        config.set(data_backup.CFG_AUTO, bool(enabled.get()))
+        config.set(data_backup.CFG_AUTO_FOLDER, folder.get().strip())
+        try:
+            config.set(data_backup.CFG_AUTO_DAYS, min(90, max(1, int(days.get()))))
+        except ValueError:
+            pass            # a half-typed number keeps the last good value
+
+    overlay.save_settings()
+    overlay_placement.save_settings()
+    shortcuts.save_settings()
+    overlay_appearance.save_settings()
+    for feature in FEATURES:
+        if hasattr(feature, "save_settings"):
+            feature.save_settings()
+
+
+# --- Update-status slot ("Updated to vX") ---------------------------------
+
+# The state is kept here as well as on the label: the update check can finish (and the "Updated to" notice is raised) before EDMC
+# has built the panel, so the label is brought up to date when it is created (see _show_version_state).
+_version_state: str = "idle"
+_version_new: str = ""
+
+
+def version_line(state: str, new_version: str = "", current: str = __version__) -> str:
+    """The text of the plugin line above the game-mode line for an update `state`."""
+    if state == "downloading":
+        return f"Plugin: v{current} (downloading v{new_version}...)"
+    if state == "downloaded":
+        return f"v{new_version} download - Restart EDMC"
+    if state == "updated":
+        return f"Plugin: v{current} (updated)"
+    return f"Plugin: v{current}"
+
+
+def set_update_downloading(version: str) -> None:
+    _set_version_state("downloading", version)
+
+
+def set_update_downloaded(version: str) -> None:
+    _set_version_state("downloaded", version)
+
+
+def set_update_applied(version: str) -> None:
+    _set_version_state("updated", version)
+    _schedule_clear_updated()
+
+
+def _schedule_clear_updated() -> None:
+    if _frame is not None and _version_state == "updated":
+        _frame.after(_UPDATED_MESSAGE_DURATION_MS, _clear_updated_state)
+
+
+def _set_version_state(kind: str, version: str) -> None:
+    global _version_state, _version_new
+    _version_state, _version_new = kind, version
+    _show_version_state()
+
+
+def _show_version_state() -> None:
+    """Bring the label up to date. 'A restart is needed' is bold black on orange so it cannot be missed; 'updated' is green."""
+    global _version_natural
+    label = _version_label
+    if label is None:
+        return
+    try:
+        label["text"] = version_line(_version_state, _version_new)
+        if _version_natural is None and _version_state != "idle":
+            _version_natural = (label.cget("background"), label.cget("foreground"), label.cget("font"))
+        if _version_state == "downloaded":
+            label.configure(background=_ATTENTION_BG, foreground=_ATTENTION_FG, font=panelkit.bold_font(label))
+            label.after(_ATTENTION_REASSERT_MS, _reassert_attention)
+        elif _version_state == "updated":
+            label.configure(foreground=_UPDATED_COLOR, font=panelkit.bold_font(label))
+        elif _version_natural is not None:
+            bg, fg, font = _version_natural
+            label.configure(background=bg, foreground=fg, font=font)
+    except tk.TclError:
+        logger.debug("Could not update the plugin version line", exc_info=True)
+
+
+def _reassert_attention() -> None:
+    """EDMC re-themes labels when the theme changes, which would drop the colors; put them back while the restart is pending."""
+    if _version_state == "downloaded":
+        _show_version_state()
+
+
+def _clear_updated_state() -> None:
+    if _version_state == "updated":
+        _set_version_state("idle", "")

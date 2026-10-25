@@ -1,0 +1,44 @@
+#!/bin/sh
+# Checks a commit message before the commit is made, so a message that breaks the project's rules has to be changed to be accepted.
+#
+# 1. No co-author lines and no "generated with" notes. The one place for acknowledgements is docs/ATTRIBUTIONS.md.
+# 2. Form: a subject of at most 72 characters (aim for about 50), starting with a capital and not ending in a period; a blank line after it;
+#    body lines wrapped at 80 or fewer characters (aim for about 72). Indented lines and URLs may run longer.
+# 3. Content (whole words only, so "loops" is fine and "oops" is not): no echo of who asked for the change ("as requested", "you asked") and no chatty asides or exclamations. Say what the change does and why.
+#
+# Merge, revert, fixup and squash messages are left alone. tests/test_commit_msg_hook.py runs this script on sample messages.
+msg="$1"
+
+if grep -qiE "^co-authored-by:|^generated (with|by)|^🤖" "$msg"; then
+  echo "commit-msg: remove the co-author / generated-with line from the commit message." >&2
+  exit 1
+fi
+
+case "$(grep -v '^#' "$msg" | sed -n '1p')" in
+  "Merge "*|"Revert "*|"fixup!"*|"squash!"*|"amend!"*) exit 0 ;;
+esac
+
+grep -v '^#' "$msg" | LC_ALL=C awk '
+  function bad(text) { print "commit-msg: " text > "/dev/stderr"; failed = 1 }
+  function width(line,   copy) { copy = line; gsub(/[\200-\377]+/, "x", copy); return length(copy) }
+  { sub(/\r$/, ""); all = all "\n" tolower($0) }
+  NR == 1 {
+    subject = $0
+    if (subject == "") { bad("the message starts with a blank line; the first line is the subject."); next }
+    if (width(subject) > 72) bad("the subject is " width(subject) " characters; keep it to about 50 and never more than 72.")
+    if (subject ~ /\.[ \t]*$/) bad("the subject ends with a period; leave it off.")
+    if (subject !~ /^[A-Z0-9]/) bad("start the subject with a capital letter (an imperative verb, such as \"Add\" or \"Fix\").")
+    next
+  }
+  NR == 2 && $0 != "" { bad("leave a blank line between the subject and the body.") }
+  NR >= 2 && width($0) > 80 && $0 !~ /^[ \t]/ && $0 !~ /:\/\// {
+    bad("line " NR " is " width($0) " characters; wrap the body at about 72 (80 at most).")
+  }
+  END {
+    n = split("as requested|per your request|at your request|per the request|you asked|you requested|you wanted|user asked|user requested|as you asked|as you said|as discussed|per feedback|i asked|oops|whoops|sketchy|lol", phrases, "|")
+    for (i = 1; i <= n; i++)
+      if (all ~ ("(^|[^a-z0-9])" phrases[i] "($|[^a-z0-9])")) bad("remove \"" phrases[i] "\": describe what the change does and why, not who asked or how it went.")
+    if (all ~ /!/) bad("remove the exclamation mark: keep the message plain and factual.")
+    exit failed
+  }
+'

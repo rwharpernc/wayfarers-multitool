@@ -1,0 +1,108 @@
+# What goes on the internet
+
+Most of WFMT works entirely on your own computer, reading the game's journal files.
+
+The journal is all a third-party tool is given about your play, and not everything is logged. So a few features add to it from outside: data the community reports (Spansh, EDSM, Canonn, edastro, Raven Colonial) and figures Frontier's servers give a signed-in EDMC.
+
+This page lists **every** feature that contacts an outside site, so you can decide what you're comfortable with. See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
+
+**The short version:** most lookups only run when you click a button or after you switch them on in Settings. The exceptions are:
+
+- **BGS tick detection** is on by default (turn it off in Settings → WFMT → BGS).
+- The **Rare Goods Finder** and **Codex "Not found" tab** have no on/off setting and contact their service when you open them.
+
+The table says exactly when.
+
+**All the switches in one place:** Settings → WFMT → General → Online lookups lists every one of them, whether it is on now, who it asks and which Settings page changes it.
+
+- Its list shows what is saved and has no controls.
+- The one set of controls on the page is the **Local star index** (see the second row of the table below).
+
+| Feature | Contacts | When |
+|---|---|---|
+| N.S. and W.D. buttons (nearest neutron star / white dwarf) | Spansh | Only when you click **N.S.** or **W.D.** With the local star index installed (next row) and left on, **N.S.** asks nothing; **W.D.** always asks |
+| Local star index: **Download and build** and **Update** (Settings → WFMT → General → Online lookups) | Spansh's download server (`downloads.spansh.co.uk`) | Only when you press **Download and build** or **Update**; never on its own. A plain GET for one public file per press (about 173 MB for the first download, 3 to 19 MB for an update); the only thing sent is WFMT's User-Agent (its name, version and project address). Nothing about you.<br><br>**Update** asks for less: when your index is recent it fetches one of Spansh's small update files instead (`systems_1day.json.gz`, about 3 MB, or `systems_1week.json.gz`, about 19 MB; the systems that changed since a recent midnight) and merges it in, sending the date of your index first so a file that has not changed is not downloaded again.<br><br>It downloads the whole file again only when your index is more than a week behind, after 20 updates, or if the update file does not reach back far enough. A download that was cancelled or cut off continues where it stopped.<br><br>The file is turned into an index of about 110 MB in the plugin folder and then deleted.<br><br>The index is optional and WFMT works fully without it. The switch **Use the local index for N.S.** (on by default) only decides whether the button uses the index; it asks for nothing |
+| Rare Goods Finder | Spansh | When you open the window, to see which Power controls each listed rare's origin system. With **Only my Power** ticked it also asks about further origin systems, ten at a time and nearest first, until enough match your Power (at most all 141). Remembered until you restart EDMC |
+| Codex Completionist "Not found" tab | Canonn (its data service runs on Google's cloud) | Downloads a list when you open the details window (if it has none, or it's over two weeks old), or when you click **Refresh Catalog** |
+| POI Reference: GEC | edastro.com | Only when you click **FIND**: the first press of a session downloads their whole list (about 2 MB), then it is reused for six hours |
+| POI Reference: Canonn | Canonn's published site lists, which are hosted on Google Sheets and Google Drive, so Google also sees the request | Downloads the lists when you click **FIND** |
+| Boxel Survey lookups, and the RND button | EDSM (and Spansh for Region Sweep and RND) | When you use its lookup buttons. Some automatic checks are optional in Settings. RND sends your current position to Spansh to find systems near you, and keeps the answer in memory only, for 10 minutes |
+| Materials: Find a trader (button in the Materials window) | Spansh | Only when you press **Find**. Sends the system you search from and the type of material trader (Raw, Manufactured or Encoded), and nothing about you. The same search within two minutes is answered from memory |
+| Nearest place to land (the window opened by FIND in the Exploration panel) | Spansh | Only when you press **Find**, and only after you tick the box that allows it. Sends your position (three coordinates), the landing pad size, the services you ticked and how fresh fleet carrier records must be, and nothing about you. The same question within two minutes is answered from memory |
+| System-name suggestions (every box that takes a system name) | Spansh | **Off** until you tick *Suggest system names from Spansh while typing* (Settings → WFMT → General → Window). Once on, the part of the name you have typed so far goes to Spansh's system-name search, from the third letter and after a short pause, so a list of matching systems can appear. Nothing else is sent. The answers are kept in memory for the session. Without it the boxes still suggest the systems you have been in and the ones WFMT already holds, with no network |
+| Route Planner (**PLOT** on the Exploration panel, then **Generate route**) | Spansh | Only when you press **Generate route**. First looks up the destination (and the source, if it is not where you are) by name, then sends the two systems' ids and your ship's numbers: its mass, fuel tank, cargo, and the frame shift drive's figures and any Guardian booster, plus your choices. Nothing else, and nothing about you.<br><br>Once the route is ready, and as you progress along it, it also asks Spansh for the stars of the next dozen neutron stops (`/api/system/<address>`, one request each, by system address), to flag a neutron star that is probably a secondary star. The route is kept in the window only.<br><br>With *Mark white dwarfs the route passes (asks EDSM)* ticked it then sends **EDSM** the names of the route's systems, in requests of 40, and nothing else |
+| Carrier Route (the **Carrier route** button in the Route Planner, then **Generate route**) | Spansh | Only when you press **Generate route**. Looks up the destination (and the start, if it is not where your carrier is) by name, then sends the systems' ids and your carrier's size, the space it uses and its tritium (all from your journal), and waits for the answer (`POST /api/fleetcarrier/route`, then `GET /api/results/<job>`, about every 5 seconds; WFMT stops waiting after 5 minutes). Nothing about you or your carrier's name is sent |
+| Expedition: Road to Riches and Exomastery (buttons in the Expedition window, then **Plot**) | Spansh | Only when you press **Plot**. Sends the system you start from (and the one you end at, if you typed one) and the numbers you chose: jump range, radius, results, distance and least worth. Nothing else, and nothing about you. The answer is kept as an expedition on your computer |
+| Expedition: Add stop, Save changes and Import CSV (when *Check system names on EDSM* is ticked, which it is until you untick it) | EDSM | When you add or change a stop. Sends only the system name (all the names of an imported file, 50 to a request), so EDSM can say how it spells the system and where it is. Nothing about you. The spelling and position are kept with the stop |
+| Expedition: Locate and reorder (button in the Expedition window) | EDSM | Only when you press it. Sends the names of the unvisited stops that have no position yet, in one request, and nothing about you. The positions are kept with the expedition |
+| System targets: *Also look up bodies other commanders have scanned* (Settings → WFMT → Overlays → System targets) | EDSM | **Off** until you tick it. Once on, it asks EDSM once per system, right after you honk, for the planets other commanders have scanned. Sends only the system name, and nothing about you |
+| System targets: *Also look up the life and points of interest other commanders found in the system* (Settings → WFMT → Overlays → System targets) | Spansh | **Off** until you tick it. Once on, it asks Spansh once per system, when you arrive (or tick it while in the system), for what other commanders found there: biology with its reward, wrecks, beacons and Guardian sites. Sends only the system's number, and nothing about you. The answer is kept in memory for the session and not saved |
+| Exploration Value extras | Spansh, EDSM | **Off** until you turn them on in Settings |
+| Report an issue (Settings → WFMT → General → Help) | github.com (opened in your browser, not by WFMT) | Only when you press **Report an issue**. Opens a new-issue page with the WFMT, EDMC and Python versions and your operating system in the address. WFMT sends nothing itself; the page is GitHub's, and nothing is filed unless you submit it. No commander name, system or path is included ([how to use it](reporting-problems.md)) |
+| Route overlay: mark systems EDSM does not know (Settings → WFMT → Overlays → Route, **off by default**) | EDSM | One request, in the background, for the names of the next systems on your plotted route (up to 30) when the route changes, and again after a failed request (not sooner than 5 minutes) or for systems EDSM did not know (after 10 minutes). Sends system names only, nothing about you |
+| Mining lookups (hotspots, prices, ring reserves, a system's bodies; Market research, What pays and Get body info in the Mining Book) | Spansh, EDSM | **Off** until you turn them on in Settings. Once on, the ring reserve lookup also runs by itself each time you drop into a ring |
+| Colonization: Planned Builds (Raven Colonial menu in the Colonization Sites window) | Raven Colonial (ravencolonial.com) | Only when you press **Planned Builds** or **Refresh** in that window. Sends the name of the site's system and nothing else; answers are remembered for a minute. It only reads |
+| Colonization: sharing progress with Raven Colonial (Settings → WFMT → Colonization → Raven Colonial, **off by default**) | Raven Colonial (ravencolonial.com) | Only live events, one request each, and only for a site Raven already has a project for (WFMT first reads the system's plan to find it).<br><br>**Progress:** the depot's figures and what is still needed of each commodity. <br>**Deliveries:** the commodities and tons you hand over, under your commander name, plus a one-time link of your commander to the project. <br>**Carrier cargo** (a second switch): the tons moved to and from your fleet carrier, as plus and minus amounts.<br><br>Every write needs your Raven key, which goes in a header (with your commander name, as Raven Colonial's own web page sends them) and nowhere else; with no key nothing is looked up or sent. Nothing from before the event, and no other journal data |
+| Colonization: Raven Progress (button in the Colonization Sites window) | Raven Colonial (ravencolonial.com) | Only when you press it. Reads the system's plan, then that project's figures; sends only the system name and the project's id |
+| Colonization: links to Raven Colonial (Settings, and the Raven Colonial menu in the Colonization Sites window) | Raven Colonial (ravencolonial.com) | Only when you click one. It opens the page in your web browser; WFMT itself sends nothing, except that **Open Selected Build on Raven** first makes the same one-read lookup of the system's plan as Raven Progress, to find the project's address |
+| Colonization: Test key (Settings → WFMT → Colonization → Raven Colonial) | Raven Colonial (ravencolonial.com) | Only when you press **Test key**. One read (`GET /api/Cmdr/_`) carrying your key in a header and nothing else; it changes nothing on Raven |
+| Colonization: Report Complete to Raven (Raven Colonial menu in the Colonization Sites window) | Raven Colonial (ravencolonial.com) | Only when you press **Report Complete to Raven** on a site your journal shows complete and confirm. Sends your Raven Colonial key and that one project's id (an empty request to its `complete` address), after first reading the system's plan to find the project. No deliveries, cargo or journal data |
+| Colonization: Where to buy (**Find nearest**, **Find all**) | Spansh | Only when you press the button. Sends the commodity name and the system you search around, one request per commodity for **Find all**, plus one that sends the names of all of them together to find a station that sells the whole list (and, when the route still leaves two or more uncovered, one more with just those names). A commodity a single station can supply in full is not searched on its own. Identical searches are answered from memory for 2 minutes |
+| Trade: Watch list REFRESH (Trade row, or Refresh from Spansh in its window) | Spansh | **Off** until you turn Trade lookups on in Settings, and then only when you press it. Two requests per watched commodity (cheapest to buy, dearest to sell), about 0.4 seconds apart. Sends the commodity name and the system you search around, nothing about you. The prices WFMT keeps from the markets you open come from the game's own file and are not sent anywhere |
+| Trade: Best picks; Missions: Source commodities | Spansh | **Off** until you turn Trade lookups on in Settings, and then only when you press **Best picks** or **Find sources**. About four requests (five with carriers) per commodity, one after another with a short pause; sends the commodity name, the system you search around and your landing pad size |
+| Trade lookups (best routes; where to buy or sell a commodity) | Spansh | **Off** until you turn them on in Settings. See below for how often |
+| BGS tick detection | A community tick-time service (`tick.infomancer.uk`) | **On** by default. About every 60 seconds while **Detect BGS ticks** is ticked, even if the BGS section itself is switched off. Can be turned off in Settings → WFMT → BGS. The service has no HTTPS, so this one request is **unencrypted**; it asks only for the time of the last tick and sends nothing about you but WFMT's name and version |
+| Automatic updates | GitHub | **Off** by default |
+
+Links that open a web page (Inara, Canonn or edastro.com pages, GitHub) open it in **your browser**, only when you click them; that is your
+browser connecting, not WFMT.
+
+### How often do Trade lookups ask?
+
+Only when you press a button:
+
+- **Find routes**: sends one request, then checks for the answer every 5 seconds, for up to 4 minutes, until you
+  press **Cancel**.
+- **Near me** / **Galaxy**: two requests each (stations, then fleet carriers). One if you hide carriers.
+- **Best picks**: about four requests (five with carriers), one after another. **Find sources** in Missions: the same, per commodity, one commodity at a time.
+- **Round trip**: one to three requests of up to 100 stations each.
+
+## What never goes online
+
+Everything else makes **no internet connection at all**:
+
+- Powerplay tracking, Missions, Inventory and Screenshots.
+- Copy diagnostics (clipboard only).
+- The Missions overlay card and window (with pinned missions).
+- The Ship planner. It reads a loadout or an import link you paste, and your own journal for the ship you fly. Its **Open in Coriolis** and **Open in EDSY** buttons only open your browser at that site when you press them, with the loadout in the address.
+- The Upgrade planner (your own journal for the gear you own).
+- Colonization tracking, history and the shopping list overlay. Where to buy and Planned Builds are the only parts that go online, above.
+- Organic Scanning, Ship Builds, Landing Assist and Interdiction Warning.
+- Mining History and both Mining Books (the Space Mining Book and the Surface Mining Book read your journals and send nothing), and the mining alerts.
+- Trade's session profit, stock, carrier cargo and History, and the Watch list's prices from the markets you open.
+
+The **overlays** send nothing outside your computer either:
+
+- WFMT's built-in overlay (Windows) is a window drawn on your own screen.
+- With EDMCModernOverlay, WFMT talks to it over a local connection on your own computer (`127.0.0.1`).
+- Fonts are files on your disk: WFMT downloads none, and the font section only copies a file you pick.
+- Converted screenshots with the overlay drawn on them stay on your disk.
+
+The one overlay feature that goes online, and only when you press a button, is the opt-in EDSM lookup for System targets, above.
+
+## How WFMT keeps its traffic low
+
+WFMT is built to ask these services for as little as it can:
+
+- Lookups are started by **you**, or switched on by **you**.
+- Answers are remembered, so asking twice doesn't mean two requests.
+- Every request says who it's from.
+- Requests to Spansh are spaced out, never more than two at once, retried with growing waits when Spansh is busy, and paused for five minutes after repeated failures.
+- The page [How WFMT uses Spansh](../SPANSH_USAGE.md) lists every Spansh request WFMT makes, what starts it and how many it sends.
+
+The technical details are in [TECHNICAL.md](../TECHNICAL.md#keeping-api-traffic-low).
+
+## Please support the services
+
+These services are run and funded by volunteers. If WFMT is useful to you, please consider supporting them: the
+[Acknowledgements](../ATTRIBUTIONS.md) page has links.

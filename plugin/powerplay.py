@@ -1,0 +1,1342 @@
+"""Powerplay mode: tracks the commander's pledged Power/merit total, the
+current system's PowerPlay context, classifies which activity a batch of
+merits most likely came from, and turns that into a session-scoped merit/CP
+tally (see session.py/store.py/formulas.py).
+
+The journal has no field that says "these merits came from Acquisition" —
+that has to be inferred from where the commander is when they earn them.
+FSDJump/Location/Docked report a system's "PowerplayState" and "Powers" (the
+controlling power, or the powers contesting it) whenever the system is
+powerplay-relevant. Comparing that to the commander's own pledged power tells
+us whether being there helps acquire an unclaimed system, reinforce one's own
+power's hold on it, or undermine a rival's.
+
+`PowerplayController` (bottom of the tracker section) is this feature's one
+entry point for `load.py` — it owns the tracker/session singletons, the
+main-panel widgets (`build_panel`), and the Settings tab (`build_settings`/
+`save_settings`), per the standard feature-module contract every mode
+follows.
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+import os
+import queue
+import threading
+from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, List, Mapping, Optional, Tuple
+
+import tkinter as tk
+from tkinter import ttk
+
+import myNotebook as nb
+from config import appname, config
+from monitor import monitor
+
+from . import catchup_status, panelkit
+from .megaship_scans import MegaShipTracker
+from .formulas import (
+    ACQUISITION, ACTIVITIES, ACTIVITY_LABELS, DEFAULT_RATIOS, DELIVERY, NO_CP_ACTIVITIES,
+    REINFORCEMENT, UNDERMINING, UNKNOWN, merits_to_cp,
+)
+from .powerplay_clipboard import DEFAULT_TEMPLATE as DEFAULT_CLIPBOARD_TEMPLATE
+from .powerplay_clipboard import PLACEHOLDERS as CLIPBOARD_PLACEHOLDERS
+from . import powerplay_backfill, powerplay_state
+from .powerplay_backfill import OP_MEGASHIP, OP_MEGASHIP_MERITS, OP_MERITS, OP_SNAPSHOT, Op, ScanResult
+from .powerplay_ledger import parse_ts as _parse_ts
+from .powerplay_ledger import (
+    DEFAULT_BACKFILL_CYCLES, MAX_BACKFILL_CYCLES, SCAN_NONE, SCAN_REBUILD, PowerplayLedger, ScanPlan, TabPrefs,
+    parse_snapshot,
+)
+from .session import (
+    SessionManager, system_merit_total, system_totals, total_merits,
+)
+from .store import SessionStore
+
+plugin_name = os.path.basename(os.path.dirname(__file__))
+logger = logging.getLogger(f"{appname}.{plugin_name}")
+
+# This mode's own main-panel/Settings-tab placement. ui.py builds this
+# feature's widgets into the "powerplay" mode frame and calls
+# build_settings/save_settings generically; it never reaches into this
+# module's internals beyond that.
+PANEL_PLACEMENT = "powerplay"
+
+_INFO_COLOR = "#1565c0"
+
+# PowerplayState values that mean "a single power has already secured this
+# system" — under one of these, whether it's *our* power or a rival's Powers
+# entry is what separates Reinforcement from Undermining. Anything else means
+# nobody has it secured yet, so effort there is Acquisition. The exact set of
+# state names Frontier uses isn't documented (the last official journal
+# manual predates Powerplay 2.0); this list covers both the legacy and
+# current names seen in the wild and is deliberately conservative — an
+# unrecognized state falls through to Acquisition rather than guessing wrong.
+_CONTROLLED_STATES = {"exploited", "fortified", "stronghold", "controlled", "homesystem"}
+
+# "SearchAndRescue" is shared by several mechanics (Thargoid War salvage,
+# regular mission hand-ins, PowerPlay commodity delivery) — Frontier's
+# PowerPlay commodity item names ("PowerAgriculture", "PowerComputer", etc.)
+# all share this prefix, which is how a PowerPlay hand-in is told apart from
+# the others.
+_POWER_COMMODITY_PREFIX = "power"
+
+# "PowerplayDeliver" (Type, Count, Power) is the event Powerplay 2.0 writes for every commodity or data hand-in, just
+# before the "PowerplayMerits" it earns: usually one or two merit events within a second or two, but sometimes a few
+# minutes later. So a hand-in claims the first merit event that follows within DELIVERY_FIRST_MERIT_S, and any merit
+# event within DELIVERY_FOLLOW_ON_S of the last one it claimed. The older "SearchAndRescue" / "DeliverPowerMicroResources"
+# signals are kept for journals that predate it, and ignored once a PowerplayDeliver has been seen (they arrive
+# after the merits there, so they would claim the wrong one).
+DELIVERY_FIRST_MERIT_S = 600
+DELIVERY_FOLLOW_ON_S = 10
+
+# Pledge status, resolved once per game session (see apply_login_reset /
+# confirm_not_pledged_if_unresolved).
+PLEDGE_UNKNOWN = "unknown"
+PLEDGED = "pledged"
+NOT_PLEDGED = "not_pledged"
+
+
+class PowerplayTracker:
+    """Commander's pledged Power/merit total, plus the PowerPlay state of 'here'."""
+
+    def __init__(self) -> None:
+        self.my_power: Optional[str] = None
+        self.rank: Optional[int] = None
+        self.total_merits: Optional[int] = None
+        self.system_name: Optional[str] = None
+        self.system_state: Optional[str] = None
+        self.system_powers: List[str] = []
+        self.system_controller: Optional[str] = None
+        self.pledge_status: str = PLEDGE_UNKNOWN
+        self._delivery_pending: bool = False
+        self._delivery_deadline: Optional[datetime] = None   # the pending hand-in's first merit must come by then
+        self._delivery_chain_until: Optional[datetime] = None  # further merits up to here belong to the same hand-in
+        self._saw_powerplay_deliver: bool = False
+        self._merit_when: Optional[datetime] = None          # timestamp of the PowerplayMerits being classified
+
+    def apply_login_reset(self) -> None:
+        """
+        "LoadGame": start of a fresh game session.
+
+        The journal only ever tells us "you ARE pledged" (the "Powerplay"
+        event, written alongside LoadGame at startup if pledged) — there's no
+        "you are NOT pledged" event. So pledge_status goes back to unknown
+        here, and confirm_not_pledged_if_unresolved() (called on the next
+        always-fires "Location" event) resolves it to NOT_PLEDGED if no
+        "Powerplay" event showed up in between.
+        """
+        self.my_power = None
+        self.rank = None
+        self.total_merits = None
+        self.pledge_status = PLEDGE_UNKNOWN
+        self._delivery_pending = False
+        self._delivery_deadline = None
+        self._delivery_chain_until = None
+
+    def apply_delivery_signal(self, event: str, entry: Mapping[str, Any]) -> None:
+        """
+        "SearchAndRescue" (PowerPlay commodities only) or
+        "DeliverPowerMicroResources" (on-foot PowerPlay data): a hand-in at a
+        power contact. Frontier's journal doesn't link this to the
+        "PowerplayMerits" event it triggers, so mark the *next* merit gain as
+        a delivery rather than guessing an activity from system state — a
+        hand-in's target (Acquisition/Reinforcement/Undermining) is chosen
+        in-game and isn't reported either, so DELIVERY is tracked by merit
+        count only, same as UNKNOWN (see formulas.NO_CP_ACTIVITIES).
+        """
+        if event == "PowerplayDeliver":
+            self._saw_powerplay_deliver = True
+            self._delivery_pending = True
+            when = _parse_ts(entry.get("timestamp"))
+            self._delivery_deadline = when + timedelta(seconds=DELIVERY_FIRST_MERIT_S) if when else None
+            return
+        if self._saw_powerplay_deliver:
+            return   # the legacy signals arrive after the merits once PowerplayDeliver exists
+        if event == "DeliverPowerMicroResources":
+            self._delivery_pending = True
+            return
+        if event == "SearchAndRescue":
+            name = str(entry.get("Name", "")).lower()
+            if name.startswith(_POWER_COMMODITY_PREFIX):
+                self._delivery_pending = True
+
+    def apply_login_snapshot(self, entry: Mapping[str, Any]) -> None:
+        """"Powerplay" event: written at startup if the commander is pledged."""
+        power = entry.get("Power")
+        self.my_power = str(power) if power else None
+        self.pledge_status = PLEDGED if self.my_power else NOT_PLEDGED
+        rank = entry.get("Rank")
+        if isinstance(rank, int):
+            self.rank = rank
+        merits = entry.get("Merits")
+        if isinstance(merits, int):
+            self.total_merits = merits
+
+    def confirm_not_pledged_if_unresolved(self) -> bool:
+        """
+        Call on "Location" (always fires once at startup, after "Powerplay"
+        would have if pledged). Returns True if this call just resolved the
+        status to NOT_PLEDGED.
+        """
+        if self.pledge_status == PLEDGE_UNKNOWN:
+            self.pledge_status = NOT_PLEDGED
+            return True
+        return False
+
+    def apply_join(self, entry: Mapping[str, Any]) -> None:
+        power = entry.get("Power")
+        self.my_power = str(power) if power else self.my_power
+        self.pledge_status = PLEDGED if self.my_power else self.pledge_status
+        # A fresh pledge starts at Rank 0; only trust an explicit field though.
+        rank = entry.get("Rank")
+        self.rank = rank if isinstance(rank, int) else 0
+
+    def apply_leave(self, entry: Mapping[str, Any]) -> None:
+        self.my_power = None
+        self.rank = None
+        self.total_merits = None
+        self.pledge_status = NOT_PLEDGED
+
+    def apply_defect(self, entry: Mapping[str, Any]) -> None:
+        to_power = entry.get("ToPower")
+        self.my_power = str(to_power) if to_power else None
+        self.pledge_status = PLEDGED if self.my_power else self.pledge_status
+        # Merits and rank don't carry over to the new power; start fresh so
+        # the next PowerplayMerits event's TotalMerits diff isn't a huge,
+        # wrong number, and so the old power's rank isn't shown against the
+        # new one until "PowerplayRank" corrects it.
+        self.total_merits = None
+        rank = entry.get("Rank")
+        self.rank = rank if isinstance(rank, int) else 0
+
+    def apply_pledge_event(self, event: str, entry: Mapping[str, Any]) -> bool:
+        """Apply a pledge-lifecycle event ("Powerplay", join, leave, defect). False if `event` isn't one."""
+        applier = {
+            "Powerplay": self.apply_login_snapshot, "PowerplayJoin": self.apply_join,
+            "PowerplayLeave": self.apply_leave, "PowerplayDefect": self.apply_defect,
+        }.get(event)
+        if applier is None:
+            return False
+        applier(entry)
+        return True
+
+    def apply_rank(self, entry: Mapping[str, Any]) -> None:
+        rank = entry.get("Rank")
+        if isinstance(rank, int):
+            self.rank = rank
+
+    def pledge_summary(self) -> Optional[str]:
+        """Human-readable "Power (Rank N)" string, or None if not pledged."""
+        if not self.my_power:
+            return None
+        if self.rank is not None:
+            return f"{self.my_power} (Rank {self.rank})"
+        return self.my_power
+
+    def apply_system_context(self, system: Optional[str], entry: Mapping[str, Any]) -> None:
+        """FSDJump / Location / Docked: refresh PowerplayState/Powers/ControllingPower for 'here'.
+
+        `system` is EDMC's own live-tracked current system name (the `system`
+        argument `journal_entry` receives, sourced from monitor.state), not
+        parsed from the entry itself — it's the authoritative answer to
+        "where are we right now" regardless of which fields this particular
+        event happens to carry, and lets classify_current_activity() notice
+        when the commander has moved on from the system this context
+        describes (see there).
+        """
+        if "PowerplayState" not in entry and "Powers" not in entry and "ControllingPower" not in entry:
+            # Not a powerplay-relevant system right now. Deliberately don't
+            # clear the previous context here — a Docked event, for instance,
+            # doesn't repeat the fields of the FSDJump that got us here, and
+            # that shouldn't erase a still-valid system context.
+            return
+        self.system_name = system
+        self.system_state = entry.get("PowerplayState")
+        powers = entry.get("Powers")
+        self.system_powers = [str(p) for p in powers] if isinstance(powers, list) else []
+        # "Powers" lists *every* Power active in the system — the controller
+        # plus any rival actively undermining it — so it can have more than
+        # one entry even in a settled Stronghold/Fortified/Exploited system.
+        # "ControllingPower" is the one field that actually names who holds
+        # it; classify_current_activity() relies on this, not on Powers'
+        # length, to tell Reinforcement/Undermining apart in that case.
+        controller = entry.get("ControllingPower")
+        self.system_controller = str(controller) if controller else None
+
+    def apply_merits(self, entry: Mapping[str, Any]) -> Optional[int]:
+        """
+        "PowerplayMerits" event: returns the merits gained, or None if there's
+        nothing usable to report.
+
+        Prefers the event's own "MeritsGained" (community-confirmed field,
+        though undocumented by Frontier); falls back to diffing "TotalMerits"
+        against the last known total, which is what EDMC's own state tracking
+        relies on, so it's a solid fallback if MeritsGained is ever absent.
+
+        Also resolves pledge status if it wasn't already: earning PowerPlay
+        merits is only possible while pledged, so this recovers correctly
+        even if EDMC attached to the game mid-session and never saw this
+        commander's "Powerplay"/"Location" startup events.
+        """
+        power = entry.get("Power")
+        if power and not self.my_power:
+            self.my_power = str(power)
+        if self.pledge_status != PLEDGED:
+            self.pledge_status = PLEDGED
+
+        total = entry.get("TotalMerits")
+        gained = entry.get("MeritsGained")
+        self._merit_when = _parse_ts(entry.get("timestamp"))
+
+        if not isinstance(gained, int):
+            if isinstance(total, int) and self.total_merits is not None:
+                gained = total - self.total_merits
+            else:
+                gained = None
+
+        if isinstance(total, int):
+            self.total_merits = total
+
+        return gained if isinstance(gained, int) and gained > 0 else None
+
+    def classify_current_activity(self, current_system: Optional[str] = None) -> str:
+        """Best-guess activity classification for merits earned right now.
+
+        `current_system` is EDMC's live-tracked system name as of the merit
+        gain (see apply_system_context). If it doesn't match the system our
+        stored PowerplayState/Powers context was captured in, that context is
+        stale — the commander has moved on since the last powerplay-relevant
+        event — so it's better to admit we don't know than to misattribute
+        using a different system's data. Omit it (or pass None) to skip this
+        check and classify from the stored context regardless, as before.
+
+        A pending delivery signal (see apply_delivery_signal) takes priority
+        over all of that — a commodity/data hand-in's merits aren't a guess
+        from system state at all, they're a direct signal of their own, and
+        can be turned in at a different system than where the goods were
+        collected. This also consumes the pending flag, so it only ever
+        applies to the merit gain it actually triggered.
+        """
+        when = self._merit_when
+        if self._delivery_pending:
+            self._delivery_pending = False
+            if when is None or self._delivery_deadline is None or when <= self._delivery_deadline:
+                self._delivery_chain_until = when + timedelta(seconds=DELIVERY_FOLLOW_ON_S) if when else None
+                return DELIVERY
+        elif when is not None and self._delivery_chain_until is not None and when <= self._delivery_chain_until:
+            self._delivery_chain_until = when + timedelta(seconds=DELIVERY_FOLLOW_ON_S)
+            return DELIVERY
+
+        if not self.my_power:
+            return UNKNOWN
+
+        if current_system and self.system_name and current_system != self.system_name:
+            return UNKNOWN
+
+        state = (self.system_state or "").lower()
+        controller = self.system_controller
+
+        if state in _CONTROLLED_STATES:
+            if controller == self.my_power:
+                return REINFORCEMENT
+            if controller:
+                return UNDERMINING
+            # A controlled-type state but no ControllingPower reported
+            # (shouldn't normally happen): fall back to Acquisition if we're
+            # among the Powers listed as active there.
+            return ACQUISITION if self.my_power in self.system_powers else UNKNOWN
+
+        if self.system_state:
+            # Unoccupied / Contested / Turmoil / etc: nobody holds it yet.
+            return ACQUISITION
+
+        return UNKNOWN
+
+
+# ---------------------------------------------------------------------------
+# Pledge recovery from the journal file itself.
+#
+# Frontier only writes a "Powerplay" event once per client launch (at the
+# first login) — not on a logout-to-menu-and-back, and EDMC doesn't replay
+# journal history when it (re)attaches to an already-running game either. So
+# if this tracker starts out not knowing pledge status (a fresh
+# EDMC/plugin start, mid-session or right after a relog), there's no new
+# live event coming to tell it. The journal file itself still has the
+# answer, though: the pledge-lifecycle event(s) from earlier in this same
+# client launch are still sitting in it. This reads that file directly to
+# recover it — the same approach autohonk.py uses for the binds file.
+# ---------------------------------------------------------------------------
+
+_PLEDGE_LIFECYCLE_EVENTS = frozenset({"Powerplay", "PowerplayJoin", "PowerplayLeave", "PowerplayDefect"})
+_REVERSE_READ_CHUNK = 65536
+
+
+def _iter_lines_reverse(path: str, chunk_size: int = _REVERSE_READ_CHUNK):
+    """Yields non-blank lines from `path` in reverse order (last line
+    first), reading backward in chunks instead of loading the whole file."""
+    with open(path, "rb") as fh:
+        fh.seek(0, os.SEEK_END)
+        remaining = fh.tell()
+        tail = b""
+        while remaining > 0:
+            read_size = min(chunk_size, remaining)
+            remaining -= read_size
+            fh.seek(remaining)
+            tail = fh.read(read_size) + tail
+            lines = tail.split(b"\n")
+            tail = lines[0]
+            for line in reversed(lines[1:]):
+                if line.strip():
+                    yield line
+        if tail.strip():
+            yield tail
+
+
+def find_last_pledge_event(journal_file: Optional[str]) -> Optional[Dict[str, Any]]:
+    """Scans `journal_file` backward for the most recent pledge-lifecycle
+    event already written to it. Returns None if the file can't be read or
+    contains no pledge-lifecycle event before its start."""
+    if not journal_file:
+        return None
+    try:
+        for raw_line in _iter_lines_reverse(journal_file):
+            try:
+                entry = json.loads(raw_line)
+            except ValueError:
+                continue
+            event = entry.get("event")
+            if event in _PLEDGE_LIFECYCLE_EVENTS:
+                return entry
+            if event == "Fileheader":
+                break
+    except OSError:
+        logger.warning("Could not read %s for pledge recovery", journal_file, exc_info=True)
+    return None
+
+
+def find_latest_standing(journal_file: Optional[str], power: Optional[str]) -> Tuple[Optional[int], Optional[int]]:
+    """(rank, total merits) from the newest `PowerplayRank` / `PowerplayMerits` events for `power` in `journal_file`, each None if
+    there is none. The login "Powerplay" snapshot goes stale as the session goes on (rank and merits climb afterwards), so after
+    EDMC is restarted mid-game the snapshot alone shows the rank you had at login. Events for another power are ignored."""
+    rank: Optional[int] = None
+    merits: Optional[int] = None
+    if not journal_file:
+        return rank, merits
+    try:
+        for raw_line in _iter_lines_reverse(journal_file):
+            try:
+                entry = json.loads(raw_line)
+            except ValueError:
+                continue
+            event = entry.get("event")
+            if event == "Fileheader":
+                break
+            if power and entry.get("Power") not in (None, power):
+                continue
+            if event == "PowerplayRank" and rank is None and isinstance(entry.get("Rank"), int):
+                rank = entry["Rank"]
+            elif event == "PowerplayMerits" and merits is None and isinstance(entry.get("TotalMerits"), int):
+                merits = entry["TotalMerits"]
+            elif event in _PLEDGE_LIFECYCLE_EVENTS:
+                break          # older than the latest pledge event: not this pledge's
+            if rank is not None and merits is not None:
+                break
+    except OSError:
+        logger.warning("Could not read %s for the latest Powerplay standing", journal_file, exc_info=True)
+    return rank, merits
+
+
+_PLEDGE_EVENT_APPLIERS = {
+    "Powerplay": lambda pp, entry: pp.apply_login_snapshot(entry),
+    "PowerplayJoin": lambda pp, entry: pp.apply_join(entry),
+    "PowerplayLeave": lambda pp, entry: pp.apply_leave(entry),
+    "PowerplayDefect": lambda pp, entry: pp.apply_defect(entry),
+}
+
+# Events that carry PowerplayState/Powers for the current system when it's
+# powerplay-relevant. "Location" is handled separately (it also doubles as
+# the not-pledged checkpoint).
+_SYSTEM_CONTEXT_EVENTS = ("FSDJump", "Docked")
+
+# Events that carry a system's full Powerplay standing (state, control
+# progress, reinforcement, undermining) for the per-system ledger. Docked
+# doesn't repeat those fields; CarrierJump does.
+_LEDGER_SNAPSHOT_EVENTS = ("FSDJump", "Location", "CarrierJump")
+
+# Commodity/data hand-ins at a power contact — see apply_delivery_signal.
+_DELIVERY_EVENTS = ("PowerplayDeliver", "SearchAndRescue", "DeliverPowerMicroResources")
+
+# --- CP-ratio / clipboard-template settings (this mode's own Settings-tab
+# state, kept here rather than in ui.py so the feature owns its own config) -
+
+CONFIG_RATIO_PREFIX = "wfmt_powerplay_ratio_"
+CONFIG_CLIPBOARD_FORMAT = "wfmt_powerplay_clipboard_format"
+CONFIG_BACKFILL_CYCLES = "wfmt_powerplay_backfill_cycles"
+
+
+def backfill_cycles() -> int:
+    """How many cycles (the current one included) the start-up journal scan covers (Settings), 1-12."""
+    try:
+        value = int(config.get_str(CONFIG_BACKFILL_CYCLES) or DEFAULT_BACKFILL_CYCLES)
+    except ValueError:
+        value = DEFAULT_BACKFILL_CYCLES
+    return max(1, min(MAX_BACKFILL_CYCLES, value))
+
+
+def ratio_for(activity: str) -> float:
+    """Current merits-per-CP ratio for an activity, from Settings or the default."""
+    default = DEFAULT_RATIOS.get(activity)
+    if default is None:
+        return 0.0
+    raw = config.get_str(f"{CONFIG_RATIO_PREFIX}{activity}")
+    if not raw:
+        return default
+    try:
+        value = float(raw)
+    except ValueError:
+        return default
+    return value if value > 0 else default
+
+
+def clipboard_template() -> str:
+    """Current "Copy Progress" line format, from Settings or the default."""
+    return config.get_str(CONFIG_CLIPBOARD_FORMAT) or DEFAULT_CLIPBOARD_TEMPLATE
+
+
+def _format_ratio(value: float) -> str:
+    return f"{value:g}"
+
+
+def _cp_by_activity(totals: Dict[str, int]) -> Dict[str, float]:
+    return {
+        activity: merits_to_cp(totals.get(activity, 0), ratio_for(activity))
+        for activity in ACTIVITIES
+        if activity not in NO_CP_ACTIVITIES and totals.get(activity, 0)
+    }
+
+
+_SHORT_ACTIVITY_LABELS = {
+    ACQUISITION: "Acq", REINFORCEMENT: "Reinf", UNDERMINING: "UM", DELIVERY: "Del", UNKNOWN: "Unk",
+}
+
+
+def _cp_bits(cp_by_activity: Dict[str, float]) -> str:
+    return " · ".join(
+        f"{_SHORT_ACTIVITY_LABELS[activity]} {cp_by_activity[activity]:.0f}"
+        for activity in ACTIVITIES if activity in cp_by_activity
+    )
+
+
+def _full_cp_bits(totals: Dict[str, int]) -> str:
+    return " · ".join(
+        f"{_SHORT_ACTIVITY_LABELS[activity]} {merits_to_cp(totals.get(activity, 0), ratio_for(activity)):.0f}"
+        for activity in ACTIVITIES
+        if activity not in NO_CP_ACTIVITIES
+    )
+
+
+def _here_lines(session: dict, current_system: Optional[str]) -> tuple:
+    if not current_system:
+        return "Here: awaiting system data…", ""
+    merits = system_merit_total(session, current_system)
+    cp_bits = _full_cp_bits(system_totals(session, current_system))
+    return f"Here: {merits:,} merits", f"CP: {cp_bits}"
+
+
+def _cycle_lines(view) -> tuple:
+    """The main panel's cumulative tally for the Powerplay cycle in progress (all systems,
+    from the per-commander ledger, so it spans game sessions and includes the journal scan)."""
+    totals = view.merit_totals()
+    number = view.number
+    label = f"Cycle {number}" if number is not None else "Cycle"
+    cp_bits = _cp_bits(_cp_by_activity(totals)) or "—"
+    return f"{label} merits: {sum(totals.values()):,}", f"{label} CP: {cp_bits}"
+
+
+def _megaship_line(view) -> str:
+    """The main panel's megaship tally for the Powerplay cycle in progress: how many megaships were scanned, and the merits those scans earned."""
+    number = view.number
+    label = f"Cycle {number}" if number is not None else "Cycle"
+    count = len(view.megaships)
+    merits = view.megaship_merits()
+    return f"{label} megaships: {count}" + (f" ({merits:,} merits)" if merits else "")
+
+
+def _system_summary(pp: PowerplayTracker) -> str:
+    """'Nervi — Exploited (Zachary Hudson)' for the main panel. Deliberately
+    just the controller, not the full rival/contested-Powers list — the
+    Sessions window's Current Session tab is the better home for that full
+    detail, and keeping it off the main panel keeps this row's width
+    predictable."""
+    if not pp.system_name:
+        return "Awaiting system data…"
+    state = pp.system_state or "no PP data"
+    if pp.system_controller:
+        detail = pp.system_controller
+    elif pp.system_powers:
+        detail = "contested"
+    else:
+        detail = "uncontested"
+    return f"{pp.system_name} — {state} ({detail})"
+
+
+class PowerplayController:
+    """This mode's one entry point for `load.py`/`ui.py` — owns the tracker
+    + session singletons, the main-panel widgets, and the Settings tab."""
+
+    def __init__(self) -> None:
+        self.tracker = PowerplayTracker()
+        self.sessions: Optional[SessionManager] = None
+        self._plugin_dir: Optional[str] = None
+        self._cmdr: Optional[str] = None
+        # Per-commander, per-system ledger for the Sessions window's Systems
+        # tab (powerplay_ledger.py) - swapped out when the commander changes.
+        self.ledger = PowerplayLedger()
+        self._megaships = MegaShipTracker()
+        self.tab_prefs = TabPrefs()
+        # Start-up journal scan (powerplay_backfill.py): runs on a worker thread, answers on a
+        # queue, and live ledger writes wait in `_scan_buffer` until it has been applied.
+        self._scan_queue: "queue.Queue[Tuple[int, str, ScanPlan, ScanResult]]" = queue.Queue()
+        self._scan_generation = 0
+        self._scan_running = False
+        self._scan_buffer: List[Op] = []
+        self._scan_status = "Journal scan: waiting for a commander."
+        self._current_system: Optional[str] = None
+        # Galactic (x, y, z) from the latest StarPos-carrying event - only
+        # the Rare Goods Finder needs it.
+        self._current_coords: Optional[Tuple[float, float, float]] = None
+        # The system's allegiance and government from the same events, for the Rare Goods Finder's Legality column.
+        self._current_allegiance: Optional[str] = None
+        self._current_government: Optional[str] = None
+
+        # Main-panel widgets (built in build_panel).
+        self._status_label: Optional[tk.Label] = None
+        self._system_label: Optional[tk.Label] = None
+        self._here_merits_label: Optional[tk.Label] = None
+        self._here_cp_label: Optional[tk.Label] = None
+        self._merits_label: Optional[tk.Label] = None
+        self._cp_label: Optional[tk.Label] = None
+        self._cycle_megaships_label: Optional[tk.Label] = None
+        self._cycle_merits_label: Optional[tk.Label] = None
+        self._cycle_cp_label: Optional[tk.Label] = None
+        self._last_event_label: Optional[tk.Label] = None
+        self._panel_parent: Optional[tk.Frame] = None
+
+        # Settings-tab state.
+        self._ratio_vars: Dict[str, tk.StringVar] = {}
+        self._clipboard_format_var: Optional[tk.StringVar] = None
+        self._backfill_var: Optional[tk.StringVar] = None
+
+    # --- lifecycle --------------------------------------------------------
+
+    def start(self, plugin_dir: str) -> None:
+        self._plugin_dir = plugin_dir
+        self.sessions = SessionManager(SessionStore(plugin_dir))
+        # The ledger is per commander and EDMC doesn't say who is active until
+        # the first journal event - the load happens in _switch_cmdr().
+
+    def flush(self) -> None:
+        if self.sessions is not None:
+            self.sessions.flush()
+        self._persist_ledger()
+
+    # --- per-commander system ledger -----------------------------------------
+
+    def _switch_cmdr(self, cmdr: str) -> None:
+        """Save the previous commander's ledger and load this one's."""
+        self._persist_ledger()
+        self._cmdr = cmdr
+        saved = powerplay_state.load_state(self._plugin_dir, cmdr) if self._plugin_dir else None
+        data = saved if isinstance(saved, dict) else {}
+        self.ledger = PowerplayLedger.from_dict(data.get("ledger"))
+        self._megaships = MegaShipTracker()
+        self.tab_prefs = TabPrefs.from_dict(data.get("pinned_systems"), data.get("hidden_systems"))
+        if saved:
+            logger.info("Restored Powerplay ledger for %s: %d system(s), %d archived cycle(s)",
+                        cmdr, len(self.ledger.records), len(self.ledger.archive))
+        self._start_scan()
+
+    # --- start-up journal scan ------------------------------------------------
+
+    def _start_scan(self) -> None:
+        """Work out what the journals can still tell us for this commander and, if
+        anything, read it on a worker thread. A new commander (or a first run)
+        rebuilds the last few cycles; after that only the gap since EDMC last saw the
+        journal is read, and nothing at all when there isn't one."""
+        self._scan_generation += 1
+        self._scan_buffer = []
+        now = datetime.now(timezone.utc)
+        plan = self.ledger.plan_scan(now, backfill_cycles())
+        self._scan_status = plan.describe()
+        logger.info("Powerplay %s: %s (mode %s)", self._cmdr, plan.describe(), plan.mode)
+        if plan.mode == SCAN_NONE or plan.scan_from is None or not self._cmdr:
+            self._scan_running = False
+            catchup_status.end("Powerplay")
+            self._tick_cycle()
+            return
+        self._scan_running = True
+        catchup_status.begin("Powerplay")
+        threading.Thread(
+            target=self._scan_worker, args=(self._scan_generation, self._cmdr, plan), daemon=True,
+        ).start()
+        if self._panel_parent is not None:
+            self._panel_parent.after(500, self._poll_scan)
+
+    def _scan_worker(self, generation: int, cmdr: str, plan: ScanPlan) -> None:
+        """Off the main thread: must never touch a Tk widget or the live ledger."""
+        try:
+            result = powerplay_backfill.scan_journals(cmdr, plan.scan_from, PowerplayTracker)  # type: ignore[arg-type]
+        except Exception:  # never let a journal quirk take the thread (or plugin) down
+            logger.exception("Powerplay journal scan failed")
+            result = ScanResult(ok=False)
+        self._scan_queue.put((generation, cmdr, plan, result))
+
+    def _poll_scan(self) -> None:
+        """Main thread (via after() and on every journal event): pick up a finished scan."""
+        try:
+            generation, cmdr, plan, result = self._scan_queue.get_nowait()
+        except queue.Empty:
+            if self._scan_running and self._panel_parent is not None:
+                self._panel_parent.after(500, self._poll_scan)
+            return
+        self._finish_scan(generation, cmdr, plan, result)
+
+    def _finish_scan(self, generation: int, cmdr: str, plan: ScanPlan, result: ScanResult) -> None:
+        if generation != self._scan_generation or cmdr != self._cmdr:
+            return  # stale: the commander changed meanwhile
+        self._scan_running = False
+        catchup_status.end("Powerplay")
+        buffered, self._scan_buffer = self._scan_buffer, []
+        if not result.ok:
+            self._scan_status = f"{plan.describe()} Could not read the journals (is EDMC's Journal directory set?)."
+        else:
+            if plan.mode == SCAN_REBUILD:
+                fresh = powerplay_backfill.rebuild_ledger(result.ops)
+                self.ledger.adopt(fresh, plan.scan_from, result.last_ts)  # type: ignore[arg-type]
+            else:
+                powerplay_backfill.apply_ops(self.ledger, result.ops)
+                self.ledger.touch(result.last_ts)
+            self._scan_status = (
+                f"Cycle {plan.current_cycle}, day {plan.day_of_cycle} of 7. Journal scan: read {plan.days_back} "
+                f"day{'s' if plan.days_back != 1 else ''} back ({result.files} file{'s' if result.files != 1 else ''}, "
+                f"{sum(1 for op in result.ops if op.kind == OP_MERITS)} merit event(s)).")
+        powerplay_backfill.apply_ops(self.ledger, buffered)
+        self._tick_cycle()
+        self._persist_ledger()
+        logger.info("Powerplay journal scan done for %s: %s", cmdr, self._scan_status)
+        self._refresh_panel()
+
+    def _tick_cycle(self) -> None:
+        """Archive a cycle that has ended - on time, not at the next event. Held back
+        while a scan runs: the scan applies a gap's events in order and rolls the cycles itself."""
+        if not self._scan_running and self.ledger.roll_to(datetime.now(timezone.utc)):
+            self._persist_ledger()
+
+    def _apply_live(self, op: Op) -> None:
+        """A live journal event for the ledger (held until the scan is applied, if one is running)."""
+        if self._scan_running:
+            self._scan_buffer.append(op)
+            return
+        if op.kind == OP_SNAPSHOT and op.snapshot is not None:
+            self.ledger.record_snapshot(op.system, op.snapshot)
+        elif op.kind == OP_MERITS:
+            self.ledger.record_merits(op.system, op.activity, op.merits, op.ts)
+        elif op.kind == OP_MEGASHIP and op.scan is not None:
+            self.ledger.record_megaship(op.scan)
+        elif op.kind == OP_MEGASHIP_MERITS:
+            self.ledger.add_megaship_merits(op.key, op.merits, op.ts)
+        self._persist_ledger()
+
+    def _persist_ledger(self) -> None:
+        if self._plugin_dir is None or self._cmdr is None:
+            return
+        powerplay_state.save_state(self._plugin_dir, self._cmdr, {
+            "ledger": self.ledger.to_dict(),
+            "pinned_systems": self.tab_prefs.pinned,
+            "hidden_systems": self.tab_prefs.hidden,
+        })
+
+    def _record_standing(self, system: Optional[str], entry: Mapping[str, Any]) -> None:
+        """FSDJump/Location/CarrierJump: file the system's Powerplay standing."""
+        snapshot = parse_snapshot(entry)
+        name = entry.get("StarSystem") or system
+        if snapshot is not None and name:
+            self._apply_live(Op(OP_SNAPSHOT, snapshot.at, system=str(name), snapshot=snapshot))
+
+    def systems_pane(self):
+        """What the Sessions window's Systems tab needs - fetched fresh on every refresh."""
+        from . import powerplay_systems_tab
+        return powerplay_systems_tab.SystemsPane(
+            views=self.ledger.views, prefs=lambda: self.tab_prefs, cmdr=lambda: self._cmdr or "",
+            pledge=self._pledge_text, status=lambda: self._scan_status,
+            known_systems=self.ledger.known_systems,
+            actions=powerplay_systems_tab.TabActions(self._toggle_pin, self._close_tab, self._add_system),
+        )
+
+    def _pledge_text(self) -> str:
+        """The commander's pledge as the Systems/Cycles tabs show it."""
+        if self.tracker.pledge_status == PLEDGED:
+            return self.tracker.pledge_summary() or "pledged"
+        if self.tracker.pledge_status == NOT_PLEDGED:
+            return "not pledged"
+        return "checking pledge…"
+
+    def _record_power(self) -> None:
+        """Keep the session and this cycle's ledger told which Power is pledged."""
+        assert self.sessions is not None
+        self.sessions.record_power(self.tracker.my_power)
+        self.ledger.record_power(self.tracker.my_power)
+
+    def _toggle_pin(self, system: str) -> bool:
+        ok = self.tab_prefs.toggle_pin(system)
+        self._after_tab_change()
+        return ok
+
+    def _close_tab(self, system: str) -> None:
+        self.tab_prefs.close(system)
+        self._after_tab_change()
+
+    def _add_system(self, name: str) -> bool:
+        known = {n.casefold(): n for n in self.ledger.known_systems()}
+        ok = self.tab_prefs.add(known.get(name.casefold(), name))
+        self._after_tab_change()
+        return ok
+
+    def _after_tab_change(self) -> None:
+        self._persist_ledger()
+        self._refresh_panel()
+
+    # --- journal dispatch ---------------------------------------------------
+
+    def handle_event(self, entry: Dict[str, Any], cmdr: str, system: Optional[str], station: Optional[str], state: Dict[str, Any]) -> None:
+        if self.sessions is None:
+            return
+
+        if system:
+            self._current_system = system
+        if cmdr and cmdr != self._cmdr:
+            self._switch_cmdr(cmdr)
+        self._poll_scan()
+        self.ledger.touch(entry.get("timestamp"))
+        self._tick_cycle()
+        for found in self._megaships.feed(entry):
+            if found[0] == "scan":
+                self._apply_live(Op(OP_MEGASHIP, found[1].at, system=found[1].system, scan=found[1]))
+            else:
+                self._apply_live(Op(OP_MEGASHIP_MERITS, found[3], key=found[1], merits=found[2]))
+
+        star_pos = entry.get("StarPos")
+        if (
+            isinstance(star_pos, (list, tuple)) and len(star_pos) == 3
+            and all(isinstance(v, (int, float)) for v in star_pos)
+        ):
+            self._current_coords = (float(star_pos[0]), float(star_pos[1]), float(star_pos[2]))
+            from . import rare_goods, rare_goods_window
+            self._current_allegiance = str(entry.get("SystemAllegiance") or "").strip() or None
+            self._current_government = rare_goods.clean_government(entry.get("SystemGovernment"), entry.get("SystemGovernment_Localised"))
+            rare_goods_window.refresh(self._current_system, self._current_coords, self._current_allegiance, self._current_government, self.tracker.my_power)
+
+        try:
+            self._dispatch(cmdr, system, entry)
+        finally:
+            self._refresh_panel()
+
+    def _dispatch(self, cmdr: str, system: Optional[str], entry: Dict[str, Any]) -> None:
+        assert self.sessions is not None
+        event = entry.get("event", "")
+
+        if event == "LoadGame":
+            continued = self.sessions.sync_session(cmdr, None, monitor.logfile)
+            logger.info("LoadGame for %s (%s)", cmdr, "continuing session" if continued else "new session")
+            if continued:
+                # Same journal file as before — a logout to the main menu and
+                # back in, not a fresh game launch. Frontier only re-sends
+                # "Powerplay" on the *first* login of a client launch, so
+                # recover pledge state from the journal file if this tracker
+                # is a fresh instance that never saw it live.
+                self._recover_pledge_state()
+                self._set_status(
+                    f"Pledged to {self.tracker.pledge_summary()}" if self.tracker.my_power
+                    else f"CMDR {cmdr}: not a PP Pledge"
+                )
+            else:
+                self.tracker.apply_login_reset()
+                self._set_status(f"{cmdr}: checking PowerPlay pledge…")
+            return
+
+        if event == "StartUp":
+            # EDMC (re)started with the game already running — no journal
+            # replay, so recover the pledge state directly.
+            self.sessions.sync_session(cmdr, None, monitor.logfile)
+            logger.info("StartUp (EDMC attached to a running game) for %s", cmdr)
+            self._recover_pledge_state()
+            self._set_status(
+                f"Pledged to {self.tracker.pledge_summary()}" if self.tracker.my_power
+                else f"CMDR {cmdr}: not a PP Pledge"
+            )
+            return
+
+        if event == "Powerplay":
+            self.tracker.apply_login_snapshot(entry)
+            self._record_power()
+            self._set_status(
+                f"Pledged to {self.tracker.pledge_summary()}" if self.tracker.my_power
+                else f"CMDR {cmdr}: not a PP Pledge"
+            )
+            return
+
+        if event == "PowerplayJoin":
+            self.tracker.apply_join(entry)
+            self._record_power()
+            self._set_status(f"Pledged to {self.tracker.pledge_summary()}")
+            return
+
+        if event == "PowerplayLeave":
+            self.tracker.apply_leave(entry)
+            self._set_status("Left PowerPlay")
+            return
+
+        if event == "PowerplayDefect":
+            self.tracker.apply_defect(entry)
+            self._record_power()
+            self._set_status(f"Defected to {self.tracker.pledge_summary()}")
+            return
+
+        if event == "PowerplayRank":
+            self.tracker.apply_rank(entry)
+            if self.tracker.my_power:
+                self._set_status(f"Pledged to {self.tracker.pledge_summary()}")
+            return
+
+        if event in _LEDGER_SNAPSHOT_EVENTS:
+            self._record_standing(system, entry)
+
+        if event == "Location":
+            # "Location" always fires once at startup, after "Powerplay"
+            # would have if the commander is pledged — so if pledge status
+            # is still unresolved by now, there was no "Powerplay" event.
+            if self.tracker.confirm_not_pledged_if_unresolved():
+                logger.info("CMDR %s is not pledged to a Power", cmdr)
+                self._set_status(f"CMDR {cmdr}: not a PP Pledge")
+            self.tracker.apply_system_context(system, entry)
+            return
+
+        if event in _SYSTEM_CONTEXT_EVENTS:
+            self.tracker.apply_system_context(system, entry)
+            return
+
+        if event in _DELIVERY_EVENTS:
+            self.tracker.apply_delivery_signal(event, entry)
+            return
+
+        if event == "PowerplayMerits":
+            self._handle_merits(system, entry)
+            return
+
+    def _handle_merits(self, system: Optional[str], entry: Dict[str, Any]) -> None:
+        assert self.sessions is not None
+
+        gained = self.tracker.apply_merits(entry)
+        self._record_power()
+        if gained is None:
+            return
+
+        activity = self.tracker.classify_current_activity(system)
+        ts = entry.get("timestamp")
+        self.sessions.record_merits(activity, gained, system, ts if isinstance(ts, str) else None)
+        if system and isinstance(ts, str):
+            self._apply_live(Op(OP_MERITS, ts, system=system, activity=activity, merits=gained))
+
+        ratio = ratio_for(activity)
+        cp = 0.0 if not ratio else gained / ratio
+        label = ACTIVITY_LABELS.get(activity, "Unattributed")
+        message = f"+{gained} merits ({label}, ~{cp:.1f} CP)"
+        logger.info(message)
+        self._set_last_event(message)
+
+    def _recover_pledge_state(self) -> None:
+        """Falls back to reading the current journal file directly for the
+        last pledge-lifecycle event when the tracker doesn't already know
+        pledge status in memory. No-op if it already has an answer."""
+        if self.tracker.pledge_status != PLEDGE_UNKNOWN:
+            if self.tracker.pledge_status == PLEDGED and self.tracker.rank is None:
+                self._recover_latest_standing()      # pledged (a merit event said so) but no rank seen yet
+            return
+        entry = find_last_pledge_event(monitor.logfile)
+        if entry is not None:
+            _PLEDGE_EVENT_APPLIERS[entry["event"]](self.tracker, entry)
+            self._recover_latest_standing()
+            logger.info("Recovered pledge state from journal file: %s", self.tracker.pledge_summary() or "not pledged")
+            self._record_power()
+
+    def _recover_latest_standing(self) -> None:
+        """The login snapshot's rank and merits are the values from login; apply any newer ones from the same journal file."""
+        if not self.tracker.my_power:
+            return
+        rank, merits = find_latest_standing(monitor.logfile, self.tracker.my_power)
+        if rank is not None:
+            self.tracker.rank = rank
+        if merits is not None:
+            self.tracker.total_merits = merits
+
+    def rescan_journal(self) -> None:
+        """"Rescan" button handler: re-reads the current journal file from
+        the start and replays its PowerPlay-relevant events, to recover
+        merits earned in the gap between an EDMC restart (while the game
+        keeps running) and the synthesized "StartUp" event that follows it.
+
+        PowerplayMerits events are only actually recorded if their
+        "timestamp" is newer than the last one already recorded this session
+        — re-adding an already-counted gain would double it. A genuinely new
+        merit event sharing the exact same (whole-second-precision) timestamp
+        as the last recorded one is the one edge case this can still miss —
+        silently under-counting is the safer failure mode than double-counting.
+        """
+        if self.sessions is None:
+            return
+        journal_file = monitor.logfile
+        if not journal_file or self.sessions.current.get("journal_file") != journal_file:
+            self._set_last_event("Rescan: no active session for the current journal file")
+            return
+
+        baseline_ts = self.sessions.current.get("last_merit_ts")
+        replay_system: Optional[str] = None
+        recovered_events = 0
+        recovered_merits = 0
+
+        try:
+            with open(journal_file, "r", encoding="utf-8") as fh:
+                for line in fh:
+                    try:
+                        entry = json.loads(line)
+                    except ValueError:
+                        continue
+                    event = entry.get("event", "")
+                    star_system = entry.get("StarSystem")
+                    if star_system:
+                        replay_system = star_system
+
+                    applier = _PLEDGE_EVENT_APPLIERS.get(event)
+                    if applier is not None:
+                        applier(self.tracker, entry)
+                    elif event == "PowerplayRank":
+                        self.tracker.apply_rank(entry)
+                    elif event == "Location" or event in _SYSTEM_CONTEXT_EVENTS:
+                        self.tracker.apply_system_context(replay_system, entry)
+                    elif event in _DELIVERY_EVENTS:
+                        self.tracker.apply_delivery_signal(event, entry)
+                    elif event == "PowerplayMerits":
+                        gained = self.tracker.apply_merits(entry)
+                        activity = self.tracker.classify_current_activity(replay_system)
+                        ts = entry.get("timestamp")
+                        is_new = (
+                            gained is not None
+                            and isinstance(ts, str)
+                            and (baseline_ts is None or ts > baseline_ts)
+                        )
+                        if is_new:
+                            self.sessions.record_merits(activity, gained, replay_system, ts)
+                            if replay_system:
+                                self._apply_live(Op(OP_MERITS, ts, system=replay_system, activity=activity, merits=gained))
+                            baseline_ts = ts
+                            recovered_events += 1
+                            recovered_merits += gained
+        except OSError:
+            logger.warning("Could not read %s for rescan", journal_file, exc_info=True)
+            self._set_last_event("Rescan failed: could not read journal file")
+            return
+
+        self._record_power()
+        self._persist_ledger()
+        logger.info("Rescanned journal: recovered %d merits across %d events", recovered_merits, recovered_events)
+        if recovered_events:
+            self._set_last_event(f"Rescan: recovered {recovered_merits} merits ({recovered_events} events)")
+        else:
+            self._set_last_event("Rescan: no missed merits found")
+        self._refresh_panel()
+
+    # --- main-panel widgets -------------------------------------------------
+
+    def build_panel(self, parent: tk.Frame) -> None:
+        self._panel_parent = parent
+
+        fonts = panelkit.view_fonts()
+
+        self._status_label = panelkit.wrap_label(parent, text="Awaiting PowerPlay activity…")
+        self._status_label.grid(row=0, column=0, sticky=tk.W)
+
+        # Where the commander is: the system in bold, then this system's tally.
+        self._system_label = panelkit.wrap_label(parent, text="Awaiting system data…", font=fonts["bold"])
+        self._system_label.grid(row=2, column=0, sticky=tk.W, pady=(4, 0))
+
+        self._here_merits_label = panelkit.wrap_label(parent, text="Here: awaiting system data…")
+        self._here_merits_label.grid(row=3, column=0, sticky=tk.W)
+
+        self._here_cp_label = panelkit.wrap_label(parent, text="", font=fonts["small"])
+        self._here_cp_label.grid(row=4, column=0, sticky=tk.W)
+
+        # Each tally (this session, then this cycle) is a bold merits line over a small CP line,
+        # with a rule between the groups.
+        panelkit.add_separator(parent, 5)
+
+        self._merits_label = panelkit.wrap_label(parent, text="Session merits: 0", font=fonts["bold"])
+        self._merits_label.grid(row=6, column=0, sticky=tk.W)
+
+        self._cp_label = panelkit.wrap_label(parent, text="Session CP: —", font=fonts["small"])
+        self._cp_label.grid(row=7, column=0, sticky=tk.W)
+
+        panelkit.add_separator(parent, 8)
+
+        self._cycle_merits_label = panelkit.wrap_label(parent, text="Cycle merits: 0", font=fonts["bold"])
+        self._cycle_merits_label.grid(row=9, column=0, sticky=tk.W)
+
+        self._cycle_cp_label = panelkit.wrap_label(parent, text="Cycle CP: —", font=fonts["small"])
+        self._cycle_cp_label.grid(row=10, column=0, sticky=tk.W)
+
+        self._cycle_megaships_label = panelkit.wrap_label(parent, text="Cycle megaships: 0", font=fonts["small"])
+        self._cycle_megaships_label.grid(row=11, column=0, sticky=tk.W)
+
+        self._last_event_label = panelkit.wrap_label(
+            parent, text="No merit events yet this session.", font=fonts["small"])
+        self._last_event_label.grid(row=12, column=0, sticky=tk.W, pady=(6, 0))
+
+        windows_row = tk.Frame(parent)
+        windows_row.grid(row=13, column=0, sticky=tk.W, pady=(4, 0))
+        sessions_button = tk.Button(windows_row, text="SES", command=self._show_sessions)
+        sessions_button.pack(side=tk.LEFT, padx=(0, 6))
+        panelkit.add_tooltip(sessions_button, "Sessions - open the Powerplay sessions window")
+        rares_button = tk.Button(windows_row, text="RARES", command=self._show_rares)
+        rares_button.pack(side=tk.LEFT, padx=(0, 6))
+        panelkit.add_tooltip(rares_button, "Rares - open the nearby rare goods window")
+        rescan_button = tk.Button(windows_row, text="RESCAN", command=self.rescan_journal)
+        rescan_button.pack(side=tk.LEFT)
+        panelkit.add_tooltip(
+            rescan_button, "Rescan - re-read the current journal to recover merits missed after an EDMC restart")
+
+        self._refresh_panel()
+
+    def _show_sessions(self) -> None:
+        if self._panel_parent is not None and self.sessions is not None:
+            from . import powerplay_window
+            powerplay_window.show(
+                self._panel_parent, self.sessions, self.tracker, self._current_system, self.systems_pane())
+
+    def _show_rares(self) -> None:
+        if self._panel_parent is not None:
+            from . import rare_goods_window
+            rare_goods_window.show(self._panel_parent, self._current_system, self._current_coords, self._current_allegiance, self._current_government, self.tracker.my_power, self._last_known_place)
+
+    def _last_known_place(self) -> Optional[Tuple[Optional[str], Tuple[float, float, float], Optional[str], Optional[str]]]:
+        """For the Rare Goods Finder's *Use last known location*: where the detected commander's journals last put them (EDMC's commander first; WFMT's own guess from the newest journal can differ), as (system, coordinates, allegiance,
+        government), or None. Used when EDMC started with the game closed and no live event has said where the commander is."""
+        from . import current_system, rare_goods
+        place = current_system.last_place(cmdr=str(getattr(monitor, "cmdr", "") or "") or self._cmdr or "")
+        star_pos = place.get("StarPos")
+        if not (isinstance(star_pos, (list, tuple)) and len(star_pos) == 3 and all(isinstance(v, (int, float)) for v in star_pos)):
+            return None
+        return (
+            str(place.get("StarSystem") or "").strip() or None,
+            (float(star_pos[0]), float(star_pos[1]), float(star_pos[2])),
+            str(place.get("SystemAllegiance") or "").strip() or None,
+            rare_goods.clean_government(place.get("SystemGovernment"), place.get("SystemGovernment_Localised")),
+        )
+
+    def _set_status(self, message: str) -> None:
+        if self._status_label is not None:
+            self._status_label["text"] = message
+
+    def _set_last_event(self, message: str) -> None:
+        if self._last_event_label is not None:
+            self._last_event_label["text"] = message
+            self._last_event_label["foreground"] = "green"
+
+    def _refresh_panel(self) -> None:
+        if self.sessions is None or self._merits_label is None:
+            return
+
+        if self._system_label is not None:
+            self._system_label["text"] = _system_summary(self.tracker)
+
+        session = self.sessions.current
+
+        if self._here_merits_label is not None and self._here_cp_label is not None:
+            here_merits_text, here_cp_text = _here_lines(session, self._current_system)
+            self._here_merits_label["text"] = here_merits_text
+            self._here_cp_label["text"] = here_cp_text
+
+        merits = total_merits(session)
+        cp_by_activity = _cp_by_activity(session.get("totals", {}))
+
+        self._merits_label["text"] = f"Session merits: {merits:,}"
+        if self._cp_label is not None:
+            self._cp_label["text"] = f"Session CP: {_cp_bits(cp_by_activity)}"
+
+        if self._cycle_merits_label is not None and self._cycle_cp_label is not None:
+            cycle_merits_text, cycle_cp_text = _cycle_lines(self.ledger.live_view())
+            self._cycle_merits_label["text"] = cycle_merits_text
+            self._cycle_cp_label["text"] = cycle_cp_text
+            if self._cycle_megaships_label is not None:
+                self._cycle_megaships_label["text"] = _megaship_line(self.ledger.live_view())
+
+        from . import powerplay_window, session_merits
+        session_merits.controller.refresh()     # the "Merits this session" line under the mode buttons
+        powerplay_window.refresh(self._current_system, self.systems_pane())
+
+    # --- Settings tab --------------------------------------------------------
+
+    def build_settings(self, notebook: nb.Notebook) -> None:
+        tab = nb.Frame(notebook)
+        tab.columnconfigure(0, weight=1)
+        notebook.add(tab, text="Powerplay")
+
+        nb.Label(tab, text="CP Ratios", font=("TkDefaultFont", 9, "bold")).grid(
+            row=0, column=0, sticky=tk.W, padx=10, pady=(10, 2),
+        )
+        ratios_section = nb.Frame(tab)
+        ratios_section.grid(row=1, column=0, sticky=tk.NSEW)
+        self._build_ratios_section(ratios_section)
+
+        ttk.Separator(tab, orient=tk.HORIZONTAL).grid(row=2, column=0, sticky=tk.EW, padx=10, pady=(8, 0))
+        nb.Label(tab, text="Clipboard", font=("TkDefaultFont", 9, "bold")).grid(
+            row=3, column=0, sticky=tk.W, padx=10, pady=(10, 2),
+        )
+        clipboard_section = nb.Frame(tab)
+        clipboard_section.grid(row=4, column=0, sticky=tk.NSEW)
+        self._build_clipboard_section(clipboard_section)
+
+        ttk.Separator(tab, orient=tk.HORIZONTAL).grid(row=5, column=0, sticky=tk.EW, padx=10, pady=(8, 0))
+        nb.Label(tab, text="Journal scan", font=("TkDefaultFont", 9, "bold")).grid(
+            row=6, column=0, sticky=tk.W, padx=10, pady=(10, 2),
+        )
+        scan_section = nb.Frame(tab)
+        scan_section.grid(row=7, column=0, sticky=tk.NSEW)
+        self._build_scan_section(scan_section)
+
+        nb.Label(
+            tab, text=panelkit.WORK_IN_PROGRESS_NOTE, wraplength=440, justify=tk.LEFT, foreground="#c07000",
+        ).grid(row=8, column=0, sticky=tk.W, padx=10, pady=(14, 10))
+
+    def _build_scan_section(self, frame: nb.Frame) -> None:
+        nb.Label(
+            frame,
+            text=(
+                "When a commander is first seen, WFMT reads their journals to fill in Powerplay cycles it "
+                "missed. After that it only reads what happened while EDMC was closed. This is how many "
+                f"cycles back (this one included, 1-{MAX_BACKFILL_CYCLES}) to look when a commander is new; "
+                "journals older than you have kept can't be read."
+            ),
+            wraplength=440, justify=tk.LEFT,
+        ).grid(row=0, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(10, 6))
+        nb.Label(frame, text="Cycles to scan:").grid(row=1, column=0, sticky=tk.W, padx=10, pady=2)
+        self._backfill_var = tk.StringVar(value=str(backfill_cycles()))
+        nb.EntryMenu(frame, textvariable=self._backfill_var, width=8).grid(
+            row=1, column=1, sticky=tk.W, padx=(0, 10), pady=2,
+        )
+
+    def _build_ratios_section(self, frame: nb.Frame) -> None:
+        nb.Label(
+            frame,
+            text=(
+                "Frontier doesn't publish these in the journal — the defaults are "
+                "community-sourced best estimates. If your in-game CP totals don't "
+                "line up, correct the ratio here (merits required for 1 CP)."
+            ),
+            wraplength=440, justify=tk.LEFT,
+        ).grid(row=0, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(10, 8))
+
+        nb.Label(
+            frame,
+            text=(
+                "Note: system strength/frontline penalties, ethos bonuses, and your "
+                "Squadron's PP bonus are already baked into the merit amount the "
+                "journal reports — these ratios only convert that final merit total "
+                "into CP, so there's no separate bonus to account for here."
+            ),
+            wraplength=440, justify=tk.LEFT, foreground="#c07000",
+        ).grid(row=1, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 10))
+
+        self._ratio_vars = {}
+        row = 2
+        for activity in ACTIVITIES:
+            default = DEFAULT_RATIOS.get(activity)
+            if default is None:
+                continue
+            nb.Label(frame, text=f"{ACTIVITY_LABELS[activity]}:").grid(
+                row=row, column=0, sticky=tk.W, padx=10, pady=2,
+            )
+            var = tk.StringVar(value=_format_ratio(ratio_for(activity)))
+            self._ratio_vars[activity] = var
+            nb.EntryMenu(frame, textvariable=var, width=8).grid(
+                row=row, column=1, sticky=tk.W, padx=(0, 10), pady=2,
+            )
+            row += 1
+
+    def _build_clipboard_section(self, frame: nb.Frame) -> None:
+        nb.Label(
+            frame,
+            text='Format for each system\'s line when "Copy Progress" (Sessions window) copies to the clipboard.',
+            wraplength=440, justify=tk.LEFT,
+        ).grid(row=0, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(10, 6))
+
+        nb.Label(
+            frame, text="Placeholders: " + "  ".join(CLIPBOARD_PLACEHOLDERS),
+            wraplength=440, justify=tk.LEFT, foreground=_INFO_COLOR,
+        ).grid(row=1, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 8))
+
+        self._clipboard_format_var = tk.StringVar(value=clipboard_template())
+        nb.EntryMenu(frame, textvariable=self._clipboard_format_var, width=60).grid(
+            row=2, column=0, sticky=tk.W, padx=10, pady=2,
+        )
+
+        def _reset_default() -> None:
+            if self._clipboard_format_var is not None:
+                self._clipboard_format_var.set(DEFAULT_CLIPBOARD_TEMPLATE)
+
+        tk.Button(frame, text="Reset to default", command=_reset_default).grid(
+            row=2, column=1, sticky=tk.W, padx=(6, 10), pady=2,
+        )
+
+    def save_settings(self) -> None:
+        for activity, var in self._ratio_vars.items():
+            text = var.get().strip()
+            try:
+                value = float(text)
+            except ValueError:
+                continue
+            if value <= 0:
+                continue
+            config.set(f"{CONFIG_RATIO_PREFIX}{activity}", str(value))
+
+        if self._backfill_var is not None:
+            try:
+                depth = int(self._backfill_var.get().strip())
+            except ValueError:
+                depth = 0
+            if depth >= 1:
+                config.set(CONFIG_BACKFILL_CYCLES, str(min(MAX_BACKFILL_CYCLES, depth)))
+
+        if self._clipboard_format_var is not None:
+            text = self._clipboard_format_var.get()
+            config.set(CONFIG_CLIPBOARD_FORMAT, text if text.strip() else DEFAULT_CLIPBOARD_TEMPLATE)
+
+
+controller = PowerplayController()
+
+
+def handle_event(entry: Dict[str, Any], cmdr: str, system: Optional[str], station: Optional[str], state: Dict[str, Any]) -> None:
+    controller.handle_event(entry, cmdr, system, station, state)
+
+
+def build_panel(parent: tk.Frame) -> None:
+    controller.build_panel(parent)
+
+
+def build_settings(notebook: nb.Notebook) -> None:
+    controller.build_settings(notebook)
+
+
+def save_settings() -> None:
+    controller.save_settings()

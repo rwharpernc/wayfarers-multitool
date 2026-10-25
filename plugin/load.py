@@ -1,0 +1,380 @@
+"""
+WFMT — Wayfarer's Multitool — plugin entry point.
+
+Copyright (c) 2026 R.W. Harper. Licensed under the GNU General Public
+License v3.0 - see LICENSE and THIRD-PARTY-NOTICES.md at the repository
+root.
+
+Wires up the standard EDMC lifecycle hooks and the shared mode-switching
+panel/overlay/updater, then forwards every journal event unconditionally to
+each registered feature module's own `handle_event` — each feature decides
+internally what it cares about and whether it's currently enabled (see
+each feature's own docstring for why "forward unconditionally, gate
+inside" is the established pattern: it's cheap, and it means load.py
+never needs per-event-type knowledge of any feature).
+"""
+
+from __future__ import annotations
+
+import logging
+import os
+import threading
+import tkinter as tk
+from typing import Any, Dict, Optional
+
+from config import appname, config
+
+from . import (
+    __version__, autohonk, data_backup, explore_dashboard, legacy_names, route_planner_panel, bgs_panel, feature_dispatch, boxel_survey, poi_reference_panel, codex_completionist_panel, colonization_history_window, exobiology_overlay, expedition_log_overlay, expedition_log_panel, landing_finder_panel, colonization_overlay, colonization_panel, credits_ledger, discovery,
+    exploration_value, flight_alerts, game_mode, interdiction, inventory_panel, ledger_window, landing, materials_panel, mining_overlay, mining_panel, notes_panel, expedition_panel, surface_compass,
+    missions, missions_overlay, notable, organic_scan_panel, overlay, overlay_native, overlay_placement, overlay_profile, overlay_visibility, platform_support, shortcuts, powerplay, system_names, powerplay_window, rare_goods_window, restore, route_overlay, screenshots, session_credits, ship_current, session_merits, ship_builds_panel, system_survey, targets_overlay, body_info_overlay, trade_panel, trade_watch_panel, ui,
+)
+from .update import UpdateManager, check_applied_update
+
+plugin_name = os.path.basename(os.path.dirname(__file__))
+logger = logging.getLogger(f"{appname}.{plugin_name}")
+
+if not logger.hasHandlers():
+    level = logging.INFO
+    logger.setLevel(level)
+    logger_channel = logging.StreamHandler()
+    logger_formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - "
+        "%(module)s:%(lineno)d:%(funcName)s: %(message)s",
+    )
+    logger_formatter.default_time_format = "%Y-%m-%d %H:%M:%S"
+    logger_formatter.default_msec_format = "%s.%03d"
+    logger_channel.setFormatter(logger_formatter)
+    logger.addHandler(logger_channel)
+
+# Every feature module that consumes journal events. Order doesn't matter -
+# each one only ever reads `entry`/`state`, never mutates them.
+_FEATURES = (
+    powerplay, missions, missions_overlay, autohonk, interdiction, flight_alerts, landing, discovery, notable, boxel_survey, exploration_value,
+    organic_scan_panel, codex_completionist_panel, poi_reference_panel, notes_panel, expedition_panel, expedition_log_panel, landing_finder_panel, route_overlay, system_survey, targets_overlay, body_info_overlay, exobiology_overlay, expedition_log_overlay, surface_compass, ship_builds_panel, colonization_panel, screenshots,
+    inventory_panel, materials_panel, mining_panel, trade_panel, trade_watch_panel, bgs_panel, game_mode, session_credits, session_merits, credits_ledger, explore_dashboard, route_planner_panel,
+    shortcuts,
+)
+
+_ui_frame: Optional[tk.Frame] = None
+_live_event_seen = False   # any journal event from EDMC (a running game sends StartUp straight away)
+RESTORE_DELAY_MS = 4000
+_updater: Optional[UpdateManager] = None
+
+# One shared overlay connection for every overlay-drawing feature
+# (Interdiction/Landing/Discovery) - see overlay.py's own docstring for why
+# a persistent, shared connection is required rather than one per feature.
+_overlay = overlay.OverlayClient()
+
+
+# One-time reset: every overlay is off by default, and users who had overlays on from
+# earlier versions are switched off once, for every commander, so they opt back in
+# deliberately. The marker key makes it run exactly once per install; bump the suffix to
+# force another reset.
+_CFG_OVERLAY_RESET_DONE = "wfmt_overlay_reset_v2"
+_OVERLAY_ENABLE_KEYS = (
+    "wfmt_discovery_enabled",
+    "wfmt_interdiction_enabled",
+    "wfmt_notable_enabled",
+    "wfmt_landing_overlay_enabled",
+    "wfmt_inventory_overlay_enabled",
+    "wfmt_mining_overlay_enabled",
+    "wfmt_mining_radar_enabled",
+    "wfmt_compass_enabled",
+    "wfmt_screenshot_overlay_enabled",
+    "wfmt_colonization_overlay_enabled",
+    "wfmt_colonization_overlay_forced",
+    "wfmt_missions_overlay_enabled",
+    "wfmt_expedition_log_overlay",
+    "wfmt_flight_enabled",
+    "wfmt_route_enabled",
+    "wfmt_targets_enabled",
+    "wfmt_body_info_enabled",
+    "wfmt_exo_status_enabled",
+    "wfmt_exo_list_enabled",
+    "wfmt_exo_radar_enabled",
+    "wfmt_exo_popup_enabled",
+)
+
+
+def _reset_overlays_once() -> None:
+    """Needs overlay_profile.profiles configured, so the filed choices of every commander are switched off too."""
+    if config.get_bool(_CFG_OVERLAY_RESET_DONE, default=False):
+        return
+    for key in _OVERLAY_ENABLE_KEYS:
+        config.set(key, False)
+    filed = overlay_profile.profiles.switch_off(_OVERLAY_ENABLE_KEYS)
+    config.set(_CFG_OVERLAY_RESET_DONE, True)
+    logger.info("All WFMT overlays reset to disabled (one-time), including the saved choices of %d commander(s); "
+                "re-enable them in Settings", filed)
+
+
+STARTUP_BACKUP_DELAY_S = 60.0       # let EDMC and the features finish starting before the copy reads their files
+
+
+def _schedule_startup_backup(plugin_dir: str) -> None:
+    """The automatic data backup, if it is switched on and due, a minute after start-up and off the main thread."""
+    def run() -> None:
+        try:
+            data_backup.run_configured_backup(plugin_dir, config, __version__)
+        except Exception:
+            logger.warning("Automatic data backup failed", exc_info=True)
+
+    timer = threading.Timer(STARTUP_BACKUP_DELAY_S, run)
+    timer.daemon = True
+    timer.start()
+
+
+def plugin_start3(plugin_dir: str) -> str:
+    """Load WFMT into EDMarketConnector."""
+    global _updater
+    logger.info("WFMT v%s starting from %s", __version__, plugin_dir)
+
+    restored = data_backup.apply_pending_restore(plugin_dir)      # before any feature reads a data file
+    if restored:
+        logger.info("%s", restored)
+    legacy_names.migrate(plugin_dir, config)      # saved names from before the spelling fix, after a restore that may bring them back
+
+    overlay_profile.profiles.configure(plugin_dir, config, _on_overlay_profile_changed)
+    _reset_overlays_once()  # before any feature module reads its settings, and before a commander is activated
+
+    powerplay.controller.start(plugin_dir)
+    missions.start(plugin_dir)
+    boxel_survey.start(plugin_dir)
+    codex_completionist_panel.start(plugin_dir)
+    organic_scan_panel.start(plugin_dir)
+    bgs_panel.start(plugin_dir)
+    session_credits.start(plugin_dir)
+    credits_ledger.start(plugin_dir)
+    ship_builds_panel.start(plugin_dir)
+    colonization_panel.start(plugin_dir)
+    inventory_panel.start(plugin_dir)
+    materials_panel.start(plugin_dir)
+    mining_panel.start(plugin_dir)
+    trade_panel.start(plugin_dir)
+    trade_watch_panel.start(plugin_dir)
+    flight_alerts.start(plugin_dir)
+    route_overlay.start(plugin_dir)
+    route_planner_panel.start(plugin_dir)
+    targets_overlay.start(plugin_dir)
+    system_survey.start(plugin_dir)
+    body_info_overlay.start(plugin_dir)
+    exobiology_overlay.start(plugin_dir)
+    missions_overlay.start(plugin_dir)
+    notes_panel.start(plugin_dir)
+    expedition_panel.start(plugin_dir)
+    expedition_log_panel.start(plugin_dir)
+    landing_finder_panel.start(plugin_dir)
+    expedition_log_overlay.start(plugin_dir)
+    shortcuts.start(plugin_dir)
+    overlay_native.start()
+    surface_compass.start(plugin_dir)
+    interdiction.set_overlay_client(_overlay)
+    flight_alerts.set_overlay_client(_overlay)
+    route_overlay.set_overlay_client(_overlay)
+    targets_overlay.set_overlay_client(_overlay)
+    body_info_overlay.set_overlay_client(_overlay)
+    exobiology_overlay.set_overlay_client(_overlay)
+    expedition_log_overlay.set_overlay_client(_overlay)
+    missions_overlay.set_overlay_client(_overlay)
+    surface_compass.set_overlay_client(_overlay)
+    landing.set_overlay_client(_overlay)
+    discovery.set_overlay_client(_overlay)
+    notable.set_overlay_client(_overlay)
+    screenshots.set_overlay_client(_overlay)
+    inventory_panel.set_overlay_client(_overlay)
+    colonization_panel.set_overlay_client(_overlay)
+    mining_panel.set_overlay_client(_overlay)
+
+    # Every feature with its own background-rect-behind-text overlay card
+    # registers an EDMCModernOverlay Plugin Group (see overlay.py's own
+    # docstring) - without one, the background can render invisible under
+    # EDMCModernOverlay.
+    overlay.register_modern_overlay_groups([
+        (landing.GROUP_NAME, landing.GROUP_PREFIX),
+        (inventory_panel.GROUP_NAME, inventory_panel.GROUP_PREFIX),
+        (discovery.GROUP_NAME, discovery.GROUP_PREFIX),
+        (notable.GROUP_NAME, notable.GROUP_PREFIX),
+        (interdiction.GROUP_NAME, interdiction.GROUP_PREFIX),
+        (flight_alerts.GROUP_NAME, flight_alerts.GROUP_PREFIX),
+        (route_overlay.GROUP_NAME, route_overlay.GROUP_PREFIX),
+        (targets_overlay.GROUP_NAME, targets_overlay.GROUP_PREFIX),
+        (body_info_overlay.GROUP_NAME, body_info_overlay.GROUP_PREFIX),
+        *exobiology_overlay.GROUPS.values(),
+        (expedition_log_overlay.GROUP_NAME, expedition_log_overlay.GROUP_PREFIX),
+        (missions_overlay.GROUP_NAME, missions_overlay.GROUP_PREFIX),
+        (surface_compass.GROUP_NAME, surface_compass.GROUP_PREFIX),
+        (mining_overlay.GROUP_NAME, mining_overlay.GROUP_PREFIX),
+        (screenshots.GROUP_NAME, screenshots.GROUP_PREFIX),
+        (colonization_overlay.GROUP_NAME, colonization_overlay.GROUP_PREFIX),
+    ])
+    overlay_placement.apply_group_offsets()   # carries right-hand displays past the overlay's clamp (see overlay_layout.py)
+
+    if platform_support.IS_LINUX:
+        advice = platform_support.journal_dir_advice(config.get_str("journaldir") or "")
+        if advice:
+            logger.warning("Linux journal folder: %s", advice)
+
+    applied_version = check_applied_update()
+    if applied_version is not None:
+        logger.info("WFMT updated to v%s", applied_version)
+        ui.set_update_applied(applied_version)
+
+    _updater = UpdateManager(plugin_dir, on_ready=_on_update_ready, on_downloading=_on_update_downloading)
+    _updater.check_async()
+    _schedule_startup_backup(plugin_dir)
+    explore_dashboard.start(plugin_dir)
+    return "WFMT"
+
+
+def _on_overlay_profile_changed() -> None:
+    """Another commander's overlay choices are now in the config: forget what was worked out from the old ones."""
+    overlay_placement.refresh()
+    overlay_placement.apply_group_offsets()
+    overlay_native.refresh_settings()
+
+
+def _on_update_downloading(version: str) -> None:
+    if _ui_frame is None:
+        ui.set_update_downloading(version)      # panel not built yet; it picks the state up when it is
+    else:
+        _ui_frame.after(0, lambda: ui.set_update_downloading(version))
+
+
+def _on_update_ready(version: str) -> None:
+    if _ui_frame is None:
+        ui.set_update_downloaded(version)
+    else:
+        _ui_frame.after(0, lambda: ui.set_update_downloaded(version))
+
+
+def plugin_stop() -> None:
+    """EDMarketConnector is closing."""
+    overlay_profile.profiles.save_current()
+    powerplay.controller.flush()
+    boxel_survey.stop()
+    explore_dashboard.stop()
+    route_planner_panel.stop()
+    codex_completionist_panel.stop()
+    organic_scan_panel.stop()
+    bgs_panel.stop()
+    session_credits.stop()
+    credits_ledger.stop()
+    inventory_panel.stop()
+    materials_panel.stop()
+    colonization_panel.stop()
+    mining_panel.stop()
+    trade_panel.stop()
+    flight_alerts.stop()
+    route_overlay.stop()
+    targets_overlay.stop()
+    body_info_overlay.stop()
+    system_survey.stop()
+    exobiology_overlay.stop()
+    missions_overlay.stop()
+    notes_panel.stop()
+    expedition_panel.stop()
+    expedition_log_panel.stop()
+    landing_finder_panel.stop()
+    expedition_log_overlay.stop()
+    shortcuts.stop()
+    overlay_native.stop()
+    trade_watch_panel.stop()
+    surface_compass.stop()
+    powerplay_window.close()
+    rare_goods_window.close()
+    ledger_window.close()
+    colonization_history_window.close()
+    _overlay.close()
+    logger.info("WFMT shutting down")
+
+
+def plugin_app(parent: tk.Frame) -> tk.Frame:
+    """Create WFMT's widgets on the EDMC main window."""
+    global _ui_frame
+    _ui_frame = ui.create_plugin_app(parent)
+    _ui_frame.after(RESTORE_DELAY_MS, _restore_commander_if_idle)
+    return _ui_frame
+
+
+def _restore_commander_if_idle() -> None:
+    """EDMC started without the game running, so no event will say who is playing until the next login. Tell every
+    feature the last commander from the newest journal so nothing waits for a login (see restore.py)."""
+    if _live_event_seen:
+        return
+    try:
+        cmdr = restore.latest_commander()
+        if cmdr:
+            overlay_profile.profiles.activate(cmdr)
+            place = restore.place_for(cmdr)
+            handled = restore.dispatch(_FEATURES, cmdr, place)
+            logger.info("No game running at start-up; restored commander %s in %d feature(s), last known system %s", cmdr, handled, place.get("StarSystem") or "unknown")
+    except Exception:
+        logger.exception("Could not restore the last commander")
+
+
+def plugin_prefs(parent, cmdr: str, is_beta: bool):
+    """Create the WFMT settings tab."""
+    return ui.create_prefs(parent)
+
+
+def prefs_changed(cmdr: str, is_beta: bool) -> None:
+    """Settings were saved."""
+    ui.save_prefs()
+    overlay_profile.profiles.save_current(cmdr)
+    powerplay.controller.flush()
+    # A changed overlay host/port applies straight away: drop the old connection
+    # and forget any recent "no overlay found" cool-off.
+    _overlay.close()
+    _overlay.retry_now()
+
+
+def journal_entry(
+    cmdr: str,
+    is_beta: bool,
+    system: Optional[str],
+    station: Optional[str],
+    entry: Dict[str, Any],
+    state: Dict[str, Any],
+) -> None:
+    """Dispatches journal events to every feature module's own handle_event."""
+    global _live_event_seen
+    _live_event_seen = True
+    overlay_profile.profiles.activate(cmdr)    # before any feature reads its overlay settings for this event
+    visited = entry.get("StarSystem") if entry.get("event") in ("FSDJump", "Location", "CarrierJump") else system
+    if isinstance(visited, str):
+        system_names.remember(visited)
+    feature_dispatch.dispatch(_FEATURES, entry, cmdr, system, station, state, logger)
+    feature_dispatch.replay_ship(_FEATURES, entry, cmdr, system, station, state, logger, ship_current.latest_loadout)    # EDMC started mid-session: the ship's Loadout was written before it was running
+
+
+def capi_fleetcarrier(data: Any) -> None:
+    """EDMC calls this when fresh CAPI `/fleetcarrier` data arrives
+    (requires Frontier auth; fetched on CarrierBuy/CarrierStats, ~15min
+    throttle) - a separate hook from journal_entry, not a journal event.
+    Only Inventory's fleet-carrier-locker tracking currently needs this."""
+    inventory_panel.capi_fleetcarrier(data)
+    colonization_panel.capi_fleetcarrier(data)
+
+
+def dashboard_entry(cmdr: str, is_beta: bool, entry: Dict[str, Any]) -> None:
+    """EDMC calls this on every Status.json change (roughly once a second in
+    flight) - entry is the parsed file directly. The only thing WFMT reads
+    from it is the Flags bitmask, for Interdiction's "Being Interdicted" bit
+    (the earliest interdiction signal, before any resolving journal event -
+    see interdiction.py)."""
+    flags = entry.get("Flags")
+    if isinstance(flags, int):
+        interdiction.handle_dashboard_flags(flags)
+    flight_alerts.dashboard_status(entry)
+    route_overlay.dashboard_status(entry)
+    system_survey.dashboard_status(entry)      # applies a survey rebuilt in the background, on this thread
+    body_info_overlay.dashboard_status(entry)
+    notes_panel.dashboard_status(entry)
+    mining_panel.dashboard_status(entry)
+    surface_compass.dashboard_status(entry)   # after Mining has refreshed the live position from this same entry
+    colonization_panel.dashboard_status(entry)
+    organic_scan_panel.dashboard_status(entry)
+    exobiology_overlay.dashboard_status(entry)   # after Organic Scanning has taken the position and body from this same entry
+    route_planner_panel.dashboard_status(entry)
+    explore_dashboard.dashboard_status(entry)    # last: the window reads what every feature above has just taken from this entry

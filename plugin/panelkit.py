@@ -1,0 +1,449 @@
+"""Shared Tk helpers for building `plugin_app`/Settings-tab widgets — used by
+every feature module (`powerplay.py`, `interdiction.py`, `landing.py`,
+`autohonk.py`, `discovery.py`) and by `ui.py` itself.
+
+Feature modules import this module, never `ui.py` — that's what keeps `ui.py`
+from becoming the thing every feature reaches into (a circular import).
+Each feature owns its own widgets
+and Settings section; this module only holds the generic, content-agnostic
+mechanics every one of them needs.
+"""
+
+from __future__ import annotations
+
+WORK_IN_PROGRESS_NOTE = (
+    "Work in progress: this feature is still being developed. Feedback, bug reports and ideas are very welcome - "
+    "please open an issue at https://github.com/rwharpernc/wayfarers-multitool/issues."
+)
+"""Shown at the foot of the Settings tab of every feature that is still taking shape."""
+
+import logging
+import os
+import time
+import tkinter as tk
+import tkinter.font as tkfont
+from typing import Dict, List, Optional, Tuple
+
+from config import appname, config
+from theme import theme
+
+plugin_name = os.path.basename(os.path.dirname(__file__))
+logger = logging.getLogger(f"{appname}.{plugin_name}")
+
+# Every label whose wraplength should track its frame's width - starting
+# tight and growing to match the frame's real, already-established width
+# means this plugin's own long lines (station/system/Power names - all
+# externally-sourced, unbounded strings) are never themselves the reason
+# EDMC's window grows. EDMC sizes its main window to whatever's widest among
+# every plugin it's running, so anything that can size the main window
+# must be bounded.
+MIN_WRAP = 300
+
+_wrap_labels: List[Tuple[tk.Label, int]] = []   # (label, the narrowest it may wrap)
+
+
+def available_wrap(frame_width: int, label_x: int, floor: int, margin: int = 6) -> int:
+    """The width a label may wrap at: what is left of the frame to the right of where the label starts, never below `floor`.
+
+    A label that shares a row with a button or another label must not be allowed the whole frame width: the row would then be wider than the frame, the window
+    would grow to fit it, and the next resize would hand the label that larger width again, so the window crept wider each time the text changed."""
+    return max(floor, frame_width - max(0, label_x) - margin)
+
+
+def _frame_x(label: tk.Label, frame: tk.Misc) -> int:
+    """How far the label's left edge is from the frame's left edge, in pixels."""
+    return label.winfo_rootx() - frame.winfo_rootx()
+
+
+ROW_GAP = 10     # what a neighbor in the same row is allowed on top of its own width (its padding)
+
+
+def row_room(label: tk.Label, frame_width: int, margin: int = 6) -> Optional[int]:
+    """The room left in the label's grid row after the other widgets in it, or None when it has the row to itself.
+
+    The label's own position is not always settled when it is first shown, so this reads the widths of its neighbors instead, which are."""
+    try:
+        info = label.grid_info()
+        if not info:
+            return None
+        others = [w for w in label.master.grid_slaves(row=info["row"]) if w is not label and w.winfo_manager() == "grid"]
+    except tk.TclError:
+        return None
+    if not others:
+        return None
+    return frame_width - sum(w.winfo_reqwidth() + ROW_GAP for w in others) - margin
+
+
+def _room(label: tk.Label, frame: tk.Misc, frame_width: int, floor: int) -> int:
+    """The wraplength for a shown label: the narrower of what its position and what its row's neighbors leave, never below `floor`."""
+    room = available_wrap(frame_width, _frame_x(label, frame), floor)
+    beside = row_room(label, frame_width)
+    return max(floor, min(room, beside)) if beside is not None else room
+
+
+def wrap_label(parent: tk.Frame, min_wrap: int = MIN_WRAP, **kwargs) -> tk.Label:
+    """A `tk.Label` whose `wraplength` is kept in sync with the room left in its containing
+    frame (see `on_frame_configure`) - use this for any label whose
+    text comes from the game/journal rather than this plugin's own fixed
+    strings. `min_wrap` is the width it wraps at until the frame is known to be
+    wider: a section that must not be the widest row in a narrow window passes a
+    smaller one, and still uses the whole width of a wide window instead of
+    wrapping short of it."""
+    label = tk.Label(parent, wraplength=min_wrap, justify=tk.LEFT, **kwargs)
+    _wrap_labels.append((label, min_wrap))
+    # A hidden panel is shown: wrap to where it now sits. Once now and once after the layout has settled.
+    pending: List[str] = []
+
+    def on_map(_event: tk.Event) -> None:
+        pending[:] = [label.after_idle(_rewrap, label, min_wrap), label.after(120, _rewrap, label, min_wrap)]
+
+    def on_destroy(event: tk.Event) -> None:
+        if event.widget is label:                               # a pending re-wrap must not run against a label that is gone
+            for after_id in pending:
+                try:
+                    label.after_cancel(after_id)
+                except tk.TclError:
+                    pass
+
+    label.bind("<Map>", on_map, add="+")
+    label.bind("<Destroy>", on_destroy, add="+")
+    return label
+
+
+_wrap_frame: Optional[tk.Misc] = None       # the plugin's top frame, seen on its first <Configure>
+
+
+def _rewrap(label: tk.Label, floor: int) -> None:
+    frame = _wrap_frame
+    if frame is None:
+        return
+    try:
+        if not label.winfo_viewable():
+            return
+        label.configure(wraplength=_room(label, frame, frame.winfo_width(), floor))
+    except tk.TclError:
+        pass   # the label's panel was torn down
+
+
+GROWTH_LOG_PX = 40              # a panel that becomes this much wider than it has been is written to the log, with its widest widgets
+_widest_seen = 0
+_first_seen_at: Optional[float] = None
+GROWTH_SETTLE_S = 30.0         # while EDMC is still building every plugin's panel the width changes a lot and means nothing
+
+
+def widest_widgets(frame: tk.Misc, count: int = 4) -> List[Tuple[int, str, str]]:
+    """The visible widgets under `frame` that ask for the most width: (requested width, class, a snippet of its text)."""
+    found: List[Tuple[int, str, str]] = []
+
+    def walk(widget: tk.Misc) -> None:
+        for child in widget.winfo_children():
+            try:
+                if child.winfo_viewable():
+                    text = ""
+                    try:
+                        text = str(child.cget("text"))[:50]
+                    except tk.TclError:
+                        pass
+                    found.append((child.winfo_reqwidth(), child.winfo_class(), text))
+            except tk.TclError:
+                continue
+            walk(child)
+
+    walk(frame)
+    return sorted(found, reverse=True)[:count]
+
+
+def _note_growth(frame: tk.Misc, width: int) -> None:
+    """Write to the log when the panel gets noticeably wider than it has been, naming what is asking for the room, so a window that stretches
+    can be traced to the widget responsible."""
+    global _widest_seen, _first_seen_at
+    now = time.monotonic()
+    if _first_seen_at is None:
+        _first_seen_at = now
+    if _widest_seen and width >= _widest_seen + GROWTH_LOG_PX and now - _first_seen_at >= GROWTH_SETTLE_S:
+        try:
+            widest = widest_widgets(frame)
+            if widest:                                # nothing visible yet means the panel is still being built
+                logger.warning("The WFMT panel widened from %d to %d px. Widest widgets: %s", _widest_seen, width, widest)
+        except Exception:
+            logger.debug("Could not describe the panel's widest widgets", exc_info=True)
+    _widest_seen = max(_widest_seen, width)
+
+
+def on_frame_configure(event: tk.Event) -> None:
+    """Bind this to the top-level `plugin_app` frame's `<Configure>` -
+    wraps every registered `wrap_label` to the room left of it in the frame, never below its `min_wrap`."""
+    global _wrap_frame
+    _wrap_frame = event.widget
+    _note_growth(event.widget, event.width)
+    for label, floor in list(_wrap_labels):
+        try:
+            if label.winfo_viewable():
+                label.configure(wraplength=_room(label, event.widget, event.width, floor))
+            else:
+                label.configure(wraplength=max(floor, min(event.width, MIN_WRAP)))     # not shown: a modest width until it is mapped and re-wrapped
+        except tk.TclError:
+            pass   # the label's panel was torn down
+
+
+def bold_font(_widget: tk.Widget) -> tuple:
+    """Bold variant of EDMC's default font, for a collapsible header title -
+    `_widget` is unused (kept so call sites read naturally as "bold font for
+    this widget") since TkDefaultFont is global, not per-widget; a plain
+    tk.Label/Frame has no "font" option to read back in the first place."""
+    try:
+        base = tkfont.nametofont("TkDefaultFont")
+        return (base.actual("family"), base.actual("size"), "bold")
+    except tk.TclError:
+        return ("TkDefaultFont", 9, "bold")
+
+
+_view_fonts: "Dict[str, tkfont.Font] | None" = None
+
+
+def view_fonts() -> "Dict[str, tkfont.Font]":
+    """Fonts for Trade mode's page (trade_view.py), made once from EDMC's default UI font: normal, bold, a size
+    smaller for detail lines, and that small size in bold for column headings."""
+    global _view_fonts
+    if _view_fonts is None:
+        try:
+            base = tkfont.nametofont("TkDefaultFont")
+            family, size = base.actual("family"), int(base.actual("size")) or 9
+        except tk.TclError:
+            family, size = "TkDefaultFont", 9
+        small = size - 1 if size > 0 else size + 1   # a negative size is in pixels, so "smaller" runs the other way
+        _view_fonts = {
+            "normal": tkfont.Font(family=family, size=size),
+            "bold": tkfont.Font(family=family, size=size, weight="bold"),
+            "small": tkfont.Font(family=family, size=small),
+            "small_bold": tkfont.Font(family=family, size=small, weight="bold"),
+        }
+    return _view_fonts
+
+
+def separator_color() -> str:
+    """The rule color `add_separator` uses, for rules drawn elsewhere."""
+    return _SEPARATOR_DARK if is_dark_theme() else _SEPARATOR_LIGHT
+
+
+NAV_ARROW_COLOR = "#ff8c0d"  # Elite orange
+_NAV_ARROW_EXTRA_PT = 7
+_nav_arrow_font: "tkfont.Font | None" = None
+
+
+def nav_arrow(parent: tk.Misc, direction: int, command) -> tk.Label:
+    """The page-switching arrow (previous = -1, next = +1) used by every paged panel. It is a
+    raised, bordered, padded label in a large bold font, so it reads as a button and is easy to
+    hit - the bare triangle it replaced was too small to see in EDMC's small main window. Not packed
+    or gridded here; the caller places it. Its size is fixed (a glyph plus padding), so it can't
+    widen the main window."""
+    global _nav_arrow_font
+    if _nav_arrow_font is None:
+        try:
+            base = tkfont.nametofont("TkDefaultFont")
+            size = int(base.actual("size")) or 9
+            _nav_arrow_font = tkfont.Font(
+                family=base.actual("family"), weight="bold",
+                size=size + _NAV_ARROW_EXTRA_PT if size > 0 else size - _NAV_ARROW_EXTRA_PT)
+        except tk.TclError:
+            _nav_arrow_font = tkfont.Font(family="TkDefaultFont", weight="bold", size=16)
+    arrow = tk.Label(parent, text="◀" if direction < 0 else "▶", font=_nav_arrow_font, fg=NAV_ARROW_COLOR,
+                     cursor="hand2", relief="raised", borderwidth=2, padx=10, pady=0)
+    arrow.bind("<Button-1>", lambda _e: command())
+    return arrow
+
+
+# --- Toggle-button coloring (shared by every feature's own main-panel quick-
+# toggle button, and by ui.py's mode-select buttons) -----------------------
+
+TOGGLE_ON_BG = "#2e7d32"
+TOGGLE_ON_FG = "#ffffff"
+
+
+def capture_toggle_off_colors(widget: tk.Button) -> Tuple[str, str]:
+    """Call once, on a widget still in its natural (never-toggled) state, to
+    learn the theme's own off-state bg/fg - so `apply_toggle_button_state`
+    can restore exactly that instead of a hardcoded guess."""
+    return widget.cget("background"), widget.cget("foreground")
+
+
+def apply_toggle_button_state(widget: tk.Button, on: bool, off_colors: Tuple[str, str]) -> None:
+    bg, fg = (TOGGLE_ON_BG, TOGGLE_ON_FG) if on else off_colors
+    try:
+        widget.configure(background=bg, foreground=fg, activebackground=bg, activeforeground=fg)
+    except tk.TclError:
+        pass
+
+
+TOOLTIP_DELAY_MS = 500
+TOOLTIP_WRAP = 280
+
+
+def fit_entry(entry: tk.Entry, max_px: int, min_chars: int = 8) -> tk.Entry:
+    """Make an Entry no wider than `max_px` pixels whatever the font is. An Entry's `width` counts characters of its font, so a fixed
+    count is narrow in one font and wide in another (the same 26 characters ask for about 190 px in one and 266 px in another), and
+    EDMC sizes its whole window to the widest row. The count is lowered until the box asks for no more than `max_px`."""
+    chars = int(entry.cget("width"))
+    entry.update_idletasks()
+    while chars > min_chars and entry.winfo_reqwidth() > max_px:
+        chars -= 1
+        entry.configure(width=chars)
+        entry.update_idletasks()
+    return entry
+
+
+def fit_button_row(buttons: List[tk.Button], max_px: int, gap: int = 4) -> None:
+    """Narrow a row of buttons until the row asks for no more than `max_px` pixels, whatever the font. A button's width is its text plus
+    its inner padding, so a wide font makes the same row several pixels wider, and EDMC sizes its whole window to the widest row. The inner
+    padding is lowered first, then the font a point at a time (never below 7)."""
+    if not buttons:
+        return
+
+    def row_width() -> int:
+        buttons[0].update_idletasks()
+        return sum(b.winfo_reqwidth() for b in buttons) + gap * (len(buttons) - 1)
+
+    padx = int(float(buttons[0].cget("padx") or 0)) if str(buttons[0].cget("padx")).replace(".", "").isdigit() else 8
+    while row_width() > max_px and padx > 1:
+        padx -= 2
+        for b in buttons:
+            b.configure(padx=max(1, padx))
+    font = tkfont.Font(font=buttons[0].cget("font"))
+    size = abs(int(font.actual("size")))
+    while row_width() > max_px and size > 7:
+        size -= 1
+        for b in buttons:
+            b.configure(font=(font.actual("family"), size))
+
+
+def add_tooltip(widget: tk.Widget, text: str) -> None:
+    """Shows `text` in a small popup next to `widget` after the pointer rests on
+    it for TOOLTIP_DELAY_MS, and hides it on leave/click. The popup is its own
+    borderless top-level window, so it never affects the size of EDMC's main
+    window; fixed light colors keep it legible under every EDMC theme."""
+    state = {"after": None, "tip": None}
+
+    def hide(_event: object = None) -> None:
+        if state["after"] is not None:
+            widget.after_cancel(state["after"])
+            state["after"] = None
+        if state["tip"] is not None:
+            state["tip"].destroy()
+            state["tip"] = None
+
+    def show() -> None:
+        state["after"] = None
+        try:
+            tip = tk.Toplevel(widget)
+            tip.wm_overrideredirect(True)
+            tip.wm_geometry(f"+{widget.winfo_rootx() + 8}+{widget.winfo_rooty() + widget.winfo_height() + 4}")
+            tk.Label(
+                tip, text=text, justify=tk.LEFT, wraplength=TOOLTIP_WRAP, background="#ffffe0",
+                foreground="#000000", relief=tk.SOLID, borderwidth=1, padx=4, pady=2,
+            ).pack()
+            state["tip"] = tip
+        except tk.TclError:
+            state["tip"] = None
+
+    def schedule(_event: object = None) -> None:
+        hide()
+        state["after"] = widget.after(TOOLTIP_DELAY_MS, show)
+
+    widget.bind("<Enter>", schedule, add="+")
+    widget.bind("<Leave>", hide, add="+")
+    widget.bind("<ButtonPress>", hide, add="+")
+    widget.bind("<Destroy>", hide, add="+")
+
+
+def collapsible_section(parent: tk.Frame, title: str, config_key: str, default_collapsed: bool = True) -> tk.Frame:
+    """A bold, click-to-toggle title (▸ collapsed / ▾ expanded) in row 0 of
+    `parent`, with a body frame in row 1 that the caller builds its widgets
+    into (`body.set_title_suffix(text)` adds a note to the title that shows even when folded). A section always starts
+    collapsed (`default_collapsed`) each time EDMC starts: opening it lasts for the session and is not remembered, so the
+    panel is the same short height every launch. `config_key` is kept for the callers that name it and is unused."""
+    collapsed = default_collapsed
+    suffix = ""
+    title_label = tk.Label(parent, font=bold_font(parent), cursor="hand2")
+    title_label.grid(row=0, column=0, columnspan=3, sticky=tk.W)
+    body = tk.Frame(parent)
+    body.grid(row=1, column=0, columnspan=3, sticky=tk.W)
+
+    def apply() -> None:
+        title_label.config(text=f"{'▸' if collapsed else '▾'} {title}{suffix}")
+        (body.grid_remove if collapsed else body.grid)()
+
+    def set_suffix(text: str) -> None:
+        """Short text after the title that stays visible while the section is folded (for example "- rebuilding...")."""
+        nonlocal suffix
+        suffix = text
+        apply()
+
+    def toggle(_event: tk.Event) -> None:
+        nonlocal collapsed
+        collapsed = not collapsed
+        apply()
+
+    title_label.bind("<Button-1>", toggle)
+    apply()
+    body.set_title_suffix = set_suffix  # type: ignore[attr-defined]
+    return body
+
+
+def copy_to_clipboard(widget: tk.Misc, text: str) -> bool:
+    """Copies `text` to the OS clipboard via `widget`. The explicit
+    `update()` after `clipboard_append` is required on some platforms/
+    window managers for the clipboard-ownership handoff to actually take
+    effect before focus moves elsewhere (e.g. back to the game window) -
+    without it, pastes can silently grab stale content. Returns True on
+    success."""
+    try:
+        widget.clipboard_clear()
+        widget.clipboard_append(text)
+        widget.update()
+        return True
+    except tk.TclError as exc:
+        logger.warning("Clipboard copy failed: %s", exc)
+        return False
+
+
+_SEPARATOR_LIGHT = "#5a5f62"
+_SEPARATOR_DARK = "#82878b"
+
+
+def is_dark_theme() -> bool:
+    """Whether Dark or Transparent theme is active - same check
+    missions_ui.py's own private `_is_dark_theme()` uses; generalized here
+    since `add_separator` below is the first cross-feature use of it."""
+    return theme.active not in (None, theme.THEME_DEFAULT)
+
+
+def add_separator(parent: tk.Frame, row: int) -> int:
+    """A thin horizontal rule marking the boundary between two features'
+    sections stacked in the same mode/always frame (see `ui.py`'s
+    `create_plugin_app`) - call before every feature after the first, never
+    before the first. Color is set directly from a static light/dark
+    choice, not read back through `theme.update()`/a themed widget's own
+    background - sidesteps the theme.update()-is-a-no-op-until-theme.current-
+    is-populated pitfall documented in `ui.py`'s own `create_plugin_app` and
+    `inventory_panel.py`'s bar-track-color fix, so this never needs a retry
+    to show the right color. Returns `row + 1`."""
+    sep = tk.Frame(parent, height=1, borderwidth=0)
+    sep.configure(background=_SEPARATOR_DARK if is_dark_theme() else _SEPARATOR_LIGHT)
+    sep.grid(row=row, column=0, columnspan=3, sticky="ew", pady=6)
+    return row + 1
+
+
+def apply_theme_deep(widget: tk.Misc) -> None:
+    """EDMC's own `theme.update()` only recolors `widget` itself plus its
+    *direct* children - not enough once a feature's own widgets nest a
+    button/label inside a wrapper Frame of their own (several levels below
+    the mode frame `theme.update()` is called on once in `ui.py`). Walks
+    the whole subtree instead; use it after building any nested widget
+    structure whose leaves wouldn't otherwise get themed."""
+    try:
+        theme.update(widget)  # type: ignore[arg-type]
+    except Exception:
+        logger.debug("theme.update() failed for %r", widget, exc_info=True)
+
+    for child in widget.winfo_children():
+        apply_theme_deep(child)

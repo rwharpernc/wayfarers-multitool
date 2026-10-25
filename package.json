@@ -1,0 +1,13 @@
+{
+  "name": "wfmt",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Wayfarer's Multitool \u2014 EDMC plugin",
+  "license": "GPL-3.0-only",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "package": "node scripts/build.mjs && node scripts/package.mjs",
+    "deploy": "node scripts/build.mjs --install",
+    "test:docker": "node scripts/docker-test.mjs"
+  }
+}

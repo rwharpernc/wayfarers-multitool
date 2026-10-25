@@ -1,0 +1,124 @@
+"""
+Unit tests for the pure parts of plugin/uikit (no display needed).
+Run with: python -m unittest discover -s tests
+"""
+
+from __future__ import annotations
+
+import os
+import sys
+import unittest
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from plugin.uikit.shell import WindowShell  # noqa: E402
+from plugin.uikit.table import _lighten, _sort_value  # noqa: E402
+from plugin.uikit.widgets import clip, suggestions  # noqa: E402
+
+
+class ClipTests(unittest.TestCase):
+    def test_short_text_unchanged(self) -> None:
+        self.assertEqual(clip("Monazite", 20), "Monazite")
+
+    def test_long_text_capped_with_ellipsis(self) -> None:
+        out = clip("x" * 500, 40)
+        self.assertEqual(len(out), 40)
+        self.assertTrue(out.endswith("…"))
+
+
+class SuggestionTests(unittest.TestCase):
+    SYSTEMS = ["Sol", "Achenar", "Alpha Centauri", "HIP 12345", "Shinrarta Dezhra", "Colonia"]
+
+    def test_empty_text_offers_everything_in_order(self) -> None:
+        self.assertEqual(suggestions(self.SYSTEMS, ""), self.SYSTEMS)
+
+    def test_names_starting_with_the_text_come_before_names_containing_it(self) -> None:
+        self.assertEqual(suggestions(self.SYSTEMS, "a"),
+                         ["Achenar", "Alpha Centauri", "Shinrarta Dezhra", "Colonia"])
+
+    def test_matching_ignores_case_and_surrounding_spaces(self) -> None:
+        self.assertEqual(suggestions(self.SYSTEMS, "  hip "), ["HIP 12345"])
+
+    def test_no_match_gives_nothing(self) -> None:
+        self.assertEqual(suggestions(self.SYSTEMS, "zzz"), [])
+
+
+class GeometryTests(unittest.TestCase):
+    def test_no_saved_geometry_uses_default(self) -> None:
+        self.assertEqual(WindowShell._geometry(None, (1180, 720), (900, 520)), "1180x720")
+
+    def test_garbage_saved_geometry_uses_default(self) -> None:
+        self.assertEqual(WindowShell._geometry(lambda: "nonsense", (1180, 720), (900, 520)), "1180x720")
+
+    def test_saved_geometry_kept_with_position(self) -> None:
+        self.assertEqual(WindowShell._geometry(lambda: "1300x800+50+60", (1180, 720), (900, 520)),
+                         "1300x800+50+60")
+
+    def test_saved_geometry_grown_to_minimum(self) -> None:
+        self.assertEqual(WindowShell._geometry(lambda: "400x300+10+10", (1180, 720), (900, 520)),
+                         "900x520+10+10")
+
+    def test_negative_monitor_offsets_accepted(self) -> None:
+        self.assertEqual(WindowShell._geometry(lambda: "1000x600+-1920+30", (1180, 720), (900, 520)),
+                         "1000x600+-1920+30")
+
+
+class SortValueTests(unittest.TestCase):
+    def test_numbers_sort_numerically_not_alphabetically(self) -> None:
+        values = ["10", "9", "1,200", "2"]
+        self.assertEqual(sorted(values, key=_sort_value), ["2", "9", "10", "1,200"])
+
+    def test_numbers_before_text_and_text_case_insensitive(self) -> None:
+        values = ["beta", "Alpha", "7", "—"]
+        self.assertEqual(sorted(values, key=_sort_value), ["7", "Alpha", "beta", "—"])
+
+    def test_suffixed_numbers(self) -> None:
+        self.assertEqual(sorted(["412 ls", "98 ls", "3,210 ls"], key=_sort_value),
+                         ["98 ls", "412 ls", "3,210 ls"])
+
+
+class NoShadowingTests(unittest.TestCase):
+    """A package directory beats a same-named module on import, so `plugin/ui/`
+    once silently replaced `plugin/ui.py` (the main panel builder) and WFMT
+    failed to load in EDMC with "module 'WFMT.ui' has no attribute
+    'create_plugin_app'". The unit tests never import load.py, hence this check."""
+
+    def test_no_package_shares_a_name_with_a_module(self) -> None:
+        plugin_dir = os.path.join(os.path.dirname(__file__), "..", "plugin")
+        entries = os.listdir(plugin_dir)
+        packages = {e for e in entries if os.path.isdir(os.path.join(plugin_dir, e)) and e != "__pycache__"}
+        modules = {e[:-3] for e in entries if e.endswith(".py")}
+        self.assertEqual(sorted(packages & modules), [])
+
+
+class NoGlobalTtkTests(unittest.TestCase):
+    """ttk themes and styles are application-wide: switching the theme or
+    restyling a stock style ("TButton", "Treeview", ...) from the kit would
+    recolor EDMC's main window and every other plugin. The kit must stay
+    on classic tk widgets and name-scoped option-database skinning."""
+
+    def test_kit_never_touches_global_ttk(self) -> None:
+        import glob
+        import re
+        root = os.path.join(os.path.dirname(__file__), "..", "plugin", "uikit")
+        for path in glob.glob(os.path.join(root, "*.py")):
+            source = open(path, encoding="utf-8").read()
+            code = re.sub(r'""".*?"""', "", source, flags=re.S)  # docstrings may explain the rule
+            code = re.sub(r"#.*", "", code)
+            for needle in ("theme_use(", "ttk.Style", "style.configure(", "style.map(", "from tkinter import ttk"):
+                self.assertNotIn(needle, code, f"{os.path.basename(path)} uses {needle!r}")
+
+
+class LightenTests(unittest.TestCase):
+    def test_zero_leaves_the_color_alone(self) -> None:
+        self.assertEqual(_lighten("#1f4a37", 0), "#1f4a37")
+
+    def test_lightening_moves_toward_white(self) -> None:
+        self.assertEqual(_lighten("#000000", 0.5), "#808080")
+        self.assertEqual(_lighten("#ffffff", 0.5), "#ffffff")
+        light = _lighten("#1f4a37", 0.3)
+        self.assertTrue(all(int(light[i:i + 2], 16) > int("1f4a37"[i - 1:i + 1], 16) for i in (1, 3, 5)))
+
+
+if __name__ == "__main__":
+    unittest.main()

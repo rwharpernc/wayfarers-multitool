@@ -1,0 +1,467 @@
+"""
+Unit tests for Trade mode's pure logic (trade_ledger, trade_market, trade_spansh_client).
+No EDMC runtime and no network needed.
+
+Run with: python -m unittest discover -s tests
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+import tempfile
+import unittest
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from plugin import trade_ledger as ledger_mod  # noqa: E402
+from plugin import trade_market as market  # noqa: E402
+from plugin import trade_spansh_client as client  # noqa: E402
+
+
+def buy(name: str, count: int, total: int, stamp: str = "2026-10-09T10:00:00Z") -> dict:
+    return {"event": "MarketBuy", "Type": name.lower(), "Type_Localised": name, "Count": count,
+            "TotalCost": total, "timestamp": stamp}
+
+
+def sell(name: str, count: int, total: int, paid: int, stamp: str = "2026-10-09T11:00:00Z") -> dict:
+    return {"event": "MarketSell", "Type": name.lower(), "Type_Localised": name, "Count": count,
+            "TotalSale": total, "AvgPricePaid": paid, "timestamp": stamp}
+
+
+class LedgerTests(unittest.TestCase):
+    def _ledger(self) -> dict:
+        return ledger_mod.new_ledger("Bocheaux", "Journal.1.log")
+
+    def test_profit_is_sale_minus_what_the_sold_tons_cost(self) -> None:
+        ledger = self._ledger()
+        ledger_mod.apply_trade_event(ledger, buy("Gold", 10, 90_000))
+        ledger_mod.apply_trade_event(ledger, sell("Gold", 10, 120_000, 9_000))
+        totals = ledger_mod.totals(ledger)
+        self.assertEqual((totals.bought_t, totals.sold_t, totals.spent, totals.revenue), (10, 10, 90_000, 120_000))
+        self.assertEqual(totals.profit, 30_000)
+
+    def test_stolen_goods_count_the_whole_sale_as_profit(self) -> None:
+        ledger = self._ledger()
+        ledger_mod.apply_trade_event(ledger, sell("Gold", 4, 40_000, 0))
+        self.assertEqual(ledger_mod.totals(ledger).profit, 40_000)
+
+    def test_a_loss_is_negative(self) -> None:
+        ledger = self._ledger()
+        ledger_mod.apply_trade_event(ledger, sell("Tea", 5, 20_000, 5_000))
+        self.assertEqual(ledger_mod.totals(ledger).profit, -5_000)
+
+    def test_other_events_and_bad_counts_are_ignored(self) -> None:
+        ledger = self._ledger()
+        self.assertFalse(ledger_mod.apply_trade_event(ledger, {"event": "Docked"}))
+        self.assertFalse(ledger_mod.apply_trade_event(ledger, buy("Gold", 0, 0)))
+        self.assertFalse(ledger_mod.apply_trade_event(ledger, {"event": "MarketBuy", "Count": "x"}))
+        self.assertEqual(ledger["rows"], {})
+
+    def test_rate_needs_enough_time_to_mean_something(self) -> None:
+        ledger = self._ledger()
+        ledger_mod.apply_trade_event(ledger, sell("Gold", 1, 1_000, 0, "2026-10-09T10:00:00Z"))
+        self.assertNotIn("cr/hr", ledger_mod.summary_lines(ledger)[0])
+        ledger_mod.apply_trade_event(ledger, sell("Gold", 1, 1_000, 0, "2026-10-09T11:00:00Z"))
+        self.assertIn("+2,000 cr (+2,000 cr/hr)", ledger_mod.summary_lines(ledger)[0])
+
+    def test_best_sales_are_ranked_and_limited(self) -> None:
+        ledger = self._ledger()
+        for index in range(8):
+            ledger_mod.apply_trade_event(ledger, sell(f"Item{index}", 1, 1_000 * (index + 1), 0))
+        lines = ledger_mod.summary_lines(ledger)
+        ranked = [line for line in lines if line.startswith("  ")]
+        self.assertEqual(len(ranked), ledger_mod.TOP_ROWS_SHOWN)
+        self.assertIn("Item7", ranked[0])
+
+    def test_empty_ledger_text(self) -> None:
+        self.assertIn("No trades yet", ledger_mod.summary_lines(None)[0])
+        self.assertIn("No trades yet", ledger_mod.summary_lines(self._ledger())[0])
+
+    def test_a_commanders_session_carries_on_across_logins(self) -> None:
+        book = ledger_mod.LedgerBook()
+        first, created = book.ensure("Bocheaux", "Journal.1.log", started="2026-10-09T10:00:00Z", credits=100)
+        self.assertTrue(created)
+        ledger_mod.apply_trade_event(first, buy("Gold", 1, 10, "2026-10-09T10:05:00Z"))
+        again, created = book.ensure("BOCHEAUX", "Journal.2.log", started="2026-10-10T09:00:00Z", credits=999)
+        self.assertFalse(created)
+        self.assertIs(again, first)
+        self.assertIn("Gold", again["rows"])                                          # nothing was discarded
+        self.assertEqual(again["journal_file"], "Journal.2.log")                      # only a note of the file being played
+        self.assertEqual(ledger_mod.meta(again)["started"], "2026-10-09T10:00:00Z")   # the start is the session's, not the login's
+        self.assertEqual(ledger_mod.meta(again)["credits_start"], 100)
+
+    def test_each_commander_has_their_own_session(self) -> None:
+        book = ledger_mod.LedgerBook()
+        bocheaux, _ = book.ensure("Bocheaux", "Journal.1.log")
+        ledger_mod.apply_trade_event(bocheaux, buy("Gold", 1, 10, "2026-10-09T10:05:00Z"))
+        mactavious, created = book.ensure("Mactavious", "Journal.1.log")
+        self.assertTrue(created)
+        self.assertEqual(mactavious["rows"], {})
+        self.assertIn("Gold", book.get("bocheaux")["rows"])          # switching commanders discarded nothing
+        self.assertIsNone(book.get("Someone Else"))
+
+    def test_save_and_load_round_trip(self) -> None:
+        book = ledger_mod.LedgerBook()
+        ledger, _ = book.ensure("Bocheaux", "Journal.1.log", started="2026-10-09T10:00:00Z")
+        ledger_mod.apply_trade_event(ledger, buy("Gold", 3, 30, "2026-10-09T10:05:00Z"))
+        with tempfile.TemporaryDirectory() as folder:
+            self.assertEqual(ledger_mod.load_book(folder).ledgers, {})
+            ledger_mod.save_book(folder, book)
+            self.assertEqual(ledger_mod.load_book(folder).ledgers, book.ledgers)
+
+    def test_an_earlier_single_ledger_file_becomes_that_commanders_session(self) -> None:
+        old = ledger_mod.new_ledger("Bocheaux", "Journal.1.log")
+        ledger_mod.apply_trade_event(old, buy("Gold", 3, 30, "2026-10-09T10:05:00Z"))
+        with tempfile.TemporaryDirectory() as folder:
+            with open(os.path.join(folder, ledger_mod.STATE_FILENAME), "w", encoding="utf-8") as handle:
+                json.dump(old, handle)
+            book = ledger_mod.load_book(folder)
+        self.assertEqual(book.get("bocheaux")["rows"]["Gold"]["bought"], 3)
+
+
+
+class RunningCostTests(unittest.TestCase):
+    """Event shapes copied from a real journal (2026-10-09)."""
+
+    def _ledger(self) -> dict:
+        return ledger_mod.new_ledger("Bocheaux", "Journal.1.log")
+
+    def test_fuel_repairs_rearm_and_limpets_are_counted(self) -> None:
+        ledger = self._ledger()
+        for entry in (
+            {"event": "RefuelAll", "Cost": 14, "Amount": 0.26972},
+            {"event": "RefuelPartial", "Cost": 243, "Amount": 4.85},
+            {"event": "Repair", "Items": ["$type8_cockpit_name;", "Hull"], "Cost": 1731},
+            {"event": "RepairAll", "Cost": 1621},
+            {"event": "BuyAmmo", "Cost": 16},
+            {"event": "RestockVehicle", "Type": "testbuggy", "Cost": 5270, "Count": 1},
+            {"event": "BuyDrones", "Type": "Drones", "Count": 60, "BuyPrice": 101, "TotalCost": 6060},
+            {"event": "SellDrones", "Type": "Drones", "Count": 20, "SellPrice": 100, "TotalSale": 2000},
+        ):
+            self.assertTrue(ledger_mod.apply_trade_event(ledger, entry), entry["event"])
+        self.assertEqual(ledger_mod.expenses_by_category(ledger),
+                         {"fuel": 257, "repairs": 3352, "rearm": 5286, "limpets": 4060})
+
+    def test_a_repair_that_includes_wear_is_advanced_maintenance(self) -> None:
+        ledger = self._ledger()
+        # Both shapes copied from a real journal (2026-10-09): the second one is Advanced Maintenance.
+        ledger_mod.apply_trade_event(ledger, {"event": "RepairAll", "Cost": 50_083})
+        ledger_mod.apply_trade_event(ledger, {"event": "Repair", "Cost": 905, "Items": [
+            "$panthermkii_cockpit_name;", "Hull", "$modularcargobaydoor_name;", "Wear"]})
+        ledger_mod.apply_trade_event(ledger, {"event": "Repair", "Cost": 1_731, "Items": ["Hull", "$x_name;"]})
+        self.assertEqual(ledger_mod.expenses_by_category(ledger),
+                         {"repairs": 51_814, "maintenance": 905})
+        lines = ledger_mod.summary_lines(ledger)
+        self.assertIn("Repairs: -51,814 cr", lines)
+        self.assertIn("Advanced maintenance: -905 cr", lines)
+        self.assertLess(lines.index("Repairs: -51,814 cr"), lines.index("Advanced maintenance: -905 cr"))
+
+    def test_wear_is_matched_ignoring_case_and_only_as_a_whole_item(self) -> None:
+        ledger = self._ledger()
+        ledger_mod.apply_trade_event(ledger, {"event": "Repair", "Cost": 10, "Items": [" WEAR "]})
+        ledger_mod.apply_trade_event(ledger, {"event": "Repair", "Cost": 20, "Items": ["Wearable Thing"]})
+        ledger_mod.apply_trade_event(ledger, {"event": "Repair", "Cost": 30})
+        self.assertEqual(ledger_mod.expenses_by_category(ledger), {"repairs": 50, "maintenance": 10})
+
+    def test_a_free_or_empty_cost_changes_nothing(self) -> None:
+        ledger = self._ledger()
+        self.assertFalse(ledger_mod.apply_trade_event(ledger, {"event": "RefuelAll", "Cost": 0}))
+        self.assertFalse(ledger_mod.apply_trade_event(ledger, {"event": "RepairAll"}))
+        self.assertEqual(ledger_mod.expenses_by_category(ledger), {})
+
+    def test_fines_and_bounties_are_not_a_running_cost_unless_asked_for(self) -> None:
+        # Shapes copied from a real journal (2026-10-12).
+        ledger = self._ledger()
+        self.assertFalse(ledger_mod.counts_fines())
+        self.assertFalse(ledger_mod.apply_trade_event(ledger, {"event": "PayFines", "Amount": 20140, "AllFines": True, "ShipID": 9, "BrokerPercentage": 25.0}))
+        self.assertFalse(ledger_mod.apply_trade_event(ledger, {"event": "PayBounties", "Amount": 1250, "AllFines": True, "ShipID": 16}))
+        self.assertEqual(ledger_mod.expenses_by_category(ledger), {})
+
+    def test_with_the_setting_on_a_fine_or_bounty_paid_is_a_cost_with_its_own_line(self) -> None:
+        ledger_mod.set_count_fines(True)
+        self.addCleanup(ledger_mod.set_count_fines, False)
+        ledger = self._ledger()
+        ledger_mod.apply_trade_event(ledger, sell("Gold", 1, 10_000, 0))
+        self.assertTrue(ledger_mod.apply_trade_event(ledger, {"event": "PayFines", "Amount": 20140, "AllFines": True}))
+        self.assertTrue(ledger_mod.apply_trade_event(ledger, {"event": "PayBounties", "Amount": 1250}))
+        self.assertEqual(ledger_mod.expenses_by_category(ledger), {"fines": 21_390})
+        lines = ledger_mod.summary_lines(ledger)
+        self.assertIn("Fines and bounties paid: -21,390 cr", lines)
+        self.assertEqual(ledger_mod.totals(ledger).net, 10_000 - 21_390)
+
+    def test_a_payment_with_no_amount_or_a_zero_one_changes_nothing(self) -> None:
+        ledger_mod.set_count_fines(True)
+        self.addCleanup(ledger_mod.set_count_fines, False)
+        ledger = self._ledger()
+        for entry in ({"event": "PayFines"}, {"event": "PayFines", "Amount": 0}, {"event": "PayBounties", "Amount": "lots"}):
+            self.assertFalse(ledger_mod.apply_trade_event(ledger, entry))
+        self.assertEqual(ledger_mod.expenses_by_category(ledger), {})
+
+    def test_a_payment_replayed_from_the_journal_is_counted_once(self) -> None:
+        ledger_mod.set_count_fines(True)
+        self.addCleanup(ledger_mod.set_count_fines, False)
+        ledger = ledger_mod.new_ledger("Bocheaux", "Journal.1.log", started="2026-10-12T08:00:00Z")
+        entries = [{"event": "Commander", "Name": "Bocheaux"},
+                   {"timestamp": "2026-10-12T09:00:00Z", "event": "PayFines", "Amount": 500}]
+        self.assertEqual(ledger_mod.replay_entries(ledger, entries, "Bocheaux"), 1)
+        self.assertEqual(ledger_mod.replay_entries(ledger, entries, "Bocheaux"), 0)
+        self.assertEqual(ledger_mod.expenses_by_category(ledger), {"fines": 500})
+
+    def test_the_journal_readers_pick_up_the_payment_events(self) -> None:
+        from plugin import trade_journal_scan
+        for event in ("PayFines", "PayBounties", "PayLegacyFines"):
+            self.assertTrue(ledger_mod._WANTED.search('{ "event":"%s", "Amount":1 }' % event))
+            self.assertTrue(trade_journal_scan._WANTED.search('{ "event":"%s", "Amount":1 }' % event))
+
+    def test_net_is_trade_profit_less_costs(self) -> None:
+        ledger = self._ledger()
+        ledger_mod.apply_trade_event(ledger, buy("Gold", 10, 90_000))
+        ledger_mod.apply_trade_event(ledger, sell("Gold", 10, 120_000, 9_000))
+        ledger_mod.apply_trade_event(ledger, {"event": "RefuelAll", "Cost": 1_000})
+        ledger_mod.apply_trade_event(ledger, {"event": "RepairAll", "Cost": 4_000})
+        totals = ledger_mod.totals(ledger)
+        self.assertEqual((totals.profit, totals.expenses, totals.net), (30_000, 5_000, 25_000))
+        lines = ledger_mod.summary_lines(ledger)
+        self.assertEqual(lines[0], "Net profit: +25,000 cr (+25,000 cr/hr)")  # buy and sell an hour apart
+        self.assertIn("Trade profit: +30,000 cr", lines)
+        self.assertIn("Fuel: -1,000 cr", lines)
+        self.assertIn("Repairs: -4,000 cr", lines)
+
+    def test_without_costs_the_summary_is_unchanged(self) -> None:
+        ledger = self._ledger()
+        ledger_mod.apply_trade_event(ledger, sell("Gold", 1, 1_000, 0))
+        self.assertEqual(ledger_mod.summary_lines(ledger)[0], "Profit: +1,000 cr")
+        self.assertNotIn("Trade profit", "\n".join(ledger_mod.summary_lines(ledger)))
+
+    def test_costs_before_any_trade_still_show(self) -> None:
+        ledger = self._ledger()
+        ledger_mod.apply_trade_event(ledger, {"event": "RefuelAll", "Cost": 700})
+        lines = ledger_mod.summary_lines(ledger)
+        self.assertEqual(lines[0], "No trades yet this session.")
+        self.assertIn("Fuel: -700 cr", lines)
+        self.assertEqual(lines[-1], "Net: -700 cr")
+
+    def test_limpets_sold_back_can_read_as_a_gain(self) -> None:
+        ledger = self._ledger()
+        ledger_mod.apply_trade_event(ledger, {"event": "SellDrones", "TotalSale": 2_000})
+        self.assertIn("Limpets: +2,000 cr", ledger_mod.summary_lines(ledger))
+
+    def test_the_rate_uses_the_net_figure_and_ignores_cost_times(self) -> None:
+        ledger = self._ledger()
+        ledger_mod.apply_trade_event(ledger, sell("Gold", 1, 3_000, 0, "2026-10-09T10:00:00Z"))
+        ledger_mod.apply_trade_event(ledger, {"event": "RepairAll", "Cost": 1_000, "timestamp": "2026-10-09T09:00:00Z"})
+        ledger_mod.apply_trade_event(ledger, sell("Gold", 1, 3_000, 0, "2026-10-09T11:00:00Z"))
+        self.assertIn("Net profit: +5,000 cr (+5,000 cr/hr)", ledger_mod.summary_lines(ledger)[0])
+
+    def test_an_older_saved_ledger_without_costs_still_works(self) -> None:
+        old = {"cmdr": "B", "journal_file": "J", "first_trade": None, "last_trade": None, "rows": {}}
+        self.assertTrue(ledger_mod.apply_trade_event(old, {"event": "RefuelAll", "Cost": 5}))
+        self.assertEqual(ledger_mod.expenses_by_category(old), {"fuel": 5})
+
+    def test_a_reset_session_starts_with_no_costs(self) -> None:
+        book = ledger_mod.LedgerBook()
+        ledger, _ = book.ensure("Bocheaux", "Journal.1.log")
+        ledger_mod.apply_trade_event(ledger, {"event": "RefuelAll", "Cost": 5})
+        book.put("Bocheaux", ledger_mod.new_ledger("Bocheaux", "Journal.1.log", started="2026-10-09T12:00:00Z"))
+        self.assertEqual(ledger_mod.expenses_by_category(book.get("Bocheaux")), {})
+
+
+
+class MarketTests(unittest.TestCase):
+    DATA = {"Items": [
+        {"Name": "$gold_name;", "Name_Localised": "Gold", "SellPrice": 50_000, "BuyPrice": 0, "Demand": 80, "Stock": 0},
+        {"Name": "$tea_name;", "Name_Localised": "Tea", "SellPrice": 0, "BuyPrice": 1_500, "Demand": 0, "Stock": 90},
+        {"bad": "row"}, "junk",
+    ]}
+
+    def test_names_reduce_to_one_key(self) -> None:
+        self.assertEqual(market.canonical_name("$Gold_Name;"), "gold")
+        self.assertEqual(market.canonical_name("Low Temperature Diamonds"), "lowtemperaturediamonds")
+        self.assertEqual(market.canonical_name("gold"), "gold")
+
+    def test_parse_skips_malformed_rows(self) -> None:
+        parsed = market.parse_market(self.DATA)
+        self.assertEqual(set(parsed), {"gold", "tea"})
+        self.assertEqual(parsed["gold"].sell_price, 50_000)
+        self.assertEqual(market.parse_market(None), {})
+
+    def test_cargo_value_counts_only_what_the_station_buys(self) -> None:
+        parsed = market.parse_market(self.DATA)
+        self.assertEqual(market.cargo_value({"gold": 10, "tea": 5, "unknown": 3}, parsed), 500_000)
+        self.assertIsNone(market.cargo_value({"tea": 5}, parsed))
+        self.assertIsNone(market.cargo_value({}, parsed))
+
+    def test_missing_file_gives_empty_market(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            self.assertEqual(market.read_market_file(folder), {})
+
+    def _write(self, folder: str, text: str) -> None:
+        with open(os.path.join(folder, "Market.json"), "w", encoding="utf-8") as handle:
+            handle.write(text)
+
+    def test_a_late_write_is_waited_for(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            self._write(folder, json.dumps({"MarketID": 1, "Items": [{"Name": "$tea_Name;", "SellPrice": 9}]}))   # the previous station's
+            waits = []
+
+            def sleep(seconds: float) -> None:
+                waits.append(seconds)
+                self._write(folder, json.dumps(dict(self.DATA, MarketID=2)))      # the game catches up
+
+            parsed = market.read_market_file(folder, 2, sleep)
+            self.assertEqual(set(parsed), {"gold", "tea"})
+            self.assertEqual(len(waits), 1)
+
+    def test_another_stations_file_is_never_returned(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            self._write(folder, json.dumps(dict(self.DATA, MarketID=1)))
+            waits = []
+            self.assertEqual(market.read_market_file(folder, 2, waits.append), {})
+            self.assertEqual(len(waits), market.READ_ATTEMPTS - 1)
+
+    def test_a_half_written_file_is_waited_for(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            self._write(folder, '{"MarketID": 2, "Items": [')
+            sleep = lambda _s: self._write(folder, json.dumps(dict(self.DATA, MarketID=2)))
+            self.assertEqual(set(market.read_market_file(folder, 2, sleep)), {"gold", "tea"})
+
+    def test_without_an_id_a_good_file_is_read_at_once(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            self._write(folder, json.dumps(self.DATA))
+            waits = []
+            self.assertEqual(set(market.read_market_file(folder, None, waits.append)), {"gold", "tea"})
+            self.assertEqual(waits, [])
+
+    def test_without_an_id_a_missing_file_is_not_waited_for(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            waits = []
+            self.assertEqual(market.read_market_file(folder, None, waits.append), {})
+            self.assertEqual(waits, [])
+
+
+class SpanshClientTests(unittest.TestCase):
+    # Shaped like a real /api/results response (captured 2026-10-09).
+    RESULT = [{
+        "commodities": [{"amount": 98, "name": "Insulating Membrane", "profit": 7861, "total_profit": 770378}],
+        "destination": {"distance_to_arrival": 198, "station": "Ivins City", "system": "Gendalla",
+                        "market_updated_at": 1791534202},
+        "distance": 16.55,
+        "source": {"distance_to_arrival": 232, "station": "Daedalus", "system": "Sol", "market_updated_at": 1791515405},
+        "total_profit": 770378,
+    }]
+
+    def test_parse_hops(self) -> None:
+        hops = client.parse_hops(self.RESULT)
+        self.assertEqual(len(hops), 1)
+        hop = hops[0]
+        self.assertEqual((hop.source_station, hop.dest_system, hop.profit), ("Daedalus", "Gendalla", 770378))
+        self.assertEqual(hop.cargo[0].tons, 98)
+        self.assertEqual(hop.market_updated_at, 1791515405)  # the older market
+
+    def test_malformed_hops_are_skipped(self) -> None:
+        self.assertEqual(client.parse_hops([{"nope": 1}, "x", None]), [])
+        self.assertEqual(client.parse_hops(None), [])
+
+    def test_form_fields_are_clamped_and_stringified(self) -> None:
+        form = client.build_form(client.RouteQuery(
+            system="Sol", station="Daedalus", capital=-5, cargo_capacity=0, max_hops=0,
+            max_hop_distance_ly=0, max_arrival_ls=0, requires_large_pad=True))
+        self.assertEqual(form["starting_capital"], "0")
+        self.assertEqual(form["max_cargo"], "1")
+        self.assertEqual(form["max_hops"], "1")
+        self.assertEqual(form["max_hop_distance"], "1")
+        self.assertEqual(form["requires_large_pad"], "1")
+        self.assertTrue(all(isinstance(value, str) for value in form.values()))
+
+    def test_filters_are_sent_the_way_spansh_expects(self) -> None:
+        query = client.RouteQuery("Sol", "Daedalus", 1000, 100, max_price_age_h=24, allow_planetary=False,
+                                  allow_player_owned=True, allow_permit=True)
+        form = client.build_form(query, now=1_000_000)
+        self.assertEqual(form["max_price_age"], str(1_000_000 - 24 * 3600))  # the oldest update allowed
+        self.assertEqual((form["allow_planetary"], form["allow_player_owned"], form["permit"]), ("0", "1", "1"))
+        self.assertNotIn("max_price_age", client.build_form(client.RouteQuery("Sol", "Daedalus", 1000, 100)))
+
+    def test_supply_and_demand_are_read_from_each_hop(self) -> None:
+        hops = client.parse_hops([{
+            "source": {"system": "A", "station": "a"}, "destination": {"system": "B", "station": "b"},
+            "distance": 10, "total_profit": 100,
+            "commodities": [{"name": "Gold", "amount": 5, "profit": 20, "total_profit": 100,
+                             "source_commodity": {"supply": 900}, "destination_commodity": {"demand": 700}}]}])
+        self.assertEqual((hops[0].cargo[0].supply, hops[0].cargo[0].demand), (900, 700))
+
+    def test_profit_per_hour_is_a_sensible_estimate(self) -> None:
+        hop = client.Hop("A", "a", 0, "B", "b", 1000, 30.0, profit=1_000_000)
+        seconds = client.estimate_hop_seconds(hop, 30.0)   # one jump, 1000 ls out, one stop
+        self.assertAlmostEqual(seconds, 45 + 30 + 30 + 120)
+        self.assertEqual(client.estimate_profit_per_hour([hop], 30.0), int(1_000_000 * 3600 / seconds))
+        self.assertGreater(client.estimate_hop_seconds(hop, 10.0), seconds)  # a shorter range needs more jumps
+        self.assertEqual(client.estimate_profit_per_hour([], 30.0), 0)
+
+    def test_the_job_state_is_told_as_waiting_or_calculating(self) -> None:
+        self.assertEqual(client.describe_state("queued"), "Waiting in Spansh's queue.")
+        self.assertEqual(client.describe_state(" QUEUED "), "Waiting in Spansh's queue.")
+        for working in ("started", "running", "in progress", "calculating"):
+            self.assertEqual(client.describe_state(working), "Spansh is calculating the route.")
+
+    def test_a_finished_or_missing_state_says_nothing_and_an_unknown_word_is_shown_cleaned_and_short(self) -> None:
+        for quiet in (None, 3, "", "  ", "completed", "ok"):
+            self.assertEqual(client.describe_state(quiet), "")
+        self.assertEqual(client.describe_state("rate_limited"), "Spansh says: rate limited.")
+        self.assertEqual(client.describe_state("<b>x</b>"), "Spansh says: bxb.")
+        self.assertLessEqual(len(client.describe_state("z" * 500)), len("Spansh says: .") + client.STATE_MAX_CHARS)
+
+    def test_the_search_reports_each_state_it_sees_in_order(self) -> None:
+        from unittest import mock
+        answers = [{"job": "abc", "status": "queued"}, {"state": "queued"}, {"state": "started"},
+                   {"state": "completed", "status": "ok", "result": []}]
+        told = []
+        with mock.patch.object(client, "_request", side_effect=answers), mock.patch.object(client.time, "sleep"):
+            hops = client.search_routes(client.RouteQuery("A", "B", 1000, 100), on_state=told.append)
+        self.assertEqual(hops, [])
+        self.assertEqual(told, ["Waiting in Spansh's queue.", "Waiting in Spansh's queue.", "Spansh is calculating the route.", ""])
+
+    def test_a_refusal_shows_what_spansh_said(self) -> None:
+        import io
+        import urllib.error
+        from unittest import mock
+        body = io.BytesIO(b'{"error":"Could not find station"}')
+        refusal = urllib.error.HTTPError(client.ROUTE_URL, 400, "Bad Request", {}, body)
+        with mock.patch.object(client.spansh_courtesy, "call", side_effect=refusal):
+            with self.assertRaises(client.RouteSearchError) as caught:
+                client.search_routes(client.RouteQuery("Candiaei", "WLF-LXW", 1000, 100))
+        self.assertIn("Could not find station", str(caught.exception))
+
+    def test_a_busy_spansh_is_shown_as_a_search_error_with_its_own_text(self):
+        from unittest import mock
+        busy = client.spansh_courtesy.SpanshBusy("Spansh has not been answering, so WFMT is not asking it for another 5 minute(s).")
+        with mock.patch.object(client.spansh_courtesy, "call", side_effect=busy):
+            with self.assertRaises(client.RouteSearchError) as caught:
+                client.search_routes(client.RouteQuery("A", "B", 1000, 100))
+        self.assertIn("not been answering", str(caught.exception))
+
+    def test_cancelling_during_a_wait_reads_as_a_cancelled_search(self):
+        from unittest import mock
+        with mock.patch.object(client.spansh_courtesy, "call", side_effect=client.spansh_courtesy.Cancelled("Cancelled.")):
+            with self.assertRaisesRegex(client.RouteSearchError, "cancelled"):
+                client.search_routes(client.RouteQuery("A", "B", 1000, 100))
+
+    def test_the_requests_carry_the_user_agent_and_the_cancel_event(self):
+        import json
+        import threading
+        from unittest import mock
+        cancel = threading.Event()
+        bodies = [b'{"job": "abc", "status": "queued"}', b'{"state": "completed", "status": "ok", "result": []}']
+        with mock.patch.object(client.spansh_courtesy, "call", side_effect=bodies) as call, mock.patch.object(client.time, "sleep"),                 mock.patch.object(threading.Event, "wait", return_value=False):
+            client.search_routes(client.RouteQuery("A", "B", 1000, 100), cancel)
+        self.assertEqual(call.call_count, 2)
+        for args in call.call_args_list:
+            self.assertEqual(args.args[0].get_header("User-agent"), client._USER_AGENT)
+            self.assertIs(args.args[2], cancel)
+        self.assertEqual(call.call_args_list[0].args[0].get_method(), "POST")
+        self.assertEqual(call.call_args_list[1].args[0].get_method(), "GET")
+
+
+if __name__ == "__main__":
+    unittest.main()

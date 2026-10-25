@@ -1,0 +1,309 @@
+# Technical Specification — Missions
+
+**Author:** R.W. Harper (CMDR Bocheaux)
+
+The standing reference for Missions mode: what it reads, the rules it applies, and what its numbers can
+and can't tell you. For how to use it, see the [README](guide/missions.md). For how the code is
+organized in general, see [TECHNICAL.md](TECHNICAL.md).
+
+**Design principle.**
+
+- Like all of WFMT, this is journal-first: a third-party tool only knows what the game writes to its journal files, and not everything is logged.
+- Gaps are filled from Frontier's own data or from community services where those exist, and otherwise worked around.
+- Each gap and its workaround is written down.
+- See [the design principle in TECHNICAL.md](TECHNICAL.md).
+
+## 1. Goals
+
+- Show every mission on the commander's board in one place, sorted into pages by type.
+- For kill-count missions (massacres and settlement raids), show **stacked** progress: how many kills
+  you have, how many each mission-giving faction still needs, and the reward.
+- Show Community Goals and the commander's own contribution.
+- Survive an EDMC restart without losing the picture, and keep each commander's missions separate.
+
+## 2. Non-goals
+
+- **No exact kill counts.** The journal never reports per-mission kill progress, so progress is an
+  estimate (see §5).
+- **No network access.** Everything comes from the journal. Nothing is sent or fetched.
+- **No mission planning.** It doesn't suggest missions or routes.
+- **No colonization missions.** They're dropped from every page on purpose (see §4).
+
+## 3. Architecture
+
+All modules live in `plugin/`; `PANEL_PLACEMENT = "missions"`.
+
+```
+missions.py            Entry point (feature-module contract). Reads settings, starts the backlog scan,
+                       and routes each journal event to the modules below.
+journal_scan.py        Reads the last two weeks of journals at start-up (Backlog): accepted missions, kills,
+                       redirects, Community Goals, cargo progress and the active set the journals leave.
+active_missions.py     Per-commander roster of accepted and active missions (ActiveMissions).
+kill_tracker.py        Per-commander kill evidence: Bounty events, completed mission ids, new turn-in
+                       places, and the on-foot/ship kill test.
+kill_missions.py       The kill-count missions among the active ones, plus the progress estimate.
+all_missions.py        A generic summary of every active mission (the "All Missions" view).
+mission_cargo.py       Collect / delivery progress of cargo missions (CargoDepot events).
+community_goal_state.py Community Goal snapshots and the commander's contribution.
+mission_types.py       The rules that decide a mission's category. Pure, no dependencies.
+missions_ui.py         The panel (category pages); opens the Missions window.
+missions_board.py      The Missions window's data: a Row per active mission, totals, grouping by place, detail lines. Pure.
+missions_window.py     The Missions window (Active and By place tabs, detail strip, pinning).
+mission_pins.py        The commander's pinned mission ids (per commander, mission_pins.json).
+mission_sources.py     The commodities the missions still need, and the source lookups (section 10c).
+mission_sources_window.py  The Source commodities window.
+notifier.py            A small subscribe/notify helper the views use to tell the UI something changed.
+```
+
+Data flows one way. `ActiveMissions` announces the active set; `kill_missions` and `all_missions`
+subscribe and rebuild; the UI subscribes to those. The data layer never imports UI code.
+
+### 3.1 Journal events used
+
+| Event | What it does here |
+|---|---|
+| `Commander`, and the commander name EDMC supplies | Decides whose roster an event belongs to |
+| `MissionAccepted` | Adds the mission to the commander's roster and marks it active |
+| `Missions` (sent at login) | Lists the ids that are active, and the ids already complete |
+| `CargoDepot` | Cargo mission progress: collected, delivered and total (also when a wing-mate hands cargo in) |
+| `MissionRedirected` | The mission's objective is done; may carry a new turn-in station/system |
+| `MissionCompleted`, `MissionAbandoned`, `MissionFailed` | Removes the mission |
+| `Bounty` | One kill; the `VictimFaction` says whose |
+| `FactionKillBond` | A combat-zone kill; counted like a `Bounty` (it names `VictimFaction` but no ship type) |
+| `CommunityGoal` | Community Goal snapshots (may list several goals at once) |
+| `CommunityGoalReward` | The credits a finished Community Goal paid this commander (`CGID`, `Name`, `System`, `Reward`) |
+
+## 4. Classification
+
+Frontier doesn't document mission types, but each mission's internal `Name` carries underscore-separated
+tags (for example `Mission_Massacre_Onslaught`, `Mission_Delivery_Illegal_MB`) that the community has
+learned to read. `mission_types.classify()` buckets a `MissionAccepted` event like this, first match wins:
+
+1. **Massacre-shaped** (see below) → *Massacre (Space)* or *Settlement Raids (Ground)*.
+2. Name contains a combat hint (`assassinate`, `disable`, `skimmer`, `conflict`, `piracy`, `scout`,
+   `thargoid` and similar) → **Combat**.
+3. Name contains a trade hint (`delivery`, `courier`, `collect`, `mining`, `salvage`, `smuggle`) →
+   **Trade & Mining**.
+4. Name contains a passenger hint (`passenger`, `sightseeing`, `vip`, `bulk`, `evacuation`) →
+   **Passenger**.
+5. Name contains a covert hint (`hack`, `heist`, `sabotage`, `download`, `upload` and similar), or the
+   mission is on foot → **Covert / On-Foot Ops**.
+6. Anything else → **Other**.
+
+- **Massacre-shaped** means the event has both a `KillCount` and a `TargetFaction` (the mission's
+  *shape*), or the name contains `massacre`, `onslaught` or `raid`. Using the shape first means a
+  kill mission with an unfamiliar name is still recognized.
+- **On foot / ground** means `OnFoot` in the name, or a `DestinationSettlement` on the event.
+- **Illegal** means `illegal` or `smuggle` in the name; the card shows a "⚠ Illegal" badge.
+- **Mining missions** need `mining` in the name. This is deliberately narrower than "has a Commodity
+  field": Collect and Delivery missions also carry one, but you buy or collect that cargo, so showing a
+  mining hint on them would be wrong.
+- **Colonization missions** (`colonization` in the name) are excluded from every page.
+
+New or odd mission names fall into **Other**, which is the safe default. The name hints are community
+knowledge and may need extending when Frontier adds mission types.
+
+## 5. The kill-progress estimate
+
+**Why an estimate.** Elite doesn't tell plugins how many kills a mission has. What the journal gives is
+a stream of `Bounty` and `FactionKillBond` events, each naming the faction of the ship or person killed. WFMT replays those
+against your active kill missions using the game's known stacking rules.
+
+**Rules** (`kill_missions.estimate_progress`), per commander:
+
+1. A mission whose id is in the *completed* set (from `MissionRedirected` or the login `Missions`
+   event) counts as **fully done**.
+2. For the rest, missions are queued **per mission-giving faction**, oldest first.
+3. Each `Bounty` or `FactionKillBond` counts as one kill, but only if the victim's faction matches the mission's target
+   faction, the kill is in the same arena (on foot or in a ship, from the victim's type), and it
+   happened after the mission was accepted.
+4. A qualifying kill is credited to the **oldest unfinished mission of every giver** that fits. That is
+   what makes stacking work: one kill advances several missions from different factions at once, but only
+   one mission per faction.
+
+**What the panel shows for a stack**
+- **Progress `done/required`** for each giver faction, with a bar. A `~` in front means the number is an
+  estimate (it appears for any wing or on-foot mission).
+- **Δ (the remaining-kills column).** For a faction's stack, how many more kills it needs to reach the
+  tallest stack. For the tallest stack, the gap down to the next-tallest.
+- **Sum row.** Total progress against the tallest stack (your effective kill target when stacking).
+- **Reward** is shown as the total, with the share you'd get from wing-shareable missions in brackets.
+- **Warnings** appear when the missions have several target factions or systems, and a standing note
+  that wing and on-foot kills are often unreported until the mission completes.
+
+**Limits to know about**
+- **Wing and on-foot kills** are frequently missing from the journal, so those counts run low until the
+  game reports completion. That's why they're marked `~`.
+- **Only the last two weeks of journals are read at start-up.** Kills from before that aren't counted,
+  and a mission still active but accepted earlier isn't found at all (the log notes "active but not
+  found in the scanned journals", and it isn't shown).
+- **Kills made while EDMC wasn't running** are caught by the backlog scan only if they're in the last
+  two weeks of files.
+- **Combat-bond kills count** (checked against real journals: 4 of 53 redirected massacre missions only reached
+  their kill count with the bonds included), but 17 of the 53 fell short even with both, which fits the wing and
+  on-foot limit above.
+- It is an **estimate by design**. When the game reports a mission redirected or complete, that is
+  authoritative and replaces the estimate.
+
+## 6. Completion and drop-off
+
+A mission is **Complete** once its id appears in the completed set, which two events feed:
+`MissionRedirected` as it happens, and the `Complete[]` list in the login `Missions` event (so a relog
+is correct immediately). When the redirect named a new station or system, that becomes the **drop-off**
+shown on the card. Completion state is dropped when the mission is handed in, abandoned or failed.
+
+## 7. Community Goals
+
+`CommunityGoal` events list `CurrentGoals`, which can include goals in several systems at once. The
+journal never says a goal has gone away, and finished goals keep reappearing for a while, so state is
+**additive**: every goal id ever seen is kept and the newest snapshot wins. The panel then filters to
+goals that haven't expired. Each card shows the title, system, market, expiry, the community's tier
+reached, your contribution and rank, and the bonus. The tier shown is the *community's*, not yours.
+
+A `CommunityGoalReward` event is the payout. Payouts are kept per commander (the newest 20, each once, by goal id and time) in
+`community_goal_state.py`, read back from the last two weeks of journals at start-up like the goals, and the page lists the latest
+three under **Paid out** below the goal cards. A goal that has finished is past its expiry and no longer shown as a card, so this
+is where its payout appears.
+
+## 8. Commanders and persistence
+
+Every roster, kill list and goal set is keyed by commander, so switching commander in EDMC immediately
+shows that commander's data and never leaks another's.
+
+- Nothing is written to disk: the picture is rebuilt each start from the two-week backlog.
+- The active set comes from the login `Missions` event when one arrives.
+- Otherwise (EDMC restarted mid-game) it comes from the journals: the newest `Missions` list plus every
+  `MissionAccepted` after it, less every `MissionCompleted`, `MissionAbandoned` and `MissionFailed`.
+- The only saved setting that isn't a checkbox is the last category page you were on.
+
+## 9. Settings
+
+Under **File → Settings → WFMT → Missions** (config keys start `wfmt_missions_`): kill progress, the
+remaining-kills column, the totals row, mission count, target settlement (for ground missions), and the
+commodities-needed summary on the Trade & Mining page. All default to on.
+
+## 10. Testing
+
+`tests/test_missions_data.py` covers the active-missions roster (commander separation, login sync,
+accept and finish), the kill-progress rules (stacking, oldest-first, arena and timing, redirected
+missions), the journal backlog reader (per-commander collection, malformed lines, age cut-off,
+missing folder, the derived active set, combat bonds, cargo progress) and `mission_cargo.py`. The category rules and the panel are exercised by hand in EDMC.
+
+## 10b. The overlay card
+
+`missions_overlay.py` draws the Missions card on the in-game overlay (settings in Settings → Overlays →
+Missions, off by default, placement the "Missions list" slot).
+
+**Building the lines**
+
+- `entries_from` turns the active missions (`all_missions.view.missions`) into `Entry`s: a redirected
+  mission (`kill_tracker.get_redirected`) is ready and goes to its new hand-in place
+  (`get_redirect_destination`), and the label is the mission's own title (a massacre is "Massacre", a
+  cargo mission "40 Gold").
+- `stack` makes one `Item` of the entries with the same category, label, place and ready flag (a
+  massacre's faction too; an entry with cargo progress stays alone), keeping the soonest expiry.
+- `build_lines` sorts the items into HERE (the system the commander is in, from `FSDJump`, `Location`
+  and `CarrierJump`), NEXT (the system named by `FSDTarget`, cleared on arrival and by `NavRouteClear`)
+  and the rest, each ready first and then soonest to expire.
+- It shows at most the row limit of them (3 to 14) in that order and counts what is hidden.
+
+**Drawing the card**
+
+- Each line is `title > place  time left` clipped to `LINE_CHARS` (46) with the time always kept; the
+  title and the place share the room.
+- Red is under the urgent limit (60 minutes by default), amber under six hours, green when ready.
+- The card has one fixed width and is drawn at its placement slot.
+- The overlay is redrawn when the lines change, now and then (every 45 s) so it does not expire, and a
+  30 s tick keeps the times left current.
+- Tests: `tests/test_missions_overlay.py`; the look smoke test draws the widest card at every text size.
+
+## 10b-2. The Missions window and pinning
+
+`missions_board.rows_from` turns the active missions (`all_missions.MissionSummary`) into `Row`s:
+
+- Ready if the mission is in `kill_tracker.get_redirected` (its place is then the redirect's
+  `get_redirect_destination`).
+- Cargo progress from `MissionSummary.cargo`.
+- Kill progress from `kill_missions.estimate_progress` (an estimate for wing and on-foot missions, shown
+  with `~`).
+- Sorted ready first then soonest to expire.
+
+The rest of the board:
+
+- `totals` is the summary line, `by_place` groups by system (here, next jump, then urgency) and `detail`
+  is the selected mission's lines.
+- `missions_window.MissionsWindow` shows them in two `DataTable`s, rebuilding a table only when its rows
+  changed (so selection and scroll stay put), refreshes from `MissionsUI.redraw` and every 30 s.
+- `MissionsUI.__live_rows` supplies the live data.
+- The panel's two buttons (Missions window, Find sources) are built once in `build_panel`, in grid row 1
+  below the canvas, so they show on every page.
+
+Pins:
+
+- `mission_pins.PinBook` keeps a set of mission ids per commander in `mission_pins.json`
+  (`commander_data`), written at every change.
+- `missions_overlay._live_entries` prunes pins whose mission is gone, but only once the roster is known
+  (`all_missions.view.missions` is not None).
+- `Entry.pinned` makes `stack` keep the mission as its own `Item`.
+- `build_lines` puts pinned items first under PINNED (taking rows before HERE, NEXT and the rest;
+  overflow counts in the `+N more` line).
+- Tests: `tests/test_missions_board.py`, `tests/test_missions_overlay.py` (`PinnedTests`).
+
+## 10b-3. Progress and its colors
+
+`mission_progress.compute` gives each mission a `Progress` (text, fraction, done, required). The source,
+in order:
+
+- The game's `CargoDepot` count when there is one.
+- Else the kill estimate.
+- Else (for a source-and-return mission, whose `MissionSummary.commodity_key` is the commodity's
+  internal name) the tons of it in the hold, `current_cargo.held()`, shared out among the missions for
+  that commodity soonest-expiring first.
+
+Cargo and tiers:
+
+- `current_cargo` takes `state["Cargo"]` from EDMC on every journal event (`missions.handle_event`) and
+  tells the window and the overlay when the hold changes.
+- `tier` maps a fraction to ready / high (at least half) / low / none.
+
+Display:
+
+- The window tags rows (`ready`, `soon`, `warn`, then `high` and `low`) and draws a six-cell bar.
+- The overlay card's `_role` is ready, red, amber, then high and low, drawn in the fixed `GREEN`, `RED`,
+  `LIME` and `BLUE`.
+- An overlay `Item` carries the summed done and required of the missions stacked into it.
+- Tests: `tests/test_mission_progress.py`.
+
+## 10c. Source commodities
+
+A Delivery mission (`mission_types.is_pickup_delivery`: `delivery` in the name, with a commodity and count,
+not on-foot, colonization, wing, rank or cooperative) is not bought: the faction supplies the cargo,
+collected at the station that gave the mission (a `CargoDepot` `Collect` event, within seconds or much
+later).
+
+- `MissionSummary` carries `pickup_commodity`, `pickup_count` (less what `CargoDepot` shows collected)
+  and `pickup_station` and `pickup_pad`.
+- The pad is the station's largest pad (from the `Docked` event's `LandingPads`,
+  `mission_types.largest_pad_of`) that WFMT noted when the mission was accepted.
+- It is noted through `mission_types.ACCEPTED_AT` and `ACCEPTED_PAD`, added to the stored event by
+  `missions.py` live and by `journal_scan.read_backlog` from `Docked`/`Location`/`Undocked`/jump events;
+  empty when not docked.
+- `needs_from` lists those after the market needs as `Need`s with `pickup` set, and `lookup` skips them.
+
+`mission_sources.needs_from` sums `needed_commodity_count` per commodity over the active missions (biggest first, at most 12) with the system most of them are handed in
+at; `lookup` runs `source_picks.find` (buying) for each in turn from the commander's system or that turn-in system. `mission_sources_window.py` shows the rows
+(`rows_for`), runs the lookup on a worker thread polled every 400 ms, and gates it on Trade's lookups switch. Tests: `tests/test_mission_sources.py`.
+
+## 11. Known gaps
+
+- The overlay's NEXT section follows the targeted system only, not the whole route (section 10b).
+
+- Mission names the rules don't recognize land in **Other**; the hint lists need upkeep.
+- Kill counts for wing and on-foot missions are estimates and can lag.
+- Nothing older than two weeks is read at start-up.
+- Without a login `Missions` event (EDMC restarted mid-game), the active set is derived from the journals: newest
+  `Missions` list, then `MissionAccepted` adds and `MissionCompleted`/`Abandoned`/`Failed` removes. An expiry with no
+  journal entry is missed until the next login list replaces the derived set.
+- Cargo mission progress comes only from `CargoDepot`; nothing before the two-week window, or between events, is known.
+- `FactionKillBond` carries no ship type, so an on-foot combat-zone kill is counted as a ship kill.
+- Community Goals have no "gone" signal, so the panel relies on each goal's expiry date.
