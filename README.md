@@ -10,7 +10,7 @@ A free add-on for **Elite Dangerous** that puts a set of handy tools in one pane
 - **Where it runs:** inside [EDMC](https://github.com/EDCD/EDMarketConnector) (Elite Dangerous Market Connector), a free companion program many commanders already use, on Windows and Linux.
 - **What you need to know:** nothing about programming.
 
-**Version 1.0.0** is out. [Download it from the Releases page.](https://github.com/rwharpernc/wayfarers-multitool/releases/latest)
+**Version 1.0.0** is being prepared for release. The download links below start working once it is published.
 
 ## Contents
 
