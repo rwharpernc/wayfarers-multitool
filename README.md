@@ -1,9 +1,3 @@
-**WFMT is a work in progress.** It is still being developed and has some rough edges.
-
-- **Bug reports are welcome**, especially from Linux and Windows installations.
-- **Ideas for improvements are welcome too**, and so is feedback on how it feels to use. WFMT's layout and flow were shaped around the author's own playstyles, and the author would like to hear how it works for other commanders, other playstyles and other screens.
-- Please use the [issue tracker](https://github.com/rwharpernc/wayfarers-multitool/issues). The plugin can start a report for you: see [Getting help](#getting-help).
-
 <p align="center">
   <img src="images/logo.png" alt="Wayfarer's Multitool logo: a compass ring with a ship's arrowhead and a wrench, above the name" width="240">
 </p>
@@ -13,35 +7,32 @@
 A free add-on for **Elite Dangerous** that puts a set of handy tools in one panel. It is open to anyone who wants it.
 
 - **What it covers:** Powerplay, exploration, mining, trading, missions, on-foot and cargo tracking, colonization, the BGS and more.
-- **Where it runs:** inside [EDMC](https://github.com/EDCD/EDMarketConnector) (Elite Dangerous Market Connector), a free companion program many commanders already use.
+- **Where it runs:** inside [EDMC](https://github.com/EDCD/EDMarketConnector) (Elite Dangerous Market Connector), a free companion program many commanders already use, on Windows and Linux.
 - **What you need to know:** nothing about programming.
 
-**Jump to:** [Quick start](#quick-start) · [What's in the multitool](#whats-in-the-multitool) · [Finding your way around](#finding-your-way-around) · [Known issues](#known-issues) · [Getting help](#getting-help)
+**Version 1.0.0** is out. [Download it from the Releases page.](https://github.com/rwharpernc/wayfarers-multitool/releases/latest)
 
-## Quick start
+## Contents
 
-**WFMT has not had its first release yet.**
+- [Download and install](#download-and-install)
+- [What's in the multitool](#whats-in-the-multitool)
+- [Finding your way around](#finding-your-way-around)
+- [About WFMT](#about-wfmt)
+- [How WFMT knows what it knows](#how-wfmt-knows-what-it-knows)
+- [Known issues](#known-issues)
+- [Getting help](#getting-help)
+- [All the guides](#all-the-guides)
+- [For developers, credits and license](#for-developers-credits-and-license)
 
-- There is no download on the Releases page for now.
-- Until the first release, the only way to try it is to build it from the source: see [Build](docs/DEVELOPMENT.md#build).
-- The green **Code → Download ZIP** button is not an install. It is the source code, and EDMC can't load it as a plugin.
+## Download and install
 
-The steps below are for the first release, when it is published.
-
-**You need** [EDMC](https://github.com/EDCD/EDMarketConnector) on Windows or Linux. Everything except the on-screen displays works with EDMC alone.
-
-1. Download **`Wayfarers-Multitool.zip`** from the [latest release](https://github.com/rwharpernc/wayfarers-multitool/releases/latest).
+1. Download **`Wayfarers-Multitool.zip`** from the [latest release](https://github.com/rwharpernc/wayfarers-multitool/releases/latest). (The green **Code → Download ZIP** button is the source code, not the plugin.)
 2. In EDMC open **File → Settings → Plugins → Open** and extract the ZIP there, so you end up with `plugins/Wayfarers-Multitool/load.py`.
-3. Restart EDMC. The **Wayfarer's Multitool (WFMT)** panel appears.
-4. Click the mode buttons under the title to switch modes. Settings are under **File → Settings → WFMT**.
+3. Restart EDMC. The **Wayfarer's Multitool (WFMT)** panel appears. Settings are under **File → Settings → WFMT**.
 
-To update, extract the new ZIP over the old `Wayfarers-Multitool` folder (don't delete it first: your saved data lives there), or turn on **Automatically download and install updates** under **Settings → WFMT → General → Updates**.
+On **Linux**, EDMC needs a few settings first (the journal folder, `xdotool`, Flatpak permissions): see [WFMT on Linux](docs/guide/linux.md). For on-screen displays, Windows has a built-in overlay and Linux uses [EDMCModernOverlay](https://github.com/SweetJonnySauce/EDMCModernOverlay).
 
-| | **Windows** | **Linux** |
-|---|---|---|
-| **After installing** | Nothing more is needed. | Work through [WFMT on Linux](docs/guide/linux.md): the journal folder, `xdotool`, and Flatpak permissions. Without the journal folder most features find nothing. |
-| **On-screen overlays** | WFMT's built-in overlay: choose it under **Settings → WFMT → Overlays → Overlay Connection** ([setup](docs/OVERLAY_SETUP.md)). | Install [EDMCModernOverlay](https://github.com/SweetJonnySauce/EDMCModernOverlay). The built-in overlay is Windows only. |
-| **More** | [Windows and Linux](docs/guide/platforms.md) | [Linux testing](docs/LINUX_TESTING.md) |
+**Full instructions** (folders for each system, updating, removing, building from source): [docs/INSTALL.md](docs/INSTALL.md). To update later, extract the new ZIP over the old folder without deleting it first, or turn on **Automatically download and install updates** under **Settings → WFMT → General → Updates**.
 
 ## What's in the multitool
 
@@ -140,12 +131,13 @@ Ideas, comments on how WFMT feels to use, and suggestions for other playstyles b
 
 ## All the guides
 
-- **Set up:** [Getting started](docs/guide/getting-started.md) · [Windows and Linux](docs/guide/platforms.md) · [WFMT on Linux](docs/guide/linux.md) · [Overlay setup](docs/OVERLAY_SETUP.md) · [What goes on the internet](docs/guide/internet-and-privacy.md)
+- **Set up:** [Installing WFMT](docs/INSTALL.md) · [Getting started](docs/guide/getting-started.md) · [Windows and Linux](docs/guide/platforms.md) · [WFMT on Linux](docs/guide/linux.md) · [Overlay setup](docs/OVERLAY_SETUP.md) · [What goes on the internet](docs/guide/internet-and-privacy.md)
 - **Use it:** [Features at a glance](docs/guide/features.md) · [full guide index](docs/guide/README.md)
 - **When something's wrong:** [Known issues](docs/guide/known-issues.md) · [Troubleshooting](docs/guide/troubleshooting.md) · [Linux testing](docs/LINUX_TESTING.md)
 
 ## For developers, credits and license
 
+- [docs/INSTALL.md](docs/INSTALL.md): installing, updating and building from source.
 - [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md): setting up to build, test and change WFMT.
 - [docs/TECHNICAL.md](docs/TECHNICAL.md): how WFMT works and why. [docs/DESIGN_NOTES.md](docs/DESIGN_NOTES.md): the reasoning behind the main decisions. [docs/MODULES.md](docs/MODULES.md): every module in `plugin/`.
 - **Feature specifications:** [Missions](docs/MISSIONS_TECH_SPEC.md), [Mining](docs/MINING_TECH_SPEC.md), [Trade](docs/TRADE_TECH_SPEC.md), [Boxel Survey](docs/BOXEL_SURVEY_TECH_SPEC.md), [BGS](docs/BGS_TECH_SPEC.md), [Organic Scanning](docs/ORGANIC_SCANNING_TECH_SPEC.md), [Powerplay](docs/POWERPLAY_TECH_SPEC.md), [Screenshots and input automation](docs/SCREENSHOTS_AND_INPUT_TECH_SPEC.md).

@@ -22,8 +22,6 @@ git clone https://github.com/rwharpernc/wayfarers-multitool.git
 cd wayfarers-multitool
 ```
 
-The repository is private for now, so cloning needs access to it.
-
 **Layout**
 
 - The plugin source is the `plugin/` folder.
@@ -265,22 +263,21 @@ that means you have no permission to.
 
 ## Releasing
 
-The repository has no tags yet, so the first release is cut from a clean `master`:
+A release is cut from a clean `master`:
 
-1. Set the version (`1.0.0`) in `plugin/__init__.py` and `package.json`.
-2. In `CHANGELOG.md`, change the heading `1.0.0 (unreleased)` to `1.0.0 (<date>)`. For later releases, add a dated section and
-   move the "Unreleased" entries under it.
+1. Set the version in `plugin/__init__.py` and `package.json`.
+2. In `CHANGELOG.md`, add a dated section for the version and move the "Unreleased" entries under it.
 3. Run the tests, then `npm run package` to build `dist/Wayfarers-Multitool.zip`.
-4. Commit, then tag `v1.0.0` and push the commit and the tag.
+4. Commit, then tag `v<version>` and push the commit and the tag.
 5. Publish the release with the zip as its asset:
 
    ```bash
-   gh release create v1.0.0 dist/Wayfarers-Multitool.zip --title "WFMT 1.0.0" --notes-file <the changelog section for 1.0.0>
+   gh release create v<version> dist/Wayfarers-Multitool.zip --title "WFMT <version>" --notes-file <the changelog section for 1.0.0>
    ```
 
-   The title is `WFMT <version>` with no `v`; the tag keeps the `v` (`v1.0.0`), and the in-app updater reads the tag, not the title.
+   The title is `WFMT <version>` with no `v`; the tag keeps the `v` (`v1.0.0`, for example), and the in-app updater reads the tag, not the title.
    Publish it as a normal release, not a draft or a pre-release: the in-app updater and the README's "latest release" link only
-   follow official GitHub releases. They can only find it once the repository, or at least its releases, is public.
+   follow official GitHub releases. They find it because the repository is public.
 6. Update `docs/guide/known-issues.md` (what is known to go wrong in the new release) and `docs/STATUS.md` (the current release,
    which branches exist, what is still unreleased), and the version examples in `docs/guide/getting-started.md`.
 

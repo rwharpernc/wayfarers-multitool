@@ -9,11 +9,10 @@ Read this first when picking the project up on a machine that has not seen the r
 
 - **1.0.0** is the version number in `plugin/__init__.py` and `package.json`.
   - The project was renamed Wayfarer's Multitool (WFMT) and its version history restarted at 1.0.0 on 2026-10-21.
-  - Everything built so far counts as the first release, which has **not** been published yet.
+  - Everything built so far is the first release, published as 1.0.0.
   - The checks to run first are in [TEST_PLAN.md](TEST_PLAN.md), and the open in-game checks are in [TODO.md](TODO.md).
-- The repository is private for now.
+- The repository is public.
   - The in-app updater and the README's "latest release" link read GitHub's public releases API.
-  - They find nothing until a release is published on a repository they can reach.
 
 ## Branches
 
