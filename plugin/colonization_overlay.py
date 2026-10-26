@@ -1,20 +1,19 @@
 """
 The Colonization shopping list on the in-game overlay: a table of the commodities a
-construction site still needs, with the columns Commodity, Required, Remaining, FC, Cargo and To buy.
+construction site still needs, with the columns Commodity, Required, Remaining, FC and Cargo.
 
 - **Required** is the site's full requirement for the commodity.
-- **Remaining** is what the site still requires (required less delivered). It does not fall as you load up, so you can see
-  how much you need and how much you have side by side.
+- **Remaining** is what is left to get: what the site still requires (required less delivered), less the hold and the carrier. It
+  reaches 0 once the hold plus the fleet carrier cover the need, like the Colonization window's Remaining column. A ✓ marks a commodity the hold plus the fleet
+  carrier already cover (the same rule as the Colonization window's green rows); the row turns amber when together they are more than is needed.
 - **FC** (only for a commander with a fleet carrier) is what has been transferred to the carrier (`colonization_carrier`).
 - **Cargo** is what is in the ship's hold now.
-- **To buy** is what is left to get after the hold and the carrier (0 shows blank). A ✓ marks a commodity the hold plus the fleet carrier already cover (the
-  same rule as the Colonization window's green rows); the row turns amber when together they are more than is needed.
 
 Order: at a construction site the rows are alphabetical; anywhere else (a market, the carrier's inventory) they are
 grouped under the market's categories, a heading line for each, alphabetical within a group. While docked at a market, a commodity it does
 not sell is dimmed (unless the hold and the carrier already cover it), so what to buy here stands out.
 
-A footer gives the tons remaining and the trips in the current ship (from its cargo capacity): trips to buy and to haul with a fleet
+A footer gives the tons remaining (still to get) and the trips in the current ship (from its cargo capacity): trips to buy and to haul with a fleet
 carrier, one "to finish" figure without one. Commodities are
 alphabetical, so rows stay put as the numbers change.
 
@@ -179,7 +178,7 @@ INDENT_CHARS = 2             # a commodity sits this far in from its category he
 # The wire protocol has no text metrics, so widths are estimated from character counts. Headings and numbers in the overlay font run
 # wider than the plain estimate (capitals, digits), so this card measures a little wide and the box always holds the text.
 CHAR_SCALE = 1.2
-MAX_COLUMNS = 6   # name plus up to five number columns
+MAX_COLUMNS = 5   # name plus up to four number columns
 
 
 @dataclass(frozen=True)
@@ -213,7 +212,7 @@ class Card:
     title: str
     rows: Tuple[Row, ...]
     hidden: int          # commodities beyond the row limit
-    remaining: int       # tons still needed in total
+    remaining: int       # tons still to get in total, after the ship and the carrier
     trips: int           # trips to carry all of that to the site in the current ship (0 when its capacity is unknown)
     show_fc: bool
     buy_trips: int = 0   # trips to gather what is still to get, after the ship and the carrier (0 once it is all stocked)
@@ -257,14 +256,14 @@ def build_card(site: Optional[Site], hold: Mapping[str, int], on_carrier: Mappin
     rows = tuple(Row(r.label, r.remaining, hold.get(r.key, 0), on_carrier.get(r.key, 0), r.required,
                      commodity_categories.category_for(r.key) if grouped else "",
                      market_keys is None or not market_keys or r.key in market_keys) for r in needed[:limit])
-    remaining = sum(r.remaining for r in needed)
+    need = sum(r.remaining for r in needed)
     known = bool(capacity and capacity > 0)
-    trips = math.ceil(remaining / capacity) if known else 0
+    trips = math.ceil(need / capacity) if known else 0
     # What is still to get is counted over every commodity, not only the rows shown, and takes off the ship and the carrier
     # (the same sum as the sites window's "trips to buy").
     to_get = sum(max(0, r.remaining - hold.get(r.key, 0) - on_carrier.get(r.key, 0)) for r in needed)
     buy_trips = math.ceil(to_get / capacity) if known and to_get > 0 else 0
-    return Card(_clip(site.display_name(), TITLE_CHARS), rows, max(0, len(needed) - limit), remaining, trips, show_fc, buy_trips, grouped)
+    return Card(_clip(site.display_name(), TITLE_CHARS), rows, max(0, len(needed) - limit), to_get, trips, show_fc, buy_trips, grouped)
 
 
 def _name_text(row: Row) -> str:
@@ -274,8 +273,8 @@ def _name_text(row: Row) -> str:
 
 def _columns(card: Card) -> List[Tuple[str, str]]:
     """(heading, Row attribute) of each number column, left to right; FC only for a commander with a carrier."""
-    return ([("Required", "required"), ("Remaining", "need")] + ([("FC", "fc")] if card.show_fc else [])
-            + [("Cargo", "ship"), ("To buy", "to_buy")])
+    return ([("Required", "required"), ("Remaining", "to_buy")] + ([("FC", "fc")] if card.show_fc else [])
+            + [("Cargo", "ship")])
 
 
 def _layout(card: Card, look: Look = LEGACY) -> Tuple[int, List[int], int]:
@@ -336,8 +335,8 @@ def render(client: overlay.OverlayClient, card: Card, x: int, y: int, previous_s
         cells = [(0, _name_text(row), color, x + (int(round(INDENT_CHARS * char)) if card.grouped else 0))]
         for column, ((head, attr), edge) in enumerate(zip(_columns(card), edges), start=1):
             value = getattr(row, attr)
-            if not value:
-                continue    # a zero is left blank: nothing in the hold, on the carrier or left to buy
+            if not value and attr != "to_buy":
+                continue    # a zero is left blank: nothing in the hold or on the carrier (Remaining shows its 0)
             text = f"{value:,}"
             cell_color = color
             if attr == "fc":

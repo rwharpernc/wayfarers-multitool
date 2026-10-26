@@ -477,17 +477,16 @@ Optional, and **off until you ask for it**. It needs an overlay running; see [Se
 ### The table
 
 It draws a table, with the site name as its title and the columns **Commodity**, **Required**, **Remaining**,
-**FC**, **Cargo** and **To buy**:
+**FC** and **Cargo**:
 
 - **Required** is the site's full requirement for that commodity.
-- **Remaining** is what the site still requires (required less delivered). It does **not** drop as you load up, so you can
-  see what you need and what you have side by side. It falls when you deliver.
+- **Remaining** is what is left to get: what the site still requires (required less delivered), less your hold and your
+  fleet carrier, the same as the window's Remaining column. It shows **0** once you have it all, wherever it is stored.
 - **FC** appears only if you have a fleet carrier (see the FC column above): what you have moved onto it. It is blue
   once it covers the remaining amount, gray while it doesn't, and blank when none.
 - **Cargo** is what is in your ship's hold right now, so you can see what you just bought. A **✓** after the name means
   your hold **plus** what is on your fleet carrier already covers it (the row turns green, the same rule as the
   window's green rows); the row turns amber if together they are **more** than the site needs.
-- **To buy** is what is left to get after your hold and your carrier (remaining less both). Blank once it is covered.
 
 ### Order
 
@@ -505,7 +504,7 @@ It draws a table, with the site name as its title and the columns **Commodity**,
 
 ### The last line
 
-A last line gives the tons remaining and the trips in your current ship. It needs your ship's cargo capacity, which EDMC supplies.
+A last line gives the tons remaining (still to get, as in the Remaining column) and the trips in your current ship. It needs your ship's cargo capacity, which EDMC supplies.
 
 - **With a fleet carrier** it gives both legs, as the COL page and the window do: `► 32,769 remaining  ► 21 to buy  ► 33 to haul`.
   - **To buy** is the loads to gather what is still to get after your ship and your carrier (0 once it is all stocked).

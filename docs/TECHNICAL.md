@@ -1439,9 +1439,9 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 
 **Shopping-list overlay card** (`colonization_overlay.py`)
 
-- It draws the optional shopping-list card, laid out as a table (Commodity, Required, Remaining, FC (only with a carrier), Cargo, To buy).
+- It draws the optional shopping-list card, laid out as a table (Commodity, Required, Remaining, FC (only with a carrier), Cargo).
 - `build_card` (pure) turns the most recently updated active site, the hold, the carrier tons and the ship's `CargoCapacity` into a frozen `Card`.
-  - Remaining is required less delivered and is not reduced by the hold.
+  - Remaining is what is still to get: required less delivered, less the hold and the carrier (a zero is drawn as 0). `Row.need` keeps the site's own remaining need for the covered / surplus rules and the trips to haul.
   - Rows are alphabetical at a construction site and grouped under the market's categories elsewhere; the footer has tons remaining and trips.
 - `render` / `clear` send it through the shared `OverlayClient` (ids `wfmt_colonization_s<line>_<column>`, registered as a Plugin Group in `load.py`).
 - Columns are right-aligned from character counts, since the overlay has no text metrics.

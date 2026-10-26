@@ -188,10 +188,11 @@ class MeasuredSlotTests(unittest.TestCase):
 
 
 class BuildCardTests(unittest.TestCase):
-    def test_need_is_not_reduced_by_the_hold_and_rows_are_alphabetical(self) -> None:
+    def test_need_is_kept_per_row_and_rows_are_alphabetical(self) -> None:
         built = card.build_card(site(), {"steel": 100}, {}, show_fc=False)
         self.assertEqual([(r.name, r.need, r.ship) for r in built.rows], [("Steel", 400, 100), ("Water", 50, 0)])
-        self.assertEqual(built.remaining, 450)
+        self.assertEqual(built.remaining, 350)      # 450 needed, less the 100 steel in the hold
+        self.assertEqual([r.to_buy for r in built.rows], [300, 50])
 
     def test_covered_and_surplus(self) -> None:
         built = card.build_card(site(), {"steel": 400, "water": 80}, {}, show_fc=False)
@@ -245,11 +246,11 @@ class BuildCardTests(unittest.TestCase):
 class FooterTests(unittest.TestCase):
     def test_with_a_carrier_the_footer_gives_both_legs(self) -> None:
         built = card.build_card(site(), {"steel": 100}, {"water": 40}, show_fc=True, capacity=200)
-        self.assertEqual(built.footer_text(), "► 450 remaining  ► 2 to buy  ► 3 to haul")
+        self.assertEqual(built.footer_text(), "► 310 remaining  ► 2 to buy  ► 3 to haul")
 
     def test_with_a_carrier_all_stocked_it_still_says_what_is_left_to_haul(self) -> None:
         built = card.build_card(site(), {}, {"steel": 400, "water": 50}, show_fc=True, capacity=200)
-        self.assertEqual(built.footer_text(), "► 450 remaining  ► 0 to buy  ► 3 to haul")
+        self.assertEqual(built.footer_text(), "► 0 remaining  ► 0 to buy  ► 3 to haul")
 
     def test_without_a_carrier_there_is_one_figure_and_it_says_to_finish(self) -> None:
         self.assertEqual(card.build_card(site(), {}, {}, show_fc=False, capacity=200).footer_text(),
@@ -440,14 +441,15 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(slots, card.preview_card().slot_count)
         self.assertEqual(client.sent[0][:2], ("shape", card.CARD_ID))
         texts = self.texts(client)
-        self.assertEqual([texts[f"s1_{i}"] for i in range(1, 6)], ["Required", "Remaining", "FC", "Cargo", "To buy"])
+        self.assertEqual([texts[f"s1_{i}"] for i in range(1, 5)], ["Required", "Remaining", "FC", "Cargo"])
         self.assertEqual(texts["s2_0"], "CHEMICALS")          # grouped: a heading before each market category
         self.assertEqual(texts["s4_0"], "METALS")
         self.assertTrue(texts["s5_0"].endswith(card.NOT_SOLD))     # Aluminium: the market here does not sell it
         self.assertEqual(texts["s6_0"], "Steel ✓")
         self.assertEqual(texts["s6_1"], "15,000")
         self.assertEqual(texts["s6_4"], "14,000")
-        self.assertEqual(texts["s5_5"], "10,055")     # To buy: nothing in the hold or on the carrier
+        self.assertEqual(texts["s6_2"], "0")          # Remaining: the hold and the carrier already cover Steel
+        self.assertEqual(texts["s5_2"], "10,055")     # Remaining: nothing in the hold or on the carrier
         self.assertTrue(texts[f"s{slots - 1}_0"].startswith("► 32,769 remaining  ► 21 to buy  ► 33 to haul"))
 
     def test_no_fc_column_without_a_carrier(self) -> None:
@@ -456,8 +458,8 @@ class RenderTests(unittest.TestCase):
         card.render(client, built, 20, 300)
         texts = self.texts(client)
         self.assertNotIn("FC", texts.values())
+        self.assertEqual(texts["s2_2"], "390")    # Remaining: less the 10 in the hold
         self.assertEqual(texts["s2_3"], "10")     # Cargo follows Required and Remaining when there is no FC column
-        self.assertEqual(texts["s2_4"], "390")    # To buy
 
     def test_shorter_card_clears_leftover_lines(self) -> None:
         client = FakeClient()
