@@ -4,7 +4,7 @@
 
 This page records what WFMT asks it for, when, how often, what is sent, and what WFMT does to keep its use light. It is kept up to date with the code: a change to the requests WFMT makes is a change to this page.
 
-If you run Spansh, or you are another developer, and something here concerns you, please open an issue at <https://github.com/rwharpernc/wayfarers-multitool/issues> once the repository is public.
+If you run Spansh, or you are another developer, and something here concerns you, please open an issue at <https://github.com/rwharpernc/wayfarers-multitool/issues>.
 
 Every request carries a User-Agent that points to this project.
 

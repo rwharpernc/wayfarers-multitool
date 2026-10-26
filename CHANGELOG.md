@@ -3,7 +3,7 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
-## 1.0.0 (not yet released)
+## 1.0.0 (2026-10-26)
 
 The first release. WFMT is an add-on for Elite Dangerous that runs inside EDMC (Elite Dangerous Market
 Connector) and puts its tools in one panel of eight modes, with optional on-screen overlays on Windows

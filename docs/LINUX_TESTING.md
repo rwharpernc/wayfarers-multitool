@@ -200,7 +200,7 @@ Use them for anything the passes did not reach.
 
 ### Getting set up
 
-1. Install the plugin: the zip from the [releases page](https://github.com/rwharpernc/wayfarers-multitool/releases/latest) once a release is published, or `npm run deploy` (step 4 below).
+1. Install the plugin: the zip from the [releases page](https://github.com/rwharpernc/wayfarers-multitool/releases/latest), or `npm run deploy` (step 4 below).
    - Restart EDMC.
    - The line under the mode buttons should read `Plugin: v1.0.0`.
    - Work through sections 0 and 1 below first.

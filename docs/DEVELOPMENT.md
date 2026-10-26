@@ -277,7 +277,7 @@ A release is cut from a clean `master`:
 
    The title is `WFMT <version>` with no `v`; the tag keeps the `v` (`v1.0.0`, for example), and the in-app updater reads the tag, not the title.
    Publish it as a normal release, not a draft or a pre-release: the in-app updater and the README's "latest release" link only
-   follow official GitHub releases, and they can read them only once the repository is public.
+   follow official GitHub releases, and they can read them only while the repository is public.
 6. Update `docs/guide/known-issues.md` (what is known to go wrong in the new release) and `docs/STATUS.md` (the current release,
    which branches exist, what is still unreleased), and the version examples in `docs/guide/getting-started.md`.
 

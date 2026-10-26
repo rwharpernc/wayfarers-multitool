@@ -1,6 +1,6 @@
 # Test plan: 1.0.0
 
-What to check in EDMC before 1.0.0 is released, on **Windows** first and then on **Linux**.
+What to check in EDMC after the 1.0.0 release (and before any later one), on **Windows** first and then on **Linux**.
 
 - This is the quick pass over the whole release:
   - the Rare Goods Finder

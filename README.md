@@ -16,9 +16,14 @@ Back in the bubble, a colony site is waiting for steel and titanium. You open a 
 covers, and find the one system that sells most of the rest. The route is a click away. On a quiet evening you check the merits for your
 Power, the missions on your board and the faction you have been supporting, all from the same panel.
 
-None of that is new. Commanders have been building tools for each of those jobs for years, and most players end up running a pile of them:
-one for the route, one for the mining, one for the merits, one for the cargo. **Wayfarer's Multitool (WFMT)** collects the ones that matter
-into a single panel, so you can spend less time switching windows and more time flying.
+None of these tools are new or innovative. They have been in the community for years, in various forms, by various authors, each one a
+dedicated commander and a member of a dedicated community of players.
+
+I started putting these ideas together into a single tool, so that I did not have to keep up with the updates of many, and placed it on a
+platform that has always served me well: EDMC. **Wayfarer's Multitool (WFMT)** is the result. It is a big project and not perfect, but it has
+all of the bells and whistles I expect and always wanted.
+
+I am sharing it with you all, and I would appreciate your feedback and suggestions.
 
 ## What WFMT is
 
@@ -29,7 +34,7 @@ WFMT is a free add-on for **Elite Dangerous**, open to anyone who wants it.
   many commanders already use, on Windows and Linux.
 - **What you need to know:** nothing about programming.
 
-**Version 1.0.0** is being prepared for release. The download links below start working once it is published.
+**Version 1.0.0** is the first release, published on 2026-10-26.
 
 ## Contents
 
