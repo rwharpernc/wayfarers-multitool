@@ -14,7 +14,8 @@ start-up. What goes out, and when:
   tons moved as signed amounts (to the carrier plus, back to the ship minus). Never a replacement of Raven's record, which WFMT's own
   tally is not a complete copy of.
 
-The Raven project for a site is found by reading the system's plan (one lookup, remembered; a site Raven has no project for is not
+The Raven project for a site is found by reading the system's plan and, when that names none, by the site's market id (the way
+SrvSurvey finds one; one lookup each, remembered; a site Raven has no project for is not
 asked about again for ten minutes). Requests are made one at a time on a worker thread through a bounded queue (a full queue drops the
 newest), each retried once on 429 / 503, and a failure is only logged: it never reaches the commander's play. The key goes in the
 `rcc-key` header (with the commander in `rcc-cmdr0`, as Raven's own web app sends them) and nowhere else. The commander's name is only ever part of a URL.
@@ -100,10 +101,12 @@ def carrier_body(entry: Mapping[str, Any]) -> Dict[str, int]:
 class RccSync:
     def __init__(self, share_progress: Callable[[], bool], share_carrier: Callable[[], bool], key_for: Callable[[str], str],
                  find_sites: Optional[Callable[[str], Any]] = None, writer: Optional[Callable[..., None]] = None,
+                 by_market: Optional[Callable[[int, int], Any]] = None,
                  now: Callable[[], float] = time.monotonic) -> None:
         self._share_progress, self._share_carrier, self._key_for = share_progress, share_carrier, key_for
         self._find_sites = find_sites or rcc_client.fetch_system
         self._write = writer or rcc_client.send_write
+        self._by_market = by_market or rcc_client.fetch_project_by_market
         self._now = now
         self._queue: "queue.Queue[Tuple[Callable[[], None], str]]" = queue.Queue(QUEUE_MAX)
         self._thread: Optional[threading.Thread] = None
@@ -197,7 +200,7 @@ class RccSync:
         if missed is not None and self._now() - missed < NEGATIVE_SECONDS:
             return ""
         try:
-            build_id = rcc_client.find_build_id(self._find_sites(system).sites, market_id, name) if system else ""
+            build_id = rcc_client.build_id_for(self._find_sites(system), market_id, name, by_market=self._by_market) if system else ""
         except rcc_client.RccError as err:
             self.last_result = str(err)
             return ""

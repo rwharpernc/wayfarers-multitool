@@ -34,7 +34,7 @@ def plan(build_id="B-1", market_id=77):
 
 
 class Harness:
-    def __init__(self, progress=True, carrier=False, key="k", sites=None):
+    def __init__(self, progress=True, carrier=False, key="k", sites=None, by_market=None):
         self.writes = []
         self.lookups = []
         self.done = threading.Event()
@@ -50,7 +50,7 @@ class Harness:
             self.lookups.append(system)
             return self.sites
 
-        self.sync = S.RccSync(lambda: progress, lambda: carrier, lambda cmdr: key, find, writer)
+        self.sync = S.RccSync(lambda: progress, lambda: carrier, lambda cmdr: key, find, writer, by_market=by_market)
 
     def settle(self) -> None:
         self.sync._queue.join()
@@ -224,6 +224,28 @@ class ProjectTests(unittest.TestCase):
         self.assertEqual(project.commodities, {"steel": 100, "water": 20})
         with self.assertRaises(rcc_client.RccError):
             rcc_client.parse_project([])
+
+
+class LookupByMarketTests(unittest.TestCase):
+    def test_a_project_the_plan_does_not_list_is_found_by_its_market_id(self) -> None:
+        asked = []
+
+        def by_market(address, market_id):
+            asked.append((address, market_id))
+            return rcc_client.RccProjectView("B-9", "Primary port", "Sol", "no_truss", market_id, 5, 10, False, {})
+
+        standalone = rcc_client.RccSystem("Sol", "", None, [], id64=1234)
+        h = Harness(sites=standalone, by_market=by_market)
+        h.sync.on_depot("Alice", DEPOT, "Sol", "$EXT_PANEL_ColonisationShip; Some Claim")
+        h.settle()
+        self.assertEqual(asked, [(1234, 77)])
+        self.assertTrue(any(path == "/api/project/B-9" for _m, path, _b, _k in h.writes), h.writes)
+
+    def test_the_plan_is_enough_when_it_names_the_project(self) -> None:
+        h = Harness(by_market=lambda *a: self.fail("the plan already named the project"))
+        h.sync.on_depot("Alice", DEPOT, "Sol")
+        h.settle()
+        self.assertTrue(h.writes)
 
 
 if __name__ == "__main__":

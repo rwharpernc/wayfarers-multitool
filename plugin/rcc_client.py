@@ -537,3 +537,26 @@ def save_hidden(cmdr: str, build_ids: List[str], key: str, send: Callable[..., A
 def set_primary(cmdr: str, build_id: str, key: str, send: Callable[..., Any] = send_json) -> None:
     """Make a project the commander's primary one (`PUT /api/Cmdr/<cmdr>/primary/<build id>`)."""
     send("PUT", f"/api/Cmdr/{cmdr_path(cmdr)}/primary/{urllib.parse.quote(build_id.strip(), safe='')}", None, key, cmdr=cmdr)
+
+
+def fetch_project_by_market(address: int, market_id: int, opener: Callable[..., Any] = urllib.request.urlopen) -> Optional[RccProjectView]:
+    """Raven Colonial's active project for a site, found by the system's address and the site's market id (`GET /api/system/<address>/<market id>`),
+    or None when it has none. This is how SrvSurvey finds one too; unlike the plan's names it does not depend on what a site is called, so it
+    still works for a project named "Primary port" and after the game renames a station."""
+    views = parse_project_views([_get_json(f"/api/system/{int(address)}/{int(market_id)}", opener)])
+    return views[0] if views else None
+
+
+def build_id_for(plan: "RccSystem", market_id: int, name: str = "", address: Optional[int] = None,
+                 by_market: Callable[[int, int], Optional[RccProjectView]] = fetch_project_by_market) -> str:
+    """Raven Colonial's build id for a site, or "" when it has none: first from the system's plan (see `find_build_id`), then, when the plan has
+    nothing and the system's address is known (`address`, else the plan's own), by the site's market id. Raises RccError when that read fails."""
+    build_id = find_build_id(plan.sites, market_id, name)
+    if build_id:
+        return build_id
+    address = address or getattr(plan, "id64", None)
+    if address:
+        view = by_market(address, market_id)
+        if view is not None:
+            return view.build_id
+    return ""

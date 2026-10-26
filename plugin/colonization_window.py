@@ -857,7 +857,7 @@ class ColonizationWindow:
 
         def work() -> None:
             try:
-                job["build_id"] = rcc_client.find_build_id(rcc_client.fetch_system(site.system).sites, site.market_id, site.name)
+                job["build_id"] = rcc_client.build_id_for(rcc_client.fetch_system(site.system), site.market_id, site.name, self._address(site))
             except rcc_client.RccError as err:
                 job["error"] = str(err)
             except Exception:
@@ -898,7 +898,7 @@ class ColonizationWindow:
 
         def work() -> None:
             try:
-                build_id = rcc_client.find_build_id(rcc_client.fetch_system(site.system).sites, site.market_id, site.name)
+                build_id = rcc_client.build_id_for(rcc_client.fetch_system(site.system), site.market_id, site.name, self._address(site))
                 job["project"] = rcc_client.fetch_project(build_id)
             except rcc_client.RccError as err:
                 job["error"] = str(err)
@@ -983,6 +983,10 @@ class ColonizationWindow:
             key = (entered or "").strip()
         return key
 
+    def _address(self, site: Site) -> Optional[int]:
+        """The site's system address when the game state knows it (the commander is in that system), else None (Raven's own is then used)."""
+        return rcc_create.locate(site.system, None, self._game_state())[0]
+
     @staticmethod
     def _game_state() -> Mapping[str, Any]:
         try:
@@ -1028,7 +1032,11 @@ class ColonizationWindow:
         if plan is None:
             self._shell.set_status(job["error"] or "Raven Colonial could not be read.")
             return
-        existing = rcc_client.find_build_id(plan.sites, site.market_id, site.name)
+        try:
+            existing = rcc_client.build_id_for(plan, site.market_id, site.name, self._address(site))
+        except rcc_client.RccError as err:
+            self._shell.set_status(str(err))
+            return
         if existing:
             self._rcc_created(site.market_id, existing)
             self._shell.set_status(f"Raven Colonial already has a project for {site.display_name()}; progress sharing will use it.")
@@ -1099,7 +1107,7 @@ class ColonizationWindow:
             try:
                 rcc_client.clear_cache()
                 plan = rcc_client.fetch_system(site.system)
-                build_id = rcc_client.find_build_id(plan.sites, site.market_id, site.name)
+                build_id = rcc_client.build_id_for(plan, site.market_id, site.name, self._address(site))
                 entry = next((s for s in plan.sites if s.site_id and (s.market_id == site.market_id or (build_id and s.build_id == build_id))), None)
                 address, _pos = rcc_create.locate(site.system, plan, self._game_state())
                 if entry is None or address is None:
@@ -1177,13 +1185,13 @@ class ColonizationWindow:
                 f"Tell Raven Colonial that {site.display_name()} in {site.system} is complete?\n\nOnly your Raven key and this "
                 "one project's id are sent; none of your deliveries or cargo."):
             return
-        market_id, system, cmdr, site_name = site.market_id, site.system, self._cmdr, site.name
+        market_id, system, cmdr, site_name, address = site.market_id, site.system, self._cmdr, site.name, self._address(site)
         job: Dict[str, Any] = {"done": False, "error": ""}
         self._shell.set_status("Reporting to Raven Colonial…")
 
         def work() -> None:
             try:
-                build_id = rcc_client.find_build_id(rcc_client.fetch_system(system).sites, market_id, site_name)
+                build_id = rcc_client.build_id_for(rcc_client.fetch_system(system), market_id, site_name, address)
                 rcc_client.complete_project(build_id, key, cmdr=cmdr)
                 rcc_keys.keys.set(cmdr, key)     # saved once it has worked, so a wrong key is not kept
             except rcc_client.RccError as err:

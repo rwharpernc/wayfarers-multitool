@@ -422,7 +422,7 @@ Optional and **off by default**.
 ### Rules for what is sent
 
 - **Only live events.** What you did while EDMC was closed, and anything the start-up catch-up reads, is never sent.
-- **Raven must already have a project for the site** (Raven matches it on the site's market id in its plan for the system). If it has none,
+- **Raven must already have a project for the site.** WFMT finds it from the system's plan and, failing that, from the system's address and the site's market id (so a project named *Primary port* is still found, and a renamed station does not break it). If it has none,
   WFMT sends nothing and tries again no sooner than ten minutes later. To make one, use
   [Create Project on Raven](#starting-a-project-on-raven-colonial); WFMT then uses it at once.
 - **One request per event.** They go one at a time in the background, are retried once if Raven says it is busy, and a failure is only

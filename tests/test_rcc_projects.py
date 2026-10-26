@@ -161,5 +161,30 @@ class Labels(unittest.TestCase):
         self.assertIn("nothing is needed", P.shopping_text(R.parse_project_views(LIVE)[2]))
 
 
+class ByMarket(unittest.TestCase):
+    VIEW = {"buildId": "b7", "buildName": "Primary port", "systemName": "Sol", "buildType": "no_truss", "marketId": 5, "sumNeed": 1, "maxNeed": 2}
+
+    def test_a_project_is_found_by_the_systems_address_and_the_market_id(self):
+        opener = Opener(self.VIEW)
+        view = R.fetch_project_by_market(2833168437946, 5, opener)
+        self.assertEqual(view.build_id, "b7")
+        self.assertTrue(opener.requests[0].full_url.endswith("/api/system/2833168437946/5"))
+
+    def test_no_project_is_none(self):
+        self.assertIsNone(R.fetch_project_by_market(1, 5, Opener(urllib.error.HTTPError("u", 404, "nf", {}, None))))
+
+    def test_the_plan_is_tried_first_then_the_market_id(self):
+        sites = R.parse_sites([{"id": "x1", "name": "Named", "bodyNum": 1, "buildType": "vulcan", "status": "build", "buildId": "from-plan"}])
+        plan = R.RccSystem("Sol", "", None, sites, id64=99)
+        never = lambda *a: self.fail("not needed")
+        self.assertEqual(R.build_id_for(plan, 5, "Named", by_market=never), "from-plan")
+        asked = []
+        found = lambda address, market: asked.append((address, market)) or R.parse_project_views([self.VIEW])[0]
+        self.assertEqual(R.build_id_for(plan, 5, "Primary port", by_market=found), "b7")
+        self.assertEqual(asked, [(99, 5)])
+        self.assertEqual(R.build_id_for(R.RccSystem("Sol", "", None, []), 5, by_market=never), "")     # no address: nothing to ask
+        self.assertEqual(R.build_id_for(plan, 6, by_market=lambda *a: None), "")
+
+
 if __name__ == "__main__":
     unittest.main()
