@@ -75,3 +75,31 @@ def read_events(path: str, wanted: "re.Pattern[str]") -> Iterator[Dict[str, Any]
                     yield entry
     except OSError:
         logger.warning("Could not read journal %s", path)
+
+
+def read_cargo_file(folder: Optional[str] = None) -> Optional[Dict[str, int]]:
+    """What the game says the ship's hold holds right now, from `Cargo.json` beside the journals ({commodity name: tons}).
+    The game rewrites it on every change, while the journal's own `Cargo` event carries only a count, so this is the
+    current figure even when EDMC's cargo state has not caught up. None when the file is missing, unreadable, or
+    describes another vessel (the SRV), so the caller keeps what EDMC reports."""
+    folder = journal_folder() if folder is None else folder
+    if not folder:
+        return None
+    try:
+        with open(os.path.join(folder, "Cargo.json"), "r", encoding="utf-8", errors="replace") as handle:
+            data = json.load(handle)
+    except (OSError, ValueError):
+        return None
+    if not isinstance(data, dict) or data.get("Vessel", "Ship") != "Ship":
+        return None
+    hold: Dict[str, int] = {}
+    for item in data.get("Inventory") or []:
+        if not isinstance(item, dict) or not item.get("Name"):
+            continue
+        try:
+            count = int(item.get("Count") or 0)
+        except (TypeError, ValueError):
+            continue
+        if count > 0:
+            hold[str(item["Name"])] = hold.get(str(item["Name"]), 0) + count
+    return hold

@@ -26,7 +26,7 @@ import myNotebook as nb
 from config import appname, config
 
 from . import (overlay_appearance, overlay_layout, overlay_placement, colonization, colonization_carrier, colonization_catchup, colonization_history, colonization_overlay as card, rcc_client, rcc_keys, rcc_sync,
-               colonization_history_window, colonization_projects_window, colonization_stats as stats, colonization_window, overlay, panelkit, restore, trade_market, trade_panel)
+               colonization_history_window, colonization_projects_window, colonization_stats as stats, colonization_window, journal_files, overlay, panelkit, restore, trade_market, trade_panel)
 from .colonization import Site
 from . import commander_data
 from .colonization_data import SiteRepository, site_repository
@@ -42,6 +42,11 @@ _CFG_OVERLAY_RIGHT_PANEL = "wfmt_colonization_overlay_right_panel"
 _CFG_OVERLAY_FORCED = "wfmt_colonization_overlay_forced"   # the OVERLAY button: the card stays on until switched off, across restarts
 _CFG_RCC_PROGRESS = "wfmt_rcc_share_progress"      # report depot progress and deliveries to Raven Colonial (off by default)
 _CFG_RCC_CARRIER = "wfmt_rcc_share_carrier"        # report fleet carrier cargo changes to Raven Colonial (off by default)
+
+# Events after which the ship's hold may have changed; the game rewrites Cargo.json for each, so it is read again shortly after.
+_CARGO_EVENTS = frozenset({"Cargo", "MarketBuy", "MarketSell", "CargoTransfer", "CollectCargo", "EjectCargo", "MiningRefined",
+                           "BuyDrones", "SellDrones", "LaunchDrone", "Loadout"})
+_CARGO_RECHECK_MS = 1500
 
 
 def _journal_dir() -> str:
@@ -113,6 +118,7 @@ class ColonizationController:
         # remembered from the latest Docked (MarketID -> (station, system)).
         self._docked: Dict[int, tuple] = {}
         self._cargo: Dict[str, int] = {}
+        self._state_cargo: Any = None    # EDMC's own `state["Cargo"]`, kept for when Cargo.json cannot be read
         self._capacity = 0   # the ship's cargo capacity, for the trips figure on the overlay
         self._carrier_cargo = colonization_carrier.carrier_cargo
         self._ledger = colonization_history.DeliveryLedger()
@@ -232,6 +238,25 @@ class ColonizationController:
 
     # --- journal dispatch -----------------------------------------------
 
+    def _hold(self) -> Dict[str, int]:
+        """The ship's hold by commodity key. The game's own `Cargo.json` first: EDMC's cargo state was seen not to follow a purchase
+        (the journal's `Cargo` event carries only a count), so it is the fallback for when the file cannot be read or is another vessel's."""
+        try:
+            from_file = journal_files.read_cargo_file()
+        except Exception:
+            logger.debug("Could not read Cargo.json", exc_info=True)
+            from_file = None
+        return colonization.cargo_by_key(self._state_cargo if from_file is None else from_file)
+
+    def _recheck_cargo(self) -> None:
+        """Read the hold again a moment after a cargo event, in case the game had not finished writing `Cargo.json` when it was first read."""
+        cargo = self._hold()
+        if cargo != self._cargo:
+            self._cargo = cargo
+            colonization_window.refresh_cargo(cargo)
+            self._refresh_summary()
+            self._update_overlay()
+
     def handle_event(self, entry: Dict[str, Any], cmdr: str, system: Optional[str], station: Optional[str], state: Dict[str, Any]) -> None:
         if entry.get("event") in ("Market", "Music", "Docked", "Undocked", "CarrierStats", "CargoTransfer", "Outfitting",
                                   "Shipyard", "ColonisationConstructionDepot"):
@@ -265,7 +290,8 @@ class ColonizationController:
         if isinstance(capacity, (int, float)) and not isinstance(capacity, bool):
             capacity_changed = int(capacity) != self._capacity
             self._capacity = int(capacity)
-        cargo = colonization.cargo_by_key(state.get("Cargo"))
+        self._state_cargo = state.get("Cargo")
+        cargo = self._hold()
         if cargo != self._cargo:
             self._cargo = cargo
             colonization_window.refresh_cargo(cargo)
@@ -275,6 +301,8 @@ class ColonizationController:
             self._refresh_summary()
 
         event = entry.get("event")
+        if event in _CARGO_EVENTS and self._parent is not None:
+            self._parent.after(_CARGO_RECHECK_MS, self._recheck_cargo)   # the game may finish writing Cargo.json just after the event
         self._track_market(event, entry, station)
         if not self._cmdr:
             return
