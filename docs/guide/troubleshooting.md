@@ -340,9 +340,25 @@ Only deliveries made while sharing is on are sent. WFMT does not backfill earlie
 
 ### Raven Progress says Raven has no project for my site
 
-Raven Colonial only records a site's market id once the build is finished, so WFMT finds a build in progress by its **name**. If you
-renamed the site in the game, dock at it once so WFMT takes the new name; if you renamed it on Raven, give both the same station name.
-A site that is only *planned* on Raven has no project yet. See the [guide](colonization.md#sharing-your-progress-with-raven-colonial).
+WFMT finds a site's project in two ways: from the system's plan on Raven (by the site's market id, or by its name while it is being built),
+and, if the plan names none, by the system's address and the site's market id. If you renamed the site in the game, dock at it once so
+WFMT takes the new name.
+
+A site that is only *planned* on Raven, or one you never started a project for, has no project yet. Select the site and choose
+**Create Project on Raven** in the **Raven Colonial** menu to make one (see the
+[guide](colonization.md#starting-a-project-on-raven-colonial)). Otherwise see
+[sharing your progress](colonization.md#sharing-your-progress-with-raven-colonial).
+
+### Create Project on Raven did not work
+
+The status line at the bottom of the Colonization Sites window says which step Raven refused.
+
+- **"No Raven Colonial key is saved", or switched off:** tick the master switch and paste your key in Settings → Colonization → Raven Colonial.
+- **"WFMT does not know this system's address yet":** dock at the site once (or be in that system) so the game reports it, then try again.
+- **"Raven Colonial did not accept the key (or this commander may not change that)":** check the key with **Test key**. A system locked to another architect may also refuse.
+- **The project was made but linking you, making it primary or attaching your carrier failed:** the project exists. Open **My Projects** and use **Set as My Primary**, or fix the rest on ravencolonial.com.
+- **"Attach my fleet carrier" is grayed out:** WFMT has not seen your carrier's id this session. Log in again or open Carrier Management once.
+- **"Raven Colonial already has a project":** nothing was created; progress sharing uses the project that is there.
 
 ### Test key says Raven did not accept the key
 

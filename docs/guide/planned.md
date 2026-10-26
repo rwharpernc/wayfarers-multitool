@@ -8,7 +8,8 @@ If one of these matters to you, tell me (see [Getting help](../../README.md#gett
 
 - **Raven Colonial:** sharing your progress, deliveries and carrier cargo is built, strictly **opt-in and off by default**, and the internet page lists exactly what is sent and when.
   - **Raven Progress** reads Raven's own figures for a site when you press it.
-  - Not done: creating or linking a Raven project from WFMT, and reading Raven's progress automatically instead of on a button press.
+  - **Create Project on Raven** starts a project for a site you are docked at, and **My Projects** lists every active project you have there.
+  - Not done: reading Raven's progress automatically instead of on a button press, assigning commodities to commanders on a project, showing other linked carriers' cargo, and a guided tool that fills in a system's whole plan on Raven.
 - **Team projects:** several commanders on one project, with a "what the team still needs" line. Everything today is per commander and would stay that way until you choose to share.
 - **Co-op building and colony tracking:** not available yet.
 - *Being researched, may not happen:* tons per hour and credits earned per delivery. The journal does not say how long you spent hauling, and I have not been able to confirm that the credits a depot lists are what is actually paid.

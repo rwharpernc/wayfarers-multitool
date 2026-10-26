@@ -405,7 +405,7 @@ Optional and **off by default**.
 | **Allow WFMT to write to Raven Colonial** (master switch) | Nothing by itself. Off by default. The three options below only work while it is ticked, and are grayed out while it is not. |
 | **Report my construction progress and deliveries** | Needs the key below; with none, nothing is looked up or sent. When the depot's figures change (the game's `ColonisationConstructionDepot` event): the depot's numbers and how much of each commodity is still needed, which is what moves *Remaining* on Raven Colonial. When you deliver cargo (`ColonisationContribution`): the commodities and tons, which credits your commander name in Raven's history. Once per project, it also links your commander to the project. |
 | **Also report cargo I move to and from my fleet carrier** | When you transfer cargo at your own fleet carrier: the tons moved, to the carrier as plus and back to the ship as minus. It adds to Raven's carrier record; it never replaces it, because WFMT's own tally is only what it saw you move. Needs the key below. |
-| **Raven Colonial key** | Needed for every write: progress, deliveries, carrier cargo and **Report Complete to Raven**. With no key WFMT sends nothing (Raven's published API description does not say which writes work without one, so none is tried). Saved per commander on your computer, shown masked, and sent only to Raven Colonial. |
+| **Raven Colonial key** | Needed for every write: progress, deliveries, carrier cargo, **Create Project on Raven**, **Report Complete to Raven**, **Mark Plan Entry Demolished**, and **Set as My Primary** and **Save Counted List** in My Projects. With no key WFMT sends nothing (Raven's published API description does not say which writes work without one, so none is tried). Saved per commander on your computer, shown masked, and sent only to Raven Colonial. |
 
 **Where to get the key.** The settings page has a link to [ravencolonial.com/user](https://ravencolonial.com/user), where you sign in and Raven shows your key (it is also the page that can reset it). WFMT does not fetch it for you.
 
@@ -414,9 +414,9 @@ Optional and **off by default**.
 - It uses a read that changes nothing, and shows Raven's name for you when the key is accepted.
 - It checks the box as typed, so you can use it before closing Settings.
 
-**What works with no key and no switch.** **Planned Builds** and **Raven Progress** only *read* from Raven Colonial, so they need neither.
+**What works with no key and no switch.** **Planned Builds**, **My Projects** (viewing) and **Raven Progress** only *read* from Raven Colonial, so they need neither.
 
-- Each runs when you press its button and sends only the system's name (and, for Raven Progress, the project's id).
+- Each runs when you press its button or open its window. **Planned Builds** sends only the system's name, **My Projects** only your commander name, and **Raven Progress** the system's name and the project's id (and, if the plan does not name the project, the system's address and the site's market id).
 - If another tool already reports your builds to Raven, leave the master switch off. WFMT then sends nothing, and Raven Progress is a way to check that Raven's figures match WFMT's.
 
 ### Rules for what is sent
@@ -463,8 +463,8 @@ Select a site your journal has reported **complete** and press **Report Complete
 - It needs your **Raven Colonial key**. The first time, WFMT asks you to paste it; it is saved for that commander only (in
   `rcc_keys.json`, in the plugin folder, which updates leave alone) once Raven Colonial has accepted it, and masked as you type.
 - **What is sent:** your key and the one project's id, nothing else. No deliveries, cargo or journal data.
-- **Limits:** Raven Colonial must already list the site with a project linked to its market id. If it does not (for example it
-  is still only planned there), WFMT says so and sends nothing. Reporting does not copy anything back: WFMT's own tracking
+- **Limits:** Raven Colonial must already have a project for the site, found from its plan or by the site's market id. If it has none
+  (for example it is still only planned there), WFMT says so and sends nothing; **Create Project on Raven** can make one. Reporting does not copy anything back: WFMT's own tracking
   stays as it is.
 
 ## The shopping list on the overlay

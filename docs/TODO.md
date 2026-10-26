@@ -704,7 +704,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Carrier cargo sharing requires a transfer at the commander's own carrier with that option enabled, followed by a check of Raven's carrier record.
   - Depot progress and deliveries have been verified, and the Test key button accepts a valid key.
 - [ ] **Raven Progress and Open Selected Build on Raven** on real in-progress builds (the Raven Colonial menu).
-  - These find a build by name, because Raven has no market id until a build is finished.
+  - These find a build from the system's plan (by name while it is being built) and, failing that, by the system's address and the site's market id. Check both routes, including a project named *Primary port* and one on a station the game has renamed.
   - A renamed station therefore requires a new dock before WFMT uses the new name.
 
 ### Screenshots, settings and general
@@ -756,7 +756,8 @@ WFMT's own tracking is the reference, and reporting to Raven Colonial is **opt-i
 
 Not implemented:
 
-- Creating or linking a project from WFMT (WFMT does not store the system address or build type that Raven requires).
+- Assigning commodities to commanders on a project, linking other commanders, and showing other linked carriers' cargo.
+- A guided tool that fills in a system's whole plan on Raven (bodies, installations and statuses) from play.
 - Ready flags.
 - Raven's `supply` call, which Raven's documentation describes as unsuitable for a tool that reads the journal.
 
@@ -788,7 +789,7 @@ What remains of it is under "In progress" and "Verification in the game" above.
 No work is planned on these items. They are retained so that the ideas are not lost.
 
 - [ ] Raven Colonial: read-only polling of tracked projects (remaining needs and other commanders' progress alongside WFMT's own), followed by opt-in writes.
-  - Completion, progress, deliveries and carrier cargo are implemented; the remainder is deferred.
+  - Completion, progress, deliveries, carrier cargo, creating a project and My Projects are implemented; the remainder is deferred.
   - Reads need no key.
   - The public documentation would need to list exactly what is sent and when.
 - [ ] **Team projects:** several commanders working on one project.

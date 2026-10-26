@@ -656,9 +656,10 @@ class ColonizationController:
             text=("Optional, and nothing is written to Raven Colonial (ravencolonial.com), a community planning site, until you tick the "
                   "master switch. Then WFMT can share your construction progress as it happens: the site's depot figures and the "
                   "deliveries you make. It needs your Raven key (below), only sends live events, needs Raven to already have a project "
-                  "linked to the site, and uses your commander name. If another tool also reports your deliveries to Raven, turn one "
-                  "of them off or they are counted twice. Planned Builds and Raven Progress in the Colonization Sites window only "
-                  "read from Raven; they need neither the switch nor a key."),
+                  "for the site (Create Project on Raven makes one), and uses your commander name. If another tool also reports your deliveries to Raven, turn one "
+                  "of them off or they are counted twice. The same switch and key let you start a project for a site (Create Project on "
+                  "Raven), set your primary project and save your counted list (My Projects), and report a finished build. Planned "
+                  "Builds, My Projects (to look at) and Raven Progress only read from Raven; they need neither the switch nor a key."),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(0, 4))
         self._rcc_enabled_var = tk.BooleanVar(value=rcc_keys.enabled())

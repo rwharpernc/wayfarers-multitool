@@ -177,7 +177,8 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Site tracking | What each construction site still needs, after counting the cargo in your ship | Dock at a depot once; nothing is typed | [Tracking a site](colonization.md#tracking-a-site) |
 | Colonization Sites window | Every site's shopping list, progress and totals, and the carrier's part | **DASHBOARD**; **Rescan Carrier** if a load did not register | [The Sites window](colonization.md#the-colonization-sites-window) |
 | Where to buy | The closest places to buy a commodity, or a whole list | Click a commodity row, then **Find nearest** or **Find all** | [Where to buy](colonization.md#where-to-buy) |
-| Planned Builds and Raven Colonial | Links, and opt-in sharing of progress and deliveries | **Settings → WFMT → Colonization** (master switch and your Raven key) | [Planned builds](colonization.md#planned-builds) |
+| My Projects | Every active project you have on Raven Colonial, across systems, with totals and trips | **PROJECTS** | [My Projects](colonization.md#my-projects) |
+| Planned Builds and Raven Colonial | Links, starting a Raven project for a site, and opt-in sharing of progress and deliveries | **Raven Colonial** menu in the Sites window; **Settings → WFMT → Colonization** (master switch and your Raven key) | [Planned builds](colonization.md#planned-builds), [Starting a project](colonization.md#starting-a-project-on-raven-colonial) |
 | Shopping list overlay | Shown at the market, your carrier or a construction site | **OVERLAY**, or the automatic option in Settings | [The overlay](colonization.md#the-shopping-list-on-the-overlay) |
 
 ### BGS ([guide](bgs.md))

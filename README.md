@@ -55,7 +55,7 @@ Four more tools are always on and belong to no mode: **Landing Assist**, **Inter
 
 **Colonization is a work in progress.**
 
-- The COL page, the Sites window and the shopping-list overlay work today.
+- The COL page, the Sites window, My Projects (your projects on Raven Colonial), starting a Raven project for a site, and the shopping-list overlay work today.
 - Co-op building and colony tracking are planned.
 - Until then, everything on the COL page is about **you**.
 

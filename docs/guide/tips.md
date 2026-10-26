@@ -67,8 +67,9 @@ Things that surprise people, and what to do about them. Back to the [README](../
 - Commanders **without** a carrier see simpler wording and one Trips column; the carrier lines appear only if you have one.
 - **Where to buy** needs the internet (Spansh) and caches a search for two minutes. Click a result row to copy its system, ready to paste into the galaxy map search.
 - **Raven Colonial** (ravencolonial.com) is optional.
-  - Planned Builds, Raven Progress and the page links only read or open your browser.
-  - Sending anything to Raven is **off until you tick the master switch** in Settings and save your Raven key (the settings page links to where you get it).
+  - Planned Builds, My Projects (to look at), Raven Progress and the page links only read or open your browser.
+  - Sending anything to Raven is **off until you tick the master switch** in Settings and save your Raven key (the settings page links to where you get it). That covers progress sharing, **Create Project on Raven**, **Report Complete to Raven**, **Mark Plan Entry Demolished**, and **Set as My Primary** and **Save Counted List** in My Projects.
+  - If Raven has no project for the site you are building, **Create Project on Raven** (in the Colonization Sites window) makes one.
   - **Test key** checks the key.
 - **Shopping-list overlay:**
   - Switch it on and off with the **OVERLAY** button (it stays as you leave it).

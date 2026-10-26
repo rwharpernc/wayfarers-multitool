@@ -111,7 +111,9 @@ being listed doesn't mean a tool was the first or the only one.
   - The shopping-list overlay card follows [SrvSurvey](https://github.com/njthomson/SrvSurvey)'s layout.
   - Raven Colonial publishes its API as OpenAPI, which SrvSurvey and BGS-Tally use and which informed WFMT's plans for it.
   - WFMT's **Planned Builds** window reads one public, key-free endpoint of it (the build sites of a system) when you press a button.
-  - Anything WFMT sends to Raven Colonial (progress, deliveries, carrier cargo, a completion) is opt-in, off by default, and listed in the privacy page.
+  - WFMT's **My Projects** window reads a commander's active projects, hidden list and primary project (public, key-free endpoints) when it is opened.
+  - **Create Project on Raven** and **My Projects** follow the steps of the same features in [SrvSurvey](https://github.com/njthomson/SrvSurvey) (GPL-3.0): choosing the location, building and layout, picking the body, naming the first port "Primary port", leaving the plan alone, and finding a project by the system's address and market id. Its source was read for the order of the calls; none of it is copied.
+  - Anything WFMT sends to Raven Colonial (progress, deliveries, carrier cargo, a new project, a primary project, a counted list, a completion) is opt-in, off by default, and listed in the privacy page.
 - **What each building costs:** the cost table behind the Planned Builds window is a copy of
   [SrvSurvey](https://github.com/njthomson/SrvSurvey)'s `colonization-costs2.json` (GPL-3.0; notice in `THIRD-PARTY-NOTICES.md`),
   compiled by its author from the game. Raven Colonial's own totals for the same buildings agree with it where I checked.

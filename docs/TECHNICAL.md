@@ -1366,8 +1366,10 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
 - Every write (`rcc_client.send_write`, `complete_project`) and the key check carry `rcc-key` plus `rcc-cmdr0` (the commander's name as base64 of its UTF-8 bytes). Raven's own web app (read from its published script) sends both on every call to its API, so WFMT sends both.
 - `rcc_sync` refuses to look anything up or send without a saved key (`_has_key`), because Raven's OpenAPI description declares no authentication at all, so which writes work keyless is unknown.
 - `check_key` is `GET /api/Cmdr/_` (401 without a valid key, checked live; changes nothing), run on a worker thread from the Settings page's **Test key** button against the text in the box.
-- A build in progress has a `buildId` but no `marketId` on Raven.
+- A build in progress has a `buildId` but no `marketId` on the plan's sites.
   - `find_build_id` therefore falls back to the station's name (`station_part` strips the game's "Orbital Construction Site: " prefix; a build in progress wins over a finished namesake).
+  - `build_id_for` adds a second route when the plan names none: `fetch_project_by_market` does `GET /api/system/<address>/<market id>` (public, 404 means none), the lookup SrvSurvey uses. The address is the plan's `id64` or the game state's `SystemAddress`. This finds a standalone project, one named "Primary port", and a station the game has renamed. A failed read raises `RccError`.
+- `send_json` is `send_write` that returns the parsed answer (both share `_send_request`: one retry on 429 / 503, 401 / 403 worded without the key).
 - The page links are opened with `webbrowser.open`:
   - `home_page_url`
   - `key_page_url` = `/user`
@@ -1375,6 +1377,25 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
   - `build_page_url` = `/#build=<id>`
   - Only **Open Selected Build on Raven** first reads the system's plan to find the id.
 - The Sites window's header uses `uikit.widgets.MenuButton` (a `FlatButton` that posts a `tk.Menu`; `WindowShell.add_menu`).
+
+**Creating a project (Raven Colonial)**
+
+- `rcc_create.py` (pure) and `colonization_create_dialog.py` (the dialog); the flow is `ColonizationWindow._on_create_rcc` -> `_poll_plan` -> dialog -> `rcc_create.create` on a worker thread.
+- The plan is read first (cache cleared). `build_id_for` finding a project ends the run ("already has one") and tells `RccSync.note_created`.
+- The dialog collects: plan entry (an unbuilt, unlinked planned site, or none), name, location, building, layout, body, architect, notes, due date, primary port, make primary, attach carrier.
+  - The building is chosen in three steps: location (`orbital` / `surface`), building (`BuildChoice`, by tier and name) and layout, the build type Raven knows it by (every key in the bundled table: `build_costs.table()` maps layout to building, `layouts_of` lists them with the building's own first). The layout is what is sent as `buildType`.
+  - Body choices are `RccSystem.bodies` (`num`, `name`, `subType`; numbers above 999 are belts and rings and are dropped).
+  - A construction ship (`is_construction_ship`: either spelling of colonization ship in the raw name) defaults to the name "Primary port" and `isPrimaryPort`.
+- `create`: `PUT /api/project` with the market id, system address and name, star position, name, `buildType`, `commodities` still needed (required minus provided), `maxNeed`, a rebuilt `colonisationConstructionDepot`, and the optional fields only when known. A chosen plan entry goes in as `systemSiteId`; none leaves it out, so the project stands alone and the plan is never edited (as SrvSurvey does). The answer's `buildId` is required.
+- Then, each reporting its own failure without undoing the project: `PUT /api/project/<id>/link/<cmdr>`, `PUT /api/Cmdr/<cmdr>/primary/<id>`, `PUT /api/project/<id>/fc/<carrier market id>`.
+- The system address and position come from the plan (`id64`, `pos`) first, then EDMC's `monitor.state` when the commander is in that system (`rcc_create.locate`). The carrier id is the commander's own, from `CarrierStats` / `CarrierLocation` (`Feeder.own_market_id`).
+- **Mark Plan Entry Demolished** sends `PUT /api/v2/system/<address>/sites` with the entry's fields and status `demolish`. Neither write has run against the live service (see TODO.md).
+
+**My Projects (Raven Colonial)**
+
+- `colonization_projects_window.py` draws; `rcc_projects.py` (pure) makes the rows, progress, totals, trips and shopping text; `rcc_client` has the reads (`fetch_active`, `fetch_hidden`, `fetch_primary`: `GET /api/Cmdr/<cmdr>/active`, `/hiddenIDs`, `/primary`, public) and the writes (`save_hidden`: `POST .../hiddenIDs`; `set_primary`: `PUT .../primary/<id>`).
+- The commander's name is lowercased and percent-encoded into the path. At most 200 projects and 1000 hidden ids are kept.
+- "Counted" is the inverse of Raven's hidden list. Saving replaces the whole list, so it asks first. An older answer is dropped (`_request_id`).
 
 **Delivery history**
 
