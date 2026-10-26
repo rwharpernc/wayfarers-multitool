@@ -1,6 +1,6 @@
 # Technical Specification — Screenshots and input automation
 
-**Author:** R.W. Harper (CMDR Bocheaux)
+**Author:** R.W. Harper (CMDR Mactavious)
 
 Two WFMT features press keys in the game for you: **Auto-Honk** and **timed or automatic screenshot
 capture**. This document explains exactly what they do and don't do, how Screenshots converts and crops
@@ -42,13 +42,13 @@ arrive in a system. **Off by default.**
 1. **Trigger:** a `FSDJump` or `CarrierJump` journal event. A fresh login (`LoadGame`) clears the
    "visited this session" memory.
 2. **Skip repeats (default on):** each system is honked once per session, by its system address.
-3. **Find the key:** it reads your active **binds file** (`*.binds`, the game's own control settings) and
+3. **Find the key:** it reads your active **binds file** (the most recently modified `<preset>.<major>.<minor>.binds`, where the preset is named in `StartPreset.start`, usually `Custom`) and
    finds the keyboard key assigned to the chosen fire button (Primary or Secondary; default Secondary).
    If that button is bound only to a joystick button, or isn't bound, or the key isn't one WFMT can
    produce, nothing is sent and the Settings tab says why.
 4. **Press and hold:** the key is held down for a set time (default **10 seconds**), because the scanner
    charges while the button is held and a quick tap never honks. The time depends on your scanner and
-   engineering, so it's adjustable. This runs on a background thread so EDMC never freezes.
+   engineering, so it's adjustable (saved as at least 1 second). This runs on a background thread so EDMC never freezes.
 5. **Focus the game (default on):** it can bring the Elite window to the front first.
 
 Outcomes shown in Settings: sent; Elite window not found; no usable keybind; unsupported OS;

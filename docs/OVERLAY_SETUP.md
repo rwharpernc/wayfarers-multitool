@@ -15,15 +15,16 @@ on-screen extras.
 | **Notable Bodies** | A banner when a body you scan matches a rule you chose (terraformable, high-value world, shepherd moon and more) |
 | **Landing Assist** | The pad you've been assigned, with a diagram of the station or carrier |
 | **Interdiction Warning** | An alert the moment an interdiction starts |
-| **Flight Alerts** | A small card with the fleet carrier jump countdown and the low-fuel and unscoopable-star warnings |
-| **Route** | A card with your fuel and jump range, the jumps left and the plotted route (neutron stars and white dwarfs picked out), and the running expedition; a route plotted in the Route Planner takes its place |
+| **Flight Alerts** | A small card with the fleet carrier jump countdown, the low-fuel and unscoopable-star warnings and the mining alerts (a core asteroid, a rich rock, low limpets, a nearly full hold) |
+| **Route** | A card with your fuel and jump range, the jumps left, the next supercharge and the plotted route (neutron stars and white dwarfs picked out); a route plotted in the Route Planner takes its place |
 | **Expedition Log** | The running expedition's exploration and exobiology totals and what it has earned |
 | **Bio status**, **Biology**, **Bio radar**, **Sample popup** | The Exobiology cards: sampling progress and distance, predicted species and what they pay, a plot of your samples and their circles, and a popup after each sample |
 | **System targets** | A list of scanned bodies worth mapping and bodies with life not yet analyzed, with the scan progress |
 | **Body info** | A card describing the body you have targeted or are close to |
 | **Missions** | A small card of your missions: those here and at the next jump first, then the rest by urgency |
+| **Colonization** | The shopping list for the construction site you are working on: what it still needs, what your hold and fleet carrier cover |
 | **Inventory** | Capacity bars and pickup messages |
-| **Mining** | Live stats |
+| **Mining** | Live stats, and (built-in overlay only) the Surface Live radar over the game while the Rhino is out |
 | **Surface Compass** | An arrow, a name and a distance pointing at a hotspot or a mark on the planet you are on |
 | **Screenshots** | A short "Screenshot saved" message |
 
@@ -43,7 +44,7 @@ There are two, and you pick one under **Settings → WFMT → Overlays → Overl
 | Install | Nothing: it is part of WFMT | Install it yourself ([project page](https://github.com/SweetJonnySauce/EDMCModernOverlay) and its wiki) |
 | Draws | **WFMT's displays only** | WFMT's and every other plugin that supports it |
 | Chosen with | The setting above (off until you choose it) | The same setting (it is the default) |
-| Font | Its own: Source Sans 3 (lower case), or any `.ttf` / `.otf` you add; changes at once | One font for all plugins, in its own list; takes effect after a restart |
+| Font | Its own: Source Sans 3 (lower case), or any `.ttf` / `.otf` you add; used as soon as you press OK, no restart | One font for all plugins, in its own list; takes effect after a restart |
 | Cards fit their text | Exactly (the text is measured in the font in use) | By estimate, a little roomier |
 | Card corners | Rounded (your choice: square to very rounded) | Square |
 | Stray windows | Cannot happen: it ends with EDMC | An old window can be left running (see [Known issues](guide/known-issues.md)) |
@@ -91,25 +92,25 @@ makes sense, a test button:
 | Overlays tab | What it controls | Test button |
 |---|---|---|
 | **Overlay Connection** | Which overlay draws; EDMCModernOverlay's host and port; keep showing for screenshots | **Check connection** |
+| **Appearance** | Color scheme, text size, panel opacity, corners and the overlay font | **Show sample** |
 | **Overlay Placement** | Where every display sits (layout editor) | **Show placement preview** |
-| **Appearance** | Color scheme, text size, panel opacity and the overlay font | **Show sample** |
-| **Hide overlays** | A button to hide or show every overlay (its keyboard shortcut and chat command are under General → Shortcuts) (the Exploration Dashboard's two header buttons hide only the exploration cards, or only the exobiology cards, and never change these settings) | **Hide / show now** |
+| **Body info** | The body card (targeted body, nearby body, symbols or full names for elements and compounds) | **Test Card** |
 | **Colonization** | The shopping list card | **Test Overlay** |
 | **Discovery** | New system and body discovery alerts | **Test Discovery** |
-| **Inventory** | Pickup notifications and the inventory bars | **Test pickup** |
+| **Exobiology** | Four switches, one for each Exobiology card, and the radar's size and circles | **Test Cards** |
+| **Expedition Log** | The card of the running expedition's totals | **Test Card** |
+| **Flight Alerts** | The carrier jump countdown, fuel warnings and mining alerts card | **Test Card** |
+| **Hide overlays** | A button to hide or show every overlay (its keyboard shortcut and chat command are under General → Shortcuts; the Exploration Dashboard's two header buttons hide only the exploration cards, or only the exobiology cards, and never change these settings) | **Hide / show now** |
 | **Interdiction Warning** | The warning when you are interdicted | **Test Warning** |
-| **Flight Alerts** | The carrier jump countdown and fuel warnings card | **Test Card** |
-| **Route** | The route card (how many systems to list, whether to mark systems EDSM does not know) | **Test Card** |
-| **Expedition Log** | The card of the running expedition's totals (and whether to keep showing the last one after it is stopped) | **Test Card** |
-| **Exobiology** | Four switches, one for each Exobiology card | **Test Cards** |
-| **System targets** | The list of bodies to map and sample (value threshold, what the value is judged by, rows, life list, and the EDSM and Spansh lookups of what others found) | **Test Card** |
-| **Body info** | The body card (targeted body, nearby body, symbols or full names for elements and compounds) | **Test Card** |
-| **Missions** | The missions card (rows to show, next jump, urgent limit) | **Test Card** |
+| **Inventory** | Pickup notifications and the inventory bars | **Test pickup** |
 | **Landing** | The assigned pad and diagram | **Test Overlay** |
 | **Mining** | The mining stats, and the **Mining radar**: the Surface Live radar drawn over the game while the Rhino is out (WFMT's built-in overlay only: EDMCModernOverlay cannot draw a picture), with its size, background opacity and a **Test radar** button (see [the Mining guide](guide/mining.md#the-live-window)) | **Test HUD**, **Test radar** |
-| **Surface Compass** | The arrow, name and distance pointing at a hotspot or a mark on the planet you are on | **Test Compass** |
-| **Notable Bodies** | Alerts for bodies worth a look | **Test Notable** |
+| **Missions** | The missions card (rows to show, next jump, urgent limit) | **Test Card** |
+| **Notable Bodies** | Alerts for bodies worth a look, with a tick for each rule | **Test Notable** |
+| **Route** | The route card (how many systems to list, whether to mark systems EDSM does not know) | **Test Card** |
 | **Screenshots** | The "screenshot saved" message | **Test Overlay** |
+| **Surface Compass** | The arrow, name and distance pointing at a hotspot or a mark on the planet you are on | **Test Compass** |
+| **System targets** | The list of bodies to map and sample (value threshold, what the value is judged by, rows, life list, and the EDSM and Spansh lookups of what others found) | **Test Card** |
 
 The test buttons work even while the feature is switched off, and they tell you whether the overlay
 could be reached. A feature's other settings (what it tracks, how it behaves) stay in its own tab elsewhere in
@@ -120,6 +121,141 @@ whether it has found Elite's window. It also says when more than one EDMCModernO
 
 Start the overlay (EDMCModernOverlay) or just start EDMC (the built-in overlay), start the game, and press a test button. If you
 see the message on your screen, you're set.
+
+## Every Overlays tab in detail
+
+Open **File → Settings → WFMT → Overlays**. The row of tabs starts with **Overlay Connection**, **Appearance** and **Overlay Placement**, then runs in alphabetical order: Body info, Colonization, Discovery, Exobiology, Expedition Log, Flight Alerts, Hide overlays, Interdiction Warning, Inventory, Landing, Mining, Missions, Notable Bodies, Route, Screenshots, Surface Compass, System targets. Press **OK** to keep a change.
+
+Things true of every feature tab:
+
+- **Every feature's own enable switch starts off.** The options under a switch have the starting values given below (for example *Show the body I have targeted* starts on, but does nothing until the card itself is enabled).
+- **Test buttons** draw a sample on the overlay for a few seconds and tell you whether the overlay could be reached. They work while the feature is off, so a passing test means the overlay works, not that the live feature is on.
+- Where the display sits is **not** on its own tab: it is on **Overlay Placement**. Its look is on **Appearance**.
+- If EDMCModernOverlay is the overlay in use and is not installed, each tab says so in orange at the top (the settings are kept and take effect once it is installed). A **Get EDMCModernOverlay** link shows on the tabs while it is the overlay in use.
+- Overlay choices are kept per commander ([below](#moving-things-around)).
+
+### Overlay Connection
+
+| Control | Starts as | What it does |
+|---|---|---|
+| **Overlay** drop-down in the *Which overlay draws* box (Windows only) | EDMCModernOverlay (a separate app) | Choose **WFMT built-in overlay (Windows)** or **EDMCModernOverlay (a separate app)**. Takes effect when you press OK. The box is not shown on Linux, which has only EDMCModernOverlay |
+| *Keep showing when Elite is not the window in front (to take screenshots with another tool)* (Windows only) | off | Leaves the built-in overlay up whenever Elite is running, so a capture tool that takes the focus still records it |
+| Status line under the box | | Whether the built-in overlay is running and has found Elite's window |
+| **Host** and **Port** | `127.0.0.1` and `5010` | Where EDMCModernOverlay listens. They match its defaults; change them only if you changed the overlay's port. Ignored while the built-in overlay is chosen |
+| **Check connection** | | With EDMCModernOverlay, connects to the host and port and closes again (nothing is sent) and says whether something is listening; with the built-in overlay, says whether it is running and has found Elite. Either way it names the process numbers when more than one EDMCModernOverlay window is running ([Known issues](guide/known-issues.md#overlay-text-looks-doubled-or-ghosted)) |
+
+### Appearance
+
+| Control | Starts as | What it does |
+|---|---|---|
+| **Color scheme** | Elite orange | Elite orange, Ice blue, Phosphor green, Amber mono, High contrast or Color-blind safe (Okabe-Ito colors). A row of chips (Title, Text, Covered, Caution, Carrier, Warning, Border) previews the choice |
+| **Text size** | Larger | Default or Larger. Every box is sized from it |
+| **Panel opacity** | 90% (default) | 100% (solid), 90%, 75%, 60%, 40% or 25% (faint). Only the box background; the text stays solid |
+| **Corners (built-in overlay)** (Windows only) | Rounded | Square, Slightly rounded, Rounded or Very rounded. Panels only; applies to the built-in overlay |
+| **Overlay font** group: **Font**, **Add font file...**, **Open fonts folder** | Source Sans 3 (built-in overlay) or *Overlay default* (EDMCModernOverlay) | See [Fonts](#fonts) |
+| **Show sample** | | Draws the Colonization card for 12 seconds with the scheme, size and opacity as currently picked, before you press OK, in the spot that display sits |
+| **Reset appearance** | | Puts the scheme, text size, opacity and corners back to the starting values on the tab (press OK to keep them). It does not change the font |
+
+### Overlay Placement
+
+| Control | Starts as | What it does |
+|---|---|---|
+| Layout editor (the to-scale picture) | | Drag a box to place a display; **Picture size** (Default, Large, Extra large) enlarges the picture and is remembered; *Snap to the grid and to edges* with a grid of 20, 40, 60 or 120 pixels |
+| The table: **Display**, **Spot**, **Offset X**, **Offset Y**, **Show** | Each display's default spot, all shown | One row per display (20 in all): Colonization shopping list, Discovery alerts, Notable find card, Flight alerts, Route and ship status, System targets, Body info, Biology, Bio status, Bio radar, Sample popup, Expedition Log, Missions list, Interdiction warning, Landing assist, Inventory pickups and bars, Mining stats, Mining radar, Surface compass and Screenshot messages. *Spot* is one of nine places or **Exact position**; the offsets are screen pixels in from the edge, or the overlay's own x and y for Exact position. Unticking *Show* hides that display whatever its own settings say |
+| **Display scaling** | Automatic (from the overlay and Windows) | Automatic, 100%, 125%, 150%, 175%, 200%, 250% or 300% |
+| **Overlay mode** | Automatic (from the overlay's settings) | Fit (canvas keeps its shape) or Fill (canvas stretched over the screen); ignored by the built-in overlay |
+| *Carry displays on the right to the screen edge* | on | EDMCModernOverlay only: sets an offset on a right-hand display's group so it reaches the edge. Untick it if displays end up in the wrong place |
+| **Show placement preview** | | Draws a labeled box for every display at its real size for 12 seconds, using what is typed now |
+| **Reset all to defaults** | | Shows every display's default spot, makes them all shown, and sets scaling, mode and the edge carry back to their starting values (press OK to keep) |
+| **Detect screen again** | | Reads the overlay's log and the game's files again; the line above shows what it found |
+
+### Body info
+
+*Enable the Body info card* (off); *Show the body I have targeted* (on); *Show the body I am close to* (on); *Element and compound names*: **Symbols (Fe, CO2)** (the starting choice) or **Full names (Iron, carbon dioxide)**; **Test Card**. The card describes one body: its class, whether it is undiscovered, terraformable or mapped, the estimated scan value, temperature, gravity, pressure, atmosphere, volcanism, life and materials. See [System targets and Body info](guide/exploration.md#system-targets-and-body-info).
+
+### Colonization
+
+*Also show the shopping list automatically (markets, carrier inventory, construction sites)* (off); *Also show whenever the right-hand cockpit panel is open, anywhere* (off); **Rows** (0 to 60; 0, the starting value, lists every commodity and a number limits the list, the rest being summarized); *Hide commodities already covered by the hold and the fleet carrier* (on); **Test Overlay**. The **OVERLAY** button on the COL page switches the card on and off whether or not the first tick is on. See [the shopping list on the overlay](guide/colonization.md#the-shopping-list-on-the-overlay).
+
+### Discovery
+
+*Enable Discovery Alerts* (off; the same switch as **D.A.** on the Exploration panel); **Test Discovery**. A gold alert for a system nobody has scanned before, and a cyan alert when you are first to scan or map a body.
+
+### Exobiology
+
+Four ticks, all off: *Enable the Bio status card (progress, current species, distance to the last sample)*, *Enable the Biology card (predicted species and what they pay)*, *Enable the Bio radar (samples, their circles, your ship and SRV)*, *Enable the Sample popup (a few seconds after each sample)*. Under them, for the radar: **Radar size** (200 to 800 pixels across, 260 to start), **Circle fill** (0 to 100%, 70 to start; the share that is solid while you are inside a circle, 0 leaving an outline) and **Circle outline** (1 to 6 pixels, 2 to start). **Test Cards** draws all four. See [Exobiology](guide/exobiology.md).
+
+### Expedition Log
+
+*Enable the Expedition Log card* (off); **Test Card**. The card shows the expedition that is running or paused. A paused one keeps its totals until you resume or stop it; stopping resets the card. You start, pause and stop an expedition in the Expedition section of the Exploration panel, and name and edit them in the Log tab of the Expedition window. See [Expedition Log](guide/exploration.md#expedition-log).
+
+### Flight Alerts
+
+*Enable Flight Alerts* (off); *Fleet carrier jump countdown (alerts at 10, 5 and 1 minute, and at departure)* (on); *Fuel warnings* (on) with *Warn when the tank is at or under [n]%* (25) and *Warn about a star that cannot be scooped when the tank is at or under [n]%* (50), both 5 to 95; *Play a sound when an alert starts* (off; grayed out where no sound can play); *Mining alerts (a core asteroid, a rock rich in your target commodity, low limpets, a nearly full hold)* (on) with *Warn when the limpets aboard are at or under [n]* (0 to 99; 5) and *Warn when the hold is at or over [n]% full (only while you are mining)* (50 to 100; 95); **Test Card**. The target commodity is set under Settings → WFMT → Mining. See [Flight Alerts](guide/always-on.md#flight-alerts).
+
+### Hide overlays
+
+**Hide / show now**: hides every WFMT overlay at once or shows them again. The same action is the **Overlays** line in the WFMT panel, a keyboard shortcut (Windows) and the `!wf overlays` chat command ([Hiding the overlays for a while](#hiding-the-overlays-for-a-while)). It is never saved: the overlays are shown whenever EDMC starts.
+
+### Interdiction Warning
+
+*Enable Interdiction Warning* (off); **Test Warning**. An alert on your screen the moment an interdiction starts, before it resolves. Its red alert colors do not follow the color scheme. See [Interdiction Warning](guide/always-on.md#interdiction-warning).
+
+### Inventory
+
+*Show pillage notifications on the in-game overlay* (off); *Show these inventory bars on the overlay*: **Backpack**, **Ship Locker**, **Carrier Locker**, **Cargo** (each off; the Carrier Locker and Cargo bars draw only when they would also show on the main panel); **Test pickup**. What the pickup message says, the sound and the categories are on Settings → WFMT → Field Ops → Inventory.
+
+### Landing
+
+*Enable Landing* (off); *Show on Overlay* (off; the pad diagram and docking text on your screen); *Show in EDMC app* (on; the line and diagram in the WFMT panel); **Test Overlay**, which also previews the in-app text and diagram whatever the ticks say. See [Landing Assist](guide/always-on.md#landing-assist).
+
+### Mining
+
+*Enable HUD Overlay (sends live stats to the overlay - see the Overlay Connection tab)* (off) with **Test HUD**; and the radar: *Show the Mining radar over the game while the Rhino is out (WFMT's built-in overlay, Windows)* (off), **Size (pixels)** (240 to 560; 340), **Background opacity (%)** (30 to 100; 70) and **Test radar**. EDMCModernOverlay cannot draw a picture, so the radar needs the built-in overlay. See [the Mining guide](guide/mining.md#the-live-window).
+
+### Missions
+
+*Show missions on the overlay* (off); *Show the missions for the next jump (the system you have targeted)* (on); **Mission lines to show (at most)** (3 to 14; 8; the rest become "+N more"); *Show a mission in red when it has less than [n] minutes left* (5 to 720; 60; amber under six hours); **Test Card**. See [Missions on the overlay](guide/missions.md#missions-on-the-overlay).
+
+### Notable Bodies
+
+*Enable Notable Bodies alerts* (off) and a tick for each rule, with its description; **Test Notable**. A violet alert when a body you scan matches a rule you ticked. The rules and whether they start ticked:
+
+| Rule | Starts | Matches |
+|---|---|---|
+| Terraformable landable | on | A landable body that is terraformable, or being or already terraformed |
+| High-value body | on | Any terraformable, Earth-like, water or ammonia world, landable or not |
+| High-g landable | on | A landable body above about 3 g (29.4 m/s²) |
+| Shepherd moon | on | A moon orbiting inside the outer edge of its parent's outermost ring |
+| Good FSD injection | on | A body with 5 or 6 of the premium FSD boost materials |
+| Green gas giant | on | A Codex entry for one, or a gas giant at a confirmed green temperature |
+| Colliding binary | on | Two bodies whose orbits overlap, so they will collide |
+| Large landable | off | A landable body over 18,000 km in radius |
+| Landable ringed | off | A landable body that also has rings |
+| Close orbit | off | A moon orbiting very close to its parent planet |
+| Close binary | off | Two bodies orbiting so close to their shared center that they nearly touch |
+| High eccentricity | off | An orbit with eccentricity above 0.9 |
+| Fast orbit | off | A planet orbiting in under 8 hours |
+| Fast rotation | off | A planet with a day under 8 hours (not tidally locked) |
+| Wide ring | off | A ring far wider than the body it circles |
+
+If several bodies match at once the cards take turns. See [Notable Bodies](guide/exploration.md#notable-bodies).
+
+### Route
+
+*Enable the Route overlay* (off); **Systems listed** (3 to 20; 8; the jump count and the light years cover the whole route); *Mark the systems ahead that EDSM does not know yet (asks EDSM; sends the names of the next systems on your route)* (off; a system EDSM has no record of gets a `*`); **Test Card**. The card follows the route plotted in the game, or the Route Planner's route when there is one. It is shown while you are in one of the route's systems; if you jump off it the card clears until you plot a new route. See [Route overlay](guide/always-on.md#route-overlay).
+
+### Screenshots
+
+*Show a notification on the in-game overlay when a screenshot is saved* (off); **Test Overlay**. Whether screenshots are converted at all, and where they go, is on Settings → WFMT → Field Ops → Screenshots (which also has *Include WFMT's built-in overlay in the converted screenshot*).
+
+### Surface Compass
+
+*Enable Surface Compass* (off); **Test Compass**. An arrow, a name and a distance pointing at a hotspot or a mark on the planet you are on. What it points at is chosen in the Compass section of the Exploration panel (**MARK**, **TARGET**, **MARKS**); by default it points at the nearest hotspot you have recorded. See [Compass](guide/exploration.md#compass).
+
+### System targets
+
+*Enable the System targets card* (off); *List bodies worth at least [n] credits, judged by* **Mapped value (what scanning and mapping pays)** (the starting choice) or **Scan value (what scanning alone pays)** (the threshold is 0 to 50,000,000; 100,000 to start); **Rows shown** (3 to 16; 6; the rest are counted); *Also list bodies with life that I have not finished analyzing* (on); *Also list the bodies I have finished (mapped, and their life analyzed), so I can see where I left off* (on); *Also look up bodies other commanders have scanned (EDSM, once per system)* (off); *Also look up the life and points of interest other commanders found in the system (Spansh, once per system, on arrival)* (off); **Test Card**. See [System targets and Body info](guide/exploration.md#system-targets-and-body-info).
 
 ## Moving things around
 
@@ -152,7 +288,7 @@ Where each display goes is set once, for every WFMT overlay, on **Settings → W
 
 - Each row has a **Show** checkbox. Untick it and that display is never drawn, whatever its own settings say, and what is already on screen goes the next time it would redraw.
 - The spot and offsets are kept, so ticking it again puts it back where it was.
-- It works for every display on the tab (Colonization shopping list, Discovery, Notable, Flight alerts, Route, Expedition Log, Biology, Bio status, Bio radar, Sample popup, System targets, Body info, Interdiction, Missions, Landing, Inventory, Mining stats, Surface compass, Screenshot messages).
+- It works for every display on the tab (Colonization shopping list, Discovery, Notable, Flight alerts, Route, Expedition Log, Biology, Bio status, Bio radar, Sample popup, System targets, Body info, Interdiction, Missions, Landing, Inventory, Mining stats, Mining radar, Surface compass, Screenshot messages).
 - **Reset all to defaults** shows them all again.
 
 **How WFMT knows your screen**
@@ -223,7 +359,7 @@ If displays land in the wrong place or at the wrong size, check that the line on
   - System targets and Body info sit one above the other in the lower middle of the right half of the screen.
 - The Exobiology cards start at the top center (Bio status), the bottom center left of the Body info card (Biology), the left middle (Bio radar) and above Biology (Sample popup).
 - The Expedition Log card sits at the top left, to the right of the Route card.
-- The radar and the popup share a spot with the Colonization list, and Bio status and the Expedition Log with the Interdiction warning, because those are never up at the same time (a planet's surface, a construction depot, supercruise).
+- The Bio radar and the Mining radar share a spot with the Colonization list, and Bio status and the Expedition Log with the Interdiction warning, because those are not normally up at the same time (a planet's surface, a construction depot, supercruise).
 - The displays are sized in pixels, so on a smaller screen they take up more of it and some can overlap: use **Show placement preview** and move them.
 - A position you chose yourself is never changed.
 
@@ -298,7 +434,7 @@ Elite in **borderless or windowed** mode (a fullscreen game cannot be drawn over
 
 **Built-in overlay: WFMT's own fonts**
 - It starts with **Source Sans 3**, which WFMT ships (a clear font with lower case letters; SIL Open Font License, the license is in the `fonts` folder next to it).
-- **Add font file...** copies a `.ttf` or `.otf` you pick into WFMT's own `fonts` folder (inside the plugin folder) and chooses it. The change is used straight away: no restart. **Open fonts folder** shows the folder;
+- **Add font file...** copies a `.ttf` or `.otf` you pick into WFMT's own `fonts` folder (inside the plugin folder) and chooses it (press OK in Settings to keep the choice). The change is used as soon as you press OK: no restart. **Open fonts folder** shows the folder;
   you can also drop font files into it yourself and pick them from the list.
 - A font you add **stays through WFMT updates** (an update only replaces the files it ships). You can remove one by deleting the file.
 - Where to find fonts: [Google Fonts](https://fonts.google.com/) has many free ones. **Keep a font's license with it**: WFMT does not install or license fonts for you, and not every font may be redistributed.

@@ -32,7 +32,16 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 | See what my colony site still needs | **COL** mode; **DASHBOARD** | [The Colonization Sites window](colonization.md#the-colonization-sites-window) |
 | See how my actions affect the BGS | **BGS** mode; **REPORT** | [BGS](bgs.md) |
 | Use a key combination or a chat command for an action | Settings → WFMT → General → Shortcuts, or `!wf` commands in Elite's chat | [Shortcuts](shortcuts.md) |
+| Find the best system to buy a whole shopping list in | **Find all**, then read **Best single systems** in the Colonization Sites window | [Best single systems](colonization.md#best-single-systems) |
 | Show a card or alert on my game screen | **Settings → WFMT → Overlays** | [Setting up the overlay](../OVERLAY_SETUP.md) |
+| Move a card on my game screen, or change its colors, size or font | **Settings → WFMT → Overlays → Overlay Placement** (drag the boxes) and **Appearance** | [Moving things around](../OVERLAY_SETUP.md#moving-things-around), [Fonts](../OVERLAY_SETUP.md#fonts) |
+| Hide every overlay for a screenshot | Click the **Overlays shown** line under the mode buttons, or the shortcut or chat command | [Hiding the overlays](../OVERLAY_SETUP.md#hiding-the-overlays-for-a-while) |
+| Find the nearest neutron star or white dwarf | **N.S.** and **W.D.** in Exploration mode; the optional Local star index makes **N.S.** answer without a request | [N.S. and W.D.](exploration.md#ns-and-wd-buttons), [The local star index](exploration.md#the-local-star-index) |
+| See what I earned today, by day and over my career | Click the **Credits this session** line (the Credits Ledger) | [The lines under the mode buttons](getting-started.md#the-lines-under-the-mode-buttons) |
+| Back up my data, restore it or move it to another computer | **Settings → WFMT → General → Backup** | [Backing up your data](getting-started.md#backing-up-your-data) |
+| Keep WFMT up to date | **Settings → WFMT → General → Updates**, or extract the new ZIP over the old folder | [Updating](getting-started.md#updating) |
+| Report a bug | **Settings → WFMT → General → Help → Report an issue** and **Copy diagnostics** | [Reporting a problem](reporting-problems.md) |
+| See every setting and what it starts as | **File → Settings → WFMT** | [Settings](getting-started.md#settings) |
 | Know which online services WFMT contacts | The internet page | [What goes on the internet](internet-and-privacy.md) |
 | Fix something that looks wrong | Known issues, then Troubleshooting | [Known issues](known-issues.md), [Troubleshooting](troubleshooting.md) |
 
@@ -44,16 +53,23 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
-| Eight modes in one panel | One small panel, switched by mode buttons; game mode, credits and merits lines and the version you run sit under them | Click a mode button | [Getting started](getting-started.md) |
+| Eight modes in one panel | One small panel, switched by mode buttons; the version you run, the game mode, credits and merits lines, the overlay switch and a catch-up notice sit under them | Click a mode button; hide the ones you don't use under **Settings → WFMT → General → Window** | [Getting started](getting-started.md#finding-your-way-around) |
+| Credits this session and the Credits Ledger | What you earned or lost since login with an hourly rate, and a window of income by activity (Trade profit, exploration data, exobiology data, mission rewards, bounties and bonds), by day and the game's lifetime totals | Click the **Credits this session** line | [The lines under the mode buttons](getting-started.md#the-lines-under-the-mode-buttons) |
+| Window height fits | The EDMC window's height follows the panel as you switch modes or open a section; its width never changes | **Settings → WFMT → General → Window** to switch it off | [Window height](getting-started.md#window-height) |
 | Everything per commander | Nothing WFMT saves about play is shared between commanders | Nothing to do; switching commander in EDMC switches the data | [Getting started](getting-started.md) |
 | Catches up after EDMC was closed | Reads the recent journals when EDMC starts, counting nothing twice | Nothing to do | [If EDMC wasn't running](getting-started.md) |
 | System-name suggestions | Suggests systems as you type in any system box | Type two letters; **Down** and **Enter** pick one, **Esc** closes it | [Typing a system name](getting-started.md#typing-a-system-name) |
 | Pop-out windows | Dark windows that remember their size and place | Open from the panel's buttons; **Esc** closes | [Opening the pop-out windows](getting-started.md#opening-the-pop-out-windows) |
-| Back up my data | One zip of everything WFMT has recorded about your play, with a restore and an optional automatic backup | **Settings → WFMT → General → Backup** | [Backing up your data](getting-started.md#backing-up-your-data) |
-| Automatic updates | Downloads new releases from GitHub; a **Release notes** link | **Settings → WFMT → General → Updates** (off by default) | [Getting started](getting-started.md) |
+| Back up my data | One zip of everything WFMT has recorded about your play, with a restore (applied at the next start) and an optional automatic backup | **Settings → WFMT → General → Backup**: **Back up my data**, **Restore my data...**, *Back up automatically* | [Backing up your data](getting-started.md#backing-up-your-data) |
+| Automatic updates | Checks GitHub once each time EDMC starts, downloads a newer release and waits for you to restart EDMC; a **Release notes** link | **Settings → WFMT → General → Updates** (off by default) | [Updating](getting-started.md#updating) |
+| Report an issue and Copy diagnostics | Opens a GitHub bug report with your versions filled in; copies the newest WFMT log lines (with your commander name and home folder removed) for you to paste into it | **Settings → WFMT → General → Help** | [Reporting a problem](reporting-problems.md) |
+| Local star index (optional) | A file of neutron stars built from Spansh's public dump so **N.S.** answers without a request; **Update** fetches only what changed | **Settings → WFMT → General → Online lookups**: **Download and build**, **Update**, **Cancel**, **Delete** | [The local star index](exploration.md#the-local-star-index) |
+| Help in each window | Most pop-out windows have a **Help** button that explains their columns and buttons | **Help** in the window's header | [Pop-out windows](getting-started.md#pop-out-windows) |
+| Shortcuts | Six actions as Windows key combinations and as `!wf` chat commands (Windows and Linux) | **Settings → WFMT → General → Shortcuts** | [Shortcuts](shortcuts.md) |
 | On-screen overlays | Alerts, cards and diagrams on your game screen: WFMT's built-in overlay on Windows, or EDMCModernOverlay (Windows and Linux), with a drag-and-drop placement editor, color schemes, text size, panel opacity, fonts and a switch to hide them all | **Settings → WFMT → Overlays**; the **Overlays shown** line on the panel hides them | [Overlay setup](../OVERLAY_SETUP.md) |
-| Windows and Linux | Native or Flatpak EDMC, Elite under Proton or Wine | [Quick start](../../README.md#quick-start) | [Windows and Linux](platforms.md), [WFMT on Linux](linux.md) |
-| Online lookups listed | Every one is opt-in or runs only when you press a button | **Settings → WFMT → General → Online lookups** | [What goes on the internet](internet-and-privacy.md) |
+| Windows and Linux | Native or Flatpak EDMC, Elite under Proton or Wine | [Download and install](../../README.md#download-and-install) | [Windows and Linux](platforms.md), [WFMT on Linux](linux.md) |
+| Online lookups listed | Every one is opt-in or runs only when you press a button, with the address it uses | **Settings → WFMT → General → Online lookups** | [What goes on the internet](internet-and-privacy.md) |
+| Every setting in one place | Each Settings tab, its controls and what they start as | **File → Settings → WFMT** | [Settings](getting-started.md#settings), [Every Overlays tab](../OVERLAY_SETUP.md#every-overlays-tab-in-detail) |
 
 ### Powerplay ([guide](powerplay.md))
 
@@ -72,25 +88,26 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 **Controls:**
 
-- The Exploration panel has a section per feature (click a title to fold it).
-- Buttons: **A.H.**, **D.A.**, **N.S.**, **W.D.**, **RND**, **FIND**, **UPDATE**, **MY CODEX**, **ADD**, **NOTES**, **EXPEDITION**, **COPY**, **PLOT**, **DASHBOARD**, **MARK**, **TARGET**, **MARKS**.
+- The Exploration panel has a section per feature, in alphabetical order (click a title to fold it): Auto-Honk with Discovery Alerts, Boxel Survey, Codex Completionist, Compass, Dashboard, Expedition, Nearest place to land, Notes, Organic Scanning, POI Reference and Route Planner.
+- Buttons: **A.H.**, **D.A.**, **N.S.**, **W.D.**, **RND** (with the Boxel Survey's **Sequence**, **Region Sweep** and **Waypoints**), **FIND**, **UPDATE**, **MY CODEX**, **ADD**, **NOTES**, **START**, **PAUSE** (**RESUME**), **STOP**, **EXPEDITION**, **COPY**, **PLOT**, **CLEAR ROUTE**, **REVIEW**, **DASHBOARD**, **MARK**, **TARGET**, **MARKS**.
 - Overlay cards are switched on under **Settings → WFMT → Overlays**.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
 | Auto-Honk | Fires your Discovery Scanner on every jump | Toggle **A.H.** (off by default); needs your scanner key bound; Linux needs `xdotool` | [Auto-Honk](exploration.md#auto-honk) |
-| Discovery Alerts | A banner for an unscanned system or a first scan or map | Toggle **D.A.**; **N.S.** and **W.D.** find the nearest neutron star and white dwarf | [Discovery Alerts](exploration.md#discovery-alerts) |
+| Discovery Alerts | A banner for an unscanned system or a first scan or map | Toggle **D.A.** (or *Enable Discovery Alerts* under Settings → WFMT → Overlays → Discovery) | [Discovery Alerts](exploration.md#discovery-alerts) |
+| Nearest neutron star and white dwarf | The nearest system whose main star is a neutron star or a white dwarf, from Spansh, copied for the galaxy map; **N.S.** can answer from the optional Local star index | **N.S.** and **W.D.** beside the Discovery Alerts toggle | [N.S. and W.D.](exploration.md#ns-and-wd-buttons), [The local star index](exploration.md#the-local-star-index) |
 | Notable Bodies | A banner when a body you scan is worth a second look | **Settings → WFMT → Overlays → Notable Bodies** | [Notable Bodies](exploration.md#notable-bodies) |
-| Boxel Survey | Explore by procedural system name: Sequence, Region Sweep and Waypoints | The Boxel Survey section; **RND** finds an undiscovered system and copies it | [Boxel Survey](exploration.md#boxel-survey) |
+| Boxel Survey | Explore by procedural system name: Sequence, Region Sweep and Waypoints | The Boxel Survey section: **Sequence**, **Region Sweep** or **Waypoints**, then **Set** or **Add**, **< Prev**, **Next >** and **Copy**; **RND** finds an undiscovered system and copies it | [Boxel Survey](exploration.md#boxel-survey) |
 | Exploration Value | Estimated payout for the last body, scan progress, the system's age and region, and what your data sales paid | Unfold the Dashboard section; the switch is *Show estimated scan value, system age, and current region* (on by default) | [Exploration Value](exploration.md#exploration-value) |
-| Organic Scanning and Exobiology cards | Find and identify life on a planet: bio status, predicted species and what they pay, a sample radar, and a popup after each sample; leads you back to a plant | The Organic Scanning panel (**REVIEW** for the prediction review); cards under **Settings → WFMT → Overlays → Exobiology** | [Exobiology](exobiology.md) |
-| System targets and Body info | Two cards: what is left to map and analyse in the system, and the body under you | **Settings → WFMT → Overlays → System targets / Body info** | [System targets and Body info](exploration.md#system-targets-and-body-info) |
+| Organic Scanning and Exobiology cards | Find and identify life on a planet: bio status, predicted species and what they pay, a sample radar, and a popup after each sample; leads you back to a plant | The Organic Scanning panel (**REVIEW** for the prediction review, which can be switched off in Settings → WFMT → Exploration → Organic Scanning); cards under **Settings → WFMT → Overlays → Exobiology** | [Exobiology](exobiology.md) |
+| System targets and Body info | Two cards: what is left to map and analyze in the system, and the body under you | **Settings → WFMT → Overlays → System targets / Body info** | [System targets and Body info](exploration.md#system-targets-and-body-info) |
 | Codex Completionist | A lifetime tally of your Codex finds, what is missing and where to look | **MY CODEX** | [Codex Completionist](exploration.md#codex-completionist) |
 | POI Reference | The nearest point of interest from edastro's catalog and Canonn's Thargoid and Guardian lists | **FIND** copies the nearer system; **UPDATE** refreshes Canonn's lists | [POI Reference](exploration.md#poi-reference) |
 | Notes | Your own notes on a system or body, shown when you arrive | Type a line and **ADD**; **NOTES** opens a searchable window | [Notes](exploration.md#notes) |
 | Expedition planner | Named trips of stops ticked off as you arrive; Spansh's Road to Riches and Exomastery planners make one in a button press | **EXPEDITION**; **COPY** the next stop; in the window **Start**, **From plotted route**, **Import CSV**, **Road to Riches**, **Exomastery**, **Neutron route** | [Expedition](exploration.md#expedition) |
-| Expedition Log | An archive of your exploration expeditions with what each found and earned, and a card that keeps the running one in view | The Expedition section: **START**, **PAUSE**/**RESUME**, **STOP**; the archive is the Log tab of the Expedition window | [Expedition Log](exploration.md#expedition-log) |
-| Route Planner | A neutron route for your ship from Spansh's exact plotter, from your ship's own numbers; followed as you jump | **PLOT**; type the destination, **Generate route**, **Copy next system**, **Start expedition**, **Review**, **Clear route** | [Route Planner](exploration.md#route-planner) |
+| Expedition Log | An archive of your exploration expeditions with what each found and earned, and a card that keeps the running one in view | The Expedition section: **START**, **PAUSE**/**RESUME**, **STOP**; the archive is the Log tab of the Expedition window; the card is under Settings → WFMT → Overlays → Expedition Log | [Expedition Log](exploration.md#expedition-log) |
+| Route Planner | A neutron route for your ship from Spansh's exact plotter, from your ship's own numbers; followed as you jump | **PLOT**; type the destination, **Generate route**, **Copy next system**, **Start expedition**, **Review**, **Clear route**; on the panel, **CLEAR ROUTE** and the *Copy the next system to the clipboard automatically* tick | [Route Planner](exploration.md#route-planner) |
 | Carrier Route | A route for your fleet or squadron carrier from Spansh's fleet carrier router, filled in from the journal | **Carrier route** in the Route Planner window; type the destination, **Generate route**, **Copy next system**, **Mark next as reached** | [Carrier route](exploration.md#carrier-route) |
 | Exploration Dashboard | One window of everything known about the system, the body under you, its biology and your exploration | **DASHBOARD**; tabs Overview, Orbit, Surface, Exploration; header buttons switch overlays on and off | [Exploration Dashboard](exploration.md#exploration-dashboard) |
 | Nearest place to land | The nearest station that can take your ship and has what you need, and fleet carriers open to all | **FIND** in its section | [Nearest place to land](exploration.md#nearest-place-to-land) |
@@ -119,6 +136,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Save and share hotspots | Save the spot you stand at, import or export your list | **+H.S.** saves; **I/E** imports or exports (both in the live window) | [The buttons](mining.md#the-buttons) |
 | Mining alerts | A card for a core asteroid or a rock rich in your target commodity; warnings for low limpets and a nearly full hold while you mine | **Settings → WFMT → Mining** for the target commodity; **Settings → WFMT → Overlays → Flight Alerts** to switch them on | [Flight Alerts](always-on.md#flight-alerts) |
 | Mining overlay and archive | Live stats on your game screen; an optional JSON file per completed run | **Settings → WFMT → Overlays → Mining**; *Archive completed mining runs* | [Settings](mining.md#settings) |
+| Mining radar over the game | The Surface Live radar drawn on your game screen while the Rhino is out (WFMT's built-in overlay, Windows) | **Settings → WFMT → Overlays → Mining**: *Show the Mining radar over the game*, its size and opacity, **Test radar** | [The radar over the game](mining.md#the-radar-over-the-game) |
 | Opt-in lookups | Nearby hotspots and best price (Spansh), ring reserve level (EDSM) | Tick them in Settings, then **H.S.**, **PRICE**, **RES** | [The buttons](mining.md#the-buttons) |
 
 ### Trade ([guide](trade.md))
@@ -163,23 +181,24 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Screenshots | Converts Elite's screenshots to PNG, with an optional crop to the HUD | Nothing to do; **Click to expand** shows thumbnails | [Screenshots](field-ops.md#screenshots) |
 | Inventory | Your backpack, locker and cargo as bars, and the Carrier Locker, with a pick-up sound | Click an inventory bar | [Inventory](field-ops.md#inventory) |
 | Materials | The Raw, Manufactured and Encoded materials you hold, their grade and limit | **MATERIALS** | [Materials](field-ops.md#materials) |
-| Engineering | About 1,180 blueprints against what you hold, a wishlist and shopping list, a ship planner, an Odyssey upgrade planner and an Engineers tab | **BLUEPRINTS** | [Engineering](field-ops.md#engineering-blueprints-and-a-wishlist) |
+| Engineering | About 1,180 blueprints against what you hold, a wishlist and shopping list, a ship planner (which also shows the engineered modules you already have in storage), an Odyssey upgrade planner and an Engineers tab | **BLUEPRINTS** | [Engineering](field-ops.md#engineering-blueprints-and-a-wishlist) |
 | Material trader finder | The closest Raw, Manufactured or Encoded trader, with distance and pad filters | **Find a trader** in the Materials window | [Materials](field-ops.md#materials) |
 | Ship Builds | Builds from Coriolis, EDSY or Spansh, kept by link | **SHIPS** | [Ship Builds](field-ops.md#ship-builds) |
 
 ### Colonization ([guide](colonization.md))
 
-**Controls:** the **COL** page, **DASHBOARD** (the Sites window), **OVERLAY** (the shopping list on your screen), and in the Sites window **Rescan Carrier**, **Find nearest** and **Find all**.
+**Controls:** the **COL** page with **DASHBOARD** (the Sites window), **OVERLAY** (the shopping list on your screen), **PROJECTS** (My Projects on Raven Colonial) and **HISTORY**; and in the Sites window **Copy Shopping List**, **Rescan Carrier**, the **Raven Colonial** menu, the **Manage Sites** menu, **Find nearest** and **Find all**.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
 | The COL page | Your current project and your history | **COL** | [The COL page](colonization.md#the-col-page) |
 | Site tracking | What each construction site still needs, after counting the cargo in your ship | Dock at a depot once; nothing is typed | [Tracking a site](colonization.md#tracking-a-site) |
 | Colonization Sites window | Every site's shopping list, progress and totals, and the carrier's part | **DASHBOARD**; **Rescan Carrier** if a load did not register | [The Sites window](colonization.md#the-colonization-sites-window) |
-| Where to buy | The closest places to buy a commodity, or a whole list | Click a commodity row, then **Find nearest** or **Find all** | [Where to buy](colonization.md#where-to-buy) |
+| Where to buy | The closest places to buy a commodity, or a whole list, with a suggested route and, for a list, the best single systems that stock most or all of it | Click a commodity row, then **Find nearest** or **Find all** (**Stop** while it runs) | [Where to buy](colonization.md#where-to-buy), [Best single systems](colonization.md#best-single-systems) |
 | My Projects | Every active project you have on Raven Colonial, across systems, with totals and trips | **PROJECTS** | [My Projects](colonization.md#my-projects) |
 | Planned Builds and Raven Colonial | Links, starting a Raven project for a site, and opt-in sharing of progress and deliveries | **Raven Colonial** menu in the Sites window; **Settings → WFMT → Colonization** (master switch and your Raven key) | [Planned builds](colonization.md#planned-builds), [Starting a project](colonization.md#starting-a-project-on-raven-colonial) |
-| Shopping list overlay | Shown at the market, your carrier or a construction site | **OVERLAY**, or the automatic option in Settings | [The overlay](colonization.md#the-shopping-list-on-the-overlay) |
+| Shopping list overlay | Shown at the market, your carrier or a construction site; fully covered rows are left out unless you untick the option | **OVERLAY**, or the options under Settings → WFMT → Overlays → Colonization (automatic showing, rows, *Hide commodities already covered*) | [The overlay](colonization.md#the-shopping-list-on-the-overlay) |
+| Colonization History | What you delivered over time, by day, commodity and site | **HISTORY** | [History](colonization.md#history) |
 
 ### BGS ([guide](bgs.md))
 

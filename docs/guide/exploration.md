@@ -1,8 +1,31 @@
 # Exploration
 
-Exploration mode is one scrolling panel with several sections stacked top to bottom, in alphabetical order of their names (in every mode the sections are
-alphabetical, so one can be found without scanning). Some sections start folded:
-click a section's title (▸ / ▾) to open it. They fold again each time EDMC starts.
+Exploration mode is one scrolling panel (press **EXP** in the mode row to show it). It has a row of buttons at the top, then several sections stacked top to bottom in
+alphabetical order of their names (in every mode the sections are alphabetical, so one can be found without scanning).
+
+- **The top row** holds **A.H.** (Auto-Honk), **D.A.** (Discovery Alerts), **N.S.** and **W.D.** (nearest neutron star and white dwarf) and **RND** (a system nobody
+  has scanned). A short status line under it reports Discovery Alerts and the last N.S. or W.D. answer.
+- **The sections** are Boxel Survey, Codex Completionist, Compass, Dashboard, Expedition, Nearest place to land, Notes, Organic Scanning, POI Reference and Route Planner.
+- **Folding.** Every section with a ▸ / ▾ in its title starts folded: click the title to open it. A section you open stays open until EDMC restarts, and
+  every section is folded again at each start, so the panel is the same short height every time. Organic Scanning has no fold and is always shown.
+- **Long values never widen EDMC's window.** Names, notes and results in this panel wrap or are cut to a fixed length, so a long system name cannot make the main window wider.
+
+**Where the settings are.** Everything is under **Settings → WFMT**:
+
+| Feature | Settings page |
+|---|---|
+| Auto-Honk | Exploration → Auto-Honk |
+| Boxel Survey, Region Sweep, Waypoint Route | Exploration → Boxel Survey (one page, the three sections one under another) |
+| Expedition | Exploration → Expedition |
+| Exploration Value | Exploration → Exploration Value |
+| Nearest place to land | Exploration → Nearest place to land |
+| Organic Scanning | Exploration → Organic Scanning |
+| POI Reference and Codex Completionist | Exploration → POI Reference (the Canonn, edastro and Codex sections one under another) |
+| Discovery Alerts, Notable Bodies | Overlays → Discovery, Overlays → Notable Bodies |
+| System targets, Body info, Route, Expedition Log card, Surface Compass, Exobiology cards | Overlays → the page of the same name |
+| Where each card sits, its colors and the overlay connection | Overlays → Overlay Placement, Appearance and Overlay Connection |
+| Local star index and the online lookups | General → Online lookups |
+| Keyboard shortcuts and chat commands | General → Shortcuts |
 
 **Where this comes from:**
 
@@ -15,7 +38,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 **On this page:** [Auto-Honk](#auto-honk) · [Discovery Alerts](#discovery-alerts) ·
 [Notable Bodies](#notable-bodies) · [Boxel Survey](#boxel-survey) · [Exploration Value](#exploration-value) ·
 [Organic Scanning](#organic-scanning) ([Exobiology guide](exobiology.md)) · [Codex Completionist](#codex-completionist) ·
-[POI Reference](#poi-reference) · [Notes](#notes) · [Expedition](#expedition) · [Expedition Log](#expedition-log) · [System targets and Body info](#system-targets-and-body-info) · [Exploration Dashboard](#exploration-dashboard) · [Route Planner](#route-planner) · [Compass](#compass) ·
+[POI Reference](#poi-reference) · [Notes](#notes) · [Expedition](#expedition) · [Expedition Log](#expedition-log) · [System targets and Body info](#system-targets-and-body-info) · [Exploration Dashboard](#exploration-dashboard) · [Route Planner](#route-planner) ([Carrier route](#carrier-route)) · [Nearest place to land](#nearest-place-to-land) · [Compass](#compass) ·
 [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
 
 Anything that draws on your game screen needs an overlay. See [Getting started](getting-started.md#what-you-need)
@@ -27,16 +50,29 @@ Fires your Discovery Scanner automatically every time you jump into a system, so
 
 **How to use it:**
 
-1. Turn it on with its toggle button (**A.H.**) or the **Enable Auto-Honk** box in Settings. It is **off by default**.
-2. Open **Settings → WFMT → Exploration → Auto-Honk** to choose which fire button it uses (**Primary** or **Secondary**; the
-   default is Secondary) and how many seconds it holds it (**Hold**, default 10).
-3. Two other options there: *Focus game window first* and *Skip systems already visited* (both on by default).
-4. Press **Test Honk Now** to check it works without waiting for a real jump. **Rescan** re-reads your key
-   bindings.
+1. Turn it on with its toggle button (**A.H.**, which is highlighted while it is on) or the **Enable Auto-Honk** box in Settings. It is **off by default**.
+2. Open **Settings → WFMT → Exploration → Auto-Honk** and set:
+   - **Fire button**: **Primary** or **Secondary** (the default is Secondary). This is the Elite control WFMT looks up in your key bindings, so pick the one your Discovery Scanner is on.
+   - **Hold (sec)**: how long the key is held down. The default is 10. The Discovery Scanner charges while the button is held and fires only when it is full, so a quick tap does nothing; the charge time depends on your scanner and its engineering. A value under 1 second is saved as 1 second.
+   - **Focus game window first** (on by default): brings the Elite window to the front before pressing the key. Turn it off only if you want WFMT to press the key into whichever window already has focus.
+   - **Skip systems already visited** (on by default): see below.
+3. Read the status line under the options. It says which key WFMT will press (`Status: Will press <key> when you jump into a system.`, in green) or why it cannot (in amber). Press **Rescan** after you change your bindings in the game, or after you change the fire button here, to read them again.
+4. Press **Test Honk Now** to press the key at once and check it works without waiting for a real jump. The result appears beside the button (`Last test (Test): sent`, or the reason it failed, such as `Elite Dangerous window not found`). **Rescan** and **Test Honk Now** work even while Auto-Honk is off.
 
-If another program also fires your Discovery Scanner for you (some co-pilot apps do), turn one of the two off, or they'll fight each other.
+**When it fires.** On every jump into a system (`FSDJump`) and every fleet carrier jump (`CarrierJump`) while Auto-Honk is on. It does nothing at any other time, and it presses the key once for each arrival.
 
-*On Linux this needs `xdotool` and a keyboard key bound to your fire button. See [WFMT on Linux](linux.md).*
+**What *Skip systems already visited* means.** WFMT remembers the systems it has honked in since you loaded into the game, and does not honk the same system twice in that session (for example when you jump away and straight back). The memory is cleared each time you load a game. It is not a record of your whole travel history.
+
+**What it can and cannot do.**
+
+- It presses a **keyboard** key. If the fire button you chose is bound only to a joystick or HOTAS button, the status line says so and nothing is pressed; bind a keyboard key to it in the game, or switch to the other fire button.
+- If the fire button is bound to nothing in your active control preset, or to a key WFMT does not know how to press, the status line says so.
+- If WFMT cannot find or read your Elite controls file, it says that instead. It reads the most recently saved `Custom.<version>.binds` file of the preset named in `StartPreset.start`.
+- It does not check what your ship is doing. If you are in a ship with no Discovery Scanner, or the game has a menu open, the key press simply does nothing useful.
+
+If another program also fires your Discovery Scanner for you (some co-pilot apps do), turn one of the two off, or they'll fight each other. The status line warns you when it sees a known co-pilot program running.
+
+*On Linux this needs `xdotool` and a keyboard key bound to your fire button. A second box, **Elite Wine/Proton prefix**, tells WFMT where Elite's prefix is if it cannot find it from Steam by itself (leave it blank to auto-detect). See [WFMT on Linux](linux.md).*
 
 ## Discovery Alerts
 
@@ -45,9 +81,20 @@ first to scan or map a body.
 
 **How to use it:**
 
-1. Click its toggle button (**D.A.**) or tick **Enable Discovery Alerts** in Settings. It is **off by default**.
+1. Click its toggle button (**D.A.**) or tick **Enable Discovery Alerts** in **Settings → WFMT → Overlays → Discovery**. It is **off by default**.
 2. Make sure an overlay is running. The connection details are on the **Overlay Connection** tab under Settings → WFMT → Overlays.
-3. Use **Settings → WFMT → Overlays → Discovery** to send a test one, and **Settings → WFMT → Overlays → Overlay Placement** to move the banner.
+3. Press **Test Discovery** on the Discovery page to send both banners (it works even while the feature is off and says whether an overlay could be reached), and use **Settings → WFMT → Overlays → Overlay Placement** to move them. By default they sit at the top center.
+
+**What you see.** Two banner cards, one under the other:
+
+| Banner | Shown when | Stays up |
+|---|---|---|
+| **NEW SYSTEM DISCOVERY**, with the system name | You jump into a system and the game's automatic scan of the arrival star says nobody had scanned that star before (`WasDiscovered` is false) | 12 seconds |
+| **First scan of a new discovery** or **First to map this body**, with the body name | A body you scan (or map) was undiscovered, or unmapped, when you did it | 8 seconds |
+
+The status line under the buttons on the panel says the same in text (`New system: ...`, `Scanned first: ...`, `Mapped first: ...`), or `Watching for new discoveries...` when there is nothing to report.
+
+**What it does not do.** It stays silent for a system or body that was already discovered, since that is the usual case. The first-to-map banner needs the body's own scan to have been seen earlier in the system, because the mapping event does not say whether the body had been mapped before; a body whose scan WFMT did not see (for example because EDMC was closed) is not announced.
 
 ### N.S. and W.D. buttons
 
@@ -57,6 +104,13 @@ clipboard so you can paste it into the galaxy map.
 
 They are manual only: they contact Spansh when you click and never on their own. Jump or reload first so WFMT knows
 your position.
+
+**What you see.** After the click the line under the buttons reads `N.S.: searching...` and both buttons are grayed until the answer arrives. The answer reads like
+`N.S.: Sample Sector AB-C d1-2 - 84.3 ly, Spansh (copied)`: the system, how far it is, which source answered (**Spansh** or **local index**, see below) and `(copied)` once the full name is on your clipboard. A name longer than the panel allows is cut with an ellipsis on the panel only; the copy is always the whole name. The system you are in is never offered as the answer.
+
+- `position unknown - jump or reload first` means WFMT has not yet seen a jump or login that gave it your coordinates.
+- `lookup failed - see EDMarketConnector.log` means Spansh could not be reached or answered something WFMT could not read.
+- Only the **primary** (main) star of a system counts, and **W.D.** accepts a white dwarf of any class.
 
 ### The local star index
 
@@ -115,29 +169,38 @@ It has no button on the main panel.
 
 ### What it looks for
 
-**On to start with** (the rarer finds):
+Each rule has a tick box on the Notable Bodies settings page, with a one-line description. The limits are fixed.
 
-- **High-value body**: any terraformable world, and every Earth-like, water and ammonia world, whether or not you
-  can land on it. The log line says if it is undiscovered or unmapped.
-- **Terraformable landable**
-- **High-g landable** (about 3 g or more)
-- **Shepherd moon**
-- **Good FSD injection** (5 or 6 of the premium boost materials on a landable)
-- **Colliding binary**
-- **Green gas giant**: from the Codex, or a gas giant whose surface temperature matches a confirmed green one. The
-  game never records a planet's color, so treat this as a lead, not a fact.
+| Rule | Matches | Starts |
+|---|---|---|
+| **Terraformable landable** | A landable body that is terraformable, being terraformed or already terraformed | On |
+| **High-value body** | Any terraformable world, and every Earth-like, water and ammonia world, landable or not; the log line says if it is undiscovered or unmapped | On |
+| **High-g landable** | A landable body above about 3 g (29.4 m/s²) | On |
+| **Shepherd moon** | A moon orbiting inside the outer edge of its parent's outermost ring | On |
+| **Good FSD injection** | A landable body with 5 or 6 of the 6 premium FSD boost materials (carbon, germanium, arsenic, niobium, yttrium, polonium) | On |
+| **Green gas giant** | A Codex entry that names one, or a gas giant of a class whose surface temperature matches a confirmed green one. The game never records a planet's color, so treat this as a lead, not a fact | On |
+| **Colliding binary** | Two bodies sharing a barycenter whose closest approaches are less than their radii apart | On |
+| **Large landable** | A landable body over 18,000 km in radius | Off |
+| **Landable ringed** | A landable body that also has rings | Off |
+| **Close orbit** | A moon whose orbit is under three times its parent's radius | Off |
+| **Close binary** | Two bodies orbiting so close to their shared center (radius over 0.4 of the orbit) that they nearly touch, but do not collide | Off |
+| **High eccentricity** | An orbit with eccentricity above 0.9 | Off |
+| **Fast orbit** | A planet orbiting in under 8 hours | Off |
+| **Fast rotation** | A planet with a day under 8 hours that is not tidally locked | Off |
+| **Wide ring** | A ring wider than five times the radius of the body it circles | Off |
 
-**Off to start with** (because they're common): large landable, landable ringed, close orbit, close binary, high
-eccentricity, fast orbit, fast rotation and wide ring.
+The last eight start off because they are common.
 
 ### How alerts behave
 
 - If a body matches several rules you get **one banner**, for example "High-value body +2".
 - A body only alerts **once per rule**.
-- Banners take turns if several come at once.
+- Each banner stays up for 6 seconds. Banners take turns if several come at once: up to three wait behind the one on screen, and the body's name on the banner then ends with `(N more)` for the cards still to come. Any beyond three waiting are not shown separately.
+- A banner shows two lines: the title of the first rule that matched (with `+N` for the others) over the body's name. The measurements that matched (such as the gravity or the orbit) are written to EDMC's log, not drawn on the banner.
+- A Codex entry for a green gas giant raises the same banner (title **Green gas giant**, with the name of the nearest destination) when that rule is on.
 - The banner widens to fit the body's name and the rule's title, so a long catalog name shows in full (only text past about 56 characters is cut with "…").
 - The limits are fixed defaults.
-- If the banner lands on top of other overlay text, move it under **Settings → WFMT → Overlays → Overlay Placement**.
+- It starts at the top right of the screen ("Notable find card" on **Overlay Placement**). If the banner lands on top of other overlay text, move it there.
 
 ## Boxel Survey
 
@@ -208,7 +271,7 @@ It is careful not to count anything twice:
 - Scans older than 14 days, made with EDMC closed, are not found.
 - The game's journals are only read, never changed.
 
-**Settings → WFMT → Exploration → Boxel Survey:**
+**Settings → WFMT → Exploration → Boxel Survey (the first section of that page):**
 
 | Setting | Default |
 |---|---|
@@ -243,7 +306,7 @@ current cube. **Set Current** makes the selected cube the current one, and **Rem
 Empty cubes count as complete and are skipped. When you arrive at a cube's target and that cube is complete, the
 sweep moves on to the next unfinished cube in the queue (wrapping around to the start).
 
-**Settings → WFMT → Exploration → Region Sweep:**
+**Settings → WFMT → Exploration → Boxel Survey, in the Region Sweep section (further down the same page):**
 
 | Setting | Default |
 |---|---|
@@ -268,7 +331,8 @@ squadron staging system.
    your current position and always goes to the nearest unvisited waypoint next. Waypoints you've already visited
    keep their place at the front, and ones EDSM can't locate keep their order at the end. It needs your position.
 4. **Copy** copies the current target. With *Auto-copy next waypoint to clipboard on jump* on, WFMT copies the next
-   one when you arrive.
+   one when you arrive. That tick is in the Waypoint Route section at the foot of **Settings → WFMT → Exploration → Boxel Survey**.
+5. The waypoints are saved for each commander, so the list and the current target are still there after a restart.
 
 ### RND: find something nobody has discovered
 
@@ -307,25 +371,24 @@ More detail: [Boxel Survey specification](../BOXEL_SURVEY_TECH_SPEC.md).
 
 ## Exploration Value
 
-A quiet readout of what you're finding, in the **Dashboard** section of the Exploration panel (click its title to unfold it). Nothing to turn on. It shows:
+A quiet readout of what you're finding, in the **Dashboard** section of the Exploration panel (click its title to unfold it; the **DASHBOARD** button and a one-line summary of the system sit at the top of that section). Nothing to turn on. The lines read:
 
-- the estimated payout for your last scan,
-- the age of the current system,
-- which of the galaxy's 42 named regions you're in (for example "Inner Orion Spur"),
-- how many of the system's bodies you have scanned out of the number the honk found (for example "System bodies: 6
-  scanned of 14 — all found"),
-- what your last data sales actually paid, to set against the estimate ("Last data sale: exploration 1,234,567 cr,
-  organic 350,000 cr").
+| Line | What it says |
+|---|---|
+| `Last scan: <body> - est. 1.2M` | The estimated payout for the last body you scanned (stars as well as planets), with the first-discovery multiplier when nobody had found it. `Last scan: (none yet)` until you scan |
+| `System age: <system> - <age>` | The age of the current system, from the star's `Age_MY` in the scan, written in million years (`4,200 My (~4.2 By)` for the oldest) |
+| `Region: Inner Orion Spur` | Which of the galaxy's 42 named regions you are in, worked out from your coordinates |
+| `System bodies: 6 scanned of 14 - all found` | How many of the system's bodies you have scanned out of the number the honk found. `all found` appears once the game reports that your FSS has found every body; before a honk it says `(honk to count them)` |
+| `Last data sale: exploration 1,234,567 cr, organic 350,000 cr` | What your last data sales actually paid, to set against the estimate. `Last data sale: (none yet)` until one is read |
 
 All of that is worked out on your computer. The estimate is the value of scanning the body (with the first-discovery multiplier when nobody had found it); the value of
 mapping it as well is on the [Body info](#system-targets-and-body-info) card (**Mapped value**) and counted in the [Expedition Log](#expedition-log).
 
-The readout itself is on by default (*Show estimated scan value, system age, and current region*). Two extras are
-optional in **Settings → WFMT → Exploration → Exploration Value**, and both are off until you tick them because they
-contact the internet:
+The readout itself is on by default (*Show estimated scan value, system age, and current region*, in **Settings → WFMT → Exploration → Exploration Value**). Two extras are
+optional on the same page, and both are off until you tick them because they contact the internet:
 
-- *Show ELW rarity comparison when you scan an Earthlike World* (Spansh)
-- *Show EDSM upload status when you select a system on the galaxy map* (EDSM)
+- *Show ELW rarity comparison when you scan an Earthlike World* (Spansh). A line `ELW rarity: <body> - 2 known ELWs within 250 ly - a rare find` appears (`not unusual here` when more than 3 are known), after `checking Spansh...`. The count is of Earth-like worlds Spansh already lists around the system.
+- *Show EDSM upload status when you select a system on the galaxy map* (EDSM). A line `EDSM upload status: <system> - already in EDSM` (or `not yet in EDSM`, or `EDSM check unavailable`) appears when you select a system in the galaxy map. A system is asked about once in ten minutes.
 
 ## Organic Scanning
 
@@ -333,7 +396,7 @@ Helps you find and identify exobiology life on a planet's surface: which species
 Sample and Analyse progress, and when you have walked far enough for the next sample. It also has four overlay cards for the body you are on (bio status,
 predicted species, a sample radar and a popup after each sample), leads you back to plants you identified, and shows the first footfall bonus.
 
-All of it is in its own guide: **[Exobiology](exobiology.md)**. You can switch the panel's section off under **Settings → WFMT → Exploration → Organic Scanning**
+The section is always shown (it has no fold) and has two text readouts, `Predicted species` and `Active scan`, and a **REVIEW** button for the prediction review window. All of it is in its own guide: **[Exobiology](exobiology.md)**. You can switch the panel's section off under **Settings → WFMT → Exploration → Organic Scanning**
 (**Show predicted species and scan progress**); it uses only your own journal and makes no internet connection.
 
 ## Codex Completionist
@@ -449,8 +512,8 @@ you when you arrive. With the section folded, the title says `- 2 here`.
 - **Quick note:** type a line in the box and press **ADD** (or Enter). It is saved against the system you are in, and the body too
   when you are near one (the game's `Status.json` names it).
 - **NOTES** opens the Notes window: a **Search** box (every word you type must appear in the system, body or note), a list of every
-  note, newest change first, and an editor underneath. Select a note to change it, press **New note** to write another. **Here**
-  beside the System and Body boxes fills in where you are now. Tick **Only the system I am in** to see just this system's notes.
+  note, newest change first, and an editor underneath. The list's columns are **System**, **Body**, **Note** (the start of it) and **Changed (UTC)**. Select a note to change it, press **New note** (in the header) to write another. **Here**
+  beside the System and Body boxes fills in where you are now (the System box also suggests names as you type). Press **Save** to keep what is in the editor. Tick **Only the system I am in** to see just this system's notes.
 - **Delete** asks you to press it a second time, because a note cannot be got back.
 - A note can be up to 2,000 characters, a system or body name up to 100, and you can keep 2,000 notes. Past a limit WFMT tells you
   rather than cutting the note short.
@@ -504,6 +567,30 @@ Once you have honked, it also knows how many bodies the system has, so a stop re
 - The stop you are at shows in the Expedition row.
 - A body scanned twice counts once, belt clusters are not counted, and nothing is counted in a system that is not a stop you have reached.
 
+### The Expedition window
+
+**EXPEDITION** on the panel opens it on the **Plan** tab. From top to bottom:
+
+- **The header** has **Start**, **Pause** and **Stop** for the expedition picked below, and a Help button. The subtitle names the commander and how many expeditions they have (up to 30).
+- **The picker** is a list of your expeditions, each written as `Name (status, 3 of 20)`. The status is *planned*, *active*, *paused* or *done*. **Name** and **New**, **Rename**, **Reset** and **Delete** are beside it.
+- **The totals line** under it reads like `Active · 7 of 20 stops · 31 jumps · 1,204 ly · 2 d 4 h · 38 scanned · 6 first · 4 mapped`: the status, stops ticked, jumps, light-years, time and the bodies found across all stops.
+- **The stops table** lists the stops in order (up to 500 for each expedition):
+
+  | Column | What it shows |
+  |---|---|
+  | **#** | The stop's number in the order |
+  | **System**, **Body**, **Note** | What you or the planner entered |
+  | **Reached (UTC)** | When the stop was ticked off. The next stop shows `next` while the expedition is active |
+  | **Found here** | What you did at the stop, such as `5 of 12 scanned · 2 first · 1 mapped` |
+  | **From you (ly)** | The straight-line distance from where you are now, or `-` when the stop has no position yet |
+
+- **The editor** under the table has **System** (with suggestions as you type, and **Here** to fill in the system you are in), **Body (optional)** and **Note (optional)** boxes and the buttons **Add stop**, **Save changes**, **Mark visited**, **Up**, **Down** and **Remove**. **Mark visited** on a ticked stop takes the tick away again.
+- **Make an expedition with Spansh** has **Road to Riches**, **Exomastery** and **Neutron route**.
+- **The tools row** has **From plotted route**, **Import CSV**, **Locate and reorder (EDSM)**, **Copy list**, **Export CSV** and **Copy next**.
+- **The status line** at the foot says what the last button did, including why it refused.
+
+**Reset**, **Delete** and **Remove** ask you to press the button a second time within five seconds before they act.
+
 ### Using the Expedition window
 
 1. **Create an expedition.** Type a name and press **New**.
@@ -525,15 +612,20 @@ Once you have honked, it also knows how many bodies the system has, so a stop re
    - **Exomastery** (Spansh's Expressway to Exomastery) picks planets with the most valuable biological signals.
    - **Neutron route** opens the [Route Planner](#route-planner), which plots a neutron route for your ship (nothing to type about the ship) and can turn it into an expedition with **Start expedition** or **Review**.
    - A small window asks for:
-     - where to **start** (the system you are in is filled in),
-     - an optional place to **end**,
-     - your **jump range** (taken from your last loadout; change it),
-     - how far from the route to look,
-     - the most results (up to 100),
-     - how far from the arrival star,
-     - the **least a body or planet is worth** (raise it for fewer, better places).
-   - **Avoid systems the Thargoids control** is ticked. **Come back to the start** is not.
-   - Press **Plot**. Spansh can take from a few seconds to a couple of minutes.
+
+     | Box | What it means | Starts at |
+     |---|---|---|
+     | **Start from** | Where the route begins (the system you are in is filled in) | Your system |
+     | **End at (optional)** | Leave empty for a route that just goes where the best places are | Empty |
+     | **Jump range (ly)** | Your ship's range, taken from your last loadout when WFMT has seen one; change it if it is wrong | 30 when no loadout is known |
+     | **Look this far from the route (ly)** | How far off the route a place may be | 25 |
+     | **Most results** | Up to 100 | 100 |
+     | **Furthest from the arrival star (ls)** | Leaves out bodies that are a long way from where you arrive | 50,000 |
+     | **Least a body is worth (credits)** (Road to Riches) or **Least a planet's biology is worth (credits)** (Exomastery) | Raise it for fewer, better places | 100,000 for Road to Riches, 10,000,000 for Exomastery |
+
+   - **Avoid systems the Thargoids control** is ticked. **Come back to the start** is not. **Start it now** is a third tick (see below).
+   - Each of the number boxes must be a number above 0; otherwise the window tells you which one to fix.
+   - Press **Plot**. Spansh can take from a few seconds to a couple of minutes (WFMT waits up to five minutes, then says so).
      - While it works, the **Plot** button reads *Plotting...*, a bar moves along the window, and a timer counts what you have waited, with Spansh's own word beside it (waiting in the queue, or calculating). So you can see it has not stalled.
      - **Cancel** stops waiting.
      - When the answer arrives it becomes a new expedition (named, for example, *Road to Riches from Sol*) with a stop for each system: the best body, a note of what is worth scanning there and its position.
@@ -602,7 +694,12 @@ Earned figures are what the game reports when you sell, so they count when you s
 - The estimates follow the community formula: the base value of the body from its class and mass, the first-discovery multiplier, the mapping multipliers (for a first map, a first map of an already discovered body, and an already mapped body), the efficiency bonus when your probe run met the target, and the Odyssey bonus.
 - Expect them to be close, not exact.
 
-**The LOG window** is the archive. A table lists every expedition, newest first.
+**The LOG window** is the archive (the **Log** tab of the Expedition window). Up to 200 expeditions are kept.
+
+- **The header** has **Start**, **Pause** and **Stop**.
+- **The starter row** has the **New expedition name** box (optional; **Start** begins it now, from where you are) and **Start since my last sale**.
+- **The table** lists every expedition, newest first. Its columns are **Name**, **Status**, **Started (UTC)**, **Ended (UTC)**, **Systems**, **Jumps**, **Bodies**, **Species**, **Exploration cr**, **Exobiology cr** and **Total cr**.
+- **Under the table** is everything the selected expedition recorded, then the editor.
 
 Select one to read everything it recorded and to **edit** these, then press **Save changes**:
 
@@ -630,7 +727,7 @@ The buttons:
 - The heading has its name and how long it has run. The total earned is at the foot.
 - It shows the expedition that is **running or paused**. A paused one keeps what it had counted (its heading says `paused`) until you resume or stop it.
 - **Stopping resets the card**, which goes back to saying no expedition is running.
-- Place it on **Overlay Placement** ("Expedition Log").
+- Place it on **Overlay Placement** ("Expedition Log (totals of the running expedition)"); it starts at the top left, beside the Route card.
 
 Everything is kept for your commander only (another commander has their own archive) and never leaves your computer.
 
@@ -655,16 +752,30 @@ Everything is kept for your commander only (another commander has their own arch
 Two cards on your game screen for working a system. Both are **off by default**, have no panel button, and are set up under **Settings → WFMT → Overlays**.
 They need an overlay ([WFMT's built-in one on Windows, or EDMCModernOverlay](../OVERLAY_SETUP.md)). They read your journal and send nothing anywhere, except the two lookups on System targets that you can tick (EDSM and Spansh, below).
 
-**System targets** (Settings → WFMT → Overlays → System targets) is a list of what is left to do in the system you are in:
+**System targets** (Settings → WFMT → Overlays → System targets) is a list of what is left to do in the system you are in. Its settings:
+
+| Setting | What it does | Starts at |
+|---|---|---|
+| **Enable the System targets card** | Switches the card on | Off |
+| **List bodies worth at least** [N] **credits, judged by** [basis] | The threshold (0 to 50,000,000, in steps of 25,000), and whether bodies are judged and ranked by **Mapped value (what scanning and mapping pays)** or **Scan value (what scanning alone pays)** | 100,000, Mapped value |
+| **Rows shown** | 3 to 16 rows across all the lists; the rest are counted (`+ 3 more`) | 6 |
+| **Also list bodies with life that I have not finished analyzing** | The Life list | On |
+| **Also list the bodies I have finished (mapped, and their life analyzed), so I can see where I left off** | The Done list | On |
+| **Also look up bodies other commanders have scanned (EDSM, once per system)** | See below | Off |
+| **Also look up the life and points of interest other commanders found in the system (Spansh, once per system, on arrival)** | See below | Off |
+| **Test Card** | Draws a made-up system, so you can see and place the card | |
+
+The card is drawn in lists under the heading, each headed with its count: **To map (n)**, **Life (n)**, **Known (n)** and **Done (n)**. What each list holds:
 
 - After you have scanned bodies, it lists the planets and moons **worth mapping that you have not mapped**.
   - These are the ones whose estimated value is at or above a threshold you choose (100,000 credits to start), most valuable first.
   - The value is what **scanning and then mapping** the body pays by default, so a body worth mapping is ranked by what mapping it earns. A choice in Settings → WFMT → Overlays → System targets switches it to the scan alone.
   - Each row has the body's short name (`A 1`), a tag for the classes that matter (`ELW`, `WW`, `AW`, `HMC`, `MR`, and `TF` for any other terraformable world) and the value (`1.2M`, with `first` when nobody had discovered it).
 - Below that it lists the bodies **with life that you have not finished analyzing**, as `1/3 life`.
-- A body leaves the list when you **map it** or **analyse its last organism**.
+- A body leaves the list when you **map it** or **analyze its last organism**.
 - The card's heading is the system name with a progress bar for the system scan and a count (`4 of 8 scanned`) once you have honked.
-- A message says so when nothing at or above your threshold is left (`Nothing over 100k left to map or sample`). While the Spansh lookup runs, it says `Looking up data (Spansh)...`. A long message continues on the next line.
+- A message says so when nothing at or above your threshold is left. Before your FSS has found every body it reads `Nothing over 100k to map yet`; once the game says every body is found it reads `Nothing over 100k left to map or sample`. While the Spansh lookup runs it says `Looking up data (Spansh)...`; if Spansh has nothing, `Spansh has nothing on this system`; if the lookup failed, `Spansh lookup failed; will retry`. A long message continues on the next line.
+- With the EDSM lookup on, the heading's count gains `· 3 online` for the bodies that came from EDSM.
 - Each row shows the body, a muted tag and distance (`HMC  82k ls`) or the genera once known, and the value on the right.
 - **Also look up bodies other commanders have scanned** (off until you tick it).
   - Right after you honk, WFMT asks [EDSM](https://www.edsm.net/) once for the system's planets. It sends only the system name (see [What goes on the internet](internet-and-privacy.md)).
@@ -700,7 +811,19 @@ They need an overlay ([WFMT's built-in one on Windows, or EDMCModernOverlay](../
 - its materials, written as element symbols (`Fe 18.4% · S 18.2%`),
 - then the estimated scan value, temperature, gravity (in the warning color at 2.0 g and over), pressure, atmosphere and its composition (formulas such as `CO2`), volcanism, life signals (how many, how many are done, and the genera once you have mapped it), geology signals and distance.
 
-It shows for **the body you have targeted** in the galaxy or system map or the nav panel, and for **the body you are close to**. Each can be switched off.
+It shows for **the body you have targeted** in the galaxy or system map or the nav panel, and for **the body you are close to**. The targeted body wins when both apply, and a targeted body that is already finished (mapped by you, with all its life analyzed) is not held on the card, so it moves on to the next. A body you have targeted but not scanned shows its name with `Scan required`, and the number of life signals if the system scan gave one.
+
+Its settings (**Settings → WFMT → Overlays → Body info**):
+
+| Setting | What it does | Starts at |
+|---|---|---|
+| **Enable the Body info card** | Switches the card on | Off |
+| **Show the body I have targeted** | Follow the destination you set in the map or nav panel | On |
+| **Show the body I am close to** | Follow the body the game's `Status.json` says you are near | On |
+| **Element and compound names** | **Symbols (Fe, CO2)** or **Full names (Iron, carbon dioxide)** for materials and atmosphere gases | Symbols |
+| **Test Card** | Draws a made-up body | |
+
+On the card, **Scan value** shows `first` after the amount when nobody had discovered the body, **Mapped value** (with a `~`) shows until you have mapped it, and the distance from the arrival star is the badge at the right of the title (`3,936 ls`). A **Footfall** row says `First: exobiology pays 5x` on a body with life that nobody has stood on.
 
 **What they cannot tell you:**
 
@@ -731,7 +854,7 @@ The Exobiology cards (bio status, predicted species, the sample radar and the sa
 
 The overlays draw over the game. The **Exploration Dashboard** is for the times you would rather read than have your screen cluttered.
 
-The **DASHBOARD** button in the Dashboard section of the Exploration panel (which also holds the [Exploration Value](#exploration-value) lines) opens a window with everything WFMT knows about:
+The **DASHBOARD** button in the Dashboard section of the Exploration panel (which also holds the [Exploration Value](#exploration-value) lines, and a one-line summary of the system beside the button) opens a window with everything WFMT knows about:
 
 - the system you are in,
 - the body under you,
@@ -749,7 +872,7 @@ is left alone until the next change.
   - The system: bodies scanned of the honk's count, planets mapped, how many are worth mapping at your System targets threshold, biological signals analyzed, the scan value of what you have scanned, what mapping would add, first discoveries.
   - *This system* and *You* (where you are, altitude, position, heading, fuel).
 - **Orbit**: every body in the system in a table you can sort.
-  - Columns: type, distance, gravity, landable, atmosphere, temperature, scan and mapped value, biology and geology signals, and what has been done with it.
+  - Columns: **Body**, **Type**, a small tag for the classes that matter, **Distance** (light-seconds from the arrival star), **Gravity**, **Landable**, **Atmosphere**, **Temp**, **Scan value**, **Mapped value**, **Bio** and **Geo** (signal counts) and **Status** (what has been done with it). Click a heading to sort by it.
   - Rows are tinted: green for nothing left to do, amber for worth mapping, green text for unfinished biology.
   - Click a row for that body in full (conditions, atmosphere gases, materials, signals, genera, value).
   - Beside it are **Worth mapping**, **Life to analyze** and **Found by others** (what Spansh lists in the system, when the lookup under Settings → WFMT → Overlays → System targets is on).
@@ -766,7 +889,7 @@ is left alone until the next change.
 
 **Route Planner.** The window's header also has a **Route Planner** button, which opens the [plotter](#route-planner).
 
-**Switching overlays off and on.** The two buttons at the top right of the window, **Exploration overlays** and **Exobiology overlays**, hide and show those cards without touching Settings.
+**Switching overlays off and on.** The two buttons at the top right of the window, **Exploration overlays** and **Exobiology overlays**, hide and show those cards without touching Settings. Each says what pressing it will do: `Exploration overlays: ON - hide`, or (in the warning color) `Exploration overlays: OFF - show`.
 
 - Exploration covers Route, System targets, Body info, Expedition Log, Compass, Discovery Alerts and Notable Bodies.
 - Exobiology covers its four cards.
@@ -821,7 +944,7 @@ The **PLOT** button in the Route Planner section of the Exploration panel (click
 
   The choices are remembered. Spansh starts from a full tank.
 - **The route.** A long route can take a minute or two. There is a bar, a timer and Spansh's own word for what it is doing, and **Cancel** stops waiting.
-  - The table lists **every jump**: the system, the light-years jumped and still to go, the fuel left, and what to do there (supercharge at a neutron star, refuel, use an injection).
+  - The table lists **every jump**. Its columns are **#**, **System**, **Distance (ly)** (this jump), **Left (ly)** (still to go), **Fuel (t)** (in the tank after the jump) and **At this system** (what to do there: supercharge at a neutron star, refuel, use an injection).
   - Systems you have reached turn green and the next one is marked.
   - The panel button's line says what is next (for example *Next: Colonia Neutron 4 (neutron) · 41 jumps left*).
 - **Messages.**
@@ -905,7 +1028,7 @@ These come from `CarrierLocation` and `CarrierStats`, which the game writes at l
 2. Check **Carrier** (Fleet carrier or Squadron carrier, if you have both), **Where it is now** (filled in), **Destination system** (type it; suggestions appear), and the **Space used** and tritium boxes (filled in from the journal; you can change them).
 3. Leave **Work out the tritium I need to start with** ticked to let Spansh say how much to have at the start, or untick it to enter the tritium you already have in the tank and in the carrier's market.
 4. Press **Generate route**. Spansh works out each jump (up to 500 ly), the tritium each one uses and where there is an icy ring; the summary says how much tritium to have at the start. **Cancel** stops waiting.
-5. Work down the table.
+5. Work down the table. Its columns are **#**, **System**, **Distance (ly)**, **Left (ly)**, **Tank (t)** and **Market (t)** (the tritium in the tank and in the carrier's market after the jump) and **At this system** (for example where there is an icy ring to mine tritium).
    - **Copy next system** (or double-click a row) puts the next system on the clipboard. Paste it into Carrier Management's jump search and schedule the jump in the game.
    - The route moves on by itself when your carrier arrives (green rows are done, the next is marked). WFMT sees it in the journal when you are aboard or log in.
 
@@ -928,43 +1051,68 @@ These come from `CarrierLocation` and `CarrierStats`, which the game writes at l
 
 ## Nearest place to land
 
-For deep space and emergencies: the nearest station that can take your ship and has what you need, and the nearest fleet carriers that let anyone dock. **Exploration → Nearest place to land → FIND** opens the window. The online lookup is allowed by the tick in that window, or by the same switch in Settings → WFMT → Exploration → Nearest place to land.
+*(Starts folded.)*
 
-- **It starts from where you are.** The position comes from the journal (`StarPos`, set by each jump), not from a system name, so it works in a system nobody has charted yet. If WFMT has not seen a jump this session it reads the newest journals; if it still has no position, jump once.
-- **It knows your ship's pad.** The pad comes from your ship (`Loadout`): a Python is never sent to an outpost with only small pads. Choose a pad size yourself, or *Any size*, if you want something else.
-- **Say what you need:** fuel, repairs, rearming, outfitting (fuel and repairs are ticked at first). Only stations that offer all of them are listed.
-- **Stations** (starports, outposts, planetary ports and outposts, megaships and colonization sites) are listed nearest first with their pads, the distance in light years and where they are in the system.
-- **Fleet carriers** are listed only when Spansh says docking is open to everyone, and only if its record is recent (7, 14, 30 or 90 days, your choice), because carriers jump and change who may dock. The age of each record is shown. Check it before you rely on a carrier.
-- **Double-click a row** to copy its system name, to paste into the galaxy map.
-- **It is online, and only when you press Find**, once you have ticked the box that allows it. It sends Spansh your position, the pad size and your choices, and nothing about you (see [What goes on the internet](internet-and-privacy.md)).
+For deep space and emergencies: the nearest station that can take your ship and has what you need, and the nearest fleet carriers that let anyone dock.
+
+The panel section has a line saying where you are and which pad your ship needs (`From Sol; your ship needs a large pad.`, or `Needs your position: it comes from your next jump, or from the journal when you log in.`) and a **FIND** button that opens the window.
+
+**To use it:**
+
+1. Press **FIND**. The window opens with **From** showing your system and coordinates.
+2. Under **I need**, tick what the place must offer: **Refuel**, **Repair**, **Rearm (restock)** and **Outfitting**. Refuel and Repair are ticked at first. Only stations that offer *all* the ticked services are listed.
+3. Choose the **Landing pad**: **My ship's pad** (the default), **Any size**, **Medium or larger** or **Large only**. With **My ship's pad** WFMT uses your ship's size from your last loadout (a Python is never sent to an outpost with only small pads); a small ship has no restriction, since it fits everywhere.
+4. Leave **Include fleet carriers open to all, updated within** ticked to list carriers too, and choose how fresh a carrier's record must be: **7 days**, **14 days** (the default), **30 days** or **90 days**. Untick it to leave carriers out; the carrier table then says `Fleet carriers were not asked for`.
+5. Tick **Allow this lookup: pressing Find sends Spansh my position, the pad size and these choices, nothing else**. It is off until you tick it, and it is the same switch as **Settings → WFMT → Exploration → Nearest place to land**. Nothing is sent before it is ticked.
+6. Press **Find**. The window asks Spansh and fills two tables. An answer is remembered for two minutes, so pressing Find again with the same choices costs no new request.
+
+**The tables.** Up to eight places are listed in each, nearest first.
+
+| Table | Columns |
+|---|---|
+| **Stations with <services>** (starports, outposts, planetary ports and outposts, megaships and colonization sites) | **Station**, **System**, **Where** (where in the system), **Distance (ly)**, **Pads** (the pad sizes it has), **Has** (which of your ticked services it offers) |
+| **Fleet carriers open to all, reported within <days> days** | **Carrier**, **System**, **Distance (ly)**, **Pads**, **Has**, **Last reported** (how long ago Spansh had a report of it) |
+
+**Double-click a row** to copy its system name, to paste into the galaxy map. The status line at the foot of the window says what happened and reminds you that carriers move: check a carrier's age before you rely on it. Stations rarely change.
+
+- **It starts from where you are.** The position comes from the journal (`StarPos`, set by each jump), not from a system name, so it works in a system nobody has charted yet. If WFMT has not seen a jump this session it reads the newest journals; if it still has no position, the window says `Your position is not known yet. Jump to a system or log in first.` Jump once.
+- **Fleet carriers** are listed only when Spansh says docking is open to everyone, and only if its record is recent, because carriers jump and change who may dock.
+- **It is online, and only when you press Find**, once you have ticked the box that allows it. It sends Spansh your position, the pad size and your choices, and nothing about you (see [What goes on the internet](internet-and-privacy.md)). If Spansh cannot be reached, the window says so and suggests trying again.
+- The window remembers your choices and its size and position.
 
 What this cannot tell you is in the last section of this guide.
 
 ## Compass
 
-*(Starts minimized.)*
+*(Starts folded.)*
 
-Points you at a spot on the planet you are on, from wherever you are on its surface (on foot, or in a vehicle), in any mode.
+Points you at a spot on the planet you are on, from wherever you are on its surface (on foot, or in a vehicle), in any mode. It replaces the arrow Mining used to draw for hotspots, and a Mining waypoint arrow you had switched on carries over as the Compass, with its place on screen.
 
 What it can point at:
 
 - **The nearest hotspot** you have recorded on this body (the default). Hotspots with no position yet are
   skipped.
 - **One of your marks**: a name, a body and a latitude and longitude, kept for you alone (another commander on the same install does
-  not see them) and never sent anywhere.
+  not see them) and never sent anywhere. Up to 500 marks can be kept; a name can be 60 characters and a body name 100.
 - **Nothing.**
 
-The section shows what it is aiming at and how far (`↗ Ship - 340m NE`) and has three buttons and a box:
+**The panel section** shows a line saying what it is aiming at and how far (`↗ Ship - 340m NE`; the arrow is left out until the game has given your heading), a box and three buttons:
 
-- **MARK** saves where you are now as a mark, named with what you typed in the box (or `Mark 1`, `Mark 2` ... if it is empty). The body
-  comes from the game's `Status.json`.
-- **TARGET** steps through what to aim at: the nearest hotspot, then each mark on this body, then nothing, then round again.
-- **MARKS** opens the Marks window: every mark with how far it is from you now (when it is on your body), an editor to change a mark's
-  name, body, latitude and longitude (**Here** fills in where you are), **Delete** (press twice), and buttons to aim at the nearest
-  hotspot, at the selected mark, or at nothing. You can type a position, for example one from a guide or a screenshot.
+- **MARK** saves where you are now as a mark, named with what you typed in the box (or `Mark 1`, `Mark 2` ... if it is empty), then clears the box. The body
+  comes from the game's `Status.json`. Without a surface position it says `No surface position yet: land, or get out, first.`
+- **TARGET** steps through what to aim at: the nearest hotspot, then each mark on this body, then nothing, then round again. It says `Now aiming at ...`.
+- **MARKS** opens the Marks window.
 
-To see the arrow on your game screen, tick **Settings → WFMT → Overlays → Surface Compass → Enable Surface Compass** (**off by default**) and
-press **Test Compass**. Where it sits is set on **Overlay Placement** ("Surface compass").
+When the target is a mark on another body than the one you are on, the line says so (`Mark Ship is on <body>, not here.`) instead of pointing.
+
+**The Marks window.** Its table lists every mark with the columns **Name**, **Body**, **Latitude**, **Longitude** and **From here** (the distance from you now, when the mark is on your body). Under the heading **The compass points at:** (with what it is now aiming at) are three buttons: **Nearest hotspot**, **Selected mark** and **Nothing**. Below the table is the editor:
+
+1. Press **New mark** (in the header) or select a mark to change it.
+2. Fill in **Name**, **Body**, **Latitude** and **Longitude**. **Here** fills in your own position and body. You can also type a position, for example one from a guide or a screenshot.
+3. Press **Save**. **Delete** removes the selected mark; press it twice, since a deleted mark cannot be got back.
+
+**To see the arrow on your game screen**, tick **Settings → WFMT → Overlays → Surface Compass → Enable Surface Compass** (**off by default**) and
+press **Test Compass**. Where it sits is set on **Overlay Placement** ("Surface compass"). The overlay card is one line of text (an arrow glyph, the name, the distance and the compass point) with a drawn arrow under it that turns as you turn, so straight up means straight ahead.
 
 The distance and direction are great-circle on a sphere the size of the body (from the body's radius in `Status.json`), good for "which
 way and how far", not for the last few meters. The compass only points at things on the body you are on, and shows nothing until you
@@ -992,6 +1140,10 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 | The compass to work in space or in a ship above the ground | The game gives a latitude and longitude only on a landable surface (on foot or in a vehicle). | Land, or get out, and it appears. |
 | A mark to know which body it is on | The body comes from `Status.json` (`BodyName`), which the game writes only near a body. Marks are matched by body name. | Use **Here** while standing there, or type the body's full name as the game shows it. |
 | Auto-Honk to press any control | It can only press **keyboard** keys, so your fire button must be bound to one. On Linux it needs `xdotool`; Wayland without XWayland is unsupported. | Bind a keyboard key to your fire button and use **Rescan** after changing bindings. |
+| Auto-Honk to know the honk worked | WFMT presses the key and reports only that the key press was sent. The game's `FSSDiscoveryScan` event is what the rest of WFMT uses to know a honk happened. | If nothing happens in the game, press **Rescan** and **Test Honk Now**, and check the status line. |
+| A first-to-map banner for a body whose scan was not seen | The mapping event carries no "mapped before" flag; WFMT takes it from the same body's earlier scan in this system. | Scan the body (or let the system scan reach it) before mapping, and the banner can fire. |
+| The Route Planner or Carrier route to set the game's destination | An add-on cannot give the game a route. The journal and `NavRoute.json` only report what you plotted. | Paste each system into the galaxy map (or Carrier Management) yourself; WFMT keeps the next one on the clipboard. |
+| The Route Planner's fuel figures to include a white dwarf boost | Spansh's plotter knows only neutron stars. | White dwarfs are marked as extra boosts only when you tick the EDSM option; the jump counts do not include them. |
 | Boxel Survey to know where a system is | It works with **names**, not coordinates. It counts through the trailing number to make the next name and does not know whether that system exists. | The galaxy map is the judge. Press **Next >** to skip a name that won't plot. |
 | The game to tell WFMT a candidate failed to plot | Nothing is written to the journal when the galaxy map can't find a name. | After 3 skips WFMT asks EDSM for a real nearby system. Press **Set** to move there. |
 | Whether anyone has flown to an RND system | RND offers real systems with no scans on Spansh or EDSM. A visit without a scan leaves no trace in either. | Treat a result as a strong lead; the first scan you upload settles it. |

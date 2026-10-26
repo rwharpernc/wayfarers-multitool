@@ -697,6 +697,11 @@ The items below are implemented and covered by unit tests, but have not all been
   - Verify that the HISTORY button on the Colonization panel opens its window.
 - [ ] **BGS** after a tick passes while EDMC is closed: the period that closed should contain the play made in the meantime. Also verify that a finished Colonization build is displayed without the "Construction Site:" prefix.
 - [ ] Colonization window: **Find all** against Spansh, **Only what [station] sells** with a real `Market.json`, and copying a system by clicking a result row.
+- [ ] **Colonization: hold, Remaining and best single systems** (Windows, then Linux; steps in [LINUX_TESTING.md](LINUX_TESTING.md)).
+  - Buy a tracked commodity at a market: the **In Cargo** figures in the Sites window, on the COL page and on the overlay card follow the hold within a couple of seconds (WFMT reads the game's `Cargo.json`).
+  - **Remaining** falls as you load the ship or the carrier and reaches 0 once the whole amount is acquired, wherever it is stored; **Haul Trips** still counts everything the site needs.
+  - The overlay card shows the same Remaining and no To buy column. With *Hide commodities already covered by the hold and the fleet carrier* on (the default), those commodities are left out and the footer still counts them.
+  - After **Find all** with two or more commodities, **Best single systems** lists the few best systems with their stations in visiting order; **Copy Route** copies the best system first. The note under the buttons is in the accent color while a search runs.
 - [ ] **Raven Colonial writes not yet observed:** Report Complete on a finished build, and carrier cargo sharing (the second switch).
   - **Create Project on Raven** has never run against the live service: try it docked at a construction ship, once with a planned site and once with none, and check the project, the link, the primary project and the attached carrier on ravencolonial.com.
   - **Mark Plan Entry Demolished** is likewise unobserved.

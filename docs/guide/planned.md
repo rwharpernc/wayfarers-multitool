@@ -47,6 +47,7 @@ If one of these matters to you, tell me (see [Getting help](../../README.md#gett
 
 ## Overlays
 
+- **A built-in overlay for Linux.** Windows has one that needs nothing else installed; on Linux EDMCModernOverlay is still required. A Linux version is being researched (the window handling differs between X11 and Wayland), and nothing is built yet.
 - **Screens smaller than 1920 x 1080** are not laid out for. The displays are sized in pixels, so on a smaller screen some can overlap until you
   move them on Overlay Placement. The default spots do not overlap on 1920 x 1080 or larger, ultrawide screens included.
 

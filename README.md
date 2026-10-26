@@ -24,6 +24,8 @@ A free add-on for **Elite Dangerous** that puts a set of handy tools in one pane
 - [All the guides](#all-the-guides)
 - [For developers, credits and license](#for-developers-credits-and-license)
 
+<a id="quick-start"></a>
+
 ## Download and install
 
 1. Download **`Wayfarers-Multitool.zip`** from the [latest release](https://github.com/rwharpernc/wayfarers-multitool/releases/latest). (The green **Code → Download ZIP** button is the source code, not the plugin.)
@@ -55,7 +57,7 @@ Four more tools are always on and belong to no mode: **Landing Assist**, **Inter
 
 **Colonization is a work in progress.**
 
-- The COL page, the Sites window, My Projects (your projects on Raven Colonial), starting a Raven project for a site, and the shopping-list overlay work today.
+- The COL page, the Sites window, My Projects (your projects on Raven Colonial), starting a Raven project for a site, Where to buy (with the best single systems for a whole list), and the shopping-list overlay work today.
 - Co-op building and colony tracking are planned.
 - Until then, everything on the COL page is about **you**.
 
@@ -143,7 +145,7 @@ Ideas, comments on how WFMT feels to use, and suggestions for other playstyles b
 - **Feature specifications:** [Missions](docs/MISSIONS_TECH_SPEC.md), [Mining](docs/MINING_TECH_SPEC.md), [Trade](docs/TRADE_TECH_SPEC.md), [Boxel Survey](docs/BOXEL_SURVEY_TECH_SPEC.md), [BGS](docs/BGS_TECH_SPEC.md), [Organic Scanning](docs/ORGANIC_SCANNING_TECH_SPEC.md), [Powerplay](docs/POWERPLAY_TECH_SPEC.md), [Screenshots and input automation](docs/SCREENSHOTS_AND_INPUT_TECH_SPEC.md).
 - [CHANGELOG.md](CHANGELOG.md) · [docs/ATTRIBUTIONS.md](docs/ATTRIBUTIONS.md) (thanks and acknowledgements).
 
-Built and maintained by R.W. Harper: CMDR Bocheaux.
+Built and maintained by R.W. Harper: CMDR Mactavious.
 
 Copyright (c) 2026 R.W. Harper. Released under the [GNU General Public License v3.0](LICENSE). Third-party notices are in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 

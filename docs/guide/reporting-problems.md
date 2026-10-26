@@ -16,7 +16,7 @@ own free GitHub account. You can always write the report by hand on the
 
 1. **Check whether it is a setting first.** Most "nothing happens" reports are a feature that is switched off. See
    [Troubleshooting](troubleshooting.md#nothing-happens-settings-that-start-off), and check whether the gap is a known limit of what the
-   game records (each mode guide ends with "What the game does and doesn't tell us").
+   game records (each mode guide ends with "What the game does and doesn't tell us"). A window's own **Help** button, if it has one, explains its columns and colors, and [Known issues](known-issues.md) lists what is already known.
 2. **Make the problem happen again if you can**, with EDMC still open, so the log has the lines from it. A problem from an hour ago may
    have scrolled out of the part of the log WFMT copies (see [what gets copied](#what-copy-diagnostics-copies)).
 3. Open **File → Settings → WFMT → General → Help**.

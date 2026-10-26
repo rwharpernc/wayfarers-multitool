@@ -27,8 +27,26 @@ screen (you choose which in Settings).
    **Show on Overlay** (the diagram on your game screen; off by default).
 4. Press **Test Overlay** to check the diagram shows.
 
+Where it sits is set on **Overlay Placement** ("Landing assist"); by default it is at the bottom left.
+
 If the overlay is still starting when docking is approved, WFMT keeps retrying for up to three minutes, so the
 diagram appears as soon as the overlay is up.
+
+**What it shows.** The status goes through what the game's journal says about your docking request:
+
+| Status | When | What else it shows |
+|---|---|---|
+| **Docking Requested** | You asked the station for permission | The station name |
+| **Docking Approved** | Permission was granted, and again after you touch down | The station name and `Pad 24` |
+| **Docking Denied** | The station refused | The reason, in words: *All pads occupied*, *Ship too large*, *Hostile to station*, *Criminal offences*, *Must be within 7.5km*, *Active SLF deployed*, *Carrier access restricted* or *Carrier jump imminent* (any other reason is shown as the game wrote it) |
+
+- In the EDMC panel it is one line, such as `Docking Approved — Jameson Memorial — Pad 24`, with the diagram under it. The line wraps rather than widening the window.
+- On the game screen it is a card with the same text and the diagram.
+- **The diagram** is a plan of the station's pads with yours marked. There are two layouts: the **starport** layout (Coriolis, Orbis, Ocellus, asteroid bases and planetary ports) and the **fleet carrier** layout, used for fleet carriers, squadron carriers and colonization ships. Outposts and other facilities have no diagram, so you get the pad number and the text only.
+- A carrier is told from a station by its type in the journal; a four-character name is taken to be a squadron carrier.
+- After you touch down the card stays for about ten seconds and then clears. A new jump, a supercruise entry or a stale request clears a request that never finished.
+
+The panel line and the card appear only for what the journal reports: nothing is drawn for a station you never requested docking at.
 
 ## Interdiction Warning
 
@@ -38,8 +56,24 @@ Puts an alert on your game screen the moment an interdiction starts. It has no p
 
 1. Open **Settings → WFMT → Overlays → Interdiction Warning**.
 2. Tick **Enable Interdiction Warning**. It is **off by default**.
-3. Press **Test Warning** to see what it looks like. The test works even while the feature is off, and reports
+3. Press **Test Warning** to see what it looks like. Where it sits is set on **Overlay Placement** ("Interdiction warning"); by default it is at the top center. The test works even while the feature is off, and reports
    whether an overlay could be reached.
+
+**What you see.** A card headed **INTERDICTION WARNING** with a line `Interdictor: CMDR Name (Commander)` (or `(Thargoid)`; the name is `Unknown` until the game gives it, and `— Power: <name>` is added when the interdictor belongs to a Power). When it resolves, the card adds the outcome in color for about eight seconds and then clears:
+
+| Outcome | Shown as |
+|---|---|
+| You escaped | **Escaped** (green) |
+| You were pulled out of supercruise | **Pulled from supercruise** (red) |
+| You submitted | **Submitted to interdiction** (amber) |
+
+**How it knows.** Three signals, whichever arrives first:
+
+1. The game's own "being interdicted" flag in `Status.json`, which flips the moment the interdiction minigame starts. The game writes that file about once a second, so this can trail the instant by up to a second.
+2. An NPC's taunt in the chat (the `npc` channel only, never system or squadron chat, which other commanders type into). A taunt can arrive before the flag.
+3. The authoritative `Interdicted` and `EscapeInterdiction` journal events once it is over. They carry the interdictor's name, whether it is a player or a Thargoid, and its Power.
+
+If the flag drops without a journal event, the card clears after three seconds. A warning that came from a chat taunt and is never confirmed clears after 75 seconds.
 
 ## Flight Alerts
 
@@ -57,7 +91,7 @@ One small card on your game screen with three jobs. It has no panel button, only
   - `No scoop at next star`, `(neutron star)`, `Fuel 38% (12.2 t)` when the star you have plotted to is one you cannot scoop (neutron stars, white dwarfs, black holes and the other non-main-sequence stars) and the tank is at or under a second percentage. That second warning is the one the game does not give you.
 - **Mining alerts.** While you mine:
   - A green `Core asteroid` card with the core mineral for 30 seconds when a prospected rock is a core asteroid.
-  - A green `Rich rock: Painite` card for each target commodity (set under Settings → WFMT → Mining; several can be set, each with its own percentage) that a rock holds at least the percentage of.
+  - A green `Rich rock: Painite` card for each target commodity (set under Settings → WFMT → Mining; several can be set, each with its own percentage) that a rock holds at least the percentage of. A rock rich in more than three targets shows the richest three.
   - An amber `Low on limpets` when the limpets aboard are at or under a number you choose.
   - An amber `Hold nearly full` when the hold is at or over a percentage you choose. It follows the cargo in the game's `Status.json` as it changes, and the `Cargo` event when that is not available; it does not use the figure while the Rhino is out.
 
@@ -65,14 +99,17 @@ One small card on your game screen with three jobs. It has no panel button, only
   - The limpet and hold alerts only show while you are mining (a prospector, refinery or collector event in the last half hour), so a full hold for another reason never nags.
   - The limpet count is exact once EDMC has told WFMT your cargo.
   - The limpet alert only appears when a limpet controller is fitted (or limpets have been seen aboard since the last loadout), and never while the Rhino is out. A Rhino miner or a laser miner who carries no limpets is not warned.
-  - A rock you prospect twice raises its alert once (once for each target it holds), and a rock that is nearly mined out does not raise a rich-rock alert.
+  - A rock you prospect twice raises its alert once (once for each target it holds), and a rock with under a quarter of itself left does not raise a rich-rock alert (a core alert is still raised).
 
 **To set it up:**
 
 1. Open **Settings → WFMT → Overlays → Flight Alerts**.
-2. Tick **Enable Flight Alerts**. It is **off by default**. The countdown and the fuel warnings are two ticks under it (both on),
-   with a percentage for each fuel warning (25% for low fuel, 50% for the unscoopable star). Mining alerts are a third tick (on), with the limpet number (5) and the hold percentage (95).
-3. Optionally tick **Play a sound when an alert starts**: it plays when a fuel or mining alert starts and at 10 minutes, 5 minutes, 1 minute
+2. Tick **Enable Flight Alerts**. It is **off by default**. Under it:
+   - **Fleet carrier jump countdown (alerts at 10, 5 and 1 minute, and at departure)** (on).
+   - **Fuel warnings** (on), with two percentages, each from 5 to 95: **Warn when the tank is at or under** (25 by default) and **Warn about a star that cannot be scooped when the tank is at or under** (50 by default).
+   - **Mining alerts (a core asteroid, a rock rich in your target commodity, low limpets, a nearly full hold)** (on), with **Warn when the limpets aboard are at or under** (0 to 99, 5 by default) and **Warn when the hold is at or over** (50 to 100 percent full, 95 by default).
+   - The target commodity and its percentage for the rich-rock alert are set under **Settings → WFMT → Mining**; a core asteroid is always flagged.
+3. Optionally tick **Play a sound when an alert starts** (off by default): it plays when a fuel or mining alert starts and at 10 minutes, 5 minutes, 1 minute
    and departure for a carrier jump. The box is grayed out where WFMT cannot play a sound (on Linux it needs `canberra-gtk-play`
    or `paplay`).
 4. Press **Test Card** to see it. The test works even while the feature is off, and reports whether an overlay could be reached.
@@ -80,7 +117,7 @@ One small card on your game screen with three jobs. It has no panel button, only
 The card is always the same width and wraps what it says onto more lines (at the end of a sentence first), growing downward, so nothing runs off the screen however long a system name is.
 
 - Fuel warnings show only while you are flying your main ship, not docked, landed or scooping.
-- Where the card sits is set on **Overlay Placement** ("Flight alerts"); by default it is on the right, below the Inventory display.
+- Where the card sits is set on **Overlay Placement** ("Flight alerts (carrier jump, fuel)"); by default it is on the right, below the Inventory display.
 
 ## Route overlay
 
@@ -157,7 +194,7 @@ WFMT, like every third-party tool, only knows what Elite Dangerous writes to its
 |---|---|---|
 | Landing Assist to show which way the pad faces | The journal gives only a **pad number** and the station type, with no orientation. | Use the diagram for which pad is yours; line up by the pad numbers in the game. |
 | A diagram for every kind of facility | Some facilities have no diagram, and the journal does not say enough (which layout, which way it faces) to draw one. | Use the pad number and follow the game's own docking guidance. |
-| Interdiction Warning to fire before the game confirms | It combines three early signals, then the game's own `Interdicted` and `EscapeInterdiction` events, because they arrive separately. | Treat the alert as a prompt. The in-game screen is the final word. |
+| Interdiction Warning to fire before the game confirms | It combines the `Status.json` interdiction flag (written about once a second), an NPC's taunt in chat, and then the game's own `Interdicted` and `EscapeInterdiction` events, because they arrive separately. A taunt is not proof of an interdiction. | Treat the alert as a prompt. The in-game screen is the final word. |
 | A fuel warning that says whether you can make the next jump | The journal does not say what a jump costs in fuel. | WFMT compares **percentages** of the tank, so choose the percentages that suit your ship. |
 | A fuel percentage the moment EDMC starts | The tank size comes from the game's `Loadout` event, written at login and when you change ship or a module. Until then WFMT has fuel in tons, but no percentage. | Only the game's own low-fuel flag is used until then. Log in again, or change a module or ship, to make the game write it. |
 | A countdown for a jump you did not schedule | WFMT only knows a request the game wrote to your journal. | Use the in-game carrier screen for jumps scheduled by someone else. |

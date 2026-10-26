@@ -9,7 +9,7 @@ Mining mode tracks two kinds of mining, keeps a book for each, and adds up every
 Use the **◀** and **▶** buttons at the top of the panel to switch between the two pages. Each page shows live stats
 for your current run, and its **BOOK** button opens the book for that page.
 
-**On this page:** [What each page shows](#what-each-page-shows) · [The buttons](#the-buttons) · [A typical run](#a-typical-run) · [Mining History](#mining-history) · [The live window](#the-live-window) · [The Space Mining Book](#the-space-mining-book) · [The Surface Mining Book](#the-surface-mining-book) · [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) · [Settings](#settings)
+**On this page:** [What each page shows](#what-each-page-shows) · [The buttons](#the-buttons) · [A typical run](#a-typical-run) · [Mining History](#mining-history) · [The live window](#the-live-window) · [The Space Mining Book](#the-space-mining-book) · [The Surface Mining Book](#the-surface-mining-book) · [Mining alerts](#mining-alerts) · [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) · [Settings](#settings)
 
 **Where this comes from:**
 
@@ -22,21 +22,32 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 ## What each page shows
 
-Lines come and go with the settings listed at the end of this page.
+Lines come and go with the settings listed at the end of this page. Three switches under **Settings → WFMT → Mining** decide which lines you see (all three are on by default):
+
+| Setting | Lines it controls |
+|---|---|
+| *Show the cargo bar* | The hold lines (**Hold** on the Space page; **SRV hold** and **Ship hold** on the Surface page) |
+| *Show session totals* | **Refined**, **Refining now**, **Run average**, **Hold full in** and **What the station pays** (Space page); **Refined**, the rates, **SRV hold full in**, **Transferred to ship** and **Raw materials** (Surface page) |
+| *Show prospector hints* | **Asteroids prospected**, **Materials seen**, **Last rock**, **Core asteroids found**, **Asteroids cracked** and **Limpets launched** (Space page); the **Last DSS scan** line (Surface page); the `Mine via` method hint beside each commodity |
+
+The HUD overlay follows the same three switches, so turning a line off hides it in both places.
+
+Before a run has started the page says so instead of showing zeros: `No commander detected yet.` until the game has told WFMT who you are, then `No active mining run. Undock to start tracking a new run.` on the Space page and `No active Rhino deployment. Launch the Rhino to start tracking a new run.` on the Surface page. Mission needs and the ring's reserve level still show on the Space page while it waits.
 
 ### Space Mining
 
-In your ship, from undocking.
+In your ship, from undocking. A run is one trip from `Undocked` to `Docked`: the next undocking starts a fresh run and the numbers of the finished one stay on the page until then.
 
 - **Hold**, for example `Hold: 64 of 200 t`.
   - The tons your ship carries, read live from `Status.json` (the `Cargo` event is used until it has said), and its capacity from your last loadout.
   - The same line is on the HUD overlay.
-  - The ring you are at is shown with its reserve level, once *Enable EDSM ring reserve lookup* is ticked and EDSM knows it.
-- **Asteroids prospected**, with how many of each content grade, and the **materials seen** in them. A rock prospected again with the same composition is counted once, and the page says how many repeats it ignored.
+  - The ring you are at is shown with its reserve level, once *Enable EDSM ring reserve lookup* is ticked and EDSM knows it, for example `Ring: Example 2 A Ring (Metallic) - Reserve: Pristine`. A ring that is not Metallic is shown in amber with a reminder that laser mining pays best on Metallic rings. Nothing is shown while the answer is unknown, rather than a stale or guessed one.
+- **Asteroids prospected**, with how many of each content grade (for example `Asteroids prospected: 14 (High x3, Medium x6, Low x5)`), and the **materials seen** in them. A rock prospected again with the same composition is counted once, and the page says how many repeats it ignored (`[2 duplicate(s) ignored]`).
+  - Each material in **Materials seen** is listed on its own line with how many rocks held it, the lowest, average and highest percentage seen this run in square brackets, and, when the method is known, `Mine via` with the method that usually suits it (core, laser surface or sub-surface deposit). The method hints are community-sourced.
 - **Last rock**: the latest rock's materials with their percentages and its grade, for example `Last rock: Painite 34%, Platinum 12% (High), target: Painite`.
   - A **core asteroid** (the game names a core mineral in the prospector's result) adds `core: Painite`, and **Core asteroids found** counts them for the run.
   - `target:` names each target commodity the rock holds at least its percentage of (Settings → WFMT → Mining; several can be set).
-- **Mission needs**: for each commodity your active mining missions still ask for, how many tons you already hold, for example `Mission needs: Painite 50 of 120 t held (2 missions)`. It is worked out the way the Missions window does it and shows even before you start mining.
+- **Mission needs**: for each commodity your active mining missions still ask for, how many tons you already hold, for example `Mission needs: Painite 50 of 120 t held (2 missions)`. It is worked out the way the Missions window does it and shows even before you start mining. Up to three commodities get a line; more are summed up as `+2 more commodities`. A commodity asked for by several missions says how many (`(2 missions)`).
 - **Asteroids cracked** (core mining).
 - **Limpets launched** by type, with the count still on board. The count is exact once EDMC has told WFMT the cargo. Otherwise it is bought less launched, marked with ~. The HUD overlay's *Limpets remaining* line shows the same number.
 - **Refined**, by commodity (with the mining method that usually suits it, when prospector hints are on). Then:
@@ -58,20 +69,23 @@ In your ship, from undocking.
   - A good deal is a good one only until you have looked at the next station.
   - A station that lists a price for something it does not buy (no demand) is skipped.
   - The lines go when you undock.
-- A **Paused** note while you are in supercruise.
+- A **Paused** note (`Paused (in supercruise)`) while you are in supercruise. It changes nothing: the run keeps its numbers and carries on when you drop out.
 
 ### Surface Mining
 
-In the Rhino SRV.
+In the Rhino SRV. A run runs from launching the Rhino to stowing it. The page keeps the last run's numbers (`Rhino stowed (last deployment)`) until the next launch, but the hold lines and *Refining now* show only while the Rhino is out.
 
 - Whether the Rhino is deployed or stowed, its hold (`SRV hold: 40 of 72 t`) and your ship's (`Ship hold: 64 of 200 t`, from the last `Cargo` event while the Rhino is out).
 - **Refined**, **Refining now** and the **Run average**. They are worded as on the Space page. *Refining now* shows only while the Rhino is out.
 - **SRV hold full in**: the same estimate for the Rhino's 72 t hold, only while it is out.
 - What was **Transferred to ship** and the **Raw materials** picked up.
-- The **Last DSS scan**: how many mining locations the scan found on which body.
-- **Known hotspots here**: the ones you have saved on the body you are on.
+- The **Last DSS scan**: how many mining locations the scan found on which body (`Last DSS scan: 4 Planetary Mining Location(s) on <body>`).
+- **Known hotspots here (N)**: the ones you have saved on the body you are on, one per line with the material, rigs, signal number, position, the tons-left estimate in square brackets and your note.
 - The **coverage minimap** (if ticked in Settings): ground the Rhino has driven over, with your position, your saved hotspots and the mining locations you marked with **CTR** and **BRD**. In your ship it appears only close to the ground (under about 2 km).
 - **Nearest marked location**: the size of the mining location you marked nearest you, which way its center is and how much of its edge you have driven (see [Marking a mining location](#marking-a-mining-location)).
+- **Nearest saved deposit**: the closest deposit you saved, its material, how far and which way, with your rig-gap verdict when one is set.
+- **Rigs noted**: how many rigs you noted with **Rig placed** and how far the nearest is (see [Rig bands](#rig-bands)). Nothing until you note one.
+- A line saying what **CTR** or **BRD** last did, or why it could not (`WFMT cannot read your position: be on or just above the ground.`).
 
 Both pages carry the buttons below, and the Surface Mining Book and the coverage map are per commander.
 
@@ -93,32 +107,36 @@ The three online lookups are **off until you turn them on in Settings**. See [wh
 
 ### H.S.: Find Nearby Hotspots
 
-1. Type a material.
-2. Choose how far to look and the system to search from.
-3. Press **Search**.
+1. In **Material**, pick or type a mineral (the list holds the materials known to work; a name not in it is still accepted).
+2. In **Where**, choose how far to look: within 25, 50, 100 (the default), 250, 500 or 1,000 ly.
+3. In **Search from**, type the system to measure from. It starts as the system you are in; **Here** puts it back. System names are suggested as you type, from the systems you have been in (and from Spansh while typing only if you ticked *Suggest system names from Spansh while typing* in Settings → WFMT → Window).
+4. Press **Search** (or Enter).
 
-The table lists the nearest rings Spansh confirms have a hotspot for it: ring, body, system, hotspots, distance, distance from the star and reserve level. Click a heading to sort. Double-click a row, or use **Copy system**, **Copy body** or **Copy ring**.
+The table lists up to 25 rings Spansh confirms have a hotspot for that material, nearest first. Columns: **Ring**, **Body**, **System**, **Hotspots** (how many of that material the ring has), **Distance (ly)**, **Arrival (ls)** (distance from the arrival star) and **Reserve level**. Click a heading to sort. Select a row and use **Copy ring**, **Copy body** or **Copy system** in the header, or double-click a row to copy its system, then paste it into the galaxy map.
+
+Only the system name and the material are sent. A search that finds nothing tells you to try a longer distance or to check the spelling.
 
 ### PRICE: Find Best Price
 
-1. Type a commodity.
-2. Choose selling or buying.
-3. Choose how far to look (or **This system only**, for goods that must be sold inside a Powerplay system) and the system to search from.
-4. Press **Search**.
+1. Type a commodity in **Commodity**. Suggestions follow what you type, with what this run refined listed first. Press Down on an empty box to see the list.
+2. Choose **I am selling** (the default) or **I am buying**.
+3. In **Where**, choose **This system only** (for goods that must be sold inside a Powerplay system), within 10, 25, 50 (the default), 100, 250, 500 or 1,000 ly, or **Anywhere**.
+4. In **Search from**, type the system to measure from (it starts as yours; **Here** resets it).
+5. Press **Search** (or Enter).
 
-The table lists the stations Spansh shows paying the most (or selling cheapest): price, demand or supply, distance, distance from the star, largest pad and kind of station. Click a heading to sort. Double-click a row, or use **Copy system** or **Copy station**.
+The table lists up to 25 stations Spansh shows paying the most (or selling cheapest). Columns: **Station**, **System**, **Price (cr)**, **Demand** (**Supply** when buying), **Distance (ly)**, **Arrival (ls)**, **Pad** (the largest pad Spansh counts, or `?`) and **Kind** (for example `Orbital Coriolis Starport` or `Ground Planetary Outpost`). Click a heading to sort. Double-click a row to copy its system, or use **Copy system** or **Copy station** in the header.
 
-- **Minimum demand (t)** (Minimum supply when buying) is the least a station must show. When you are selling it starts at the tons of that commodity in your hold if EDMC knows them, otherwise 1. You can type another whole number.
+- **Minimum demand (t)** (Minimum supply when buying) is the least a station must show, a whole number from 1 to 1,000,000. When you are selling it starts at the tons of that commodity in your hold if EDMC knows them, otherwise 1, and follows the commodity you type until you type a figure yourself.
 - Fleet carriers are left out, and only markets updated in the last 30 days are asked for.
 - The pad size and a market's exact age are not filtered. The largest pad is in the table, and a station you cannot land at can still be listed.
 
 ### RES: Check Ring Reserve Level
 
-1. Type a system.
-2. If you want one body, type a body or ring name. Empty lists every ringed body in the system.
-3. Press **Search**.
+1. Type a system in **System** (it starts as the one you are in).
+2. In **Body or ring**, type a body or ring name if you want one. It starts as the ring you are at, if WFMT has tracked one. Empty lists every ringed body in the system.
+3. Press **Search**. **Here** fills in the system you are in.
 
-The table gives each ring with its body, the reserve level and the ring type, and flags rings that are not Metallic in amber. It uses EDSM.
+The table gives each ring with its **Body**, **Reserve level**, **Ring type** and a **Laser mining** note, and flags rings that are not Metallic in amber. Select a row and use **Copy ring** or **Copy system**, or double-click a row to copy its system. It uses EDSM and sends only the system name. When EDSM has no ringed body on file for the system (or none with the name you typed) the status line says so.
 
 **Automatic lookup.** Once on, the EDSM ring reserve lookup also contacts edsm.net **automatically every time you drop into a ring**, as well as when you search by hand.
 
@@ -156,7 +174,15 @@ The table gives each ring with its body, the reserve level and the ring type, an
 - **Rings**: where you mined, with runs, tons, asteroids prospected, the share rated High and the last visit.
 - **Runs**: every run, newest first, with where, mining time, tons, tons per hour, asteroids prospected, the share rated High, limpets (prospector / collector), what it earned and what is left after the limpets.
 
-Click a heading on the last three tabs to sort.
+Click a heading on the last three tabs to sort. The columns:
+
+| Tab | Columns |
+|---|---|
+| **Commodities** | Commodity, Refined (t), Sold (t), Earned, Average per ton, Share of refined |
+| **Rings** | Ring, System, Runs, Refined (t), Prospected, High, Last visit (most tons first until you sort) |
+| **Runs** | Started (UTC), Where, Mining time, Refined (t), t / hour, Prospected, High, Limpets P / C (prospector and collector), Earned, After limpets |
+
+The window's header has **Refresh**, **Rebuild from journals** and **Help** (it explains *Mining time*, *Earned* and *After limpets*). The line under the title says which commander it is and how many runs there are since when. If a commander is not known yet, the status line asks you to log in or play first.
 
 ### Surface Mining History
 
@@ -164,7 +190,9 @@ Click a heading on the last three tabs to sort.
 
 - Runs are counted from launch to stowing.
 - It shows tons refined by the Rhino (and what they sold for).
-- A **Bodies** tab takes the place of Rings, with each body's runs, tons and last visit.
+- The Overview drops the tiles that only make sense in a ship (*asteroids rated High* and *credits after limpets*), and its Prospecting and Limpets blocks give way to **The Rhino's bodies**: how many bodies were mined on, the most tons on one body and the average tons per body.
+- Sales are matched to each half by the commodity sold, so a commodity mined both ways counts its sales in both windows.
+- A **Bodies** tab takes the place of Rings, with each body's runs, tons refined, tons per hour and last visit. Its **Runs** tab has Started (UTC), Where, Mining time, Refined (t), t / hour and Earned.
 - Each window remembers its own size and position.
 - A Rhino that was already out when EDMC or the game started is recognized from the SRV's hold in the journal or from `Status.json`. Its tons count as Surface mining, from the first refined ton on.
 
@@ -209,7 +237,7 @@ Commodity names are suggested as you type in the Find Best Price window, the Add
 
 - The first time it opens, WFMT reads every finished journal once, in the background. The header and status bar show how far it has got. Years of journals take a minute.
 - It keeps the runs in `mining_history.json` beside the plugin, one record per commander. A later start reads only the journals written since.
-- The newest journal, which may be growing, is read again every few seconds while the window is open, so a run in progress is included and nothing is counted twice.
+- The newest journal, which may be growing, is read again about every 15 seconds while the window is open, so a run in progress is included and nothing is counted twice.
 - **Refresh** reads now.
 - **Rebuild from journals** forgets the saved runs and reads every journal again. Use it if the journals were edited or you think a number is wrong.
 - It sends nothing anywhere.
@@ -246,7 +274,8 @@ Three more things appear when they apply:
 Other controls and lines:
 
 - The **Help** button in the window's header explains every mark.
-- The buttons under the radar set how far it reaches, from 50 m to 2 km (the choice is remembered).
+- The **Radar reaches** buttons under the radar set how far it reaches: 50 m, 250 m, 500 m, 1 km or 2 km (2 km is the default, and the choice is remembered). The button for the current reach is highlighted.
+- The radar needs your position and the body's size. Until it has them (you are not on or just above the ground) it says `The radar draws when you are on or just above the ground.` instead of a picture.
 - On the right are the same lines the panel shows: the run, cargo, refined, the last DSS scan, your saved deposits here, the nearest marked location and the nearest saved deposit.
 
 The controls that act on the ground are in the header:
@@ -264,13 +293,30 @@ The controls that act on the ground are in the header:
 
 The radar draws when you are on or just above the ground and a body's size is known; otherwise it says so. The ground "driven" is where the Rhino has been, not what was scanned, as on the minimap.
 
+The window's subtitle names the body and system you are on. **Save map** needs the same two things; without them its status line says `The map needs your position and the body's size: land, or launch the Rhino, first.` The file name offered is the body's name followed by `map.png`.
+
+### Keyboard shortcuts and chat commands
+
+Three of the controls, the radar range and the window itself have shortcuts, so you can use them without taking your hands off the controls. They are set on **Settings → WFMT → General → Shortcuts** and listed in [Shortcuts](shortcuts.md).
+
+| Action | Default key (Windows) | Chat command |
+|---|---|---|
+| Mark the center (**CTR**) | Ctrl+Alt+Shift+C | `!wf center` |
+| Mark the border (**BRD**) | Ctrl+Alt+Shift+B | `!wf border` |
+| **Rig placed** | Ctrl+Alt+Shift+R | `!wf rig` |
+| Radar range (steps 50 m, 250 m, 500 m, 1 km, 2 km, then back to 50 m) | Ctrl+Alt+Shift+Z | `!wf zoom` |
+| Open the Live window | Ctrl+Alt+Shift+L | `!wf live` |
+
+Chat commands are off until you tick *Chat commands* on that page. The key combinations are Windows only; on Linux use the chat commands.
+
 ### The radar over the game
 
 With one screen you cannot keep the Live window beside the game. **Settings → WFMT → Overlays → Mining → Show the Mining radar over the game** draws the same radar over the game while the Rhino is out, about once a second, and takes it down when you stow the Rhino.
 
 - It needs WFMT's built-in overlay (Windows; **Overlays → Overlay Connection**). EDMCModernOverlay cannot draw a picture, so on Linux, or with that overlay, it does nothing.
 - Its background and the green of the ground driven are translucent so the game shows through. Everything else on it is solid.
-- The card's size (240 to 560 pixels) and the background opacity (30 to 100 percent) are on the same page, with a **Test radar** button that draws the simulation's pretend Rhino for a few seconds.
+- The card's size (240 to 560 pixels, 340 by default) and the background opacity (30 to 100 percent, 70 by default) are on the same page, with a **Test radar** button that draws the simulation's pretend Rhino for a few seconds at the size and opacity typed in the boxes (they are saved only when you press OK). It says `Needs WFMT's built-in overlay` when that overlay is not the one in use.
+- The card appears only while the Rhino is out and WFMT knows your position and the body's size; it is redrawn about once a second and removed when any of that stops.
 - It reaches as far as the Live radar, so the radar range shortcut or chat command, or the Live window's range buttons, change it too.
 - Where it sits is **Overlay Placement → Mining radar**. The default is the Bio radar's spot at the left, since both are for a planet's surface.
 
@@ -285,6 +331,7 @@ With it set:
 - Each rig you note with **Rig placed** gets a band of that radius on the radar: a filled disc while the Rhino is inside it, and a thin outline once the Rhino is clear. So the next rig goes down outside every band.
 - The lines on the right say how many rigs are noted and how far the nearest is.
 - Each rig is a small numbered square (1 is the first placed).
+- Pressing **Rig placed** twice within 5 m of the same rig adds nothing, and WFMT keeps at most 40 rigs on a body.
 - With no gap set the radar shows only the squares, and says to set one.
 - The rigs, and the radar card over the game, follow the same rule.
 
@@ -320,8 +367,8 @@ A surface mining signal is a circle of ground with the deposits scattered inside
 
 1. Open **LIVE**. Land and drive to the **middle** of the signal and press **CTR** (in the live window's header).
    - Pressing it again within 100 m of the same center moves it.
-   - Pressing it anywhere else starts another location (up to 12 per body).
-2. Drive to the **edge** of the signal and press **BRD** (also in the live window). The radius is the distance from the center, shown on the page (`Border marked: the signal is 1.50 km in radius`). **BRD** works on the marked center nearest you.
+   - Pressing it anywhere else starts another location (up to 12 per body; past that the oldest is dropped).
+2. Drive to the **edge** of the signal and press **BRD** (also in the live window). The radius is the distance from the center, shown on the page (`Border marked: the signal is 1.50 km in radius`). **BRD** works on the marked center nearest you. If you are within 100 m of that center, it tells you how close you are and asks you to drive to the edge first. With no center marked on the body it asks you to press **CTR** first. Pressing **BRD** again somewhere else resets the border.
 3. The minimap draws a cross at the center and the circle through the border.
 
 **Nearest marked location** on the page gives:
@@ -354,6 +401,8 @@ Press **BOOK** on the Space Mining page. It lists every **ring** your journals s
 - A ring the journals only show as part of a planet you scanned (no hotspots, no mining) is left out, since there are thousands.
 - A ring with a note, a favorite star, or added by hand stays.
 
+The window is one table with a detail panel under it. Its columns are **★** (a favorite), **Ring**, **System**, **Hotspots (count per mineral)**, **Class**, **Reserve**, **Tons mined** and **Last mined**. Click a heading to sort. Until you sort, favorites come first, then the ring with the most tons, then the one with the most hotspots. Select a row and the panel under the table repeats the ring's hotspots (up to 30 minerals), class and reserve, `Mined: 620 t in 3 runs, last 2026-10-12` (or `Not mined yet`) and `Added by hand` when you added it yourself. The subtitle gives your commander, how many rings you have and the tons mined in all.
+
 What each ring shows:
 
 - **Hotspots**: each mineral a DSS scan of the ring found, with its hotspot **count**, for example `Painite 3, Platinum 2`. The journal gives the count only, not where the hotspots are or whether two minerals share a spot, so overlaps cannot be shown.
@@ -362,12 +411,15 @@ What each ring shows:
 
 What you can do:
 
-- **Your note and a favorite star.** Type a note and press **Save note**. **Favorite** moves a ring to the top.
+- **Your note and a favorite star.** Select a ring, type in **Your note** and press **Save note** (or Enter). **Favorite** toggles the star, and starred rings move to the top.
 - **Copy system** puts its system on the clipboard for the galaxy map.
-- **Find** narrows the list by a ring, a system, a mineral or a note.
+- **Find** narrows the list by a ring, a system, a mineral or a note, as you type.
 - **Favorites only** shows just the starred ones.
-- **Add ring** adds a ring by hand (a ring the journals have not shown, or one you heard about): its name, system, hotspots like `Painite 3, Platinum 2`, class and reserve level. A ring you added can be removed. One from the journals comes back when the journals are read.
+- **Add ring** (top right) adds a ring by hand, for a ring the journals have not shown or one you heard about. The form asks for the ring's name as the game names it (required), the system, the hotspots written like `Painite 3, Platinum 2`, the class (Icy, Rocky, Metallic or Metal rich) and the reserve level (Pristine, Major, Common, Low or Depleted). A hotspot list that does not read that way is refused with a hint. It needs a known commander.
+- **Remove** takes away a ring you added by hand. A ring from the journals cannot be removed (it comes back when the journals are read); the status line says so.
 - **This system** (a header button) goes to the rings you have in the system you are in, or says `You have not worked this system yet.` It puts the system name in **Find**.
+- **Refresh** reads the newest journal again now. The window also keeps itself current while the journals are being read for the first time.
+- **Help** explains where the rings come from and what **Remove** does.
 
 If the list is still long, it draws the first 150 rings (favorites first, then the most tons mined) so the window opens and closes quickly. The subtitle says when more match, and **Find** reaches them.
 
@@ -398,6 +450,14 @@ About the **From your journals** group:
 
 **This system** (a header button) goes to the body you have worked in the system you are in (saved hotspots, tons refined or mining locations found), or says `You have not worked this system yet.`
 
+### The three panes
+
+- **Left, Bodies.** Two filters sit on top: a material (`All materials` or any material you have saved) and a number of rigs (`Any rigs`, `1 rigs`, and so on for the counts you have saved). Under them the bodies are grouped: one group for each planet class among the bodies scanned in the system you are in (with how many mining locations the scan found and the tons you refined there), then **Saved, not scanned this session** (saved bodies in this system the journals have not shown a scan of), **Other systems** (saved bodies elsewhere) and **From your journals**. A pill shows how many hotspots you saved on a body. Click a group heading to fold it. With a material filter, a scanned body also stays when your own records show that material on its kind of ground, highest share first, and a line says what percentage of your recorded deposits there are that material. The **From your journals** group is hidden while a filter is on.
+- **Middle, Hotspots.** The selected body's saved deposits, grouped by location number (`Location 1`, `Location 2` and so on, with `Unnumbered` last), each with its material, rigs, tons-left estimate, the tons mined and a pill for its Amount. Three tiles give the hotspots saved, the tons mined here and how many are not depleted. A summary line gives the materials saved on the body (`Monazite ×2 · Painite ×1`). Under it come the best stops, and, for a scanned body, the **Your records** table (Material, Share, Recorded, Saved) of what you have found on that kind of ground, which describes your own finds and not what the body holds.
+- **Right, the card and the map.** The selected deposit's material, location and rigs, its Density and Amount pills, the tons-left estimate, its depleted status, the tons mined so far, its coordinates and your note, with these buttons: **Mark depleted** (not shown once it is), **Copy coords** (shown when it has a position), **Share line** (when it can be shared), **Edit** and **Delete** (it asks first). Under the card is a zoomable map of the body: the ground you have driven, your deposits (with their signal numbers, a hollow ring for a depleted one), you, and the stop circles. The map needs the body's size, which WFMT has only for a body you have visited this session; otherwise it says so.
+
+The header buttons are **Add hotspot**, **Market research**, **What pays**, **Get body info**, **Paste spot** and **This system**. The window opens on the body you are on when there is one, and refreshes itself when you save or change a hotspot.
+
 You can:
 
 - filter by material or number of rigs,
@@ -411,12 +471,30 @@ You can:
 - press **Get body info** to add the landable bodies EDSM lists for your system (below),
 - **Share line** and **Paste spot** (below).
 
+### Adding or editing a hotspot
+
+**Add hotspot** (and **+H.S.** in the Live window, and **Add** in Settings) opens one form; **Edit** opens the same form filled in. It starts with your system, body and position when you are on the ground. The fields:
+
+| Field | What to enter |
+|---|---|
+| **System**, **Body** | Required. |
+| **Latitude**, **Longitude** | Optional, in degrees. Without them the deposit is listed but never placed on the map or radar, and cannot be shared. |
+| **Contains** | Required. The commodity the deposit holds, for example Painite. Suggestions follow what you type, the materials you have already saved first. The spelling is made uniform, so `painite` and `Painite` are one material. |
+| **Rigs** | Optional, 1 to 7: how many mining rigs the deposit takes. |
+| **Signal number** | Optional. Which of the body's mining locations the deposit is in. Hotspots with the same number are listed together. |
+| **Amount** | The scanner's readout, `High`, `Medium`, `Low` or `Depleted`. Only these four are offered, because any other text would silently drop out of the tons-left estimate. |
+| **Density** | The scanner's readout, `Low`, `Medium` or `High`. |
+| **Folder** | A name to file it under. Type a name that does not exist yet to make the folder. |
+| **Notes** | Free text. |
+
+An edit keeps the tons mined and the kind of ground that WFMT recorded. A form with something missing or wrong shows a one-line error and keeps the window open. Saving a new hotspot with a position from **Add hotspot** or **+H.S.**, within 100 m of one you already have on the same body, updates that one (keeping its position, folder, notes and tons mined unless you supply new ones) instead of adding a second. This lets you correct a material by saving again at the same spot. **Add** in Settings always adds.
+
 ### Depleted marks
 
 A hotspot marked depleted is dated, and its card says how long ago.
 
 - Nobody knows when a mined-out deposit refills (the game gives no date and it may differ from system to system). So by default the mark stays until you change it: read the deposit's Amount again and edit the hotspot.
-- If you have seen a refill time, set it in **Settings → WFMT → Mining → Assume a depleted deposit has refilled after (days)** (0 = unknown). With a time set, the mark comes off that long after it was set, and the hotspot has no Amount until you read it again.
+- If you have seen a refill time, set it in **Settings → WFMT → Mining → Assume a depleted deposit has refilled after (days)** (0 = unknown, up to 90 days). With a time set, the mark comes off that long after it was set, and the hotspot has no Amount until you read it again.
 - If you then press **Mark depleted** on it and have not refined anything there since, WFMT takes that as a look at a deposit that is still empty. It keeps the first date and looks again 7 days later (`Still depleted at 15 d; look again in 7 d`).
 - Tons refined since make it a fresh depletion.
 
@@ -519,6 +597,23 @@ With the Rhino on the body, the deposit within 175 m of it is marked `you are he
 
 For a scanned body it also shows what *you've* found so far on that kind of body. That starts empty and fills in as you save hotspots. It describes your own finds, not what a body actually holds.
 
+## Mining alerts
+
+Mining alerts are cards on the Flight Alerts overlay, so they need an overlay running and Flight Alerts switched on. They are set on **Settings → WFMT → Overlays → Flight Alerts**: tick *Enable Flight Alerts* (off by default), make sure *Mining alerts* is ticked (it is by default), then choose the limpet number and the hold percentage. Details are in [Always on](always-on.md#flight-alerts).
+
+| Card | When it appears | Settings |
+|---|---|---|
+| `Core asteroid` and the core mineral (green) | A prospected rock names a core mineral. It stays 30 seconds. | None; a core asteroid is always flagged. |
+| `Rich rock: Painite`, `38% of the rock` (green) | A rock holds at least a target commodity's percentage. One card for each target it holds enough of (the richest three at most), 30 seconds each. No card when the rock has less than a quarter of itself left. | *Target commodities* in Settings → WFMT → Mining |
+| `Low on limpets`, `3 aboard` (amber) | The limpets aboard are at or under your number (5 by default, 0 to 99). | *Warn when the limpets aboard are at or under* |
+| `Hold nearly full`, `190 of 200 t` (amber) | The hold is at or over your percentage (95 by default, 50 to 100) of the capacity from your last loadout. | *Warn when the hold is at or over* |
+
+- A rock prospected again with the same composition does not raise a second card or sound. A new run (the next undocking) forgets the rocks seen.
+- The limpet and hold cards show only while you are mining, meaning a prospector, refinery, limpet or cracking event in the last half hour, so a hold that is full for another reason never nags.
+- The low-limpet card applies only when a prospector or collector limpet controller is in your last loadout or limpets have been seen aboard, and never while a Rhino is out.
+- The hold figure comes from `Status.json` about once a second when you are in the ship, and from the `Cargo` event otherwise.
+- *Play a sound when an alert starts* on the same page plays a sound for a new alert.
+
 ## What the game does and doesn't tell us, and how to work around it
 
 WFMT, like every third-party tool, only knows what Elite Dangerous writes to its journal files. It adds what Spansh and EDSM report and works around the rest. Where it can't be sure, WFMT says so rather than guess quietly. See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
@@ -534,27 +629,42 @@ WFMT, like every third-party tool, only knows what Elite Dangerous writes to its
 | The ship's hold while the Rhino is out | `Status.json` carries a `Cargo` figure, but what it counts while an SRV is out could not be checked (the file keeps no history), so WFMT does not use it then, or on foot. | The Ship hold line shows the last `Cargo` event's figure until you are back in the ship. |
 | An exact count of limpets aboard | The exact count comes from EDMC's cargo once it has told WFMT; until then "on board" is an estimate (bought less launched, marked `~`). The low-limpet alert applies only when a prospector or collector limpet controller is in your last loadout or limpets have been seen aboard, and never while a Rhino is out. | Check your cargo for the real number. |
 | Every commodity's best mining method | The method hints are community-sourced and need occasional updating. | If a hint looks wrong, trust the game and open an issue. |
+| Where a ring's hotspots are, or whether two minerals share one | A DSS scan gives each mineral's hotspot **count** only. | The Space Mining Book lists counts. Fly the ring and note what you find in **Your note**. |
+| Where a surface mining location is and how big it is | The journal says a body has mining locations, not where or how large. | Mark the center and border yourself with **CTR** and **BRD** ([marking a location](#marking-a-mining-location)). |
+| Where a mining rig went, and how close two rigs may be | The journal does not say where you put a rig, and the game does not publish a minimum gap. | Press **Rig placed** after each rig and enter the gap you measured in Settings. |
+| How far the Rhino's scanner reaches | No figure from Frontier. WFMT uses 2 km, a community estimate, for the driven-ground map, the edge percentage and the drive rings. | Treat those as guides. |
 | Ring reserve and hotspot lookups to always answer | They only know what players have uploaded to EDSM or Spansh. | No answer can mean nobody has recorded it. Scan the ring yourself, then save the hotspot with **+H.S.** |
 
 ## Settings
 
 **Settings → WFMT → Mining**
 
-The in-game Mining displays, including *Enable HUD Overlay*, are set on **Settings → WFMT → Overlays → Mining**.
+The in-game Mining displays are set on **Settings → WFMT → Overlays → Mining** (see below).
 
 **Checkboxes.** The first three are on by default. The rest are off.
 
-- *Show session totals*, *Show the cargo bar* and *Show prospector hints* (on by default).
-- The three online lookups above.
-- *Show coverage minimap* (Surface Mining page): a small map of ground the Rhino has driven over on the current body.
-- *Archive completed mining runs*: writes a JSON file per run.
+- *Show session totals*, *Show the cargo bar* and *Show prospector hints* (on by default). See [What each page shows](#what-each-page-shows) for the lines each one controls.
+- *Enable Spansh nearby hotspot finder* (Space Mining page): shows **H.S.**
+- *Enable Spansh best price finder and Market research in the Surface Mining Book*: shows **PRICE** and turns on **Market research** and **What pays**.
+- *Enable EDSM ring reserve lookup* (Space Mining page): shows **RES** and looks up each ring you drop into automatically.
+- *Enable body lookup*: turns on **Get body info** in the Surface Mining Book (asks edsm.net and spansh.co.uk for the bodies of your system, sending only its name or id).
+- *Show coverage minimap* (Surface Mining page): a small map of ground the Rhino has driven over on the current body, redrawn once a second while the Rhino is deployed.
+- *Archive completed mining runs*: writes a JSON file per run to `mining_sessions/`. A trip with nothing in it writes nothing.
 
 **Other settings.**
 
 - *Target commodities* and a percentage (Space Mining page). See below.
-- *Assume a depleted deposit has refilled after (days)*: 0 (the default) means unknown and marks stay. A number takes a Depleted mark off that long after it was set.
-- *Too close to place another rig (m)*: your own distance for the Surface Mining page's "far enough" note. 0 turns it off (0 to 2000 m, steps of 5).
-- *Stop radius in the Surface Mining Book*: how close deposits must be to the lead deposit to share a stop (500 to 2500 m).
+- *Assume a depleted deposit has refilled after (days)*: 0 (the default) means unknown and marks stay. A number from 1 to 90 takes a Depleted mark off that long after it was set.
+- *Too close to place another rig (m, 0 = off)*: your own distance for the Surface Mining page's "far enough" note and the radar's rig bands. 0 turns it off (0 to 2000 m, steps of 5).
+- *Stop radius in the Surface Mining Book (m)*: how close deposits must be to the lead deposit to share a stop (500 to 2500 m in steps of 250, default 1250).
+- **Simulation: Surface Live (pretend Rhino)**: opens the Live window on made-up data (see [Trying the live window without the game](#trying-the-live-window-without-the-game)).
+
+**Known Surface Hotspots.** At the bottom of the same page is a list of every hotspot you have saved, grouped by folder (`Unfiled` last), one line each with the system, body, material, rigs, signal number and tons-left estimate. Select a line and use **Add**, **Edit**, **Delete** (a folder heading cannot be edited or deleted), **Import...** and **Export...**. These open the same form and the same import and export as the Surface Mining Book and the Live window's **I/E** button. **Import...** reads a hotspot file exported by WFMT and asks whether to merge with your list (Yes) or replace it (No). **Export...** writes your saved hotspots to a JSON file you choose. A list belongs to the commander you are playing, and an export holds only that commander's list.
+
+**Settings → WFMT → Overlays → Mining**
+
+- *Enable HUD Overlay*: sends the hold, *Refining now*, *Run average*, *Hold full in* and *Limpets remaining* lines to the overlay. It follows the three display switches above. On the Surface page it sends the SRV and ship holds and the rates, and it stops while the ship is in supercruise. Where it sits is **Overlay Placement → Mining stats**. **Test HUD** draws a sample panel for a few seconds and says whether the overlay was reachable (it works even while the HUD is off).
+- *Show the Mining radar over the game while the Rhino is out*, with its **Size (pixels)**, **Background opacity (%)** and **Test radar** (see [The radar over the game](#the-radar-over-the-game)).
 
 **The arrow to the nearest known hotspot** is the **Surface Compass** (Settings → WFMT → Overlays → Surface Compass, and the Compass section in [Exploration](exploration.md#compass)). It points at the nearest hotspot by default, and also works from any mode.
 
@@ -563,7 +673,7 @@ The in-game Mining displays, including *Enable HUD Overlay*, are set on **Settin
 Type a commodity as the game names it (for example Painite) and the least share of a rock that makes it worth cracking.
 
 - You can type several, separated by commas or semicolons, each with its own percentage after the name: `Painite 30, Platinum 25, Void Opals`.
-- A name with no number uses the percentage beside the box.
+- A name with no number uses the percentage beside the box (20 by default, 1 to 100).
 - Up to 8 are used. A line under the box says what is wrong, such as a percentage outside 1 to 100.
 - The commodity may be typed in any spelling (Void Opals or Void Opal, Low Temperature Diamonds or Low Temp. Diamonds).
 - Empty means none.

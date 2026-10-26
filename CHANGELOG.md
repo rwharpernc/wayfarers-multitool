@@ -3,7 +3,7 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
-## 1.0.0 (2026-10-25)
+## 1.0.0 (not yet released)
 
 The first release. WFMT is an add-on for Elite Dangerous that runs inside EDMC (Elite Dangerous Market
 Connector) and puts its tools in one panel of eight modes, with optional on-screen overlays on Windows
@@ -20,7 +20,7 @@ Connector) and puts its tools in one panel of eight modes, with optional on-scre
   expedition planner, the Route Planner with Spansh's exact plotter and a carrier route for a fleet or
   squadron carrier, and the Expedition Log) with one Expedition section on the panel and a confirmation
   when a route's expedition starts, the Exploration
-  Dashboard, POI Reference and a surface compass with marks.
+  Dashboard, Notable Bodies alerts, POI Reference and a surface compass with marks.
   - An expedition that was stopped and is started again carries its clock on from the time it stopped at, and
     Rescan leaves out the time it was paused or stopped, as the live count does.
 - **Mining:** space and surface mining runs, the Space Mining Book and the Surface Mining Book, Mining
@@ -29,12 +29,20 @@ Connector) and puts its tools in one panel of eight modes, with optional on-scre
   needs and mining alerts.
 - **Trade:** profit after fuel and repairs, fleet carrier cargo, saved sessions, best routes and prices,
   a watch list and source commodities for missions.
-- **Missions:** every mission in one view, progress bars, the Missions window and pinned missions.
+- **Missions:** every mission in one view, progress bars, the Missions window and pinned missions, the Community
+  Goals page and where to buy the cargo a mission needs.
 - **Field Ops:** screenshots, backpack and cargo, materials, a blueprint browser, Engineers, material
   traders, the Ship planner and the Odyssey Upgrade planner.
   - The Ship planner shows which of a build's engineered modules you already have in storage.
 - **Colonization:** the current build, history and every site's shopping list.
   - A Sites window with a fleet carrier column and Rescan Carrier, and Where to buy for what a site still needs.
+  - **Remaining** is what is still to get: the site's need less the cargo in your ship and on your fleet carrier,
+    reaching 0 once you have it all wherever it is stored. The shopping-list overlay card shows the same figure, and
+    an option (on by default) leaves out the commodities the ship and the carrier already cover.
+  - The ship's hold is read from the game's `Cargo.json`, so the In Cargo figures follow a purchase at once.
+  - **Best single systems:** after Find all, the few systems whose stations together stock the most of the list are
+    checked with Spansh and ranked, with the stations to visit in order and what to buy at each; Copy Route copies the
+    best first. A search in progress is shown in the accent color.
   - Planned Builds, read from Raven Colonial when you press a button.
   - Optional sharing of progress, deliveries and carrier cargo with Raven Colonial, off by default.
   - My Projects lists every active project you have on Raven Colonial, across systems, adds up the ones you count and the trips

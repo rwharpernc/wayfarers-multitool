@@ -103,7 +103,7 @@ Buttons:
 
 - **Reset** starts the tally again; it offers to save an unsaved session first.
 - **Save session** is grayed out until there is something to save.
-- **History**, with **Rebuild** on a second row (see 5.2).
+- **History** and **Rebuild** (see 5.2); the four buttons share one row. A fifth button, if a page ever needs one, goes on a second row so it never widens the panel.
 
 Save does not end or restart the session: tracking is always on, the label never changes, and only
 **Reset** begins a new session.
@@ -665,6 +665,8 @@ Settings > WFMT > Trade (a top-level tab; the top-level tabs are in alphabetical
 | `wfmt_trade_include_carriers` | Fleet carriers in price results and routes (`allow_player_owned`) | on |
 | `wfmt_trade_include_ground` | Ground facilities in price results and routes (`allow_planetary`) | on |
 | `wfmt_trade_ship_pad_override` | small / medium / large ("" = from the ship) | "" |
+| `wfmt_trade_count_fines` | Count fines and bounties paid as a running cost (only payments made after it is ticked) | off |
+| `wfmt_trade_watch_collapsed`, `wfmt_trade_watch_window_geometry` | The Watch list row's fold state and its window's size and position | folded, "" |
 | `wfmt_trade_current_page` | Last page shown | Session |
 | `wfmt_trade_market_side` | Market search side: sell or buy | sell |
 | `wfmt_trade_commanders` | Commanders seen, `\|`-separated, so Settings can list them | "" |
@@ -675,7 +677,7 @@ Files in the plugin folder (all are commander data and must survive updates; see
 `tests/test_own_data_files.py` enforces):
 
 - `trade_ledger.json`, `trade_carrier.json`, `trade_stock.json`, `trade_history.json`,
-  `trade_journal_scan.json` and `trade_route_start.json`.
+  `trade_journal_scan.json`, `trade_route_start.json` and `trade_watch.json` (the watch list, section 11a).
 - `trade_route_start.json` is `{commander: {system, station, at}}`, where `at` is the dock's time: a dock
   replaces a start only if it is not older, so scanned files in any order give the right answer.
 - `trade_ledger.json` is `{"ledgers": {commander: ledger}}` (one session per commander; a defensive
@@ -715,7 +717,7 @@ Follows TECHNICAL.md section 11 ("Keeping API traffic low").
 
 A separate feature module in Trade's panel (its own `PANEL_PLACEMENT = "trade"` entry in `ui.FEATURES`, after `trade_panel`), so the Trade
 page code does not change. It reads Trade's two settings, `wfmt_trade_lookups_enabled` and `wfmt_trade_near_radius_ly`, and has none of its own;
-the row's fold state is `wfmt_trade_watch_collapsed` and the window's geometry `wfmt_trade_watch_window_geometry`.
+the refresh uses the "Near me" radius held to 5 to 5,000 ly (`trade_watch_panel._radius`); the row's fold state is `wfmt_trade_watch_collapsed` (folded by default) and the window's geometry `wfmt_trade_watch_window_geometry`.
 
 - **Seen prices.** On the `Market` event the panel reads `Market.json` (`trade_market.read_market_file`) and `WatchBook.record_market` keeps, for
   each watched commodity the market trades with a buy or sell price above 0, one `Sighting` per station (matched by station and system,
@@ -730,7 +732,7 @@ the row's fold state is `wfmt_trade_watch_collapsed` and the window's geometry `
   - Answers live in memory only.
 - **Best price.** `best_buy` is the lowest price among seen sightings with stock above 0 and the Spansh buy quote; `best_sell` the highest among
   sightings with demand above 0 and the Spansh sell quote. Ties go to the newer.
-- **Sizing.** The row is a hard-wrapped label (200 px), at most 5 lines of at most 16 characters of name, and the status is clipped to 160
+- **Sizing.** The row is a hard-wrapped label (200 px), at most 5 lines of at most 32 characters of name (then a `+N more in the window` line), and the status is clipped to 160
   characters; `tests/trade_watch_smoke.py` fails if the open row asks for more than the main panel's default width.
 - **Not verified in game:** reading `Market.json` on the `Market` event with a real market (the same file `trade_panel` already reads for cargo
   value), and a real Spansh answer for a refresh (the call is the one the Market page makes).

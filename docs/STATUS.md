@@ -3,7 +3,7 @@
 Read this first when picking the project up on a machine that has not seen the recent work (for example the Linux test machine).
 
 - It is kept in Git because Git is the only thing shared between the two test machines, one Windows and one Linux.
-- Last updated 2026-10-24, on Linux.
+- Last updated 2026-10-26.
 
 ## Release
 
@@ -11,8 +11,8 @@ Read this first when picking the project up on a machine that has not seen the r
   - The project was renamed Wayfarer's Multitool (WFMT) and its version history restarted at 1.0.0 on 2026-10-21.
   - Everything built so far is the first release, published as 1.0.0.
   - The checks to run first are in [TEST_PLAN.md](TEST_PLAN.md), and the open in-game checks are in [TODO.md](TODO.md).
-- The repository is public.
-  - The in-app updater and the README's "latest release" link read GitHub's public releases API.
+- 1.0.0 has not been published yet, and the repository is private until it is.
+  - The in-app updater and the README's "latest release" link read GitHub's public releases API, so they start working once the release exists.
 
 ## Branches
 
@@ -105,6 +105,11 @@ Written 2026-10-21 on the Windows machine. This is work done since the last Linu
 - **Expedition clock and Rescan (new, not run on Linux).** A stopped expedition started again carries its clock on from where it stopped; Rescan leaves out paused and stopped time. Steps are in `docs/LINUX_TESTING.md`.
 - **Ship planner In storage column (new, not run on Linux).** Steps are in `docs/LINUX_TESTING.md`.
 - **Table text caps (new, both OSes).** The caps went to 60 on the non-stretch name columns of Missions, Source commodities, Ship Builds and My Codex. Look at a long name at a narrow and a wide size.
+- **Colonization, added 2026-10-26 (not run on Linux).** Steps are in `docs/LINUX_TESTING.md` and section 6 of [TEST_PLAN.md](TEST_PLAN.md).
+  - Raven Colonial: **Create Project on Raven**, the **My Projects** window (the PROJECTS button) and finding a site's project by market id as well as name. Create Project, Mark Plan Entry Demolished and the My Projects writes have not yet run against the live service.
+  - The Sites window's **Remaining** column now shows what is still to get (the need less the ship's hold and the fleet carrier), and the overlay card matches it, with no To buy column and an option, on by default, to hide the commodities already covered.
+  - The ship's hold is read from the game's `Cargo.json`, so the In Cargo figures follow a purchase.
+  - **Best single systems** after Find all, and the accent color for a search in progress.
 - **Tests.** The Docker run on Windows (Docker Desktop, a Linux container) passed all 3,370 tests on 2026-10-23. Run the suite natively on Linux too, from a desktop session, and report the count and any failure.
   - Tests that replay dated journals now use a fixed clock; `docs/DEVELOPMENT.md` explains how to look for the ones that do not.
 - **Star index Update.** Update now fetches Spansh's small 1-day or 1-week file instead of the whole 173 MB dump.
@@ -142,7 +147,7 @@ Written 2026-10-21 on the Windows machine. This is work done since the last Linu
 
 ## Decisions already made
 
-- "Mactavious" stays as the second test commander in the tests. It is not to be stripped or renamed.
+- The tests keep using Mactavious as a second test commander (a fixture name for checking that commanders' data stays apart). It is a test name only; CMDR Mactavious is also the project's credited author (see the README and [ATTRIBUTIONS.md](ATTRIBUTIONS.md)).
 - Every online lookup is either opt-in in Settings or runs only when a button is pressed, and is listed in `docs/guide/internet-and-privacy.md`.
 - Out of scope: Guardian ruin surveying, landing-pad diagrams and an FSS spectrum guide.
   - The journal lacks what they would need.

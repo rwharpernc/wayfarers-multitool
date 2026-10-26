@@ -1431,6 +1431,17 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 - The repository only saves when a site really changed, because re-docking re-sends an identical snapshot.
 - At start-up `colonization_catchup.py` replays the recent journals into the repository (see "Catching up on state EDMC missed").
 
+**The ship's hold**
+
+- The In Cargo figures (Sites window, COL page and overlay card) read the hold from the game's `Cargo.json` beside the journals (`journal_files.read_cargo_file`), because the journal's `Cargo` event carries only a count and EDMC's cargo state was seen not to follow a purchase.
+- The file is ignored when it is missing, unreadable or describes another vessel (the SRV); `state["Cargo"]` is then used.
+- After any event that can change the hold (`Cargo`, `MarketBuy`, `MarketSell`, `CargoTransfer`, `CollectCargo`, `EjectCargo`, `MiningRefined`, the limpet events and `Loadout`) the hold is read again 1.5 s later, in case the game had not finished writing the file.
+
+**The Sites window's Remaining column**
+
+- `colonization_view` keeps two figures per commodity: `remaining` (the site's own need, required less delivered) and `to_get` (that less the hold and the carrier, never below zero). The window's Remaining column, its category totals and its sort show `to_get`; the buy trips divide `to_get` by the ship's capacity and the haul trips divide `remaining`, so haul trips still count everything the site needs.
+- The note under the Where to buy buttons is drawn in the accent color while a search runs, while the system check that follows it runs and while a Stop is pending, and in the muted color otherwise (one method sets every update, `_say`).
+
 **Fleet carrier column**
 
 - `colonization_carrier.py` keeps the window's FC column: tons transferred to the commander's fleet carrier, per commander through `commander_data.py`.
@@ -1597,7 +1608,7 @@ Design decisions:
   aren't in the zip, so they are never overwritten. `_OWN_DATA_FILES` and `_OWN_DIRS` add a second
   layer: they keep listed data out of the pre-update backup and out of unpacking. Keep them in sync
   when adding a data file (section 16).
-- **Backups.** The last three (`BACKUPS_KEEP`) are kept as timestamped zips. They hold code only: `_OWN_DATA_FILES` stays out of them.
+- **Backups.** The last three (`BACKUPS_KEEP`) are kept as timestamped zips; only those are trimmed, never the `pre-restore-` safety zips that share the folder. They hold code only: `_OWN_DATA_FILES` stays out of them.
 - **Exploration Dashboard.** *(Why a window that holds nothing of its own: [DESIGN_NOTES.md](DESIGN_NOTES.md#36-the-exploration-dashboard).)*
   - `explore_dashboard.py` owns the window (`explore_dashboard_window.py`) and supplies `snapshot()`:
     - the shared `system_survey.survey`

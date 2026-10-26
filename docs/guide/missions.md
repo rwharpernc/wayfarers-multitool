@@ -12,14 +12,21 @@ Where WFMT has to work something out, it marks it (a `~`). See [How WFMT knows w
 
 ## Using it
 
-The panel shows one category at a time, with a line like `◀  Combat (3)  ▶`. Click the **◀** or **▶** arrow to
+Press **MSN** in the mode bar. At the top a line reads `Missions: 7/20` (how many missions you hold of the game's limit of 20; switch it off with *Show mission count* in Settings). Under it the panel shows one category at a time, with a line like `◀  Combat (3)  ▶`. Click the **◀** or **▶** arrow to
 page between categories; the number is how many missions are in that category. The pages, in order, are:
 
 **Massacre (Space) · Settlement Raids (Ground) · Combat · Trade & Mining · Passenger · Covert / On-Foot Ops · Other · Community Goals**
 
 - **Massacre** and **Settlement Raids** missions show grouped **kill-progress bars**, so you can see at a glance how
   many kills are still needed across all your missions for the same faction.
-- Everything else shows **one card per mission**. Click a card to open the Missions window on that mission.
+  - There is one block per **issuing faction**. The top line is the faction's name (with `⚠ Illegal` when any of its stacked missions is illegal) and its kills as `done/required`. A `~` before the count means an estimate (see below).
+  - The second line is a progress bar, the reward (`12.5M (4.0M)`: the total of the stacked missions, and in brackets the part that came from wing missions, which are shared), and `Δ` followed by a number: how many more kills the biggest stack needs than this one (for the biggest stack, how many more than the next one).
+  - A **Sum** line at the end totals the biggest stack with a bar and the total reward (switch it off with *Show totals row*).
+  - Under them, `Settlements:` lists the ground targets (switch it off with *Show target settlement*), and `⚠` notes warn when the missions name several target factions or several target systems, or that `~kills = estimate, not exact`.
+  - With no such mission the page says so; if WFMT has no mission data yet it asks you to relog (`Relog (main menu and back) to sync missions.`).
+- Everything else shows **one card per mission**, soonest to expire first. A card has the mission's name (with `⚠ Illegal` or `🤝 Wing` badges), the issuing faction, `Mine via: ...` for a mining mission, its status (`Pending` or `✓ Complete`) and reward, a `Cargo: 120/200 collected, 80 delivered` line for cargo missions, `→ <system> / <station>` (where to go now: the hand-in place once the mission is done) and `Expires: 2d 4h` (`⚠` when under two hours remain). Click a card to open the Missions window on that mission.
+- The **Trade & Mining** page starts with **Commodities needed:** a total per commodity (`Gold (2 missions)  x150`) of the cargo you still have to find (switch it off with *Show commodities needed*).
+- The **Community Goals** page has one card per goal: its title, the system and market, a bar and the tier reached against the top tier (with `✓ Complete`), `Your contribution`, the bonus, `🏆 Top rank` when you are in the top rank, and the expiry. Under the goals, **Paid out** lists the latest three payouts.
 - Two buttons at the very bottom of the panel, on every page: **Missions window** (every active mission across every category) and **Find sources** (where to buy the cargo your missions need).
 
 ## The Missions window
@@ -28,8 +35,8 @@ Opens from the **Missions window** button at the bottom of the panel (or by clic
 come and go as you accept and hand them in.
 
 - **Active** tab: one row per mission, ready ones (✓, green) first, then the soonest to expire.
-  - Columns: mission, kind, faction, where to go now (the hand-in place once a mission is done), progress (see below), reward, and time left.
-  - Above the table, the summary: how many missions, how many are ready or under an hour from expiring, how many are pinned, and the rewards held.
+  - Columns: a pin column (★ for a pinned mission), **Mission**, **Kind**, **Faction**, **Go to** (the hand-in place once a mission is done), **Progress** (see below), **Reward** and **Left** (time left).
+  - Above the table, in the window's subtitle, the summary: how many missions, how many are ready or under an hour from expiring, how many are pinned, and the rewards held.
   - The progress column also draws a small bar, so it reads by shape as well as color.
   - A row's color tells you where it stands:
     - **green**: ready to hand in
@@ -37,13 +44,15 @@ come and go as you accept and hand them in.
     - **amber**: under six hours left
     - **lime**: half or more done
     - **blue**: started but under half
-- **By place** tab: the same missions grouped by the system to go to, your own system first, then the next jump you have targeted, then the places with
-  something ready. A route plan at a glance.
+- **By place** tab: the same missions grouped by the system to go to, your own system first (`(you are here)`), then the next jump you have targeted (`(next jump)`), then the places with
+  something ready. A route plan at a glance. Each group's heading counts its missions and how many are ready; under it the columns are **Mission**, **Station**, **Progress**, **Reward** and **Left**.
 - **Detail strip** below the tabs: click a mission for the faction, status, where to go, cargo and commodity (with the tons still needed), exact reward, wing,
   when it was accepted and when it expires.
-- **Pin / Unpin** pins the selected mission. **Pin all here** pins every mission for the system you are in. **Unpin all** clears them.
-- **Copy system** puts the selected mission's system on the clipboard for the galaxy map.
-- **Sources** opens [Source commodities](#source-commodities).
+- The buttons are in the window's header:
+  - **Pin / Unpin** (the highlighted button) pins the selected mission, or unpins it. **Pin all here** pins every mission for the system you are in. **Unpin all** clears them. With no commander known yet the status line asks you to log in.
+  - **Copy system** puts the selected mission's system on the clipboard for the galaxy map.
+  - **Sources** opens [Source commodities](#source-commodities).
+- The window is titled **WFMT - Missions**, stays on the mission you selected as the list updates, and remembers its size and position.
 
 ### Progress
 
@@ -56,7 +65,7 @@ Where the number comes from depends on the mission, and the window says which:
 | `~18/40 kills` | Massacre and settlement-raid kills. `~` means an estimate: wing and on-foot kills are often missing from the journal until the mission completes. |
 | `36/60 held` | A **source and return** mission, while you are still buying the cargo. The game writes nothing about these until you hand cargo in, so WFMT compares what is in your hold with what the mission asks for. Several missions for one commodity share the hold, the soonest to expire first, so a ton is never counted twice. |
 
-The colors are the same on the [overlay card](#missions-on-the-overlay).
+The colors are the same on the [overlay card](#missions-on-the-overlay). The panel's `Δ` and the bars on the massacre pages use the same kill counts.
 
 About **held**:
 
@@ -139,8 +148,8 @@ Combat > HIP 20019                  3d
   - The card's top-left corner never moves as lines come and go.
 - **Placement:** Settings → WFMT → Overlays → Overlay Placement ("Missions list"). It starts in the bottom-right corner, above the screenshot messages; move it to
   any corner.
-- **Settings:** the number of mission lines to show (3 to 14, 8 by default), whether to show the next jump, and the red limit in minutes. **Test Card**
-  draws a made-up card.
+- **Settings** (Settings → WFMT → Overlays → Missions): **Show missions on the overlay**; **Show the missions for the next jump (the system you have targeted)**; **Mission lines to show (at most)** (3 to 14, 8 by default; the rest become `+N more`); **Show a mission in red when it has less than N minutes left** (5 to 720, 60 by default; amber under six hours). **Test Card**
+  draws a made-up card and says whether the overlay could be reached.
 
 What it cannot know:
 
@@ -158,7 +167,7 @@ For each commodity, summed over all your active missions, it shows the same four
 - cheapest anywhere
 - recommended (within 10% of the cheapest)
 
-Each row shows the station's **largest landing pad** (Large, Medium or Small, from the pad counts Spansh holds; a `?` means Spansh gave none), so you can see before you go whether your ship fits.
+The table has the columns **Commodity**, **Need** (tons, summed), **Pick** (closest, best local and so on), **Station**, **System**, **Largest pad**, **ly**, **cr/t** and **Note**. Each row shows the station's **largest landing pad** (Large, Medium or Small, from the pad counts Spansh holds; a `?` means Spansh gave none), so you can see before you go whether your ship fits.
 
 ### Delivery missions
 
@@ -174,8 +183,9 @@ A Delivery mission (for example "Deliver 132 units of Personal Weapons") is diff
 1. Pick where to measure from:
    - **From where I am** is your current system. If WFMT has not seen you jump since EDMC started, it reads it from EDMC and then from your newest journal, so you do not need to jump first.
    - **From the turn-in system** is where most of the missions for that commodity are handed in, so you can see what is nearest to the place you will deliver to.
-2. Press **Find sources**. It asks Spansh a few times per commodity, one commodity after another, and shows each as it finishes. Press **Cancel** to stop.
-3. Pick a row and press **Copy system** to put its system name on the clipboard for the galaxy map.
+   Changing the choice clears the results.
+2. Press **Find sources** (the highlighted button). It asks Spansh a few times per commodity, one commodity after another, and shows each as it finishes (`Asking Spansh... 2 of 5 done`). The button becomes **Cancel** while it runs; press it to stop.
+3. Pick a row and press **Copy system** to put its system name on the clipboard for the galaxy map (with no station on the row it asks you to pick one first).
 
 Things to know:
 
@@ -190,7 +200,15 @@ Not covered: the nearest ring hotspot for a Mining mission (use Mining's hotspot
 
 ## Settings
 
-**Settings → WFMT → Missions**: choose what shows on each card (kill progress, mission counts, a commodities-needed
-summary and so on).
+**Settings → WFMT → Missions** (all on by default):
+
+- **Show kill progress**: the `done/required` count and the bars on the massacre pages. Off, only the required count shows.
+- **Show remaining-kills column**: the `Δ` figure.
+- **Show totals row**: the **Sum** line.
+- **Show mission count**: the `Missions: N/20` line.
+- **Show target settlement (ground missions)**: the `Settlements:` line.
+- **Show commodities needed (trade and mining)**: the **Commodities needed:** summary.
+
+The overlay card has its own settings under Settings → WFMT → Overlays → Missions (see above). Settings take effect when you close the Settings window.
 
 More detail: [Missions specification](../MISSIONS_TECH_SPEC.md).

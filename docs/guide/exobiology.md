@@ -40,7 +40,21 @@ Helps you find and identify exobiology life on a planet's surface.
 3. When you start sampling, it tracks your progress (Log, Sample, Analyse) and tells you when you have walked far enough from the last sample for the next one
    to count.
 
-You can switch it off under **Settings → WFMT → Exploration → Organic Scanning** (**Show predicted species and scan progress**). It uses only your own journal and
+**What the section shows.** It is always visible in Exploration mode (it has no fold), under the title **Organic Scanning**:
+
+- **`Predicted species: (land on a body with biological signals)`** until you are on a body that has them. When you are, and the body has been scanned, it reads `Predicted species (<body>):` and one line for each genus: `Tussock: Tussock pennatis (~1,000,000 cr)` when only one species fits, or `Bacterium: Bacterium aurasus, Bacterium nebulus` when several do, or `<genus>: unknown` when the body's conditions match none of the rules. Until the body's scan arrives it says `waiting on body scan data...`.
+- **`Active scan: (none yet)`** until you sample. Then one line for each organism in progress: `Tussock pennatis: Sample (2/3)`, with `(~1,000,000 cr)` once it is analyzed and ` - next sample ready` or ` - move further away` while you walk between samples. The stage names are Log, Sample and Analyse, and the count is out of three.
+- **REVIEW** opens the [Prediction review window](#the-prediction-review-window).
+
+**How to use it, step by step.**
+
+1. Fly to a planet with biological signals (the system scan or the FSS tells you how many). Map it with the Detailed Surface Scanner: the mapping scan is what names the genera.
+2. Land, or fly low, and read the `Predicted species` lines to see what each genus could be and what it pays.
+3. Optionally use the Composition Scanner on a plant from a distance to identify it. WFMT remembers where it is so the cards can lead you back to it ([Finding your way back to a plant](#finding-your-way-back-to-a-plant)). The first scan of an organism with the Genetic Sampler is the **Log**, and the `Active scan` line starts.
+4. Take the second (**Sample**) and third (**Analyse**) scans of the same species, each at least the genus's minimum distance from the previous one. The `Active scan` line says `next sample ready` when you are far enough and `move further away` when you are not.
+5. After the third scan the organism shows its payout, and the cards (below) mark the genus `Done`.
+
+You can switch the section off under **Settings → WFMT → Exploration → Organic Scanning** (**Show predicted species and scan progress**, on by default). It uses only your own journal and
 makes no internet connection, and it submits nothing. The rules behind the prediction are in the [specification](../ORGANIC_SCANNING_TECH_SPEC.md).
 
 ## The overlay cards
@@ -59,18 +73,20 @@ own entry on **Overlay Placement**.
 
 Top center. It is a short, wide strip, so it can sit above the game's compass.
 
-- The heading is *Biological signals*, with a count of how many you have analyzed and a progress bar. The bar moves a third of a genus with each Log or Sample, and all of it once analyzed.
+- The heading is *Biological signals*, with a count of how many you have analyzed (`1 of 4 analyzed`) and a progress bar. The bar moves a third of a genus with each Log or Sample, and all of it once analyzed.
 - While you are sampling a genus it shows:
   - the species and color variant in large type, with three circles (filled as you take each sample),
   - what the species pays, at the right end of that row (**five times as much on a first footfall**, marked `FF 5x`),
   - how far you are from the last sample against the distance the genus needs (`Move 122 m further: 78 m of 200 m`, or `Clear: 210 m from the last sample, 200 m needed` once you can take the next).
 - With nothing in progress it lists each genus with the distance it needs between samples, and `Done` once analyzed.
 - A plant you have identified with the Composition Scanner is named at the foot until you sample it.
-- On a body you have not mapped it says to map it.
+- On a body you have not mapped it says `Map this body with the surface scanner to learn what lives here`, with the number of signals.
+- While you are sampling and have not taken a first sample yet, the line under the reward reads `Samples must be 200 m apart`.
+- With nothing in progress, the foot of the card reads `Use the Composition Scanner on a plant to begin`, `First footfall: every reward here is five times as much` on an untouched body, or `All samples analyzed` when you are done.
 
 ### Biology
 
-Bottom, left of center. It lists every genus on the body with the species it could be, or is once a sample has named it (with its color variant), and what it pays.
+Bottom, left of center. Its heading is `Bio signals <body>` with `1 of 4 done` at the right. It lists every genus on the body with the species it could be, or is once a sample has named it (with its color variant), and what it pays. A genus with no usable prediction reads `unknown`.
 
 - Before a sample names the real color, a genus whose colors follow the **star** the body orbits or a **surface material** shows `Likely color: Emerald` under its row (or `Lime or White` when more than one material fits).
 - While the species is open, the genus shows the **range** it could pay (`1.0M - 5.3M CR`). Each candidate shows its value and a percentage (`~50%`). A single likely species has a `~` before its value.
@@ -91,18 +107,19 @@ A top-down plot centered on you, with straight ahead up.
   - The circles themselves are drawn within a fixed size range (about 5% to 16% of the plot's width as a radius), so a circle is never a dot or a blob however far you zoom out.
   - Because of that, a circle's size is not to scale, though its position is. A circle that reads as overlapping another may not be.
 - **Settings** (**Settings → WFMT → Overlays → Exobiology**):
-  - **Radar size**: pixels across. 260 by default, and 520 for twice the size, which draws every sample circle larger.
-  - **Circle fill**: how solid a circle is while you are inside it.
-  - **Circle outline**: its thickness.
+  - **Radar size**: pixels across, from 200 to 800. 260 by default, and 520 for twice the size, which draws every sample circle larger.
+  - **Circle fill**: how solid a circle is while you are inside it, as a percentage from 0 (an outline only) to 100. 70 by default.
+  - **Circle outline**: its thickness in pixels, from 1 to 6. 2 by default.
+- **How far it shows.** The plot never shows less than a 150 m radius around you, nor more than 3 km. Up to 12 sample circles and 5 tracked plants are drawn.
 
 ### Sample popup
 
 For ten seconds after each sample, it shows:
 
-- the species and variant,
-- its estimated value,
-- the distance the genus needs,
-- whether it was logged, sampled or analyzed.
+- the species and variant as its heading,
+- **Estimated value**, in credits (five times as much on a first footfall, marked `(FF bonus)`),
+- **Colony range**, the distance the genus needs between samples,
+- at the foot, whether it was **Logged**, **Sampled** or **Analyzed**.
 
 ## Finding your way back to a plant
 
@@ -160,7 +177,7 @@ A body scanned long ago may show as footfalled if someone has landed since. Trea
   if you come back.
 - The cards are also hidden in hyperspace, while docked, when the game is closed or at its main menu (including while another commander signs in), and a
   different commander loading in starts with a clean slate.
-- **System targets** and **Body info** move on to the next body to map or sample: a body drops off System targets when you map it or analyse its last organism, and
+- **System targets** and **Body info** move on to the next body to map or sample: a body drops off System targets when you map it or analyze its last organism, and
   Body info does not hold on to a targeted body that is finished (see [System targets and Body info](exploration.md#system-targets-and-body-info)).
 - After a relog or an EDMC restart the cards are rebuilt from your journals, reading back through earlier journals of the same commander while you stayed in the
   system, so a body you scanned before the relog still shows.
@@ -168,7 +185,7 @@ A body scanned long ago may show as footfalled if someone has landed since. Trea
 ## Setting up
 
 1. Set up the [overlay](../OVERLAY_SETUP.md).
-2. **Settings → WFMT → Overlays → Exobiology**: tick the cards you want and press **Test Cards**.
+2. **Settings → WFMT → Overlays → Exobiology**: tick the cards you want and press **Test Cards**. The four ticks are *Enable the Bio status card (progress, current species, distance to the last sample)*, *Enable the Biology card (predicted species and what they pay)*, *Enable the Bio radar (samples, their circles, your ship and SRV)* and *Enable the Sample popup (a few seconds after each sample)*. All four are off at first. **Test Cards** draws a made-up body (a Tussock being sampled, with a first footfall) on all four, works even while they are off, and says whether an overlay could be reached.
 3. **Settings → WFMT → Overlays → Overlay Placement**: drag each card where you want it in the layout editor. The cards start at the top center (Bio status), the bottom
    center left of the Body info card (Biology), the left middle (Bio radar) and above Biology (Sample popup).
 
@@ -211,13 +228,13 @@ It is used to check the prediction over time: how often the species was on the l
 
 Press **REVIEW** on the Organic Scanning panel (Exploration mode) to open it.
 
-- **Finds** lists every confirmed species and whether the prediction had listed it, with a filter, the body's conditions and the species that were listed.
+- **Finds** lists every confirmed species. The columns are **Result** (`On list` or `MISSED`, with a **!** added when the body was outside the range the data allows that species), **Species**, **System and body**, **Body type / atmosphere**, **Listed** (how many species the prediction listed for that genus) and **Review**.
+  - The **Show** box filters the list: *All finds*, *Not on the predicted list*, *Outside a rule's range*, *Not reviewed yet*, *Needs a rule change*, *Look at again later* and *Recorded live only*. A count (`12 of 40`) shows how many match.
   - **MISSED** means a rule is missing or too strict.
-  - A **!** means the body was outside the range the data allows that species.
-  - Give a find a review (*Needs a rule change*, *Bad data or journal quirk*, *Expected, no change* or *Look at again later*) and a note, and filter on them later.
-- **By genus** shows the hit rate and how long the predicted list usually was.
-- **Ranges** shows the temperature, gravity and pressure each species was found at, beside its rules.
-- **Together** shows the species that shared a body.
+  - Select a find to see the body's conditions and the species that were listed. Give it a **Review** (*Needs a rule change*, *Bad data or journal quirk*, *Expected, no change* or *Look at again later*) and a **Note**, then press **Save review**.
+- **By genus** shows, for each genus, the number of **Finds**, how many were **On the list**, the **Hit rate** and the **Average list length** (how long the predicted list usually was).
+- **Ranges** shows, for each species and condition (temperature, gravity, pressure), the **Observed** range of your finds beside the range the **Rules allow**, with a flag when a find falls outside.
+- **Together** shows the species that shared a body, by body type and atmosphere.
 - **Copy report** copies all of it as text.
 
 A review changes nothing in the prediction; it is a note for whoever next tunes the rules. `python scripts/analyze_exo_observations.py` (from a copy of the source) prints the same report.

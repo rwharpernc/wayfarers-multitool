@@ -1,6 +1,6 @@
 # Technical Specification — Missions
 
-**Author:** R.W. Harper (CMDR Bocheaux)
+**Author:** R.W. Harper (CMDR Mactavious)
 
 The standing reference for Missions mode: what it reads, the rules it applies, and what its numbers can
 and can't tell you. For how to use it, see the [README](guide/missions.md). For how the code is
@@ -25,7 +25,7 @@ organized in general, see [TECHNICAL.md](TECHNICAL.md).
 
 - **No exact kill counts.** The journal never reports per-mission kill progress, so progress is an
   estimate (see §5).
-- **No network access.** Everything comes from the journal. Nothing is sent or fetched.
+- **No network access for the missions themselves.** Everything on the panel, in the Missions window and on the overlay comes from the journal. The one exception is the Source commodities window (section 10c), which asks Spansh only when you press **Find sources**, and only when Trade's online lookups are switched on.
 - **No mission planning.** It doesn't suggest missions or routes.
 - **No colonization missions.** They're dropped from every page on purpose (see §4).
 
@@ -170,11 +170,11 @@ is where its payout appears.
 Every roster, kill list and goal set is keyed by commander, so switching commander in EDMC immediately
 shows that commander's data and never leaks another's.
 
-- Nothing is written to disk: the picture is rebuilt each start from the two-week backlog.
+- The mission picture itself is not written to disk: it is rebuilt each start from the two-week backlog. What is saved is the commander's pinned mission ids (`mission_pins.json`, section 10b-2), the window positions and the settings.
 - The active set comes from the login `Missions` event when one arrives.
 - Otherwise (EDMC restarted mid-game) it comes from the journals: the newest `Missions` list plus every
   `MissionAccepted` after it, less every `MissionCompleted`, `MissionAbandoned` and `MissionFailed`.
-- The only saved setting that isn't a checkbox is the last category page you were on.
+- Apart from the checkboxes, the saved settings are the last category page you were on (`CONFIG_CURRENT_CATEGORY`) and the overlay card's options (rows, red limit, next jump, on or off).
 
 ## 9. Settings
 

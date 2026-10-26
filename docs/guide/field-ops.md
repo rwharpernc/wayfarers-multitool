@@ -23,26 +23,49 @@ Field Ops holds the on-foot and housekeeping tools: screenshots, your inventory,
 
 Converts Elite's screenshots to PNG automatically, with an optional crop to just the relevant HUD panel.
 
-**How to use it:** nothing to do. Screenshots convert as you take them.
+**How to use it:** nothing to do. Take a screenshot in the game as usual and WFMT converts it when the game's journal reports it.
 
-- Click **"Click to expand"** in the panel to see thumbnails of recent ones. Click a thumbnail to preview it; the preview has an
-  **Open Folder** button that opens the folder it was saved in.
-- An optional auto-capture timer (a small clock icon) takes screenshots periodically for you.
+**On the panel** (Field Ops mode, **OPS**):
+
+- A status line. It reads `Waiting for a screenshot…` until one is taken, then the converted file's name (cut to 40 characters). **Click the status line to open the folder** the last screenshot was saved in.
+- The **clock icon** to its right turns the auto-capture timer on and off (see below). It is hidden when the timer cannot work on your system or when you turn the icon off in Settings.
+- **Click to expand** / **Click to collapse** shows or hides the thumbnails. They always start collapsed when EDMC starts.
+- Expanded, you see the newest screenshot as a thumbnail (and, when a crop was made, the cropped copy beside it), then **Recent - click to preview**: the eight screenshots before it, in rows of four. Click any thumbnail to open a larger preview.
+- The preview window is view-only. It scales the image to fit the window (never larger than the image itself), remembers its size and has an **Open Folder** button for the folder the file was saved in, a **Close** button and a help button.
+
+**What happens to each screenshot.**
+
+1. The game saves its own image file in its screenshots folder and writes a `Screenshot` entry to the journal.
+2. WFMT finds the file, converts it to PNG in the **Converted Directory**, and names it from the **Filename Mask** (the system, the body or station, your commander name, a five-digit number or the date and time).
+3. If **Delete original file after conversion** is ticked, the game's original is deleted after a 60 second grace period so that other tools can see it first.
+4. If the panel that was open when you pressed the key has a crop rectangle, a cropped copy is made as well: the target panel, the comms panel, the role panel or the left-hand (systems) panel. A high-resolution screenshot is never cropped. The rectangles are fixed measurements for a 1920 by 1080 screen, scaled to the screenshot's size and centered on wider screens.
+5. The status line, the thumbnails and (if you turned it on) the on-screen **Screenshot saved** message update.
+
+The status line also reports problems: `Screenshot not found - check Screenshot Directory in Settings` (when the file is in none of the known folders), and `Conversion failed: <reason>`. If the file is not in the folder you set but WFMT finds it in a known fallback folder, it corrects the Screenshot Directory by itself (and moves the Converted Directory with it when that was still the default).
+
+**The auto-capture timer.** The clock icon presses the game's screenshot key (F10) for you, on a timer, so you can leave it running while you work.
+
+- Click the icon to start it (`Auto-capture enabled`) and again to stop it (`Auto-capture disabled`). It starts off every time EDMC starts and stops by itself when the game shuts down or you die (`Auto-capture stopped`).
+- It only presses the key while Elite is the window in front; otherwise the status line says `Auto-capture paused (Elite not focused)`.
+- It presses once every **poll interval** (1 second by default, 0.2 second at the least).
+- It can only press the key on systems that support it (Windows, and Linux under X11 or XWayland with `xdotool`).
+- **Thargoid scans.** When you collect a Thargoid signal's data, WFMT presses the key once for you (if *Automatically capture a screenshot when scanning a Thargoid signal* is on) and crops the copy to the bottom-left quarter of the screen, where the scan result appears. The same crop is used for the next screenshot you take while the game's Thargoid encounter music is playing.
 
 **Settings → WFMT → Field Ops → Screenshots:**
 
-- where converted screenshots are saved,
-- whether to delete the originals,
-- the file-name format,
-- the auto-capture timing,
-- the optional "Screenshot saved" message on your game screen is set on **Settings → WFMT → Overlays → Screenshots** (off by default; needs an overlay; has a **Test Overlay** button),
-- *Include WFMT's built-in overlay in the converted screenshot* (off by default; Windows, needs the built-in overlay chosen under Settings → WFMT → Overlays).
+- **Screenshot Directory**: where the game saves its screenshots. **Browse…** picks a folder.
+- **Converted Directory**: where the PNG copies go. **Browse…** picks a folder.
+- **Delete original file after conversion** (off by default).
+- *Include WFMT's built-in overlay in the converted screenshot (the game's own capture never shows an overlay)* (off by default; Windows, needs the built-in overlay chosen under Settings → WFMT → Overlays).
   - The game's own screenshot never shows an overlay, so WFMT draws the cards that were on screen when you pressed the key onto the converted copy.
   - A failure here never loses the screenshot.
-- *Group converted files into a per-system subfolder* (off by default),
-- *Show the auto-capture timer icon on the main window* (on by default),
-- *Automatically capture a screenshot when scanning a Thargoid signal* (on by default),
-- *Use high-resolution capture on the auto-timer (Solo play only)* (off by default).
+- **Group converted files into a per-system subfolder** (off by default).
+- **Show the auto-capture timer icon on the main window** (on by default).
+- **Filename Mask**: a drop-down of presets, from `SYSTEM(BODY)_NNNNN.png` (the default) through `SYSTEM(CMDR)_DATE.png`, `BODY(CMDR)_NNNNN.png`, `SYSTEM BODY (CMDR) NNNNN.png` to `DATE_SYSTEM_BODY_CMDR.png`. `NNNNN` is a running five-digit number, `DATE` the date and time.
+- **Auto-capture poll interval (seconds)** (1; the minimum is 0.2).
+- **Use high-resolution capture on the auto-timer (Solo play only)** (off by default). The timer then holds Left Alt with F10, which the game honors in Solo only.
+- **Automatically capture a screenshot when scanning a Thargoid signal** (on by default).
+- The optional **Show a notification on the in-game overlay when a screenshot is saved** is set on **Settings → WFMT → Overlays → Screenshots** (off by default; needs an overlay; has a **Test Overlay** button).
 
 *On Linux, the auto-timer needs `xdotool`, and a Flatpak EDMC needs the screenshots permission. See
 [WFMT on Linux](linux.md). On Windows, OneDrive-redirected folders are handled automatically.*
@@ -62,7 +85,7 @@ game's three categories: **Assets**, **Goods** and **Data** (the journal calls t
 | **Carrier Locker** | Not shown | Only once WFMT has real fleet carrier locker data for this commander |
 | **Cargo** | Your ship's cargo capacity; Scarab 4 t, Scorpion 2 t; Rhino capacity unknown | While you are in a ship or SRV. Hidden while on foot. The label reads Ship Cargo, Scarab Cargo and so on |
 
-**Click any bar** to open the Inventory window.
+Under the bars a small line names the last change (a pick-up or a transfer), and a reminder reads `Click Inventory Bar to Open Inventory Panel`. **Click any bar** to open the Inventory window.
 
 ### The Inventory window
 
@@ -72,11 +95,13 @@ hold you are using (ship or SRV).
 
 - The **Filter** box at the top filters every tab at once. **Clear** empties it.
 - **Refresh** redraws the window.
-- The subtitle shows your current suit.
+- The subtitle shows your current suit (`Suit: ...`).
+- The Cargo tab opens with a bar and `tons / capacity` (or `capacity unknown`), then the commodities, most tons first. On foot it says `Cargo - not applicable on foot`.
+- The window remembers its size and position and follows the commander if you switch.
 - A note on the Backpack tab says `Not yet synced this session` if the game hasn't yet reported your backpack
   (for example if you logged in already on foot). Loot, resupply or disembark to refresh it.
 - Capacity colors change as a category fills: amber near the limit, red when full. The ship locker warning level
-  is **90%** of 1,000 for a category.
+  is **90%** of 1,000 for a category. When a category crosses it, WFMT logs `Ship Locker <Assets|Goods|Data>: n/1000 - nearing capacity` and shows it on the overlay if pickup notifications are on (and the category is ticked under *Announce pickups for*). The same warning appears when you transfer remotely through an Apex shuttle's Manage Items screen.
 
 ### Things worth knowing
 
@@ -103,7 +128,8 @@ hold you are using (ship or SRV).
 | Show these inventory bars on the overlay (one tick per bar) | All off |
 | Where it sits on screen | Top right area (set on Settings → WFMT → Overlays → Overlay Placement) |
 | Announce pickups for (Assets, Goods, Data) | All three |
-| Suit Backpack Capacity (per suit loadout) | The built-in table |
+| Suit Backpack Capacity (per suit loadout) | The built-in table. One row per suit loadout WFMT has seen for the commander, pre-filled with the unengineered default; change the number to what you see in the game. Until a suit has been seen the tab says `No suits recorded yet for this commander` - wear a suit in the game, then reopen Settings |
+| Test pickup (button, on the Overlays tab) | Sends a sample pickup to the overlay and says whether the overlay could be reached, even while notifications are off |
 
 Unticking a category in *Announce pickups for* only mutes its notifications. It is still counted.
 The overlay settings are on **Settings → WFMT → Overlays → Inventory** and need an overlay running; see
@@ -115,13 +141,17 @@ On Linux, the pickup sound needs `canberra-gtk-play` or `paplay`; see [Windows a
 
 What you hold of each engineering material: **Raw** (mined and scanned), **Manufactured** and **Encoded**, with each one's grade (1 very common to 5 very rare) and the most the game lets you hold of it.
 
-A collapsible **Materials** row shows:
+A collapsible **Materials** row shows (click its title to fold it; the folded title carries a total such as `- 1,234 held`):
 
-- the pieces held of each type,
+- the pieces held of each type (`Raw 400 · Manufactured 350 · Encoded 300`, plus `Other` for a material the table does not know),
 - the last pick-up or discard ("Last: +3 Carbon (now 123)"),
-- which materials are **at the limit**, so you know that collecting more is wasted.
+- which materials are **at the limit** (`At the limit: ...`), so you know that collecting more is wasted,
+- `As of your last session.` until the game has sent a fresh list,
+- a wishlist line when you have one.
 
-**MATERIALS** opens the window.
+Before the game has told WFMT anything the row says `Log in to see your materials.`, and with an empty book `No materials yet. The counts fill in when you are in the game.`
+
+**MATERIALS** opens the window, and **BLUEPRINTS** (under it) opens the Engineering window.
 
 **To use it:**
 1. Switch to Field Ops mode (**OPS**) and open the **Materials** row if it is folded. Log in to the game once, so WFMT has the full list.
@@ -129,7 +159,7 @@ A collapsible **Materials** row shows:
 3. Press **MATERIALS** to search, filter and sort. To find where to swap materials, press **Find a trader** inside that window (see below).
 4. To plan crafts, press **BLUEPRINTS** (see [Engineering](#engineering-blueprints-and-a-wishlist)).
 
-**The window** lists every material you hold: its type, grade, how many, the limit and the room left. Type in **Search** (every word must be in
+**The window** lists every material you hold in the columns **Material**, **Type**, **Grade**, **Held**, **Limit** and **Room**. A help button repeats these notes. Type in **Search** (every word must be in
 the name), pick a **Type** or **Grade**, tick **Only what is at the limit**, and click a heading to sort.
 
 **Where the counts come from.**
@@ -143,13 +173,13 @@ a new material the table does not know is still counted, with no grade or limit 
 
 **Find a trader.** A material trader swaps materials within one category (a Raw trader trades Raw materials, and so on). **Find a trader** in the Materials window opens a window to look for the closest one.
 
-1. Pick the **Type**, how far to look (**Within**, 50 ly up to any distance) and the smallest landing **Pad** you need.
+1. Pick the **Type** (it starts as the type with the most materials at the limit), how far to look (**Within**: 50, 100, 250 or 500 ly, or any distance; 100 ly by default) and the smallest landing **Pad** you need (**Any size**, **Medium or larger** or **Large only**).
 2. Check the system to **Search from**. It starts as the one you are in; type another to plan ahead, or press **Here**.
 3. Press **Find**.
 
 The results:
 
-- They list the closest first, each with whether the station is in space or on a surface, its distance from the arrival star and its largest pad.
+- The window is called **Material trader**. Its columns are **Station**, **System**, **Where** (in space or on a surface, with its distance from the arrival star), **Distance (ly)** and **Largest pad**, closest first.
 - Double-click a row to copy its system name for the galaxy map.
 - Above the results is what you hold of that type by grade, with how many materials are at the game's limit, so you can see what is worth swapping.
 
@@ -157,7 +187,7 @@ Pressing **Find** is the only thing that goes online: it sends Spansh the system
 
 ## Engineering: blueprints and a wishlist
 
-**BLUEPRINTS** on the Materials row opens the Engineering window. It has five tabs: Blueprints, Wishlist, Ship planner, Upgrade planner and Engineers.
+**BLUEPRINTS** on the Materials row opens the Engineering window. It has five tabs: Blueprints, Wishlist, Ship planner, Upgrade planner and Engineers. **Refresh counts** (top right) re-reads what you hold, which the Have and Short figures use.
 
 **To use it:**
 1. Press **BLUEPRINTS** on the Materials row. On the **Blueprints** tab, search for a module or an effect and pick a blueprint.
@@ -168,7 +198,7 @@ Pressing **Find** is the only thing that goes online: it sends Spansh the system
 
 **Blueprints.** Every engineering blueprint in the table (about 1,180: ship modules, Guardian items, Technology Broker unlocks, engineer unlocks, synthesis recipes, and Odyssey suit and weapon upgrades).
 
-- **Search** matches the module, blueprint name, engineer, effect or an ingredient (every word you type must match), and **Module** narrows to one type.
+- The table has the columns **Module**, **Blueprint**, **Grade** and **Offered by**. **Search** matches the module, blueprint name, engineer, effect or an ingredient (every word you type must match), and **Module** narrows to one type; a count beside them says how many match.
 - Pick a blueprint to see who offers it, its effects, and what **one craft** takes: each ingredient with how many you need, how many you hold, and where it is found.
 - Set **Crafts** and press **Add to wishlist** (or double-click a row to add one craft).
 
@@ -177,7 +207,8 @@ Pressing **Find** is the only thing that goes online: it sends Spansh the system
 - For each entry it says whether it **can be made now** and how many pieces it is **short**.
 - Below is one **shopping list** for the whole wishlist: need, have, short and where each ingredient is found, with what is short at the top.
 - Each entry also says **who can do it**: an engineer you have unlocked, or a vendor or the synthesis panel (which need no unlocking), or "No engineer unlocked yet".
-- Select an entry to change its crafts, **Remove** it or **Clear list** (each asks twice).
+- The table has the columns **Blueprint**, **Crafts**, **Can be made now**, **Short** and **Who can do it**. The shopping list has **Ingredient**, **Kind**, **Need**, **Have**, **Short** and **Where it is found**.
+- Select an entry, type the new number in **Crafts** and press **Set crafts**; **Remove** takes it off and **Clear list** empties the list. Each of the last two asks you to press the button a second time to confirm.
 - The Materials row shows a line such as `Wishlist: 3 blueprints, 2 can be made, 14 pieces short`.
 
 **Ship planner.** Work out what a whole ship's engineering takes, and put it on the wishlist in one step.
@@ -187,7 +218,7 @@ Pressing **Find** is the only thing that goes online: it sends Spansh the system
    - Paste an **import link** (`https://coriolis.io/import?data=...` or `https://edsy.org/#/I=...`), such as one copied with the **Coriolis link** or **EDSY link** buttons below, or made by EDMC's own shipyard links.
    - The address a site shows for a build you designed there (EDSY's `#/L=...`, Coriolis's `/outfit/...`) holds that site's own code, which WFMT cannot read, and short links would need a request to another website. For those, use **Export**, SLEF, instead.
 2. In the Engineering window open the **Ship planner** tab and press **Paste from clipboard**, or paste into the box and press **Read loadout**. If the text holds several ships, pick one in the **Ship** box.
-3. The table lists each engineered module: its slot, the module, the blueprint, the level, the experimental effect and whether it was **counted**. Select a row for the detail.
+3. The table has the columns **Slot**, **Module**, **Engineering**, **Level**, **Experimental** and **Counted?** (and **In storage**, below), one row per engineered module. Select a row for the detail. **Clear** empties the box and the table.
    - A module with no engineering is left out.
    - A **pre-engineered** module (it comes that way from Frontier) says so and takes nothing.
    - Anything WFMT's table does not cover says **not counted** and why.
@@ -292,29 +323,29 @@ doesn't design ships itself. This just helps you find a build again later.
 **To save a build:**
 
 1. Design your build on whichever site you like.
-2. Click **SHIPS** (manage ship builds) in the WFMT panel.
-3. Click **Add**.
-4. Give it a name, and optionally a role such as "PvE Exploration".
-5. Pick the site and paste the build's web address.
-6. Click **Save**.
+2. Click **SHIPS** (manage ship builds) in the **Ship Builds** row of the WFMT panel. The row is collapsible, and its text shows how many builds you have.
+3. Click **Add** (the highlighted button).
+4. Fill in the **Add Ship Build** form. **Name**, **Ship**, **Site** and **Link** are required. **Ship** starts as the ship you are flying; **Role** is what the build is for, such as "PvE Exploration"; **Notes** is free text.
+5. Pick the **Site** (**Coriolis**, **EDSY (E:D Shipyard)**, **Spansh** or **Other**) and paste the build's web address, which must start with `http://` or `https://`, into **Link**.
+6. Click **Save** (or **Cancel**).
 
 **Example:** name `Krait Phantom explorer`, role `Exploration`, site `Coriolis`, and paste the link from your
 browser's address bar.
 
-**To use it later:** select a saved build and use **Open Link** to open it in your browser, or **Copy Link** to copy
-the address. **Edit** and **Delete** work the same way.
+**To use it later:** the **Builds** tab lists your builds with the columns **Name**, **Ship**, **Role**, **Site** and **Updated**. Select one and use **Open Link** to open it in your browser, or **Copy Link** to copy
+the address. **Edit** and **Delete** work on the selected build in the same way.
 
 ### Stored modules
 
 The **Stored modules** tab of the Ship Builds window lists the modules you have in Module Storage and where they are. For each it shows:
 
-- the module and its class,
-- its engineering (blueprint and grade, or `-`),
-- the station and system,
-- the transfer cost and time,
-- a mark for hot modules and for modules still in transit.
+- **Module** and **Class**,
+- **Engineering** (blueprint and grade, or `-`),
+- **Where** (the station and system),
+- **Transfer** (the cost and time),
+- **Marks** (hot modules and modules still in transit).
 
-Type in the **Filter** box to narrow the list; every word you type has to match something in the row (a name, a blueprint, a system, `hot`, `in transit`). The list is kept per commander, and the line above it says when it was last written.
+Type in the **Filter** box to narrow the list (a count beside it reads `Showing N of M; filter to narrow` for a long list); every word you type has to match something in the row (a name, a blueprint, a system, `hot`, `in transit`). The list is kept per commander, and the line above it says when it was last written.
 
 How it stays current:
 

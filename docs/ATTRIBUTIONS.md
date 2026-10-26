@@ -4,7 +4,7 @@ WFMT is a multitool I built for Elite Dangerous commanders. Elite Dangerous has 
 community of tool authors, and many of WFMT's features were shaped by what they've built. This page
 credits the projects and people whose ideas, and in some cases published data and services, helped.
 
-Author: R.W. Harper: CMDR Bocheaux. Licensed under the GNU GPL v3.0; see `LICENSE`.
+Author: R.W. Harper: CMDR Mactavious. Licensed under the GNU GPL v3.0; see `LICENSE`.
 Notices that a license requires are in `THIRD-PARTY-NOTICES.md`.
 
 ## Ideas that belong to the community
@@ -121,7 +121,8 @@ being listed doesn't mean a tool was the first or the only one.
   at a construction site, grouped under the market's categories elsewhere, with what the market does not sell dimmed. The category
   table (`plugin/commodity_categories.py`) is taken from its `ColonyData.mapCargoType` (GPL-3.0; notice in `THIRD-PARTY-NOTICES.md`). The code is WFMT's own.
 - **Where to buy a Colonization commodity:** [Spansh](https://spansh.co.uk/)'s station search, the same one the Mining and Trade
-  finders use.
+  finders use. The **Best single systems** list asks the same search for every station of a few systems, one request each, and adds up
+  their stock; the ranking is WFMT's own.
 - **RND (a nearby system with no scans):** [Spansh](https://spansh.co.uk/)'s systems search, sorted by distance from your position, for the real systems around you, and [EDSM](https://www.edsm.net/)'s bodies list to confirm one. Both are called only when you press the button.
 - **My Codex's Where to look:** the species conditions and color rules WFMT already credits above (the same data the Bio predictions use), matched to [Canonn](https://canonn.science/)'s codex catalog by species name. No other data is used.
 - **Overlay placement:** SrvSurvey places each overlay relative to the game window (left, center or right; top, middle or
@@ -231,8 +232,9 @@ WFMT's data is open under the project's license (GPL-3.0) and not restricted any
 ## Services
 
 [EDSM](https://www.edsm.net/), [Spansh](https://spansh.co.uk/), [edastro.com](https://edastro.com/)
-(GEC), Canonn's published site lists and codex catalog, `tick.infomancer.uk` (BGS tick, optional) and
-GitHub Releases (self-update, opt-in). [Inara](https://inara.cz/) is linked to only.
+(GEC), Canonn's published site lists and codex catalog, [Raven Colonial](https://ravencolonial.com/) (Colonization, opt-in or on a
+button press), `tick.infomancer.uk` (BGS tick, optional) and GitHub Releases (self-update, opt-in). [Inara](https://inara.cz/),
+[Coriolis](https://coriolis.io/) and [EDSY](https://edsy.org/) are linked to only.
 
 - Every network call goes to a documented API or a published data file, never to another site's HTML, and most are opt-in or
   user-triggered.

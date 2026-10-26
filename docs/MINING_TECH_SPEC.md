@@ -1,6 +1,6 @@
 # Technical Specification — Mining
 
-**Author:** R.W. Harper (CMDR Bocheaux)
+**Author:** R.W. Harper (CMDR Mactavious)
 
 The standing reference for Mining mode: what it tracks, the rules and numbers behind its estimates, the
 files it keeps, and the outside lookups it can make. For how to use it, see the
@@ -57,7 +57,21 @@ mining_ledger.py         The Surface Mining Book window.   mining_ledger_data.py
 mining_coverage.py       The driven-ground record.  mining_coverage_render.py: draws the minimap (PIL).
 mining_live_position.py  The live surface position from Status.json.
 mining_bearing.py        Distance and bearing between two surface points.
-mining_overlay.py        The optional on-screen stats panel.
+mining_overlay.py        The optional on-screen stats HUD (hold, rates, hold full in, limpets remaining).
+mining_live_window.py    The LIVE window (Surface Live with the radar and the ground controls; Space Live with the page's lines).
+mining_radar_view.py     The radar picture from the Mining data, one recipe for the Live window and the card over the game.
+mining_radar_overlay.py  The Mining radar card over the game (built-in overlay, Windows).   mining_map_picture.py: the Save map picture.
+mining_drive_rings.py    The rings to drive round a marked mining location.   mining_rigs.py: the rigs noted with Rig placed.
+mining_stops.py          Stops: deposits one Rhino parking spot reaches; the nearest-deposit and rig-gap helpers.
+mining_depletion.py      When a Depleted mark comes off, and the dated bookkeeping behind it.
+mining_share.py          The WFMT-SPOT1 share line for one deposit.   mining_hotspot_import_export.py: the file import and export.
+mining_hotspot_settings.py The Known Surface Hotspots list on the Settings page.
+mining_simulation.py     The pretend Rhino for the Live window.   mining_sources.py: where the renderers read their data from.
+mining_history.py        Every mining run read from the journals, per commander.   mining_history_data.py (pure) and mining_history_window.py: the DASHBOARD.
+mining_alerts.py         Core, rich-rock, limpet and hold alerts for Flight Alerts; the rock reading shared with the Space page.
+mining_market.py         What the open market pays against the galactic average.   mining_missions.py: the mission-needs lines.
+mining_market_research*.py, mining_what_pays*.py   Market research and What pays: the plan (pure) and the windows.
+mining_body_lookup.py, mining_body_cache.py   Get body info (EDSM and Spansh) and what it remembers.
 mining_session_archive.py Optional JSON archive of finished runs.
 mining_journal_backfill.py Replays today's journal on a mid-session EDMC start.
 mining_location.py       The commander's current system.
@@ -457,7 +471,36 @@ the commander marks them:
 - That figure is *driven*, not *scanned*, and the 2,000 m reach is the same community figure the map
   uses.
 
-### 7.3 The waypoint arrow (the Surface Compass)
+### 7.3 The Live window and the radar
+The **LIVE** button opens one window for each page (`mining_live_window.py`): geometry is saved per page, it redraws
+once a second, and the page's lines are drawn by the same code as the panel (`mining_render`, with no button bar), so
+the two cannot disagree.
+
+- **Surface Live** has the radar (`mining_radar_view.render`, drawn by `mining_coverage_render.render_radar`): the Rhino
+  in the middle, north up, range rings, the driven ground (a 2,000 m disc at each recorded point), marked locations,
+  saved deposits, a line to the nearest one, the stops, the drive rings and the rig markers and bands. The range steps
+  through `RADAR_RANGES_M` = 50, 250, 500, 1,000 and 2,000 m (default 2,000, `wfmt_mining_live_radar_range_m`, shared
+  with the card over the game).
+- **Drive rings** (`mining_drive_rings.ring_radii`): the first sits one scanner reach (2,000 m) from the center, each next
+  one 90% of a scanner diameter (3,600 m) further, at most 12, the last on the border; with no border they reach as far
+  as the ground driven. They come from the one community figure for the reach and are a guide only.
+- **Rigs** (`mining_rigs.py`): the journal never says where a rig went, so **Rig placed** (button, Ctrl+Alt+Shift+R or
+  `!wf rig`) notes the Rhino's position. A second press within 5 m adds nothing; at most 40 are kept; they are not saved
+  and are forgotten on launch, stow, destruction or a change of body. With the rig gap setting
+  (`wfmt_mining_rig_gap_m`, 0 to 2,000 m in steps of 5, 0 = off) the radar draws a band of that radius round each rig.
+- **Save map** (`mining_map_picture.py`) draws the same marks once, centered on the marked location, with a title and a
+  legend, to a PNG the commander chooses. It holds no commander name or date.
+- **The card over the game** (`mining_radar_overlay.py`): the same picture laid over the game as one image by the
+  built-in overlay (Windows); EDMCModernOverlay cannot draw a picture. Drawn while a Rhino is deployed and the
+  position and body size are known, at most once a second, with a translucent background (`wfmt_mining_radar_enabled`,
+  `wfmt_mining_radar_size` 240 to 560, default 340; `wfmt_mining_radar_opacity` 30 to 100, default 70). The slot is
+  Overlay Placement's `mining_radar`.
+- **Shortcuts.** CTR, BRD, Rig placed, the radar range and opening the window are shortcut actions
+  (`shortcut_actions.py`, `shortcuts.py`; see the [Shortcuts guide](guide/shortcuts.md)).
+- **Simulation** (`mining_simulation.py`): Settings → Mining → Simulation opens Surface Live on made-up data. It builds
+  its own repositories, never given a plugin folder or a commander, so none can write a file; the window has no I/E.
+
+### 7.4 The waypoint arrow (the Surface Compass)
 The arrow is part of the **Surface Compass** (`surface_compass.py`; see [TECHNICAL.md](TECHNICAL.md) and
 the [Exploration guide](guide/exploration.md#compass)).
 
@@ -504,7 +547,14 @@ The page arrows on the Mining panel are the shared `panelkit.nav_arrow`.
 
 Under **File → Settings → WFMT → Mining** (keys start `wfmt_mining_`):
 
-- Session totals, cargo bar, prospector hints, the three lookups, the coverage minimap, run archiving.
+- Session totals, cargo bar, prospector hints (`wfmt_mining_display_session_totals`, `_cargo_bar`, `_prospector_hints`; on),
+  the three lookups (`wfmt_mining_spansh_hotspot_finder_enabled`, `wfmt_mining_spansh_price_finder_enabled`,
+  `wfmt_mining_edsm_reserve_lookup_enabled`), body lookup (`wfmt_mining_edsm_body_lookup_enabled`), the coverage minimap
+  (`wfmt_mining_display_coverage_minimap`), run archiving (`wfmt_mining_archive_sessions`); the lookups, minimap and
+  archiving are off.
+- `wfmt_mining_stop_radius_m` (500 to 2,500 in steps of 250, default 1,250), `wfmt_mining_rig_gap_m` (0 to 2,000, 0 =
+  off) and `wfmt_mining_refill_days` (0 to 90, 0 = unknown).
+- The Known Surface Hotspots list (add, edit, delete, import, export) at the bottom of the tab.
 - The two overlays (the HUD overlay and the radar) are on Settings → WFMT → Overlays → Mining.
 - The target commodities and the default percentage (`wfmt_mining_target_commodity`,
   `wfmt_mining_target_percent`; a line under the box lists problems in what is typed).

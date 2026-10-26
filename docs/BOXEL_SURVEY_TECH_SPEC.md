@@ -1,6 +1,6 @@
 # Technical Specification — Boxel Survey
 
-**Author:** R.W. Harper (CMDR Bocheaux)
+**Author:** R.W. Harper (CMDR Mactavious)
 **Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 The standing reference for Boxel Survey across all three sub-modes (Sequence, Region Sweep, Waypoint
@@ -60,14 +60,14 @@ region_sweep_state.py     JSON persistence for the Region Sweep queue.
 region_sweep_spansh.py    Spansh systems-typeahead wrapper (§7) — raises on failure, unlike
                           edsm_client.py's convention.
 region_sweep_panel.py     RegionSweepController — widgets, worker-thread/queue.Queue/after() EDSM+
-                          Spansh lookups, its own Settings tab.
+                          Spansh lookups, its own Settings section (the "Region Sweep" section of the Boxel Survey page).
 waypoint_route.py         Pure logic for Waypoint Route: Waypoint/WaypointRoute, add/remove/manual
                           move, greedy nearest-neighbor reordering, CSV import, the plotted-route import (`parse_navroute`, `add_systems`, from `NavRoute.json`). Unit-tested
                           (tests/test_waypoint_route.py) via the same try/except ImportError
                           fallback survey_log.py uses, so it doesn't need a live EDMC to import.
 waypoint_route_state.py   JSON persistence for the Waypoint Route list.
 waypoint_route_panel.py   WaypointRouteController — widgets, worker-thread bulk EDSM coordinate
-                          lookup for reordering, its own Settings tab.
+                          lookup for reordering, its own Settings section (the "Waypoint Route" section of the Boxel Survey page).
 boxel_survey.py           BoxelSurveyController — the feature-module contract entry point
                           (PANEL_PLACEMENT = "exploration"). Owns the Sequence/Region Sweep/Waypoints
                           toggle, fans journal events to all three sub-controllers unconditionally
@@ -134,8 +134,10 @@ Boxel Survey is one panel with a button-row toggle (`_SUBMODE_SEQUENCE` / `_SUBM
     not ask EDSM after a scan.
 - `build_panel(parent)` → main-panel widgets, per the feature-module contract every WFMT mode module
   follows.
-- `build_settings(notebook)` / `save_settings()` → the "Boxel Survey" Settings tab (Sequence's own
-  toggles + Export Survey Log) plus Region Sweep's and Waypoint Route's own tabs.
+- `build_settings(notebook)` / `save_settings()` → the "Boxel Survey" Settings page (Sequence's own
+  toggles + Export Survey Log + the Random button's settings). Region Sweep's and Waypoint Route's
+  settings are built into the same page as sections under it (the Exploration tabs stack what one
+  feature adds to a page), so there is no separate Region Sweep or Waypoint Route tab.
 
 ## 4. The procedural-name sequence algorithm
 
@@ -321,7 +323,7 @@ fuller fix would need.
 next incomplete, non-empty cube once the current one completes — it just needed the queue to never run
 empty.
 
-**"Auto-discover more nearby cubes (EDSM) when the queue is running low"** (Settings → Region Sweep,
+**"Auto-discover more nearby cubes (EDSM) when the queue is running low"** (Settings → Exploration → Boxel Survey, Region Sweep section,
 opt-in/default off, `wfmt_boxel_sweep_auto_discover`) closes that:
 
 - After every jump while Region Sweep is active, `RegionSweepController._maybe_auto_discover()` checks

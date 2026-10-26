@@ -4,6 +4,7 @@ Plain-language guides for using the Wayfarer's Multitool.
 
 - **New here?** Start with [Getting started](getting-started.md).
 - **Want every feature at a glance, with its controls?** [Features at a glance](features.md) lists them mode by mode and starts with a table that goes from what you want to do to the right guide.
+- **Want to see every setting?** [Settings in Getting started](getting-started.md#settings) lists each tab and its starting values, and [Every Overlays tab](../OVERLAY_SETUP.md#every-overlays-tab-in-detail) does the same for the overlays.
 - **More:** [Tips, quirks and workarounds](tips.md) and [Planned and being researched](planned.md).
 - **Something looks wrong?** See [Known issues](known-issues.md) first.
 
@@ -36,11 +37,12 @@ know of, how it looks on screen, and what to do. Where a figure is an estimate, 
 
 | Guide | What's in it |
 |---|---|
-| [Getting started](getting-started.md) | What you need, installing, updating, finding your way around, your data and backing it up, opening windows, button names |
-| [Setting up the overlay](../OVERLAY_SETUP.md) | The on-screen overlay for alerts, cards and diagrams: WFMT's built-in one (Windows) or EDMCModernOverlay, using both, and fonts |
-| [Windows and Linux](platforms.md) | What works where |
+| [Installing WFMT](../INSTALL.md) | Install, update, remove and build from source, with the folders for each system |
+| [Getting started](getting-started.md) | What you need, installing, the in-app updater, finding your way around (the lines under the mode buttons and the Credits Ledger), your data and backing it up, catching up after EDMC was closed, every Settings tab and what it starts as, opening windows, button names |
+| [Setting up the overlay](../OVERLAY_SETUP.md) | The on-screen overlay for alerts, cards and diagrams: WFMT's built-in one (Windows) or EDMCModernOverlay, using both, every Overlays tab in detail, placement, color schemes, opacity and fonts |
+| [Windows and Linux](platforms.md) | What works where, feature by feature |
 | [WFMT on Linux](linux.md) | Step-by-step Linux and Flatpak setup |
-| [What goes on the internet](internet-and-privacy.md) | Every feature that contacts an outside site |
+| [What goes on the internet](internet-and-privacy.md) | Every feature that contacts an outside site, what triggers it, what it sends and the address it uses |
 | [Known issues](known-issues.md) | What is known to go wrong in this release (such as doubled or ghosted overlay text) and the fix |
 | [Reporting a problem](reporting-problems.md) | The **Report an issue** and **Copy diagnostics** buttons, step by step, and what they include |
 

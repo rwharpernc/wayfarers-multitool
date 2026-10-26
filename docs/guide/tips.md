@@ -7,7 +7,17 @@ Things that surprise people, and what to do about them. Back to the [README](../
 - **Restart EDMC** after installing or updating. The WFMT panel only appears after a restart.
 - Extract the ZIP **over** the old `Wayfarers-Multitool` folder, don't delete it first: your saved data lives there.
 - Use the ZIP from the **Releases** page (Assets), not the green **Code → Download ZIP** button.
-- The WFMT panel is a little wider because there are eight mode buttons. EDMC sizes its window to the widest plugin, so you may see the main window grow slightly.
+- The WFMT panel is a little wider because there are eight mode buttons. EDMC sizes its window to the widest plugin, so you may see the main window grow slightly. Every long name wraps instead of widening it, and the panel never changes the window's width as you switch modes.
+- **Automatic updates are off until you tick them** (Settings → WFMT → General → Updates). A downloaded update waits for a restart: the version line under the mode buttons turns orange and says *Restart EDMC*.
+- Press **OK** in EDMC's Settings window to keep a change.
+
+## Your data and backups
+
+- WFMT keeps what it records about your play in files inside its plugin folder, one section per commander. Updates never touch them, but deleting or reinstalling the folder loses them.
+- **Back it up** (Settings → WFMT → General → Backup). Ticking *Back up automatically* with a folder outside the plugin folder (Documents or a cloud-synced folder) makes a zip every 7 days when EDMC starts, and one just before an update installs. A manual **Back up my data** shows no result line in this version, so look in the folder for the new zip.
+- **Restore** is applied when EDMC next starts, so restart EDMC after choosing a zip. The files it replaced are kept in `backups/pre-restore-<date>.zip` inside the plugin folder.
+- The Raven Colonial key, the downloaded Codex catalog and the Local star index are not in a backup. Type the key again (or paste it) on a new install.
+- Click the **Credits this session** line under the mode buttons to open the **Credits Ledger**: your income by activity and by day, and the game's lifetime totals.
 
 ## EDMC, the journal and catching up
 
@@ -17,7 +27,8 @@ Things that surprise people, and what to do about them. Back to the [README](../
 - WFMT, like every third-party tool, only knows what the game writes to its journal, plus what it can add from Frontier's servers and community services.
   - Where it can't be sure, it says so.
   - Each guide lists these gaps and the workaround in "What the game does and doesn't tell us".
-- Everything is kept **per commander**. Switching commanders in EDMC switches the data.
+- Everything is kept **per commander**. Switching commanders in EDMC switches the data. Overlay choices (which cards are on, where they sit, how they look) are per commander too.
+- A gray line under the mode buttons, *Reading your journals to catch up (...)*, means a first-time or long catch-up is running. It happens once, can take a minute, and goes by itself.
 - **Linux:**
   - EDMC's **Journal directory** must point at Elite's journal folder inside the Proton/Wine folder, or most features will find nothing.
   - Auto-Honk and the screenshot timer also need `xdotool`.
@@ -31,6 +42,7 @@ Things that surprise people, and what to do about them. Back to the [README](../
 - **Windows:** use WFMT's **built-in overlay** (choose it under **Settings → WFMT → Overlays → Overlay Connection**) or [EDMCModernOverlay](https://github.com/SweetJonnySauce/EDMCModernOverlay). EDMCModernOverlay is needed for other plugins' overlays too; you can run both.
 - **Linux:** you must use [EDMCModernOverlay](https://github.com/SweetJonnySauce/EDMCModernOverlay); the built-in overlay is Windows only. Right-hand cards stop a little short of the screen edge (see [Known issues](known-issues.md#right-hand-cards-stop-a-little-short-of-the-screen-edge-linux-edmcmodernoverlay)).
 - Press a **Test** button to check. Everything is **off until you turn it on**.
+- **Overlays shown (click to hide)**, under the mode buttons, hides every WFMT overlay for a clean screenshot and brings them back where they were. It is not remembered: they are shown again whenever EDMC starts.
 - Run Elite in borderless or windowed mode; some overlays can't draw over exclusive fullscreen (see the [overlay setup](../OVERLAY_SETUP.md)).
 
 **Where the settings are**
@@ -55,6 +67,8 @@ Things that surprise people, and what to do about them. Back to the [README](../
 - **Appearance** sets the color scheme for every overlay.
 - The text size (Default or Larger) is yours to choose, and the spacing is fixed so columns stay aligned.
 - The Interdiction warning always stays red.
+- **Panel opacity** (Appearance) makes every card's background fainter without touching the text; 75% or more is easiest to read over a bright scene.
+- The **Color-blind safe** scheme uses colors that stay apart for the common kinds of color blindness, so good, short and warning never rest on red against green.
 
 ## Colonization (work in progress)
 
@@ -65,7 +79,8 @@ Things that surprise people, and what to do about them. Back to the [README](../
   - For the real hold, sign EDMC in to Frontier and open **Carrier Management** once; WFMT then reads the carrier's actual cargo. It can lag behind the game.
   - If a transfer never registered, **Rescan Carrier** (in the Colonization Sites window) rebuilds the tally from your last 30 days of journals.
 - Commanders **without** a carrier see simpler wording and one Trips column; the carrier lines appear only if you have one.
-- **Where to buy** needs the internet (Spansh) and caches a search for two minutes. Click a result row to copy its system, ready to paste into the galaxy map search.
+- **Where to buy** needs the internet (Spansh) and caches a search for two minutes. Click a result row to copy its system, ready to paste into the galaxy map search. After **Find all** with several commodities, **Best single systems** checks the few systems that look best and shows which one stocks the most of the list; **Stop** keeps what was found so far.
+- The **In Cargo** figures come from the game's `Cargo.json`, read again shortly after any event that can change the hold, so they follow what you buy.
 - **Raven Colonial** (ravencolonial.com) is optional.
   - Planned Builds, My Projects (to look at), Raven Progress and the page links only read or open your browser.
   - Sending anything to Raven is **off until you tick the master switch** in Settings and save your Raven key (the settings page links to where you get it). That covers progress sharing, **Create Project on Raven**, **Report Complete to Raven**, **Mark Plan Entry Demolished**, and **Set as My Primary** and **Save Counted List** in My Projects.
@@ -74,6 +89,7 @@ Things that surprise people, and what to do about them. Back to the [README](../
 - **Shopping-list overlay:**
   - Switch it on and off with the **OVERLAY** button (it stays as you leave it).
   - Tick the automatic option in Settings if you want it to appear by itself at a market, in Carrier Management or at a construction site.
+  - It leaves out commodities your hold and fleet carrier already cover (*Hide commodities already covered by the hold and the fleet carrier*, on by default) and its Remaining column shows the tons still to get.
 
 ## Windows
 

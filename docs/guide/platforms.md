@@ -8,7 +8,7 @@
 
 WFMT runs on **Windows and Linux**, wherever EDMC does. Almost everything is the same on both, because it only reads the game's journal. A handful of features touch the operating system, and those are the ones that differ.
 
-Each of those features' Settings tab says which systems it works on and whether it can work on *yours* right now. Look for the **Works on:** line.
+The Settings tabs for Auto-Honk, the screenshot auto-timer and the sound options say which systems the feature works on and whether it can work on *yours* right now. Look for the **Works on:** line (it names the missing tool, for example `xdotool`, when one is needed).
 
 ## Side by side
 
@@ -26,13 +26,18 @@ Each of those features' Settings tab says which systems it works on and whether 
 | **Auto-Honk** (presses your Discovery Scanner key for you) | Yes | Yes, needs **`xdotool`**. X11 or XWayland windows only, not a native Wayland window |
 | **Screenshot auto-timer** and **Thargoid-scan capture** (press the screenshot key for you) | Yes | Yes, needs **`xdotool`** |
 | Screenshot conversion and renaming | Yes | Yes (Elite's `Pictures` folder inside the Proton/Wine folder) |
-| Pickup **sound** (Field Ops → Inventory) | Yes (system beep) | Yes, needs `canberra-gtk-play` or `paplay` |
+| **Sounds**: the Inventory pickup sound, the Flight Alerts sound and the Shortcuts confirmation sound | Yes (system beep) | Yes, needs `canberra-gtk-play` or `paplay` where EDMC runs (inside a Flatpak, that means inside the Flatpak); without one the sound ticks are grayed out |
 | On-screen overlay features | WFMT's built-in overlay (nothing to install), or EDMCModernOverlay | **EDMCModernOverlay is required** (the built-in overlay is Windows only for now; a Linux version is being researched) |
 | The Mining radar over the game (a picture on the overlay) | Yes, with WFMT's built-in overlay | No (EDMCModernOverlay cannot draw a picture; use the Surface Live window) |
 | Keyboard shortcuts (CTR, BRD, radar range, Live window, hide overlays) | Yes (Ctrl+Alt+Shift plus a key) | No (use the chat commands, which work on both) |
 | Chat commands (`!wf center` and the rest, typed in Elite's chat) | Yes | Yes |
 | Include the overlay in converted screenshots | Yes (built-in overlay) | No |
-| Self-update | Yes | Yes |
+| Self-update (Settings → WFMT → General → Updates) and the data backup before it | Yes | Yes |
+| **Local star index** (Settings → WFMT → General → Online lookups): download, update and delete | Yes | Yes. Needs about 300 MB of free space while it builds (110 MB afterwards) in the plugin folder; with a Flatpak EDMC that folder is inside its own data folder, which it can write to |
+| Finding your screen size for overlay placement | Elite's own window (built-in overlay), `DisplaySettings.xml`, or the operating system's hardware resolution | EDMCModernOverlay's log, `DisplaySettings.xml` (a Flatpak needs permission 5), then `xrandr`. Display scaling cannot be read, so set it by hand ([Overlay Placement](../OVERLAY_SETUP.md#moving-things-around)) |
+| Overlay **Corners**, **Keep showing when Elite is not the window in front** and the Windows capture-tool detection | Yes (built-in overlay) | No (they belong to the built-in overlay) |
+| Credits line, Credits Ledger, Settings, windows and their Help buttons | Yes | Yes (same journal data; the Journal directory must be set) |
+| Copy to clipboard buttons (Copy system, Copy next, Copy Shopping List) | Yes | Yes, needs a working clipboard |
 
 ## Windows only
 

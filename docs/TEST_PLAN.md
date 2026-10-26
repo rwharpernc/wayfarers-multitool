@@ -94,6 +94,16 @@ Do these on **Windows** and again on **Linux**. Where the two differ the line sa
 - [ ] **Long names in the tables.** In the Missions, Source commodities, Ship Builds and My Codex windows a long faction, station, ship, role or site name shows whole at a wide size and cut with an ellipsis at a narrow one, and the window does not grow wider than its size.
 - [ ] **Saved data from before the spelling change** (a copy that predates this build). Start EDMC and look for `Renamed saved names:` in the log, once. The Colonization page, the Sites window, the fleet carrier column and the overlay positions are as you left them. A body or system whose name holds the letters of an old spelling inside a word (the old spelling of tons or analyzed) keeps its name.
 
+## 6. Added since section 5 (2026-10-26): Colonization
+
+Do these on **Windows** and again on **Linux**. The longer steps are in [TODO.md](TODO.md) (Missions, trade and colonization) and [LINUX_TESTING.md](LINUX_TESTING.md).
+
+- [ ] **The hold follows a purchase.** Buy a tracked commodity at a market: the **In Cargo** figures in the Sites window, on the COL page and on the overlay card change within a couple of seconds.
+- [ ] **Remaining is what is still to get.** It falls as you load the ship or the carrier and reaches 0 once the whole amount is acquired; **Haul Trips** still counts everything the site needs. The overlay card shows the same Remaining and no To buy column.
+- [ ] **Hide covered rows on the overlay card.** With *Hide commodities already covered by the hold and the fleet carrier* ticked (the default) covered commodities are left out and the footer still counts them; unticked, they are listed.
+- [ ] **Best single systems.** After **Find all** with two or more commodities, the results start with the best single systems, each with its coverage, distance, basket cost and stations in the order to visit. **Copy Route** copies the best system first, and **Stop** keeps what was found.
+- [ ] **Raven Colonial.** **PROJECTS** opens My Projects (reading needs no key). **Create Project on Raven** at a construction site you are docked at: check the project, the link, the primary project and the attached carrier on ravencolonial.com.
+
 ## Linux specifics
 
 The same checks apply. The points that differ:

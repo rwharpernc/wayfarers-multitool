@@ -33,6 +33,7 @@ Elite runs under Steam Proton or Wine on Linux, which needs a few extras. **Work
 | Just the journal-based features (Powerplay, Missions, BGS, Trade...) | 2 (and 3 if EDMC is a Flatpak) |
 | Plus Auto-Honk or the screenshot timer | 1, 2, 4 (and 3 if Flatpak) |
 | Plus on-screen overlays | 1, 2, 5 (and 3 if Flatpak) |
+| Plus backups, the star index, updates or sounds | 7 |
 
 ## Step 1: Install the helper tools
 
@@ -174,6 +175,17 @@ Other points:
 
 - The Spansh lookups just need the network.
 - **Export log (CSV)** in Trade History uses a standard file dialog. If EDMC is a Flatpak and the save fails, pick a folder EDMC is allowed to write to (WFMT shows the error).
+
+## Step 7: Backups, the star index and updates
+
+Nothing extra to install, but a Flatpak EDMC has a few limits:
+
+- **Back up my data** (Settings → WFMT → General → Backup) and **Back up automatically** write to a folder you choose, and the folder must be outside the plugin folder. A Flatpak EDMC can only write to folders it has been given, so pick one it can reach (its own data folder, or one you grant with `flatpak override --user --filesystem=<folder> io.edcd.EDMarketConnector`). This version shows no result line after a manual backup; check the folder for the new `WFMT-data-<date>.zip`. The data backup has not been tried on Linux yet, so please say if it misbehaves.
+- **Restore my data...** needs the same folder permission to read the zip. The restore is applied the next time EDMC starts.
+- **The Local star index** (General → Online lookups) downloads one file from Spansh (about 173 MB) and builds an index in the plugin folder, which needs about 300 MB free while it builds. It is optional.
+- **Automatic updates** (General → Updates) work the same on Linux. The update waits for you to restart EDMC.
+- **Sounds** (the Inventory pickup sound, Flight Alerts and the shortcut confirmation) need `canberra-gtk-play` or `paplay` on your system; the tick is grayed out without one. WFMT looks for the player inside the Flatpak's own environment, not on the host, so with a Flatpak EDMC the sounds can be unavailable even when your system has one.
+- **Keyboard shortcuts** are not available on Linux; use the chat commands (`!wf overlays` and so on) after switching them on under General → Shortcuts.
 
 ## More help
 

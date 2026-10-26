@@ -10,9 +10,10 @@ the kit provides and where it's used.
 The kit covers external windows only. The main-window panels (`plugin_app`) are **not** part of it: they
 follow EDMC's theme and must obey the width-bounding rules in TECHNICAL.md section 5.
 
-Windows that use it: the Mining Book and the Mining dialogs, Powerplay Sessions, Rare Goods, Inventory,
-the BGS Report, Trade History, Codex Completionist, Ship Builds (window and dialog), the Missions pop-ups and the
-Screenshots preview. Settings tabs are not converted, because they live inside EDMC's own preferences
+Windows that use it: every pop-out window, dialog and the screenshot preview (the Mining Book and the Mining dialogs,
+Powerplay Sessions, Rare Goods, Inventory, the BGS Report, Trade History, Codex Completionist, Ship Builds, the
+Colonization windows, the Expedition window and the Exploration Dashboard, the Missions pop-ups and the rest).
+Settings tabs are not converted, because they live inside EDMC's own preferences
 window and follow its theme.
 
 ## 2. Hard rule: never touch ttk globally
@@ -37,16 +38,18 @@ A consequence:
 - **Style** (`style.py`): applies the look to a window's classic widgets. Fonts derive from
   `TkDefaultFont` so Linux and high-DPI displays behave.
 - **Window shell** (`shell.py`): a singleton Toplevel with saved geometry, a minimum size, a header (title,
-  subtitle, action buttons), a status footer and Esc-to-close. It never touches EDMC's config: the window
+  subtitle, action buttons, a Help button), a status footer and Esc-to-close. `TabShell` is the same shell for a window that
+  lives in a tab of another window (the Expedition window's Plan, Route and Log tabs): its size and place are the host's. It never touches EDMC's config: the window
   passes it `load_geometry` and `save_geometry` callables. Windows are built hidden and shown once their
   content is laid out, so they never flash at a default size.
-- **Widgets** (`widgets.py`, `table.py`): `Card`, `Pill` (status chip), `StatTile`, `FlatButton`, `Combobox`, `SlimScrollbar`, `ProgressBar`, `Tabs`, `FoldList`, `ScrollFrame`, `NoteLabel`, `field_grid` and `DataTable`.
+- **Widgets** (`widgets.py`, `table.py`): `Card`, `Pill` (status chip), `StatTile` and `TileRow`, `Row` (a selectable list row), `FlatButton`, `MenuButton` (a button that posts a menu), `Combobox`, `SuggestEntry` (a text box that suggests as you type, used for system and commodity names), `SlimScrollbar`, `ProgressBar`, `Tabs`, `FoldList`, `ScrollFrame`, `NoteLabel`, `field_grid` and `DataTable`.
   - `Tabs` has an `on_select` callback so a window can redraw only the tab being shown, and `compact=True` for tabs nested inside a pane: smaller labels, the pane's color.
   - `FoldList` is a collapsible grouped list.
   - `NoteLabel` is a body-size note that spans the full width and re-wraps as the window is resized, for hints under a table.
   - `DataTable` is striped, sortable and optionally grouped, with an API like Treeview's, and header and body columns kept aligned.
   - A `DataTable` tag can set a row's text color and a whole-row background tint, which is lightened while hovered or selected.
   - `DataTable.set_rows` refills it and does nothing when the rows haven't changed, for windows that refresh often.
+- **Forms** (`form.py`): `FormDialog` is the one add/edit form (hotspots, ship builds): labeled fields (text, system, choice, combo, commodity) under section headings, an error line, Save and Cancel, with `parse_optional_int` and `parse_optional_float` for the typed numbers.
 - **Dialogs** (`dialogs.py`): `confirm` (Yes/No), `choose` (a row of buttons, for three-way questions), `prompt` (one line of text, optionally hidden as it is typed) and `info`, `warning` and `error`.
   - They are used instead of the operating system's own boxes so confirmations look and behave the same on Windows and Linux.
   - Each is modal over its parent window, opens centered over it, wraps its text at a fixed width and scrolls a very long message instead of growing.

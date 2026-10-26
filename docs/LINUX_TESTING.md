@@ -706,7 +706,9 @@ Written and tried on Linux (Flatpak EDMC, Proton game, EDMCModernOverlay). The c
   - docked at a construction site
   - It goes when you leave, and the OVERLAY button forces it on and off.
   - The EDMC debug log lines "Colonization overlay ..." say what was decided and why.
-- [ ] Rows left at the default list every commodity; the card fits on screen from the default position (20, 300).
+- [ ] Rows left at the default list every commodity not yet covered; the card fits on screen from the default position (20, 300).
+- [ ] **Hide covered rows:** with *Hide commodities already covered by the hold and the fleet carrier* ticked (the default) a commodity the hold plus the carrier cover is left out and the footer still counts it; untick it and the covered rows return.
+- [ ] **The hold follows a purchase:** buy a tracked commodity at a market. The In Cargo figures (Sites window, COL page and card) change within a couple of seconds. WFMT reads `Cargo.json` beside the journals, so check the journal folder is found on Linux/Proton; if the file cannot be read, EDMC's cargo state is used.
 - [ ] Windows paths: `Status.json` reports the same `GuiFocus` values (5 in the services screens, 1 for the right-hand panel).
 
 ## 7e. Colonization Sites window: sites list, totals, Where to buy (Windows-tested only: check on Linux)

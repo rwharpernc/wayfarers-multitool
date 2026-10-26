@@ -21,16 +21,17 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | A Route Planner route on the Route overlay card | The route is plotted in the Route Planner, and **Enable the Route overlay** is ticked (it does not turn the card on by itself) | Exploration panel, and Settings → WFMT → Overlays → Route |
 | The Route Planner copying the next system for you | **Copy the next system to the clipboard automatically** (one tickbox, on the Exploration panel and in the plotter) | Exploration panel (Route Planner) |
 | Backups made for you | **Back up automatically** and a folder | Settings → WFMT → General → Backup |
-| The running expedition's totals on the game screen | **Enable the Expedition Log card** (and START an expedition in the Exploration panel) | Settings → WFMT → Overlays → Expedition Log |
+| The running expedition's totals on the game screen | **Enable the Expedition Log card** (and press START in the Exploration panel's Expedition section) | Settings → WFMT → Overlays → Expedition Log |
 | What is left to map and sample in a system | **Enable the System targets card** | Settings → WFMT → Overlays → System targets |
 | A card describing the body you target or are near | **Enable the Body info card** | Settings → WFMT → Overlays → Body info |
 | Sampling progress, predicted species, the sample radar, the sample popup | The tick for each of the four Exobiology cards | Settings → WFMT → Overlays → Exobiology |
 | Discovery alerts | **Enable Discovery Alerts**, or the **D.A.** button | Settings → WFMT → Overlays → Discovery |
 | Notable find banners | **Enable Notable Bodies alerts**, then pick the rules you want | Settings → WFMT → Overlays → Notable Bodies |
 | The arrow to a mark or hotspot on a planet | **Enable Surface Compass** | Settings → WFMT → Overlays → Surface Compass |
-| Inventory pickups and bars | The inventory bars you want, one tick per bar | Settings → WFMT → Overlays → Inventory |
+| Inventory pickups and bars | **Show pillage notifications on the in-game overlay** for pickups, and one tick per bar (Backpack, Ship Locker, Carrier Locker, Cargo) for the bars | Settings → WFMT → Overlays → Inventory |
 | Mining stats on the game screen | **Enable HUD Overlay** | Settings → WFMT → Overlays → Mining |
-| "Screenshot saved" message on the game screen | The overlay message option for screenshots | Settings → WFMT → Overlays → Screenshots |
+| The Mining radar (the Surface Live radar) over the game | **Show the Mining radar over the game while the Rhino is out**, and WFMT's built-in overlay chosen (Windows) | Settings → WFMT → Overlays → Mining and Overlay Connection |
+| "Screenshot saved" message on the game screen | **Show a notification on the in-game overlay when a screenshot is saved** | Settings → WFMT → Overlays → Screenshots |
 | The Colonization shopping list appears by itself at markets | **Also show the shopping list automatically**. Otherwise only the **OVERLAY** button on the COL page shows it | Settings → WFMT → Overlays → Colonization |
 | Auto-Honk | **Enable Auto-Honk** or the **A.H.** button | Settings → WFMT → Exploration → Auto-Honk |
 | **Find sources** (Missions) and **Best picks** (Trade) | **Enable Spansh trade lookups**; Find sources asks to turn it on when you press it | Settings → WFMT → Trade |
@@ -40,7 +41,10 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | Fleet carriers missing from "where to buy" results | **Include fleet carriers** in the Colonization sites window | Colonization sites window |
 | Raven Colonial not updating | The master switch and the two options under it ([steps](#raven-colonial-doesnt-update-as-i-deliver)) | Settings → WFMT → Colonization → Raven Colonial |
 | Something else is wrong | **Report an issue**, then **Copy diagnostics** to paste the log lines into it ([how](reporting-problems.md)) | Settings → WFMT → General → Help |
-| WFMT never updates itself | **Automatically download and install updates** | Settings → WFMT → General → Updates |
+| WFMT never updates itself | **Automatically download and install updates** (see also [the update did not take](#the-update-did-not-take)) | Settings → WFMT → General → Updates |
+| **N.S.** asks Spansh every time | Install the optional Local star index, and leave **Use the local index for N.S. when it is installed** ticked | Settings → WFMT → General → Online lookups |
+| Chat commands such as `!wf overlays` do nothing | **Chat commands** | Settings → WFMT → General → Shortcuts |
+| Prices and routes near you are for the wrong ship size | **Ship size (landing pad)** | Settings → WFMT → Trade |
 
 Notes:
 
@@ -68,8 +72,8 @@ A wrapped line uses the width EDMC's window already has; widening the window giv
 
 ### A button or section is missing
 
-Open **File → Settings → WFMT** and check the feature hasn't been switched off. The BGS and Codex Completionist
-sections can each be hidden there. Also make sure you're in the right mode, and on the right page (some buttons
+Open **File → Settings → WFMT** and check the feature hasn't been switched off. The BGS, Codex Completionist and Organic Scanning
+sections can each be hidden there (Settings → WFMT → BGS; Exploration → POI Reference; Exploration → Organic Scanning), and a mode's own button can be hidden under General → Window → *Mode buttons on the main panel*. Also make sure you're in the right mode, and on the right page (some buttons
 only appear on one page).
 
 ### Numbers look wrong or out of date
@@ -146,12 +150,48 @@ See [Ship planner](field-ops.md#engineering-blueprints-and-a-wishlist).
 - **Nothing is copied to the clipboard**: tick **Copy the next system to the clipboard automatically** (Exploration panel, under **PLOT**), or press **Copy next system** in the plotter.
 - **The Route overlay does not show the route**: the overlay itself must be switched on (Settings → WFMT → Overlays → Route); a route plotted in the Route Planner takes over its card once it is on. When you reach the last system the card says the route has ended and closes after ten seconds.
 
-### Back up my data says it cannot save there, or a restore did nothing
+### Back up my data made no zip, or a restore did nothing
 
-- **"Choose a folder outside the WFMT plugin folder"**: an update or a reinstall can clear that folder, so a backup cannot go there. Pick Documents, another drive or a cloud-synced folder.
+After a manual **Back up my data** the Backup tab says `Saved N files (size) to <path>`, or `Backup failed: <reason>`. If the file is not where you expect it, the usual causes are:
+
+- **The folder is inside the WFMT plugin folder.** An update or a reinstall can clear that folder, so a backup is refused there. Pick Documents, another drive or a cloud-synced folder.
 - **A Flatpak EDMC cannot write to the folder**: it can only write to folders it has been given ([Linux](linux.md)). Pick one it can reach, or grant it with `flatpak override --user --filesystem=<folder> io.edcd.EDMarketConnector`.
-- **A restore did nothing**: it is applied the next time EDMC **starts**; restart EDMC. The files it replaced are in `backups/pre-restore-<date>.zip` inside the WFMT plugin folder if you need them back, and **Cancel the waiting restore** (Backup tab) drops one you no longer want.
+- **WFMT has nothing saved yet** (a brand-new install that has recorded nothing).
+- **Automatic backups**: they need **Back up automatically** ticked *and* a folder chosen. They run when EDMC starts, only if the newest `WFMT-data-auto-...` zip in the folder is as old as the number of days you set (7 by default), and again before an update installs. A failure is written to EDMC's log.
+- **A restore did nothing so far**: it is applied the next time EDMC **starts**; restart EDMC. The files it replaced are in `backups/pre-restore-<date>.zip` inside the WFMT plugin folder if you need them back, and **Cancel the waiting restore** (Backup tab) drops one you no longer want.
 - **"That zip holds a file WFMT does not back up"**: only a zip made by **Back up my data** is accepted, and a restore never applies part of a zip it does not recognize.
+
+### The update did not take
+
+Automatic updates are off until you tick **Automatically download and install updates** (Settings → WFMT → General → Updates). With the tick on:
+
+- **WFMT looks once, when EDMC starts**, and ignores a draft or a pre-release. If a release came out while EDMC was already running, restart EDMC to look again.
+- **A downloaded update waits for a restart.** The line under the mode buttons turns orange and reads *vX.Y.Z download - Restart EDMC*. Until EDMC starts again nothing has changed.
+- **Check the line after the restart.** It reads *Plugin: vX.Y.Z (updated)* in green for 15 seconds, and the version in it is the one now running.
+- **A failed check or download** is written to EDMC's log and tried again at the next start. The WFMT panel is unchanged. Extract the ZIP over the old folder by hand instead ([Updating](getting-started.md#updating)).
+- A file named `disable-auto-update.txt` in the plugin folder switches updating off whatever the tick says. Delete it if it was left there.
+
+### The Local star index will not download or build
+
+On **Settings → WFMT → General → Online lookups**, the Local star index line says what went wrong.
+
+- **Not enough room:** the first download needs about 173 MB and building needs about 300 MB more while it works. Free some space and press **Download and build** again; a download that was cut off carries on from where it stopped.
+- **Spansh is not answering:** see the next entry.
+- **The installed index is damaged or was made by another version of WFMT:** the line says so and the **N.S.** button asks Spansh instead. Press **Delete**, then **Download and build**.
+- **Update downloads nothing:** that is correct if you already updated today, or if Spansh's file has not changed since the date of your index.
+- The index is optional. **N.S.** works without it by asking Spansh, and **W.D.** always does.
+
+### "Spansh has not been answering, so WFMT is not asking it for another N minute(s)"
+
+WFMT spaces its requests to Spansh out, retries a busy answer a few times, and after five failed requests in a row stops asking for five minutes so as not to press a service that is in trouble. Every Spansh feature (routes, prices, Where to buy, Nearest place to land, the Rare Goods Finder's Power column, system-name suggestions) is quiet during the pause and works again by itself. Check your connection, wait the minutes it names, and press the button again. **Copy diagnostics** lists how many requests the session has sent, how many were retried and how many were not sent during a pause ([Reporting a problem](reporting-problems.md)).
+
+### The credits line says "waiting for your balance" or the Game mode line says "waiting for login"
+
+Both lines fill in from the game's own events:
+
+- **Game mode** is read when you log in, or when EDMC starts with the game already running (from the newest journal). It goes back to *waiting for login* when the game shuts down.
+- **Credits this session** starts counting at login and waits for EDMC to pass on your balance. If you restart EDMC in the middle of a session it picks the session back up while the game is still writing the same journal file.
+- If you started EDMC before the game, WFMT shows the saved data for the last commander at once, but these two lines still wait for a running game. Log in and they fill in.
 
 ### The Exploration Dashboard is empty, or its overlay buttons do nothing
 
@@ -218,14 +258,14 @@ See also [Exobiology](exobiology.md#what-the-game-does-and-doesnt-tell-us-and-ho
 
 ### The Expedition Log shows nothing, or its numbers look low
 
-The buttons (START, STOP and LOG) are inside the **Expedition Log** section of the Exploration panel, which starts folded each time EDMC starts: click its title (▸) to open it. The title shows what is running even while folded.
+The buttons (**START**, **PAUSE**, which reads **RESUME** while the expedition is held, and **STOP**) are inside the **Expedition** section of the Exploration panel, which starts folded each time EDMC starts: click its title (▸) to open it. The archive of your expeditions is the **Log** tab of the Expedition window (the **EXPEDITION** button).
 
 With the card switched on and no expedition running, the card says so (`No expedition is running`) and how to start one.
 
 The log counts only while an expedition is **running**:
 
-- Press START in the Exploration panel (or **Start** in the LOG window) when you set off, and the row and the card show it.
-- Anything that happened before you pressed it, or while EDMC was closed, is not counted until you press **Rescan** on that expedition in the LOG window (it works the totals out again from your journals between the expedition's start and end).
+- Press **START** in the Exploration panel (or **Start** in the Log tab) when you set off, and the section and the card show it.
+- Anything that happened before you pressed it, or while EDMC was closed, is not counted until you press **Rescan** on that expedition in the Log tab (it works the totals out again from your journals between the expedition's start and end).
 - **Start since my last sale** begins one from your last sale and fills it in.
 
 Other things to know:
@@ -258,7 +298,7 @@ To change it:
 
 That changes the font for every overlay, and an update of EDMCModernOverlay can put its old list back.
 
-**With WFMT's built-in overlay (Windows):** it has a font of its own, Source Sans 3, with lower case letters, so this does not happen. You can choose another under the same Overlay font section (it is used at once, and a font you add stays through updates).
+**With WFMT's built-in overlay (Windows):** it has a font of its own, Source Sans 3, with lower case letters, so this does not happen. You can choose another under the same Overlay font section (it is used as soon as you press OK, and a font you add stays through updates).
 
 Neither overlay can draw italics, so species names are not italicized.
 

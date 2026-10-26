@@ -3,9 +3,12 @@
 Colonization has its own mode: press the **COL** button.
 
 - The page shows the project you are building now and nothing historical.
-- The **PROJECTS** button opens [My Projects](#my-projects): everything you have on Raven Colonial.
-- The **HISTORY** button opens your history in its own window.
-- The **DASHBOARD** button opens the full sites window.
+- Four buttons sit under it, left to right:
+  - **DASHBOARD** opens the full [Colonization Sites window](#the-colonization-sites-window).
+  - **OVERLAY** turns the [shopping list on the overlay](#the-shopping-list-on-the-overlay) on or off. It is lit while the card is on.
+  - **PROJECTS** opens [My Projects](#my-projects): everything you have on Raven Colonial.
+  - **HISTORY** opens your [history](#history) in its own window.
+  - Hover over a button for a one-line reminder of what it does.
 - It works the same for a commander with a fleet carrier and for one without. The wording changes to match, and the carrier lines are left out when you have none.
 
 **Work in progress.** Co-op building (several commanders on one project) and colony tracking are not available yet. For now this
@@ -14,6 +17,7 @@ page is about your own deliveries, ship and carrier, and details may change.
 **Where this comes from:**
 
 - The journal reports a construction site's totals when you dock or open its market, and each delivery you make.
+- The ship's hold is read from the game's own `Cargo.json` (next to the journals), which the game rewrites on every change, so a purchase shows at once. WFMT looks again about a second and a half after each cargo event in case the game had not finished writing it. When the file cannot be read, or describes your SRV, it falls back to the hold EDMC reports.
 - It does not say who delivered what, and it only records cargo you *transfer* to or from your carrier.
 - WFMT adds the carrier's real hold from Frontier's servers (through a signed-in EDMC), nearby stock from Spansh, plans that players enter on Raven Colonial, and a bundled table of building costs.
 - It works around the rest by tallying transfers itself.
@@ -32,14 +36,14 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 | Line | What it says |
 |---|---|
 | Name, system and a bar | The site, and how far its build has come (the bar turns green when the build is complete) |
-| Progress, Delivered, Still needed | The build's percentage, the tons handed over by everyone against the tons it needs, and what is left |
-| Covered | Of the commodities still needed, how many are **fully** covered, **partly** covered and **not yet** covered, counting your ship, or your ship and carrier together if you have one |
-| On hand | Tons of needed commodities in your ship now |
-| Carrier | (Only with a fleet carrier.) Tons of needed commodities you have moved onto it |
+| Progress, Delivered, Still needed | The build's percentage (`42% complete`), the tons handed over by everyone against the tons it needs (`1,200 of 8,000 t`), and what is left |
+| Covered | Of the commodities still needed, how many are **fully** covered, **partly** covered and **not yet** covered (`3 fully · 2 partly · 5 not yet (of 10 commodities)`), counting your ship, or your ship and carrier together if you have one. `Nothing left to deliver` when all is delivered |
+| On hand | Tons of needed commodities in your ship now (read from `Cargo.json`) |
+| Carrier | (Only with a fleet carrier.) Tons of needed commodities you have moved onto it (`120 t moved onto your carrier`) |
 | Still to get | What is left to buy or mine after your ship (and carrier) |
-| Trips left | **Without a carrier:** the loads of your current ship it takes to finish (one trip buys and delivers). **With a carrier:** trips to buy what is missing and trips to haul everything to the site |
-| Biggest gaps | The four commodities with the most still to get |
-| Next | One sentence on what to do now |
+| Trips left | **Without a carrier:** the loads of your current ship it takes to finish (`4 loads of 400 t`; one trip buys and delivers). **With a carrier:** `N to buy · N to haul (400 t ship)`. `None` when nothing remains, and `Unknown (ship size not seen yet)` until EDMC has reported your ship's cargo capacity |
+| Biggest gaps (t) | The four commodities with the most still to get, with their tons. Left out when nothing is left to get |
+| Next | One sentence on what to do now: how many tons to get (and whether bought or moved onto your carrier), that your ship and carrier hold everything so you should deliver it, that everything is delivered and you should dock to finish the build, or that the build is complete |
 | Others | `+N more active sites` when you have more than the one shown (the line is left out when you have none) |
 
 **A finished build** is shown by its own name. The game calls a depot `Orbital Construction Site: Example Station` while it is being built. Once the build is complete, WFMT drops the `Construction Site:` part (`Example Station`) in the sites window, the shopping list and the history.
@@ -49,9 +53,11 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 History is yours alone (everything is per commander) and is kept off the page. Press **HISTORY** to open the Colonization History window, named for the commander it is for. It has four tabs:
 
 - **Overview**
-- **By day**: tons each day, every day counted
+- **By day**: tons delivered on each day (UTC), newest first. Only days with a delivery are listed
 - **Commodities**: everything you delivered, most first
 - **Sites**: every depot you delivered to, most first
+
+A **help** button in the window's header repeats the notes below. The window keeps its size and position, and it follows the commander if you log in as someone else. A row with nothing to say (for example Best day before any delivery) is left out of the Overview.
 
 The Overview says:
 
@@ -95,12 +101,12 @@ construction depot or open its market, and a `ColonisationContribution` event ea
 
 1. Dock at the construction depot, or open its market, **once**. There is nothing to type in.
 2. The **COL** page shows that site under **Current project** (see below). It is your most recently updated active
-   site, with a line `+N more active sites` if you have others. With none it says `No active construction site`.
+   site, with a line `+N more active sites` if you have others. With none it says `No active construction site. Dock at one to register it.`, and before WFMT knows the commander, `Waiting for commander login`.
 3. Press **DASHBOARD** to open the **Colonization Sites** window.
 
 ### Who is playing
 
-At start-up WFMT takes the commander from the newest journal (the last login in it), so the summary line shows your sites straight away instead of `waiting for commander login`. After you log in as someone else it follows them.
+At start-up WFMT takes the commander from the newest journal (the last login in it), so the COL page shows your sites straight away instead of `Waiting for commander login`. After you log in as someone else it follows them, and so do the open Colonization windows.
 
 ### The site name
 
@@ -123,7 +129,7 @@ They are found again when EDMC starts.
 
 ## The Colonization Sites window
 
-Sites are listed on the left: name, tons left, and progress as a percentage (or `complete` or `failed`). Finished ones are grayed out. The subtitle reads `<commander> — N active of M sites`.
+Sites are listed on the left under three headings: **Site** (the name), **Left** (tons the site still needs) and **Status** (progress as a percentage, or `complete` or `failed`). Finished ones are grayed out. The subtitle reads `<commander> — N active of M sites`. With no sites the list says to dock at a construction depot to register one. The window remembers its size and position, and the divider between the commodity table and Where to buy can be dragged.
 
 Click a site to see it on the right. The first active site is picked when the window opens. You see:
 
@@ -135,7 +141,7 @@ Click a site to see it on the right. The first active site is picked when the wi
 
 ### The six totals
 
-They are always for the whole site, whatever the filters hide:
+They are always for the whole site, whatever the filters hide. A commander **without** a fleet carrier sees four of them: the carrier tile and *trips to buy* are left out, and *trips to haul* is captioned **trips to finish** (one load is bought and delivered in one go).
 
 | Total | Meaning |
 |---|---|
@@ -155,9 +161,10 @@ Building a colony has two legs, and the window counts them apart.
 ### Filters and sorting
 
 - The **Filter** box keeps the commodities whose names contain what you type.
-- **Hide rows already covered** drops the rows you needn't buy any more (see the colors below for what counts as covered).
-- **Only what [station] sells** keeps just the commodities the station you are docked at has for sale. Open its commodity market once and the box names the station and becomes usable. It switches itself off when you leave the station.
+- **Hide rows already covered** drops the rows you needn't buy any more (see the colors below for what counts as covered). It starts off each time the window opens.
+- **Only what [station] sells** keeps just the commodities the station you are docked at has for sale. Open its commodity market once and the box names the station (clipped to 24 characters) and becomes usable; until then it is grayed out. It switches itself off when you leave the station.
 - Click a column heading to sort by it, and again to reverse. The default is alphabetical, so rows stay put while numbers change.
+- The status line at the bottom of the window says how many commodities are still needed, how many your ship (and carrier) cover, and the trips: `Your 400 t ship needs 21 trips to buy what is missing and 33 to haul it all to the site.` Its text changes to `The filters hide every commodity this site still needs.` when the filters hide every row.
 
 ### The table columns
 
@@ -168,10 +175,11 @@ Building a colony has two legs, and the window counts them apart.
 | Remaining | What you still have to get: Required minus delivered, less what is in your ship and what you have moved onto your fleet carrier. It reaches **0** once you have it all, wherever it is stored, so it falls as you load up |
 | In Cargo | What is in your ship (or SRV) now |
 | FC | Tons of that commodity you have transferred onto your **fleet carrier** (only shown once WFMT has seen you have one) |
-| Buy Trips | Loads of **your current ship** to gather what is still missing of that commodity: what is left to get (the Remaining column) divided by your ship's cargo capacity. **0** when you already have enough, wherever it is stored |
+| Buy Trips | (Only with a fleet carrier.) Loads of **your current ship** to gather what is still missing of that commodity: what is left to get (the Remaining column) divided by your ship's cargo capacity. **0** when you already have enough, wherever it is stored |
 | Haul Trips | Loads of your current ship to carry everything the site still needs of that commodity (Required less Delivered) to the site. This stays above 0 for a commodity sitting on your carrier, because it still has to be moved |
+| Trips | Without a fleet carrier there is one trips column in place of the last two, headed **Trips**: the loads of your ship to buy and deliver that commodity |
 
-Both trip columns use at most two decimals (`4`, `1.5`, `1.25`, `0.33`), never round a small remainder down to 0, and show a dash
+The trip columns use at most two decimals (`4`, `1.5`, `1.25`, `0.33`), never round a small remainder down to 0, and show a dash
 until EDMC has given your ship's capacity.
 
 ### Row colors
@@ -252,9 +260,11 @@ For anyone who does not use the overlay, the commodity table is the shopping lis
 
 Under the commodity table, **Where to buy** finds the closest places to buy a commodity.
 
-1. Click a commodity row.
+1. Click a commodity row. The note under the buttons says `Ready to search for <commodity>. Press Find nearest.`
 2. Check the options.
-3. Press **Find nearest**.
+3. Press **Find nearest**. While it runs the note is shown in the accent color and the button is disabled.
+
+With no row picked it asks you to pick one, and with no system in the **Around** box it asks you to enter one or press **Here**. The same search asked again within two minutes is answered from memory rather than sent to Spansh again.
 
 It asks [Spansh](https://spansh.co.uk) (a community-run map of the game), so it needs an internet connection.
 
@@ -265,7 +275,7 @@ It asks [Spansh](https://spansh.co.uk) (a community-run map of the game), so it 
 
 | Option | Meaning |
 |---|---|
-| Around | The system to measure from. It starts as the site's system; type another, or press **Here** for the system you are in now |
+| Around | The system to measure from. It starts as the site's system (and follows the site you pick until you type your own); type another (system names autocomplete), or press **Here** for the system you are in now. **Here** says so if WFMT has not seen which system you are in yet |
 | Within | How far to look: 25, 50, 100, 200 or 500 ly, or no limit. Default 50 |
 | Sort | **Closest first** (default) or **Cheapest first**. This decides which stations Spansh returns, not just their order. Click a result heading to re-sort what came back |
 | Landing pad | **Any size** (default), **Medium or larger**, or **Large only**. Any size lists stations whose biggest pad is small, so you can swap to a smaller cargo ship when a commodity isn't sold at a large-pad station. The **Pad** column shows each station's largest pad |
@@ -279,9 +289,9 @@ search system is not: it starts as the site's system again.
 **Find all** searches every commodity you still have to buy, using the same options. It lists the closest 5 stations (and, if carriers are ticked, the closest 2 carriers) under a heading for each commodity.
 
 - It follows the table as you have it filtered. Rows already covered are left out, and so are rows the Filter box or **Only what [station] sells** hide.
-- Spansh can only look up one commodity per request. So WFMT sends one request per commodity, about half a second apart, plus one more asking for the nearest stations that have every commodity on the list in stock (see below).
+- Spansh can only look up one commodity per request. So WFMT sends one request per commodity, a short pause (0.4 second) apart, plus one more asking for the nearest stations that have every commodity on the list in stock (see below).
 - A list of 20 takes some seconds, and the note under the buttons shows how far it has got, in amber while a search is running so it stands out. The best single systems are checked at the end (see below).
-- Press **Stop** (the same button) to stop after the search in progress, keeping what it found.
+- While it runs, **Find all** is relabeled **Stop** and **Find nearest** is disabled. Press **Stop** to stop after the search in progress, keeping what it found (the note says `(stopped early)`).
 - A commodity that fails is named and the others still show. Press **Find all** again to retry.
 - Commodities with no source in range are listed in the note.
 
@@ -300,11 +310,11 @@ search system is not: it starts as the site's system again.
 
 If you park your fleet carrier in one system and fly between its stations, the question is which **system** can supply the most of your list, not which station. Find all answers it first, at the top of the results, under **Best single systems**.
 
-- After the searches, WFMT picks the few systems that looked best (the most of your commodities, then the most tons), plus the system you searched around, and asks Spansh for **every station in each**, with its whole market. That is one more request per system (up to 6), about half a second apart. The note shows "Checking system 2 of 6".
+- After the searches, WFMT picks up to 6 systems that looked best (the most of your commodities, then the most tons; a system that offered fewer than two of them is not worth a request when your list has more than one), plus the system you searched around, and asks Spansh for **every station in each**, with its whole market. That is one more request per system (up to 6), with a short pause (0.4 second) between them. The note shows "Checking system 2 of 6".
 - The stock of a system's stations is added up. A system is then planned with the fewest stations that supply the most, the same way as the suggested route.
 - The systems are ranked: those that cover **everything** first, then the larger share of the tons, then the nearer, then the cheaper basket.
-- Each system shows how many tons it covers of the total, **everything** or how much it is **short**, its distance, and the cost of the whole basket (for example `22.8M cr`). Open it to see its stations in the order to visit (nearest the arrival star first) and what to buy at each, with the price per ton. Anything the system cannot supply in full is listed under it as **Short**.
-- Only the best system is open to start with. Click a system or station row to copy the system name.
+- Each system is numbered and shows how many tons it covers of the total (`18,000 of 20,000 t`), **everything** or how much it is **short**, its distance, and the cost of the whole basket (for example `22.8M cr`). Open it to see its stations in the order to visit (nearest the arrival star first) and what to buy at each, with the price per ton. Anything the system cannot supply in full is listed under it as **Short**.
+- A system plan never has more than 12 stations. Only the best system is open to start with. Click a system or station row to copy the system name.
 - **Copy Route** copies the best system's plan first, then the suggested route.
 - It is skipped when only one commodity is left, since a plain search answers that.
 
@@ -328,13 +338,14 @@ Find all also works out a shopping route and puts it first in the results: the f
 
 ### Reading the results
 
-Each result shows the station, system, type, whether it is **Planetary**, largest pad, distance in light years, distance from the arrival star, the price per ton and the stock.
+The results table has the columns **Station**, **System**, **Type**, **Planetary**, **Pad** (largest landing pad), **Distance** (light years from the Around system), **Arrival** (distance from the arrival star, in ls), **Price** (per ton) and **Supply** (the stock). **Find nearest** lists up to 25 stations and, if carriers are ticked, up to 10 carriers.
 
 - **Planetary: Yes** means a base on a planet's surface, so you have to descend to land (planetary ports and outposts, settlements).
 - **Planetary: No** means an orbital station, asteroid base, megaship or fleet carrier, which you dock at in space.
 - Click a heading to sort by it.
 - **Click a result row** (a station, or a stop in the suggested route) to copy its system name, ready to paste into the galaxy map's search. The note under the buttons says what was copied. Headings and the "buy" lines under a route stop copy nothing.
-- **Copy System** does the same for the row already selected.
+- **Copy System** does the same for the row already selected (it asks you to select a result row first if none is).
+- **Copy Route** needs a **Find all** first.
 
 ### Things worth knowing
 
@@ -348,28 +359,29 @@ Each result shows the station, system, type, whether it is **Planetary**, larges
 
 **Buttons.** The header of the window, top right. All of them act on the site picked on the left:
 
-- **Copy Shopping List** copies that site's list to the clipboard, as lines like `1,200 t  Steel`, biggest first.
+- **Copy Shopping List** (the highlighted button) copies that site's list to the clipboard: a first line with the site and system, then lines like `1,200 t  Steel`, biggest first.
   The amounts are the **t still to get** figures, so what is on your ship and on your carrier is taken off. If nothing is needed it says
   so.
 - **Rescan Carrier** rebuilds the fleet carrier tally from your journals; see [Rescan Carrier](#rescan-carrier-when-a-load-did-not-register).
-- **Raven Colonial** (a menu): **My Projects**, **Planned Builds**, **Raven Progress**, **Open Selected Build on Raven**, **Open This System on Raven**,
-  **Raven Colonial Website**, **Create Project on Raven**, **Report Complete to Raven** and **Mark Plan Entry Demolished**. See
+- **Raven Colonial** (a menu): **My Projects**, **Planned Builds**, **Raven Progress**, then **Open Selected Build on Raven**, **Open This System on Raven**,
+  **Raven Colonial Website**, then **Create Project on Raven…**, **Report Complete to Raven** and **Mark Plan Entry Demolished…** (the three that write; the dots mean a question follows). See
   [Planned builds](#planned-builds), [Starting a project on Raven Colonial](#starting-a-project-on-raven-colonial) and
   [Sharing your progress with Raven Colonial](#sharing-your-progress-with-raven-colonial).
-- **Manage Sites** (a menu): **Remove Site** stops tracking that site, and **Remove Finished** deletes every complete or failed site.
+- **Manage Sites** (a menu): **Remove Site** stops tracking the selected site, and **Remove Finished** deletes every complete or failed site and says how many it removed. Neither asks first. Removing a site only forgets WFMT's tracking of it: docking at the depot again registers it afresh.
 
 ## My Projects
 
 The Colonization Sites window only knows sites you have docked at. **My Projects** (the **PROJECTS** button on the COL page, or **My Projects** in the **Raven Colonial** menu) lists every active project your commander has on [Raven Colonial](https://ravencolonial.com), across systems.
 
 - **Reading needs no key and no switch.** Opening the window sends only your commander name, to read your projects, your hidden list and your primary project.
-- **The table** shows each project's name, system, building (the game's name and the build type Raven knows it by, such as *Industrial Outpost (vulcan)*), how much is delivered, and the tons still needed. The **Note** column says **Primary** for your primary project and **Here** for a site WFMT also tracks from your journal.
-- **Count.** A project is counted unless it is on your hidden list on Raven Colonial. The line under the title adds up the counted projects and the trips they take in the ship you are flying. Double-click a row, or press **Count / Don't Count**, to change it.
+- **The table** has the columns **Count** (a tick when counted), **Project**, **System**, **Building** (the game's name and the build type Raven knows it by, such as *Industrial Outpost (vulcan)*), **Done** (percent delivered), **Still needed** (tons, or `complete`) and **Note**. The Note column says **Primary** for your primary project and **Here** for a site WFMT also tracks from your journal. Completed and uncounted projects are grayed.
+- **Count.** A project is counted unless it is on your hidden list on Raven Colonial. The line under the title reads like `<commander> - 6 projects · 5 counted need 41,000 t · 105 trips in your ship`: it adds up the counted projects and the trips they take in the ship you are flying, and adds `unsaved changes to the counted list` once you have changed it here. Double-click a row, or select it and press **Count / Don't Count**, to change it.
+- **Refresh** (the highlighted button) reads everything again. The window also follows you when you log in as another commander, and a **My Projects help** button repeats these notes.
 - **More** menu:
   - **Copy Shopping List** copies the picked project's needs, biggest first.
   - **Open Project on Raven** and **Open My Projects on Raven** open ravencolonial.com in your browser.
-  - **Set as My Primary** makes the picked project your primary one on Raven Colonial. It asks first.
-  - **Save Counted List** replaces your hidden list on Raven Colonial with the one on screen. It asks first, because other tools that read the list, such as SrvSurvey, see the change too.
+  - **Set as My Primary…** makes the picked project your primary one on Raven Colonial. It asks first.
+  - **Save Counted List…** replaces your hidden list on Raven Colonial with the one on screen. It asks first, because other tools that read the list, such as SrvSurvey, see the change too.
 - **The two writes** need your Raven Colonial key and the master switch (see [Sharing your progress with Raven Colonial](#sharing-your-progress-with-raven-colonial)). Nothing is saved until you press the button.
 - It does not change WFMT's own tracking. A project you have never docked at is listed from Raven's figures alone, so its commodity list is Raven's, not your journal's.
 
@@ -379,16 +391,18 @@ The journal only reports a construction site once you have docked at it, so a bu
 
 Press **Planned Builds** (in the **Raven Colonial** menu, top right of the Colonization Sites window) to see what [Raven Colonial](https://ravencolonial.com), the community planning site, has for the selected site's system.
 
-- Every site there is listed with its status (**Building**, **Planned**, **Complete**), its type and the body it is on, building first.
+- Every site there is listed, building first, in the columns **Site**, **Status** (**Building**, **Planned**, **Complete** or **Demolish**), **Type**, **Body** (the body's number), **Full cost** and **In WFMT**. Click **Refresh** to ask again. A help button repeats these notes.
 - The top of the window names the system's **architect** (the commander who planned it there) and whether Raven Colonial has it **open** or **locked**, as Raven Colonial reports them.
 - A site you have docked at and WFMT tracks is marked **yes** under *In WFMT*.
+- The window opens for the selected site's system, and shows the new system if you open it again from another site. With no system known yet for the site, dock at it once.
 
 ### Full cost
 
 For a planned or building site it also shows the **full cost**: the tons the whole building needs, from a table of what each kind of building costs that is bundled with WFMT.
 
-- Click a row to see its building and its five biggest commodities in the footer.
-- The top of the window adds up what all the *planned* builds in the system will need.
+- Full cost is shown for planned and building sites only, not finished ones.
+- Click a row to see its building, layout and its five biggest commodities in the footer.
+- The line under the title adds up what all the *planned* builds in the system will need (`planned builds need N t`).
 - The table is a snapshot. If the game changes a building's cost, it can be out of date until WFMT is updated.
 - A building the table does not know shows no cost.
 
@@ -421,13 +435,13 @@ Optional and **off by default**.
 | Setting | What WFMT sends, and when |
 |---|---|
 | **Allow WFMT to write to Raven Colonial** (master switch) | Nothing by itself. Off by default. The three options below only work while it is ticked, and are grayed out while it is not. |
-| **Report my construction progress and deliveries** | Needs the key below; with none, nothing is looked up or sent. When the depot's figures change (the game's `ColonisationConstructionDepot` event): the depot's numbers and how much of each commodity is still needed, which is what moves *Remaining* on Raven Colonial. When you deliver cargo (`ColonisationContribution`): the commodities and tons, which credits your commander name in Raven's history. Once per project, it also links your commander to the project. |
+| **Report my construction progress and deliveries to Raven Colonial** | Needs the key below; with none, nothing is looked up or sent. When the depot's figures change (the game's `ColonisationConstructionDepot` event): the depot's numbers and how much of each commodity is still needed, which is what moves *Remaining* on Raven Colonial. When you deliver cargo (`ColonisationContribution`): the commodities and tons, which credits your commander name in Raven's history. Once per project, it also links your commander to the project. |
 | **Also report cargo I move to and from my fleet carrier** | When you transfer cargo at your own fleet carrier: the tons moved, to the carrier as plus and back to the ship as minus. It adds to Raven's carrier record; it never replaces it, because WFMT's own tally is only what it saw you move. Needs the key below. |
 | **Raven Colonial key** | Needed for every write: progress, deliveries, carrier cargo, **Create Project on Raven**, **Report Complete to Raven**, **Mark Plan Entry Demolished**, and **Set as My Primary** and **Save Counted List** in My Projects. With no key WFMT sends nothing (Raven's published API description does not say which writes work without one, so none is tried). Saved per commander on your computer, shown masked, and sent only to Raven Colonial. |
 
 **Where to get the key.** The settings page has a link to [ravencolonial.com/user](https://ravencolonial.com/user), where you sign in and Raven shows your key (it is also the page that can reset it). WFMT does not fetch it for you.
 
-**Test key.** The button beside the key box in Settings asks Raven Colonial whether the key you typed is accepted for your commander.
+**Test key.** The **Test key** button beside the **Raven Colonial key** box in Settings asks Raven Colonial whether the key you typed is accepted for your commander. The key is saved for the current commander when you close Settings.
 
 - It uses a read that changes nothing, and shows Raven's name for you when the key is accepted.
 - It checks the box as typed, so you can use it before closing Settings.
@@ -450,7 +464,7 @@ Optional and **off by default**.
 - **Do not run two tools that report to Raven.** If another tool (the Raven Colonial EDMC plugin or any other) also reports your
   deliveries, Raven counts them twice. Turn one of them off.
 - **Raven Progress** (in the **Raven Colonial** menu of the Colonization Sites window) reads Raven's own figures for the selected site and sets them beside
-  WFMT's (*Raven says 12,345 t still needed; WFMT says 12,345 t*). It sends only the project's id.
+  WFMT's in the status line (*<site>: Raven Colonial says 12,345 t still needed of 20,000; WFMT says 12,345 t (they agree)*, or *they differ by N t*, and a note when Raven has it marked complete). It looks the project up first, so it sends the system's name and the project's id.
 
 WFMT's own tracking stays the source of truth for your site; Raven's figures never overwrite it.
 
@@ -458,17 +472,18 @@ WFMT's own tracking stays the source of truth for your site; Raven's figures nev
 
 When you dock at a construction ship or site that Raven Colonial has no project for, nothing is shared until one exists. Select the site and choose **Create Project on Raven** in the **Raven Colonial** menu.
 
-- It needs the master switch on and your Raven Colonial key (WFMT asks for the key the first time, and keeps it once Raven accepts it).
+- It needs the master switch on and your Raven Colonial key (WFMT asks for the key the first time, and keeps it once Raven accepts it). It only works for an **active** site; a finished one is refused. With the switch off the status line points you to Settings.
 - WFMT first reads the system's plan on Raven Colonial. If a project already exists for the site it says so and does nothing else.
-- Otherwise a dialog opens. **Plan entry** lists the sites planned for that system that have no project yet, each with its build type; pick yours, or leave **None** to make a project of its own (WFMT never edits the system's plan). If only one site is planned it is preselected.
-- The building is chosen in three steps, as on Raven Colonial: **Location** (orbital or surface), **Building** (by tier and the game's name, such as *Tier 1: Industrial Outpost*), then **Layout (build type)**, the exact identifier Raven Colonial uses, such as `vulcan` or `dual_truss`. That identifier is what is sent. A planned site fills in all three.
-- **Body** is chosen from the system's bodies as Raven lists them (or left *Unknown*). Name defaults to *Primary port* for the system's colonization ship, otherwise the station's own name. Architect, notes and due date are optional.
-- Three tick boxes: whether this is the system's primary port (ticked for a colonization ship), whether to make it **your primary project**, and whether to **attach your fleet carrier** (available once WFMT has seen your carrier's id this session, which happens when you log in or open Carrier Management).
-- Nothing is sent until you press **Create**. Then WFMT, in order: creates the project from the depot figures it already holds, links your commander, and does the two optional ticks. The status line says what worked. If linking, primary or the carrier fail, the project stays and the message names the step.
+- Otherwise the **Create Raven Colonial project** dialog opens. **Plan entry** lists the sites planned for that system that have no project yet, each with its build type; pick yours, or leave **None** to make a project of its own (WFMT never edits the system's plan). If only one site is planned it is preselected.
+- The building is chosen in three steps, as on Raven Colonial: **Location** (orbital or surface), **Building** (by tier and the game's name, such as *Tier 1: Industrial Outpost*), then **Layout (build type)**, the exact identifier Raven Colonial uses, such as `vulcan` or `dual_truss`. That identifier is what is sent. A planned site fills in all three; changing Location clears Building and Layout. Create refuses until a building and layout are chosen (`Choose the building and its layout.`).
+- **Body** is chosen from the system's bodies as Raven lists them (or left *Unknown*). **Name** defaults to *Primary port* for the system's colonization ship, otherwise the station's own name. **Architect** (defaults to Raven's architect for the system, otherwise you), **Notes** and **Due (YYYY-MM-DD)** are optional; a due date in another form is refused.
+- Three tick boxes: **This is the system's primary port** (ticked for a colonization ship), **Make it my primary project**, and **Attach my fleet carrier** (grayed out, with a note, until WFMT has seen your carrier's id this session, which happens when you log in or open Carrier Management).
+- A red note in the dialog warns when Raven reports the system as locked to another architect.
+- Nothing is sent until you press **Create** (**Cancel** sends nothing, and the status line says so). Then WFMT, in order: creates the project from the depot figures it already holds, links your commander, and does the two optional ticks. The status line says what worked. If linking, primary or the carrier fail, the project stays and the message names the step.
 - **What is sent:** your key, the site's market id, system name, address and position, the commodities still needed with the depot figures, and what you typed in the dialog. No journal data beyond that.
 - **Limits:** a system that is locked to another architect may refuse a project (the dialog warns when Raven reports it as locked). WFMT's own tracking never changes.
 
-**Mark Plan Entry Demolished** sets the selected site's entry in Raven's plan to *demolished* after you confirm. It changes Raven's record only, not the game.
+**Mark Plan Entry Demolished…** sets the selected site's entry in Raven's plan to *demolished* after you confirm. It changes Raven's record only, not the game. It needs the master switch and your key like the other writes, and says so when Raven's plan has no entry for the site.
 
 ### Reporting a finished build to Raven Colonial
 
@@ -476,7 +491,7 @@ Select a site your journal has reported **complete** and press **Report Complete
 
 - WFMT looks the site up in Raven Colonial's plan for its system. It matches on the site's market id, or on its name for a build still in progress, which Raven has no market id for yet.
 - Then it marks that project complete there.
-- It never does this by itself. It asks you to confirm each time.
+- It never does this by itself. It asks you to confirm each time (`Tell Raven Colonial that <site> in <system> is complete?`). Before the site is complete in your journal it says there is nothing to report.
 
 - It needs your **Raven Colonial key**. The first time, WFMT asks you to paste it; it is saved for that commander only (in
   `rcc_keys.json`, in the plugin folder, which updates leave alone) once Raven Colonial has accepted it, and masked as you type.
@@ -490,7 +505,7 @@ Select a site your journal has reported **complete** and press **Report Complete
 Optional, and **off until you ask for it**. It needs an overlay running; see [Setting up the overlay](../OVERLAY_SETUP.md).
 
 - Press **OVERLAY** on the COL page to put it up whatever screen you are on.
-- Or tick **Also show the shopping list automatically** in **Settings → WFMT → Overlays → Colonization**, so it appears by itself in the places listed below.
+- Or tick **Also show the shopping list automatically (markets, carrier inventory, construction sites)** in **Settings → WFMT → Overlays → Colonization**, so it appears by itself in the places listed below.
 
 ### The table
 
@@ -547,7 +562,7 @@ A last line gives the tons remaining (still to get, as in the Remaining column) 
   - In the carrier's **Carrier Management** screen. The game announces both opening and closing it, so the card
     appears and goes exactly with the screen.
   - Optionally, **whenever the right-hand cockpit panel is open, anywhere** (even in flight). Off by
-    default; tick it in the Colonization settings.
+    default; tick **Also show whenever the right-hand cockpit panel is open, anywhere** in the Colonization settings.
 
   **Prefer to switch it yourself?** Leave the automatic option unticked and use the **OVERLAY** button beside DASHBOARD on the COL page.
   - It turns the card on or off, whatever screen you are on.
@@ -559,9 +574,9 @@ A last line gives the tons remaining (still to get, as in the Remaining column) 
   failed sites are never shown. The card disappears when nothing is left to get.
 - **Settings:**
   - Where the card sits: Settings → WFMT → Overlays → Overlay Placement. The default is the left edge, vertically centered, on any screen shape.
-  - **Rows**: how many commodities to list (1 to 60; any more are summarized as `+N more`). The default, 0, lists them all.
+  - **Rows:** how many commodities to list (1 to 60; any more are summarized as `+N more`). The default, 0, lists them all.
   - **Hide commodities already covered by the hold and the fleet carrier** (on by default) leaves out the rows that already show a **✓**, so the card lists only what you still have to get. The last line still counts every commodity the site needs, and when everything is covered the card shows just that line.
-  - **Test Overlay** shows a sample card for a few seconds, even while the option is off.
+  - **Test Overlay** shows a sample card for about 8 seconds, even while the option is off, and says `Sent - check your overlay.` or that it could not reach the overlay.
 - It is cleared when EDMC closes. If the overlay program isn't running, nothing is drawn and nothing breaks.
 
 ## What the game does and doesn't tell us, and how to work around it
@@ -581,3 +596,6 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 | A site to have its real name, or a renamed site to follow | The name is taken from the last time you docked at that market. Otherwise it is `Construction site <number>`. The game does not announce a rename; it shows in the name the market has the next time you dock. | Dock at the market once to pick up the name, and again after a rename. |
 | A full history of everything you ever delivered | The journal records each delivery as it happens. WFMT rebuilds your history once from every journal file you still have, so deliveries from journals you deleted are missing. | The history counts from the first delivery it found (shown in the History window) and keeps growing. |
 | Your teammates' work on the same project | The depot reports only the project's totals, not who delivered what. | Today the page shows your deliveries and the project's overall progress. Team support is planned. |
+| What is in your hold right now | The journal's `Cargo` event carries only a count, and EDMC's own cargo state was seen not to follow a purchase. The game rewrites `Cargo.json` on every change. | WFMT reads `Cargo.json` and reads it again about a second and a half after each cargo event. If the file is missing or describes your SRV, it uses the hold EDMC reports. |
+| Builds you have only planned, or projects you have not docked at | The journal reports a construction site only when you dock at it or open its market. | Use Planned Builds and My Projects, which read what players have entered on Raven Colonial. They show other people's entries too, and a project nobody has entered shows nothing. |
+| A free-form check of a market's prices | The game gives no way to query other stations' markets. | Where to buy asks Spansh, which holds players' market updates; only markets updated in the last 7 days are listed, and fleet carriers are opt-in. Confirm on arrival. |

@@ -25,20 +25,26 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 ## Using it
 
-Just play. The panel shows:
+Just play. Press **P.P.** in the mode bar to open the page. Top to bottom it shows:
 
-- your current system's Powerplay state,
-- what you've earned in that system,
-- running merit totals and estimated CP for the session,
-- running merit totals and estimated CP for the **whole Powerplay cycle** so far, across every system. These carry over
-  between game sessions and reset when the cycle ends (Thursday 07:00 UTC); the Cycles tab shows the same numbers per cycle.
+- a status line (`Awaiting PowerPlay activity…` until the game reports your pledge, then `Pledged to <Power>`, `Left PowerPlay`, `Defected to <Power>` or `CMDR <name>: not a PP Pledge`),
+- the current system in bold, as `<system> — <state> (<controller>)` (for example `Nervi — Exploited (Zachary Hudson)`); the part in brackets is the controlling Power, `contested` when several Powers are in the system, or `uncontested`; with no Powerplay data the state reads `no PP data`,
+- `Here: N merits` and a `CP:` line, what you've earned in that system this session,
+- `Session merits` and `Session CP`, the running totals for this login,
+- `Cycle N merits` and `Cycle N CP`, running totals for the **whole Powerplay cycle** so far, across every system. These carry over
+  between game sessions and reset when the cycle ends (Thursday 07:00 UTC); the Cycles tab shows the same numbers per cycle,
+- `Cycle N megaships: 5 (2,340 merits)`,
+- the last merit event (`No merit events yet this session.` until one arrives).
 
-Your game mode and credits are on the two lines under the mode buttons.
+The CP lines list the estimated Control Points by activity, for example Acquisition, Reinforcement and Undermining. Delivery and unattributed merits add merits but no CP (see the table at the end of this page).
 
-Two buttons on the bottom row:
+Your game mode and credits are on the two lines under the mode buttons, and a line such as `Merits this session: +1,234 (+567 merits/hr)` follows them (the rate appears after about three minutes).
 
-- **SES** opens the Sessions window. **RARES** opens the Rare Goods Finder (see below).
-- **RESCAN** re-reads your journal from scratch. Use it if a session's numbers ever look wrong.
+Three buttons on the bottom row:
+
+- **SES** opens the Sessions window.
+- **RARES** opens the Rare Goods Finder (see below).
+- **RESCAN** re-reads the current journal from scratch to recover merits missed after an EDMC restart. Use it if a session's numbers ever look wrong. Hover over a button for a one-line reminder.
 
 ## The Sessions window
 
@@ -46,19 +52,21 @@ Click **SES**. It has six tabs.
 
 | Tab | What it shows |
 |---|---|
-| **Current session** | This login: merits and estimated Control Points by system and by activity, and the Power context WFMT is using. |
+| **Current session** | This login. **By System** lists what you earned in each system (columns **System**, **Merits**, **Est. CP**, **Activity breakdown**; the current system is marked and stays first). **By Activity (session total)** has the columns **Activity**, **Merits**, **Merits/CP**, **Est. CP** and **CP/hr**. **Current PowerPlay Context** shows what WFMT is using to attribute merits: the system, its state, its controller and the rival Powers. A heading above shows the commander, Power, start time and duration. |
 | **Systems** | One tab per system for the cycle, with the system's standing and what you earned there. |
-| **Cycles** | One row per Powerplay cycle, newest first: period, the Power you were pledged to, systems worked, merits, estimated CP, merits by activity. |
-| **Daily** | Merits and estimated CP (whole numbers) for each day of a cycle, with a total. |
-| **Megaships** | The megaships whose datalink you scanned, cycle by cycle: its name, the system, when, and the merits the scan earned. |
-| **History** | Every past session of the commander you are playing, with their running total. Other commanders' sessions are kept but not shown, and each commander keeps their own last 200. |
+| **Cycles** | One row per Powerplay cycle, newest first: **Cycle**, **Period (UTC)**, **Power** you were pledged to, **Systems** worked, **Merits**, **Est. CP** and **Merits by activity**. |
+| **Daily** | **Day**, **Date (UTC, from 07:00)**, **Merits** and **Est. CP** (whole numbers) for each day of a cycle, with a total. |
+| **Megaships** | The megaships whose datalink you scanned: **Cycle**, **Megaship**, **System**, **Scanned (UTC)** and **Merits**. |
+| **History** | Every past session of the commander you are playing (**Started**, **Commander**, **Power**, **Duration**, **Merits**, **Est. CP**) with their running total under **All Sessions**. Other commanders' sessions are kept but not shown, and each commander keeps their own last 200. |
+
+A help button in the window's header repeats the notes for each tab. The window keeps its size and position.
 
 ### Cycles
 
 A Powerplay cycle runs from **Thursday 07:00 UTC** to the next Thursday 07:00 UTC, and is numbered. For example,
 cycle 101 began on 2026-10-01. Each day of a cycle also runs 07:00 to 07:00 UTC, so **day 1 is the Thursday**.
 
-The Systems, Cycles and Daily tabs all have a drop-down to look at an earlier cycle.
+The Systems and Daily tabs have a **CYCLE** drop-down to look at an earlier cycle; the Cycles tab already lists them all.
 
 ### Megaships
 
@@ -82,9 +90,9 @@ scan, and counts them for the cycle.
 ### The buttons at the top
 
 - **Refresh** redraws the window.
-- **Copy Progress** copies one line per system you have visited this session to the clipboard (format in Settings).
+- **Copy Progress** copies one line per system you have visited this session to the clipboard (format in Settings; the default is `[system](link) - N merits (~N CP) - state`, with a link to the system on Inara; the button changes to a confirmation for a moment).
 - **Reset Current System** zeroes the merits earned in the system you are in during this session, and takes them off the
-  session totals too. It asks first and can't be undone.
+  session totals too. It asks first and can't be undone (with no current system it says so).
 - **Reset Session** zeroes this session's merit totals (every system and activity) without ending the session. It asks first
   and can't be undone. Use it to correct a bad count.
 
@@ -93,22 +101,22 @@ journal, so they are not affected; **RESCAN** is the way to rebuild a session fr
 
 ### The Systems tab
 
-A line above the tabs totals the cycle: merits, estimated CP and how many systems you worked. Then, one tab per
-system:
+A line above the tabs names the commander and Power and how many tabs show (`N tab(s): last 6 systems plus N/5 pinned`). A second line totals the cycle: merits, estimated CP and how many systems you worked. Then, one tab per
+system, each with two tables, **STANDING** and **WHAT YOU DID**:
 
 - **Standing** compares a baseline with the latest reading. The baseline is the system's last reading before the
   cycle began, or your first reading this cycle. The table shows state, controlling Power, control progress,
-  reinforcement and undermining, and the change.
+  reinforcement and undermining, and the change. The columns are **Standing**, **Baseline**, **Latest** and **Change**. With no reading yet the table says to jump in or log in there.
 
   These are **whole-system figures from the journal**, everyone's work and not just yours. So if you're defending a
   system, you can see it gaining or losing ground. They only update when you jump into or log in at the system, so
   they are as fresh as your last visit.
-- **What you did** shows your own merits there by activity, with estimated Control Points.
+- **What you did** shows your own merits there by activity (columns **What you did**, **Merits**, **Events**, **Est. CP**).
 
 **Which systems get a tab?** Your last 6 systems, plus up to **5 you pin**.
 
-- Click **☆ Pin** on a tab to keep it. Pinned tabs stay in every cycle, even with no data.
-- Or type a name in **Show a system** (it suggests as you type) and press **Add system**.
+- Click **☆ Pin** on a tab to keep it (the button then reads **★ Unpin**). Pinned tabs stay in every cycle, even with no data. At the limit of 5 pins WFMT says `You can pin up to 5 systems. Unpin one first.`
+- Or type a name in **SHOW A SYSTEM** (it suggests as you type) and press **Add system**, which pins it and brings a closed tab back.
 - **× Close tab** hides a system.
 
 Pins and hidden tabs are remembered for each commander.
@@ -158,11 +166,13 @@ Click **RARES** to see the rare commodities closest to where you are. Each row s
 
 **How to use it:**
 
-1. Press **RARES**. The list needs your position, so it says "Awaiting system data" until your first jump or login after EDMC starts.
-2. Choose how many to see with **Show nearest** (type a number, press Enter or **Apply**). The list holds 141 rare goods.
+1. Press **RARES**. The list needs your position, so it says "Awaiting system data" until your first jump or login after EDMC starts. If the game is closed, press **Use last known location** to take your commander's last position from the journals.
+2. Choose how many to see with **Show nearest** (type a number, press Enter or **Apply**; 10 by default, at most 141). The list holds 141 rare goods.
 3. Narrow it with **Large pads only** and **Only my Power** if you want. Both apply *before* the number shown, so with "Show nearest: 10" you get the ten nearest that match.
 4. Click a heading to sort by it (numbers sort as numbers; a second click reverses). Select a row to see where that rare is illegal.
-5. Press **Copy system** to put the selected rare's origin system on the clipboard, then paste it into the galaxy map's search.
+5. Press **Copy system** to put the selected rare's origin system on the clipboard, then paste it into the galaxy map's search. With no row selected it asks you to select one.
+
+The table has the columns **Rare Good**, **Origin System**, **Distance**, **Station**, **Arrival**, **Pad**, **Legality** and **Controlling Power**. The window's subtitle names your current system (and the Power when **Only my Power** is on), and a help button explains the columns.
 
 **Controls:**
 
@@ -171,18 +181,19 @@ Click **RARES** to see the rare commodities closest to where you are. Each row s
 | **RARES** (Powerplay panel) | Opens the window |
 | **Show nearest** and **Apply** | How many rows to show (remembered) |
 | **Large pads only** | Keeps the rares sold at large-pad stations (20 of the 141), for a large ship |
-| **Only my Power** | Keeps the rares whose origin system is controlled by the Power you are pledged to. Grayed out until WFMT knows your Power (the journal writes it at login when you are pledged). To find them WFMT asks Spansh which Power controls each origin system, nearest first and ten at a time, until it has enough (at most all 141, once per session) |
+| **Only my Power** (shown as **Only my Power (Your Power)**) | Keeps the rares whose origin system is controlled by the Power you are pledged to. Grayed out, and labeled `(not pledged or not known yet)`, until WFMT knows your Power (the journal writes it at login when you are pledged). To find them WFMT asks Spansh which Power controls each origin system, nearest first and ten at a time, until it has enough (at most all 141, once per session) |
 | **Copy system** | Puts the selected row's origin system on the clipboard |
+| **Use last known location** | Takes your commander's last position from the journals, for when the game is closed or no jump or login has been seen yet |
 | **Refresh** | Redraws the list |
 | Click a heading | Sorts by that column |
 | Double-click a row | Opens that commodity on Inara |
 
-Both filter choices are remembered. A "—" in the Power column means unclaimed, or couldn't be checked.
+Both filter choices and the number to show are remembered. In the Power column "…" means the lookup is still running, and "—" means unclaimed or couldn't be checked.
 
 **Legality.**
 
 - *Legal* means the table lists no place the rare is illegal (128 of the 141).
-- For the 13 that are restricted (liquors, the Onionhead and similar narcotics, Kamitra Cigars), the column says *Illegal here* or *Legal here* for the system you are in.
+- For the 13 that are restricted (liquors, the Onionhead family and similar narcotics, Kamitra Cigars, Lyrae Weed and a few others), the column says *Illegal here* or *Legal here* for the system you are in.
   - It uses that system's allegiance and government from the journal when you jump or log in.
   - It says *Restricted* until WFMT knows them.
   - It says nothing about the system you are heading for.
@@ -196,7 +207,9 @@ you restart EDMC (a failed lookup is also kept, so it isn't retried until then).
 
 **Settings → WFMT → Powerplay**:
 
-- The merit-per-Control-Point ratios. Only change these if Frontier changes them.
-- The format of the lines **Copy Progress** copies. That button is in the Sessions window; it puts a summary on
-  your clipboard to paste into Discord or a forum post. A **Reset to default** button restores the standard format.
-- How many cycles the start-up journal scan covers.
+- **CP Ratios**: the merits needed for 1 Control Point, per activity. The defaults are Acquisition 4.0, Reinforcement 2.5 and Undermining 4.2, community-sourced estimates. Only change these if Frontier changes them or your in-game totals disagree. System strength, ethos and squadron bonuses are already inside the merits the journal reports, so there is nothing separate to enter for them. Delivery and Unattributed have no ratio.
+- **Clipboard**: the format of the lines **Copy Progress** copies. That button is in the Sessions window; it puts a summary on
+  your clipboard to paste into Discord or a forum post. The placeholders are `{system}`, `{system_url}`, `{merits}`, `{cp}` and `{state}`. A **Reset to default** button restores the standard format.
+- **Journal scan**: **Cycles to scan**, how many cycles back (this one included, 1 to 12; default 4) the start-up scan covers for a commander WFMT has not seen before.
+
+Ratios, clipboard format and scan depth are saved when you close Settings.

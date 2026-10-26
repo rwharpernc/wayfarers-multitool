@@ -1,6 +1,6 @@
 # Technical Specification — Powerplay
 
-**Author:** R.W. Harper (CMDR Bocheaux)
+**Author:** R.W. Harper (CMDR Mactavious)
 **Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 The standing reference for Powerplay mode: how merits are attributed to an activity, how Control Points
@@ -136,6 +136,12 @@ A window listing the rare commodities closest to your current system.
   because control changes weekly. Results are cached for the session, failures included, at most 5 at a
   time. A "—" means unclaimed or unreachable. See
   [TECHNICAL.md](TECHNICAL.md#keeping-api-traffic-low).
+- **Filters.** *Large pads only* keeps the rares whose station has a large pad (20 of the 141). *Only my Power* keeps those whose origin system
+  the commander's pledged Power controls: the window asks Spansh (`powerplay_control_lookup`) about `POWER_BATCH` (10) origin systems at a time,
+  nearest first, until it has as many matches as the number to show or has gone through the list, and caches each answer for the session. The
+  filter is grayed out until the Power is known. Both filters apply before the number to show, and the choices are remembered.
+- **Position.** The list needs the commander's `StarPos`. *Use last known location* takes it, with the system's allegiance and government,
+  from the commander's newest journals (`current_system.last_place`) for when the game is closed.
 - Double-click a row to open the commodity on Inara, using the stored id. **Copy system** puts the selected row's origin system on the clipboard.
 - **Legality** is worked out locally from the table's `illegalInSuperpowers`, `illegalInGovs` and
   `illegalInSuperpowerGovs` (`rare_goods.legality_text`).
