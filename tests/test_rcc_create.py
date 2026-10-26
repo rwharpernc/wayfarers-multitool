@@ -59,8 +59,18 @@ class Planned(unittest.TestCase):
     def test_the_site_is_matched_by_the_stations_own_name(self):
         sites = rcc_client.parse_sites(PLAN)
         self.assertEqual(C.guess_planned(sites, "pennington claim").site_id, "x1")
-        self.assertIsNone(C.guess_planned(sites, "Other"))
-        self.assertEqual(C.suggested_name(site()), "Pennington Claim")
+        self.assertEqual(C.suggested_name(site()), "Primary port")
+        other = Site(market_id=5, name="Orbital Construction Site: Grinning Station")
+        self.assertEqual(C.suggested_name(other), "Grinning Station")
+        self.assertTrue(C.is_construction_ship(site()))
+        self.assertTrue(C.is_construction_ship(Site(market_id=6, name="System Colonization Ship Foo")))
+        self.assertFalse(C.is_construction_ship(other))
+
+    def test_the_only_planned_site_is_preselected(self):
+        sites = rcc_client.parse_sites(PLAN)
+        self.assertEqual(C.guess_planned(sites, "Primary port").site_id, "x1")
+        two = rcc_client.parse_sites(PLAN + [{"id": "x4", "name": "Second", "bodyNum": 1, "buildType": "vesta", "status": "plan"}])
+        self.assertIsNone(C.guess_planned(two, "Primary port"))
 
 
 class Parsing(unittest.TestCase):
@@ -69,13 +79,6 @@ class Parsing(unittest.TestCase):
         self.assertIsNone(C.parse_due(" "))
         with self.assertRaises(ValueError):
             C.parse_due("31/12/2026")
-
-    def test_body_numbers(self):
-        self.assertEqual(C.parse_body_num("12"), 12)
-        self.assertIsNone(C.parse_body_num(""))
-        for bad in ("x", "-1", "100000"):
-            with self.assertRaises(ValueError):
-                C.parse_body_num(bad)
 
     def test_the_location_comes_from_raven_first_then_the_game(self):
         plan = rcc_client.RccSystem("S", "", None, [], id64=5, pos=(1.0, 1.0, 1.0))
@@ -104,11 +107,6 @@ class Bodies(unittest.TestCase):
         for name in ("starPos", "bodyNum", "systemSiteId", "architectName", "notes", "timeDue", "bodyName"):
             self.assertNotIn(name, body)
 
-    def test_a_new_site_is_added_as_being_built(self):
-        body = C.sites_put_body(request(), "x99")
-        self.assertEqual(body, {"update": [{"id": "x99", "name": "Pennington Claim", "bodyNum": 4, "buildType": "no_truss", "status": "build"}],
-                                "delete": []})
-
     def test_demolishing_keeps_the_entry_as_it_is(self):
         entry = rcc_client.parse_sites(PLAN)[0]
         update = C.demolish_body(next(s for s in rcc_client.parse_sites(PLAN) if s.site_id == "x2"))["update"][0]
@@ -122,22 +120,20 @@ class Validation(unittest.TestCase):
         self.assertIn("name", C.validate(request(name="")))
         self.assertIn("Choose", C.validate(request(build_type="")))
         self.assertIn("address", C.validate(request(system_address=None)))
-        self.assertIn("body number", C.validate(request(body_num=None)))
         self.assertEqual(C.validate(request()), "")
 
-    def test_a_planned_site_needs_no_body_number(self):
-        planned = C.planned_sites(rcc_client.parse_sites(PLAN))[0]
-        self.assertEqual(C.validate(request(body_num=None, planned=planned)), "")
+    def test_no_body_is_needed(self):
+        self.assertEqual(C.validate(request(body_num=None)), "")
 
 
 class Creating(unittest.TestCase):
-    def test_a_new_site_is_added_then_the_project_made_then_the_commander_linked(self):
+    def test_a_project_of_its_own_never_touches_the_plan(self):
         send = Recorder()
-        result = C.create(request(fleet_carrier=3700000002), send, now=lambda: 1.5)
+        result = C.create(request(fleet_carrier=3700000002), send)
         self.assertEqual([(m, p) for m, p, _b in send.calls], [
-            ("PUT", "/api/v2/system/1234/sites"), ("PUT", "/api/project"), ("PUT", "/api/project/newbuild/link/tiber%20caelvox"),
+            ("PUT", "/api/project"), ("PUT", "/api/project/newbuild/link/tiber%20caelvox"),
             ("PUT", "/api/Cmdr/tiber%20caelvox/primary/newbuild"), ("PUT", "/api/project/newbuild/fc/3700000002")])
-        self.assertEqual(send.calls[1][2]["systemSiteId"], "x1500")
+        self.assertNotIn("systemSiteId", send.calls[0][2])
         self.assertEqual(result.build_id, "newbuild")
         self.assertEqual(result.warnings, [])
 
@@ -148,8 +144,8 @@ class Creating(unittest.TestCase):
         self.assertEqual([p for _m, p, _b in send.calls], ["/api/project", "/api/project/newbuild/link/tiber%20caelvox"])
         self.assertEqual(send.calls[0][2]["systemSiteId"], "x1")
 
-    def test_a_refused_plan_edit_stops_before_any_project_is_made(self):
-        send = Recorder(fail=("/sites",))
+    def test_a_refused_project_stops_the_run(self):
+        send = Recorder(fail=("/api/project",))
         with self.assertRaises(rcc_client.RccError):
             C.create(request(), send)
         self.assertEqual(len(send.calls), 1)
@@ -174,10 +170,37 @@ class Creating(unittest.TestCase):
 
 
 class BuildTypes(unittest.TestCase):
-    def test_choices_use_raven_keys_and_include_layouts(self):
-        keys = {c.key for c in C.build_choices()}
-        self.assertTrue({"no_truss", "dual_truss", "dysnomia", "hermes"} <= keys)
-        self.assertEqual(len(keys), len(C.build_choices()))
+    def test_a_building_lists_the_layouts_raven_knows_it_by(self):
+        coriolis = next(c for c in C.build_choices() if c.key == "no_truss")
+        self.assertEqual(coriolis.layouts, ("no_truss", "dual_truss", "quad_truss"))
+        self.assertEqual(C.choice_label(coriolis), "Tier 2: Coriolis Starport")
+        vulcan = next(c for c in C.build_choices() if c.key == "vulcan")
+        self.assertEqual((vulcan.name, vulcan.layouts, vulcan.location), ("Industrial Outpost", ("vulcan",), "orbital"))
+
+    def test_the_two_locations_split_the_buildings(self):
+        orbital, surface = C.choices_at("orbital"), C.choices_at("surface")
+        self.assertTrue(orbital and surface)
+        self.assertEqual(len(orbital) + len(surface), len(C.build_choices()))
+        self.assertEqual({c.location for c in surface}, {"surface"})
+
+    def test_a_planned_layout_finds_its_building(self):
+        self.assertEqual(C.choice_for_layout("Dual_Truss").key, "no_truss")
+        self.assertEqual(C.choice_for_layout("vulcan").name, "Industrial Outpost")
+        self.assertIsNone(C.choice_for_layout("nonsense"))
+
+    def test_every_layout_is_listed_once(self):
+        layouts = [x for c in C.build_choices() for x in c.layouts]
+        self.assertEqual(len(layouts), len(set(layouts)))
+
+
+class Bodies(unittest.TestCase):
+    def test_bodies_are_listed_by_number_without_belts(self):
+        bodies = rcc_client.parse_bodies([
+            {"name": "S B 1", "num": 7, "type": "hmc", "subType": "High metal content world"},
+            {"name": "S A", "num": 1, "type": "st", "subType": "K star"},
+            {"name": "S A Belt", "num": 100200, "type": "bt"}, {"name": "", "num": 3}, "junk"])
+        self.assertEqual([(b.num, b.name) for b in bodies], [(1, "S A"), (7, "S B 1")])
+        self.assertEqual(bodies[1].kind, "High metal content world")
 
 
 if __name__ == "__main__":

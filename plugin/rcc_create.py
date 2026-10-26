@@ -5,18 +5,18 @@ did not: until a project exists, the progress and delivery sharing in rcc_sync.p
 What a run does, in order (each only after the commander confirmed the dialog; nothing happens on docking):
 
 1. The system's plan is read (no key needed) to see whether a project already exists for the site, and which planned sites it has.
-2. A site chosen from the plan is used as it is. A new one is added to the plan first (`PUT /api/v2/system/<id64>/sites`, a site
-   with status "build"), which Raven only allows when the system is open or the commander is its architect.
+2. A site chosen from the plan is built from. With none chosen the project stands on its own, as SrvSurvey's does; the plan is
+   never edited by this.
 3. The project is created (`PUT /api/project`) from the depot snapshot WFMT already holds: the market id, the system, the
    commodities still needed and the total need. Raven answers with the project, whose build id is what every later call uses.
 4. The commander is linked to it, and, when asked, it is made their primary project and their fleet carrier is attached.
 
-A failed first step stops the run; the optional ones after the project exists report their own failure and never undo it. Pure
+A failed project stops the run; the optional ones after the project exists report their own failure and never undo it. Pure
 shaping plus one function (`create`) whose network calls are passed in, so it is tested without a connection.
 """
 from __future__ import annotations
 
-import time
+import re
 import urllib.parse
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -25,36 +25,59 @@ from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple
 from . import build_costs, colonization, rcc_client
 from .colonization import Site
 
-NEW_SITE = "New site (add it to the plan)"
+NO_PLAN_ENTRY = "None (a project of its own)"
 NAME_MAX = 60
 NOTES_MAX = 500
 BUILD_ID_MAX = rcc_client.BUILD_ID_MAX
-BODY_NUM_MAX = 999
 
 Writer = Callable[..., Any]
 
 
 @dataclass(frozen=True)
 class BuildChoice:
-    """One thing that can be built, by the key Raven Colonial uses for it."""
+    """One building, with the build types (layouts) Raven Colonial knows it by; the layout is what a project is made with."""
     key: str
-    label: str
+    name: str
     tier: int
-    location: str
+    location: str                    # "orbital" or "surface"
+    layouts: Tuple[str, ...]
+
+
+LOCATIONS = ("orbital", "surface")
 
 
 def build_choices() -> List[BuildChoice]:
-    """Every build type in the bundled cost table: each building under its own key, and each of its other layouts (a Coriolis is
-    also a dual and a quad truss) under theirs, labeled by the game's name."""
+    """Every building in the bundled cost table, by tier then name."""
+    seen = set()
     choices = []
-    for key, cost in build_costs.table().items():
-        label = cost.name if key == cost.key else f"{cost.name} - {rcc_client.build_type_label(key).lower()}"
-        choices.append(BuildChoice(key, label, cost.tier, cost.location))
-    return sorted(choices, key=lambda c: (c.location, c.label.casefold(), c.key))
+    for cost in build_costs.table().values():
+        if cost.key in seen:
+            continue
+        seen.add(cost.key)
+        choices.append(BuildChoice(cost.key, cost.name, cost.tier, cost.location, tuple(build_costs.layouts_of(cost))))
+    return sorted(choices, key=lambda c: (c.tier, c.name.casefold(), c.key))
+
+
+def choices_at(location: str) -> List[BuildChoice]:
+    return [c for c in build_choices() if c.location == location]
 
 
 def choice_label(choice: BuildChoice) -> str:
-    return f"{choice.label} ({choice.location})"
+    return f"Tier {choice.tier}: {choice.name}"
+
+
+def choice_for_layout(layout: str) -> Optional[BuildChoice]:
+    """The building that a build type (layout) makes, or None for one the table does not know."""
+    wanted = (layout or "").strip().casefold()
+    return next((c for c in build_choices() if wanted in (x.casefold() for x in c.layouts)), None)
+
+
+_SHIP_NAME = re.compile(r"colon[a-z]*ation[\s_;]*ship", re.IGNORECASE)   # either spelling, with or without a space
+
+
+def is_construction_ship(site: Site) -> bool:
+    """Whether the site is the system's colonization ship (its primary port), by the name the game gives it."""
+    return bool(_SHIP_NAME.search(site.name))
 
 
 def planned_sites(sites: Sequence[rcc_client.RccSite]) -> List[rcc_client.RccSite]:
@@ -62,16 +85,25 @@ def planned_sites(sites: Sequence[rcc_client.RccSite]) -> List[rcc_client.RccSit
     return [s for s in sites if s.site_id and s.status == rcc_client.STATUS_PLANNED and not s.build_id and s.market_id is None]
 
 
+PRIMARY_PORT_NAME = "Primary port"
+
+
 def suggested_name(site: Site) -> str:
-    """The name to offer: the station's own, without the game's construction-site prefix."""
+    """The name to offer: "Primary port" for the system's colonization ship, else the station's own name without the game's
+    construction-site prefix."""
+    if is_construction_ship(site):
+        return PRIMARY_PORT_NAME
     return rcc_client.station_part(site.display_name())[:NAME_MAX]
 
 
 def guess_planned(sites: Sequence[rcc_client.RccSite], name: str) -> Optional[rcc_client.RccSite]:
-    """The planned site whose name is the one given, if exactly one is."""
+    """The planned site whose name is the one given, or the only planned site there is (None when it is not clear which)."""
     wanted = name.strip().casefold()
     named = [s for s in planned_sites(sites) if s.name.casefold() == wanted]
-    return named[0] if len(named) == 1 else None
+    if len(named) == 1:
+        return named[0]
+    everything = planned_sites(sites)
+    return everything[0] if len(everything) == 1 else None
 
 
 def parse_due(text: str) -> Optional[str]:
@@ -81,17 +113,6 @@ def parse_due(text: str) -> Optional[str]:
         return None
     day = datetime.strptime(text, "%Y-%m-%d").replace(tzinfo=timezone.utc)
     return day.isoformat().replace("+00:00", "Z")
-
-
-def parse_body_num(text: str) -> Optional[int]:
-    """The body number typed (the number after the system name in the in-game body list), or None for a blank. ValueError otherwise."""
-    text = (text or "").strip()
-    if not text:
-        return None
-    number = int(text)
-    if not 0 <= number <= BODY_NUM_MAX:
-        raise ValueError("body number out of range")
-    return number
 
 
 @dataclass
@@ -107,7 +128,7 @@ class Request:
     build_type: str
     body_num: Optional[int] = None
     body_name: str = ""
-    planned: Optional[rcc_client.RccSite] = None     # a planned site to build from; None adds a new one to the plan
+    planned: Optional[rcc_client.RccSite] = None     # a planned site to build from; None makes a project of its own
     architect: str = ""
     notes: str = ""
     due: Optional[str] = None
@@ -138,8 +159,6 @@ def validate(request: Request) -> str:
         return "Choose what is being built."
     if request.system_address is None:
         return "WFMT does not know this system's address yet. Dock at the site once, then try again."
-    if request.planned is None and request.body_num is None:
-        return "A new site needs its body number (the number shown after the system name in the in-game body list)."
     return ""
 
 
@@ -193,23 +212,12 @@ def locate(system: str, plan: Optional[rcc_client.RccSystem], state: Mapping[str
     return address, pos
 
 
-def new_site_id(now: Callable[[], float] = time.time) -> str:
-    """An id for a site added to the plan: `x` and the time in milliseconds, the form Raven's own web app gives them."""
-    return f"x{int(now() * 1000)}"
-
-
-def sites_put_body(request: Request, site_id: str) -> Dict[str, Any]:
-    """The `PUT /api/v2/system/<id64>/sites` body that adds one site, already marked as being built."""
-    return {"update": [{"id": site_id, "name": request.name.strip()[:NAME_MAX], "bodyNum": request.body_num or 0,
-                        "buildType": request.build_type, "status": rcc_client.STATUS_BUILDING}], "delete": []}
-
-
 def _quote(text: Any) -> str:
     return urllib.parse.quote(str(text).strip(), safe="")
 
 
-def create(request: Request, send: Writer = rcc_client.send_json, now: Callable[[], float] = time.time) -> Result:
-    """Run the steps (see the module docstring). Raises rcc_client.RccError when the site or the project could not be made; the later
+def create(request: Request, send: Writer = rcc_client.send_json) -> Result:
+    """Run the steps (see the module docstring). Raises rcc_client.RccError when the project could not be made; the later
     steps only add a warning to the result. `send(method, path, body, key, cmdr=...)` returns Raven's parsed answer."""
     problem = validate(request)
     if problem:
@@ -217,10 +225,6 @@ def create(request: Request, send: Writer = rcc_client.send_json, now: Callable[
     result = Result()
     key, cmdr = request.key.strip(), request.cmdr
     site_id = request.planned.site_id if request.planned else ""
-    if request.planned is None:
-        site_id = new_site_id(now)
-        send("PUT", f"/api/v2/system/{request.system_address}/sites", sites_put_body(request, site_id), key, cmdr=cmdr)
-        result.steps.append(f"Added {request.name.strip()} to the plan.")
     answer = send("PUT", "/api/project", project_body(request, site_id), key, cmdr=cmdr)
     build_id = str(answer.get("buildId") or "").strip()[:BUILD_ID_MAX] if isinstance(answer, Mapping) else ""
     if not build_id:

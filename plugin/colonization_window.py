@@ -1032,16 +1032,17 @@ class ColonizationWindow:
         carrier_id = self._carrier_id()
         locked = ""
         if plan.is_open is False and plan.architect and plan.architect.casefold() != self._cmdr.casefold():
-            locked = f"This system is locked to its architect, {plan.architect}; adding a site to the plan may be refused."
+            locked = f"This system is locked to its architect, {plan.architect}; Raven Colonial may refuse a project here."
         chosen = colonization_create_dialog.ask(
             self._toplevel, site.system, name, rcc_create.planned_sites(plan.sites), rcc_create.guess_planned(plan.sites, name),
-            plan.architect or self._cmdr, can_attach_carrier=isinstance(carrier_id, int), locked_note=locked)
+            plan.architect or self._cmdr, can_attach_carrier=isinstance(carrier_id, int), bodies=plan.bodies,
+            primary_port=rcc_create.is_construction_ship(site), locked_note=locked)
         if chosen is None:
             self._shell.set_status("Nothing was sent to Raven Colonial.")
             return
         request = rcc_create.Request(
             site=site, cmdr=self._cmdr, key=key, system=site.system, system_address=address, star_pos=star_pos, name=chosen.name,
-            build_type=chosen.build_type, body_num=rcc_create.parse_body_num(chosen.body_num), planned=chosen.planned,
+            build_type=chosen.build_type, body_num=chosen.body_num, body_name=chosen.body_name, planned=chosen.planned,
             architect=chosen.architect, notes=chosen.notes, due=rcc_create.parse_due(chosen.due), primary_port=chosen.primary_port,
             make_primary=chosen.make_primary, fleet_carrier=carrier_id if chosen.fleet_carrier else None)
         problem = rcc_create.validate(request)

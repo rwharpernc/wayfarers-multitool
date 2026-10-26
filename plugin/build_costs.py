@@ -106,6 +106,12 @@ def table() -> Dict[str, BuildCost]:
     return _table
 
 
+def layouts_of(cost: BuildCost) -> List[str]:
+    """The build types that make this building, its own first and the other layouts after it (a Coriolis: no, dual and quad truss)."""
+    own = [k for k, c in table().items() if c is cost and k == cost.key]
+    return own + sorted(k for k, c in table().items() if c is cost and k != cost.key)
+
+
 def cost_for(build_type: Any) -> Optional[BuildCost]:
     """The cost of a building by its layout / build type name (case and spaces do not matter), or None if the table lacks it."""
     return table().get(_normal(build_type))

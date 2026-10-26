@@ -2,6 +2,10 @@
 rcc_create.py for what is then sent). Modal over the Colonization Sites window, built on the shared window kit (plugin/uikit); every
 field is bounded, so the dialog never grows with what is typed in it.
 
+The building is chosen in three steps, as on Raven Colonial: where it goes (orbital or surface), which building (by tier and the
+game's name), then its **layout**, the exact build type Raven knows it by (`vulcan`, `dual_truss`, ...). The layout is what is sent,
+so it is always shown as it is written. A planned site chosen from the plan fills in all three.
+
 `ask` returns a `Choices` (the commander's answers) or None when cancelled. The values are only read here, never sent: the caller
 validates and sends.
 """
@@ -9,7 +13,7 @@ from __future__ import annotations
 
 import tkinter as tk
 from dataclasses import dataclass
-from typing import List, Optional, Sequence
+from typing import Dict, List, Optional, Sequence
 
 from . import rcc_client, rcc_create
 from .uikit import palette as P, style
@@ -17,15 +21,18 @@ from .uikit.widgets import Combobox, FlatButton, clip
 
 _WIDTH_CHARS = 44
 _LABEL_CHARS = 56
-_NEW = rcc_create.NEW_SITE
+_NO_PLAN = rcc_create.NO_PLAN_ENTRY
+_NO_BODY = "Unknown"
+_LOCATION_LABELS = {"orbital": "Orbital", "surface": "Surface"}
 
 
 @dataclass
 class Choices:
     planned: Optional[rcc_client.RccSite]
     name: str
-    build_type: str
-    body_num: str
+    build_type: str                  # the layout, as Raven writes it
+    body_num: Optional[int]
+    body_name: str
     architect: str
     notes: str
     due: str
@@ -35,16 +42,22 @@ class Choices:
 
 
 def _planned_label(site: rcc_client.RccSite) -> str:
-    return clip(f"{site.name} - {site.type_label or 'type not set'}" + (f" (body {site.body_num})" if site.body_num is not None else ""), _LABEL_CHARS)
+    return clip(f"{site.name} ({site.build_type or 'type not set'})", _LABEL_CHARS)
+
+
+def _body_label(body: rcc_client.RccBody) -> str:
+    return clip(f"{body.name} ({body.kind})" if body.kind else body.name, _LABEL_CHARS)
 
 
 def ask(parent: tk.Misc, system: str, name: str, planned: Sequence[rcc_client.RccSite], guess: Optional[rcc_client.RccSite],
-        architect: str, can_attach_carrier: bool, locked_note: str = "") -> Optional[Choices]:
-    """Show the dialog. `planned` are the plan's unbuilt sites, `guess` the one that matches `name` (preselected), `locked_note` a line
-    to show when Raven says the system is locked to someone else."""
-    types: List[rcc_create.BuildChoice] = rcc_create.build_choices()
-    type_labels = [rcc_create.choice_label(c) for c in types]
+        architect: str, can_attach_carrier: bool, bodies: Sequence[rcc_client.RccBody] = (), primary_port: bool = False,
+        locked_note: str = "") -> Optional[Choices]:
+    """Show the dialog. `planned` are the plan's unbuilt sites, `guess` the one preselected, `bodies` the system's bodies (for the body
+    choice), `primary_port` whether the site is the system's colonization ship, `locked_note` a line to show when Raven says the system
+    is locked to someone else."""
+    buildings: Dict[str, List[rcc_create.BuildChoice]] = {loc: rcc_create.choices_at(loc) for loc in rcc_create.LOCATIONS}
     planned_labels = {_planned_label(s): s for s in planned}
+    body_labels = {_body_label(b): b for b in bodies}
     top = parent.winfo_toplevel()
     window = tk.Toplevel(parent)
     window.withdraw()
@@ -55,14 +68,16 @@ def ask(parent: tk.Misc, system: str, name: str, planned: Sequence[rcc_client.Rc
         window.configure(bg=P.BG)
         window.resizable(False, False)
 
-        planned_var = tk.StringVar(master=window, value=_planned_label(guess) if guess else _NEW)
+        planned_var = tk.StringVar(master=window, value=_planned_label(guess) if guess else _NO_PLAN)
         name_var = tk.StringVar(master=window, value=name)
-        type_var = tk.StringVar(master=window, value="")
-        body_var = tk.StringVar(master=window, value="")
+        location_var = tk.StringVar(master=window, value=_LOCATION_LABELS["orbital"])
+        building_var = tk.StringVar(master=window, value="")
+        layout_var = tk.StringVar(master=window, value="")
+        body_var = tk.StringVar(master=window, value=_NO_BODY)
         architect_var = tk.StringVar(master=window, value=architect)
         notes_var = tk.StringVar(master=window, value="")
         due_var = tk.StringVar(master=window, value="")
-        port_var = tk.BooleanVar(master=window, value=False)
+        port_var = tk.BooleanVar(master=window, value=primary_port)
         primary_var = tk.BooleanVar(master=window, value=True)
         carrier_var = tk.BooleanVar(master=window, value=can_attach_carrier)
         error_var = tk.StringVar(master=window, value="")
@@ -85,32 +100,61 @@ def ask(parent: tk.Misc, system: str, name: str, planned: Sequence[rcc_client.Rc
             variable.trace_add("write", lambda *_: variable.set(variable.get()[:limit]) if len(variable.get()) > limit else None)
             return field
 
-        picker = Combobox(body, textvariable=planned_var, values=[_NEW] + list(planned_labels), state="readonly", width=_WIDTH_CHARS - 4)
+        def combo(variable: tk.StringVar, values: Sequence[str]) -> Combobox:
+            return Combobox(body, textvariable=variable, values=list(values), state="readonly", width=_WIDTH_CHARS - 4)
+
+        picker = combo(planned_var, [_NO_PLAN] + list(planned_labels))
         line("Plan entry", picker)
         line("Name", entry(name_var, rcc_create.NAME_MAX))
-        type_box = Combobox(body, textvariable=type_var, values=type_labels, state="readonly", width=_WIDTH_CHARS - 4)
-        line("Building", type_box)
-        body_entry = entry(body_var, 3)
-        line("Body number", body_entry)
+        location_box = combo(location_var, list(_LOCATION_LABELS.values()))
+        line("Location", location_box)
+        building_box = combo(building_var, [])
+        line("Building", building_box)
+        layout_box = combo(layout_var, [])
+        line("Layout (build type)", layout_box)
+        body_box = combo(body_var, [_NO_BODY] + list(body_labels))
+        line("Body", body_box)
         line("Architect", entry(architect_var, rcc_create.NAME_MAX))
         line("Notes", entry(notes_var, rcc_create.NOTES_MAX))
         line("Due (YYYY-MM-DD)", entry(due_var, 10))
 
-        def on_plan_choice(_event: object = None) -> None:
+        def location() -> str:
+            return next((k for k, v in _LOCATION_LABELS.items() if v == location_var.get()), "orbital")
+
+        def current_building() -> Optional[rcc_create.BuildChoice]:
+            return next((c for c in buildings[location()] if rcc_create.choice_label(c) == building_var.get()), None)
+
+        def on_location(_event: object = None) -> None:
+            building_box.configure(values=[rcc_create.choice_label(c) for c in buildings[location()]])
+            building_var.set("")
+            layout_var.set("")
+            layout_box.configure(values=[])
+
+        def on_building(_event: object = None) -> None:
+            choice = current_building()
+            layout_box.configure(values=list(choice.layouts) if choice else [])
+            layout_var.set(choice.layouts[0] if choice else "")
+
+        def on_plan(_event: object = None) -> None:
             site = planned_labels.get(planned_var.get())
             if site is None:
-                body_entry.configure(state="normal")
                 return
             name_var.set(site.name)
-            body_var.set("" if site.body_num is None else str(site.body_num))
-            body_entry.configure(state="disabled")
-            for index, choice in enumerate(types):
-                if choice.key == site.build_type.strip().casefold():
-                    type_var.set(type_labels[index])
-                    break
+            choice = rcc_create.choice_for_layout(site.build_type)
+            if choice is not None:
+                location_var.set(_LOCATION_LABELS[choice.location])
+                on_location()
+                building_var.set(rcc_create.choice_label(choice))
+                on_building()
+                layout_var.set(next((x for x in choice.layouts if x.casefold() == site.build_type.strip().casefold()), choice.layouts[0]))
+            match = next((label for label, b in body_labels.items() if b.num == site.body_num), None)
+            body_var.set(match or _NO_BODY)
 
-        picker.bind("<<ComboboxSelected>>", on_plan_choice)
-        on_plan_choice()
+        location_box.bind("<<ComboboxSelected>>", on_location)
+        building_box.bind("<<ComboboxSelected>>", on_building)
+        picker.bind("<<ComboboxSelected>>", on_plan)
+        on_location()
+        on_plan()
 
         for text, variable in (("This is the system's primary port", port_var), ("Make it my primary project", primary_var)):
             tk.Checkbutton(body, text=text, variable=variable, fg=P.TEXT, bg=P.BG, selectcolor=P.CARD, activebackground=P.BG,
@@ -134,17 +178,18 @@ def ask(parent: tk.Misc, system: str, name: str, planned: Sequence[rcc_client.Rc
 
         def finish(accept: bool) -> None:
             if accept:
-                chosen = next((c for c, label in zip(types, type_labels) if label == type_var.get()), None)
-                if chosen is None:
-                    error_var.set("Choose what is being built.")
+                layout = layout_var.get().strip()
+                if not layout:
+                    error_var.set("Choose the building and its layout.")
                     return
                 try:
                     rcc_create.parse_due(due_var.get())
-                    rcc_create.parse_body_num(body_var.get())
                 except ValueError:
-                    error_var.set("The due date must look like 2026-12-31, and the body number must be a whole number.")
+                    error_var.set("The due date must look like 2026-12-31.")
                     return
-                answer[0] = Choices(planned_labels.get(planned_var.get()), name_var.get().strip(), chosen.key, body_var.get().strip(),
+                chosen_body = body_labels.get(body_var.get())
+                answer[0] = Choices(planned_labels.get(planned_var.get()), name_var.get().strip(), layout,
+                                    chosen_body.num if chosen_body else None, chosen_body.name if chosen_body else "",
                                     architect_var.get().strip(), notes_var.get().strip(), due_var.get().strip(), port_var.get(),
                                     primary_var.get(), carrier_var.get() and can_attach_carrier)
             window.destroy()

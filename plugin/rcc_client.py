@@ -118,6 +118,33 @@ def parse_sites(data: Any) -> List[RccSite]:
 
 
 @dataclass(frozen=True)
+class RccBody:
+    """One body of the system as Raven Colonial lists it (what a project's body is chosen from)."""
+    num: int
+    name: str
+    kind: str                    # Raven's short body type, e.g. "hmc", "st", "rb"
+
+
+MAX_BODIES = 300
+BODY_NUM_MAX = 999               # numbers above this are belts and rings, which nothing is built on
+
+
+def parse_bodies(data: Any) -> List[RccBody]:
+    """The bodies in an answer (`[{name, num, type}, ...]`), by number, without belts and rings. Anything malformed is skipped."""
+    if not isinstance(data, list):
+        return []
+    bodies = []
+    for raw in data[:MAX_BODIES]:
+        if not isinstance(raw, dict):
+            continue
+        num, name = _int(raw.get("num")), str(raw.get("name") or "").strip()
+        if num is None or not 0 <= num <= BODY_NUM_MAX or not name:
+            continue
+        bodies.append(RccBody(num, name[:NAME_MAX], str(raw.get("subType") or raw.get("type") or "").strip()[:NAME_MAX]))
+    return sorted(bodies, key=lambda b: b.num)
+
+
+@dataclass(frozen=True)
 class RccSystem:
     """What Raven Colonial holds for one system."""
     name: str
@@ -126,6 +153,7 @@ class RccSystem:
     sites: List[RccSite]
     id64: Optional[int] = None   # the system's address, when Raven gives one
     pos: Optional[Tuple[float, float, float]] = None   # its galactic position, when Raven gives one
+    bodies: Tuple[RccBody, ...] = ()
 
     @property
     def access_label(self) -> str:
@@ -141,7 +169,8 @@ def parse_system(data: Any, fallback_name: str = "") -> RccSystem:
         name=str(data.get("name") or fallback_name).strip()[:NAME_MAX],
         architect=str(data.get("architect") or "").strip()[:NAME_MAX],
         is_open=is_open if isinstance(is_open, bool) else None,
-        sites=parse_sites(data.get("sites")), id64=_int(data.get("id64")), pos=_pos(data.get("pos")))
+        sites=parse_sites(data.get("sites")), id64=_int(data.get("id64")), pos=_pos(data.get("pos")),
+        bodies=tuple(parse_bodies(data.get("bodies"))))
 
 
 def count_by_status(sites: List[RccSite]) -> Dict[str, int]:
