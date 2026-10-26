@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import shutil
 import threading
 from datetime import datetime
@@ -39,6 +40,8 @@ CONFIG_LAST_VERSION = "wfmt_last_version"
 UPDATES_DIRNAME = "updates"
 BACKUPS_DIRNAME = "backups"
 BACKUPS_KEEP = 3
+ZIP_ROOTS = ("Wayfarers-Multitool/", "WFMT/")   # the top-level folder of a release zip
+_UPDATE_BACKUP_NAME = re.compile(r"^\d{8}-\d{6}\.zip$")
 # Dev handbrake: drop a file with this name in the plugin folder to disable
 # auto-update for that install, regardless of the Settings checkbox — e.g.
 # for a folder you're actively hand-editing/testing builds in.
@@ -238,8 +241,9 @@ class UpdateManager:
         self._trim_backups()
 
     def _trim_backups(self) -> None:
+        # Only the update backups: the same folder holds the pre-restore safety zips, which data_backup trims on its own.
         backups = sorted(
-            (os.path.join(self._backups_dir, f) for f in os.listdir(self._backups_dir)),
+            (os.path.join(self._backups_dir, f) for f in os.listdir(self._backups_dir) if _UPDATE_BACKUP_NAME.match(f)),
             key=os.path.getctime,
         )
         for stale in backups[:-BACKUPS_KEEP]:
@@ -260,10 +264,10 @@ class UpdateManager:
     def _apply(self, zip_path: str) -> None:
         with ZipFile(zip_path, "r") as zf:
             names = zf.namelist()
-            # Release zips contain a top-level WFMT/ folder (see
+            # Release zips contain a top-level Wayfarers-Multitool/ folder (see
             # scripts/package.mjs), so strip it — plugin_dir *is* that
             # folder already.
-            prefix = "WFMT/" if names and all(n.startswith("WFMT/") for n in names) else ""
+            prefix = next((p for p in ZIP_ROOTS if names and all(n.startswith(p) for n in names)), "")
 
             for member in zf.infolist():
                 relative = member.filename[len(prefix):] if prefix and member.filename.startswith(prefix) else member.filename

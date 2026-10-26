@@ -25,7 +25,7 @@ Bodies = Mapping[int, Scan]
 
 STANDARD_GRAVITY = 9.81  # m/s^2 per "1 g", for display
 
-# Limits below are the defaults published in Elite Observatory's DefaultCriteria.cs (see THIRD-PARTY-NOTICES.md).
+# Source and license of the default limits below: see docs/ATTRIBUTIONS.md and THIRD-PARTY-NOTICES.md.
 HIGH_GRAVITY_MS2 = 29.4  # landable above 29.4 m/s^2 (about 3 g)
 LARGE_LANDABLE_RADIUS_M = 18_000_000.0  # landable above 18,000 km radius
 FAST_PERIOD_S = 28_800.0  # rotation or orbit faster than 8 hours

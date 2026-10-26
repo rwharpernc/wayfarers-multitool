@@ -11,8 +11,8 @@ journals between its start and its end, which fixes a run that missed events (ED
 commander's runs are kept per commander in `expedition_log.json` (`commander_data.py`) and never leave the computer.
 
 What is exact and what is an estimate: credits **earned** are the totals the game reports when data is sold (`SellExplorationData`, `MultiSellExplorationData`,
-`SellOrganicData`). The **unsold** figures are WFMT's estimate of what the scans and analyzed species not yet sold are worth (the scan value formula, and the species'
-value, five times that on a first footfall); selling clears them, since the game sells what you hold. Mapping bonuses are not estimated. Pure apart from the file:
+`SellOrganicData`). The **unsold** figures are WFMT's estimate of what the scans and analyzed species not yet sold are worth (the scan value formula, with the mapped value once a body is mapped, and the species'
+value, five times that on a first footfall); selling clears them, since the game sells what you hold. Pure apart from the file:
 no Tk, no EDMC beyond the logger.
 """
 

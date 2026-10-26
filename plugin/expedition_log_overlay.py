@@ -198,8 +198,8 @@ def build_settings(notebook: nb.Notebook) -> None:
 
     nb.Label(
         frame,
-        text=("What WFMT cannot know: what the unsold scans and species are worth is an estimate (marked ~), cleared when you sell, and the mapping bonus is not "
-              "included. Earned figures are what the game reports when you sell data, so they count when you sell, not when you scan. Only what happens while an "
+        text=("What WFMT cannot know: what the unsold scans and species are worth is an estimate (marked ~), cleared when you sell. Mapping a body adds its mapped value to the "
+              "estimate. Earned figures are what the game reports when you sell data, so they count when you sell, not when you scan. Only what happens while an "
               "expedition is running is counted; Rescan in the log window works an expedition out again from your journals."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(6, 4))

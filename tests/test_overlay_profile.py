@@ -222,6 +222,10 @@ class EveryOverlaySettingIsClassifiedTests(unittest.TestCase):
                     missing.add(f"{name}: {key}")
         self.assertEqual(sorted(missing), [], "a new overlay setting: add it to overlay_profile._FIXED, or to SHARED_BY_DESIGN with a reason")
 
+    def test_the_flight_alert_and_target_choices_are_per_commander(self):
+        for key in ("wfmt_flight_mining", "wfmt_flight_limpets_low", "wfmt_flight_hold_percent", "wfmt_targets_known"):
+            self.assertIn(key, P.profile_keys())
+
     def test_nothing_is_both_swapped_and_shared(self):
         self.assertEqual(set(P.profile_keys()) & set(SHARED_BY_DESIGN), set())
 

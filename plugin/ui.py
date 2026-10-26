@@ -843,6 +843,7 @@ def _create_backup_tab(notebook: nb.Notebook) -> None:
             status.set(result.summary())
 
     nb.Button(frame, text="Back up my data", command=back_up).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
+    nb.Label(frame, textvariable=status, justify=tk.LEFT, wraplength=420).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(0, 6))
     nb.Label(
         frame, justify=tk.LEFT, wraplength=420,
         text="Saves everything WFMT has recorded about your play (expeditions and the Expedition Log, system surveys and "
