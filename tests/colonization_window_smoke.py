@@ -277,8 +277,20 @@ def fake_whole(system, commodities, **kwargs):
     return S.WholeListResult(found=found, failed=[])
 
 
+system_calls = []
+
+
+def fake_systems(found, needs, reference, **kwargs):
+    system_calls.append((reference, dict(needs), kwargs["pad"]))
+    kwargs["progress"](0, 1, "Sol")
+    stop = W.systems.SystemStop("Near Port", "Coriolis Starport", False, "Large", 300.0, (S.Purchase("Aluminium", 80, 410),))
+    return W.systems.SystemsResult(plans=[W.systems.SystemPlan("Sol", 0.0, (stop,), 480, 80, (("Steel", 400),), 32800, 1)])
+
+
 S_whole = W.sources.find_whole_list
 W.sources.find_whole_list = fake_whole
+S_systems = W.systems.find_best_systems
+W.systems.find_best_systems = fake_systems
 window._on_find_all()
 for _ in range(100):
     root.update()
@@ -289,29 +301,42 @@ check(len(whole_calls) == 1 and whole_calls[0][1] == ["Aluminium", "Steel"],
       f"Find all should search what is still to buy, got {whole_calls}")
 check(whole_calls[0][2]["pad"] == "large", "Find all should use the chosen options")
 headings = [row.values[0] for row in window._source_table._rows.values() if row.group]
-check(headings == ["Suggested route", "1. Near Port", "Aluminium", "Steel"], f"the route, then one heading per commodity: {headings}")
+check(headings == ["Best single systems", "1. Sol", "1. Near Port", "Suggested route", "1. Near Port", "Aluminium", "Steel"],
+      f"the best systems, the route, then one heading per commodity: {headings}")
+check(system_calls == [("Sol", {"Aluminium": 80, "Steel": 400}, "large")], f"the systems check gets the needs and the pad choice: {system_calls}")
+systems_detail = {row.values[0]: row.values for row in window._source_table._rows.values() if row.group}
+check(systems_detail["Best single systems"][1] == "1 checked", f"the systems heading counts them: {systems_detail['Best single systems']}")
+check(systems_detail["1. Sol"][1:3] == ["80 of 480 t", "short 400 t"] and systems_detail["1. Sol"][7] == "32.8K cr",
+      f"a system row shows coverage, what is short and the basket's cost: {systems_detail['1. Sol']}")
+check(any(row.values[0] == "Short: Steel x 400 t" for row in window._source_table._rows.values()), "the shortfall is listed under the system")
 detail = {row.values[0]: row.values[1:3] for row in window._source_table._rows.values() if row.group}
 check(detail["Aluminium"] == ["80 t to get", ""] and detail["Steel"] == ["400 t to get", "no source found"],
       f"the detail sits in later columns so the label is not clipped: {detail}")
 check(detail["Suggested route"][0] == "1 stop", f"the route heading counts its stops: {detail['Suggested route']}")
-check(len(window._source_table) == 6, f"the route (3 rows), two headings and one station: {len(window._source_table)}")
+check(len(window._source_table) == 11, f"the systems (5 rows), the route (3 rows), two headings and one station: {len(window._source_table)}")
 check(window._plan is not None and [s.station for s in window._plan.stops] == ["Near Port"], "a plan should be kept for Copy Route")
 check(window._find_all_button.cget("text") == "Find all" and window._find_button._enabled,
       "the buttons come back when the search is done")
 check("No source found for Steel" in window._sources_note.cget("text"), "the note should name what had no source")
 check("shopping route of 1 stop" in window._sources_note.cget("text") and "Not covered: Steel 400 t" in window._sources_note.cget("text"),
       f"the note should describe the route and what it leaves out: {window._sources_note.cget('text')}")
+check("No single system covers everything; Sol covers the most (17% of the tons)." in window._sources_note.cget("text"),
+      f"the note should name the best system: {window._sources_note.cget('text')}")
 window._source_table.select("g0s0")
 window._on_copy_system()
 check("Copied" in window._sources_note.cget("text"), "Copy System works on a Find all result")
 window._on_copy_route()
-check("Copied the 1-stop shopping route" in window._sources_note.cget("text"), "Copy Route should confirm")
+check("Copied the best system and the shopping route" in window._sources_note.cget("text"), "Copy Route should confirm")
 window._on_source_sort("price")
-check(len(window._source_table) == 6, "sorting a Find all result keeps it, route included")
+check(len(window._source_table) == 11, "sorting a Find all result keeps it, systems and route included")
 window._plan = None
+window._on_copy_route()
+check("Copied the best system to the clipboard" in window._sources_note.cget("text"), "Copy Route copies the best system alone when there is no route")
+window._systems = None
 window._on_copy_route()
 check("Press Find all first" in window._sources_note.cget("text"), "Copy Route with no route says what to do")
 W.sources.find_whole_list = S_whole
+W.systems.find_best_systems = S_systems
 
 # The header: related actions sit under a heading each, as drop-down menus.
 from plugin.uikit.widgets import FlatButton, MenuButton

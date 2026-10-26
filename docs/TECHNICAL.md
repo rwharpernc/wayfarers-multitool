@@ -1437,6 +1437,14 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 - Whether a commander has a fleet carrier is asked of Trade first (`trade_panel.fleet_carrier`: the Settings choice, else a recorded fleet carrier; `None` means unknown) so the two features always agree, falling back to what this module has seen itself.
 - It is fed live and caught up from `CargoTransfer` events the same way.
 
+**Best single systems** (`colonization_systems.py`)
+
+- After Find all (`colonization_sources.find_whole_list`), the window runs `find_best_systems` on the same worker thread. It is pure logic around an injected `fetch` (`mining_spansh_client.search_system_stations`), so the tests use no network.
+- `candidate_systems` groups the per-commodity answers by system (fleet carriers ignored) and keeps up to 6: the system searched around first, then those with the most commodities and tons, skipping systems found for a single commodity.
+- Each candidate costs one request (a station search of distance 0 from the system returns every station with its whole market), paced `SYSTEM_PAUSE` apart. A failed system is recorded and the rest carry on; `cancelled()` is checked between systems, and the Stop button keeps what was found.
+- `plan_system` adds up the stations' stock per commodity and reuses `colonization_sources.plan_route` limited to that system (fewest stations, most tons), then orders the stops by arrival distance. `rank` puts systems that cover everything first, then the larger share, the nearer, the cheaper.
+- A single commodity asks for nothing. The Spansh names are normalized as the one-stop search does, and compared without regard to case.
+
 **Shopping-list overlay card** (`colonization_overlay.py`)
 
 - It draws the optional shopping-list card, laid out as a table (Commodity, Required, Remaining, FC (only with a carrier), Cargo).

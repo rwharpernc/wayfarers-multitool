@@ -741,6 +741,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
   - Clicking a row names its biggest commodities.
   - **Refresh** works.
   - With no network it says it could not reach Raven Colonial.
+- [ ] **Best single systems:** after Find all with two or more commodities, a "Best single systems" group comes first (the note shows "Checking system N of M"); each system shows how much of the list it covers, "everything" or how much it is short, and a cost; the best one is open with its stations in visiting order and what to buy at each. **Copy Route** copies the best system first.
 - [ ] **Suggested route:** after Find all, a "Suggested route" group comes first with numbered stops and the commodities to buy under each; **Copy Route** puts plain lines on the clipboard.
 - [ ] **Remembered choices**: change Within, Sort, Landing pad and Include fleet carriers, run a search, close and reopen
       the window: the same choices are back.

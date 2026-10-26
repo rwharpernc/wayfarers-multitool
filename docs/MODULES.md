@@ -365,6 +365,7 @@ Guide: [Colonization](guide/colonization.md)
 | `colonization_builds_window.py` | The Planned Builds window: Raven Colonial's sites for the picked site's system, fetched on a worker thread when opened or refreshed |
 | `colonization_sources.py` | Where to buy a colonization commodity: the closest stations (and optionally fleet carriers) with it in stock, any landing-pad size by default, via Spansh; the whole-list search (one request per commodity) and the remembered search choices; pure shaping around an injected search |
 | `colonization_stats.py` | The figures and wording of the Colonization page: the current project and the history, worded for a commander with or without a fleet carrier; pure, no Tk |
+| `colonization_systems.py` | The best single systems for a shopping list: groups the whole-list search by system, checks the best few with Spansh (every station's market in one request each), and ranks them by how much of the list they cover, the distance and the cost; pure logic around an injected search |
 | `colonization_view.py` | What the Colonization Sites window shows for a site: the commodity rows after the filters, and the totals (still to get, on the carrier, in the ship, buy and haul trips); pure, no Tk |
 | `colonization_window.py` | The Colonization Sites window: sites on the left; the picked site's progress, totals, filters and sortable commodity table, and the Where to buy search, on the right |
 

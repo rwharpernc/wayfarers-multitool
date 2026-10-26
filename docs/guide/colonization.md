@@ -280,7 +280,7 @@ search system is not: it starts as the site's system again.
 
 - It follows the table as you have it filtered. Rows already covered are left out, and so are rows the Filter box or **Only what [station] sells** hide.
 - Spansh can only look up one commodity per request. So WFMT sends one request per commodity, about half a second apart, plus one more asking for the nearest stations that have every commodity on the list in stock (see below).
-- A list of 20 takes some seconds, and the note under the buttons shows how far it has got.
+- A list of 20 takes some seconds, and the note under the buttons shows how far it has got. The best single systems are checked at the end (see below).
 - Press **Stop** (the same button) to stop after the search in progress, keeping what it found.
 - A commodity that fails is named and the others still show. Press **Find all** again to retry.
 - Commodities with no source in range are listed in the note.
@@ -295,6 +295,24 @@ search system is not: it starts as the site's system again.
 
 - That request goes first. A commodity that one of those stations can supply in full is not searched on its own (its answer comes from that station's market), so a list that one station can fill takes a single request.
 - After the searches, if the route still leaves two or more commodities uncovered, one more request asks for stations that have all of those in stock. The whole market it returns also fills in any other commodity on your list those stations sell.
+
+### Best single systems
+
+If you park your fleet carrier in one system and fly between its stations, the question is which **system** can supply the most of your list, not which station. Find all answers it first, at the top of the results, under **Best single systems**.
+
+- After the searches, WFMT picks the few systems that looked best (the most of your commodities, then the most tons), plus the system you searched around, and asks Spansh for **every station in each**, with its whole market. That is one more request per system (up to 6), about half a second apart. The note shows "Checking system 2 of 6".
+- The stock of a system's stations is added up. A system is then planned with the fewest stations that supply the most, the same way as the suggested route.
+- The systems are ranked: those that cover **everything** first, then the larger share of the tons, then the nearer, then the cheaper basket.
+- Each system shows how many tons it covers of the total, **everything** or how much it is **short**, its distance, and the cost of the whole basket (for example `22.8M cr`). Open it to see its stations in the order to visit (nearest the arrival star first) and what to buy at each, with the price per ton. Anything the system cannot supply in full is listed under it as **Short**.
+- Only the best system is open to start with. Click a system or station row to copy the system name.
+- **Copy Route** copies the best system's plan first, then the suggested route.
+- It is skipped when only one commodity is left, since a plain search answers that.
+
+Things to know:
+- Only stations whose market was updated in the last 7 days count, and fleet carriers are left out (they move, and their markets go stale). The landing pad choice applies to the stations considered.
+- The systems come from the nearest stations Find all returned for each commodity inside your radius. A good system farther out than that will not be offered; widen **Within** to look further.
+- A very large system may have more stations than Spansh sends in one answer. The note says so for the best system.
+- If a system cannot be checked, the note names it and the others still show.
 
 ### Suggested route
 

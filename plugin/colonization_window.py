@@ -19,7 +19,7 @@ from typing import Any, Callable, Dict, FrozenSet, List, Mapping, Optional, Tupl
 
 from config import appname, config
 
-from . import colonization, colonization_builds_window, colonization_carrier, colonization_create_dialog, colonization_projects_window, colonization_sources as sources, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys, system_autocomplete
+from . import colonization, colonization_builds_window, colonization_carrier, colonization_create_dialog, colonization_projects_window, colonization_sources as sources, colonization_systems as systems, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys, system_autocomplete
 from .colonization_carrier import CarrierCargo
 from .colonization import Site
 from .colonization_data import SiteRepository
@@ -123,6 +123,16 @@ def refresh_cmdr(cmdr: str) -> None:
         _window.set_cmdr(cmdr)
 
 
+def _credits(amount: int) -> str:
+    """A basket's cost short enough for the Price column: 950 cr, 12.5K cr, 22.8M cr, 1.2B cr (blank for none)."""
+    if amount <= 0:
+        return ""
+    for size, suffix in ((1_000_000_000, "B"), (1_000_000, "M"), (1_000, "K")):
+        if amount >= size:
+            return f"{amount / size:,.1f}{suffix} cr"
+    return f"{amount:,} cr"
+
+
 def _clip(text: str, limit: int) -> str:
     return text if len(text) <= limit else text[:limit - 1] + "…"
 
@@ -157,6 +167,7 @@ class ColonizationWindow:
         self._whole: Optional[sources.WholeListResult] = None   # the last "Find all" answer (instead of _result)
         self._whole_to_get: Dict[str, int] = {}                 # commodity label -> tons still to get, for its heading
         self._plan: Optional[sources.RoutePlan] = None          # the suggested shopping route for the last "Find all"
+        self._systems: Optional[systems.SystemsResult] = None   # the best single systems for the last "Find all" (each checked with Spansh)
         self._whole_job: Optional[Dict[str, Any]] = None        # the "Find all" running now
         self._prefs = sources.load_prefs(config.get_str(CONFIG_SEARCH))
         self._source_sort = ("distance", False)
@@ -591,7 +602,7 @@ class ColonizationWindow:
             self._sources_note.configure(
                 text=f"The search failed: {_clip(job['error'], _ERROR_MAX)}. Spansh may be busy; try again shortly.")
             return
-        self._result, self._result_label, self._whole, self._plan = job["result"], commodity, None, None
+        self._result, self._result_label, self._whole, self._plan, self._systems = job["result"], commodity, None, None, None
         self._render_sources(system)
 
     def _on_find_all(self) -> None:
@@ -632,6 +643,15 @@ class ColonizationWindow:
                     system, labels, radius_ly=radius, pad=pad, include_carriers=carriers, sort=order,
                     progress=lambda done, total, label: job.__setitem__("progress", (done, total, label)),
                     cancelled=lambda: job["cancel"], one_stop=search_stations_selling_all, needs=to_get)
+                if not job["result"].stopped:
+                    job["phase"] = "systems"
+                    try:   # a bonus on top of the answer above: the systems where most of the list can be bought in one place
+                        job["systems"] = systems.find_best_systems(
+                            job["result"].found, to_get, system, pad=pad,
+                            progress=lambda done, total, label: job.__setitem__("progress", (done, total, label)),
+                            cancelled=lambda: job["cancel"])
+                    except Exception:
+                        logger.exception("Colonization best-systems check failed")
             except Exception as exc:   # bad input or an unexpected failure: shown, not raised into the main thread
                 logger.exception("Colonization whole-list search failed")
                 job["error"] = str(exc) or exc.__class__.__name__
@@ -645,7 +665,8 @@ class ColonizationWindow:
             return
         if not job["done"]:
             done, total, label = job["progress"]
-            self._sources_note.configure(text=f"Searching {done + 1} of {total}: {label}…")
+            verb = "Checking system" if job.get("phase") == "systems" else "Searching"
+            self._sources_note.configure(text=f"{verb} {done + 1} of {total}: {_clip(label, _NAME_MAX)}…")
             self._toplevel.after(_POLL_MS, self._poll_whole, job, system, to_get)
             return
         self._whole_job = None
@@ -656,6 +677,7 @@ class ColonizationWindow:
             return
         self._whole, self._whole_to_get, self._result = job["result"], to_get, None
         self._plan = sources.plan_route(job["result"].found, to_get)
+        self._systems = job.get("systems")
         self._render_whole(system)
 
     def _on_source_sort(self, key: str) -> None:
@@ -718,8 +740,34 @@ class ColonizationWindow:
         self._source_table.mark_sorted(key, descending)
         self._source_rows.clear()
         plan = self._plan
+        found_systems = self._systems.plans if self._systems is not None else []
+        if found_systems:
+            # The best single systems first, each with its stations in the order to visit and what to buy at each; only the best is open.
+            self._source_table.insert("systems", ("Best single systems", f"{len(found_systems)} checked", "", "", "", "", "", "", ""),
+                                      group=True, open=True)
+            for rank, found in enumerate(found_systems, 1):
+                sid = f"sys{rank}"
+                short = sum(tons for _label, tons in found.uncovered)
+                self._source_rows[sid] = found.system
+                self._source_table.insert(
+                    sid, (f"{rank}. {_clip(found.system, _NAME_MAX)}", f"{found.covered:,} of {found.needed:,} t",
+                          "everything" if found.complete else f"short {short:,} t", "", "",
+                          f"{found.distance_ly:,.1f} ly" if found.distance_ly else "", "", _credits(found.cost), ""),
+                    group=True, open=rank == 1, parent="systems")
+                for number, stop in enumerate(found.stops, 1):
+                    stop_id = f"{sid}s{number}"
+                    self._source_rows[stop_id] = found.system
+                    self._source_table.insert(
+                        stop_id, (f"{number}. {stop.station}", found.system, stop.kind, "Yes" if stop.is_planetary else "No", stop.pad, "",
+                                  f"{stop.arrival_ls:,.0f} ls" if stop.arrival_ls else "", "", f"{stop.tons:,} t"),
+                        group=True, open=rank == 1, parent=sid)
+                    for index, buy in enumerate(stop.buys):
+                        self._source_table.insert(f"{stop_id}b{index}", (f"{buy.commodity} x {buy.tons:,} t", "", "", "", "", "", "",
+                                                                         f"{buy.price:,}", ""), parent=stop_id)
+                for index, (label, tons) in enumerate(found.uncovered):
+                    self._source_table.insert(f"{sid}u{index}", (f"Short: {label} x {tons:,} t", "", "", "", "", "", "", "", ""), parent=sid)
         if plan is not None and plan.stops:
-            # The suggested shopping route first: a stop is a row with what to buy there as rows beneath it.
+            # The suggested shopping route: a stop is a row with what to buy there as rows beneath it.
             self._source_table.insert("route", ("Suggested route", f"{len(plan.stops)} stop{'s' if len(plan.stops) != 1 else ''}",
                                                 f"{plan.covered:,} of {plan.needed:,} t", "", "", "", "", "", ""),
                                       group=True, open=True)
@@ -760,6 +808,14 @@ class ColonizationWindow:
         if whole.failed:
             parts.append(f"The search failed for {_clip(', '.join(label for label, _ in whole.failed), _ERROR_MAX)}"
                          f" - Spansh may be busy; press Find all again.")
+        if self._systems is not None and self._systems.failed:
+            parts.append(f"Could not check {_clip(', '.join(name for name, _ in self._systems.failed), _ERROR_MAX)} with Spansh.")
+        if found_systems:
+            best = found_systems[0]
+            more = " Its station list may be longer than Spansh sent." if best.more_stations else ""
+            parts.append((f"{best.system} has everything: {len(best.stops)} station{'s' if len(best.stops) != 1 else ''}."
+                          if best.complete else
+                          f"No single system covers everything; {best.system} covers the most ({best.share:.0%} of the tons).") + more)
         if plan is not None and plan.stops:
             parts.append(f"A shopping route of {len(plan.stops)} stop{'s' if len(plan.stops) != 1 else ''} covers "
                          f"{plan.covered:,} of {plan.needed:,} t (Copy Route copies it).")
@@ -770,12 +826,17 @@ class ColonizationWindow:
 
     def _on_copy_route(self) -> None:
         plan = self._plan
-        if plan is None or not plan.stops:
+        best = self._systems.plans[0] if self._systems is not None and self._systems.plans else None
+        if (plan is None or not plan.stops) and best is None:
             self._sources_note.configure(text="Press Find all first; the shopping route is worked out from its answer.")
             return
-        text = "\n".join(_clip(line, 240) for line in plan.lines())
-        if panelkit.copy_to_clipboard(self._toplevel, text):
-            self._sources_note.configure(text=f"Copied the {len(plan.stops)}-stop shopping route to the clipboard.")
+        lines = (["Best single system:"] + best.lines() + [""]) if best is not None else []
+        if plan is not None and plan.stops:
+            lines += plan.lines()
+        if panelkit.copy_to_clipboard(self._toplevel, "\n".join(_clip(line, 240) for line in lines)):
+            what = "the best system and the shopping route" if best is not None and plan is not None and plan.stops else (
+                "the best system" if best is not None else f"the {len(plan.stops)}-stop shopping route")
+            self._sources_note.configure(text=f"Copied {what} to the clipboard.")
 
     def _on_source_pick(self, iid: str) -> None:
         """Clicking a result row copies its system, ready to paste into the galaxy map's search. Rows with no system (the
