@@ -698,6 +698,8 @@ The items below are implemented and covered by unit tests, but have not all been
 - [ ] **BGS** after a tick passes while EDMC is closed: the period that closed should contain the play made in the meantime. Also verify that a finished Colonization build is displayed without the "Construction Site:" prefix.
 - [ ] Colonization window: **Find all** against Spansh, **Only what [station] sells** with a real `Market.json`, and copying a system by clicking a result row.
 - [ ] **Raven Colonial writes not yet observed:** Report Complete on a finished build, and carrier cargo sharing (the second switch).
+  - **Create Project on Raven** has never run against the live service: try it docked at a construction ship, once with a planned site and once as a new site, and check the project, the link, the primary project and the attached carrier on ravencolonial.com. Raven's API description does not say what a new plan entry needs, so a refusal there is worth reporting.
+  - **Mark Plan Entry Demolished** is likewise unobserved.
   - Carrier cargo sharing requires a transfer at the commander's own carrier with that option enabled, followed by a check of Raven's carrier record.
   - Depot progress and deliveries have been verified, and the Test key button accepts a valid key.
 - [ ] **Raven Progress and Open Selected Build on Raven** on real in-progress builds (the Raven Colonial menu).

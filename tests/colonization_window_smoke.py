@@ -320,7 +320,8 @@ check([w.cget("text") for w in header] == ["Copy Shopping List", "Rescan Carrier
       f"the header buttons: {[w.cget('text') for w in header]}")
 menus = {w.cget("text").split(" ")[0]: w for w in header if isinstance(w, MenuButton)}
 check(menus["Raven"].entries() == ["Planned Builds", "Raven Progress", "Open Selected Build on Raven", "Open This System on Raven",
-                                   "Raven Colonial Website", "Report Complete to Raven"],
+                                   "Raven Colonial Website", "Create Project on Raven…", "Report Complete to Raven",
+                                   "Mark Plan Entry Demolished…"],
       f"Raven Colonial menu: {menus['Raven'].entries()}")
 check(menus["Manage"].entries() == ["Remove Site", "Remove Finished"], f"Manage Sites menu: {menus['Manage'].entries()}")
 

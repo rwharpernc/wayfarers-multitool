@@ -767,7 +767,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
 - [ ] The header has **Copy Shopping List**, **Rescan Carrier**, **Raven Colonial ▾** and **Manage Sites ▾**. The two menus open under their buttons,
       are readable (dark colors) and close when you click elsewhere or pick an item.
 - [ ] **Raven Colonial ▾** lists Planned Builds, Raven Progress, Open Selected Build on Raven, Open This System on Raven, Raven Colonial
-      Website and Report Complete to Raven; the three Open items open the right page in your browser.
+      Website, Create Project on Raven, Report Complete to Raven and Mark Plan Entry Demolished; the three Open items open the right page in your browser.
 - [ ] A site you renamed in the game takes its new name after you dock at it again.
 
 ## 7f. Overlay Placement and the Overlays settings tab (Windows-tested only: check on Linux)

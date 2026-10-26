@@ -37,6 +37,8 @@ Connector) and puts its tools in one panel of eight modes, with optional on-scre
   - A Sites window with a fleet carrier column and Rescan Carrier, and Where to buy for what a site still needs.
   - Planned Builds, read from Raven Colonial when you press a button.
   - Optional sharing of progress, deliveries and carrier cargo with Raven Colonial, off by default.
+  - Create Project on Raven starts a Raven Colonial project for a site you are docked at (from a planned site or as a
+    new one), links you, and can make it your primary project and attach your fleet carrier.
 - **BGS:** faction states and what your activity does to them, rebuilt after a tick that passed while
   EDMC was closed. A conflict mission the game reports no influence for counts as ++ in a war and + in
   an election, an assumption the spec records.

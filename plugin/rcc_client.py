@@ -58,6 +58,7 @@ class RccSite:
     body_num: Optional[int]
     market_id: Optional[int]     # set once the site exists in the game; None while only planned
     build_id: str = ""           # Raven Colonial's id for the project at this site ("" when it has none)
+    site_id: str = ""            # the site's own id in the system plan (what a project is created from)
 
     @property
     def type_label(self) -> str:
@@ -84,6 +85,13 @@ def _int(value: Any) -> Optional[int]:
     return None
 
 
+def _pos(value: Any) -> Optional[Tuple[float, float, float]]:
+    if (isinstance(value, list) and len(value) == 3
+            and all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in value)):
+        return (float(value[0]), float(value[1]), float(value[2]))
+    return None
+
+
 def parse_sites(data: Any) -> List[RccSite]:
     """The sites in an answer (a list of `{name, status, buildType, bodyNum, marketId, ...}`), in the order worth showing: building,
     planned, complete, then the rest, each by name. Anything malformed is skipped."""
@@ -103,7 +111,8 @@ def parse_sites(data: Any) -> List[RccSite]:
             build_type=str(raw.get("buildType") or "").strip(),
             body_num=_int(raw.get("bodyNum")),
             market_id=_int(raw.get("marketId")),
-            build_id=str(raw.get("buildId") or "").strip()[:BUILD_ID_MAX]))
+            build_id=str(raw.get("buildId") or "").strip()[:BUILD_ID_MAX],
+            site_id=str(raw.get("id") or "").strip()[:BUILD_ID_MAX]))
     order = {status: index for index, status in enumerate(STATUS_ORDER)}
     return sorted(sites, key=lambda s: (order.get(s.status, len(order)), s.name.casefold()))
 
@@ -115,6 +124,8 @@ class RccSystem:
     architect: str               # the commander who plans it there ("" when none is given)
     is_open: Optional[bool]      # whether it is open (anyone may edit) or locked to its architect; None when not stated
     sites: List[RccSite]
+    id64: Optional[int] = None   # the system's address, when Raven gives one
+    pos: Optional[Tuple[float, float, float]] = None   # its galactic position, when Raven gives one
 
     @property
     def access_label(self) -> str:
@@ -130,7 +141,7 @@ def parse_system(data: Any, fallback_name: str = "") -> RccSystem:
         name=str(data.get("name") or fallback_name).strip()[:NAME_MAX],
         architect=str(data.get("architect") or "").strip()[:NAME_MAX],
         is_open=is_open if isinstance(is_open, bool) else None,
-        sites=parse_sites(data.get("sites")))
+        sites=parse_sites(data.get("sites")), id64=_int(data.get("id64")), pos=_pos(data.get("pos")))
 
 
 def count_by_status(sites: List[RccSite]) -> Dict[str, int]:
@@ -350,10 +361,10 @@ RETRY_WAIT_S = 2.0
 RETRY_WAIT_MAX_S = 10.0
 
 
-def send_write(method: str, path: str, body: Optional[Any], key: str = "", opener: Callable[..., Any] = urllib.request.urlopen,
-               sleep: Callable[[float], None] = time.sleep, cmdr: str = "") -> None:
+def _send_request(method: str, path: str, body: Optional[Any], key: str, opener: Callable[..., Any],
+                  sleep: Callable[[float], None], cmdr: str, read: int) -> bytes:
     """One write to Raven Colonial: `method` `path` with `body` as JSON (none for an empty body), the key in `rcc-key` when there is one
-    (with the commander in `rcc-cmdr0`, as Raven's web app does).
+    (with the commander in `rcc-cmdr0`, as Raven's web app does). Returns up to `read` bytes of the answer.
     Retried once after a short wait if it says 429 or 503 (it honors a short Retry-After). Raises RccError with a message that never
     contains the key."""
     headers = {"User-Agent": http_identity.user_agent("rcc-write")}
@@ -368,8 +379,7 @@ def send_write(method: str, path: str, body: Optional[Any], key: str = "", opene
         request = urllib.request.Request(BASE_URL + path, data=data, method=method, headers=headers)
         try:
             with opener(request, timeout=TIMEOUT_S) as response:
-                response.read(1024)
-            return
+                return response.read(read)
         except urllib.error.HTTPError as err:
             if err.code in RETRY_CODES and attempt == 1:
                 try:
@@ -379,7 +389,24 @@ def send_write(method: str, path: str, body: Optional[Any], key: str = "", opene
                 sleep(max(0.0, min(RETRY_WAIT_MAX_S, wait)))
                 continue
             if err.code in (401, 403):
-                raise RccError("Raven Colonial did not accept the key.") from err
+                raise RccError("Raven Colonial did not accept the key (or this commander may not change that).") from err
             raise RccError(f"Raven Colonial answered with an error ({err.code}).") from err
         except (urllib.error.URLError, OSError, TimeoutError) as err:
             raise RccError("Could not reach Raven Colonial.") from err
+    return b""
+
+
+def send_write(method: str, path: str, body: Optional[Any], key: str = "", opener: Callable[..., Any] = urllib.request.urlopen,
+               sleep: Callable[[float], None] = time.sleep, cmdr: str = "") -> None:
+    """A write whose answer is not needed (see `_send_request`)."""
+    _send_request(method, path, body, key, opener, sleep, cmdr, 1024)
+
+
+def send_json(method: str, path: str, body: Optional[Any], key: str = "", opener: Callable[..., Any] = urllib.request.urlopen,
+              sleep: Callable[[float], None] = time.sleep, cmdr: str = "") -> Any:
+    """A write whose JSON answer is wanted (a created project). Returns the parsed answer, or None when it is empty or not JSON."""
+    raw = _send_request(method, path, body, key, opener, sleep, cmdr, MAX_BYTES)
+    try:
+        return json.loads(raw.decode("utf-8")) if raw.strip() else None
+    except (ValueError, UnicodeDecodeError):
+        return None

@@ -184,5 +184,15 @@ class RescanTests(unittest.TestCase):
             self.assertEqual(cc.scan_journals("Alice", folder)["tons"], {})
 
 
+class OwnCarrierId(unittest.TestCase):
+    def test_the_commanders_own_carrier_is_known_from_its_stats_and_location(self):
+        feeder = cc.Feeder(object(), cmdr="")
+        feeder.feed({"event": "CarrierLocation", "CarrierType": "FleetCarrier", "CarrierID": 3700000002})
+        self.assertEqual(feeder.own_market_id, 3700000002)
+        other = cc.Feeder(object(), cmdr="")
+        other.feed({"event": "CarrierStats", "CarrierType": "SquadronCarrier", "CarrierID": 5})
+        self.assertIsNone(other.own_market_id)
+
+
 if __name__ == "__main__":
     unittest.main()

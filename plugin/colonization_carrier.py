@@ -211,6 +211,7 @@ class Feeder:
         self._only = commander_data.key_for(only)    # when set, other commanders' events are ignored (a rescan for one)
         self._at_fleet_carrier = False
         self.carrier_market_id: Optional[int] = None    # the market id of the fleet carrier last docked at
+        self.own_market_id: Optional[int] = None        # the market id of the commander's own carrier (`CarrierID` of its stats and location)
 
     @property
     def at_fleet_carrier(self) -> bool:
@@ -236,6 +237,8 @@ class Feeder:
         if event == "Undocked":
             self._at_fleet_carrier = False
             return False
+        if event in ("CarrierStats", "CarrierLocation") and isinstance(entry.get("CarrierID"), int)                 and entry.get("CarrierType") in (None, "", "FleetCarrier"):
+            self.own_market_id = entry["CarrierID"]
         if not self.cmdr or (self._only and commander_data.key_for(self.cmdr) != self._only):
             return False
         if event in ("CarrierStats", "CarrierBuy"):

@@ -609,7 +609,8 @@ class ColonizationController:
         if self._parent is None:
             return
         colonization_window.show(self._parent, self._repository, self._cmdr or "", self._cargo, self._carrier_cargo,
-                               lambda: self._capacity, lambda: self._system, lambda: self._market)
+                               lambda: self._capacity, lambda: self._system, lambda: self._market,
+                               lambda: self._carrier_feed.own_market_id, self._rcc.note_created)
 
     # --- Settings tab --------------------------------------------------
 

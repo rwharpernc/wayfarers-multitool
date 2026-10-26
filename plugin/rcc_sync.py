@@ -144,6 +144,12 @@ class RccSync:
         if moved and key:
             self._submit(lambda: self._send("PATCH", f"/api/FC/{carrier_market_id}/cargo", moved, key, "carrier cargo", cmdr), "carrier cargo")
 
+    def note_created(self, market_id: int, build_id: str) -> None:
+        """A project was just made for this site by the commander: use it from now on instead of waiting out the "no project" memory."""
+        if isinstance(market_id, int) and build_id:
+            self._builds[market_id] = build_id
+            self._missing.pop(market_id, None)
+
     # --- one send at a time --------------------------------------------------------------------------
     @staticmethod
     def _stamp(entry: Mapping[str, Any]) -> str:

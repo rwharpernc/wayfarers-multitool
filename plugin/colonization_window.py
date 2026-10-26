@@ -19,7 +19,7 @@ from typing import Any, Callable, Dict, FrozenSet, List, Mapping, Optional, Tupl
 
 from config import appname, config
 
-from . import colonization, colonization_builds_window, colonization_carrier, colonization_sources as sources, colonization_view as view, panelkit, rcc_client, rcc_keys, system_autocomplete
+from . import colonization, colonization_builds_window, colonization_carrier, colonization_create_dialog, colonization_sources as sources, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys, system_autocomplete
 from .colonization_carrier import CarrierCargo
 from .colonization import Site
 from .colonization_data import SiteRepository
@@ -86,18 +86,21 @@ _window: Optional["ColonizationWindow"] = None
 def show(parent: tk.Misc, repository: SiteRepository, cmdr: str, cargo: Mapping[str, int],
          carrier: Optional[CarrierCargo] = None, capacity: Optional[Callable[[], int]] = None,
          current_system: Optional[Callable[[], str]] = None,
-         market: Optional[Callable[[], Optional[Tuple[str, FrozenSet[str]]]]] = None) -> None:
+         market: Optional[Callable[[], Optional[Tuple[str, FrozenSet[str]]]]] = None,
+         carrier_id: Optional[Callable[[], Optional[int]]] = None,
+         rcc_created: Optional[Callable[[int, str], None]] = None) -> None:
     """Open the window for `cmdr`, or raise/refresh it if already open. `capacity` returns the current ship's cargo
     capacity (0 when unknown), for the trips figure; `current_system` the system the commander is in, for the
     "Here" button of the where-to-buy search; `market` the docked station's name and the commodities it has for
-    sale, or None when no market has been opened (for the "Only what this station sells" filter)."""
+    sale, or None when no market has been opened (for the "Only what this station sells" filter); `carrier_id` the market id of the
+    commander's own fleet carrier (None when not known), and `rcc_created(market_id, build_id)` is told of a project made on Raven."""
     global _window
     if _window is not None and _window.alive:
         _window.set_cmdr(cmdr)
         _window.set_cargo(cargo)
         _window.lift()
         return
-    _window = ColonizationWindow(parent, repository, cmdr, cargo, carrier, capacity, current_system, market)
+    _window = ColonizationWindow(parent, repository, cmdr, cargo, carrier, capacity, current_system, market, carrier_id, rcc_created)
 
 
 def refresh_cargo(cargo: Mapping[str, int]) -> None:
@@ -128,8 +131,12 @@ class ColonizationWindow:
     def __init__(self, parent: tk.Misc, repository: SiteRepository, cmdr: str, cargo: Mapping[str, int],
                  carrier: Optional[CarrierCargo] = None, capacity: Optional[Callable[[], int]] = None,
                  current_system: Optional[Callable[[], str]] = None,
-                 market: Optional[Callable[[], Optional[Tuple[str, FrozenSet[str]]]]] = None) -> None:
+                 market: Optional[Callable[[], Optional[Tuple[str, FrozenSet[str]]]]] = None,
+                 carrier_id: Optional[Callable[[], Optional[int]]] = None,
+                 rcc_created: Optional[Callable[[int, str], None]] = None) -> None:
         self._repository = repository
+        self._carrier_id = carrier_id or (lambda: None)
+        self._rcc_created = rcc_created or (lambda _market_id, _build_id: None)
         self._market = market or (lambda: None)
         self._carrier = carrier
         self._capacity = capacity or (lambda: 0)
@@ -164,7 +171,7 @@ class ColonizationWindow:
 
         self._shell.add_action("Copy Shopping List", self._on_copy, accent=True)
         self._shell.add_action("Rescan Carrier", self._on_rescan_carrier)
-        # Raven Colonial's three actions under one heading: the first two only read, the last writes (it asks first).
+        # Raven Colonial's actions under one heading: the first ones only read, the last three write (each asks first).
         self._shell.add_menu("Raven Colonial", [
             ("Planned Builds", self._on_builds),
             ("Raven Progress", self._on_raven_progress),
@@ -173,7 +180,9 @@ class ColonizationWindow:
             ("Open This System on Raven", self._on_open_system_page),
             ("Raven Colonial Website", lambda: webbrowser.open(rcc_client.home_page_url())),
             None,
-            ("Report Complete to Raven", self._on_report_rcc)])
+            ("Create Project on Raven…", self._on_create_rcc),
+            ("Report Complete to Raven", self._on_report_rcc),
+            ("Mark Plan Entry Demolished…", self._on_demolish_rcc)])
         self._shell.add_menu("Manage Sites", [
             ("Remove Site", self._on_remove, "danger"),
             ("Remove Finished", self._on_remove_finished, "danger")])
@@ -948,6 +957,190 @@ class ColonizationWindow:
                                f"{'y' if len(tons) == 1 else 'ies'}, {sum(tons.values()):,} t on your carrier. The next Frontier "
                                "fetch can replace this with the carrier's real cargo.")
 
+    def _raven_ready(self, site: Optional[Site]) -> str:
+        """The commander's Raven key when a write may go ahead, else "" (with the reason in the status line). Asks for the key when
+        none is saved; it is kept only once a write has worked."""
+        if not rcc_keys.enabled():
+            self._shell.set_status("Sending to Raven Colonial is switched off. Turn it on in Settings → Colonization → Raven Colonial.")
+            return ""
+        if site is None:
+            self._shell.set_status("Select a site on the left first.")
+            return ""
+        if not site.system or not self._cmdr:
+            self._shell.set_status("This site needs a system name and a commander first; dock at it once.")
+            return ""
+        key = rcc_keys.keys.get(self._cmdr)
+        if not key:
+            entered = dialogs.prompt(
+                self._toplevel, "Raven Colonial key", f"Paste {self._cmdr}'s Raven Colonial key. It is saved for this commander only and sent "
+                "only to Raven Colonial.", show="*")
+            key = (entered or "").strip()
+        return key
+
+    @staticmethod
+    def _game_state() -> Mapping[str, Any]:
+        try:
+            from monitor import monitor   # EDMC's own module; absent in unit tests
+            return getattr(monitor, "state", None) or {}
+        except Exception:
+            return {}
+
+    def _on_create_rcc(self) -> None:
+        """Start a Raven Colonial project for the selected site: read the system's plan, then (after the commander fills in and confirms the
+        dialog) create the project and link the commander (see rcc_create.py). Nothing is sent before the dialog is confirmed."""
+        site = self._selected_site()
+        key = self._raven_ready(site)
+        if not key or site is None:
+            return
+        if not site.active:
+            self._shell.set_status("This site is already finished; only an active one can start a project.")
+            return
+        job: Dict[str, Any] = {"done": False, "plan": None, "error": ""}
+        self._shell.set_status("Looking at the plan on Raven Colonial…")
+
+        def work() -> None:
+            try:
+                rcc_client.clear_cache()
+                job["plan"] = rcc_client.fetch_system(site.system)
+            except rcc_client.RccError as err:
+                job["error"] = str(err)
+            except Exception:
+                logger.exception("Raven Colonial plan lookup failed")
+                job["error"] = "The lookup failed unexpectedly; see the EDMC log."
+            job["done"] = True
+
+        threading.Thread(target=work, daemon=True, name="WFMT-rcc-plan").start()
+        self._poll_plan(job, site, key)
+
+    def _poll_plan(self, job: Dict[str, Any], site: Site, key: str) -> None:
+        if not self._shell.alive:
+            return
+        if not job["done"]:
+            self._toplevel.after(_POLL_MS, self._poll_plan, job, site, key)
+            return
+        plan = job["plan"]
+        if plan is None:
+            self._shell.set_status(job["error"] or "Raven Colonial could not be read.")
+            return
+        existing = rcc_client.find_build_id(plan.sites, site.market_id, site.name)
+        if existing:
+            self._rcc_created(site.market_id, existing)
+            self._shell.set_status(f"Raven Colonial already has a project for {site.display_name()}; progress sharing will use it.")
+            return
+        address, star_pos = rcc_create.locate(site.system, plan, self._game_state())
+        name = rcc_create.suggested_name(site)
+        carrier_id = self._carrier_id()
+        locked = ""
+        if plan.is_open is False and plan.architect and plan.architect.casefold() != self._cmdr.casefold():
+            locked = f"This system is locked to its architect, {plan.architect}; adding a site to the plan may be refused."
+        chosen = colonization_create_dialog.ask(
+            self._toplevel, site.system, name, rcc_create.planned_sites(plan.sites), rcc_create.guess_planned(plan.sites, name),
+            plan.architect or self._cmdr, can_attach_carrier=isinstance(carrier_id, int), locked_note=locked)
+        if chosen is None:
+            self._shell.set_status("Nothing was sent to Raven Colonial.")
+            return
+        request = rcc_create.Request(
+            site=site, cmdr=self._cmdr, key=key, system=site.system, system_address=address, star_pos=star_pos, name=chosen.name,
+            build_type=chosen.build_type, body_num=rcc_create.parse_body_num(chosen.body_num), planned=chosen.planned,
+            architect=chosen.architect, notes=chosen.notes, due=rcc_create.parse_due(chosen.due), primary_port=chosen.primary_port,
+            make_primary=chosen.make_primary, fleet_carrier=carrier_id if chosen.fleet_carrier else None)
+        problem = rcc_create.validate(request)
+        if problem:
+            self._shell.set_status(problem)
+            return
+        run: Dict[str, Any] = {"done": False, "result": None, "error": ""}
+        self._shell.set_status("Creating the project on Raven Colonial…")
+
+        def create() -> None:
+            try:
+                run["result"] = rcc_create.create(request)
+            except rcc_client.RccError as err:
+                run["error"] = str(err)
+            except Exception:
+                logger.exception("Creating the Raven Colonial project failed")
+                run["error"] = "Creating the project failed unexpectedly; see the EDMC log."
+            run["done"] = True
+
+        threading.Thread(target=create, daemon=True, name="WFMT-rcc-create").start()
+        self._poll_create(run, site, key)
+
+    def _poll_create(self, run: Dict[str, Any], site: Site, key: str) -> None:
+        if not self._shell.alive:
+            return
+        if not run["done"]:
+            self._toplevel.after(_POLL_MS, self._poll_create, run, site, key)
+            return
+        result = run["result"]
+        if result is None:
+            self._shell.set_status(_clip(run["error"] or "Raven Colonial did not create the project.", 200))
+            return
+        rcc_keys.keys.set(self._cmdr, key)     # saved once it has worked, so a wrong key is not kept
+        rcc_client.clear_cache()
+        self._rcc_created(site.market_id, result.build_id)
+        self._shell.set_status(_clip(result.summary, 300))
+
+    def _on_demolish_rcc(self) -> None:
+        """Mark the selected site's entry in Raven's plan as demolished (Raven's own status; nothing happens in the game). Asks first."""
+        site = self._selected_site()
+        key = self._raven_ready(site)
+        if not key or site is None:
+            return
+        job: Dict[str, Any] = {"done": False, "message": ""}
+        self._shell.set_status("Looking at the plan on Raven Colonial…")
+
+        def work() -> None:
+            try:
+                rcc_client.clear_cache()
+                plan = rcc_client.fetch_system(site.system)
+                build_id = rcc_client.find_build_id(plan.sites, site.market_id, site.name)
+                entry = next((s for s in plan.sites if s.site_id and (s.market_id == site.market_id or (build_id and s.build_id == build_id))), None)
+                address, _pos = rcc_create.locate(site.system, plan, self._game_state())
+                if entry is None or address is None:
+                    job["message"] = "Raven Colonial has no plan entry for this site."
+                else:
+                    job["entry"], job["address"] = entry, address
+            except rcc_client.RccError as err:
+                job["message"] = str(err)
+            except Exception:
+                logger.exception("Raven Colonial plan lookup failed")
+                job["message"] = "The lookup failed unexpectedly; see the EDMC log."
+            job["done"] = True
+
+        threading.Thread(target=work, daemon=True, name="WFMT-rcc-demolish-look").start()
+        self._poll_demolish(job, site, key)
+
+    def _poll_demolish(self, job: Dict[str, Any], site: Site, key: str) -> None:
+        if not self._shell.alive:
+            return
+        if not job["done"]:
+            self._toplevel.after(_POLL_MS, self._poll_demolish, job, site, key)
+            return
+        entry = job.get("entry")
+        if entry is None:
+            self._shell.set_status(job["message"])
+            return
+        if not dialogs.confirm(self._toplevel, "Mark demolished on Raven Colonial",
+                               f"Mark {entry.name} in {site.system} as demolished in Raven Colonial's plan?\n\nOnly its plan entry changes."):
+            return
+        address, cmdr, body = job["address"], self._cmdr, rcc_create.demolish_body(entry)
+        run: Dict[str, Any] = {"done": False, "error": ""}
+        self._shell.set_status("Updating Raven Colonial…")
+
+        def work() -> None:
+            try:
+                rcc_client.send_write("PUT", f"/api/v2/system/{address}/sites", body, key, cmdr=cmdr)
+                rcc_client.clear_cache()
+                rcc_keys.keys.set(cmdr, key)
+            except rcc_client.RccError as err:
+                run["error"] = str(err)
+            except Exception:
+                logger.exception("Marking the plan entry demolished failed")
+                run["error"] = "The update failed unexpectedly; see the EDMC log."
+            run["done"] = True
+
+        threading.Thread(target=work, daemon=True, name="WFMT-rcc-demolish").start()
+        self._poll_report(run, entry.name, "Raven Colonial now has {name} as demolished.")
+
     def _on_report_rcc(self) -> None:
         """Tell Raven Colonial the selected site is finished. Asks first, and sends only the commander's Raven key to the one
         project's `complete` address (see rcc_client.complete_project); nothing else leaves WFMT."""
@@ -996,13 +1189,13 @@ class ColonizationWindow:
         threading.Thread(target=work, daemon=True, name="WFMT-rcc-complete").start()
         self._poll_report(job, site.display_name())
 
-    def _poll_report(self, job: Dict[str, Any], name: str) -> None:
+    def _poll_report(self, job: Dict[str, Any], name: str, done: str = "Raven Colonial now has {name} as complete.") -> None:
         if not self._shell.alive:
             return
         if not job["done"]:
-            self._toplevel.after(150, self._poll_report, job, name)
+            self._toplevel.after(150, self._poll_report, job, name, done)
             return
-        self._shell.set_status(job["error"] or f"Raven Colonial now has {name} as complete.")
+        self._shell.set_status(job["error"] or done.format(name=name))
 
     def _on_remove(self) -> None:
         site = self._selected_site()

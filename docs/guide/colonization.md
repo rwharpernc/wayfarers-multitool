@@ -334,7 +334,8 @@ Each result shows the station, system, type, whether it is **Planetary**, larges
   so.
 - **Rescan Carrier** rebuilds the fleet carrier tally from your journals; see [Rescan Carrier](#rescan-carrier-when-a-load-did-not-register).
 - **Raven Colonial** (a menu): **Planned Builds**, **Raven Progress**, **Open Selected Build on Raven**, **Open This System on Raven**,
-  **Raven Colonial Website** and **Report Complete to Raven**. See [Planned builds](#planned-builds) and
+  **Raven Colonial Website**, **Create Project on Raven**, **Report Complete to Raven** and **Mark Plan Entry Demolished**. See
+  [Planned builds](#planned-builds), [Starting a project on Raven Colonial](#starting-a-project-on-raven-colonial) and
   [Sharing your progress with Raven Colonial](#sharing-your-progress-with-raven-colonial).
 - **Manage Sites** (a menu): **Remove Site** stops tracking that site, and **Remove Finished** deletes every complete or failed site.
 
@@ -406,7 +407,8 @@ Optional and **off by default**.
 
 - **Only live events.** What you did while EDMC was closed, and anything the start-up catch-up reads, is never sent.
 - **Raven must already have a project for the site** (Raven matches it on the site's market id in its plan for the system). If it has none,
-  WFMT sends nothing and tries again no sooner than ten minutes later.
+  WFMT sends nothing and tries again no sooner than ten minutes later. To make one, use
+  [Create Project on Raven](#starting-a-project-on-raven-colonial); WFMT then uses it at once.
 - **One request per event.** They go one at a time in the background, are retried once if Raven says it is busy, and a failure is only
   logged; it never interrupts play. The depot figures are sent only when the needed amounts actually changed.
 - **Raven's `supply` call is never used.** Raven documents it for tools that cannot read the journal; used beside the depot figures it
@@ -417,6 +419,20 @@ Optional and **off by default**.
   WFMT's (*Raven says 12,345 t still needed; WFMT says 12,345 t*). It sends only the project's id.
 
 WFMT's own tracking stays the source of truth for your site; Raven's figures never overwrite it.
+
+### Starting a project on Raven Colonial
+
+When you dock at a construction ship or site that Raven Colonial has no project for, nothing is shared until one exists. Select the site and choose **Create Project on Raven** in the **Raven Colonial** menu.
+
+- It needs the master switch on and your Raven Colonial key (WFMT asks for the key the first time, and keeps it once Raven accepts it).
+- WFMT first reads the system's plan on Raven Colonial. If a project already exists for the site it says so and does nothing else.
+- Otherwise a dialog opens. **Plan entry** lists the sites planned for that system that have no project yet; pick yours, or leave **New site** to add one to the plan. The name is filled in from the game. Then choose the **Building** (by the game's name; the layouts of a Coriolis, such as dual truss, are listed too), and fill in the **Body number** (the number after the system name in the in-game body list) for a new site, plus an optional architect, notes and due date.
+- Three tick boxes: whether this is the system's primary port, whether to make it **your primary project**, and whether to **attach your fleet carrier** (available once WFMT has seen your carrier's id this session, which happens when you log in or open Carrier Management).
+- Nothing is sent until you press **Create**. Then WFMT, in order: adds the site to the plan if it was new, creates the project from the depot figures it already holds, links your commander, and does the two optional ticks. The status line says what worked. If linking, primary or the carrier fail, the project stays and the message names the step.
+- **What is sent:** your key, the site's market id, system name, address and position, the commodities still needed with the depot figures, and what you typed in the dialog. No journal data beyond that.
+- **Limits:** a system that is locked to another architect may refuse a new site in the plan (the dialog warns when Raven reports it as locked). WFMT's own tracking never changes.
+
+**Mark Plan Entry Demolished** sets the selected site's entry in Raven's plan to *demolished* after you confirm. It changes Raven's record only, not the game.
 
 ### Reporting a finished build to Raven Colonial
 
