@@ -42,6 +42,16 @@ EVENT_BEACON = "ColonisationBeaconDeployed"
 CLAIM_EVENTS = frozenset({EVENT_CLAIM, EVENT_RELEASE, EVENT_BEACON})
 """System claims made and released and colonization beacons deployed: counted in the history, not construction sites."""
 
+_SYMBOLIC_NAME = re.compile(r"^\$EXT_PANEL_(?:(?:Colonisation|Colonization)Ship)?[_;\s]*(.*?)[;\s]*$", re.IGNORECASE)
+
+
+def _symbolic_name_to_text(name: str) -> str:
+    """The game's `$EXT_PANEL_ColonisationShip; Name` placeholder (written when it has no localized station name) reduced to `Name`;
+    any other name comes back unchanged."""
+    match = _SYMBOLIC_NAME.match(name.strip())
+    return re.sub(r"\s+", " ", match.group(1).replace("_", " ")).strip() if match else name
+
+
 _NAME_KEY = re.compile(r"^\$?(.*?)(?:_name)?;?$", re.IGNORECASE)
 
 
@@ -109,11 +119,12 @@ class Site:
         """The name to show. A finished build becomes an ordinary station under a new `MarketID`, so docking there never renames this depot's record;
         its name would keep the game's "Orbital Construction Site: " prefix for good. Once the build is complete the prefix is dropped
         ("Orbital Construction Site: Example Station" -> "Example Station")."""
-        if not self.name:
+        name = _symbolic_name_to_text(self.name)
+        if not name:
             return f"Construction site {self.market_id}"
         if not self.complete:
-            return self.name
-        return _SITE_PREFIX.sub("", self.name, count=1).strip() or self.name
+            return name
+        return _SITE_PREFIX.sub("", name, count=1).strip() or name
 
     def to_dict(self) -> Dict[str, Any]:
         return {

@@ -143,6 +143,11 @@ class DisplayNameTests(unittest.TestCase):
         self.assertEqual(self._site("Example Station", True).display_name(), "Example Station")
         self.assertEqual(self._site("Orbital Construction Site:", True).display_name(), "Orbital Construction Site:")
 
+    def test_the_games_symbolic_placeholder_name_is_shown_as_the_plain_name(self):
+        for raw in ("$EXT_PANEL_ColonisationShip; Pennington Claim", "$EXT_PANEL_ColonizationShip_Pennington_Claim;"):
+            self.assertEqual(self._site(raw, False).display_name(), "Pennington Claim")
+            self.assertEqual(self._site(raw, True).display_name(), "Pennington Claim")
+
     def test_an_unnamed_site_is_still_named_by_its_number(self):
         self.assertEqual(self._site("", True).display_name(), "Construction site 12345")
         self.assertEqual(self._site("", False).display_name(), "Construction site 12345")
