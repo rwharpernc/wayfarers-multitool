@@ -414,7 +414,7 @@ class ColonizationWindow:
 
     def _commodity_value(self, row: view.CommodityRow):
         return {"label": row.label.casefold(), "required": row.required, "delivered": row.delivered,
-                "remaining": row.remaining, "cargo": row.in_cargo, "buy": row.to_get, "haul": row.remaining,
+                "remaining": row.to_get, "cargo": row.in_cargo, "buy": row.to_get, "haul": row.remaining,
                 "fc": row.on_carrier}.get(self._sort_key, row.label.casefold())
 
     def _refresh_detail(self) -> None:
@@ -467,10 +467,10 @@ class ColonizationWindow:
             parent = None
             if category:
                 parent = f"{site.market_id}:cat:{category}"
-                self._commodity_table.insert(parent, (category, "", "", f"{sum(r.remaining for r in items):,}", ""), group=True)
+                self._commodity_table.insert(parent, (category, "", "", f"{sum(r.to_get for r in items):,}", ""), group=True)
             for row in items:
                 values = (row.label if row.available or row.covered else row.label + NOT_AVAILABLE,
-                          f"{row.required:,}", f"{row.delivered:,}", f"{row.remaining:,}",
+                          f"{row.required:,}", f"{row.delivered:,}", f"{row.to_get:,}",   # Remaining: still to get, not yet in the ship or on the carrier
                           f"{row.in_cargo:,}" if row.in_cargo else "")
                 if wants_fc:
                     values += (f"{row.on_carrier:,}" if row.on_carrier else "",)

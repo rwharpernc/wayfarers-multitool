@@ -139,7 +139,7 @@ They are always for the whole site, whatever the filters hide:
 
 | Total | Meaning |
 |---|---|
-| t still to get | What you still have to buy or mine: Remaining, less what is in your ship and what you have moved onto your fleet carrier |
+| t still to get | What you still have to buy or mine: what the site still needs, less what is in your ship and what you have moved onto your fleet carrier. It is the sum of the table's Remaining column |
 | t on your carrier | Of the remaining need, what you have moved onto your fleet carrier (never more than the site needs). A dash without a carrier |
 | t already in your ship | Of the remaining need, what your ship is carrying now (never more than the site needs) |
 | t ship capacity | Your current ship's cargo capacity, as EDMC reports it. It follows you when you swap ships; a dash until EDMC has given it |
@@ -165,11 +165,11 @@ Building a colony has two legs, and the window counts them apart.
 |---|---|
 | Required | What the site needs in total |
 | Delivered | What's been handed over |
-| Remaining | Required minus delivered |
+| Remaining | What you still have to get: Required minus delivered, less what is in your ship and what you have moved onto your fleet carrier. It reaches **0** once you have it all, wherever it is stored, so it falls as you load up |
 | In Cargo | What is in your ship (or SRV) now |
 | FC | Tons of that commodity you have transferred onto your **fleet carrier** (only shown once WFMT has seen you have one) |
-| Buy Trips | Loads of **your current ship** to gather what is still missing of that commodity: what is left to get (Remaining less your ship and your carrier) divided by your ship's cargo capacity. **0** when you already have enough, wherever it is stored |
-| Haul Trips | Loads of your current ship to carry all of that commodity's Remaining to the site. This stays above 0 for a commodity sitting on your carrier, because it still has to be moved |
+| Buy Trips | Loads of **your current ship** to gather what is still missing of that commodity: what is left to get (the Remaining column) divided by your ship's cargo capacity. **0** when you already have enough, wherever it is stored |
+| Haul Trips | Loads of your current ship to carry everything the site still needs of that commodity (Required less Delivered) to the site. This stays above 0 for a commodity sitting on your carrier, because it still has to be moved |
 
 Both trip columns use at most two decimals (`4`, `1.5`, `1.25`, `0.33`), never round a small remainder down to 0, and show a dash
 until EDMC has given your ship's capacity.
