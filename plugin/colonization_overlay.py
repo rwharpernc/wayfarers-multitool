@@ -239,10 +239,11 @@ class Card:
 
 def build_card(site: Optional[Site], hold: Mapping[str, int], on_carrier: Mapping[str, int], show_fc: bool,
                capacity: int = 0, max_rows: int = DEFAULT_ROWS, grouped: bool = False,
-               market_keys: Optional[Collection[str]] = None) -> Optional[Card]:
+               market_keys: Optional[Collection[str]] = None, hide_covered: bool = False) -> Optional[Card]:
     """The card for `site`, or None when there is nothing to draw (no site, a finished site, nothing still needed).
     `grouped` orders the rows by market category (the caller says so away from a construction site); `market_keys` is what the market
-    the commander is docked at sells (None when not at one), and a commodity outside it is marked unavailable."""
+    the commander is docked at sells (None when not at one), and a commodity outside it is marked unavailable. `hide_covered` leaves out
+    the rows the hold plus the carrier already cover; the footer still counts every commodity the site needs."""
     if site is None or not site.active:
         return None
     needed = [r for r in site.resources if r.remaining > 0]
@@ -252,10 +253,11 @@ def build_card(site: Optional[Site], hold: Mapping[str, int], on_carrier: Mappin
         needed.sort(key=lambda r: (commodity_categories.sort_key(commodity_categories.category_for(r.key)), r.label.casefold()))
     else:
         needed.sort(key=lambda r: r.label.casefold())
-    limit = max_rows if max_rows > 0 else len(needed)
+    listed = [r for r in needed if not (hide_covered and hold.get(r.key, 0) + on_carrier.get(r.key, 0) >= r.remaining)]
+    limit = max_rows if max_rows > 0 else len(listed)
     rows = tuple(Row(r.label, r.remaining, hold.get(r.key, 0), on_carrier.get(r.key, 0), r.required,
                      commodity_categories.category_for(r.key) if grouped else "",
-                     market_keys is None or not market_keys or r.key in market_keys) for r in needed[:limit])
+                     market_keys is None or not market_keys or r.key in market_keys) for r in listed[:limit])
     need = sum(r.remaining for r in needed)
     known = bool(capacity and capacity > 0)
     trips = math.ceil(need / capacity) if known else 0
@@ -263,7 +265,7 @@ def build_card(site: Optional[Site], hold: Mapping[str, int], on_carrier: Mappin
     # (the same sum as the sites window's "trips to buy").
     to_get = sum(max(0, r.remaining - hold.get(r.key, 0) - on_carrier.get(r.key, 0)) for r in needed)
     buy_trips = math.ceil(to_get / capacity) if known and to_get > 0 else 0
-    return Card(_clip(site.display_name(), TITLE_CHARS), rows, max(0, len(needed) - limit), to_get, trips, show_fc, buy_trips, grouped)
+    return Card(_clip(site.display_name(), TITLE_CHARS), rows, max(0, len(listed) - limit), to_get, trips, show_fc, buy_trips, grouped)
 
 
 def _name_text(row: Row) -> str:

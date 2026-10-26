@@ -229,6 +229,26 @@ class BuildCardTests(unittest.TestCase):
         built = card.build_card(site(), {}, {}, show_fc=True, capacity=0)
         self.assertEqual((built.buy_trips, built.trips), (0, 0))
 
+    def test_covered_rows_can_be_left_out_while_the_footer_still_counts_everything(self) -> None:
+        # steel (400) is covered by 100 in the hold plus 300 on the carrier; water (50) is not
+        hold, carrier = {"steel": 100}, {"steel": 300}
+        shown = card.build_card(site(), hold, carrier, show_fc=True, capacity=200, hide_covered=True)
+        self.assertEqual([r.name for r in shown.rows], ["Water"])
+        self.assertEqual((shown.remaining, shown.buy_trips, shown.trips), (50, 1, 3))
+        everything = card.build_card(site(), hold, carrier, show_fc=True, capacity=200)
+        self.assertEqual([r.name for r in everything.rows], ["Steel", "Water"])      # off by default
+        self.assertEqual((everything.remaining, everything.buy_trips, everything.trips), (50, 1, 3))
+
+    def test_hiding_covered_rows_counts_the_row_limit_over_what_is_listed(self) -> None:
+        built = card.build_card(site(), {"steel": 400}, {}, show_fc=False, max_rows=1, hide_covered=True)
+        self.assertEqual(([r.name for r in built.rows], built.hidden), (["Water"], 0))
+
+    def test_when_everything_is_covered_the_card_has_no_rows_but_still_the_footer(self) -> None:
+        built = card.build_card(site(), {"steel": 400, "water": 50}, {}, show_fc=False, capacity=200, hide_covered=True)
+        self.assertEqual((built.rows, built.hidden), ((), 0))
+        self.assertEqual(built.footer_text(), "► 0 remaining  ► 3 trips to finish")
+        card.render(FakeClient(), built, 20, 300)      # draws without rows
+
     def test_row_limit_is_summarized(self) -> None:
         built = card.build_card(site(), {}, {}, show_fc=False, max_rows=1)
         self.assertEqual((len(built.rows), built.hidden), (1, 1))

@@ -39,6 +39,7 @@ PANEL_PLACEMENT = "colonization"
 _CFG_OVERLAY_ENABLED = "wfmt_colonization_overlay_enabled"
 _CFG_OVERLAY_ROWS = "wfmt_colonization_overlay_row_limit"   # 0 = all; the older "..._rows" key held a default of 10
 _CFG_OVERLAY_RIGHT_PANEL = "wfmt_colonization_overlay_right_panel"
+_CFG_OVERLAY_HIDE_COVERED = "wfmt_colonization_overlay_hide_covered"   # leave out the rows the hold plus the carrier already cover
 _CFG_OVERLAY_FORCED = "wfmt_colonization_overlay_forced"   # the OVERLAY button: the card stays on until switched off, across restarts
 _CFG_RCC_PROGRESS = "wfmt_rcc_share_progress"      # report depot progress and deliveries to Raven Colonial (off by default)
 _CFG_RCC_CARRIER = "wfmt_rcc_share_carrier"        # report fleet carrier cargo changes to Raven Colonial (off by default)
@@ -76,6 +77,10 @@ def rcc_share_carrier() -> bool:
 
 def overlay_right_panel() -> bool:
     return config.get_bool(_CFG_OVERLAY_RIGHT_PANEL, default=False)
+
+
+def overlay_hide_covered() -> bool:
+    return config.get_bool(_CFG_OVERLAY_HIDE_COVERED, default=True)
 
 
 def overlay_shift(shown: Optional[card.Card], look=None) -> tuple:
@@ -155,6 +160,7 @@ class ColonizationController:
         self._rcc_key_var: Optional[tk.StringVar] = None
         self._rcc_key_result: Optional[tk.Label] = None
         self._right_panel_var: Optional[tk.BooleanVar] = None
+        self._hide_covered_var: Optional[tk.BooleanVar] = None
         self._show_button: Optional[tk.Button] = None
         self._show_off_colors = ("", "")
         self._overlay_vars: Dict[str, tk.StringVar] = {}
@@ -425,7 +431,8 @@ class ColonizationController:
         grouped = not self._visibility.at_depot
         market_keys = self._market[1] if self._market is not None and grouped else None
         return card.build_card(sites[0] if sites else None, self._cargo, self._carrier_cargo.tons(self._cmdr),
-                               self._carrier_cargo.has_carrier(self._cmdr), self._capacity, overlay_rows(), grouped, market_keys)
+                               self._carrier_cargo.has_carrier(self._cmdr), self._capacity, overlay_rows(), grouped, market_keys,
+                               overlay_hide_covered())
 
     def _update_overlay(self) -> None:
         """Redraw the shopping-list card if its content or position changed, or it is due a re-send before its time to
@@ -800,8 +807,14 @@ class ColonizationController:
             wraplength=440, justify=tk.LEFT,
         ).grid(row=6, column=0, sticky=tk.W, padx=10, pady=(0, 6))
 
+        self._hide_covered_var = tk.BooleanVar(value=overlay_hide_covered())
+        nb.Checkbutton(
+            frame, text="Hide commodities already covered by the hold and the fleet carrier",
+            variable=self._hide_covered_var,
+        ).grid(row=7, column=0, sticky=tk.W, padx=10, pady=(0, 6))
+
         action_row = tk.Frame(frame)
-        action_row.grid(row=7, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+        action_row.grid(row=8, column=0, sticky=tk.W, padx=10, pady=(0, 10))
         tk.Button(action_row, text="Test Overlay", command=self._test_overlay).pack(side=tk.LEFT)
         self._overlay_result = nb.Label(action_row, text="", wraplength=320, justify=tk.LEFT)
         self._overlay_result.pack(side=tk.LEFT, padx=(10, 0))
@@ -846,6 +859,8 @@ class ColonizationController:
         config.set(_CFG_OVERLAY_ENABLED, self._overlay_enabled_var.get())
         if self._right_panel_var is not None:
             config.set(_CFG_OVERLAY_RIGHT_PANEL, self._right_panel_var.get())
+        if self._hide_covered_var is not None:
+            config.set(_CFG_OVERLAY_HIDE_COVERED, self._hide_covered_var.get())
         for key, cfg_key, low, high in (("rows", _CFG_OVERLAY_ROWS, card.MIN_ROWS, card.MAX_ROWS),):
             try:
                 config.set(cfg_key, max(low, min(high, int(self._overlay_vars[key].get().strip()))))

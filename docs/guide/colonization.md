@@ -542,6 +542,7 @@ A last line gives the tons remaining (still to get, as in the Remaining column) 
 - **Settings:**
   - Where the card sits: Settings → WFMT → Overlays → Overlay Placement. The default is the left edge, vertically centered, on any screen shape.
   - **Rows**: how many commodities to list (1 to 60; any more are summarized as `+N more`). The default, 0, lists them all.
+  - **Hide commodities already covered by the hold and the fleet carrier** (on by default) leaves out the rows that already show a **✓**, so the card lists only what you still have to get. The last line still counts every commodity the site needs, and when everything is covered the card shows just that line.
   - **Test Overlay** shows a sample card for a few seconds, even while the option is off.
 - It is cleared when EDMC closes. If the overlay program isn't running, nothing is drawn and nothing breaks.
 

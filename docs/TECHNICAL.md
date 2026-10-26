@@ -1443,6 +1443,7 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 - `build_card` (pure) turns the most recently updated active site, the hold, the carrier tons and the ship's `CargoCapacity` into a frozen `Card`.
   - Remaining is what is still to get: required less delivered, less the hold and the carrier (a zero is drawn as 0). `Row.need` keeps the site's own remaining need for the covered / surplus rules and the trips to haul.
   - Rows are alphabetical at a construction site and grouped under the market's categories elsewhere; the footer has tons remaining and trips.
+  - `hide_covered` (the setting `wfmt_colonization_overlay_hide_covered`, on by default) leaves out the rows the hold plus the carrier cover; the row limit and the `+N more` count apply to the rows left, and the footer still counts every commodity.
 - `render` / `clear` send it through the shared `OverlayClient` (ids `wfmt_colonization_s<line>_<column>`, registered as a Plugin Group in `load.py`).
 - Columns are right-aligned from character counts, since the overlay has no text metrics.
 - The controller redraws only when the card or position changes or half the 3600 s time to live has passed, sends on a short-lived daemon thread, and clears synchronously in `plugin_stop`.
