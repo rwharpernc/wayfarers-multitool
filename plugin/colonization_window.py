@@ -385,7 +385,7 @@ class ColonizationWindow:
     def _on_pick_commodity(self, iid: str) -> None:
         self._wanted = self._row_label.get(iid)
         if self._wanted:
-            self._sources_note.configure(text=f"Ready to search for {self._wanted}. Press Find nearest.")
+            self._say(f"Ready to search for {self._wanted}. Press Find nearest.")
 
     def _on_sort(self, key: str) -> None:
         self._sort_desc = (self._sort_key == key) and not self._sort_desc
@@ -535,7 +535,7 @@ class ColonizationWindow:
     def _on_here(self) -> None:
         here = self._current_system()
         if not here:
-            self._sources_note.configure(text="WFMT hasn't seen which system you are in yet.")
+            self._say("WFMT hasn't seen which system you are in yet.")
             return
         self._system_var.set(here)
         self._system_edited = True
@@ -562,14 +562,18 @@ class ColonizationWindow:
             radius_ly=self._radius_ly(), pad=self._pad_choice(), carriers=bool(self._carriers_var.get()),
             sort=self._sort_choice())))
 
+    def _say(self, text: str, busy: bool = False) -> None:
+        """The note under the Where to buy buttons. A search in progress is shown in the accent color so it stands out; anything else in the muted one."""
+        self._sources_note.configure(text=text, fg=P.ACCENT if busy else P.MUTED)
+
     def _on_find(self) -> None:
         """Starts the search on a worker thread (Spansh can take seconds) and polls for its answer."""
         if not self._wanted:
-            self._sources_note.configure(text="Pick a commodity row above first.")
+            self._say("Pick a commodity row above first.")
             return
         system = self._system_var.get().strip()
         if not system:
-            self._sources_note.configure(text="Enter a system to search around, or press Here.")
+            self._say("Enter a system to search around, or press Here.")
             return
         commodity, radius, pad = self._wanted, self._radius_ly(), self._pad_choice()
         carriers, order = bool(self._carriers_var.get()), self._sort_choice()
@@ -577,7 +581,7 @@ class ColonizationWindow:
         self._search_id += 1
         job: Dict[str, Any] = {"id": self._search_id, "done": False, "result": None, "error": ""}
         self._find_button.set_enabled(False)
-        self._sources_note.configure(text=f"Searching for {commodity} around {_clip(system, _NAME_MAX)}…")
+        self._say(f"Searching for {commodity} around {_clip(system, _NAME_MAX)}…", busy=True)
 
         def work() -> None:
             try:
@@ -599,8 +603,7 @@ class ColonizationWindow:
             return
         self._find_button.set_enabled(True)
         if job["error"]:
-            self._sources_note.configure(
-                text=f"The search failed: {_clip(job['error'], _ERROR_MAX)}. Spansh may be busy; try again shortly.")
+            self._say(f"The search failed: {_clip(job['error'], _ERROR_MAX)}. Spansh may be busy; try again shortly.")
             return
         self._result, self._result_label, self._whole, self._plan, self._systems = job["result"], commodity, None, None, None
         self._render_sources(system)
@@ -610,20 +613,20 @@ class ColonizationWindow:
         on a worker thread; pressing the button again while it runs stops it, keeping what it has found."""
         if self._whole_job is not None:
             self._whole_job["cancel"] = True
-            self._sources_note.configure(text="Stopping after the search in progress…")
+            self._say("Stopping after the search in progress…", busy=True)
             return
         site = self._selected_site()
         system = self._system_var.get().strip()
         if site is None:
-            self._sources_note.configure(text="Select a site on the left first.")
+            self._say("Select a site on the left first.")
             return
         if not system:
-            self._sources_note.configure(text="Enter a system to search around, or press Here.")
+            self._say("Enter a system to search around, or press Here.")
             return
         on_carrier = self._carrier_tons()
         rows = [r for r in self._visible_rows(site, on_carrier, self._capacity()) if r.to_get > 0]
         if not rows:
-            self._sources_note.configure(text="Nothing left to buy in the list as it is shown.")
+            self._say("Nothing left to buy in the list as it is shown.")
             return
         labels = [r.label for r in rows]
         to_get = {r.label: r.to_get for r in rows}
@@ -635,7 +638,7 @@ class ColonizationWindow:
         self._whole_job = job
         self._find_button.set_enabled(False)
         self._find_all_button.configure(text="Stop")
-        self._sources_note.configure(text=f"Searching for {len(labels)} commodities around {_clip(system, _NAME_MAX)}…")
+        self._say(f"Searching for {len(labels)} commodities around {_clip(system, _NAME_MAX)}…", busy=True)
 
         def work() -> None:
             try:
@@ -666,14 +669,14 @@ class ColonizationWindow:
         if not job["done"]:
             done, total, label = job["progress"]
             verb = "Checking system" if job.get("phase") == "systems" else "Searching"
-            self._sources_note.configure(text=f"{verb} {done + 1} of {total}: {_clip(label, _NAME_MAX)}…")
+            self._say(f"{verb} {done + 1} of {total}: {_clip(label, _NAME_MAX)}…", busy=True)
             self._toplevel.after(_POLL_MS, self._poll_whole, job, system, to_get)
             return
         self._whole_job = None
         self._find_button.set_enabled(True)
         self._find_all_button.configure(text="Find all")
         if job["error"]:
-            self._sources_note.configure(text=f"The search failed: {_clip(job['error'], _ERROR_MAX)}.")
+            self._say(f"The search failed: {_clip(job['error'], _ERROR_MAX)}.")
             return
         self._whole, self._whole_to_get, self._result = job["result"], to_get, None
         self._plan = sources.plan_route(job["result"].found, to_get)
@@ -720,14 +723,12 @@ class ColonizationWindow:
             add(result.carriers, "c", "carrier", "carriers")
         stations, carriers = len(result.stations), len(result.carriers)
         if not stations and not carriers:
-            self._sources_note.configure(
-                text=f"Nothing found with {self._result_label} in stock. Try a larger radius, any landing pad size, "
+            self._say(f"Nothing found with {self._result_label} in stock. Try a larger radius, any landing pad size, "
                      f"or include fleet carriers.")
             return
         extra = f" and {carriers} fleet carrier{'s' if carriers != 1 else ''}" if carriers else ""
         around = f" around {_clip(system, _NAME_MAX)}" if system else ""
-        self._sources_note.configure(
-            text=f"{self._result_label}: {stations} station{'s' if stations != 1 else ''}{extra}{around}. Price is per "
+        self._say(f"{self._result_label}: {stations} station{'s' if stations != 1 else ''}{extra}{around}. Price is per "
                  f"ton; the data is from players' own market updates, so confirm on arrival.")
 
     def _render_whole(self, system: str = "") -> None:
@@ -822,13 +823,13 @@ class ColonizationWindow:
             if plan.uncovered:
                 parts.append("Not covered: " + _clip(", ".join(f"{label} {tons:,} t" for label, tons in plan.uncovered), _ERROR_MAX) + ".")
         parts.append(f"The closest {sources.WHOLE_LIST_STATIONS} stations are listed for each; price is per ton.")
-        self._sources_note.configure(text=" ".join(parts))
+        self._say(" ".join(parts))
 
     def _on_copy_route(self) -> None:
         plan = self._plan
         best = self._systems.plans[0] if self._systems is not None and self._systems.plans else None
         if (plan is None or not plan.stops) and best is None:
-            self._sources_note.configure(text="Press Find all first; the shopping route is worked out from its answer.")
+            self._say("Press Find all first; the shopping route is worked out from its answer.")
             return
         lines = (["Best single system:"] + best.lines() + [""]) if best is not None else []
         if plan is not None and plan.stops:
@@ -836,7 +837,7 @@ class ColonizationWindow:
         if panelkit.copy_to_clipboard(self._toplevel, "\n".join(_clip(line, 240) for line in lines)):
             what = "the best system and the shopping route" if best is not None and plan is not None and plan.stops else (
                 "the best system" if best is not None else f"the {len(plan.stops)}-stop shopping route")
-            self._sources_note.configure(text=f"Copied {what} to the clipboard.")
+            self._say(f"Copied {what} to the clipboard.")
 
     def _on_source_pick(self, iid: str) -> None:
         """Clicking a result row copies its system, ready to paste into the galaxy map's search. Rows with no system (the
@@ -848,10 +849,10 @@ class ColonizationWindow:
         selection = self._source_table.selection()
         system = self._source_rows.get(selection[0]) if selection else None
         if not system:
-            self._sources_note.configure(text="Select a result row first.")
+            self._say("Select a result row first.")
             return
         if panelkit.copy_to_clipboard(self._toplevel, system):
-            self._sources_note.configure(text=f"Copied {_clip(system, _NAME_MAX)} to the clipboard.")
+            self._say(f"Copied {_clip(system, _NAME_MAX)} to the clipboard.")
 
     # --- buttons -----------------------------------------------------------
 

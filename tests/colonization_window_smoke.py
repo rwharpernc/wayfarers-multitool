@@ -173,6 +173,7 @@ window.set_cargo({"water": 50})
 # Where to buy: the search runs on a thread; Spansh is replaced by a stand-in that records what was asked.
 import time
 from plugin import colonization_sources as S
+from plugin.uikit import palette as P
 
 asked = []
 
@@ -335,6 +336,11 @@ check("Copied the best system to the clipboard" in window._sources_note.cget("te
 window._systems = None
 window._on_copy_route()
 check("Press Find all first" in window._sources_note.cget("text"), "Copy Route with no route says what to do")
+check(window._sources_note.cget("fg") == P.MUTED, "the note is in the muted color once a search is done")
+window._say("Searching 1 of 2: Steel…", busy=True)
+check(window._sources_note.cget("fg") == P.ACCENT, "a search in progress is shown in the accent color")
+window._say("Done.")
+check(window._sources_note.cget("fg") == P.MUTED, "any other note goes back to the muted color")
 W.sources.find_whole_list = S_whole
 W.systems.find_best_systems = S_systems
 

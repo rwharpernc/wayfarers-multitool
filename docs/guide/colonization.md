@@ -280,7 +280,7 @@ search system is not: it starts as the site's system again.
 
 - It follows the table as you have it filtered. Rows already covered are left out, and so are rows the Filter box or **Only what [station] sells** hide.
 - Spansh can only look up one commodity per request. So WFMT sends one request per commodity, about half a second apart, plus one more asking for the nearest stations that have every commodity on the list in stock (see below).
-- A list of 20 takes some seconds, and the note under the buttons shows how far it has got. The best single systems are checked at the end (see below).
+- A list of 20 takes some seconds, and the note under the buttons shows how far it has got, in amber while a search is running so it stands out. The best single systems are checked at the end (see below).
 - Press **Stop** (the same button) to stop after the search in progress, keeping what it found.
 - A commodity that fails is named and the others still show. Press **Find all** again to retry.
 - Commodities with no source in range are listed in the note.
