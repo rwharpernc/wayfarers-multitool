@@ -37,6 +37,8 @@ Connector) and puts its tools in one panel of eight modes, with optional on-scre
   - A Sites window with a fleet carrier column and Rescan Carrier, and Where to buy for what a site still needs.
   - Planned Builds, read from Raven Colonial when you press a button.
   - Optional sharing of progress, deliveries and carrier cargo with Raven Colonial, off by default.
+  - My Projects lists every active project you have on Raven Colonial, across systems, adds up the ones you count and the trips
+    they take, and can set your primary project and save your counted (not hidden) list there.
   - Create Project on Raven starts a Raven Colonial project for a site you are docked at (from a planned site or as a
     project of its own), links you, and can make it your primary project and attach your fleet carrier.
 - **BGS:** faction states and what your activity does to them, rebuilt after a tick that passed while

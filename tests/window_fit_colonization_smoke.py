@@ -22,7 +22,7 @@ except tk.TclError:
 root.withdraw()
 
 from plugin import (colonization, colonization_builds_window as B, colonization_carrier, colonization_data, colonization_history_window as HW,  # noqa: E402
-                    colonization_sources as S, colonization_window as W, rcc_client)
+                    colonization_projects_window as PW, colonization_sources as S, colonization_window as W, rcc_client)
 
 problems, notes = [], []
 SITE = "Orbital Construction Site: " + F.STATION[:33]       # 60 characters
@@ -121,6 +121,19 @@ bwin = B._window
 settle(lambda: len(bwin._table) == 3)
 F.check_views(root, bwin._shell.window, "Planned Builds", None, problems, notes)
 B.close()
+
+# --- My Projects -----------------------------------------------------------------------------------------------------------------------
+long_name = SITE * 3
+rcc_client.fetch_active = lambda cmdr: rcc_client.parse_project_views([
+    {"buildId": f"b{n}", "buildName": long_name + str(n), "systemName": F.SYSTEM * 3, "buildType": "hermes_of_the_very_long_unknown_type_name",
+     "marketId": 1, "sumNeed": 12_345_678_901, "maxNeed": 12_345_678_901 * 2, "commodities": {"steel": 12_345_678_901}} for n in range(30)])
+rcc_client.fetch_hidden = lambda cmdr: ["b1"]
+rcc_client.fetch_primary = lambda cmdr: "b2"
+PW.show(root, lambda: F.COMMANDER * 3, lambda: frozenset({1}), lambda: 100)
+pwin = PW._window
+settle(lambda: len(pwin._table) == 30)
+F.check_views(root, pwin._shell.window, "My Projects", None, problems, notes)
+PW.close()
 
 root.destroy()
 for line in notes:

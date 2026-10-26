@@ -3,6 +3,7 @@
 Colonization has its own mode: press the **COL** button.
 
 - The page shows the project you are building now and nothing historical.
+- The **PROJECTS** button opens [My Projects](#my-projects): everything you have on Raven Colonial.
 - The **HISTORY** button opens your history in its own window.
 - The **DASHBOARD** button opens the full sites window.
 - It works the same for a commander with a fleet carrier and for one without. The wording changes to match, and the carrier lines are left out when you have none.
@@ -20,7 +21,7 @@ page is about your own deliveries, ship and carrier, and details may change.
 See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 **On this page:** [The COL page](#the-col-page) · [Tracking a site](#tracking-a-site) ·
-[The Colonization Sites window](#the-colonization-sites-window) · [Where to buy](#where-to-buy) · [Planned builds](#planned-builds) ·
+[The Colonization Sites window](#the-colonization-sites-window) · [Where to buy](#where-to-buy) · [My Projects](#my-projects) · [Planned builds](#planned-builds) ·
 [The shopping list on the overlay](#the-shopping-list-on-the-overlay) ·
 [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
 
@@ -333,11 +334,26 @@ Each result shows the station, system, type, whether it is **Planetary**, larges
   The amounts are the **t still to get** figures, so what is on your ship and on your carrier is taken off. If nothing is needed it says
   so.
 - **Rescan Carrier** rebuilds the fleet carrier tally from your journals; see [Rescan Carrier](#rescan-carrier-when-a-load-did-not-register).
-- **Raven Colonial** (a menu): **Planned Builds**, **Raven Progress**, **Open Selected Build on Raven**, **Open This System on Raven**,
+- **Raven Colonial** (a menu): **My Projects**, **Planned Builds**, **Raven Progress**, **Open Selected Build on Raven**, **Open This System on Raven**,
   **Raven Colonial Website**, **Create Project on Raven**, **Report Complete to Raven** and **Mark Plan Entry Demolished**. See
   [Planned builds](#planned-builds), [Starting a project on Raven Colonial](#starting-a-project-on-raven-colonial) and
   [Sharing your progress with Raven Colonial](#sharing-your-progress-with-raven-colonial).
 - **Manage Sites** (a menu): **Remove Site** stops tracking that site, and **Remove Finished** deletes every complete or failed site.
+
+## My Projects
+
+The Colonization Sites window only knows sites you have docked at. **My Projects** (the **PROJECTS** button on the COL page, or **My Projects** in the **Raven Colonial** menu) lists every active project your commander has on [Raven Colonial](https://ravencolonial.com), across systems.
+
+- **Reading needs no key and no switch.** Opening the window sends only your commander name, to read your projects, your hidden list and your primary project.
+- **The table** shows each project's name, system, building (the game's name and the build type Raven knows it by, such as *Industrial Outpost (vulcan)*), how much is delivered, and the tons still needed. The **Note** column says **Primary** for your primary project and **Here** for a site WFMT also tracks from your journal.
+- **Count.** A project is counted unless it is on your hidden list on Raven Colonial. The line under the title adds up the counted projects and the trips they take in the ship you are flying. Double-click a row, or press **Count / Don't Count**, to change it.
+- **More** menu:
+  - **Copy Shopping List** copies the picked project's needs, biggest first.
+  - **Open Project on Raven** and **Open My Projects on Raven** open ravencolonial.com in your browser.
+  - **Set as My Primary** makes the picked project your primary one on Raven Colonial. It asks first.
+  - **Save Counted List** replaces your hidden list on Raven Colonial with the one on screen. It asks first, because other tools that read the list, such as SrvSurvey, see the change too.
+- **The two writes** need your Raven Colonial key and the master switch (see [Sharing your progress with Raven Colonial](#sharing-your-progress-with-raven-colonial)). Nothing is saved until you press the button.
+- It does not change WFMT's own tracking. A project you have never docked at is listed from Raven's figures alone, so its commodity list is Raven's, not your journal's.
 
 ## Planned builds
 

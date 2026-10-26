@@ -19,7 +19,7 @@ from typing import Any, Callable, Dict, FrozenSet, List, Mapping, Optional, Tupl
 
 from config import appname, config
 
-from . import colonization, colonization_builds_window, colonization_carrier, colonization_create_dialog, colonization_sources as sources, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys, system_autocomplete
+from . import colonization, colonization_builds_window, colonization_carrier, colonization_create_dialog, colonization_projects_window, colonization_sources as sources, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys, system_autocomplete
 from .colonization_carrier import CarrierCargo
 from .colonization import Site
 from .colonization_data import SiteRepository
@@ -173,6 +173,7 @@ class ColonizationWindow:
         self._shell.add_action("Rescan Carrier", self._on_rescan_carrier)
         # Raven Colonial's actions under one heading: the first ones only read, the last three write (each asks first).
         self._shell.add_menu("Raven Colonial", [
+            ("My Projects", self._on_projects),
             ("Planned Builds", self._on_builds),
             ("Raven Progress", self._on_raven_progress),
             None,
@@ -814,6 +815,11 @@ class ColonizationWindow:
         if panelkit.copy_to_clipboard(self._toplevel, "\n".join(lines)):
             self._shell.set_status(f"Copied the shopping list for {site.display_name()}.")
 
+    def _on_projects(self) -> None:
+        """Open My Projects: every active project the commander has on Raven Colonial. Nothing is asked until it opens."""
+        colonization_projects_window.show(
+            self._toplevel, lambda: self._cmdr, lambda: frozenset(s.market_id for s in self._repository.for_cmdr(self._cmdr)), self._capacity)
+
     def _on_builds(self) -> None:
         """Open the Planned Builds window (what Raven Colonial has for this site's system). Nothing is asked until this is pressed."""
         site = self._selected_site()
@@ -1216,6 +1222,7 @@ class ColonizationWindow:
 
     def close(self) -> None:
         colonization_builds_window.close()
+        colonization_projects_window.close()
         if self._whole_job is not None:
             self._whole_job["cancel"] = True   # let the worker stop between commodities instead of running on
         self._search_id += 1   # a search still running has nowhere to show its answer

@@ -439,3 +439,101 @@ def send_json(method: str, path: str, body: Optional[Any], key: str = "", opener
         return json.loads(raw.decode("utf-8")) if raw.strip() else None
     except (ValueError, UnicodeDecodeError):
         return None
+
+
+# --- a commander's projects (reads need no key; the two writes do) -------------------------------------------------
+
+MAX_PROJECTS = 200               # projects kept from one answer
+MAX_HIDDEN = 1000                # hidden ids kept from one answer
+FC_LOADING = "fc_loading"        # Raven's build type for a carrier being loaded ahead of a build, which has no building
+
+
+@dataclass(frozen=True)
+class RccProjectView:
+    """One of a commander's projects as Raven Colonial lists it."""
+    build_id: str
+    name: str
+    system: str
+    build_type: str
+    market_id: Optional[int]     # set once the site exists in the game
+    sum_need: int                # tons still needed in all
+    max_need: int                # tons the whole build needs
+    complete: bool
+    commodities: Dict[str, int]  # commodity key -> tons still needed
+
+
+def parse_project_views(data: Any) -> List[RccProjectView]:
+    """The projects in an answer (a list of project views). Anything malformed, or with no build id, is skipped."""
+    if not isinstance(data, list):
+        return []
+    views: List[RccProjectView] = []
+    for raw in data[:MAX_PROJECTS]:
+        if not isinstance(raw, dict):
+            continue
+        build_id = str(raw.get("buildId") or "").strip()[:BUILD_ID_MAX]
+        if not build_id:
+            continue
+        needs = raw.get("commodities") if isinstance(raw.get("commodities"), dict) else {}
+        views.append(RccProjectView(
+            build_id=build_id, name=str(raw.get("buildName") or "").strip()[:NAME_MAX], system=str(raw.get("systemName") or "").strip()[:NAME_MAX],
+            build_type=str(raw.get("buildType") or "").strip()[:NAME_MAX], market_id=_int(raw.get("marketId")),
+            sum_need=_int(raw.get("sumNeed")) or 0, max_need=_int(raw.get("maxNeed")) or 0, complete=raw.get("complete") is True,
+            commodities={str(k).casefold(): v for k, item in list(needs.items())[:200] if (v := _int(item)) is not None and v > 0}))
+    return views
+
+
+def cmdr_path(cmdr: str) -> str:
+    """The commander's name as it goes in a Raven Colonial address."""
+    return urllib.parse.quote((cmdr or "").strip().casefold(), safe="")
+
+
+def _get_json(path: str, opener: Callable[..., Any] = urllib.request.urlopen) -> Any:
+    """One keyless read of Raven Colonial: the parsed JSON, or None for a 404 (it has no record). Raises RccError with a message to show."""
+    request = urllib.request.Request(BASE_URL + path, headers={"User-Agent": http_identity.user_agent("rcc-cmdr")})
+    try:
+        with opener(request, timeout=TIMEOUT_S) as response:
+            body = response.read(MAX_BYTES + 1)
+    except urllib.error.HTTPError as err:
+        if err.code == 404:
+            return None
+        raise RccError(f"Raven Colonial answered with an error ({err.code}). Try again later.") from err
+    except (urllib.error.URLError, OSError, TimeoutError) as err:
+        raise RccError("Could not reach Raven Colonial. Check your connection and try again.") from err
+    if len(body) > MAX_BYTES:
+        raise RccError("Raven Colonial sent more than expected, so it was ignored.")
+    try:
+        return json.loads(body.decode("utf-8")) if body.strip() else None
+    except (ValueError, UnicodeDecodeError) as err:
+        raise RccError("Raven Colonial sent something WFMT could not read.") from err
+
+
+def fetch_active(cmdr: str, opener: Callable[..., Any] = urllib.request.urlopen) -> List[RccProjectView]:
+    """The commander's active projects (`GET /api/Cmdr/<cmdr>/active`)."""
+    if not (cmdr or "").strip():
+        raise RccError("No commander is known yet.")
+    return parse_project_views(_get_json(f"/api/Cmdr/{cmdr_path(cmdr)}/active", opener))
+
+
+def fetch_hidden(cmdr: str, opener: Callable[..., Any] = urllib.request.urlopen) -> List[str]:
+    """The build ids the commander has hidden on Raven Colonial."""
+    data = _get_json(f"/api/Cmdr/{cmdr_path(cmdr)}/hiddenIDs", opener)
+    return [str(x).strip()[:BUILD_ID_MAX] for x in data[:MAX_HIDDEN] if isinstance(x, str) and x.strip()] if isinstance(data, list) else []
+
+
+def fetch_primary(cmdr: str, opener: Callable[..., Any] = urllib.request.urlopen) -> str:
+    """The build id of the commander's primary project, or "" when there is none."""
+    data = _get_json(f"/api/Cmdr/{cmdr_path(cmdr)}/primary", opener)
+    return data.strip()[:BUILD_ID_MAX] if isinstance(data, str) else ""
+
+
+def save_hidden(cmdr: str, build_ids: List[str], key: str, send: Callable[..., Any] = send_json) -> List[str]:
+    """Replace the commander's hidden list on Raven Colonial (`POST /api/Cmdr/<cmdr>/hiddenIDs`); returns the list it now holds."""
+    answer = send("POST", f"/api/Cmdr/{cmdr_path(cmdr)}/hiddenIDs", list(build_ids), key, cmdr=cmdr)
+    if isinstance(answer, list):
+        return [str(x).strip()[:BUILD_ID_MAX] for x in answer[:MAX_HIDDEN] if isinstance(x, str) and x.strip()]
+    return list(build_ids)
+
+
+def set_primary(cmdr: str, build_id: str, key: str, send: Callable[..., Any] = send_json) -> None:
+    """Make a project the commander's primary one (`PUT /api/Cmdr/<cmdr>/primary/<build id>`)."""
+    send("PUT", f"/api/Cmdr/{cmdr_path(cmdr)}/primary/{urllib.parse.quote(build_id.strip(), safe='')}", None, key, cmdr=cmdr)

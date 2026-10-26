@@ -26,7 +26,7 @@ import myNotebook as nb
 from config import appname, config
 
 from . import (overlay_appearance, overlay_layout, overlay_placement, colonization, colonization_carrier, colonization_catchup, colonization_history, colonization_overlay as card, rcc_client, rcc_keys, rcc_sync,
-               colonization_history_window, colonization_stats as stats, colonization_window, overlay, panelkit, restore, trade_market, trade_panel)
+               colonization_history_window, colonization_projects_window, colonization_stats as stats, colonization_window, overlay, panelkit, restore, trade_market, trade_panel)
 from .colonization import Site
 from . import commander_data
 from .colonization_data import SiteRepository, site_repository
@@ -249,6 +249,7 @@ class ColonizationController:
             self._maybe_backfill_history(cmdr)
             self._refresh_summary()
             colonization_window.refresh_cmdr(cmdr)
+            colonization_projects_window.refresh_cmdr()
         if cmdr:
             self._carrier_feed.cmdr = cmdr
         try:
@@ -575,6 +576,9 @@ class ColonizationController:
         panelkit.add_tooltip(self._show_button, "Turn the shopping list on the overlay on or off, whatever screen you are on "
                                                 "(lit while it is on). It stays as you leave it, even after a restart, and works "
                                                 "whether or not the automatic option in Settings is ticked.")
+        projects_button = tk.Button(buttons, text="PROJECTS", command=self._on_projects_clicked)
+        projects_button.pack(side=tk.LEFT, padx=(6, 0))
+        panelkit.add_tooltip(projects_button, "My Projects - every active project you have on Raven Colonial, across systems")
         history_button = tk.Button(buttons, text="HISTORY", command=self._on_history_clicked)
         history_button.pack(side=tk.LEFT, padx=(6, 0))
         panelkit.add_tooltip(history_button, "Colonization History - what you have delivered over time (kept off this panel)")
@@ -597,6 +601,13 @@ class ColonizationController:
     def _history_view(self) -> tuple:
         """What the History window draws: the commander, their tracked sites and their delivery record."""
         return self._cmdr or "", (self._repository.for_cmdr(self._cmdr) if self._cmdr else []), self._ledger.record(self._cmdr)
+
+    def _on_projects_clicked(self) -> None:
+        if self._parent is not None:
+            colonization_projects_window.show(
+                self._parent, lambda: self._cmdr or "",
+                lambda: frozenset(s.market_id for s in self._repository.for_cmdr(self._cmdr)) if self._cmdr else frozenset(),
+                lambda: self._capacity)
 
     def _on_history_clicked(self) -> None:
         if self._parent is not None:

@@ -319,7 +319,7 @@ header = [w for w in window._shell.actions.winfo_children() if isinstance(w, Fla
 check([w.cget("text") for w in header] == ["Copy Shopping List", "Rescan Carrier", "Raven Colonial ▾", "Manage Sites ▾"],
       f"the header buttons: {[w.cget('text') for w in header]}")
 menus = {w.cget("text").split(" ")[0]: w for w in header if isinstance(w, MenuButton)}
-check(menus["Raven"].entries() == ["Planned Builds", "Raven Progress", "Open Selected Build on Raven", "Open This System on Raven",
+check(menus["Raven"].entries() == ["My Projects", "Planned Builds", "Raven Progress", "Open Selected Build on Raven", "Open This System on Raven",
                                    "Raven Colonial Website", "Create Project on Raven…", "Report Complete to Raven",
                                    "Mark Plan Entry Demolished…"],
       f"Raven Colonial menu: {menus['Raven'].entries()}")
@@ -389,6 +389,44 @@ for _ in range(40):
 check(len(asked_rcc) == 2, "Refresh asks again")
 rcc_client.fetch_system = rcc_real
 B.close()
+
+# My Projects: every project the commander has on Raven Colonial; nothing is asked until it is opened, and the writes refuse while the
+# master switch is off.
+from plugin import colonization_projects_window as PW
+asked_projects = []
+real_reads = (rcc_client.fetch_active, rcc_client.fetch_hidden, rcc_client.fetch_primary)
+rcc_client.fetch_active = lambda cmdr: asked_projects.append(cmdr) or rcc_client.parse_project_views([
+    {"buildId": "b1", "buildName": "Primary port", "systemName": "Sol", "buildType": "no_truss", "marketId": 1,
+     "sumNeed": 500, "maxNeed": 1000, "commodities": {"steel": 500}},
+    {"buildId": "b2", "buildName": "Outpost", "systemName": "Alpha", "buildType": "vulcan", "sumNeed": 90, "maxNeed": 90,
+     "commodities": {"titanium": 90}}])
+rcc_client.fetch_hidden = lambda cmdr: ["b2"]
+rcc_client.fetch_primary = lambda cmdr: "b1"
+check(not asked_projects, "nothing should be asked of Raven Colonial before My Projects is opened")
+window._on_projects()
+for _ in range(80):
+    root.update()
+    if PW._window is not None and len(PW._window._table) == 2:
+        break
+    time.sleep(0.02)
+check(PW._window is not None and PW._window.alive, "the My Projects window should open")
+check(asked_projects == [window._cmdr], f"the commander's name is the one looked up: {asked_projects}")
+project_rows = [row.values for row in PW._window._table._rows.values()]
+check([r[1] for r in project_rows] == ["Outpost", "Primary port"], f"projects by system: {[r[1] for r in project_rows]}")
+check([r[0] for r in project_rows] == ["", "✓"], f"the hidden project is not counted: {[r[0] for r in project_rows]}")
+check(project_rows[0][3] == "Industrial Outpost (vulcan)", f"the building shows its name and layout: {project_rows[0][3]}")
+check([r[6] for r in project_rows] == ["", "Primary"], f"the primary project is marked: {[r[6] for r in project_rows]}")
+subtitle = PW._window._shell._subtitle.cget("text")
+check("2 projects" in subtitle and "1 counted need 500 t" in subtitle, f"the subtitle adds up the counted ones: {subtitle}")
+PW._window._table.select("b2", notify=True)
+PW._window._on_toggle()
+root.update()
+check("unsaved" in PW._window._shell._subtitle.cget("text"), "counting a project changes the list, which is flagged until it is saved")
+check("2 counted need 590 t" in PW._window._shell._subtitle.cget("text"), "the totals follow the counted state")
+check(PW._window._write_key() == "", "writing needs the master switch")
+check("switched off" in PW._window._shell._status.cget("text"), "and says why")
+PW.close()
+rcc_client.fetch_active, rcc_client.fetch_hidden, rcc_client.fetch_primary = real_reads
 
 # No FC column without a carrier; the table never asks for more than the window has.
 check(window._with_fc is False, "no FC column for a commander without a carrier")

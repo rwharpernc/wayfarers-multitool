@@ -732,6 +732,10 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
 - [ ] With no network, the panel says the search failed and the button comes back.
 - [ ] **Find all**: lists a heading per commodity still to buy with up to 5 stations under each; the
       button reads **Stop** while it runs and stopping keeps what was found; the window stays responsive.
+- [ ] **My Projects (needs the internet):** press **PROJECTS** on the COL page (or **My Projects** in the **Raven Colonial** menu).
+  - A window lists your Raven Colonial projects with building, progress and tons still needed; the subtitle adds up the counted ones.
+  - Double-clicking a row changes whether it counts, and the subtitle says there are unsaved changes.
+  - **More** has Copy Shopping List, the two Open items, Set as My Primary and Save Counted List; the last two ask first and refuse while the master switch is off.
 - [ ] **Planned Builds (needs the internet):** select a site, press **Planned Builds** (in the **Raven Colonial** menu).
   - A window lists Raven Colonial's sites for its system (building, planned, complete), marks the ones you track and shows each planned or building site's **Full cost**.
   - Clicking a row names its biggest commodities.
@@ -766,7 +770,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
 
 - [ ] The header has **Copy Shopping List**, **Rescan Carrier**, **Raven Colonial ▾** and **Manage Sites ▾**. The two menus open under their buttons,
       are readable (dark colors) and close when you click elsewhere or pick an item.
-- [ ] **Raven Colonial ▾** lists Planned Builds, Raven Progress, Open Selected Build on Raven, Open This System on Raven, Raven Colonial
+- [ ] **Raven Colonial ▾** lists My Projects, Planned Builds, Raven Progress, Open Selected Build on Raven, Open This System on Raven, Raven Colonial
       Website, Create Project on Raven, Report Complete to Raven and Mark Plan Entry Demolished; the three Open items open the right page in your browser.
 - [ ] A site you renamed in the game takes its new name after you dock at it again.
 
