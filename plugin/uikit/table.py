@@ -110,6 +110,9 @@ class DataTable(tk.Frame):
         self._on_header = on_header
         self._layout_pending = False
         self._signature: Optional[list] = None  # rows last given to set_rows()
+        # A new text size changes every cell's natural width and height: measure the columns again.
+        stop_listening = style.add_text_listener(self._on_text_size)
+        self.bind("<Destroy>", lambda e: stop_listening() if e.widget is self else None, add="+")
 
         self._header = tk.Frame(self, bg=P.CARD)
         self._header.pack(fill="x", padx=(0, SlimScrollbar.WIDTH))
@@ -313,6 +316,10 @@ class DataTable(tk.Frame):
                 cell.bind("<Double-1>", lambda _e, r=row: self._activate(r))
             row.cells.append(cell)
 
+    def _on_text_size(self) -> None:
+        if self.winfo_exists():
+            self._schedule_layout()
+
     def _schedule_layout(self) -> None:
         """Rows are inserted one at a time; lay the grid out once afterwards
         rather than once per insert (which would be quadratic)."""
@@ -352,16 +359,20 @@ class DataTable(tk.Frame):
         column's minimum would push the body out of step with the header.
         Give both grids every column's widest requirement."""
         self.update_idletasks()
+        spread = not any(column.stretch for column in self._columns)
         for index, column in enumerate(self._columns):
-            widest = max([column.width, self._header_labels[index].winfo_reqwidth()]
-                         + [row.cells[index].winfo_reqwidth() for row in self._rows.values()
-                            if index < len(row.cells)])
+            needs = [self._header_labels[index].winfo_reqwidth()] + [
+                row.cells[index].winfo_reqwidth() for row in self._rows.values() if index < len(row.cells)]
+            # A column that does not stretch is as wide as its content needs (its declared width is only the least it is given while
+            # the table is empty), and spare width is shared out in proportion to that, so short columns stay narrow and long ones grow.
+            widest = max(needs) if (self._rows and not column.stretch) else max([column.width] + needs)
             for grid in (self._header, self._scroll.body):
-                grid.columnconfigure(index, minsize=widest)
+                grid.columnconfigure(index, minsize=widest, weight=widest if (spread and self._rows) else (1 if column.stretch or spread else 0))
         if self._max_rows:
             # Fit the content, up to `visible_rows` rows; beyond that it scrolls.
             natural = self._scroll.body.winfo_reqheight()
-            self._scroll._canvas.configure(height=max(1, min(natural, self._max_rows * ROW_PX)))
+            row_px = max(ROW_PX, style.font().metrics("linespace") + 16)
+            self._scroll._canvas.configure(height=max(1, min(natural, self._max_rows * row_px)))
 
     def _row_background(self, row: _TableRow, selected: bool, hover: bool = False) -> str:
         tint = self._tag_backgrounds.get(row.tag or "")

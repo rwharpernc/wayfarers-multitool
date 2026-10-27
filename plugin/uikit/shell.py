@@ -28,6 +28,18 @@ class _Parts:
     _subtitle: tk.Label
     _status: tk.Label
 
+    def _make_text_size_buttons(self, footer: tk.Frame) -> None:
+        """A- and A+ at the right end of the footer: they change the text size of every WFMT window (the setting is shared and saved). They
+        are in the footer, not the header, because a narrow window needs the header's width for the title. Call before the status is packed."""
+        self._sizer = tk.Frame(footer, bg=P.BG)
+        self._sizer.pack(side="right", padx=(6, 0))
+        for text, step in (("A−", -1), ("A+", 1)):
+            button = tk.Label(self._sizer, text=text, fg=P.MUTED, bg=P.BG, padx=7, cursor="hand2", font=style.font(P.FONT_SMALL_BOLD))
+            button.pack(side="left")
+            button.bind("<Button-1>", lambda _e, n=step: style.set_text_delta(style.text_delta() + n))
+            button.bind("<Enter>", lambda _e, b=button: b.configure(fg=P.TEXT))
+            button.bind("<Leave>", lambda _e, b=button: b.configure(fg=P.MUTED))
+
     def add_action(self, text: str, command: Callable[[], None], accent: bool = False) -> FlatButton:
         button = FlatButton(self.actions, text, command, kind="accent" if accent else "normal")
         button.pack(side="left", padx=(6, 0))
@@ -134,11 +146,12 @@ class WindowShell(_Parts):
         # Footer first so it keeps its height when the body is squeezed.
         footer = tk.Frame(self.window, bg=P.BG, padx=P.PAD * 2, pady=P.PAD_SM)
         footer.pack(side="bottom", fill="x")
+        self._make_text_size_buttons(footer)
         self._status = tk.Label(footer, text="", fg=P.STATUS, bg=P.BG, anchor="w",
                                 font=style.font(P.FONT_SMALL))
-        self._status.pack(fill="x")
+        self._status.pack(side="left", fill="x", expand=True)
         footer.bind("<Configure>", lambda e: self._status.configure(
-            wraplength=max(e.width - 2 * P.PAD * 2, 100)))  # long hints wrap instead of clipping
+            wraplength=max(e.width - self._sizer.winfo_reqwidth() - 8 - 2 * P.PAD * 2, 100)))  # long hints wrap instead of clipping
 
         self.body = tk.Frame(self.window, bg=P.BG, padx=P.PAD * 2)
         self.body.pack(fill="both", expand=True)
@@ -210,9 +223,10 @@ class TabShell(_Parts):
             part.bind("<Configure>", lambda _e, h=header: self._fit_subtitle(h))
         footer = tk.Frame(self._root, bg=P.BG, padx=P.PAD * 2, pady=P.PAD_SM)
         footer.pack(side="bottom", fill="x")
+        self._make_text_size_buttons(footer)
         self._status = tk.Label(footer, text="", fg=P.STATUS, bg=P.BG, anchor="w", font=style.font(P.FONT_SMALL))
-        self._status.pack(fill="x")
-        footer.bind("<Configure>", lambda e: self._status.configure(wraplength=max(e.width - 2 * P.PAD * 2, 100)))
+        self._status.pack(side="left", fill="x", expand=True)
+        footer.bind("<Configure>", lambda e: self._status.configure(wraplength=max(e.width - self._sizer.winfo_reqwidth() - 8 - 2 * P.PAD * 2, 100)))
         self.body = tk.Frame(self._root, bg=P.BG, padx=P.PAD * 2)
         self.body.pack(fill="both", expand=True)
 

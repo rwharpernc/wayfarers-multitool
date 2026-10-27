@@ -512,6 +512,13 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 - **Not done:** counting a commodity on the carrier as delivered. It is not delivered until it is unloaded at the depot, and the carrier column says where it is.
 - **Best single systems** (`colonization_systems.py`) follow the same rule of not guessing: the search by commodity names stations, so a system whose stations together stock the list was invisible. The few best candidates are asked of Spansh for every station's whole market (one request each, through the courtesy layer in 3.23), so the stock is counted from what the stations report. Where to look: [TECHNICAL.md](TECHNICAL.md) (Best single systems).
 
+### 3.26 Text size and column fit for WFMT's own windows
+
+- **The problem:** the text of the dashboards was small and fixed, and every table gave each column a declared minimum width and shared spare width equally, so short columns sat wide and long ones were cut.
+- **Decision:** one text size for all pop-out windows (-2 to +6 points, remembered), changed from a window's footer (A- and A+) or Settings. Fonts are resized in place, so open windows follow at once. Columns that do not stretch take the width their content needs, and spare width goes to each in proportion to that.
+- **Why in the footer:** the narrow-window checks need the header's width for the title.
+- **Not done:** a size for the EDMC panel or the overlay cards (EDMC and Settings → Overlays → Appearance own those), and dragging a column border.
+
 ### 3.25 The navy theme for WFMT's own windows
 
 - **The problem:** the pop-out windows were near-black with gray text. Headings, table headers and status messages were all the same muted gray, so nothing stood out and the windows read as dull.

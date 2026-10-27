@@ -135,6 +135,7 @@ def plugin_start3(plugin_dir: str) -> str:
         logger.info("%s", restored)
     legacy_names.migrate(plugin_dir, config)      # saved names from before the spelling fix, after a restore that may bring them back
 
+    ui.restore_text_size()
     overlay_profile.profiles.configure(plugin_dir, config, _on_overlay_profile_changed)
     _reset_overlays_once()  # before any feature module reads its settings, and before a commander is activated
 

@@ -7,6 +7,10 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Changed
 
+- **Windows:** the text size of WFMT's pop-out windows and dashboards can be changed, from -2 to +6 points, with the **A-** and **A+**
+  buttons at the right end of a window's bottom line or under Settings → WFMT → General → Window. One size applies to every window
+  and is remembered. Table columns now fit their content (short columns stay narrow, long ones take the spare width) instead of
+  sharing it equally.
 - **Colonization:** a **Show** dropdown (All, To buy, To haul) replaces *Hide rows already covered* in the Sites window, and the overlay
   card has the same choice under Settings → WFMT → Overlays → Colonization (**List**). **To haul** is for the middle step, when
   everything is bought and on the fleet carrier and **To buy** would be empty: it lists the rows that are covered but not yet aboard

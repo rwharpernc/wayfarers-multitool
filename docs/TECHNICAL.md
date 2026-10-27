@@ -311,6 +311,8 @@ one:
 - **Never change ttk globally.** ttk themes and stock styles (`TButton`, `Treeview`, ...) are application-wide, so `theme_use()` or restyling them would recolor EDMC's main window and every other plugin.
   - The kit uses classic tk widgets plus its own `FlatButton`, `Combobox`, `SlimScrollbar`, `Tabs`, `ProgressBar` and `DataTable` (a Label grid, not a Treeview).
   - `tests/test_ui_kit.py` fails if `plugin/uikit` touches the ttk theme or styles.
+- **Text size.** `uikit/style.py` keeps one setting (`set_text_delta`, -2 to +6 points, saved as `wfmt_window_text_delta` by `ui.restore_text_size`). `style.font` resizes its cached fonts in place, `skin()` gives plain widgets the same body font, and `DataTable` listens (`add_text_listener`) to measure its columns again. The A- and A+ labels sit in the shells' footers (`_make_text_size_buttons`).
+- **Table columns.** `DataTable._sync_widths` sizes a column that does not stretch to its content (the declared width is only the least an empty table gives it) and shares spare width in proportion to that.
 - **Shell.** `ui.shell.WindowShell` gives a Toplevel a header (title, subtitle, action buttons), a body, a wrapping status footer, a minimum size and saved geometry.
   - It never touches EDMC config: the window passes `load_geometry`/`save_geometry` callables.
   - Windows are built hidden and shown once, after their content is laid out (`_present`), so they never flash at a default size.

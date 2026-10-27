@@ -42,7 +42,7 @@ from . import (
     credits_ledger, game_mode, session_credits, session_merits, settings_scroll, system_names, trade_panel, trade_watch_panel,
 )
 from . import __version__, data_backup, issue_report, settings_online
-from .uikit import dialogs
+from .uikit import dialogs, style
 from .update import CONFIG_AUTO_UPDATE, RELEASES_PAGE_URL
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
@@ -81,6 +81,7 @@ _SIDE_BY_SIDE_PAIRS = {autohonk: discovery}
 CONFIG_PANEL_MODE = "wfmt_active_panel_mode"
 CONFIG_MODE_HIDDEN = "wfmt_mode_hidden_"     # + the mode key: that mode's button is hidden from the main panel
 CONFIG_FIT_HEIGHT = "wfmt_fit_window_height"
+CONFIG_TEXT_DELTA = "wfmt_window_text_delta"   # points added to the text of WFMT's own windows (the A- and A+ buttons, Settings -> General -> Window)
 _DEFAULT_FIT_HEIGHT = True
 
 # (mode key, button label) - order here is left-to-right button order.
@@ -133,6 +134,7 @@ _toggle_off_colors: Tuple[str, str] = ("", "")
 
 _auto_update_var: Optional[tk.BooleanVar] = None
 _fit_height_var: Optional[tk.BooleanVar] = None
+_text_size_var: Optional[tk.StringVar] = None
 _suggest_var: Optional[tk.BooleanVar] = None
 
 PLUGIN_DISPLAY_NAME = "Wayfarer's Multitool (WFMT)"
@@ -761,7 +763,7 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
     """Window behavior. Everything here is placed with `grid` (never `pack`) - an
     nb.Frame already holds a gridded child, and packing into it makes the whole
     WFMT Settings tab vanish (tests/test_settings_layout.py)."""
-    global _fit_height_var, _suggest_var
+    global _fit_height_var, _suggest_var, _text_size_var
 
     frame = nb.Frame(notebook)
     frame.columnconfigure(0, weight=1)
@@ -808,6 +810,19 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
     for index, (key, label) in enumerate(PANEL_MODES):
         _mode_vars[key] = tk.BooleanVar(value=not config.get_bool(CONFIG_MODE_HIDDEN + key, default=False))
         nb.Checkbutton(modes_row, text=label, variable=_mode_vars[key]).grid(row=index // 4, column=index % 4, sticky=tk.W, padx=(0, 12))
+
+    nb.Label(frame, text="Text size in WFMT's windows", font=("TkDefaultFont", 9, "bold")).grid(row=7, column=0, sticky=tk.W, padx=10, pady=(10, 2))
+    size_row = tk.Frame(frame)
+    size_row.grid(row=8, column=0, sticky=tk.W, padx=10, pady=(0, 2))
+    nb.Label(size_row, text="Points larger than normal:").pack(side=tk.LEFT)
+    _text_size_var = tk.StringVar(value=str(style.text_delta()))
+    nb.EntryMenu(size_row, textvariable=_text_size_var, width=4).pack(side=tk.LEFT, padx=(4, 0))
+    nb.Label(
+        frame,
+        text=(f"From {style.TEXT_DELTA_MIN} to {style.TEXT_DELTA_MAX}; 0 is the normal size. It applies to the pop-out windows and dashboards, not to the EDMC "
+              "window or the overlay cards. The A- and A+ buttons in a window's top right corner change the same setting."),
+        wraplength=440, justify=tk.LEFT,
+    ).grid(row=9, column=0, sticky=tk.W, padx=10, pady=(0, 10))
 
 
 def _create_updates_tab(notebook: nb.Notebook) -> None:
@@ -963,12 +978,27 @@ def _create_help_tab(notebook: nb.Notebook) -> None:
 _mode_vars: Dict[str, tk.BooleanVar] = {}
 
 
+def restore_text_size() -> None:
+    """Applies the saved text size of WFMT's windows, and saves it again whenever the A- and A+ buttons or Settings change it."""
+    try:
+        style.set_text_delta(int(config.get_int(CONFIG_TEXT_DELTA, default=0)))
+    except (TypeError, ValueError):
+        pass
+    style.add_text_listener(lambda: config.set(CONFIG_TEXT_DELTA, style.text_delta()))
+
+
 def save_prefs() -> None:
     if _mode_vars:
         shown = {key for key, var in _mode_vars.items() if var.get()} or set(_mode_vars)     # all unticked: show every mode
         for key in _mode_vars:
             config.set(CONFIG_MODE_HIDDEN + key, key not in shown)
         _apply_mode_buttons()
+    if _text_size_var is not None:
+        try:
+            style.set_text_delta(int(_text_size_var.get().strip()))
+        except ValueError:
+            pass            # a half-typed number keeps the current size
+        _text_size_var.set(str(style.text_delta()))
     if _fit_height_var is not None:
         config.set(CONFIG_FIT_HEIGHT, bool(_fit_height_var.get()))
         if _fit_height_var.get() and _frame is not None:
