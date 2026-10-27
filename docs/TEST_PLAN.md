@@ -16,7 +16,7 @@ What to check in EDMC before the 1.1.0 release (and after any later one), and fo
 | Platform | Automated tests | Checks in the game |
 |---|---|---|
 | **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is proved only by the in-game pass. | Not yet recorded for 1.1.0. Sections 1 to 6 below are open. |
-| **Linux** | 3,469 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-10-27 on the `release/1.1.0` branch. | Not yet recorded for 1.1.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
+| **Linux** | 3,471 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-10-27 on the `release/1.1.0` branch. | Not yet recorded for 1.1.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
 
 - 1.0.0 was released on 2026-10-26 (tag `v1.0.0`). 1.1.0 is prepared on the `release/1.1.0` branch; these passes are the checks to run on its build before it is released, and a failure goes to a fix on that branch.
 - Tick a box in the sections below only when you have seen it pass; nothing here has been ticked from the automated run.

@@ -11,7 +11,8 @@ When EDMC is signed in to Frontier, `apply_capi_cargo` replaces the tally with t
 (`/fleetcarrier`, fetched on CarrierStats / CarrierBuy at most every 15 minutes, so it can lag); transfers after it are added on
 top. A fetch that arrives within `CAPI_GRACE` of the newest transfer is ignored, because Frontier's copy may predate that
 transfer and would undo it, and so is one that repeats the copy already ignored (`capi_ignored`): Frontier's copy has been
-seen to stay unchanged for longer than the grace period. Only a figure that has moved is applied. Without it:
+seen to stay unchanged for longer than the grace period. That second rule expires `CAPI_REPEAT_EXPIRY` after the copy was first
+ignored (`capi_ignored_at`), so a stable figure is applied in the end even when it never moves. Without it:
 
 What it cannot see: stock that reached the carrier another way (bought through its market, a trade order) or left it
 (sold, a trade order, moved by a squadron mate) is not a `CargoTransfer`, so it is not counted. It is "what this tool
@@ -46,6 +47,7 @@ STATE_FILENAME = "colonization_carrier.json"
 FLEET_STATION = "FleetCarrier"
 DEFAULT_DAYS = 14
 CAPI_GRACE = timedelta(minutes=15)   # Frontier's copy is at most this stale, so a transfer newer than this outranks it
+CAPI_REPEAT_EXPIRY = timedelta(hours=1)   # a copy that keeps repeating one already ignored is applied once it has been ignored this long
 MAX_DAYS = 30
 _WANTED = journal_files.event_pattern(
     "Commander", "LoadGame", "Docked", "Location", "Undocked", "CargoTransfer", "CarrierStats", "CarrierBuy")
@@ -59,6 +61,15 @@ def _empty() -> Record:
 
 def _is_legacy(_raw: Any) -> bool:
     return False   # the file is new; nothing older to claim
+
+
+def _parse_time(value: Any) -> Optional[datetime]:
+    """A time stored as ISO text, or None when there is none or it cannot be read."""
+    try:
+        stamp = datetime.fromisoformat(str(value))
+    except ValueError:
+        return None
+    return stamp if stamp.tzinfo else stamp.replace(tzinfo=timezone.utc)
 
 
 class CarrierCargo:
@@ -184,10 +195,14 @@ class CarrierCargo:
         last = self.watermark(cmdr)
         now = now or datetime.now(timezone.utc)
         recent = last is not None and timedelta(0) <= now - last < CAPI_GRACE   # a transfer stamped ahead of the clock is not recent
-        unchanged = record.get("capi_ignored") == fresh   # Frontier still shows the copy already ignored
+        ignored_at = _parse_time(record.get("capi_ignored_at"))
+        # Frontier still shows the copy already ignored, and it was first ignored less than CAPI_REPEAT_EXPIRY ago
+        unchanged = (record.get("capi_ignored") == fresh and ignored_at is not None
+                     and timedelta(0) <= now - ignored_at < CAPI_REPEAT_EXPIRY)
         if record.get("tons") != fresh and (recent or unchanged):
             if not unchanged:
                 record["capi_ignored"] = fresh
+                record["capi_ignored_at"] = now.isoformat()
                 changed = True
             logger.info("Carrier cargo from Frontier ignored: %d t against %d t tallied (%s)", sum(fresh.values()), current,
                         "unchanged since an earlier fetch" if unchanged else "the last transfer was %d s ago"
@@ -195,6 +210,7 @@ class CarrierCargo:
             return changed
         logger.info("Carrier cargo from Frontier: %d t against %d t tallied (%s)", sum(fresh.values()), current,
                     "changed" if record.get("tons") != fresh else "same")
+        record.pop("capi_ignored_at", None)
         if record.pop("capi_ignored", None) is not None:
             changed = True
         if record.get("tons") != fresh or record.get("from_capi") is not True:
@@ -217,6 +233,7 @@ class CarrierCargo:
         record["tons"], record["journal_at"], record["has_carrier"] = tons, stamp, has_carrier
         record.pop("from_capi", None)
         record.pop("capi_ignored", None)
+        record.pop("capi_ignored_at", None)
         return changed
 
     def commit(self) -> None:

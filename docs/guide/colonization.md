@@ -248,7 +248,7 @@ WFMT decided:
 | `Carrier cargo from Frontier: 18806 t against 18806 t tallied (same)` | Frontier agrees with the tally. Nothing changed. |
 | `Carrier cargo from Frontier: 15011 t against 18806 t tallied (changed)` | Rule 4. The tally now follows Frontier's figure. |
 | `Carrier cargo from Frontier ignored: ... (the last transfer was 291 s ago)` | Rule 2. Frontier's copy may not include your last transfer yet. |
-| `Carrier cargo from Frontier ignored: ... (unchanged since an earlier fetch)` | Rule 3. Frontier still shows the copy that was ignored. |
+| `Carrier cargo from Frontier ignored: ... (unchanged since an earlier fetch)` | Rule 3. Frontier still shows the copy that was ignored, less than an hour after it was first ignored. |
 
 If you report a column that looks wrong, press **Copy diagnostics** soon afterward: these lines are among the WFMT lines it copies
 (see [Reporting problems](reporting-problems.md)).
@@ -293,7 +293,7 @@ without a transfer you made: you sold from the carrier's market, a trade order f
 
 1. Make no transfers for 15 minutes, so your last transfer is no longer "recent".
 2. In the game, open Carrier Management (EDMC must be signed in to Frontier). EDMC fetches the carrier, and a figure that has moved replaces the tally.
-3. If the log says `unchanged since an earlier fetch`, Frontier has not updated yet. Wait and open Carrier Management again, or press **Rescan Carrier** to restart from your journals.
+3. If the log says `unchanged since an earlier fetch`, Frontier has not updated yet. Wait and open Carrier Management again (a copy that keeps repeating is applied once an hour has passed since it was first ignored), or press **Rescan Carrier** to restart from your journals.
 
 **The column is lower than the carrier's real hold.** Stock reached the carrier without a transfer you made (bought through its market, a trade
 order, a squadron mate), or it was moved more than 30 days ago. Follow the same three steps. **Rescan Carrier** will not help here, because it

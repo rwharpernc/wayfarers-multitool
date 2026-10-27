@@ -1452,8 +1452,8 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 - It is fed live and caught up from `CargoTransfer` events the same way.
 - `apply_capi_cargo` takes the CAPI `cargo` list from `capi_fleetcarrier`. The CAPI copy can lag, and has been seen unchanged for longer than the throttle, so applying every copy undid transfers made just before it arrived. It is applied only when it differs from the tally and neither of these holds:
   - **Recent transfer:** the newest transfer (`journal_at`) is under `CAPI_GRACE` (15 minutes) old.
-  - **Repeated copy:** the list equals the one stored as `capi_ignored`, the last copy ignored.
-- An ignored copy is stored in `capi_ignored`; an applied one clears it and sets `from_capi`. `replace_from_journals` (Rescan Carrier) clears both.
+  - **Repeated copy:** the list equals the one stored as `capi_ignored`, the last copy ignored, and `capi_ignored_at` is under `CAPI_REPEAT_EXPIRY` (1 hour) old. After that the copy is applied, so a stable figure is not ignored for ever.
+- An ignored copy is stored in `capi_ignored` with the time in `capi_ignored_at`; an applied one clears both and sets `from_capi`. `replace_from_journals` (Rescan Carrier) clears both.
 - Each call logs one INFO line (applied, same, or ignored with the reason), which is how a report of a wrong column is diagnosed.
 
 **Best single systems** (`colonization_systems.py`)

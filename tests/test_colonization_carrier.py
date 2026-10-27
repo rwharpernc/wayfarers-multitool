@@ -170,11 +170,30 @@ class CapiGraceTests(unittest.TestCase):
         self.assertEqual(self.cargo.tons("Alice"), {"steel": 100})
         self.assertNotIn("from_capi", self.cargo._record("Alice"))
 
+    def test_a_copy_that_keeps_repeating_is_applied_once_the_ignore_has_expired(self) -> None:
+        stale = [{"commodity": "steel", "qty": 40}]
+        self.cargo.apply_capi_cargo("Alice", stale, self.at(5))
+        self.assertFalse(self.cargo.apply_capi_cargo("Alice", stale, self.at(59)))         # 54 minutes after it was first ignored
+        self.assertEqual(self.cargo.tons("Alice"), {"steel": 100})
+        later = datetime(2026, 10, 1, 11, 6, tzinfo=timezone.utc)                          # 61 minutes after
+        self.assertTrue(self.cargo.apply_capi_cargo("Alice", stale, later))
+        self.assertEqual(self.cargo.tons("Alice"), {"steel": 40})
+        record = self.cargo._record("Alice")
+        self.assertTrue(record["from_capi"])
+        self.assertNotIn("capi_ignored", record)
+        self.assertNotIn("capi_ignored_at", record)
+
+    def test_a_transfer_stamped_ahead_of_the_clock_is_not_recent(self) -> None:
+        early = datetime(2026, 10, 1, 9, 0, tzinfo=timezone.utc)                           # before the 10:00 transfer
+        self.assertTrue(self.cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 40}], early))
+        self.assertEqual(self.cargo.tons("Alice"), {"steel": 40})
+
     def test_a_fetch_that_has_moved_is_applied_and_clears_the_ignored_copy(self) -> None:
         self.cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 40}], self.at(5))
         self.assertTrue(self.cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 90}], self.at(40)))
         self.assertEqual(self.cargo.tons("Alice"), {"steel": 90})
         self.assertNotIn("capi_ignored", self.cargo._record("Alice"))
+        self.assertNotIn("capi_ignored_at", self.cargo._record("Alice"))
 
     def test_a_rescan_forgets_the_ignored_copy(self) -> None:
         self.cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 40}], self.at(5))
