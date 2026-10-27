@@ -163,6 +163,24 @@ class CapiGraceTests(unittest.TestCase):
         self.assertEqual(self.cargo.tons("Alice"), {"steel": 40})
         self.assertTrue(self.cargo._record("Alice")["from_capi"])
 
+    def test_a_fetch_that_repeats_the_ignored_copy_stays_ignored_after_the_grace_period(self) -> None:
+        stale = [{"commodity": "steel", "qty": 40}]
+        self.cargo.apply_capi_cargo("Alice", stale, self.at(5))
+        self.cargo.apply_capi_cargo("Alice", stale, self.at(40))
+        self.assertEqual(self.cargo.tons("Alice"), {"steel": 100})
+        self.assertNotIn("from_capi", self.cargo._record("Alice"))
+
+    def test_a_fetch_that_has_moved_is_applied_and_clears_the_ignored_copy(self) -> None:
+        self.cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 40}], self.at(5))
+        self.assertTrue(self.cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 90}], self.at(40)))
+        self.assertEqual(self.cargo.tons("Alice"), {"steel": 90})
+        self.assertNotIn("capi_ignored", self.cargo._record("Alice"))
+
+    def test_a_rescan_forgets_the_ignored_copy(self) -> None:
+        self.cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 40}], self.at(5))
+        self.cargo.replace_from_journals("Alice", {"tons": {"steel": 100}, "journal_at": "2026-10-01T10:00:00Z"})
+        self.assertNotIn("capi_ignored", self.cargo._record("Alice"))
+
     def test_a_transfer_after_a_fetch_still_adds_on_top(self) -> None:
         self.cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 40}], self.at(20))
         live = cc.Feeder(self.cargo, "Alice")

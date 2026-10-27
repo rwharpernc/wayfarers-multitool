@@ -10,7 +10,8 @@ moved there: to the carrier minus back to the ship, never below zero.
 When EDMC is signed in to Frontier, `apply_capi_cargo` replaces the tally with the carrier's real cargo hold from the CAPI
 (`/fleetcarrier`, fetched on CarrierStats / CarrierBuy at most every 15 minutes, so it can lag); transfers after it are added on
 top. A fetch that arrives within `CAPI_GRACE` of the newest transfer is ignored, because Frontier's copy may predate that
-transfer and would undo it. Without it:
+transfer and would undo it, and so is one that repeats the copy already ignored (`capi_ignored`): Frontier's copy has been
+seen to stay unchanged for longer than the grace period. Only a figure that has moved is applied. Without it:
 
 What it cannot see: stock that reached the carrier another way (bought through its market, a trade order) or left it
 (sold, a trade order, moved by a squadron mate) is not a `CargoTransfer`, so it is not counted. It is "what this tool
@@ -182,12 +183,20 @@ class CarrierCargo:
         current = sum(record.get("tons", {}).values())
         last = self.watermark(cmdr)
         now = now or datetime.now(timezone.utc)
-        if last is not None and record.get("tons") != fresh and now - last < CAPI_GRACE:
-            logger.info("Carrier cargo from Frontier ignored: %d t against %d t tallied, and the last transfer was %d s ago",
-                        sum(fresh.values()), current, int((now - last).total_seconds()))
+        recent = last is not None and now - last < CAPI_GRACE
+        unchanged = record.get("capi_ignored") == fresh   # Frontier still shows the copy already ignored
+        if record.get("tons") != fresh and (recent or unchanged):
+            if not unchanged:
+                record["capi_ignored"] = fresh
+                changed = True
+            logger.info("Carrier cargo from Frontier ignored: %d t against %d t tallied (%s)", sum(fresh.values()), current,
+                        "unchanged since an earlier fetch" if unchanged else "the last transfer was %d s ago"
+                        % int((now - last).total_seconds()))
             return changed
         logger.info("Carrier cargo from Frontier: %d t against %d t tallied (%s)", sum(fresh.values()), current,
                     "changed" if record.get("tons") != fresh else "same")
+        if record.pop("capi_ignored", None) is not None:
+            changed = True
         if record.get("tons") != fresh or record.get("from_capi") is not True:
             record["tons"] = fresh
             record["from_capi"] = True
@@ -204,9 +213,10 @@ class CarrierCargo:
         has_carrier = bool(record.get("has_carrier") or rebuilt.get("has_carrier"))
         stamp = str(rebuilt.get("journal_at") or "")
         changed = (record.get("tons") != tons or record.get("journal_at") != stamp
-                   or "from_capi" in record or record.get("has_carrier") != has_carrier)
+                   or "from_capi" in record or "capi_ignored" in record or record.get("has_carrier") != has_carrier)
         record["tons"], record["journal_at"], record["has_carrier"] = tons, stamp, has_carrier
         record.pop("from_capi", None)
+        record.pop("capi_ignored", None)
         return changed
 
     def commit(self) -> None:
