@@ -34,7 +34,7 @@ WFMT is a free add-on for **Elite Dangerous**, open to anyone who wants it.
   many commanders already use, on Windows and Linux.
 - **What you need to know:** nothing about programming.
 
-**Version 1.1.0** is in preparation: it adds color themes, a text size setting and the Colonization Show choice. The latest release is **1.0.0**, the first, published on 2026-10-26.
+**Version 1.1.0** is the latest release, published on 2026-10-27. It adds color themes, a text size setting and the Colonization Show choice; 1.0.0, the first release, was published on 2026-10-26.
 
 ## Contents
 
