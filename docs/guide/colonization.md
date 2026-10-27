@@ -247,7 +247,8 @@ WFMT decided:
 | `Carrier cargo from Frontier ignored: ... (the last transfer was 291 s ago)` | Rule 2. Frontier's copy may not include your last transfer yet. |
 | `Carrier cargo from Frontier ignored: ... (unchanged since an earlier fetch)` | Rule 3. Frontier still shows the copy that was ignored. |
 
-If you report a column that looks wrong, include these lines (see [Reporting problems](reporting-problems.md)).
+If you report a column that looks wrong, press **Copy diagnostics** soon afterward: these lines are among the WFMT lines it copies
+(see [Reporting problems](reporting-problems.md)).
 
 ### Rescan Carrier: when a load did not register
 
