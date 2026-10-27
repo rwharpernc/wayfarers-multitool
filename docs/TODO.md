@@ -108,6 +108,11 @@ The items below are implemented and covered by unit tests, but have not all been
 
 - Linux passes of earlier builds were made on 2026-10-18 and 2026-10-20 (see [STATUS.md](STATUS.md)), so items that do not end in "Then Linux" do not ask for a Linux check.
 - Items that end in "Then Linux" need the Linux checklist ([LINUX_TESTING.md](LINUX_TESTING.md)) as well.
+- [ ] **Color themes, text size and column fit for WFMT's windows** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 6 and [LINUX_TESTING.md](LINUX_TESTING.md) 7k3 and 7k4).
+  - The theme name at the right end of a window's bottom line offers Navy, Cyan, Amber and Green; open windows recolor at once, nothing becomes hard to read, and the choice (and the same one under Settings → General → Window) is kept after a restart.
+  - **A-** and **A+** change the text of every window; the stat tiles and status chips keep their size; at the larger sizes no window loses its title, buttons or footer.
+  - Short columns are narrow and a long name column takes the spare width.
+- [ ] **Colonization Show / List** (Windows, then Linux): with everything on the fleet carrier, **To buy** lists nothing and **To haul** lists every commodity; a commodity drops off **To haul** once it is aboard in full.
 
 ### Expedition and route planning
 

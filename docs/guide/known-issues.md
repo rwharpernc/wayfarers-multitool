@@ -97,6 +97,12 @@ The overlay window can only sit over Elite when the game runs **borderless or wi
 
 **What to do:** restart EDMC (safe at any time), and see the table in [If EDMC wasn't running](getting-started.md#if-edmc-wasnt-running) for the action that rebuilds each feature.
 
+## Larger text can need a larger window
+
+- The text size of WFMT's pop-out windows (-2 to +6 points) does not change a window's saved size. At the larger sizes a window may need dragging bigger before every column and line fits; the stat tiles at the top of a dashboard and the status chips keep their size on purpose.
+- The color themes (Navy, Cyan, Amber, Green) recolor open windows where they stand. If a color looks wrong in a window that was open when you switched, close it and open it again, and tell us which window it was ([Reporting a problem](reporting-problems.md)).
+- The themes and the text size have been checked by the automated tests only; the pass by eye on Windows and Linux is still to do ([Linux testing](../LINUX_TESTING.md)).
+
 ## Proven on Windows first
 
 These were proven on Windows first:

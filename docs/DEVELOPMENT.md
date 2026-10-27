@@ -251,7 +251,8 @@ Screens and windows aren't covered by automated tests. For those, build, copy an
 7. Write American English in code, names, comments and docs (color, tons, Colonization). `tests/test_american_spelling.py` checks it.
    - The game's own names keep their spelling: journal events such as `ColonisationContribution`, mission and station names, commodity and module names.
    - A line that matches the game's text on purpose carries a `game spelling` comment, which the test lets through.
-8. Renaming a saved file, a settings key or a saved field needs a move for what users already have: add it to `plugin/legacy_names.py` (with a test), which runs at start-up.
+8. Colors in WFMT's own windows come from `plugin/uikit/palette.py` and must be read when a widget is built (`P.BG`, not a value captured at import time or as a default argument), or a theme chosen later would not reach it. Use `None` as a default and `x or P.TOKEN` inside, or store a token name. `tests/test_window_themes.py` checks every theme's contrast. Text that should not follow the text size setting (a small box in a row) uses `style.font(spec, scaled=False)`.
+9. Renaming a saved file, a settings key or a saved field needs a move for what users already have: add it to `plugin/legacy_names.py` (with a test), which runs at start-up.
 
 ### Using other people's work
 

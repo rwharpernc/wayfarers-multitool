@@ -62,9 +62,14 @@ Things that surprise people, and what to do about them. Back to the [README](../
 - **Display scaling** (Windows' percentage for your monitor) and **Overlay mode** (Fit or Fill) say how your screen is mapped, and **Text size** on Appearance only makes the text larger ([the three size settings](../OVERLAY_SETUP.md#moving-things-around)).
 - With EDMCModernOverlay the overlay can't draw flush against the right edge by itself. WFMT works around that with an offset (a switch on the Placement tab turns it off), and on Linux a small gap remains. The built-in overlay has no such limit.
 
+**Windows (not the overlay)**
+
+- WFMT's pop-out windows have their own text size and color theme, separate from the overlay's. Use **A-**, **A+** and the theme name at the right end of a window's bottom line, or **Settings → WFMT → General → Window**.
+- If a window's text is cut off after you make it larger, drag the window bigger; the size is yours to choose and the windows keep their own minimum sizes.
+
 **Appearance**
 
-- **Appearance** sets the color scheme for every overlay.
+- **Appearance** sets the color scheme for every overlay (the overlay's own schemes, apart from the themes of the windows).
 - The text size (Default or Larger) is yours to choose, and the spacing is fixed so columns stay aligned.
 - The Interdiction warning always stays red.
 - **Panel opacity** (Appearance) makes every card's background fainter without touching the text; 75% or more is easiest to read over a bright scene.
