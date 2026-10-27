@@ -9,7 +9,8 @@ moved there: to the carrier minus back to the ship, never below zero.
 
 When EDMC is signed in to Frontier, `apply_capi_cargo` replaces the tally with the carrier's real cargo hold from the CAPI
 (`/fleetcarrier`, fetched on CarrierStats / CarrierBuy at most every 15 minutes, so it can lag); transfers after it are added on
-top. Without it:
+top. A fetch that arrives within `CAPI_GRACE` of the newest transfer is ignored, because Frontier's copy may predate that
+transfer and would undo it. Without it:
 
 What it cannot see: stock that reached the carrier another way (bought through its market, a trade order) or left it
 (sold, a trade order, moved by a squadron mate) is not a `CargoTransfer`, so it is not counted. It is "what this tool
@@ -43,6 +44,7 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 STATE_FILENAME = "colonization_carrier.json"
 FLEET_STATION = "FleetCarrier"
 DEFAULT_DAYS = 14
+CAPI_GRACE = timedelta(minutes=15)   # Frontier's copy is at most this stale, so a transfer newer than this outranks it
 MAX_DAYS = 30
 _WANTED = journal_files.event_pattern(
     "Commander", "LoadGame", "Docked", "Location", "Undocked", "CargoTransfer", "CarrierStats", "CarrierBuy")
@@ -158,9 +160,10 @@ class CarrierCargo:
             changed = True
         return changed
 
-    def apply_capi_cargo(self, cmdr: str, cargo: List[Any]) -> bool:
+    def apply_capi_cargo(self, cmdr: str, cargo: List[Any], now: Optional[datetime] = None) -> bool:
         """Replace the tally with what Frontier says is in the carrier's cargo hold (`cargo`: dicts with `commodity` and `qty`).
-        The watermark stays, so a transfer made after this is still added on top. True if anything changed."""
+        The watermark stays, so a transfer made after this is still added on top. A transfer newer than `CAPI_GRACE` means
+        Frontier's copy may not include it yet, so the fetch is ignored and the next one applies. True if anything changed."""
         if not commander_data.key_for(cmdr):
             return False
         record = self._record(cmdr)
@@ -176,6 +179,15 @@ class CarrierCargo:
             if key and qty > 0:
                 fresh[key] = fresh.get(key, 0) + qty
         changed = self.note_carrier(cmdr)
+        current = sum(record.get("tons", {}).values())
+        last = self.watermark(cmdr)
+        now = now or datetime.now(timezone.utc)
+        if last is not None and record.get("tons") != fresh and now - last < CAPI_GRACE:
+            logger.info("Carrier cargo from Frontier ignored: %d t against %d t tallied, and the last transfer was %d s ago",
+                        sum(fresh.values()), current, int((now - last).total_seconds()))
+            return changed
+        logger.info("Carrier cargo from Frontier: %d t against %d t tallied (%s)", sum(fresh.values()), current,
+                    "changed" if record.get("tons") != fresh else "same")
         if record.get("tons") != fresh or record.get("from_capi") is not True:
             record["tons"] = fresh
             record["from_capi"] = True

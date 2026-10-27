@@ -10,6 +10,7 @@ import sys
 import tempfile
 import types
 import unittest
+from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 if "config" not in sys.modules:
@@ -140,6 +141,34 @@ class CatchUpTests(unittest.TestCase):
             live = cc.Feeder(cargo, "Alice")
             live.feed(docked())
             self.assertFalse(live.feed(lines[2]))
+
+
+class CapiGraceTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.cargo = cc.CarrierCargo()
+        live = cc.Feeder(self.cargo, "Alice")
+        live.feed(docked())
+        live.feed(transfer("2026-10-01T10:00:00Z", ("steel", 100, "tocarrier")))
+
+    def at(self, minute: int) -> datetime:
+        return datetime(2026, 10, 1, 10, minute, tzinfo=timezone.utc)
+
+    def test_a_fetch_just_after_a_transfer_that_lacks_it_is_ignored(self) -> None:
+        self.cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 40}], self.at(5))
+        self.assertEqual(self.cargo.tons("Alice"), {"steel": 100})
+        self.assertNotIn("from_capi", self.cargo._record("Alice"))
+
+    def test_a_fetch_after_the_grace_period_replaces_the_tally(self) -> None:
+        self.assertTrue(self.cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 40}], self.at(20)))
+        self.assertEqual(self.cargo.tons("Alice"), {"steel": 40})
+        self.assertTrue(self.cargo._record("Alice")["from_capi"])
+
+    def test_a_transfer_after_a_fetch_still_adds_on_top(self) -> None:
+        self.cargo.apply_capi_cargo("Alice", [{"commodity": "steel", "qty": 40}], self.at(20))
+        live = cc.Feeder(self.cargo, "Alice")
+        live.feed(docked())
+        live.feed(transfer("2026-10-01T10:30:00Z", ("steel", 10, "tocarrier")))
+        self.assertEqual(self.cargo.tons("Alice"), {"steel": 50})
 
 
 class RescanTests(unittest.TestCase):

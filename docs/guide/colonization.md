@@ -216,7 +216,8 @@ The FC column adds up the journal's `CargoTransfer` events made while docked at 
   squadron mate moving cargo. The figure can therefore drift from the real contents.
 - **Frontier's own figure can replace it.** When EDMC is signed in to Frontier it fetches your carrier's real cargo (at most every
   15 minutes, on opening Carrier Management and similar events), and WFMT replaces its tally with that list; transfers you make
-  afterwards are added on top. Frontier's copy can lag behind what you just did, so a very recent load may be missing from it.
+  afterwards are added on top. Frontier's copy can lag behind what you just did, so WFMT ignores a fetch that arrives within 15 minutes of your last
+  transfer and takes the next one instead.
 
 ### Rescan Carrier: when a load did not register
 
