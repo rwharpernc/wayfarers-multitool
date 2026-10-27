@@ -268,7 +268,7 @@ class _LocationTab:
 
     def __init__(self, parent: tk.Frame, heading: str) -> None:
         # Repeat the location inside the tab as well as in the tab strip.
-        tk.Label(parent, text=heading, anchor="w", bg=P.PANE, fg=P.TEXT, font=style.font(P.FONT_SECTION),
+        tk.Label(parent, text=heading, anchor="w", bg=P.PANE, fg=P.HEADING, font=style.font(P.FONT_SECTION),
                  padx=P.PAD).pack(fill="x", pady=(P.PAD, 8))
 
         self._note = tk.Label(parent, text="", anchor="w", bg=P.PANE, fg=P.WARN, padx=P.PAD)

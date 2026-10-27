@@ -122,7 +122,7 @@ class DataTable(tk.Frame):
         for index, column in enumerate(self._columns):
             for grid in (self._header, self._scroll.body):
                 grid.columnconfigure(index, minsize=column.width, weight=1 if column.stretch or spread else 0)
-            label = tk.Label(self._header, text=column.heading, fg=P.MUTED, bg=P.CARD, anchor=column.anchor,
+            label = tk.Label(self._header, text=column.heading, fg=P.HEADING, bg=P.CARD, anchor=column.anchor,
                              padx=8, pady=6, font=style.font(P.FONT_BOLD),
                              cursor="hand2" if sortable or on_header else "")
             label.grid(row=0, column=index, sticky="ew")

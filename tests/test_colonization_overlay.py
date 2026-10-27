@@ -461,15 +461,15 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(slots, card.preview_card().slot_count)
         self.assertEqual(client.sent[0][:2], ("shape", card.CARD_ID))
         texts = self.texts(client)
-        self.assertEqual([texts[f"s1_{i}"] for i in range(1, 5)], ["Required", "Remaining", "FC", "Cargo"])
+        self.assertEqual([texts[f"s1_{i}"] for i in range(1, 5)], ["Required", "Acquire", "FC", "Cargo"])
         self.assertEqual(texts["s2_0"], "CHEMICALS")          # grouped: a heading before each market category
         self.assertEqual(texts["s4_0"], "METALS")
         self.assertTrue(texts["s5_0"].endswith(card.NOT_SOLD))     # Aluminium: the market here does not sell it
         self.assertEqual(texts["s6_0"], "Steel ✓")
         self.assertEqual(texts["s6_1"], "15,000")
         self.assertEqual(texts["s6_4"], "14,000")
-        self.assertEqual(texts["s6_2"], "0")          # Remaining: the hold and the carrier already cover Steel
-        self.assertEqual(texts["s5_2"], "10,055")     # Remaining: nothing in the hold or on the carrier
+        self.assertEqual(texts["s6_2"], "0")          # Acquire: the hold and the carrier already cover Steel
+        self.assertEqual(texts["s5_2"], "10,055")     # Acquire: nothing in the hold or on the carrier
         self.assertTrue(texts[f"s{slots - 1}_0"].startswith("► 32,769 remaining  ► 21 to buy  ► 33 to haul"))
 
     def test_no_fc_column_without_a_carrier(self) -> None:
@@ -478,8 +478,8 @@ class RenderTests(unittest.TestCase):
         card.render(client, built, 20, 300)
         texts = self.texts(client)
         self.assertNotIn("FC", texts.values())
-        self.assertEqual(texts["s2_2"], "390")    # Remaining: less the 10 in the hold
-        self.assertEqual(texts["s2_3"], "10")     # Cargo follows Required and Remaining when there is no FC column
+        self.assertEqual(texts["s2_2"], "390")    # Acquire: less the 10 in the hold
+        self.assertEqual(texts["s2_3"], "10")     # Cargo follows Required and Acquire when there is no FC column
 
     def test_shorter_card_clears_leftover_lines(self) -> None:
         client = FakeClient()

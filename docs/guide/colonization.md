@@ -145,7 +145,7 @@ They are always for the whole site, whatever the filters hide. A commander **wit
 
 | Total | Meaning |
 |---|---|
-| t still to get | What you still have to buy or mine: what the site still needs, less what is in your ship and what you have moved onto your fleet carrier. It is the sum of the table's Remaining column |
+| t still to get | What you still have to buy or mine: what the site still needs, less what is in your ship and what you have moved onto your fleet carrier. It is the sum of the table's Acquire column |
 | t on your carrier | Of the remaining need, what you have moved onto your fleet carrier (never more than the site needs). A dash without a carrier |
 | t already in your ship | Of the remaining need, what your ship is carrying now (never more than the site needs) |
 | t ship capacity | Your current ship's cargo capacity, as EDMC reports it. It follows you when you swap ships; a dash until EDMC has given it |
@@ -172,10 +172,10 @@ Building a colony has two legs, and the window counts them apart.
 |---|---|
 | Required | What the site needs in total |
 | Delivered | What's been handed over |
-| Remaining | What you still have to get: Required minus delivered, less what is in your ship and what you have moved onto your fleet carrier. It reaches **0** once you have it all, wherever it is stored, so it falls as you load up |
+| Acquire | What you still have to get: Required minus delivered, less what is in your ship and what you have moved onto your fleet carrier. It reaches **0** once you have it all, wherever it is stored, so it falls as you load up |
 | In Cargo | What is in your ship (or SRV) now |
 | FC | Tons of that commodity you have transferred onto your **fleet carrier** (only shown once WFMT has seen you have one) |
-| Buy Trips | (Only with a fleet carrier.) Loads of **your current ship** to gather what is still missing of that commodity: what is left to get (the Remaining column) divided by your ship's cargo capacity. **0** when you already have enough, wherever it is stored |
+| Buy Trips | (Only with a fleet carrier.) Loads of **your current ship** to gather what is still missing of that commodity: what is left to get (the Acquire column) divided by your ship's cargo capacity. **0** when you already have enough, wherever it is stored |
 | Haul Trips | Loads of your current ship to carry everything the site still needs of that commodity (Required less Delivered) to the site. This stays above 0 for a commodity sitting on your carrier, because it still has to be moved |
 | Trips | Without a fleet carrier there is one trips column in place of the last two, headed **Trips**: the loads of your ship to buy and deliver that commodity |
 
@@ -581,12 +581,12 @@ Optional, and **off until you ask for it**. It needs an overlay running; see [Se
 
 ### The table
 
-It draws a table, with the site name as its title and the columns **Commodity**, **Required**, **Remaining**,
+It draws a table, with the site name as its title and the columns **Commodity**, **Required**, **Acquire**,
 **FC** and **Cargo**:
 
 - **Required** is the site's full requirement for that commodity.
-- **Remaining** is what is left to get: what the site still requires (required less delivered), less your hold and your
-  fleet carrier, the same as the window's Remaining column. It shows **0** once you have it all, wherever it is stored.
+- **Acquire** is what is left to get: what the site still requires (required less delivered), less your hold and your
+  fleet carrier, the same as the window's Acquire column. It shows **0** once you have it all, wherever it is stored.
 - **FC** appears only if you have a fleet carrier (see the FC column above): what you have moved onto it. It is blue
   once it covers the remaining amount, gray while it doesn't, and blank when none.
 - **Cargo** is what is in your ship's hold right now, so you can see what you just bought. A **✓** after the name means
@@ -609,7 +609,7 @@ It draws a table, with the site name as its title and the columns **Commodity**,
 
 ### The last line
 
-A last line gives the tons remaining (still to get, as in the Remaining column) and the trips in your current ship. It needs your ship's cargo capacity, which EDMC supplies.
+A last line gives the tons remaining (still to get, as in the Acquire column) and the trips in your current ship. It needs your ship's cargo capacity, which EDMC supplies.
 
 - **With a fleet carrier** it gives both legs, as the COL page and the window do: `► 32,769 remaining  ► 21 to buy  ► 33 to haul`.
   - **To buy** is the loads to gather what is still to get after your ship and your carrier (0 once it is all stocked).

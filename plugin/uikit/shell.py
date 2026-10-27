@@ -94,7 +94,7 @@ class _Parts:
 
     def set_status(self, text: str, ok: bool = False) -> None:
         """The line at the foot of the window; `ok` shows it in the success color until the next message."""
-        self._status.configure(text=text, fg=P.OK if ok else P.MUTED)
+        self._status.configure(text=text, fg=P.OK if ok else P.STATUS)
 
 
 class WindowShell(_Parts):
@@ -125,7 +125,7 @@ class WindowShell(_Parts):
         self.actions.pack(side="right")
         titles = tk.Frame(header, bg=P.BG)
         titles.pack(side="left")
-        tk.Label(titles, text=title, fg=P.TEXT, bg=P.BG, font=style.font(P.FONT_TITLE)).pack(anchor="w")
+        tk.Label(titles, text=title, fg=P.TITLE, bg=P.BG, font=style.font(P.FONT_TITLE)).pack(anchor="w")
         self._subtitle = tk.Label(titles, text=subtitle, fg=P.MUTED, bg=P.BG, justify="left", wraplength=_SUBTITLE_START_WRAP)
         self._subtitle.pack(anchor="w")
         for part in (header, self.actions):   # the buttons are added after this, so both a resize and a new button refit the subtitle
@@ -134,7 +134,7 @@ class WindowShell(_Parts):
         # Footer first so it keeps its height when the body is squeezed.
         footer = tk.Frame(self.window, bg=P.BG, padx=P.PAD * 2, pady=P.PAD_SM)
         footer.pack(side="bottom", fill="x")
-        self._status = tk.Label(footer, text="", fg=P.MUTED, bg=P.BG, anchor="w",
+        self._status = tk.Label(footer, text="", fg=P.STATUS, bg=P.BG, anchor="w",
                                 font=style.font(P.FONT_SMALL))
         self._status.pack(fill="x")
         footer.bind("<Configure>", lambda e: self._status.configure(
@@ -210,7 +210,7 @@ class TabShell(_Parts):
             part.bind("<Configure>", lambda _e, h=header: self._fit_subtitle(h))
         footer = tk.Frame(self._root, bg=P.BG, padx=P.PAD * 2, pady=P.PAD_SM)
         footer.pack(side="bottom", fill="x")
-        self._status = tk.Label(footer, text="", fg=P.MUTED, bg=P.BG, anchor="w", font=style.font(P.FONT_SMALL))
+        self._status = tk.Label(footer, text="", fg=P.STATUS, bg=P.BG, anchor="w", font=style.font(P.FONT_SMALL))
         self._status.pack(fill="x")
         footer.bind("<Configure>", lambda e: self._status.configure(wraplength=max(e.width - 2 * P.PAD * 2, 100)))
         self.body = tk.Frame(self._root, bg=P.BG, padx=P.PAD * 2)

@@ -49,7 +49,7 @@ _COMMODITY_COLUMNS = (
     Column("label", "Commodity", 200, stretch=True, max_chars=40),
     Column("required", "Required", 80, anchor="e", max_chars=10),
     Column("delivered", "Delivered", 80, anchor="e", max_chars=10),
-    Column("remaining", "Remaining", 80, anchor="e", max_chars=10),
+    Column("remaining", "Acquire", 80, anchor="e", max_chars=10),
     Column("cargo", "In Cargo", 80, anchor="e", max_chars=10),
 )
 # Shown only for a commander with a fleet carrier: tons moved onto it (colonization_carrier.py), right after what is in
@@ -238,7 +238,7 @@ class ColonizationWindow:
         self._detail = right
         head = tk.Frame(right, bg=P.PANE, padx=P.PAD, pady=P.PAD_SM)
         head.pack(fill="x")
-        self._title = tk.Label(head, text="", fg=P.TEXT, bg=P.PANE, anchor="w", font=style.font(P.FONT_SECTION))
+        self._title = tk.Label(head, text="", fg=P.HEADING, bg=P.PANE, anchor="w", font=style.font(P.FONT_SECTION))
         self._title.pack(fill="x")
         self._where = tk.Label(head, text="", fg=P.MUTED, bg=P.PANE, anchor="w")
         self._where.pack(fill="x")
@@ -481,7 +481,7 @@ class ColonizationWindow:
                 self._commodity_table.insert(parent, (category, "", "", f"{sum(r.to_get for r in items):,}", ""), group=True)
             for row in items:
                 values = (row.label if row.available or row.covered else row.label + NOT_AVAILABLE,
-                          f"{row.required:,}", f"{row.delivered:,}", f"{row.to_get:,}",   # Remaining: still to get, not yet in the ship or on the carrier
+                          f"{row.required:,}", f"{row.delivered:,}", f"{row.to_get:,}",   # Acquire: still to get, not yet in the ship or on the carrier
                           f"{row.in_cargo:,}" if row.in_cargo else "")
                 if wants_fc:
                     values += (f"{row.on_carrier:,}" if row.on_carrier else "",)

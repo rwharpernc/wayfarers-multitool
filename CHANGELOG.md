@@ -5,6 +5,13 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ## Unreleased
 
+### Changed
+
+- **Windows:** a brighter navy theme for WFMT's own windows. Surfaces move from gray to blue tints; window titles are gold,
+  section labels and table headings cyan, and the footer message soft blue (green on success).
+- **Colonization:** the Remaining column of the Sites window and of the shopping-list overlay card is now called
+  **Acquire**, since it shows what is still to get. The figure is unchanged.
+
 ### Fixed
 
 - **Colonization:** the fleet carrier column no longer falls back to an older level when Frontier's copy of the

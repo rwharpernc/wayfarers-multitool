@@ -502,10 +502,10 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 - The page `docs/SPANSH_USAGE.md` records every endpoint, so that the use can be read and checked.
 - Where Spansh publishes a data dump that covers a need (the neutron-star list), reading a local copy is preferred to asking, and that is planned as an option (see [TODO.md](TODO.md)).
 
-### 3.24 What "Remaining" means in Colonization
+### 3.24 What "Acquire" means in Colonization (formerly "Remaining")
 
-- **The problem:** Remaining was the site's need (required less delivered). A commodity already bought and parked on the fleet carrier still read as outstanding until it was unloaded at the depot, so the column did not fall as the commander worked, and the overlay card needed a second column (To buy) to say what was left to get.
-- **Decision:** Remaining is what is still to get: the site's need less the cargo in the ship and on the fleet carrier, and it reaches 0 once the whole amount is acquired wherever it is stored. The window, its category totals and sort, and the overlay card all show it. Required, Delivered and Haul Trips keep the site's own figures, so the trips to carry everything to the site stay honest.
+- **The problem:** the column, then called Remaining, was the site's need (required less delivered). A commodity already bought and parked on the fleet carrier still read as outstanding until it was unloaded at the depot, so the column did not fall as the commander worked, and the overlay card needed a second column (To buy) to say what was left to get.
+- **Decision:** the column (renamed Acquire after 1.0.0, because it shows what is still to get) is what is still to get: the site's need less the cargo in the ship and on the fleet carrier, and it reaches 0 once the whole amount is acquired wherever it is stored. The window, its category totals and sort, and the overlay card all show it. Required, Delivered and Haul Trips keep the site's own figures, so the trips to carry everything to the site stay honest.
 - **Why:** it answers the question the commander is asking while shopping, and it makes the window and the card agree.
 - **The hold comes from `Cargo.json`.** The journal's `Cargo` event carries only a count, and EDMC's cargo state was seen not to follow a purchase, so the ship's hold is read from the file the game rewrites on every change, again shortly after any event that can change it. EDMC's state is the fallback when the file is missing or describes the SRV.
 - **Not done:** counting a commodity on the carrier as delivered. It is not delivered until it is unloaded at the depot, and the carrier column says where it is.

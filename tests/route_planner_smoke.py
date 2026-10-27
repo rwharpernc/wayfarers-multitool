@@ -68,6 +68,7 @@ except tk.TclError:
 root.withdraw()
 
 from plugin import explore_dashboard as DASH, route_planner_panel as PANEL, route_planner_window as WIN, route_overlay, spansh_exact, spansh_planners  # noqa: E402
+from plugin.uikit import palette as UP  # noqa: E402
 
 problems = []
 
@@ -269,13 +270,13 @@ check("Log in" in said or "no commander" in said, "Review needs one too (said: %
 start_button = window._start
 with mock.patch.object(window._ctx, "start_expedition", return_value="Started 'Run': 3 stops. Logging in Expedition Log."):
     window._start_expedition()
-check(str(start_button.cget("text")).startswith("Started") and str(start_button.cget("fg")) == "#5fbf8f", "a started expedition shows on the button: %s" % start_button.cget("text"))
-check(str(window._shell._status.cget("fg")) == "#5fbf8f" and "Started 'Run'" in str(window._shell._status.cget("text")), "and in the status line's success color")
+check(str(start_button.cget("text")).startswith("Started") and str(start_button.cget("fg")) == UP.OK, "a started expedition shows on the button: %s" % start_button.cget("text"))
+check(str(window._shell._status.cget("fg")) == UP.OK and "Started 'Run'" in str(window._shell._status.cget("text")), "and in the status line's success color")
 window._restore_start()
 check(str(start_button.cget("text")) == "Start expedition", "the button goes back to its name")
 with mock.patch.object(window._ctx, "start_expedition", return_value="Plot a route first."):
     window._start_expedition()
-check(str(start_button.cget("text")) == "Start expedition" and str(window._shell._status.cget("fg")) != "#5fbf8f", "a start that did not happen shows no confirmation")
+check(str(start_button.cget("text")) == "Start expedition" and str(window._shell._status.cget("fg")) != UP.OK, "a start that did not happen shows no confirmation")
 
 import tempfile as _tempfile  # noqa: E402
 from plugin import expedition, expedition_log, expedition_log_panel, expedition_panel, expedition_window  # noqa: E402

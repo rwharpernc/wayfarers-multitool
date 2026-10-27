@@ -1,10 +1,10 @@
 """
 The Colonization shopping list on the in-game overlay: a table of the commodities a
-construction site still needs, with the columns Commodity, Required, Remaining, FC and Cargo.
+construction site still needs, with the columns Commodity, Required, Acquire, FC and Cargo.
 
 - **Required** is the site's full requirement for the commodity.
-- **Remaining** is what is left to get: what the site still requires (required less delivered), less the hold and the carrier. It
-  reaches 0 once the hold plus the fleet carrier cover the need, like the Colonization window's Remaining column. A ✓ marks a commodity the hold plus the fleet
+- **Acquire** is what is left to get: what the site still requires (required less delivered), less the hold and the carrier. It
+  reaches 0 once the hold plus the fleet carrier cover the need, like the Colonization window's Acquire column. A ✓ marks a commodity the hold plus the fleet
   carrier already cover (the same rule as the Colonization window's green rows); the row turns amber when together they are more than is needed.
 - **FC** (only for a commander with a fleet carrier) is what has been transferred to the carrier (`colonization_carrier`).
 - **Cargo** is what is in the ship's hold now.
@@ -275,7 +275,7 @@ def _name_text(row: Row) -> str:
 
 def _columns(card: Card) -> List[Tuple[str, str]]:
     """(heading, Row attribute) of each number column, left to right; FC only for a commander with a carrier."""
-    return ([("Required", "required"), ("Remaining", "to_buy")] + ([("FC", "fc")] if card.show_fc else [])
+    return ([("Required", "required"), ("Acquire", "to_buy")] + ([("FC", "fc")] if card.show_fc else [])
             + [("Cargo", "ship")])
 
 
@@ -338,7 +338,7 @@ def render(client: overlay.OverlayClient, card: Card, x: int, y: int, previous_s
         for column, ((head, attr), edge) in enumerate(zip(_columns(card), edges), start=1):
             value = getattr(row, attr)
             if not value and attr != "to_buy":
-                continue    # a zero is left blank: nothing in the hold or on the carrier (Remaining shows its 0)
+                continue    # a zero is left blank: nothing in the hold or on the carrier (Acquire shows its 0)
             text = f"{value:,}"
             cell_color = color
             if attr == "fc":

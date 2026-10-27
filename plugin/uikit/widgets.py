@@ -89,8 +89,8 @@ class TileRow(tk.Frame):
 
 
 def section_header(parent: tk.Misc, text: str, bg: str = P.PANE) -> tk.Label:
-    return tk.Label(parent, text=text.upper(), fg=P.MUTED, bg=bg, anchor="w",
-                    font=style.font(P.FONT_SMALL), padx=P.PAD, pady=P.PAD_SM)
+    return tk.Label(parent, text=text.upper(), fg=P.HEADING, bg=bg, anchor="w",
+                    font=style.font(P.FONT_SMALL_BOLD), padx=P.PAD, pady=P.PAD_SM)
 
 
 class ScrollFrame(tk.Frame):
@@ -638,7 +638,7 @@ def field_grid(parent: tk.Misc, row: int, pairs: Sequence[tuple[str, str]], bg: 
     grid, so values line up instead of being spaced with runs of blanks."""
     column = 0
     for label, value in pairs:
-        tk.Label(parent, text=label, fg=P.MUTED, bg=bg, font=style.font(P.FONT_BOLD)).grid(
+        tk.Label(parent, text=label, fg=P.HEADING, bg=bg, font=style.font(P.FONT_BOLD)).grid(
             row=row, column=column, sticky="w", padx=(0 if column == 0 else 28, 6), pady=2)
         tk.Label(parent, text=clip(value, 60), fg=P.TEXT, bg=bg, wraplength=240, justify="left").grid(
             row=row, column=column + 1, sticky="w", pady=2)

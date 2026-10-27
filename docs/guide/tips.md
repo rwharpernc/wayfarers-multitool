@@ -89,7 +89,7 @@ Things that surprise people, and what to do about them. Back to the [README](../
 - **Shopping-list overlay:**
   - Switch it on and off with the **OVERLAY** button (it stays as you leave it).
   - Tick the automatic option in Settings if you want it to appear by itself at a market, in Carrier Management or at a construction site.
-  - It leaves out commodities your hold and fleet carrier already cover (*Hide commodities already covered by the hold and the fleet carrier*, on by default) and its Remaining column shows the tons still to get.
+  - It leaves out commodities your hold and fleet carrier already cover (*Hide commodities already covered by the hold and the fleet carrier*, on by default) and its Acquire column shows the tons still to get.
 
 ## Windows
 

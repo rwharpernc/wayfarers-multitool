@@ -8,32 +8,38 @@ telling red from green."""
 from __future__ import annotations
 
 # Surfaces, darkest to lightest.
-BG = "#14171c"        # window background
-PANE = "#1a1e25"      # pane background
-CARD = "#222831"      # raised card
-BUTTON = "#303846"     # buttons (visible on both PANE and CARD)
-HOVER = "#2a313c"     # row hover
-SELECT = "#33415a"    # selected row
-LINE = "#2e3540"      # hairlines
+BG = "#0f1a2e"        # window background (deep navy)
+PANE = "#142340"      # pane background
+CARD = "#1c3054"      # raised card
+BUTTON = "#2c4a7a"     # buttons (visible on both PANE and CARD)
+HOVER = "#243d66"     # row hover
+SELECT = "#2f5a96"    # selected row
+LINE = "#2a4470"      # hairlines
 
 # Text.
 TEXT = "#e6e9ee"
-MUTED = "#8b94a3"
-FAINT = "#5d6675"
+MUTED = "#9db3d4"
+FAINT = "#6b82a6"
 
 # Accents / status.
 ACCENT = "#f0a23b"    # amber - primary actions, current selection marker
 INFO = "#4aa8ff"      # blue - "you are here"
-OK = "#5fbf8f"
-WARN = "#e0b341"
-DANGER = "#e06c6c"
+OK = "#52d6a0"
+WARN = "#f2c94c"
+DANGER = "#ff7a7a"
+
+# Headings and messages. HEADING colors section labels and table column headers, TITLE the window title, STATUS the
+# footer message (OK, WARN and DANGER still color a message that means success, caution or failure).
+TITLE = "#ffc15e"     # warm gold
+HEADING = "#5fd3f3"   # cyan
+STATUS = "#8fc7ff"    # soft blue
 
 # Row tints for a table row that is "done" (green) or "over" (orange); dark enough for TEXT to stay readable.
-ROW_OK = "#1f4a37"
-ROW_OVER = "#5e3b13"
+ROW_OK = "#1d5a45"
+ROW_OVER = "#6e4414"
 
 # Map.
-MAP_BG = "#101318"
+MAP_BG = "#0b1424"
 MAP_GRID = "#2b2a1c"          # dim yellow: visible over driven ground
 MAP_COVERAGE = "#2e5c3a"
 MAP_HOTSPOT = "#eee8be"       # pale filled dot

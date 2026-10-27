@@ -1437,9 +1437,9 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 - The file is ignored when it is missing, unreadable or describes another vessel (the SRV); `state["Cargo"]` is then used.
 - After any event that can change the hold (`Cargo`, `MarketBuy`, `MarketSell`, `CargoTransfer`, `CollectCargo`, `EjectCargo`, `MiningRefined`, the limpet events and `Loadout`) the hold is read again 1.5 s later, in case the game had not finished writing the file.
 
-**The Sites window's Remaining column**
+**The Sites window's Acquire column**
 
-- `colonization_view` keeps two figures per commodity: `remaining` (the site's own need, required less delivered) and `to_get` (that less the hold and the carrier, never below zero). The window's Remaining column, its category totals and its sort show `to_get`; the buy trips divide `to_get` by the ship's capacity and the haul trips divide `remaining`, so haul trips still count everything the site needs.
+- `colonization_view` keeps two figures per commodity: `remaining` (the site's own need, required less delivered) and `to_get` (that less the hold and the carrier, never below zero). The window's Acquire column, its category totals and its sort show `to_get`; the buy trips divide `to_get` by the ship's capacity and the haul trips divide `remaining`, so haul trips still count everything the site needs.
 - The note under the Where to buy buttons is drawn in the accent color while a search runs, while the system check that follows it runs and while a Stop is pending, and in the muted color otherwise (one method sets every update, `_say`).
 
 **Fleet carrier column**
@@ -1463,9 +1463,9 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 
 **Shopping-list overlay card** (`colonization_overlay.py`)
 
-- It draws the optional shopping-list card, laid out as a table (Commodity, Required, Remaining, FC (only with a carrier), Cargo).
+- It draws the optional shopping-list card, laid out as a table (Commodity, Required, Acquire, FC (only with a carrier), Cargo).
 - `build_card` (pure) turns the most recently updated active site, the hold, the carrier tons and the ship's `CargoCapacity` into a frozen `Card`.
-  - Remaining is what is still to get: required less delivered, less the hold and the carrier (a zero is drawn as 0). `Row.need` keeps the site's own remaining need for the covered / surplus rules and the trips to haul.
+  - Acquire is what is still to get: required less delivered, less the hold and the carrier (a zero is drawn as 0). `Row.need` keeps the site's own remaining need for the covered / surplus rules and the trips to haul.
   - Rows are alphabetical at a construction site and grouped under the market's categories elsewhere; the footer has tons remaining and trips.
   - `hide_covered` (the setting `wfmt_colonization_overlay_hide_covered`, on by default) leaves out the rows the hold plus the carrier cover; the row limit and the `+N more` count apply to the rows left, and the footer still counts every commodity.
 - `render` / `clear` send it through the shared `OverlayClient` (ids `wfmt_colonization_s<line>_<column>`, registered as a Plugin Group in `load.py`).
