@@ -3,7 +3,7 @@
 Read this first when picking the project up on a machine that has not seen the recent work (for example the Linux test machine).
 
 - It is kept in Git because Git is the only thing shared between the two test machines, one Windows and one Linux.
-- Last updated 2026-10-26.
+- Last updated 2026-10-27.
 
 ## Release
 
@@ -32,6 +32,10 @@ There is one long-lived branch, `master`.
   - Overlay Placement names where the screen size came from, and reads the real hardware size when the game's files are not found
   - long names in the Missions, Source commodities, Ship Builds and My Codex tables
   - saved data from before the spelling change still loads (`Renamed saved names:` once)
+- To check on Windows with the 2026-10-27 build (needs a fleet carrier, a registered construction site and EDMC signed in to Frontier; steps in [TEST_PLAN.md](TEST_PLAN.md) section 6):
+  - the Colonization FC column keeps cargo you just unloaded at your carrier when Frontier's copy lags behind: a copy that arrives within 15 minutes of your last transfer, or that repeats one already ignored, is left out until Frontier's figure changes (or Rescan Carrier is pressed)
+  - each Frontier figure writes one `Carrier cargo from Frontier` line to EDMC's log; press **Copy diagnostics** after a wrong column to gather them (how to read them is in [the Colonization guide](guide/colonization.md))
+  - not yet seen on either OS: the 15-minute rule and the unchanged-copy rule have been run in tests only, never against Frontier's live figure
 - Native checks already made on Windows on 2026-10-23: the display probe read 3840 x 2160 at 125% scaling; the journals confirmed the Mk II jet cone boost of 6x at a neutron star and 3x at a white dwarf (V-0351).
 
 ### Linux, next pass
@@ -110,6 +114,7 @@ Written 2026-10-21 on the Windows machine. This is work done since the last Linu
   - The Sites window's **Remaining** column now shows what is still to get (the need less the ship's hold and the fleet carrier), and the overlay card matches it, with no To buy column and an option, on by default, to hide the commodities already covered.
   - The ship's hold is read from the game's `Cargo.json`, so the In Cargo figures follow a purchase.
   - **Best single systems** after Find all, and the accent color for a search in progress.
+- **Fleet carrier column and a lagging Frontier copy, added 2026-10-27 (not run on Linux).** The check is the same as the Windows one above, and is in section 6 of [TEST_PLAN.md](TEST_PLAN.md). The log is the Flatpak EDMC's; **Copy diagnostics** gathers the `Carrier cargo from Frontier` lines.
 - **Tests.** The Docker run on Windows (Docker Desktop, a Linux container) passed all 3,370 tests on 2026-10-23. Run the suite natively on Linux too, from a desktop session, and report the count and any failure.
   - Tests that replay dated journals now use a fixed clock; `docs/DEVELOPMENT.md` explains how to look for the ones that do not.
 - **Star index Update.** Update now fetches Spansh's small 1-day or 1-week file instead of the whole 173 MB dump.
