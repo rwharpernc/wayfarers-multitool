@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import tkinter as tk
 import tkinter.font as tkfont
+import weakref
 from typing import Callable
 
 from . import palette as P
@@ -126,12 +127,13 @@ def skin(window: tk.Misc) -> None:
     unique name, loosely bound to everything beneath it - nothing outside
     the window, EDMC's main window included, is affected."""
     window.configure(background=P.PANE)
-    _skinned.append(window)
+    _skinned[:] = [ref for ref in _skinned if _alive(ref())]      # closed windows drop out here
+    _skinned.append(weakref.ref(window))
     _apply_options(window)
 
 
 # The windows skinned so far (closed ones are dropped when the theme changes), the colors a widget can carry, and the last theme change.
-_skinned: list[tk.Misc] = []
+_skinned: list = []   # weak references to them
 _COLOR_OPTIONS = ("background", "foreground", "activebackground", "activeforeground", "highlightbackground", "highlightcolor",
                   "selectbackground", "selectforeground", "selectcolor", "insertbackground", "disabledbackground", "disabledforeground",
                   "readonlybackground", "troughcolor")
@@ -213,8 +215,8 @@ def set_theme(name: str) -> None:
         return
     changes = P.apply(name)
     _last_changes = changes
-    _skinned[:] = [w for w in _skinned if _alive(w)]
-    for window in _skinned:
+    _skinned[:] = [ref for ref in _skinned if _alive(ref())]
+    for window in [ref() for ref in _skinned]:
         try:
             _apply_options(window)
             window.configure(background=P.PANE)
@@ -225,7 +227,9 @@ def set_theme(name: str) -> None:
         listener()
 
 
-def _alive(widget: tk.Misc) -> bool:
+def _alive(widget: object) -> bool:
+    if widget is None:
+        return False
     try:
         return bool(widget.winfo_exists())
     except tk.TclError:

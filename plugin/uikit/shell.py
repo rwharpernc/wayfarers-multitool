@@ -45,14 +45,21 @@ class _Parts:
         theme.bind("<Enter>", lambda _e: theme.configure(fg=P.TEXT))
         theme.bind("<Leave>", lambda _e: theme.configure(fg=P.MUTED))
 
-        def choose(_e: tk.Event) -> None:
-            menu = tk.Menu(theme, tearoff=0, bg=P.CARD, fg=P.TEXT, activebackground=P.SELECT, activeforeground=P.TEXT, bd=0)
-            for name in P.THEMES:
-                menu.add_command(label=name, command=lambda n=name: style.set_theme(n))
-            menu.tk_popup(theme.winfo_rootx(), theme.winfo_rooty() + theme.winfo_height())
+        menu = tk.Menu(theme, tearoff=0)
+        for name in P.THEMES:
+            menu.add_command(label=name, command=lambda n=name: style.set_theme(n))
 
-        theme.bind("<Button-1>", choose)
-        stop = style.add_theme_listener(lambda: theme.configure(text=style.theme_name()) if theme.winfo_exists() else None)
+        def paint_menu() -> None:
+            menu.configure(bg=P.CARD, fg=P.TEXT, activebackground=P.SELECT, activeforeground=P.TEXT, bd=0)
+
+        def retheme() -> None:
+            if theme.winfo_exists():
+                theme.configure(text=style.theme_name())
+                paint_menu()
+
+        paint_menu()
+        theme.bind("<Button-1>", lambda _e: menu.tk_popup(theme.winfo_rootx(), theme.winfo_rooty() + theme.winfo_height()))
+        stop = style.add_theme_listener(retheme)
         theme.bind("<Destroy>", lambda _e: stop(), add="+")
 
     def add_action(self, text: str, command: Callable[[], None], accent: bool = False) -> FlatButton:

@@ -26,6 +26,17 @@ class PaletteTests(unittest.TestCase):
             for token, value in tokens.items():
                 self.assertRegex(value, HEX, f"{name} {token}")
 
+    def test_no_two_tokens_of_a_theme_share_a_color(self):
+        # An open window is recolored by looking each of its colors up, so a color must name exactly one token.
+        for name, tokens in P.THEMES.items():
+            self.assertEqual(len(set(tokens.values())), len(tokens), name)
+
+    def test_switching_back_to_navy_restores_the_map_colors(self):
+        P.apply("Cyan")
+        changes = P.apply("Navy")
+        self.assertEqual(changes[P.THEMES["Cyan"]["MAP_BG"]], P.THEMES["Navy"]["MAP_BG"])
+        self.assertEqual(changes[P.THEMES["Cyan"]["MAP_HOTSPOT"]], P.THEMES["Navy"]["MAP_HOTSPOT"])
+
     def test_text_stays_readable_on_every_surface(self):
         def luminance(color: str) -> float:
             r, g, b = (int(color[i:i + 2], 16) / 255 for i in (1, 3, 5))

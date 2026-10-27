@@ -183,7 +183,7 @@ class CarrierCargo:
         current = sum(record.get("tons", {}).values())
         last = self.watermark(cmdr)
         now = now or datetime.now(timezone.utc)
-        recent = last is not None and now - last < CAPI_GRACE
+        recent = last is not None and timedelta(0) <= now - last < CAPI_GRACE   # a transfer stamped ahead of the clock is not recent
         unchanged = record.get("capi_ignored") == fresh   # Frontier still shows the copy already ignored
         if record.get("tons") != fresh and (recent or unchanged):
             if not unchanged:

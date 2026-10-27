@@ -47,6 +47,21 @@ def _from_variables(v: dict) -> dict:
     }
 
 
+def _distinct(tokens: dict) -> dict:
+    """`tokens` with no two sharing a color: a repeat is moved one step in its blue channel (not visible), so a color found in an open
+    window names exactly one token and can be mapped to the new theme's color for it."""
+    seen: set = set()
+    result = {}
+    for token in TOKENS:
+        color = tokens[token].lower()
+        while color in seen:
+            blue = int(color[5:7], 16)
+            color = color[:5] + f"{blue + 1 if blue < 255 else blue - 1:02x}"
+        seen.add(color)
+        result[token] = color
+    return result
+
+
 THEMES: dict = {
     "Navy": {
         "BG": "#0f1a2e", "PANE": "#142340", "CARD": "#1c3054", "BUTTON": "#2c4a7a", "HOVER": "#243d66", "SELECT": "#2f5a96",
@@ -71,6 +86,7 @@ THEMES: dict = {
         "cyan": "#4dff88", "amber": "#ffd24a", "green": "#b6ff5d", "red": "#ff6b5b", "violet": "#9bd0ff", "hot": "#0f3a1c",
         "deep": "#020603", "key-hi": "#243a2a", "key-on-hi": "#1f6b36", "green-dim": "#2a6b20", "amber-dim": "#5a4a17"}),
 }
+THEMES = {name: _distinct(tokens) for name, tokens in THEMES.items()}
 DEFAULT_THEME = "Navy"
 _current = ""
 

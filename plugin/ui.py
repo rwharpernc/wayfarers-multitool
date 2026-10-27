@@ -137,6 +137,7 @@ _auto_update_var: Optional[tk.BooleanVar] = None
 _fit_height_var: Optional[tk.BooleanVar] = None
 _text_size_var: Optional[tk.StringVar] = None
 _theme_var: Optional[tk.StringVar] = None
+_look_opened: tuple = ("", "")   # the theme and text size the Settings page showed when it was built
 _suggest_var: Optional[tk.BooleanVar] = None
 
 PLUGIN_DISPLAY_NAME = "Wayfarer's Multitool (WFMT)"
@@ -765,7 +766,7 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
     """Window behavior. Everything here is placed with `grid` (never `pack`) - an
     nb.Frame already holds a gridded child, and packing into it makes the whole
     WFMT Settings tab vanish (tests/test_settings_layout.py)."""
-    global _fit_height_var, _suggest_var, _text_size_var, _theme_var
+    global _fit_height_var, _suggest_var, _text_size_var, _theme_var, _look_opened
 
     frame = nb.Frame(notebook)
     frame.columnconfigure(0, weight=1)
@@ -830,6 +831,7 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
     theme_row = tk.Frame(frame)
     theme_row.grid(row=11, column=0, sticky=tk.W, padx=10, pady=(0, 2))
     _theme_var = tk.StringVar(value=style.theme_name())
+    _look_opened = (style.theme_name(), str(style.text_delta()))
     tk.OptionMenu(theme_row, _theme_var, *style.P.THEMES).pack(side=tk.LEFT)
     nb.Label(
         frame,
@@ -997,10 +999,10 @@ def restore_text_size() -> None:
     style.set_theme(config.get_str(CONFIG_THEME) or style.P.DEFAULT_THEME)
     style.add_theme_listener(lambda: config.set(CONFIG_THEME, style.theme_name()))
     try:
-        style.set_text_delta(int(config.get_int(CONFIG_TEXT_DELTA, default=0)))
+        style.set_text_delta(int(config.get_str(CONFIG_TEXT_DELTA) or 0))       # saved as text: the setting can be negative
     except (TypeError, ValueError):
         pass
-    style.add_text_listener(lambda: config.set(CONFIG_TEXT_DELTA, style.text_delta()))
+    style.add_text_listener(lambda: config.set(CONFIG_TEXT_DELTA, str(style.text_delta())))
 
 
 def save_prefs() -> None:
@@ -1009,15 +1011,20 @@ def save_prefs() -> None:
         for key in _mode_vars:
             config.set(CONFIG_MODE_HIDDEN + key, key not in shown)
         _apply_mode_buttons()
+    # Only what was changed in Settings is applied: a theme or size picked in a window's footer while Settings was open stays.
+    global _look_opened
     if _theme_var is not None:
-        style.set_theme(_theme_var.get())
+        if _theme_var.get() != _look_opened[0]:
+            style.set_theme(_theme_var.get())
         _theme_var.set(style.theme_name())
     if _text_size_var is not None:
-        try:
-            style.set_text_delta(int(_text_size_var.get().strip()))
-        except ValueError:
-            pass            # a half-typed number keeps the current size
+        if _text_size_var.get().strip() != _look_opened[1]:
+            try:
+                style.set_text_delta(int(_text_size_var.get().strip()))
+            except ValueError:
+                pass            # a half-typed number keeps the current size
         _text_size_var.set(str(style.text_delta()))
+    _look_opened = (style.theme_name(), str(style.text_delta()))
     if _fit_height_var is not None:
         config.set(CONFIG_FIT_HEIGHT, bool(_fit_height_var.get()))
         if _fit_height_var.get() and _frame is not None:

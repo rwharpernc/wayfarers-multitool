@@ -3,12 +3,13 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
-## Unreleased
+## 1.1.0 (unreleased)
 
 ### Changed
 
-- **Windows:** four color themes for WFMT's own pop-out windows and dashboards: Navy (the default), and Cyan, Amber and Green from
-  EDDDT. Choose one under Settings → WFMT → General → Window or with the theme name at the right end of a window's bottom line;
+- **Windows:** four color themes for WFMT's own pop-out windows and dashboards: Navy (the default, brighter than before: blue-tinted
+  surfaces, gold titles, cyan section labels and table headings, a soft blue footer message that turns green on success), and Cyan,
+  Amber and Green from EDDDT. Choose one under Settings → WFMT → General → Window or with the theme name at the right end of a window's bottom line;
   open windows are recolored at once and the choice is remembered. EDMC's window and the overlay cards are not changed.
   The stat tiles at the top of a dashboard and the status chips keep their size when the text size is changed.
 - **Windows:** the text size of WFMT's pop-out windows and dashboards can be changed, from -2 to +6 points, with the **A-** and **A+**
@@ -19,8 +20,6 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
   card has the same choice under Settings → WFMT → Overlays → Colonization (**List**). **To haul** is for the middle step, when
   everything is bought and on the fleet carrier and **To buy** would be empty: it lists the rows that are covered but not yet aboard
   the ship in full. The old overlay tick box carries over as To buy or All.
-- **Windows:** a brighter navy theme for WFMT's own windows. Surfaces move from gray to blue tints; window titles are gold,
-  section labels and table headings cyan, and the footer message soft blue (green on success).
 - **Colonization:** the Remaining column of the Sites window and of the shopping-list overlay card is now called
   **Acquire**, since it shows what is still to get. The figure is unchanged.
 
