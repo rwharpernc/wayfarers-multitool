@@ -1,6 +1,6 @@
 # WFMT Window Kit
 
-The shared look and building blocks for every pop-out (Toplevel) window in WFMT: a dark, consistent
+The shared look and building blocks for every pop-out (Toplevel) window in WFMT: a consistent navy
 palette, flat cards, striped sortable tables, and an embedded map. It lives in `plugin/uikit/`. The rules
 that matter when changing a window are in [TECHNICAL.md](TECHNICAL.md) section 5; this page describes what
 the kit provides and where it's used.
@@ -32,8 +32,9 @@ A consequence:
 
 ## 3. Building blocks
 
-- **Palette and tokens** (`palette.py`): background layers, text, accent, and success, warning and danger
-  colors, plus a color-blind-safe set for status. Shape or a label carries the state, never color
+- **Palette and tokens** (`palette.py`): navy background layers, text, accent, success, warning and danger
+  colors, and three colors for headings and messages (`TITLE` gold for a window title, `HEADING` cyan for section labels and
+  table column headers, `STATUS` soft blue for the footer message), plus a color-blind-safe set for status. Shape or a label carries the state, never color
   alone (the minimap markers work the same way).
 - **Style** (`style.py`): applies the look to a window's classic widgets. Fonts derive from
   `TkDefaultFont` so Linux and high-DPI displays behave.
@@ -64,7 +65,7 @@ for the same discipline as the main panels.
 
 ## 4. The theme choice
 
-WFMT's windows deliberately **do not follow EDMC's theme**. They use their own fixed dark look, which gives
+WFMT's windows deliberately **do not follow EDMC's theme**. They use their own fixed navy look, which gives
 every window a consistent feel and works the same on Linux. The cost is that it ignores a user's EDMC
 theme choice. The palette is token-based, so a light variant would be a small change, and a Settings
 toggle could be added later without a redesign.

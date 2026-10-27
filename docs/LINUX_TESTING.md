@@ -882,6 +882,11 @@ The Surface Live radar has not been looked at on Linux. The simulation shows it 
 - [ ] Close it, open the real LIVE window from the Mining page, and check none of the pretend deposits or marks are there.
 - [ ] Report the distro, desktop, X11 or Wayland, native or Flatpak EDMC, and any `Plugin "WFMT" failed` or traceback lines in EDMC's log.
 
+## 7k2. The navy look (new, not run on Linux)
+
+- [ ] Open the Sites window, Inventory, the Exploration Dashboard and the Mining Book. Surfaces are navy, not gray; the window title is gold; section labels and table column headers are cyan; the footer message is soft blue, and green after something succeeds. Nothing is hard to read, on Wayland or on X11.
+- [ ] The Colonization overlay card's third column is headed **Acquire**.
+
 ## 7l. Shortcuts: chat commands and the Settings page (Windows-tested only: check on Linux)
 
 Keyboard shortcuts are Windows only; the chat commands are the same on both systems and read the journal's `SendText` line.

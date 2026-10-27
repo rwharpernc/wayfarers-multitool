@@ -304,7 +304,7 @@ Ask of every new widget: *what is the worst-case size of this content, and where
 
 ### External windows (`plugin/uikit/`)
 
-Every external (Toplevel) window uses WFMT's own dark look rather than EDMC's theme; main-window
+Every external (Toplevel) window uses WFMT's own navy look rather than EDMC's theme (gold titles, cyan section labels and table headings, a soft blue footer message, green for success); main-window
 panels still follow EDMC. See `docs/WINDOW_FRAMEWORK_SPEC.md`. The rules that matter when touching
 one:
 
@@ -1258,7 +1258,7 @@ Predicts species per body from atmosphere, gravity, temperature, pressure, regio
   - Rigs is capped at 7 in the hotspot dialog.
   - While the Rhino is out, each `MiningRefined` ton is credited to the nearest positioned hotspot within 200 m (`Hotspot.mined_tons`, written on a 5 s throttle and on shutdown), so a Depleted deposit reads "depleted (612 t)".
   - Saving a hotspot from the panel within 100 m of an existing one on the same body updates it instead of adding a second.
-- **Windows** (`plugin/uikit/`, `mining_ledger.py`) use WFMT's own dark look - see "External windows" in section 5.
+- **Windows** (`plugin/uikit/`, `mining_ledger.py`) use WFMT's own navy look - see "External windows" in section 5.
   - The Surface Mining Book (`mining_ledger.py`, data in `mining_ledger_data.py`) is the browser for scanned bodies and saved hotspots.
   - Beyond the list and map it holds the following, each documented in `MINING_TECH_SPEC.md` section 6:
     - dated Depleted marks with an optional assumed refill time (`mining_depletion.py`; the default is unknown and a mark stays)

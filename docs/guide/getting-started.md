@@ -377,7 +377,7 @@ in [what goes on the internet](internet-and-privacy.md).
 ### Pop-out windows
 
 Sessions, rare goods, inventory, the BGS report, the Surface Mining Book and others open as their own windows. They have a
-dark look, remember their size and position, and close with **Esc** or the window's close button. The main panel itself follows your
+navy look with colored headings, remember their size and position, and close with **Esc** or the window's close button. The main panel itself follows your
 EDMC theme.
 
 Every pop-out window has the same layout:

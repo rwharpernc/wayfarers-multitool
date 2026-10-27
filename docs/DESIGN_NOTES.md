@@ -511,6 +511,13 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 - **Not done:** counting a commodity on the carrier as delivered. It is not delivered until it is unloaded at the depot, and the carrier column says where it is.
 - **Best single systems** (`colonization_systems.py`) follow the same rule of not guessing: the search by commodity names stations, so a system whose stations together stock the list was invisible. The few best candidates are asked of Spansh for every station's whole market (one request each, through the courtesy layer in 3.23), so the stock is counted from what the stations report. Where to look: [TECHNICAL.md](TECHNICAL.md) (Best single systems).
 
+### 3.25 The navy theme for WFMT's own windows
+
+- **The problem:** the pop-out windows were near-black with gray text. Headings, table headers and status messages were all the same muted gray, so nothing stood out and the windows read as dull.
+- **Decision:** keep the fixed look (3.x, `WINDOW_FRAMEWORK_SPEC.md` section 4) but move the surfaces to navy and give three roles their own color in `uikit/palette.py`: `TITLE` (gold) for a window title, `HEADING` (cyan) for section labels, field labels and table column headers, and `STATUS` (soft blue) for the footer message. Success, caution and failure keep green, yellow and red, a little brighter.
+- **Why:** color separates the structure of a window (where a section starts, what a column is) from its data, without adding a setting. Every window gets it because they all read the palette tokens.
+- **Not done:** a light variant or a user choice of theme; the in-game overlay cards (which have their own schemes in Settings → Overlays) and the main panel (which follows EDMC) are unchanged.
+
 ## 4. Deliberately not built
 
 Each was considered and left out for a reason that still holds. They are in the "Not planned" list of [TODO.md](TODO.md) so they are not proposed again.
