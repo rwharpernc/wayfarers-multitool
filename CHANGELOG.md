@@ -3,6 +3,16 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## Unreleased
+
+### Fixed
+
+- **Colonization:** the fleet carrier column no longer falls back to an older level when Frontier's copy of the
+  carrier's cargo is behind. A copy that arrives within 15 minutes of your last transfer, or that repeats one
+  already ignored, is left out until Frontier's figure changes. Each Frontier figure now writes one line to EDMC's
+  log saying what was done with it. The Colonization guide has new notes on how the two sources fit together
+  and a list of scenarios with what to do.
+
 ## 1.0.0 (2026-10-26)
 
 The first release. WFMT is an add-on for Elite Dangerous that runs inside EDMC (Elite Dangerous Market

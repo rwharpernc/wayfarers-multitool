@@ -214,10 +214,40 @@ The FC column adds up the journal's `CargoTransfer` events made while docked at 
 - **It is what WFMT saw you transfer, not the carrier's actual hold.** Changes that are not transfers are not in the
   journal as transfers, so they are not counted: buying from or selling to the carrier's market, trade orders, and a
   squadron mate moving cargo. The figure can therefore drift from the real contents.
-- **Frontier's own figure can replace it.** When EDMC is signed in to Frontier it fetches your carrier's real cargo (at most every
-  15 minutes, on opening Carrier Management and similar events), and WFMT replaces its tally with that list; transfers you make
-  afterwards are added on top. Frontier's copy can lag behind what you just did, so WFMT ignores a fetch that arrives within 15 minutes of your last
-  transfer, and one that repeats a copy it already ignored, until Frontier's figure changes.
+- **Frontier's own figure can replace it, once it is safe to.** See the next section.
+
+### How Frontier's figure and your transfers fit together
+
+Two sources feed the FC column, and each is wrong in a different way.
+
+- **Your transfers** (the journal) are exact and instant, but they only cover what you moved yourself.
+- **Frontier's figure** is the carrier's real hold, but only when EDMC is signed in to Frontier, and it can be old. EDMC asks for it
+  when a carrier event such as Carrier Management opens, at most every 15 minutes, and Frontier's copy can lag well behind what you
+  just did. It has been seen to stay unchanged for more than 15 minutes while cargo was moved.
+
+If WFMT simply trusted every Frontier figure, a lagging copy would undo your last unload: the column would fall back to an older
+level just as you came back for the next load. So WFMT applies these rules to each Frontier figure:
+
+1. **A figure that matches the tally** changes nothing.
+2. **A figure that differs, within 15 minutes of your last transfer, is ignored.** It probably predates the transfer.
+3. **A figure that differs but repeats a copy already ignored is ignored too.** Frontier has not updated; nothing new has been learned.
+4. **Any other figure replaces the tally.** That is a copy that is not recent and has moved, so it can be trusted to show the real hold. Transfers you make afterwards are added on top.
+
+The result: your own transfers are never undone by an old copy, and a Frontier figure that has really changed still corrects stock
+that arrived or left some other way. The ignored copy is remembered in the saved carrier file, so a restart of EDMC does not forget it,
+and **Rescan Carrier** clears it.
+
+**Reading it in the log.** Each Frontier figure writes one line to EDMC's log (Help → Open Log Folder in EDMC). Use it to see what
+WFMT decided:
+
+| Log line | What it means |
+|---|---|
+| `Carrier cargo from Frontier: 18806 t against 18806 t tallied (same)` | Frontier agrees with the tally. Nothing changed. |
+| `Carrier cargo from Frontier: 15011 t against 18806 t tallied (changed)` | Rule 4. The tally now follows Frontier's figure. |
+| `Carrier cargo from Frontier ignored: ... (the last transfer was 291 s ago)` | Rule 2. Frontier's copy may not include your last transfer yet. |
+| `Carrier cargo from Frontier ignored: ... (unchanged since an earlier fetch)` | Rule 3. Frontier still shows the copy that was ignored. |
+
+If you report a column that looks wrong, include these lines (see [Reporting problems](reporting-problems.md)).
 
 ### Rescan Carrier: when a load did not register
 
@@ -239,10 +269,50 @@ What to expect:
 - It only counts what the journals show you moving. Stock that reached the carrier another way (bought through its market, a
   trade order, a squadron mate), or moved more than 30 days ago, is **not** included. Where that matters, leave the tally alone and let
   Frontier's figure fill it in.
-- The next Frontier fetch replaces the rescanned figure with the carrier's real cargo, so a rescan is a quick fix for a missing load, not
-  a permanent override.
+- A later Frontier figure replaces the rescanned tally only if it has changed and your last transfer is more than 15 minutes old (see
+  [How Frontier's figure and your transfers fit together](#how-frontiers-figure-and-your-transfers-fit-together)), so a rescan is a
+  quick fix for a missing load, not a permanent override. A rescan also clears any Frontier copy WFMT was ignoring, so the next
+  figure is judged fresh.
 - It is safe to press more than once, and it never counts a transfer twice. It only touches the commander shown in the window and
   reads files on your computer; nothing is sent anywhere.
+
+### Scenarios: what to expect and what to do
+
+**You unload at the carrier, then go and buy another load.** The column keeps the unloaded stock. If Frontier's copy arrives and still
+lacks the unload, WFMT ignores it, so the column does not fall back. Nothing to do.
+
+**You make several trips in a row.** Each unload adds to the tally, and every Frontier figure is checked against it as above. The
+column keeps climbing even if Frontier's figure stays at an old value. The log shows `ignored` lines, which is expected.
+
+**The column is higher than the carrier's real hold.** WFMT counts what you transferred, so it drifts high when stock left the carrier
+without a transfer you made: you sold from the carrier's market, a trade order filled, or a squadron mate took some. To correct it:
+
+1. Make no transfers for 15 minutes, so your last transfer is no longer "recent".
+2. In the game, open Carrier Management (EDMC must be signed in to Frontier). EDMC fetches the carrier, and a figure that has moved replaces the tally.
+3. If the log says `unchanged since an earlier fetch`, Frontier has not updated yet. Wait and open Carrier Management again, or press **Rescan Carrier** to restart from your journals.
+
+**The column is lower than the carrier's real hold.** Stock reached the carrier without a transfer you made (bought through its market, a trade
+order, a squadron mate), or it was moved more than 30 days ago. Follow the same three steps. **Rescan Carrier** will not help here, because it
+only counts your own transfers.
+
+**A load you moved never showed up.** The game did not write the transfer (or EDMC was closed, and it was not caught up). Press
+**Rescan Carrier**. If the transfer is in your journals it is counted, and it is never counted twice.
+
+**You took cargo off the carrier** (to the ship). That is a transfer, so the column drops at once. Nothing to do.
+
+**EDMC is not signed in to Frontier.** There is no Frontier figure at all. The column is your transfers only, so it drifts as in the
+cases above. Sign EDMC in to Frontier, then open Carrier Management. Until then, **Rescan Carrier** is the only correction.
+
+**You played with EDMC closed.** At the next start WFMT reads the last 14 to 30 days of journals and adds any transfers it has not
+counted. Press **Rescan Carrier** only if one is still missing.
+
+**The column stays on an old Frontier value you know is wrong.** Check the log for the lines above. If every line says `ignored`,
+Frontier's copy is not updating. This is on Frontier's side. Press **Rescan Carrier** to rebuild from your journals, or move a
+little cargo, wait 15 minutes and open Carrier Management again.
+
+**The column drops after you opened Carrier Management.** Frontier's figure had changed and your last transfer was more than 15 minutes
+old, so WFMT took Frontier's figure as the real hold. If a load of yours is missing from it, Frontier's copy was only partly updated.
+Press **Rescan Carrier**, and tell us if it happens often, with the log lines.
 
 ### The commodity table: grouped, like the overlay
 
@@ -592,7 +662,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 | What you might expect | What the game gives | What to do |
 |---|---|---|
-| Everything on your carrier to count | The journal only records cargo you **transfer** to or from the carrier. Stock that arrived any other way is invisible to it. Frontier's carrier data lists the real hold, but only when EDMC is signed in, and it is fetched when you open Carrier Management (or about every 15 minutes) and can lag. | Sign EDMC in to Frontier, then open Carrier Management once; the Covered line and the Carrier row then follow the real hold. |
+| Everything on your carrier to count | The journal only records cargo you **transfer** to or from the carrier. Stock that arrived any other way is invisible to it. Frontier's carrier data lists the real hold, but only when EDMC is signed in, and it is fetched when you open Carrier Management (or about every 15 minutes) and can lag, sometimes for longer than 15 minutes. WFMT ignores a lagging copy, so your own transfers are not undone. | Sign EDMC in to Frontier, then open Carrier Management once, at least 15 minutes after your last transfer; the Covered line and the Carrier row then follow the real hold. See [Scenarios](#scenarios-what-to-expect-and-what-to-do). |
 | Colonization sites to appear on their own | The game writes the depot event only when you **dock or open the depot market**. A delivery to a site WFMT has never seen a depot snapshot for is ignored. | Dock at the depot (or open its market) once for each new site. Docking again replaces WFMT's figures with the game's own. Deliveries made with EDMC closed are caught up from the last 14 to 30 days of journals at start-up. |
 | A site to have its real name, or a renamed site to follow | The name is taken from the last time you docked at that market. Otherwise it is `Construction site <number>`. The game does not announce a rename; it shows in the name the market has the next time you dock. | Dock at the market once to pick up the name, and again after a rename. |
 | A full history of everything you ever delivered | The journal records each delivery as it happens. WFMT rebuilds your history once from every journal file you still have, so deliveries from journals you deleted are missing. | The history counts from the first delivery it found (shown in the History window) and keeps growing. |
