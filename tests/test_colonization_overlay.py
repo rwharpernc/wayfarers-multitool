@@ -239,6 +239,12 @@ class BuildCardTests(unittest.TestCase):
         self.assertEqual([r.name for r in everything.rows], ["Steel", "Water"])      # off by default
         self.assertEqual((everything.remaining, everything.buy_trips, everything.trips), (50, 1, 3))
 
+    def test_to_haul_lists_the_covered_rows_that_are_not_yet_aboard_in_full(self) -> None:
+        # steel (400) is on the carrier, water (50) is aboard in full
+        built = card.build_card(site(), {"water": 50}, {"steel": 400}, show_fc=True, capacity=200, show="haul")
+        self.assertEqual([r.name for r in built.rows], ["Steel"])
+        self.assertEqual(built.remaining, 0)
+
     def test_hiding_covered_rows_counts_the_row_limit_over_what_is_listed(self) -> None:
         built = card.build_card(site(), {"steel": 400}, {}, show_fc=False, max_rows=1, hide_covered=True)
         self.assertEqual(([r.name for r in built.rows], built.hidden), (["Water"], 0))

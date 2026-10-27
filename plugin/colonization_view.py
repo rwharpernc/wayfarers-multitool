@@ -13,6 +13,27 @@ from . import commodity_categories
 from .colonization import Site
 
 
+# Which commodities to list (the Sites window's Show dropdown and the overlay card's setting). "buy" is the old "hide rows already
+# covered"; "haul" is for the middle step, once everything is bought and parked on the carrier: it keeps the rows the ship and the
+# carrier cover but the ship does not yet hold in full, so a row leaves the list once its whole need is aboard (and is gone from the
+# site's list once delivered).
+SHOW_ALL = "all"
+SHOW_BUY = "buy"
+SHOW_HAUL = "haul"
+SHOW_CHOICES = ((SHOW_ALL, "All"), (SHOW_BUY, "To buy"), (SHOW_HAUL, "To haul"))
+
+
+def shown(show: str, remaining: int, in_hold: int, on_carrier: int) -> bool:
+    """Whether a commodity the site still needs `remaining` tons of is listed under `show`, given the tons in the ship's hold and on
+    the fleet carrier."""
+    covered = in_hold + on_carrier >= remaining
+    if show == SHOW_BUY:
+        return not covered
+    if show == SHOW_HAUL:
+        return covered and in_hold < remaining
+    return True
+
+
 STATE_SHORT = "short"      # still working on it
 STATE_ENOUGH = "enough"    # the ship plus the fleet carrier covers what the site still needs, exactly or with room
 STATE_OVER = "over"        # the ship plus the fleet carrier is more than the site still needs
@@ -84,9 +105,9 @@ def format_trips(trips: Optional[Decimal]) -> str:
 def commodity_rows(site: Site, cargo: Mapping[str, int], carrier: Optional[Mapping[str, int]] = None,
                    hide_covered: bool = False, text: str = "", capacity: int = 0,
                    only_keys: Optional[Collection[str]] = None,
-                   market_keys: Optional[Collection[str]] = None) -> List[CommodityRow]:
+                   market_keys: Optional[Collection[str]] = None, show: str = SHOW_ALL) -> List[CommodityRow]:
     """The site's outstanding commodities, alphabetical (so rows stay put while numbers change), less any the
-    filters take out: `hide_covered` drops those the ship plus the carrier already cover, `text` keeps labels containing it,
+    filters take out: `show` (SHOW_BUY, SHOW_HAUL; `hide_covered` is the older way to say SHOW_BUY) keeps one stage of the work, `text` keeps labels containing it,
     and `only_keys` (when given) keeps only the commodities whose key is in it - what the docked station sells. `market_keys` (what
     the docked market sells, or None away from one) only marks a row `available` or not, and filters nothing."""
     wanted = text.strip().casefold()
@@ -107,7 +128,7 @@ def commodity_rows(site: Site, cargo: Mapping[str, int], carrier: Optional[Mappi
             on_carrier=carrier.get(resource.key, 0), buy_trips=trips_for(to_get, capacity),
             haul_trips=trips_for(resource.remaining, capacity),
             available=not market_keys or resource.key in market_keys)
-        if hide_covered and row.covered:
+        if not shown(SHOW_BUY if hide_covered else show, row.remaining, row.in_cargo, row.on_carrier):
             continue
         rows.append(row)
     return sorted(rows, key=lambda r: r.label.casefold())

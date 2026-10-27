@@ -41,7 +41,7 @@ _FIXED: Tuple[str, ...] = (
     "wfmt_inventory_announce_categories", "wfmt_mining_overlay_enabled", "wfmt_compass_enabled",
     "wfmt_screenshot_overlay_enabled",
     "wfmt_colonization_overlay_enabled", "wfmt_colonization_overlay_row_limit", "wfmt_colonization_overlay_right_panel",
-    "wfmt_colonization_overlay_forced", "wfmt_colonization_overlay_hide_covered",
+    "wfmt_colonization_overlay_forced", "wfmt_colonization_overlay_hide_covered", "wfmt_colonization_overlay_show",
     "wfmt_flight_enabled", "wfmt_flight_carrier", "wfmt_flight_fuel", "wfmt_flight_low_percent",
     "wfmt_flight_unscoopable_percent", "wfmt_flight_sound", "wfmt_flight_mining", "wfmt_flight_limpets_low", "wfmt_flight_hold_percent",
     "wfmt_route_enabled", "wfmt_route_rows", "wfmt_route_edsm",

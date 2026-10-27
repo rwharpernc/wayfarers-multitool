@@ -141,10 +141,10 @@ root.update()
 check(window._selected == 1, "clicking the first site should select it again")
 
 # Filters.
-window._hide_covered.set(True)
+window._show.set("To buy")
 window._refresh_detail()
-check(len(window._commodity_table) == 2, "hide-covered should drop Water")
-window._hide_covered.set(False)
+check(len(window._commodity_table) == 2, "To buy should drop Water")
+window._show.set("All")
 window._filter_text.set("ste")
 check(len(window._commodity_table) == 1, "the text filter should keep only Steel")
 window._filter_text.set("")

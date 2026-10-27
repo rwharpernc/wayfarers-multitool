@@ -136,7 +136,7 @@ Click a site to see it on the right. The first active site is picked when the wi
 - its name and system,
 - a progress bar,
 - six totals,
-- a **Filter** box with three tick boxes (**Hide rows already covered**, **Only what this station sells** and **Group by category**),
+- a **Filter** box, a **Show** dropdown (**All**, **To buy**, **To haul**) and two tick boxes (**Only what this station sells** and **Group by category**),
 - a table with one row per commodity **still outstanding**.
 
 ### The six totals
@@ -161,7 +161,10 @@ Building a colony has two legs, and the window counts them apart.
 ### Filters and sorting
 
 - The **Filter** box keeps the commodities whose names contain what you type.
-- **Hide rows already covered** drops the rows you needn't buy any more (see the colors below for what counts as covered). It starts off each time the window opens.
+- **Show** picks the stage of the work you are on, and starts at **All** each time the window opens (see the colors below for what counts as covered):
+  - **To buy** lists only what is not covered yet, the rows you still have to buy or mine.
+  - **To haul** is for the middle step, once everything is bought and parked on the carrier: it lists the rows that are covered but not yet aboard your ship in full, so a row leaves the list when you have loaded its whole need, and the site drops it for good once it is delivered. **To buy** would be empty by then.
+  - **All** lists every commodity the site still needs.
 - **Only what [station] sells** keeps just the commodities the station you are docked at has for sale. Open its commodity market once and the box names the station (clipped to 24 characters) and becomes usable; until then it is grayed out. It switches itself off when you leave the station.
 - Click a column heading to sort by it, and again to reverse. The default is alphabetical, so rows stay put while numbers change.
 - The status line at the bottom of the window says how many commodities are still needed, how many your ship (and carrier) cover, and the trips: `Your 400 t ship needs 21 trips to buy what is missing and 33 to haul it all to the site.` Its text changes to `The filters hide every commodity this site still needs.` when the filters hide every row.
@@ -360,7 +363,7 @@ search system is not: it starts as the site's system again.
 
 **Find all** searches every commodity you still have to buy, using the same options. It lists the closest 5 stations (and, if carriers are ticked, the closest 2 carriers) under a heading for each commodity.
 
-- It follows the table as you have it filtered. Rows already covered are left out, and so are rows the Filter box or **Only what [station] sells** hide.
+- It follows the table as you have it filtered. Rows already covered are left out, and so are rows the Filter box, **Show** or **Only what [station] sells** hide.
 - Spansh can only look up one commodity per request. So WFMT sends one request per commodity, a short pause (0.4 second) apart, plus one more asking for the nearest stations that have every commodity on the list in stock (see below).
 - A list of 20 takes some seconds, and the note under the buttons shows how far it has got, in amber while a search is running so it stands out. The best single systems are checked at the end (see below).
 - While it runs, **Find all** is relabeled **Stop** and **Find nearest** is disabled. Press **Stop** to stop after the search in progress, keeping what it found (the note says `(stopped early)`).
@@ -647,7 +650,7 @@ A last line gives the tons remaining (still to get, as in the Acquire column) an
 - **Settings:**
   - Where the card sits: Settings → WFMT → Overlays → Overlay Placement. The default is the left edge, vertically centered, on any screen shape.
   - **Rows:** how many commodities to list (1 to 60; any more are summarized as `+N more`). The default, 0, lists them all.
-  - **Hide commodities already covered by the hold and the fleet carrier** (on by default) leaves out the rows that already show a **✓**, so the card lists only what you still have to get. The last line still counts every commodity the site needs, and when everything is covered the card shows just that line.
+  - **List** (**All**, **To buy** or **To haul**, the same choices as the window's **Show**) picks which rows the card lists. **To buy** (the starting choice) leaves out the rows that already show a **✓**, so the card lists only what you still have to get; **To haul** lists the rows that are covered but not yet aboard your ship in full, for when everything is on the carrier. The last line still counts every commodity the site needs, and when no row is listed the card shows just that line. A choice made with the older *Hide commodities already covered* tick box carries over.
   - **Test Overlay** shows a sample card for about 8 seconds, even while the option is off, and says `Sent - check your overlay.` or that it could not reach the overlay.
 - It is cleared when EDMC closes. If the overlay program isn't running, nothing is drawn and nothing breaks.
 

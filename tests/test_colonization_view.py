@@ -56,6 +56,19 @@ class CommodityRowsTests(unittest.TestCase):
         rows = view.commodity_rows(site(), {"water": 50}, hide_covered=True)
         self.assertEqual([r.label for r in rows], ["Aluminium", "Steel"])
 
+    def test_show_picks_one_stage_of_the_work(self):
+        # Steel (400) and Water (50) are on the carrier, Water also aboard in full; Aluminium (80) is not bought yet.
+        hold, carrier = {"water": 50}, {"steel": 400, "water": 50}
+        labels = lambda show: [r.label for r in view.commodity_rows(site(), hold, carrier, show=show)]  # noqa: E731
+        self.assertEqual(labels(view.SHOW_ALL), ["Aluminium", "Steel", "Water"])
+        self.assertEqual(labels(view.SHOW_BUY), ["Aluminium"])
+        self.assertEqual(labels(view.SHOW_HAUL), ["Steel"])      # covered, and not yet aboard in full
+
+    def test_to_haul_is_not_emptied_once_everything_is_on_the_carrier(self):
+        carrier = {"steel": 400, "water": 50, "aluminium": 80}
+        self.assertEqual(view.commodity_rows(site(), {}, carrier, hide_covered=True), [])      # the old filter: nothing left to see
+        self.assertEqual([r.label for r in view.commodity_rows(site(), {}, carrier, show=view.SHOW_HAUL)], ["Aluminium", "Steel", "Water"])
+
     def test_text_filter_is_a_case_insensitive_substring(self):
         self.assertEqual([r.label for r in view.commodity_rows(site(), {}, text="  ALU ")], ["Aluminium"])
         self.assertEqual(view.commodity_rows(site(), {}, text="nothing like this"), [])

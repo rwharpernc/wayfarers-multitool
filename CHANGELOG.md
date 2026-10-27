@@ -7,6 +7,10 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Changed
 
+- **Colonization:** a **Show** dropdown (All, To buy, To haul) replaces *Hide rows already covered* in the Sites window, and the overlay
+  card has the same choice under Settings → WFMT → Overlays → Colonization (**List**). **To haul** is for the middle step, when
+  everything is bought and on the fleet carrier and **To buy** would be empty: it lists the rows that are covered but not yet aboard
+  the ship in full. The old overlay tick box carries over as To buy or All.
 - **Windows:** a brighter navy theme for WFMT's own windows. Surfaces move from gray to blue tints; window titles are gold,
   section labels and table headings cyan, and the footer message soft blue (green on success).
 - **Colonization:** the Remaining column of the Sites window and of the shopping-list overlay card is now called

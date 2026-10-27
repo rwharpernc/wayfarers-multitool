@@ -707,7 +707,7 @@ Written and tried on Linux (Flatpak EDMC, Proton game, EDMCModernOverlay). The c
   - It goes when you leave, and the OVERLAY button forces it on and off.
   - The EDMC debug log lines "Colonization overlay ..." say what was decided and why.
 - [ ] Rows left at the default list every commodity not yet covered; the card fits on screen from the default position (20, 300).
-- [ ] **Hide covered rows:** with *Hide commodities already covered by the hold and the fleet carrier* ticked (the default) a commodity the hold plus the carrier cover is left out and the footer still counts it; untick it and the covered rows return.
+- [ ] **List (overlay card):** with **To buy** (the default) a commodity the hold plus the carrier cover is left out and the footer still counts it; **All** brings the covered rows back; **To haul** lists only the covered rows not yet aboard in full (put everything on the carrier and check that the card still lists them, and that a row drops off once its whole need is in the hold).
 - [ ] **The hold follows a purchase:** buy a tracked commodity at a market. The In Cargo figures (Sites window, COL page and card) change within a couple of seconds. WFMT reads `Cargo.json` beside the journals, so check the journal folder is found on Linux/Proton; if the file cannot be read, EDMC's cargo state is used.
 - [ ] Windows paths: `Status.json` reports the same `GuiFocus` values (5 in the services screens, 1 for the right-hand panel).
 
@@ -717,8 +717,8 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
 
 - [ ] The window opens at about 1300 x 780 with the sites on the left and the detail on the right; nothing is clipped at
       its minimum size (1180 x 640), and the divider between the commodity table and Where to buy drags.
-- [ ] Picking a site shows its progress bar, the six totals, and its commodities; the Filter box, **Hide rows
-      already covered** and the column headings (click, click again to reverse) all work.
+- [ ] Picking a site shows its progress bar, the six totals, and its commodities; the Filter box, the **Show** dropdown
+      (All, To buy, To haul) and the column headings (click, click again to reverse) all work.
 - [ ] **Buy Trips and Haul Trips** (needs a fleet carrier with stock stored on it): a commodity fully on the carrier shows Buy
       Trips 0 and a Haul Trips above 0; the totals show **t on your carrier**, **trips to buy** and **trips to haul**.
 - [ ] **Row colors**: a commodity row turns green when the hold plus the FC column covers the site's remaining need

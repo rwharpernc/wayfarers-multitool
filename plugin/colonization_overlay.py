@@ -36,7 +36,7 @@ import math
 from dataclasses import dataclass
 from typing import Collection, List, Mapping, Optional, Tuple
 
-from . import colonization, commodity_categories, overlay
+from . import colonization, colonization_view as view, commodity_categories, overlay
 from .overlay_style import CARD_PAD_X, CARD_PAD_Y, LEGACY, Look
 from .colonization import Site
 from .screenshot_gui_focus import GUI_FOCUS_STATION_SERVICES
@@ -239,11 +239,11 @@ class Card:
 
 def build_card(site: Optional[Site], hold: Mapping[str, int], on_carrier: Mapping[str, int], show_fc: bool,
                capacity: int = 0, max_rows: int = DEFAULT_ROWS, grouped: bool = False,
-               market_keys: Optional[Collection[str]] = None, hide_covered: bool = False) -> Optional[Card]:
+               market_keys: Optional[Collection[str]] = None, hide_covered: bool = False, show: str = view.SHOW_ALL) -> Optional[Card]:
     """The card for `site`, or None when there is nothing to draw (no site, a finished site, nothing still needed).
     `grouped` orders the rows by market category (the caller says so away from a construction site); `market_keys` is what the market
-    the commander is docked at sells (None when not at one), and a commodity outside it is marked unavailable. `hide_covered` leaves out
-    the rows the hold plus the carrier already cover; the footer still counts every commodity the site needs."""
+    the commander is docked at sells (None when not at one), and a commodity outside it is marked unavailable. `show` (view.SHOW_BUY or SHOW_HAUL; `hide_covered` is the older way to say SHOW_BUY) lists
+    one stage of the work only; the footer still counts every commodity the site needs."""
     if site is None or not site.active:
         return None
     needed = [r for r in site.resources if r.remaining > 0]
@@ -253,7 +253,8 @@ def build_card(site: Optional[Site], hold: Mapping[str, int], on_carrier: Mappin
         needed.sort(key=lambda r: (commodity_categories.sort_key(commodity_categories.category_for(r.key)), r.label.casefold()))
     else:
         needed.sort(key=lambda r: r.label.casefold())
-    listed = [r for r in needed if not (hide_covered and hold.get(r.key, 0) + on_carrier.get(r.key, 0) >= r.remaining)]
+    stage = view.SHOW_BUY if hide_covered else show
+    listed = [r for r in needed if view.shown(stage, r.remaining, hold.get(r.key, 0), on_carrier.get(r.key, 0))]
     limit = max_rows if max_rows > 0 else len(listed)
     rows = tuple(Row(r.label, r.remaining, hold.get(r.key, 0), on_carrier.get(r.key, 0), r.required,
                      commodity_categories.category_for(r.key) if grouped else "",

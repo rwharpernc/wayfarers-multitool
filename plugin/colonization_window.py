@@ -75,6 +75,7 @@ _SOURCE_COLUMNS = (
 _PAD_ORDER = {"Large": 0, "Medium": 1, "Small": 2, "?": 3}
 _NO_LIMIT = "No limit"
 NOT_AVAILABLE = "  (not available here)"   # after a commodity the docked market does not sell
+_SHOW_LABELS = dict(view.SHOW_CHOICES)   # key -> the dropdown text
 _SORT_CHOICES = (("Closest first", sources.SORT_DISTANCE), ("Cheapest first", sources.SORT_PRICE))
 _POLL_MS = 150
 _STATION_MAX = 24  # a station name is clipped to this in the "Only what ... sells" label
@@ -199,7 +200,7 @@ class ColonizationWindow:
             ("Remove Site", self._on_remove, "danger"),
             ("Remove Finished", self._on_remove_finished, "danger")])
 
-        self._hide_covered = tk.BooleanVar(master=self._toplevel, value=False)
+        self._show = tk.StringVar(master=self._toplevel, value=_SHOW_LABELS[view.SHOW_ALL])   # the Show dropdown: which stage of the work to list
         self._filter_text = tk.StringVar(master=self._toplevel, value="")
         self._system_var = tk.StringVar(master=self._toplevel, value="")
         self._carriers_var = tk.BooleanVar(master=self._toplevel, value=self._prefs.carriers)
@@ -261,8 +262,10 @@ class ColonizationWindow:
         entry = tk.Entry(filters, textvariable=self._filter_text, width=14)
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD))
         self._filter_text.trace_add("write", lambda *_: self._refresh_detail())
-        tk.Checkbutton(filters, text="Hide rows already covered", variable=self._hide_covered,
-                       command=self._refresh_detail).pack(side="left")
+        tk.Label(filters, text="Show", fg=P.MUTED, bg=P.PANE).pack(side="left")
+        show_box = Combobox(filters, textvariable=self._show, state="readonly", width=8, values=list(_SHOW_LABELS.values()))
+        show_box.pack(side="left", padx=(P.PAD_SM, 0))
+        show_box.bind("<<ComboboxSelected>>", lambda _e: self._refresh_detail())
         # What the docked station sells, from its market (Market.json); off and grayed out until a market is opened.
         self._station_check = tk.Checkbutton(filters, text="Only what this station sells", variable=self._station_only,
                                              command=self._refresh_detail)
@@ -527,8 +530,9 @@ class ColonizationWindow:
         """The commodity rows after every filter, as the table shows them."""
         _station, only = self._station_filter()
         market = self._market()
-        return view.commodity_rows(site, self._cargo, on_carrier, self._hide_covered.get(), self._filter_text.get(),
-                                   capacity, only_keys=only, market_keys=market[1] if market else None)
+        show = next((key for key, text in _SHOW_LABELS.items() if text == self._show.get()), view.SHOW_ALL)
+        return view.commodity_rows(site, self._cargo, on_carrier, False, self._filter_text.get(),
+                                   capacity, only_keys=only, market_keys=market[1] if market else None, show=show)
 
     # --- where to buy ----------------------------------------------------------
 
