@@ -7,6 +7,10 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Changed
 
+- **Windows:** four color themes for WFMT's own pop-out windows and dashboards: Navy (the default), and Cyan, Amber and Green from
+  EDDDT. Choose one under Settings → WFMT → General → Window or with the theme name at the right end of a window's bottom line;
+  open windows are recolored at once and the choice is remembered. EDMC's window and the overlay cards are not changed.
+  The stat tiles at the top of a dashboard and the status chips keep their size when the text size is changed.
 - **Windows:** the text size of WFMT's pop-out windows and dashboards can be changed, from -2 to +6 points, with the **A-** and **A+**
   buttons at the right end of a window's bottom line or under Settings → WFMT → General → Window. One size applies to every window
   and is remembered. Table columns now fit their content (short columns stay narrow, long ones take the spare width) instead of

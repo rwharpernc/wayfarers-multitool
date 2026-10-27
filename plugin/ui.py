@@ -81,6 +81,7 @@ _SIDE_BY_SIDE_PAIRS = {autohonk: discovery}
 CONFIG_PANEL_MODE = "wfmt_active_panel_mode"
 CONFIG_MODE_HIDDEN = "wfmt_mode_hidden_"     # + the mode key: that mode's button is hidden from the main panel
 CONFIG_FIT_HEIGHT = "wfmt_fit_window_height"
+CONFIG_THEME = "wfmt_window_theme"   # the color theme of WFMT's own windows: a name from uikit.palette.THEMES
 CONFIG_TEXT_DELTA = "wfmt_window_text_delta"   # points added to the text of WFMT's own windows (the A- and A+ buttons, Settings -> General -> Window)
 _DEFAULT_FIT_HEIGHT = True
 
@@ -135,6 +136,7 @@ _toggle_off_colors: Tuple[str, str] = ("", "")
 _auto_update_var: Optional[tk.BooleanVar] = None
 _fit_height_var: Optional[tk.BooleanVar] = None
 _text_size_var: Optional[tk.StringVar] = None
+_theme_var: Optional[tk.StringVar] = None
 _suggest_var: Optional[tk.BooleanVar] = None
 
 PLUGIN_DISPLAY_NAME = "Wayfarer's Multitool (WFMT)"
@@ -763,7 +765,7 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
     """Window behavior. Everything here is placed with `grid` (never `pack`) - an
     nb.Frame already holds a gridded child, and packing into it makes the whole
     WFMT Settings tab vanish (tests/test_settings_layout.py)."""
-    global _fit_height_var, _suggest_var, _text_size_var
+    global _fit_height_var, _suggest_var, _text_size_var, _theme_var
 
     frame = nb.Frame(notebook)
     frame.columnconfigure(0, weight=1)
@@ -823,6 +825,18 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
               "window or the overlay cards. The A- and A+ buttons in a window's top right corner change the same setting."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=9, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+
+    nb.Label(frame, text="Color theme of WFMT's windows", font=("TkDefaultFont", 9, "bold")).grid(row=10, column=0, sticky=tk.W, padx=10, pady=(10, 2))
+    theme_row = tk.Frame(frame)
+    theme_row.grid(row=11, column=0, sticky=tk.W, padx=10, pady=(0, 2))
+    _theme_var = tk.StringVar(value=style.theme_name())
+    tk.OptionMenu(theme_row, _theme_var, *style.P.THEMES).pack(side=tk.LEFT)
+    nb.Label(
+        frame,
+        text=("Navy is the default; Cyan, Amber and Green are the themes of EDDDT. The theme applies to WFMT's own pop-out windows and dashboards, "
+              "also the ones already open, and never changes EDMC or the overlay cards. The same choice is under the Theme label in a window's bottom line."),
+        wraplength=440, justify=tk.LEFT,
+    ).grid(row=12, column=0, sticky=tk.W, padx=10, pady=(0, 10))
 
 
 def _create_updates_tab(notebook: nb.Notebook) -> None:
@@ -979,7 +993,9 @@ _mode_vars: Dict[str, tk.BooleanVar] = {}
 
 
 def restore_text_size() -> None:
-    """Applies the saved text size of WFMT's windows, and saves it again whenever the A- and A+ buttons or Settings change it."""
+    """Applies the saved color theme and text size of WFMT's windows, and saves them again whenever the window controls or Settings change them."""
+    style.set_theme(config.get_str(CONFIG_THEME) or style.P.DEFAULT_THEME)
+    style.add_theme_listener(lambda: config.set(CONFIG_THEME, style.theme_name()))
     try:
         style.set_text_delta(int(config.get_int(CONFIG_TEXT_DELTA, default=0)))
     except (TypeError, ValueError):
@@ -993,6 +1009,9 @@ def save_prefs() -> None:
         for key in _mode_vars:
             config.set(CONFIG_MODE_HIDDEN + key, key not in shown)
         _apply_mode_buttons()
+    if _theme_var is not None:
+        style.set_theme(_theme_var.get())
+        _theme_var.set(style.theme_name())
     if _text_size_var is not None:
         try:
             style.set_text_delta(int(_text_size_var.get().strip()))

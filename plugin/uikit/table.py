@@ -32,7 +32,6 @@ from . import palette as P
 from . import style
 from .widgets import ScrollFrame, SlimScrollbar, clip
 
-STRIPE = "#1e232b"
 ROW_PX = 40   # generous upper bound on one body row's height (DPI varies), for `visible_rows`
 INDENT = "\u2003\u2003"   # two em-spaces
 STRETCH_HARD_CAP = 300    # most characters a stretch column ever holds, whatever the width
@@ -112,7 +111,8 @@ class DataTable(tk.Frame):
         self._signature: Optional[list] = None  # rows last given to set_rows()
         # A new text size changes every cell's natural width and height: measure the columns again.
         stop_listening = style.add_text_listener(self._on_text_size)
-        self.bind("<Destroy>", lambda e: stop_listening() if e.widget is self else None, add="+")
+        stop_theme = style.add_theme_listener(self._on_theme)
+        self.bind("<Destroy>", lambda e: (stop_listening(), stop_theme()) if e.widget is self else None, add="+")
 
         self._header = tk.Frame(self, bg=P.CARD)
         self._header.pack(fill="x", padx=(0, SlimScrollbar.WIDTH))
@@ -316,6 +316,14 @@ class DataTable(tk.Frame):
                 cell.bind("<Double-1>", lambda _e, r=row: self._activate(r))
             row.cells.append(cell)
 
+    def _on_theme(self) -> None:
+        """The theme changed: the colors this table keeps for its tags are the old theme's, and the rows are painted again."""
+        if not self.winfo_exists():
+            return
+        self._tags = {tag: str(style.remap(color)) for tag, color in self._tags.items()}
+        self._tag_backgrounds = {tag: str(style.remap(color)) for tag, color in self._tag_backgrounds.items()}
+        self._schedule_layout()
+
     def _on_text_size(self) -> None:
         if self.winfo_exists():
             self._schedule_layout()
@@ -384,7 +392,7 @@ class DataTable(tk.Frame):
             return P.HOVER
         if row.group:
             return P.CARD
-        return STRIPE if row.index % 2 else P.PANE
+        return P.STRIPE if row.index % 2 else P.PANE
 
     def _paint(self, row: _TableRow, selected: bool, hover: bool = False) -> None:
         color = self._row_background(row, selected, hover)

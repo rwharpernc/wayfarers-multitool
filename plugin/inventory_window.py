@@ -54,9 +54,6 @@ TABS = (
 
 # Capacity highlight colors: NEAR is the amber "pay attention" cue (also used
 # for the baseline note below); FULL escalates once a category is actually capped.
-COLOR_NORMAL = P.INFO
-COLOR_NEAR = P.WARN
-COLOR_FULL = P.DANGER
 
 _COLUMNS = (
     Column("item", "Resource", 420, stretch=True, max_chars=60),
@@ -231,7 +228,7 @@ class _CargoTab:
         if cargo is None:
             self._heading.configure(text="Cargo — not applicable on foot")
             self._total.configure(text="", fg=P.TEXT)
-            self._bar.set(0, COLOR_NORMAL)
+            self._bar.set(0, P.INFO)
             self._table.append(("(no cargo hold while on foot)", ""))
             return
 
@@ -348,7 +345,7 @@ class _LocationTab:
     def _capacity_colors(total: int, capacity: Optional[int]) -> tuple:
         """(bar color, total-label color): highlighted once a category nears or hits capacity."""
         if capacity and total >= capacity:
-            return COLOR_FULL, COLOR_FULL
+            return P.DANGER, P.DANGER
         if capacity and total >= capacity * WARNING_THRESHOLD:
-            return COLOR_NEAR, COLOR_NEAR
-        return COLOR_NORMAL, P.TEXT
+            return P.WARN, P.WARN
+        return P.INFO, P.TEXT

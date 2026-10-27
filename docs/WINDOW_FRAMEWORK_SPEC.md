@@ -67,8 +67,8 @@ for the same discipline as the main panels.
 
 WFMT's windows deliberately **do not follow EDMC's theme**. They use their own fixed navy look, which gives
 every window a consistent feel and works the same on Linux. The cost is that it ignores a user's EDMC
-theme choice. The palette is token-based, so a light variant would be a small change, and a Settings
-toggle could be added later without a redesign.
+theme choice. The palette is token-based: there are four themes (Navy, the default, and Cyan, Amber and Green after EDDDT), chosen under
+Settings → General → Window or in a window's bottom line, and applied to open windows at once.
 
 ## 5. The Mining Book layout
 

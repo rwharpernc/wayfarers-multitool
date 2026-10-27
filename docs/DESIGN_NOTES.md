@@ -512,6 +512,14 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 - **Not done:** counting a commodity on the carrier as delivered. It is not delivered until it is unloaded at the depot, and the carrier column says where it is.
 - **Best single systems** (`colonization_systems.py`) follow the same rule of not guessing: the search by commodity names stations, so a system whose stations together stock the list was invisible. The few best candidates are asked of Spansh for every station's whole market (one request each, through the courtesy layer in 3.23), so the stock is counted from what the stations report. Where to look: [TECHNICAL.md](TECHNICAL.md) (Best single systems).
 
+### 3.27 Color themes for WFMT's own windows
+
+- **The problem:** one fixed palette suited some commanders and not others, and the EDDDT app next to WFMT already offers three colors.
+- **Decision:** four themes (Navy, the default, and Cyan, Amber and Green after EDDDT's stylesheet), one choice for every pop-out window, from Settings or the window's bottom line. Open windows are recolored by mapping each old color to the new one, because the windows are built from the palette's attributes and keep what they were given.
+- **Why a color map and not a rebuild:** windows hold state (selections, scroll positions, a search in progress) that a rebuild would lose.
+- **The rule that makes it work:** read palette colors when a widget is built. A color fixed at import time or as a default argument would stay in the old theme, so the kit uses `None` defaults and token names.
+- **Not done:** a light theme, themes for the overlay cards (Settings → Overlays → Appearance has its own schemes) and anything in EDMC's own window.
+
 ### 3.26 Text size and column fit for WFMT's own windows
 
 - **The problem:** the text of the dashboards was small and fixed, and every table gave each column a declared minimum width and shared spare width equally, so short columns sat wide and long ones were cut.

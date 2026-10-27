@@ -887,6 +887,12 @@ The Surface Live radar has not been looked at on Linux. The simulation shows it 
 - [ ] Open the Sites window, Inventory, the Exploration Dashboard and the Mining Book. Surfaces are navy, not gray; the window title is gold; section labels and table column headers are cyan; the footer message is soft blue, and green after something succeeds. Nothing is hard to read, on Wayland or on X11.
 - [ ] The Colonization overlay card's third column is headed **Acquire**.
 
+## 7k4. Color themes (new, not run on Linux)
+
+- [ ] Press the theme name at the right end of a window's bottom line and choose each of Cyan, Amber, Green and Navy: every open WFMT window recolors at once and stays readable, on Wayland or on X11. The drop-down menu is drawn in the theme's colors.
+- [ ] Settings → WFMT → General → Window → Color theme shows the same name; the choice is kept after a restart, and a window opened afterwards uses it.
+- [ ] The stat tiles at the top of a dashboard keep their size when **A+** is pressed.
+
 ## 7k3. Text size and column fit (new, not run on Linux)
 
 - [ ] Open the Sites window and press **A+** twice at the right end of its bottom line: the text grows in every open WFMT window, tables stay aligned and nothing is cut off. **A-** shrinks it, and the size is kept after a restart.

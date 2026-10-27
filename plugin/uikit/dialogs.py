@@ -42,8 +42,8 @@ _BUTTON_CHARS = 18       # longest button caption shown (the full label is still
 _ENTRY_CHARS = 44
 
 _MARKERS = {
-    "confirm": ("?", P.ACCENT), "choose": ("?", P.ACCENT), "prompt": ("?", P.ACCENT),
-    "info": ("i", P.INFO), "warning": ("!", P.WARN), "error": ("x", P.DANGER),
+    "confirm": ("?", "ACCENT"), "choose": ("?", "ACCENT"), "prompt": ("?", "ACCENT"),    # palette token names, read when drawn
+    "info": ("i", "INFO"), "warning": ("!", "WARN"), "error": ("x", "DANGER"),
 }
 
 _responder: Optional[Callable[..., Any]] = None
@@ -150,7 +150,8 @@ def _show(owner: tk.Misc, kind: str, title: str, message: str, labels: list[str]
 
         body = tk.Frame(window, bg=P.BG, padx=P.PAD * 2, pady=P.PAD * 2)
         body.pack(fill="x")
-        glyph, color = _MARKERS[kind]
+        glyph, color_name = _MARKERS[kind]
+        color = getattr(P, color_name)
         tk.Label(body, text=glyph, fg=color, bg=P.BG, width=2, anchor="n",
                  font=style.font(P.FONT_TITLE)).pack(side="left", anchor="n", padx=(0, P.PAD))
         text_column = tk.Frame(body, bg=P.BG)

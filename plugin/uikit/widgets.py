@@ -27,21 +27,23 @@ class Card(tk.Frame):
 class Pill(tk.Label):
     """Small status chip. Always has text, so color is never the only cue."""
 
-    def __init__(self, parent: tk.Misc, text: str, color: str = P.MUTED, limit: int = 18, **kwargs) -> None:
+    def __init__(self, parent: tk.Misc, text: str, color: Optional[str] = None, limit: int = 18, **kwargs) -> None:
+        color = color or P.MUTED
         bg = kwargs.pop("bg", P.CARD)
         super().__init__(parent, text=f" {clip(text, limit)} ", fg=color, bg=bg,
-                         font=style.font(P.FONT_SMALL), highlightthickness=1,
+                         font=style.font(P.FONT_SMALL, scaled=False), highlightthickness=1,
                          highlightbackground=color, highlightcolor=color, **kwargs)
 
 
 class StatTile(tk.Frame):
     """A big number over a small caption."""
 
-    def __init__(self, parent: tk.Misc, value: str, caption: str, color: str = P.TEXT) -> None:
+    def __init__(self, parent: tk.Misc, value: str, caption: str, color: Optional[str] = None) -> None:
         super().__init__(parent, bg=P.CARD, padx=P.PAD, pady=P.PAD_SM)
-        self._value = tk.Label(self, text=value, fg=color, bg=P.CARD, font=style.font(P.FONT_STAT))
+        # A tile keeps its own size whatever the text size setting is: it is a small box in a row of them, not text to read at length.
+        self._value = tk.Label(self, text=value, fg=color or P.TEXT, bg=P.CARD, font=style.font(P.FONT_STAT, scaled=False))
         self._value.pack(anchor="w")
-        self._caption = tk.Label(self, text=caption, fg=P.MUTED, bg=P.CARD, font=style.font(P.FONT_SMALL), justify="left")
+        self._caption = tk.Label(self, text=caption, fg=P.MUTED, bg=P.CARD, font=style.font(P.FONT_SMALL, scaled=False), justify="left")
         self._caption.pack(anchor="w")
         self.bind("<Configure>", self._rewrap)
 
@@ -69,8 +71,8 @@ class TileRow(tk.Frame):
 
     GAP = 6
 
-    def __init__(self, parent: tk.Misc, bg: str = P.PANE) -> None:
-        super().__init__(parent, bg=bg)
+    def __init__(self, parent: tk.Misc, bg: Optional[str] = None) -> None:
+        super().__init__(parent, bg=bg or P.PANE)
         self._columns = 0
         self.bind("<Configure>", lambda _e: self.arrange())
 
@@ -88,15 +90,16 @@ class TileRow(tk.Frame):
             tile.grid(row=index // columns, column=index % columns, sticky="nsew", padx=(0 if index % columns == 0 else self.GAP, 0), pady=(0 if index < columns else self.GAP, 0))
 
 
-def section_header(parent: tk.Misc, text: str, bg: str = P.PANE) -> tk.Label:
-    return tk.Label(parent, text=text.upper(), fg=P.HEADING, bg=bg, anchor="w",
+def section_header(parent: tk.Misc, text: str, bg: Optional[str] = None) -> tk.Label:
+    return tk.Label(parent, text=text.upper(), fg=P.HEADING, bg=bg or P.PANE, anchor="w",
                     font=style.font(P.FONT_SMALL_BOLD), padx=P.PAD, pady=P.PAD_SM)
 
 
 class ScrollFrame(tk.Frame):
     """A vertically scrolling container; put content in `.body`."""
 
-    def __init__(self, parent: tk.Misc, bg: str = P.PANE, height: Optional[int] = None) -> None:
+    def __init__(self, parent: tk.Misc, bg: Optional[str] = None, height: Optional[int] = None) -> None:
+        bg = bg or P.PANE
         super().__init__(parent, bg=bg)
         extra = {"height": height} if height else {}
         self._canvas = tk.Canvas(self, bg=bg, highlightthickness=0, bd=0, **extra)
@@ -142,9 +145,9 @@ class NoteLabel(tk.Label):
 
     _START_WRAP = 600  # until the first layout; a huge unwrapped request would stretch the window
 
-    def __init__(self, parent: tk.Misc, text: str = "", fg: str = P.MUTED, bg: str = P.PANE,
+    def __init__(self, parent: tk.Misc, text: str = "", fg: Optional[str] = None, bg: Optional[str] = None,
                  font: tuple = P.FONT_BODY, padx: int = P.PAD) -> None:
-        super().__init__(parent, text=text, fg=fg, bg=bg, anchor="w", justify="left", padx=padx,
+        super().__init__(parent, text=text, fg=fg or P.MUTED, bg=bg or P.PANE, anchor="w", justify="left", padx=padx,
                          wraplength=self._START_WRAP, font=style.font(font))
         self.bind("<Configure>", self._rewrap)
 
@@ -296,15 +299,18 @@ class FlatButton(tk.Label):
     native chrome on Windows that ignores our colors). kind: "normal",
     "accent" (primary action) or "danger"."""
 
-    _KINDS = {
-        "normal": (P.BUTTON, P.HOVER, P.TEXT),
-        "accent": (P.ACCENT, "#ffb957", "#1a1306"),
-        "danger": (P.BUTTON, P.HOVER, P.DANGER),
-    }
+    @staticmethod
+    def _kinds() -> dict:
+        """(fill, hover fill, text) for each kind, from the theme in use now."""
+        return {
+            "normal": (P.BUTTON, P.HOVER, P.TEXT),
+            "accent": (P.ACCENT, P.ACCENT_HI, P.ACCENT_INK),
+            "danger": (P.BUTTON, P.HOVER, P.DANGER),
+        }
 
     def __init__(self, parent: tk.Misc, text: str, command: Callable[[], None],
                  kind: str = "normal", **kwargs) -> None:
-        self._bg, self._hover, fg = self._KINDS[kind]
+        self._bg, self._hover, fg = self._kinds()[kind]
         weight = P.FONT_BOLD if kind == "accent" else P.FONT_BODY
         super().__init__(parent, text=text, fg=fg, bg=self._bg, padx=14, pady=6,
                          cursor="hand2", font=style.font(weight), **kwargs)
@@ -321,7 +327,7 @@ class FlatButton(tk.Label):
 
     def set_enabled(self, enabled: bool) -> None:
         self._enabled = enabled
-        self.configure(fg=self._KINDS["normal"][2] if enabled else P.FAINT,
+        self.configure(fg=self._kinds()["normal"][2] if enabled else P.FAINT,
                        cursor="hand2" if enabled else "")
 
 
@@ -525,7 +531,8 @@ class Tabs(tk.Frame):
     `compact=True` is for a set of tabs nested inside a pane: smaller labels, and the bar takes the pane's color instead of the window's, so it reads as part
     of the pane rather than as a second page-level tab bar."""
 
-    def __init__(self, parent: tk.Misc, bg: str = P.BG, wrap: bool = True, compact: bool = False) -> None:
+    def __init__(self, parent: tk.Misc, bg: Optional[str] = None, wrap: bool = True, compact: bool = False) -> None:
+        bg = bg or P.BG
         if compact:
             bg = P.PANE
         super().__init__(parent, bg=bg)
@@ -633,9 +640,10 @@ class Tabs(tk.Frame):
             self.on_select(index)
 
 
-def field_grid(parent: tk.Misc, row: int, pairs: Sequence[tuple[str, str]], bg: str = P.PANE) -> None:
+def field_grid(parent: tk.Misc, row: int, pairs: Sequence[tuple[str, str]], bg: Optional[str] = None) -> None:
     """One row of label: value pairs (muted bold label, plain value) in a
     grid, so values line up instead of being spaced with runs of blanks."""
+    bg = bg or P.PANE
     column = 0
     for label, value in pairs:
         tk.Label(parent, text=label, fg=P.HEADING, bg=bg, font=style.font(P.FONT_BOLD)).grid(
@@ -648,15 +656,15 @@ def field_grid(parent: tk.Misc, row: int, pairs: Sequence[tuple[str, str]], bg: 
 class ProgressBar(tk.Canvas):
     """A flat capacity bar: `set(percent, color)`."""
 
-    def __init__(self, parent: tk.Misc, width: int = 220, height: int = 10, bg: str = P.PANE) -> None:
-        super().__init__(parent, width=width, height=height, bg=bg, highlightthickness=0, bd=0)
+    def __init__(self, parent: tk.Misc, width: int = 220, height: int = 10, bg: Optional[str] = None) -> None:
+        super().__init__(parent, width=width, height=height, bg=bg or P.PANE, highlightthickness=0, bd=0)
         self._percent = 0.0
         self._color = P.INFO
         self.bind("<Configure>", lambda _e: self._draw())
 
-    def set(self, percent: float, color: str = P.INFO) -> None:
+    def set(self, percent: float, color: Optional[str] = None) -> None:
         self._percent = max(0.0, min(100.0, percent))
-        self._color = color
+        self._color = color or P.INFO
         self._draw()
 
     def _draw(self) -> None:

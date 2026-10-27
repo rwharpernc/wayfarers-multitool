@@ -39,6 +39,21 @@ class _Parts:
             button.bind("<Button-1>", lambda _e, n=step: style.set_text_delta(style.text_delta() + n))
             button.bind("<Enter>", lambda _e, b=button: b.configure(fg=P.TEXT))
             button.bind("<Leave>", lambda _e, b=button: b.configure(fg=P.MUTED))
+        # The color theme: its name, and a menu of the themes when it is pressed. The label changes with the theme, wherever it is chosen.
+        theme = tk.Label(self._sizer, text=style.theme_name(), fg=P.MUTED, bg=P.BG, padx=7, cursor="hand2", font=style.font(P.FONT_SMALL_BOLD))
+        theme.pack(side="left")
+        theme.bind("<Enter>", lambda _e: theme.configure(fg=P.TEXT))
+        theme.bind("<Leave>", lambda _e: theme.configure(fg=P.MUTED))
+
+        def choose(_e: tk.Event) -> None:
+            menu = tk.Menu(theme, tearoff=0, bg=P.CARD, fg=P.TEXT, activebackground=P.SELECT, activeforeground=P.TEXT, bd=0)
+            for name in P.THEMES:
+                menu.add_command(label=name, command=lambda n=name: style.set_theme(n))
+            menu.tk_popup(theme.winfo_rootx(), theme.winfo_rooty() + theme.winfo_height())
+
+        theme.bind("<Button-1>", choose)
+        stop = style.add_theme_listener(lambda: theme.configure(text=style.theme_name()) if theme.winfo_exists() else None)
+        theme.bind("<Destroy>", lambda _e: stop(), add="+")
 
     def add_action(self, text: str, command: Callable[[], None], accent: bool = False) -> FlatButton:
         button = FlatButton(self.actions, text, command, kind="accent" if accent else "normal")

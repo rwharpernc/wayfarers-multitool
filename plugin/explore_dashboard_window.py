@@ -39,7 +39,7 @@ MIN_SIZE = (940, 560)
 TAB_OVERVIEW, TAB_ORBIT, TAB_SURFACE, TAB_EXPLORATION = 0, 1, 2, 3
 TAB_NAMES = ("Overview", "Orbit", "Surface", "Exploration")
 
-_ROLE_COLORS = {D.TEXT: P.TEXT, D.GOOD: P.OK, D.WARN: P.WARN, D.INFO: P.INFO, D.MUTED: P.MUTED, D.BAD: P.DANGER}
+_ROLE_COLORS = {D.TEXT: "TEXT", D.GOOD: "OK", D.WARN: "WARN", D.INFO: "INFO", D.MUTED: "MUTED", D.BAD: "DANGER"}   # palette token names, read when drawn
 
 _window: Optional["ExploreDashboardWindow"] = None
 
@@ -87,7 +87,8 @@ def columns_for(spec: Sequence[Tuple[str, str, int, str]]) -> List[Column]:
 class FieldBlock(tk.Frame):
     """A titled block of label: value rows. `set` redraws only when the fields changed."""
 
-    def __init__(self, parent: tk.Misc, title: str, bg: str = P.CARD, label_width: int = 22) -> None:
+    def __init__(self, parent: tk.Misc, title: str, bg: Optional[str] = None, label_width: int = 22) -> None:
+        bg = bg or P.CARD
         super().__init__(parent, bg=bg, padx=P.PAD, pady=P.PAD_SM)
         self._bg = bg
         self._label_width = label_width
@@ -346,7 +347,7 @@ class ExploreDashboardWindow:
             self._tile_signature = signature
             for child in self._tile_row.winfo_children():
                 child.destroy()
-            self._tiles = [StatTile(self._tile_row, tile.value, tile.caption, _ROLE_COLORS.get(tile.role, P.TEXT)) for tile in tiles]
+            self._tiles = [StatTile(self._tile_row, tile.value, tile.caption, getattr(P, _ROLE_COLORS.get(tile.role, "TEXT"))) for tile in tiles]
             self._tiles_for_width = 0
             self._place_tiles()
         self._system_block.set(D.system_fields(data["survey"], data["readouts"][0]))

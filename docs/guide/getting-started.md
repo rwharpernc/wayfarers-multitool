@@ -377,7 +377,7 @@ in [what goes on the internet](internet-and-privacy.md).
 ### Pop-out windows
 
 Sessions, rare goods, inventory, the BGS report, the Surface Mining Book and others open as their own windows. They have a
-navy look with colored headings, a text size you can change (the **A-** and **A+** buttons at the right end of the bottom line, or Settings → WFMT → General → Window → *Text size*; one size for every window, remembered), remember their size and position, and close with **Esc** or the window's close button. The main panel itself follows your
+navy look with colored headings, a text size and a color theme you can change (the **A-** and **A+** buttons and the theme name at the right end of the bottom line, or Settings → WFMT → General → Window; one choice for every window, remembered; Navy, Cyan, Amber or Green; the small boxes at the top of a dashboard keep their size), remember their size and position, and close with **Esc** or the window's close button. The main panel itself follows your
 EDMC theme.
 
 Every pop-out window has the same layout:

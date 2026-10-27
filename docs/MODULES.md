@@ -458,7 +458,7 @@ Spec: [WINDOW_FRAMEWORK_SPEC.md](WINDOW_FRAMEWORK_SPEC.md). Pure tkinter; nothin
 | `uikit/dialogs.py` | Themed confirm, choice, one-line prompt and message boxes (`confirm`, `choose`, `prompt`, `info`, `warning`, `error`) in place of the operating system's own boxes: modal over the parent, centered, a hard width cap, Esc cancels and Enter takes the default; `set_test_responder` lets tests answer without a window |
 | `uikit/form.py` | `FormDialog`: labeled fields under section headings with an error line and Save and Cancel, in the window shell; the shared add/edit form (hotspots, ship builds), with `parse_optional_int` and `parse_optional_float` |
 | `uikit/mapview.py` | Canvas map widget (coverage, hotspots, position, dashed rings, zoom) |
-| `uikit/palette.py` | Color and font tokens for WFMT's own window look (the navy surfaces, and the `TITLE`, `HEADING` and `STATUS` colors) |
+| `uikit/palette.py` | Color and font tokens for WFMT's own window look, and its four themes (Navy, Cyan, Amber, Green) with `apply` |
 | `uikit/shell.py` | The window shell: header, body, status footer, saved geometry; and `TabShell`, the same shell for a window that lives in a tab of another window |
 | `uikit/style.py` | Fonts and per-window skinning |
 | `uikit/table.py` | `DataTable`, the replacement for `ttk.Treeview` |

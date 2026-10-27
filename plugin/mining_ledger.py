@@ -56,8 +56,8 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 CONFIG_GEOMETRY = "wfmt_mining_ledger_geometry"
 CONFIG_STOP_RADIUS = "wfmt_mining_stop_radius_m"
 
-_DENSITY_COLORS = {"High": P.OK, "Medium": P.WARN, "Low": P.DANGER}
-_AMOUNT_COLORS = {"High": P.OK, "Medium": P.WARN, "Low": P.DANGER, "Depleted": P.MUTED}
+_DENSITY_COLORS = {"High": "OK", "Medium": "WARN", "Low": "DANGER"}   # palette token names, read when drawn
+_AMOUNT_COLORS = {"High": "OK", "Medium": "WARN", "Low": "DANGER", "Depleted": "MUTED"}
 
 _PROSPECT_COLUMNS = (
     Column("material", "Material", 150, stretch=True, max_chars=28),
@@ -380,7 +380,7 @@ class MiningBook:
                     bits.append(f"stop {stop_number[id(spot)]}")
                 rows.append(dict(key=key, title=spot.material, indent=10, sub="  ·  ".join(bits),
                                  detail=f"{spot.mined_tons:,} t" if spot.mined_tons else "",
-                                 pill=(spot.amount, _AMOUNT_COLORS.get(spot.amount, P.MUTED)) if spot.amount else None))
+                                 pill=(spot.amount, getattr(P, _AMOUNT_COLORS.get(spot.amount, "MUTED"))) if spot.amount else None))
             groups.append((label, label, rows))
         self._hotspots.populate(groups, keep_scroll=True)
         for label, _heading, _rows in groups:
@@ -540,9 +540,9 @@ class MiningBook:
         pills = tk.Frame(self._card, bg=P.CARD)
         pills.pack(anchor="w", pady=(0, 8))
         if spot.density:
-            Pill(pills, f"{spot.density} density", _DENSITY_COLORS.get(spot.density, P.MUTED)).pack(side="left", padx=(0, 6))
+            Pill(pills, f"{spot.density} density", getattr(P, _DENSITY_COLORS.get(spot.density, "MUTED"))).pack(side="left", padx=(0, 6))
         if spot.amount:
-            Pill(pills, f"{spot.amount} amount", _AMOUNT_COLORS.get(spot.amount, P.MUTED)).pack(side="left")
+            Pill(pills, f"{spot.amount} amount", getattr(P, _AMOUNT_COLORS.get(spot.amount, "MUTED"))).pack(side="left")
         estimate = mining_deposit.reserve_text(spot.rigs, spot.amount, spot.density, spot.mined_tons)
         if estimate:
             tk.Label(self._card, text=estimate, fg=P.ACCENT, bg=P.CARD,

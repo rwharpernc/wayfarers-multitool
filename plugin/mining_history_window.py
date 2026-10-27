@@ -35,7 +35,7 @@ MIN_SIZE = (820, 520)
 POLL_MS = 700
 REFRESH_EVERY_MS = 15000          # re-read the newest journal this often while the window is open
 
-_ROLE_COLORS = {TEXT: P.TEXT, GOOD: P.OK, INFO: P.INFO, MUTED: P.MUTED}
+_ROLE_COLORS = {TEXT: "TEXT", GOOD: "OK", INFO: "INFO", MUTED: "MUTED"}   # palette token names, read when drawn
 
 _windows: Dict[str, "MiningHistoryWindow"] = {}
 
@@ -205,5 +205,5 @@ class MiningHistoryWindow:
         for child in self._tile_row.winfo_children():
             child.destroy()
         for tile in tiles:
-            StatTile(self._tile_row, tile.value, tile.caption, _ROLE_COLORS.get(tile.role, P.TEXT))
+            StatTile(self._tile_row, tile.value, tile.caption, getattr(P, _ROLE_COLORS.get(tile.role, "TEXT")))
         self._tile_row.arrange(force=True)
