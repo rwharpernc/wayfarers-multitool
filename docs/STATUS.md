@@ -26,7 +26,7 @@ There is one long-lived branch, `master`.
 
 - Tested by the maintainer, using a build of the branch being worked on (`npm run deploy`, run by hand).
 - Bugs found are fixed on `master` or a short bug fix branch.
-- To check on Windows with the 2026-10-23 build (steps in [TEST_PLAN.md](TEST_PLAN.md) section 5):
+- Not yet recorded for the released 1.0.0 (2026-10-26): the in-game pass in [TEST_PLAN.md](TEST_PLAN.md), sections 1 to 6. Sections 5 (2026-10-23) and 6 (Colonization, 2026-10-26) are the newest:
   - every overlay is off after the first start, for every commander, with one log line
   - a stopped expedition carries on from where it stopped, and Rescan leaves out paused and stopped time
   - Overlay Placement names where the screen size came from, and reads the real hardware size when the game's files are not found
@@ -40,7 +40,8 @@ There is one long-lived branch, `master`.
 
 ### Linux, next pass
 
-- The current build is to be tested on CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC.
+- Automated: 3,447 tests pass in the Docker container (12 skipped), run on 2026-10-26 before the 1.0.0 release.
+- Manual: the released 1.0.0 is still to be tested on CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC.
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Report the session type (Wayland or X11) with the results.
 

@@ -11,6 +11,17 @@ What to check in EDMC after the 1.0.0 release (and before any later one), on **W
 - The unit and smoke tests pass, but they cannot show what the game, the overlay and a real clipboard do.
 - The overview is in [CHANGELOG.md](../CHANGELOG.md) and [STATUS.md](STATUS.md). The longer wording for each check is in [TODO.md](TODO.md) (under "Verification in the game").
 
+## Where the testing stands (2026-10-26)
+
+| Platform | Automated tests | Checks in the game |
+|---|---|---|
+| **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is proved only by the in-game pass. | Not yet recorded for 1.0.0. Sections 1 to 6 below are open. |
+| **Linux** | 3,447 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-10-26 before the release was cut. | Not yet recorded for 1.0.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
+
+- 1.0.0 was released on 2026-10-26 (tag `v1.0.0`). These passes are the checks to run on the released build, and a failure goes to a fix on a short
+  `bugfix/1.0.1` branch.
+- Tick a box in the sections below only when you have seen it pass; nothing here has been ticked from the automated run.
+
 **Reporting**
 
 - Tick a box when the check passes.
