@@ -131,7 +131,7 @@ They are found again when EDMC starts.
 
 ## The Colonization Sites window
 
-Sites are listed on the left under three headings: **Site** (the name), **Left** (tons the site still needs) and **Status** (progress as a percentage, or `complete` or `failed`). Finished ones are grayed out. The subtitle reads `<commander> — N active of M sites`. With no sites the list says to dock at a construction depot to register one. The window remembers its size and position, and the divider between the commodity table and Where to buy can be dragged.
+Sites are listed on the left under three headings: **Site** (the name), **Left** (tons the site still needs) and **Status** (progress as a percentage, or `complete` or `failed`). Finished ones are grayed out. The subtitle reads `<commander> — N active of M sites`. With no sites the list says to dock at a construction depot to register one. The window remembers its size and position. With Where to buy in its own window (the **Where to Buy** button), the commodity table has the whole height.
 
 Click a site to see it on the right. The first active site is picked when the window opens. You see:
 
@@ -335,9 +335,9 @@ For anyone who does not use the overlay, the commodity table is the shopping lis
 
 ## Where to buy
 
-Under the commodity table, **Where to buy** finds the closest places to buy a commodity.
+**Where to buy** finds the closest places to buy a commodity. It has its own window: press **Where to Buy** in the header of the Colonization Sites window. The window remembers its size and position, opens with the picked commodity and the site's system filled in, and closes with the Sites window.
 
-1. Click a commodity row. The note under the buttons says `Ready to search for <commodity>. Press Find nearest.`
+1. In the Sites window, click a commodity row. The Where to Buy window's heading names it, and its note says `Ready to search for <commodity>. Press Find nearest.` Pick another row, or another site, and the open window follows.
 2. Check the options.
 3. Press **Find nearest**. While it runs the note is shown in the accent color and the button is disabled.
 

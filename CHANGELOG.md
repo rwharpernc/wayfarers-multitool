@@ -16,6 +16,10 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Changed
 
+- **Colonization:** Where to buy has its own window. **Where to Buy** in the Colonization Sites window opens it with the site's system and
+  the picked commodity filled in, and it follows the commodity and site you pick there. It remembers its size and position and closes with
+  the Sites window. The commodity table now has the whole height of the right-hand side. The search itself, its options and what it sends
+  are unchanged.
 - **Windows:** the footer message of WFMT's windows has its own bright color on every theme (yellow on Navy, Cyan and Green, cyan on
   Amber) instead of a pale tint of the accent. The note under the Where to buy buttons uses it while a search runs.
 

@@ -1,4 +1,4 @@
-"""Builds the colonization pop-out windows (Colonization Sites with its where-to-buy results, Colonization History, Planned Builds, My Projects and the Archive) with EDMC stubbed and long data
+"""Builds the colonization pop-out windows (Colonization Sites, Where to Buy with its results, Colonization History, Planned Builds, My Projects and the Archive) with EDMC stubbed and long data
 (60-character construction site and station names, 40-character system names, tonnages in the millions), and runs the layout checker (window_fit_check.py) at the window's
 minimum size, 640 px wide and 1600 px wide. Fails on text cut off, controls pushed outside the window, labels that cannot wrap and tables whose columns do not fit or do
 not use a wide window. Run by test_window_fit_colonization_smoke.py in a subprocess so the stand-ins never leak into other tests. Exits 0 if everything holds, 1 if not,
@@ -21,7 +21,7 @@ except tk.TclError:
     sys.exit(77)
 root.withdraw()
 
-from plugin import (colonization, colonization_archive_window as AW, colonization_builds_window as B, colonization_carrier, colonization_data, colonization_history_window as HW,  # noqa: E402
+from plugin import (colonization, colonization_archive_window as AW, colonization_builds_window as B, colonization_buy_window as BW, colonization_carrier, colonization_data, colonization_history_window as HW,  # noqa: E402
                     colonization_projects_window as PW, colonization_sources as S, colonization_window as W, rcc_client)
 
 problems, notes = [], []
@@ -59,8 +59,8 @@ def fake_whole(system, commodities, **kwargs):
     return S.WholeListResult(found=found, failed=[])
 
 
-W.sources.find = fake_find
-W.sources.find_whole_list = fake_whole
+BW.sources.find = fake_find
+BW.sources.find_whole_list = fake_whole
 
 
 def settle(done):
@@ -75,22 +75,26 @@ def settle(done):
 W.show(root, repo_sites, F.COMMANDER, {"steel": 500, "water": 50}, carrier, lambda: 784, lambda: F.SYSTEM, lambda: (F.STATION, frozenset({"steel"})))
 window = W._window
 F.pump(root)
-window._system_var.set(F.SYSTEM)
 window._commodity_table.select("1:steel", notify=True)
-window._pad.set("Large only")
-window._carriers_var.set(True)
-window._on_find()
-settle(lambda: window._find_button._enabled)
+F.check_views(root, window._toplevel, "Colonization Sites", None, problems, notes)
+window._on_where_to_buy()
+buy = BW._window
+F.pump(root)
+buy._system_var.set(F.SYSTEM)
+buy._pad.set("Large only")
+buy._carriers_var.set(True)
+buy._on_find()
+settle(lambda: buy._find_button._enabled)
 views = [("results", lambda: None)]
 
 
 def whole():
-    window._on_find_all()
-    settle(lambda: window._whole_job is None)
+    buy._on_find_all()
+    settle(lambda: buy._whole_job is None)
 
 
 views.append(("find all", whole))
-F.check_views(root, window._toplevel, "Colonization Sites", views, problems, notes)
+F.check_views(root, buy._toplevel, "Where to Buy", views, problems, notes)
 window.close()
 
 # --- Colonization History --------------------------------------------------------------------------------------------------------------

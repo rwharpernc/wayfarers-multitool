@@ -716,7 +716,7 @@ Written and tried on Linux (Flatpak EDMC, Proton game, EDMCModernOverlay). The c
 Written and tried on Windows. The code is platform-neutral Python and Tk, but the window layout has only been seen on Windows. Needs a commander with at least one registered construction site and an internet connection.
 
 - [ ] The window opens at about 1300 x 780 with the sites on the left and the detail on the right; nothing is clipped at
-      its minimum size (1180 x 640), and the divider between the commodity table and Where to buy drags.
+      its minimum size (1300 x 640), and the commodity table has the whole height of the right-hand side.
 - [ ] Picking a site shows its progress bar, the six totals, and its commodities; the Filter box, the **Show** dropdown
       (All, To buy, To haul) and the column headings (click, click again to reverse) all work.
 - [ ] **Buy Trips and Haul Trips** (needs a fleet carrier with stock stored on it): a commodity fully on the carrier shows Buy
@@ -724,8 +724,10 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
 - [ ] **Row colors**: a commodity row turns green when the hold plus the FC column covers the site's remaining need
       (exactly equal is green), orange when together they are more than needed, and keeps the normal look while short.
       The tint stays visible, only lightened, when the row is hovered or selected.
-- [ ] **Where to buy**: pick a commodity row, press **Find nearest**: results appear, closest first, the button is
-      disabled while it searches, and the window stays responsive.
+- [ ] **Where to buy** (its own window): pick a commodity row, press **Where to Buy** in the header, then **Find nearest**:
+      the window opens with the site's system filled in, results appear, closest first, the button is disabled while it
+      searches, and the window stays responsive. Pick another row and the open window's heading follows; closing the Sites
+      window closes it; its size and position are remembered.
 - [ ] **Landing pad**: Any size lists stations whose largest pad is Medium or Small; Large only lists none of those.
 - [ ] **Include fleet carriers** off lists no carriers; on adds a **Fleet carriers** group under the stations.
 - [ ] The **Planetary** column says Yes for planetary ports, outposts and settlements and No for orbital stations and

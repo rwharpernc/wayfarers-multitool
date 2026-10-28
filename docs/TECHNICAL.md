@@ -1073,6 +1073,7 @@ Where it lives and how it is used:
   - The band is the cheapest price up to 110% of it (selling: 90% of the highest up to it).
   - `mission_sources.lookup` runs it for each commodity in turn on a worker thread.
   - Nothing is cached or stored.
+- The Where to Buy window (`colonization_buy_window.py`, opened by the Sites window's **Where to Buy** button) holds the search. It knows the Sites window only through a `Host` of four callbacks (the picked commodity, the rows still to buy, the selected site's system and the commander's system); the Sites window tells it when the pick or the site changes (`set_wanted`, `follow_site`). The search choices keep their old settings key, and the window has its own geometry key.
 - The Colonization window's Where to buy search remembers an identical search (same system, commodity, radius, pad size, carriers and sort) for 2 minutes, and runs only when you press Find nearest or Find all, asking for at most 25 stations and 10 carriers per commodity.
   - Find all (`colonization_sources.find_whole_list`) is the same search once per outstanding commodity on one worker thread, in order.
     - It pauses 0.4 s before each request that really goes out (answers from memory cost no pause; the cache key is shared with Find nearest).

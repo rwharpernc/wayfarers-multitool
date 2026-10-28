@@ -172,9 +172,13 @@ window.set_cargo({"water": 50})
 
 # Where to buy: the search runs on a thread; Spansh is replaced by a stand-in that records what was asked.
 import time
-from plugin import colonization_sources as S
+from plugin import colonization_buy_window as BW, colonization_sources as S
 from plugin.uikit import palette as P
 
+window._on_where_to_buy()
+buy = BW._window
+check(buy is not None and buy.alive and buy._toplevel.title() == "Where to Buy", "the Where to Buy button should open its own window")
+check("Pick a commodity row" in buy._sources_note.cget("text"), "with nothing picked the note says what to do")
 asked = []
 
 
@@ -189,14 +193,14 @@ def fake_find(system, commodity, **kwargs):
 def wait_for_search():
     for _ in range(100):
         root.update()
-        if window._find_button._enabled:
+        if buy._find_button._enabled:
             return
         time.sleep(0.02)
 
 
-S_find = W.sources.find
-W.sources.find = fake_find
-window._on_find()
+S_find = BW.sources.find
+BW.sources.find = fake_find
+buy._on_find()
 check(not asked, "Find nearest with no commodity picked must not search")
 # A real single click on the row (not a direct call), the way the commander picks a commodity.
 for _ in range(4):
@@ -205,49 +209,61 @@ steel_row = window._commodity_table._rows["1:steel"]
 steel_row.cells[0].event_generate("<Button-1>")
 root.update()
 check(window._wanted == "Steel", f"picking a commodity row should set the wanted commodity, got {window._wanted}")
-check(window._system_var.get() == "Sol", "the search should default to the site's system")
-window._on_find()
+check(buy._system_var.get() == "Sol", "the search should default to the site's system")
+buy._on_find()
 wait_for_search()
 check(len(asked) == 1 and asked[0][1] == "Steel", "the search should ask for Steel")
 check(asked[0][2]["pad"] == "any", "the pad size must default to ANY")
 check(asked[0][2]["include_carriers"] is False, "fleet carriers must be off by default")
-check(len(window._source_table) == 2, "two stations should be listed")
-planetary = {row.values[0]: row.values[3] for row in window._source_table._rows.values()}
+check(len(buy._source_table) == 2, "two stations should be listed")
+planetary = {row.values[0]: row.values[3] for row in buy._source_table._rows.values()}
 check(planetary == {"Near Port": "No", "Small Post": "Yes"},
       f"the Planetary column should say whether landing on a surface is needed, got {planetary}")
 
-window._pad.set("Large only")
-window._carriers_var.set(True)
-window._on_find()
+buy._pad.set("Large only")
+buy._carriers_var.set(True)
+buy._on_find()
 wait_for_search()
 check(asked[1][2]["pad"] == "large" and asked[1][2]["include_carriers"] is True, "the options should reach the search")
-check(len(window._source_table) == 4, "two stations, the carrier group row and one carrier should be listed")
-window._source_table.select("s0")
-window._on_copy_system()
-check("Copied" in window._sources_note.cget("text"), "Copy System should confirm")
+check(len(buy._source_table) == 4, "two stations, the carrier group row and one carrier should be listed")
+buy._source_table.select("s0")
+buy._on_copy_system()
+check("Copied" in buy._sources_note.cget("text"), "Copy System should confirm")
 
 def failing_find(*args, **kwargs):
     raise OSError("boom")
 
 
-W.sources.find = failing_find
-window._on_find()
+BW.sources.find = failing_find
+buy._on_find()
 wait_for_search()
-check("failed" in window._sources_note.cget("text"), "a failed search should say so")
-check(window._find_button._enabled, "the button must come back after a failure")
-W.sources.find = S_find
+check("failed" in buy._sources_note.cget("text"), "a failed search should say so")
+check(buy._find_button._enabled, "the button must come back after a failure")
+BW.sources.find = S_find
 
 # The search choices are remembered: the two searches above used "Large only" and carriers on.
-saved_prefs = S.load_prefs(saved.get(W.CONFIG_SEARCH))
+saved_prefs = S.load_prefs(saved.get(BW.CONFIG_SEARCH))
 check(saved_prefs.pad == "large" and saved_prefs.carriers is True and saved_prefs.radius_ly == 50.0,
       f"the search choices should be saved when a search starts, got {saved_prefs}")
-saved[W.CONFIG_SEARCH] = S.dump_prefs(S.SearchPrefs(radius_ly=None, pad="medium", carriers=True, sort="price"))
-reopened = W.ColonizationWindow(root, repo, "Bocheaux", {}, None, lambda: 100)
-check(reopened._radius.get() == "No limit" and reopened._pad.get() == "Medium or larger"
+BW.close()
+check(not buy.alive, "closing the Where to Buy window closes it")
+saved[BW.CONFIG_SEARCH] = S.dump_prefs(S.SearchPrefs(radius_ly=None, pad="medium", carriers=True, sort="price"))     # after the close, which saves the window's own choices
+window._on_where_to_buy()
+reopened = BW._window
+check(reopened is not buy and reopened._radius.get() == "No limit" and reopened._pad.get() == "Medium or larger"
       and reopened._sort.get() == "Cheapest first" and reopened._carriers_var.get() is True,
       "a new window should start from the remembered choices")
-reopened.close()
-saved[W.CONFIG_SEARCH] = S.dump_prefs(S.SearchPrefs())
+check(reopened._system_var.get() == "Sol" and "Ready to search for Steel" in reopened._sources_note.cget("text"),
+      "a new window should start with the site's system and the picked commodity")
+BW.close()
+saved[BW.CONFIG_SEARCH] = S.dump_prefs(S.SearchPrefs())
+window._on_where_to_buy()
+buy = BW._window
+buy._pad.set("Large only")
+window._commodity_table.select("1:aluminium", notify=True)
+check("Ready to search for Aluminium" in buy._sources_note.cget("text") and buy._toplevel.winfo_exists(),
+      "picking another commodity in the Sites window updates the open Where to Buy window")
+window._commodity_table.select("1:steel", notify=True)
 
 # Only what this station sells: grayed out until a market is known, then narrows the list to what it has for sale.
 window._refresh_detail()
@@ -284,70 +300,70 @@ system_calls = []
 def fake_systems(found, needs, reference, **kwargs):
     system_calls.append((reference, dict(needs), kwargs["pad"]))
     kwargs["progress"](0, 1, "Sol")
-    stop = W.systems.SystemStop("Near Port", "Coriolis Starport", False, "Large", 300.0, (S.Purchase("Aluminium", 80, 410),))
-    return W.systems.SystemsResult(plans=[W.systems.SystemPlan("Sol", 0.0, (stop,), 480, 80, (("Steel", 400),), 32800, 1)])
+    stop = BW.systems.SystemStop("Near Port", "Coriolis Starport", False, "Large", 300.0, (S.Purchase("Aluminium", 80, 410),))
+    return BW.systems.SystemsResult(plans=[BW.systems.SystemPlan("Sol", 0.0, (stop,), 480, 80, (("Steel", 400),), 32800, 1)])
 
 
-S_whole = W.sources.find_whole_list
-W.sources.find_whole_list = fake_whole
-S_systems = W.systems.find_best_systems
-W.systems.find_best_systems = fake_systems
-window._on_find_all()
+S_whole = BW.sources.find_whole_list
+BW.sources.find_whole_list = fake_whole
+S_systems = BW.systems.find_best_systems
+BW.systems.find_best_systems = fake_systems
+buy._on_find_all()
 for _ in range(100):
     root.update()
-    if window._whole_job is None:
+    if buy._whole_job is None:
         break
     time.sleep(0.02)
 check(len(whole_calls) == 1 and whole_calls[0][1] == ["Aluminium", "Steel"],
       f"Find all should search what is still to buy, got {whole_calls}")
 check(whole_calls[0][2]["pad"] == "large", "Find all should use the chosen options")
-headings = [row.values[0] for row in window._source_table._rows.values() if row.group]
+headings = [row.values[0] for row in buy._source_table._rows.values() if row.group]
 check(headings == ["Best single systems", "1. Sol", "1. Near Port", "Suggested route", "1. Near Port", "Aluminium", "Steel"],
       f"the best systems, the route, then one heading per commodity: {headings}")
 check(system_calls == [("Sol", {"Aluminium": 80, "Steel": 400}, "large")], f"the systems check gets the needs and the pad choice: {system_calls}")
-systems_detail = {row.values[0]: row.values for row in window._source_table._rows.values() if row.group}
+systems_detail = {row.values[0]: row.values for row in buy._source_table._rows.values() if row.group}
 check(systems_detail["Best single systems"][1] == "1 checked", f"the systems heading counts them: {systems_detail['Best single systems']}")
 check(systems_detail["1. Sol"][1:3] == ["80 of 480 t", "short 400 t"] and systems_detail["1. Sol"][7] == "32.8K cr",
       f"a system row shows coverage, what is short and the basket's cost: {systems_detail['1. Sol']}")
-check(any(row.values[0] == "Short: Steel x 400 t" for row in window._source_table._rows.values()), "the shortfall is listed under the system")
-detail = {row.values[0]: row.values[1:3] for row in window._source_table._rows.values() if row.group}
+check(any(row.values[0] == "Short: Steel x 400 t" for row in buy._source_table._rows.values()), "the shortfall is listed under the system")
+detail = {row.values[0]: row.values[1:3] for row in buy._source_table._rows.values() if row.group}
 check(detail["Aluminium"] == ["80 t to get", ""] and detail["Steel"] == ["400 t to get", "no source found"],
       f"the detail sits in later columns so the label is not clipped: {detail}")
 check(detail["Suggested route"][0] == "1 stop", f"the route heading counts its stops: {detail['Suggested route']}")
-check(len(window._source_table) == 11, f"the systems (5 rows), the route (3 rows), two headings and one station: {len(window._source_table)}")
-check(window._plan is not None and [s.station for s in window._plan.stops] == ["Near Port"], "a plan should be kept for Copy Route")
-check(window._find_all_button.cget("text") == "Find all" and window._find_button._enabled,
+check(len(buy._source_table) == 11, f"the systems (5 rows), the route (3 rows), two headings and one station: {len(buy._source_table)}")
+check(buy._plan is not None and [s.station for s in buy._plan.stops] == ["Near Port"], "a plan should be kept for Copy Route")
+check(buy._find_all_button.cget("text") == "Find all" and buy._find_button._enabled,
       "the buttons come back when the search is done")
-check("No source found for Steel" in window._sources_note.cget("text"), "the note should name what had no source")
-check("shopping route of 1 stop" in window._sources_note.cget("text") and "Not covered: Steel 400 t" in window._sources_note.cget("text"),
-      f"the note should describe the route and what it leaves out: {window._sources_note.cget('text')}")
-check("No single system covers everything; Sol covers the most (17% of the tons)." in window._sources_note.cget("text"),
-      f"the note should name the best system: {window._sources_note.cget('text')}")
-window._source_table.select("g0s0")
-window._on_copy_system()
-check("Copied" in window._sources_note.cget("text"), "Copy System works on a Find all result")
-window._on_copy_route()
-check("Copied the best system and the shopping route" in window._sources_note.cget("text"), "Copy Route should confirm")
-window._on_source_sort("price")
-check(len(window._source_table) == 11, "sorting a Find all result keeps it, systems and route included")
-window._plan = None
-window._on_copy_route()
-check("Copied the best system to the clipboard" in window._sources_note.cget("text"), "Copy Route copies the best system alone when there is no route")
-window._systems = None
-window._on_copy_route()
-check("Press Find all first" in window._sources_note.cget("text"), "Copy Route with no route says what to do")
-check(window._sources_note.cget("fg") == P.TEXT, "the note is in the plain text color once a search is done")
-window._say("Searching 1 of 2: Steel…", busy=True)
-check(window._sources_note.cget("fg") == P.STATUS, "a search in progress is shown in the status color")
-window._say("Done.")
-check(window._sources_note.cget("fg") == P.TEXT, "any other note goes back to the plain text color")
-W.sources.find_whole_list = S_whole
-W.systems.find_best_systems = S_systems
+check("No source found for Steel" in buy._sources_note.cget("text"), "the note should name what had no source")
+check("shopping route of 1 stop" in buy._sources_note.cget("text") and "Not covered: Steel 400 t" in buy._sources_note.cget("text"),
+      f"the note should describe the route and what it leaves out: {buy._sources_note.cget('text')}")
+check("No single system covers everything; Sol covers the most (17% of the tons)." in buy._sources_note.cget("text"),
+      f"the note should name the best system: {buy._sources_note.cget('text')}")
+buy._source_table.select("g0s0")
+buy._on_copy_system()
+check("Copied" in buy._sources_note.cget("text"), "Copy System works on a Find all result")
+buy._on_copy_route()
+check("Copied the best system and the shopping route" in buy._sources_note.cget("text"), "Copy Route should confirm")
+buy._on_source_sort("price")
+check(len(buy._source_table) == 11, "sorting a Find all result keeps it, systems and route included")
+buy._plan = None
+buy._on_copy_route()
+check("Copied the best system to the clipboard" in buy._sources_note.cget("text"), "Copy Route copies the best system alone when there is no route")
+buy._systems = None
+buy._on_copy_route()
+check("Press Find all first" in buy._sources_note.cget("text"), "Copy Route with no route says what to do")
+check(buy._sources_note.cget("fg") == P.TEXT, "the note is in the plain text color once a search is done")
+buy._say("Searching 1 of 2: Steel…", busy=True)
+check(buy._sources_note.cget("fg") == P.STATUS, "a search in progress is shown in the status color")
+buy._say("Done.")
+check(buy._sources_note.cget("fg") == P.TEXT, "any other note goes back to the plain text color")
+BW.sources.find_whole_list = S_whole
+BW.systems.find_best_systems = S_systems
 
 # The header: related actions sit under a heading each, as drop-down menus.
 from plugin.uikit.widgets import FlatButton, MenuButton
 header = [w for w in window._shell.actions.winfo_children() if isinstance(w, FlatButton)]
-check([w.cget("text") for w in header] == ["Copy Shopping List", "Rescan Carrier", "Raven Colonial ▾", "Manage Sites ▾"],
+check([w.cget("text") for w in header] == ["Copy Shopping List", "Where to Buy", "Rescan Carrier", "Raven Colonial ▾", "Manage Sites ▾"],
       f"the header buttons: {[w.cget('text') for w in header]}")
 menus = {w.cget("text").split(" ")[0]: w for w in header if isinstance(w, MenuButton)}
 check(menus["Raven"].entries() == ["My Projects", "Planned Builds", "Raven Progress", "Open Selected Build on Raven", "Open This System on Raven",

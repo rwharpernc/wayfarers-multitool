@@ -190,14 +190,14 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 ### Colonization ([guide](colonization.md))
 
-**Controls:** the **COL** page with **DASHBOARD** (the Sites window), **OVERLAY** (the shopping list on your screen), **PROJECTS** (My Projects on Raven Colonial) and **HISTORY**; and in the Sites window **Copy Shopping List**, **Rescan Carrier**, the **Raven Colonial** menu, the **Manage Sites** menu, **Find nearest** and **Find all**.
+**Controls:** the **COL** page with **DASHBOARD** (the Sites window), **OVERLAY** (the shopping list on your screen), **PROJECTS** (My Projects on Raven Colonial) and **HISTORY**; and in the Sites window **Copy Shopping List**, **Where to Buy** (its own window, with **Find nearest** and **Find all**), **Rescan Carrier**, the **Raven Colonial** menu and the **Manage Sites** menu.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
 | The COL page | Your current project and your history | **COL** | [The COL page](colonization.md#the-col-page) |
 | Site tracking | What each construction site still needs, after counting the cargo in your ship | Dock at a depot once; nothing is typed | [Tracking a site](colonization.md#tracking-a-site) |
 | Colonization Sites window | Every site's shopping list, progress and totals, and the carrier's part | **DASHBOARD**; **Rescan Carrier** if a load did not register | [The Sites window](colonization.md#the-colonization-sites-window) |
-| Where to buy | The closest places to buy a commodity, or a whole list, with a suggested route and, for a list, the best single systems that stock most or all of it | Click a commodity row, then **Find nearest** or **Find all** (**Stop** while it runs) | [Where to buy](colonization.md#where-to-buy), [Best single systems](colonization.md#best-single-systems) |
+| Where to buy | The closest places to buy a commodity, or a whole list, with a suggested route and, for a list, the best single systems that stock most or all of it | Click a commodity row, press **Where to Buy**, then **Find nearest** or **Find all** (**Stop** while it runs) | [Where to buy](colonization.md#where-to-buy), [Best single systems](colonization.md#best-single-systems) |
 | My Projects | Every active project you have on Raven Colonial, across systems, with totals and trips | **PROJECTS** | [My Projects](colonization.md#my-projects) |
 | Planned Builds and Raven Colonial | Links, starting a Raven project for a site, and opt-in sharing of progress and deliveries | **Raven Colonial** menu in the Sites window; **Settings → WFMT → Colonization** (master switch and your Raven key) | [Planned builds](colonization.md#planned-builds), [Starting a project](colonization.md#starting-a-project-on-raven-colonial) |
 | Shopping list overlay | Shown at the market, your carrier or a construction site; a List choice (All, To buy or To haul) picks which rows it shows | **OVERLAY**, or the options under Settings → WFMT → Overlays → Colonization (automatic showing, rows, *List*) | [The overlay](colonization.md#the-shopping-list-on-the-overlay) |
