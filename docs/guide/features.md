@@ -190,7 +190,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 ### Colonization ([guide](colonization.md))
 
-**Controls:** the **COL** page with **DASHBOARD** (the Sites window), **OVERLAY** (the shopping list on your screen), **PROJECTS** (My Projects on Raven Colonial) and **HISTORY**; and in the Sites window **Copy Shopping List**, **Where to Buy** (its own window, with **Find nearest** and **Find all**), **Rescan Carrier**, the **Raven Colonial** menu and the **Manage Sites** menu.
+**Controls:** the **COL** page with **DASHBOARD** (the Sites window), **OVERLAY** (the shopping list on your screen), **PROJECTS** (My Projects on Raven Colonial) and **HISTORY**; and in the Sites window **Copy Shopping List**, **Copy To Acquire**, **Where to Buy** (its own window, with **Find nearest** and **Find all**), **Rescan Carrier**, the **Raven Colonial** menu and the **Manage Sites** menu.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|

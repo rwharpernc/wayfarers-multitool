@@ -26,6 +26,30 @@ def site(**flags) -> colonization.Site:
     return colonization.apply_depot_event(entry, None, name="Depot One", system="Sol")
 
 
+class BreakdownTests(unittest.TestCase):
+    def test_what_is_left_to_acquire_comes_first_with_the_carrier_and_ship_shares(self):
+        lines = view.breakdown_lines(site(), {"steel": 50, "water": 50}, {"steel": 150, "aluminium": 30}, with_carrier=True)
+        self.assertEqual(lines, [
+            "Depot One (Sol) - what is left to acquire:",
+            "Steel: 400 t needed, 150 on carrier, 50 in ship, 200 to acquire",
+            "Aluminium: 80 t needed, 30 on carrier, 50 to acquire",
+            "Water: 50 t needed, 50 in ship, covered",
+            "Still to acquire: 250 t of 530 t still needed."])
+
+    def test_without_a_fleet_carrier_the_carrier_is_not_mentioned_or_counted(self):
+        lines = view.breakdown_lines(site(), {"steel": 50}, {"steel": 150}, with_carrier=False)
+        self.assertEqual(lines[1], "Steel: 400 t needed, 50 in ship, 350 to acquire")
+        self.assertFalse(any("carrier" in line for line in lines[1:]))
+
+    def test_everything_covered_and_nothing_left_say_so(self):
+        covered = view.breakdown_lines(site(), {"steel": 400, "water": 50, "aluminium": 80})
+        self.assertEqual(covered[-1], "Nothing left to acquire: the ship already covers everything still needed.")
+        both = view.breakdown_lines(site(), {"steel": 100, "water": 50}, {"steel": 300, "aluminium": 80}, with_carrier=True)
+        self.assertEqual(both[-1], "Nothing left to acquire: the ship and the carrier already cover everything still needed.")
+        done = site(ResourcesRequired=[{"Name": "$steel_name;", "Name_Localised": "Steel", "RequiredAmount": 5, "ProvidedAmount": 5}])
+        self.assertEqual(view.breakdown_lines(done, {})[-1], "Nothing is left to deliver.")
+
+
 class GroupingAndAvailabilityTests(unittest.TestCase):
     def test_rows_group_under_market_categories_alphabetically(self):
         groups = view.group_rows(view.commodity_rows(site(), {}))
