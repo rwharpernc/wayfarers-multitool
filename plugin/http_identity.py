@@ -5,7 +5,7 @@ Every request carries a User-Agent that names WFMT, its version and where to
 find the project, so a service operator who sees traffic can tell what it is
 and get in touch. `feature` says which part of WFMT made the request.
 
-Example: "WFMT/1.1.0 (rare-goods; +https://github.com/rwharpernc/wayfarers-multitool)"
+Example: "WFMT/1.2.0 (rare-goods; +https://github.com/rwharpernc/wayfarers-multitool)"
 """
 from __future__ import annotations
 

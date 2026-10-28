@@ -980,7 +980,7 @@ Design decisions that apply to all of them:
   - `edsm_client.py` says so in its docstring: any failure (offline, service down, unexpected shape) returns an empty result. A network feature failing must not break journal handling.
   - The BGS tick client is the deliberate exception: it *raises*, and the caller decides, because a fabricated or stale tick would corrupt the tally. It never returns a guessed value.
 - **Identify WFMT in every request.** Every call sends a User-Agent naming WFMT, its version and the
-  project's address (`http_identity.py`, for example `WFMT/1.1.0 (rare-goods; +https://github.com/...)`),
+  project's address (`http_identity.py`, for example `WFMT/1.2.0 (rare-goods; +https://github.com/...)`),
   so a service operator who sees the traffic can tell what it is and get in touch. EDSM returns HTTP 403
   to the default `python-requests` agent, so its client sends EDMC's own `config.user_agent` followed by
   WFMT's.

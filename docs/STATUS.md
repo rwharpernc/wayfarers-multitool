@@ -7,8 +7,9 @@ Read this first when picking the project up on a machine that has not seen the r
 
 ## Release
 
-- **1.1.0** is the version number in `plugin/__init__.py` and `package.json`. It was released on 2026-10-27 (tag `v1.1.0`) from the `release/1.1.0` branch, which was merged into `master` and deleted.
-  - 1.1.0 adds the color themes and the text size for WFMT's own windows, the Colonization Show / List choice and the Acquire column name, and carries the fleet carrier figure fix.
+- **1.2.0** is the version number in `plugin/__init__.py` and `package.json`. It is prepared on the `release/1.2.0` branch and not yet released.
+  - 1.2.0 adds the Colonization Archive, the offer to create a Raven Colonial project for a new site and a brighter footer message, and fixes Create Project on Raven (its dialog opening out of sight and its status message being overwritten).
+  - 1.1.0 was released on 2026-10-27 (tag `v1.1.0`) from the `release/1.1.0` branch, which was merged into `master` and deleted. It added the color themes and the text size for WFMT's own windows, the Colonization Show / List choice and the Acquire column name, and carried the fleet carrier figure fix.
   - The project was renamed Wayfarer's Multitool (WFMT) and its version history restarted at 1.0.0 on 2026-10-21.
   - Everything built up to 2026-10-26 is the first release, published as 1.0.0.
   - The checks to run first are in [TEST_PLAN.md](TEST_PLAN.md), and the open in-game checks are in [TODO.md](TODO.md).
@@ -19,20 +20,20 @@ Read this first when picking the project up on a machine that has not seen the r
 
 There is one long-lived branch, `master`.
 
-- For a fix to a released version, cut a short branch from `master` (for example `bugfix/1.1.1`), and merge it back.
+- For a fix to a released version, cut a short branch from `master` (for example `bugfix/1.2.1`), and merge it back.
 
 ## Testing
 
 ### Windows
 
 - Tested by the maintainer, using a build of the branch being worked on (`npm run deploy`, run by hand).
-- Work after 1.1.0, deployed and used on Windows on 2026-10-28 (not released, not run on Linux outside the Docker tests):
+- The 1.2.0 work, deployed and used on Windows on 2026-10-28 (not run on Linux outside the Docker tests):
   - the Colonization Archive (Archive Finished, Show Archive, Restore) works on Windows
   - the bright footer message color on each theme looks better than the old one
   - Create Project on Raven: the dialog was opening out of sight, and the status message was overwritten by the construction panel; both are fixed (steps in [TEST_PLAN.md](TEST_PLAN.md) section 6)
   - still to try in the game: the offer on the COL page when a new site has no Raven project (needs sharing on and a saved key); the 30-second hold of a button's message
 - Bugs found are fixed on `master` or a short bug fix branch.
-- Not yet recorded for the released 1.1.0 (2026-10-27), and still open for 1.0.0 (2026-10-26): the in-game pass in [TEST_PLAN.md](TEST_PLAN.md), sections 1 to 6. Sections 5 (2026-10-23) and 6 (Colonization, 2026-10-26) are the newest:
+- Not yet recorded for 1.2.0 (and still open for the released 1.1.0, 2026-10-27, and 1.0.0, 2026-10-26): the in-game pass in [TEST_PLAN.md](TEST_PLAN.md), sections 1 to 6. Sections 5 (2026-10-23) and 6 (Colonization, 2026-10-26) are the newest:
   - every overlay is off after the first start, for every commander, with one log line
   - a stopped expedition carries on from where it stopped, and Rescan leaves out paused and stopped time
   - Overlay Placement names where the screen size came from, and reads the real hardware size when the game's files are not found
@@ -46,8 +47,8 @@ There is one long-lived branch, `master`.
 
 ### Linux, next pass
 
-- Automated: 3,481 tests pass in the Docker container (12 skipped), run on 2026-10-28 on the work after 1.1.0 (3,471 on 2026-10-27 before the 1.1.0 release, 3,447 on 2026-10-26 before 1.0.0).
-- Manual: the released 1.1.0 (and 1.0.0) is still to be tested on CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC.
+- Automated: 3,481 tests pass in the Docker container (12 skipped), run on 2026-10-28 on the `release/1.2.0` branch (3,471 on 2026-10-27 before the 1.1.0 release, 3,447 on 2026-10-26 before 1.0.0).
+- Manual: 1.2.0 (and the released 1.1.0 and 1.0.0) is still to be tested on CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC.
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Report the session type (Wayland or X11) with the results.
 
