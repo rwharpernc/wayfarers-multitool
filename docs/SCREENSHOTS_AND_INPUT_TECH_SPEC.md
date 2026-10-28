@@ -1,6 +1,6 @@
 # Technical Specification — Screenshots and input automation
 
-**Author:** R.W. Harper (CMDR Mactavious)
+**Author:** R.W. Harper (CMDR Tiber Caelvox)
 
 Two WFMT features press keys in the game for you: **Auto-Honk** and **timed or automatic screenshot
 capture**. This document explains exactly what they do and don't do, how Screenshots converts and crops

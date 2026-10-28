@@ -1,6 +1,6 @@
 # Technical Specification — Boxel Survey
 
-**Author:** R.W. Harper (CMDR Mactavious)
+**Author:** R.W. Harper (CMDR Tiber Caelvox)
 **Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 The standing reference for Boxel Survey across all three sub-modes (Sequence, Region Sweep, Waypoint

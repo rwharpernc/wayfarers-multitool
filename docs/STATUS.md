@@ -156,7 +156,7 @@ Written 2026-10-21 on the Windows machine. This is work done since the last Linu
 
 ## Decisions already made
 
-- The tests keep using Mactavious as a second test commander (a fixture name for checking that commanders' data stays apart). It is a test name only; CMDR Mactavious is also the project's credited author (see the README and [ATTRIBUTIONS.md](ATTRIBUTIONS.md)).
+- The tests keep using Mactavious as a second test commander (a fixture name for checking that commanders' data stays apart). It is a test name only, and is not the credited author (see the README and [ATTRIBUTIONS.md](ATTRIBUTIONS.md)).
 - Every online lookup is either opt-in in Settings or runs only when a button is pressed, and is listed in `docs/guide/internet-and-privacy.md`.
 - Out of scope: Guardian ruin surveying, landing-pad diagrams and an FSS spectrum guide.
   - The journal lacks what they would need.

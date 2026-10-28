@@ -1,6 +1,6 @@
 # Technical Specification — Mining
 
-**Author:** R.W. Harper (CMDR Mactavious)
+**Author:** R.W. Harper (CMDR Tiber Caelvox)
 
 The standing reference for Mining mode: what it tracks, the rules and numbers behind its estimates, the
 files it keeps, and the outside lookups it can make. For how to use it, see the

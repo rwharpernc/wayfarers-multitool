@@ -1,6 +1,6 @@
 # Technical Specification — Powerplay
 
-**Author:** R.W. Harper (CMDR Mactavious)
+**Author:** R.W. Harper (CMDR Tiber Caelvox)
 **Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 The standing reference for Powerplay mode: how merits are attributed to an activity, how Control Points

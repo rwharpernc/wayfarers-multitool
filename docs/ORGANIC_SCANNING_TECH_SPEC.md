@@ -1,6 +1,6 @@
 # Technical Specification — Organic Scanning
 
-**Author:** R.W. Harper (CMDR Mactavious)
+**Author:** R.W. Harper (CMDR Tiber Caelvox)
 
 The standing reference for Organic Scanning (exobiology): what it predicts, the rules behind the
 prediction, how scan progress is tracked, and where its answers can be wrong. For how to use it, see the

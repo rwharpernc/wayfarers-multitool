@@ -237,7 +237,7 @@ If you want to see how WFMT works, build it or change it, start here.
 
 WFMT stands on a lot of community work. [docs/ATTRIBUTIONS.md](docs/ATTRIBUTIONS.md) has the thanks and acknowledgements, chapter by chapter.
 
-Built and maintained by R.W. Harper: CMDR Mactavious.
+Built and maintained by R.W. Harper: CMDR Tiber Caelvox.
 
 Copyright (c) 2026 R.W. Harper. Released under the [GNU General Public License v3.0](LICENSE). Third-party notices are in
 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
