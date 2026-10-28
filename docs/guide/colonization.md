@@ -46,6 +46,8 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 | Next | One sentence on what to do now: how many tons to get (and whether bought or moved onto your carrier), that your ship and carrier hold everything so you should deliver it, that everything is delivered and you should dock to finish the build, or that the build is complete |
 | Others | `+N more active sites` when you have more than the one shown (the line is left out when you have none) |
 
+**An offer to start a Raven project.** When a construction site appears for the first time and [Raven Colonial](https://ravencolonial.com) has no project for it, a line above **Current project** says `Raven Colonial has no project for <site>.` with two buttons. **CREATE ON RAVEN** opens the Colonization Sites window on that site and its [Create dialog](#starting-a-project-on-raven-colonial); **NOT NOW** hides the line. It is made once per site and goes away once a project exists. It needs the master switch and progress sharing on, and your Raven key saved, because WFMT only looks at Raven for a site when it is allowed to share.
+
 **A finished build** is shown by its own name. The game calls a depot `Orbital Construction Site: Example Station` while it is being built. Once the build is complete, WFMT drops the `Construction Site:` part (`Example Station`) in the sites window, the shopping list and the history.
 
 ### History
@@ -557,7 +559,9 @@ WFMT's own tracking stays the source of truth for your site; Raven's figures nev
 When you dock at a construction ship or site that Raven Colonial has no project for, nothing is shared until one exists. Select the site and choose **Create Project on Raven** in the **Raven Colonial** menu.
 
 - It needs the master switch on and your Raven Colonial key (WFMT asks for the key the first time, and keeps it once Raven accepts it). It only works for an **active** site; a finished one is refused. With the switch off the status line points you to Settings.
-- WFMT first reads the system's plan on Raven Colonial. If a project already exists for the site it says so and does nothing else.
+- You can also be offered this from the COL page when a new site appears (see [An offer to start a Raven project](#the-col-page)).
+- WFMT first reads the system's plan on Raven Colonial. If a project already exists for the site it says so and does nothing else. The status line shows what it is doing while it looks, and the message from any button you press in this menu stays for 30 seconds, even while the game's construction panel keeps updating the window.
+- The dialog opens centered over the Sites window and always inside the screen. If it ever does not open, the EDMC log has a `Create project:` line saying where the steps stopped.
 - Otherwise the **Create Raven Colonial project** dialog opens. **Plan entry** lists the sites planned for that system that have no project yet, each with its build type; pick yours, or leave **None** to make a project of its own (WFMT never edits the system's plan). If only one site is planned it is preselected.
 - The building is chosen in three steps, as on Raven Colonial: **Location** (orbital or surface), **Building** (by tier and the game's name, such as *Tier 1: Industrial Outpost*), then **Layout (build type)**, the exact identifier Raven Colonial uses, such as `vulcan` or `dual_truss`. That identifier is what is sent. A planned site fills in all three; changing Location clears Building and Layout. Create refuses until a building and layout are chosen (`Choose the building and its layout.`).
 - **Body** is chosen from the system's bodies as Raven lists them (or left *Unknown*). **Name** defaults to *Primary port* for the system's colonization ship, otherwise the station's own name. **Architect** (defaults to Raven's architect for the system, otherwise you), **Notes** and **Due (YYYY-MM-DD)** are optional; a due date in another form is refused.

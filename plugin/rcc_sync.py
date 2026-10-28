@@ -20,6 +20,9 @@ asked about again for ten minutes). Requests are made one at a time on a worker 
 newest), each retried once on 429 / 503, and a failure is only logged: it never reaches the commander's play. The key goes in the
 `rcc-key` header (with the commander in `rcc-cmdr0`, as Raven's own web app sends them) and nowhere else. The commander's name is only ever part of a URL.
 
+When a live depot or delivery event finds that Raven has no project for a site, `on_no_project` is told once per site (and never for a
+site the commander has just made a project for); the Colonization panel turns that into its offer to create one. Nothing is sent for it.
+
 Keeping each live event to one request means two tools reporting the same deliveries (another plugin or tool) would make Raven
 count them twice; the docs say so.
 """

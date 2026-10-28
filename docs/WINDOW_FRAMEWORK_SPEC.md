@@ -34,7 +34,7 @@ A consequence:
 
 - **Palette and tokens** (`palette.py`): navy background layers, text, accent, success, warning and danger
   colors, and three colors for headings and messages (`TITLE` gold for a window title, `HEADING` cyan for section labels and
-  table column headers, `STATUS` soft blue for the footer message), plus a color-blind-safe set for status. Shape or a label carries the state, never color
+  table column headers, `STATUS` for the footer message: a bright color of its own on each theme, yellow or cyan), plus a color-blind-safe set for status. Shape or a label carries the state, never color
   alone (the minimap markers work the same way).
 - **Style** (`style.py`): applies the look to a window's classic widgets, and holds the shared text size (-2 to +6 points, changed by the footer's A- and A+ or Settings → General → Window). Fonts derive from
   `TkDefaultFont` so Linux and high-DPI displays behave.

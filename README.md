@@ -89,7 +89,7 @@ and each has a guide that explains every button.
 | **Trade** (**TRD**) | Profit after fuel and repairs, fleet carrier cargo, saved sessions, best routes and prices, a watch list. | [Trade](docs/guide/trade.md) |
 | **Missions** (**MSN**) | Every mission in one view, progress bars, a Missions window, where to buy the cargo. | [Missions](docs/guide/missions.md) |
 | **Field Ops** (**OPS**) | Screenshots, backpack and cargo, materials, a blueprint browser, material traders, ship builds. | [Field Ops](docs/guide/field-ops.md) |
-| **Colonization** (**COL**) | Your current build, history, and every site's shopping list. | [Colonization](docs/guide/colonization.md) |
+| **Colonization** (**COL**) | Your current build, history, an archive of finished sites, and every site's shopping list. | [Colonization](docs/guide/colonization.md) |
 | **BGS** (**BGS**) | Faction states and what your activity does to them. | [BGS](docs/guide/bgs.md) |
 
 ### Always on

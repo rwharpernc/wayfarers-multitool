@@ -201,6 +201,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | My Projects | Every active project you have on Raven Colonial, across systems, with totals and trips | **PROJECTS** | [My Projects](colonization.md#my-projects) |
 | Planned Builds and Raven Colonial | Links, starting a Raven project for a site, and opt-in sharing of progress and deliveries | **Raven Colonial** menu in the Sites window; **Settings → WFMT → Colonization** (master switch and your Raven key) | [Planned builds](colonization.md#planned-builds), [Starting a project](colonization.md#starting-a-project-on-raven-colonial) |
 | Shopping list overlay | Shown at the market, your carrier or a construction site; a List choice (All, To buy or To haul) picks which rows it shows | **OVERLAY**, or the options under Settings → WFMT → Overlays → Colonization (automatic showing, rows, *List*) | [The overlay](colonization.md#the-shopping-list-on-the-overlay) |
+| Colonization Archive | Finished sites put away for reference, with how they ended, their dates and the commodities they needed; restore or remove them | **Manage Sites → Archive Finished**, then **Show Archive** | [The archive](colonization.md#the-archive) |
 | Colonization History | What you delivered over time, by day, commodity and site | **HISTORY** | [History](colonization.md#history) |
 
 ### BGS ([guide](bgs.md))

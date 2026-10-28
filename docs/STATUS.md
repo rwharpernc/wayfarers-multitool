@@ -26,6 +26,11 @@ There is one long-lived branch, `master`.
 ### Windows
 
 - Tested by the maintainer, using a build of the branch being worked on (`npm run deploy`, run by hand).
+- Work after 1.1.0, deployed and used on Windows on 2026-10-28 (not released, not run on Linux outside the Docker tests):
+  - the Colonization Archive (Archive Finished, Show Archive, Restore) works on Windows
+  - the bright footer message color on each theme looks better than the old one
+  - Create Project on Raven: the dialog was opening out of sight, and the status message was overwritten by the construction panel; both are fixed (steps in [TEST_PLAN.md](TEST_PLAN.md) section 6)
+  - still to try in the game: the offer on the COL page when a new site has no Raven project (needs sharing on and a saved key); the 30-second hold of a button's message
 - Bugs found are fixed on `master` or a short bug fix branch.
 - Not yet recorded for the released 1.1.0 (2026-10-27), and still open for 1.0.0 (2026-10-26): the in-game pass in [TEST_PLAN.md](TEST_PLAN.md), sections 1 to 6. Sections 5 (2026-10-23) and 6 (Colonization, 2026-10-26) are the newest:
   - every overlay is off after the first start, for every commander, with one log line
@@ -41,7 +46,7 @@ There is one long-lived branch, `master`.
 
 ### Linux, next pass
 
-- Automated: 3,471 tests pass in the Docker container (12 skipped), run on 2026-10-27 before the 1.1.0 release (3,447 on 2026-10-26 before 1.0.0).
+- Automated: 3,481 tests pass in the Docker container (12 skipped), run on 2026-10-28 on the work after 1.1.0 (3,471 on 2026-10-27 before the 1.1.0 release, 3,447 on 2026-10-26 before 1.0.0).
 - Manual: the released 1.1.0 (and 1.0.0) is still to be tested on CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC.
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Report the session type (Wayland or X11) with the results.

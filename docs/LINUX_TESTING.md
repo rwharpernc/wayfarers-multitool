@@ -893,6 +893,12 @@ The Surface Live radar has not been looked at on Linux. The simulation shows it 
 - [ ] Settings → WFMT → General → Window → Color theme shows the same name; the choice is kept after a restart, and a window opened afterwards uses it.
 - [ ] The stat tiles at the top of a dashboard keep their size when **A+** is pressed.
 
+## 7k5. Colonization Archive and the footer message (new, not run on Linux)
+
+- [ ] In the Sites window use **Manage Sites → Archive Finished**: finished sites leave the list and the status line counts them. **Show Archive** lists them with result, dates, time taken and tons needed; selecting one lists its commodities; **Restore**, **Copy Summary** and **Manage → Remove Permanently** (asks first) work. Restart EDMC: the archive is still there. Nothing is cut off at the window's smallest size.
+- [ ] The footer message is yellow on Navy, Cyan and Green and cyan on Amber, and green after something succeeds; the note under the Where to buy buttons is in that color while a search runs.
+- [ ] **Create Project on Raven** opens its dialog centered and inside the screen on Wayland and on X11.
+
 ## 7k3. Text size and column fit (new, not run on Linux)
 
 - [ ] Open the Sites window and press **A+** twice at the right end of its bottom line: the text grows in every open WFMT window, tables stay aligned and nothing is cut off. **A-** shrinks it, and the size is kept after a restart.

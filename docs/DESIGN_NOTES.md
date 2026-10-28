@@ -531,6 +531,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 
 - **The problem:** the pop-out windows were near-black with gray text. Headings, table headers and status messages were all the same muted gray, so nothing stood out and the windows read as dull.
 - **Decision:** keep the fixed look (3.x, `WINDOW_FRAMEWORK_SPEC.md` section 4) but move the surfaces to navy and give three roles their own color in `uikit/palette.py`: `TITLE` (gold) for a window title, `HEADING` (cyan) for section labels, field labels and table column headers, and `STATUS` (soft blue) for the footer message. Success, caution and failure keep green, yellow and red, a little brighter.
+- **Later change (2026-10-28):** `STATUS` was a pale tint of the accent, which blended into the window on every theme. It now has its own bright color per theme (yellow on Navy, Cyan and Green, cyan on Amber), and a test keeps it well apart from the accent, headings and text.
 - **Why:** color separates the structure of a window (where a section starts, what a column is) from its data, without adding a setting. Every window gets it because they all read the palette tokens.
 - **Not done:** a light variant or a user choice of theme; the in-game overlay cards (which have their own schemes in Settings → Overlays) and the main panel (which follows EDMC) are unchanged.
 
