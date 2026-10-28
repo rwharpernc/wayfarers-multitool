@@ -50,7 +50,11 @@ STATUS_CHARS = 54                  # the Bio status card is one wide strip
 GROUPS = {"status": ("wfmt_exo_status", "wfmt_exo_status_"), "list": ("wfmt_exo_pred", "wfmt_exo_pred_"),
           "radar": ("wfmt_exo_radar", "wfmt_exo_radar_"), "popup": ("wfmt_exo_popup", "wfmt_exo_popup_")}
 LAYOUT_STATUS = WideCardLayout(GROUPS["status"][1], x=650, y=100, width_chars=STATUS_CHARS, sample_lines=4)       # short and wide, to sit above the game's compass
-LAYOUT_LIST = CardLayout(GROUPS["list"][1], x=650, y=100, max_header=1, max_rows=12, name_chars=NAME_CHARS, tag_chars=14, sample_tag="up to 12.3M CR", sample_lines=8,
+LIST_NAME_CHARS = 36               # the Biology card's name column: a species with its color ("Stratum tectonicas - Emerald") and a candidate's indent
+LIST_CANDIDATES = 5                # the most candidate species a genus shows rows for; the rest are counted
+LIST_TEXT_BUDGET = 52              # the overlay draws 64 texts per card (the title, badge and footer take the rest); past this the candidate rows are left out
+CANDIDATE_INDENT = "  "
+LAYOUT_LIST = CardLayout(GROUPS["list"][1], x=650, y=100, max_header=1, max_rows=12, name_chars=LIST_NAME_CHARS, tag_chars=16, sample_tag="12.3M - 12.3M CR", sample_lines=8,
                          title_chars=TITLE_CHARS, sample_badge="12 of 12 done")
 LAYOUT_POPUP = CardLayout(GROUPS["popup"][1], x=650, y=100, max_header=3, max_rows=4, name_chars=NAME_CHARS, tag_chars=14, sample_tag="5,000,000 cr", sample_lines=4,
                           title_chars=TITLE_CHARS, sample_badge="12 of 12 done")
@@ -173,10 +177,9 @@ def _tracking(view: organic_scan.BodyView) -> list:
     return [(line, f"series{t.color}") for t, line in zip(exo_radar.tracked(view), exo_radar.track_lines(view))]
 
 
-def build_list_card(view: Optional[organic_scan.BodyView], system: str = "") -> Card:
-    """The Biology card: each genus with the species it could be, or is, and what it pays."""
-    if view is None or not view.genera:
-        return Card()
+def _list_rows(view: organic_scan.BodyView, candidates: bool) -> list:
+    """The Biology card's rows. A genus whose species is still open is a row with the range it could pay, then a row for each candidate species (its
+    name at the left, its value and share at the right, so they line up); `candidates` False leaves those rows out."""
     rows = []
     for genus in view.genera:
         color = f"\nLikely color: {genus.variant_hint}" if genus.variant_hint else ""       # from the star or the surface materials, until a sample names the real one
@@ -186,11 +189,32 @@ def build_list_card(view: Optional[organic_scan.BodyView], system: str = "") -> 
             name, value = genus.candidates[0]
             rows.append((name + color, "~" + _credits(value), "info"))
         elif genus.candidates:
-            lines = "\n".join(f"{name}  {_credits(value)}  ~{percent}%" for name, value, percent in sorted(genus.odds(), key=lambda c: -c[1]))
             span = genus.value_range
-            rows.append((f"{genus.name}\n{lines}{color}", _range(*span) if span else "?", "info"))
+            odds = sorted(genus.odds(), key=lambda c: -c[1])
+            shown = odds[:LIST_CANDIDATES] if candidates else []
+            rows.append((genus.name + (color if not shown else ""), _range(*span) if span else "?", "info"))
+            for number, (name, value, percent) in enumerate(shown):
+                last = number == len(shown) - 1 and len(odds) == len(shown)
+                rows.append((CANDIDATE_INDENT + name + (color.replace("\n", "\n" + CANDIDATE_INDENT) if last else ""), f"{_credits(value)}  ~{percent}%", "text"))
+            if len(odds) > len(shown) and shown:
+                rows.append((f"{CANDIDATE_INDENT}+{len(odds) - len(shown)} more" + color.replace("\n", "\n" + CANDIDATE_INDENT), "", "muted"))
         else:
             rows.append((genus.name, "unknown", "muted"))
+    return rows
+
+
+def _text_count(rows: list) -> int:
+    """About how many overlay texts the rows take: the name, the right-hand text and a line for each detail line."""
+    return sum(1 + bool(right) + left.count("\n") for left, right, _role in rows)
+
+
+def build_list_card(view: Optional[organic_scan.BodyView], system: str = "") -> Card:
+    """The Biology card: each genus with the species it could be, or is, and what it pays."""
+    if view is None or not view.genera:
+        return Card()
+    rows = _list_rows(view, candidates=True)
+    if _text_count(rows) > LIST_TEXT_BUDGET:                       # a crowded body: the genera with their ranges, without a row for each candidate
+        rows = _list_rows(view, candidates=False)
     span = view.reward_range
     footer = None
     if span and span[1]:

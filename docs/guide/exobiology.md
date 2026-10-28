@@ -89,7 +89,7 @@ Top center. It is a short, wide strip, so it can sit above the game's compass.
 Bottom, left of center. Its heading is `Bio signals <body>` with `1 of 4 done` at the right. It lists every genus on the body with the species it could be, or is once a sample has named it (with its color variant), and what it pays. A genus with no usable prediction reads `unknown`.
 
 - Before a sample names the real color, a genus whose colors follow the **star** the body orbits or a **surface material** shows `Likely color: Emerald` under its row (or `Lime or White` when more than one material fits).
-- While the species is open, the genus shows the **range** it could pay (`1.0M - 5.3M CR`). Each candidate shows its value and a percentage (`~50%`). A single likely species has a `~` before its value.
+- While the species is open, the genus shows the **range** it could pay (`1.0M - 5.3M CR`), and each candidate species has its own row under it, indented, with its value and a percentage (`5.3M CR  ~50%`) at the right. A genus with more than five candidates shows the five that pay most and counts the rest (`+2 more`); on a crowded body each genus is one row with its range. A single likely species has a `~` before its value.
 - The footer is the range the whole body could pay (`Rewards: 7.6M - 11.9M CR`). With a first footfall, the larger figure is on its own line (`First footfall (5x): 38.2M - 59.6M CR`).
 - Analyzed species are in the good color.
 - **The percentages are an even share.** The data says which species the body's conditions allow, not how likely each one is, so with two candidates each shows about 50%. Treat them as a count of the candidates, not as odds.

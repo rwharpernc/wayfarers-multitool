@@ -199,6 +199,8 @@ class CardLayout:
             first = False
             head, *details = left.split("\n")
             name, _tab, extra = head.partition("\t")
+            if right and card.align == "right" and not extra:      # a long name stops short of the right-hand text instead of running into it
+                name = self.fit(name, look, inner - look.extent(right) - COLUMN_GAP)
             texts.append((name, "text", x, y, size))
             if extra:
                 texts.append((extra, "muted", x + tab_px, y, size))

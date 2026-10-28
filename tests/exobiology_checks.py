@@ -96,18 +96,32 @@ class Cards(unittest.TestCase):
         sampled = dataclasses.replace(self.view.genera[2], variant_hint="Lime")            # a sampled plant already has its real color
         self.assertNotIn("Likely color", EX.build_list_card(dataclasses.replace(self.view, genera=(sampled,))).rows[0][0])
         several = dataclasses.replace(self.view.genera[0], variant_hint="Lime or White")
-        self.assertTrue(EX.build_list_card(dataclasses.replace(self.view, genera=(several,))).rows[0][0].endswith("Likely color: Lime or White"))
+        self.assertTrue(EX.build_list_card(dataclasses.replace(self.view, genera=(several,))).rows[-1][0].endswith("Likely color: Lime or White"))
 
     def test_list_card_shows_candidates_confirmed_species_and_the_rewards(self):
         card = EX.build_list_card(self.view, "Sample System")
-        names = [r[0] for r in card.rows]
-        self.assertTrue(names[0].startswith("Bacterium\nBacterium nebulus  5.3M CR  ~50%\nBacterium aurasus  1.0M CR  ~50%"))
-        self.assertEqual(card.rows[0][1], "1.0M - 5.3M CR")                         # the range the genus could pay
-        self.assertEqual(card.rows[1], ("Frutexa fera", "~1.6M CR", "info"))
-        self.assertEqual(card.rows[2][0], "Tussock pennatis - Lime")
-        self.assertEqual(card.rows[3][2], "ok")                       # analyzed
+        self.assertEqual(card.rows[0], ("Bacterium", "1.0M - 5.3M CR", "info"))      # the genus, with the range it could pay
+        self.assertEqual(card.rows[1], ("  Bacterium nebulus", "5.3M CR  ~50%", "text"))     # then a row for each candidate, value and share at the right
+        self.assertEqual(card.rows[2], ("  Bacterium aurasus", "1.0M CR  ~50%", "text"))
+        self.assertEqual(card.rows[3], ("Frutexa fera", "~1.6M CR", "info"))
+        self.assertEqual(card.rows[4][0], "Tussock pennatis - Lime")
+        self.assertEqual(card.rows[5][2], "ok")                       # analyzed
         self.assertEqual(card.footer[0], "Rewards: 7.6M - 11.9M CR\nFirst footfall (5x): 38.2M - 59.6M CR")      # the range, and the bonus on its own line
         self.assertFalse(EX.build_list_card(organic_scan.BodyView("x", ())))
+
+    def test_a_genus_with_many_candidates_counts_the_rest_and_a_crowded_body_drops_the_rows(self):
+        many = organic_scan.GenusView("b", "Bacterium", 500.0, candidates=tuple((f"Bacterium s{n}", 1_000_000 * (n + 1)) for n in range(7)))
+        rows = EX.build_list_card(organic_scan.BodyView("x", (many,))).rows
+        self.assertEqual(len(rows), 1 + EX.LIST_CANDIDATES + 1)
+        self.assertEqual(rows[-1], ("  +2 more", "", "muted"))
+        crowded = organic_scan.BodyView("x", tuple(dataclasses.replace(many, key=str(n)) for n in range(12)))
+        self.assertEqual([r[0] for r in EX.build_list_card(crowded).rows], ["Bacterium"] * 12)       # each genus on its own row, no candidate rows
+        long = organic_scan.GenusView("s", "Stratum", 500.0, species="Stratum tectonicas", value=19_010_800, variant="Stratum tectonicas - Emerald Green Long Name")
+        rec = Recorder()
+        EX.LAYOUT_LIST.render(EX.build_list_card(organic_scan.BodyView("x", (long,))), rec, S.DEFAULT)
+        placed = {text: x for text, _c, x, _y, _s in rec.messages.values() if text}
+        name = next(text for text in placed if text.startswith("Stratum"))
+        self.assertLessEqual(placed[name] + S.DEFAULT.measured_width(name), placed["19.0M CR"])      # the name stops short of what it pays
 
     def test_popup_card_and_its_first_footfall_value(self):
         card = EX.build_popup_card(EX.sample_popup())

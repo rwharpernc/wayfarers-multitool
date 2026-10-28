@@ -19,6 +19,11 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 - **Windows:** the footer message of WFMT's windows has its own bright color on every theme (yellow on Navy, Cyan and Green, cyan on
   Amber) instead of a pale tint of the accent. The note under the Where to buy buttons uses it while a search runs.
 
+- **Overlay:** the Biology card lists each candidate species of an open genus on its own row, with its value and share lined up at the right
+  (after a row for the genus with the range it could pay), instead of running them together on a muted line. The name column is wider, a
+  long name stops short of the value beside it, a genus with more than five candidates counts the rest (`+2 more`), and a crowded body
+  shows one row per genus so nothing is dropped from the card.
+
 ### Fixed
 
 - **Colonization:** Create Project on Raven could open its dialog out of sight, and the construction panel's depot updates (every few
