@@ -772,10 +772,46 @@ Not implemented:
 - **Rename Site** (Manage Sites menu): the game's name for a site replaces any name WFMT holds each time the commander docks, so a name of the commander's own would be a separate label, kept per commander and shown wherever the site's name appears, with **Reset to game name**.
   - Optionally, a tickbox (off by default, enabled only for a site with a Raven project) also renames the project on Raven Colonial through the project update that carries `buildName`. It needs the master switch and the key, and asks first like every Raven write.
   - Open: whether to rename the plan entry too (a separate call on Raven's system sites), and whether WFMT still finds the project after a rename (the name is only a fallback when Raven has no market id for the site, and the market id lookup should cover it; test against a live project).
-- Assigning commodities to commanders on a project, linking other commanders, and showing other linked carriers' cargo.
+- **Multi-commander projects** (several commanders on one Raven project): planned in phases, see the next section. It covers assigning commodities, linking other commanders, ready flags and who delivered what. Showing other linked carriers' cargo is not part of it and stays open.
 - A guided tool that fills in a system's whole plan on Raven (bodies, installations and statuses) from play.
-- Ready flags.
 - Raven's `supply` call, which Raven's documentation describes as unsuitable for a tool that reads the journal.
+
+### Multi-commander projects: plan
+
+Today WFMT writes for one commander at a time: it links the commander, sends the depot snapshot and sends that commander's own `contribute` calls. Two commanders who each run WFMT with their own key are already credited on the same project. What is missing is the shared side: seeing who has claimed or delivered what, and joining a project.
+
+Rules for every phase:
+
+- Read-only first. Each write (claim, release, join, leave, ready) is a button or menu action, needs the commander's key and says plainly what it sent.
+- Nothing about other commanders is saved to disk. It is held in memory and read again, so everything WFMT stores stays per commander.
+- Every new label is capped in width (truncate names, show `+N`), so EDMC's window never widens.
+- Raven is read when a window opens or a button is pressed, never on a timer. The privacy guide lists what is read, including that other commanders' names appear.
+- WFMT's remaining figures keep coming from the game's depot snapshot. They are never recomputed from other commanders' deliveries.
+
+Phase 0, verify the API (no code). Read a live project with two or more linked commanders and record the exact shape of `commanders`, `ready` and the project's delivery history. The OpenAPI description has no payload details. Also confirm which of `link`, `assign` and `ready` need a key, and whether a commander who is not the architect can link and assign. Write the result in `TECHNICAL.md` beside the Raven notes. The other phases depend on it.
+
+Phase 1, read and display (no writes):
+
+- `rcc_client.py`: add `commanders` (name to commodity keys) and `ready` to `RccProject`, parsed with the same limits as the commodities (cap the count and the name length, casefold keys).
+- A pure helper that splits each needed commodity into mine, taken by others (names) or unclaimed.
+- Colonization Sites window: a narrow **Claimed** column (`you`, a truncated name with `+N`, or blank) and a summary line such as `3 commanders on this project`. The fetch already runs on a worker thread.
+- **Who delivered what:** a small panel or tab in the Sites window listing each commander's deliveries to the project, from Raven's project history (shape confirmed in Phase 0). This also answers the case where another commander delivers to your site: your depot figures and Raven's remaining update from the snapshot, but your own History counts only your deliveries, so this is the only place their share shows. If Raven keeps no per-commander history, say so in the window and the guide.
+- Optional: dim rows claimed by others in the overlay shopping list.
+- Docs: `colonization.md`, `internet-and-privacy.md`, `CHANGELOG.md`.
+
+Phase 2, claim and release: `assign` and `unassign` in `rcc_client.py` (`PUT` and `DELETE /api/project/<build>/assign/<cmdr>/<commodity>`), right-click **Claim for me** and **Release** (multi-select), then read the project again so the column shows Raven's answer. With no key saved it says so and sends nothing.
+
+Phase 3, join a project: **Join Project** in My Projects (`PUT /api/project/<build>/link/<cmdr>`) so a helper can attach before a first delivery, and **Leave Project** (`DELETE`, with a confirmation because it also drops that commander's claims).
+
+Phase 4, ready flags (optional, easiest to drop): **Mark loaded** and **Clear** (`PUT` and `DELETE /api/project/<build>/ready`), only if Phase 0 shows other commanders benefit.
+
+Tests (Docker only): parsing of `commanders`, `ready` and the history (missing, empty, oversized, malformed); the claim split including case differences in names; assign, unassign, link and ready with a fake opener, including the no-key path sending nothing; a window smoke test that the new column and panel stay inside their width caps.
+
+Order: Phase 0 and Phase 1 are one piece of work and safe to release alone. Phases 2 and 3 follow, one commit per phase.
+
+Open questions: whether the overlay dimming is part of Phase 1; whether Phase 4 is in scope; whether shared fleet carriers count toward assignments (SrvSurvey handles the carrier separately through its own supply call).
+
+Reference: SrvSurvey (GPL-3.0) reads `commanders` the same way and splits needs into assigned to you and assigned to others. Ideas only; write WFMT's own code and credit it in `ATTRIBUTIONS.md` when built.
 
 Open check:
 
@@ -808,7 +844,7 @@ No work is planned on these items. They are retained so that the ideas are not l
   - Completion, progress, deliveries, carrier cargo, creating a project and My Projects are implemented; the remainder is deferred.
   - Reads need no key.
   - The public documentation would need to list exactly what is sent and when.
-- [ ] **Team projects:** several commanders working on one project.
+- [ ] **Team projects:** several commanders working on one project. The plan is under "Multi-commander projects: plan" in the Colonization section above.
   - The depot event reports only the project's totals, so a per-commander breakdown would have to come from each member.
   - All data is currently per commander and will remain so unless a commander opts in to sharing.
 - [ ] Co-operative building and colony tracking: not available yet.
