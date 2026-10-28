@@ -56,6 +56,14 @@ class PaletteTests(unittest.TestCase):
             self.assertGreaterEqual(contrast(t["TEXT"], t["ROW_OK"]), 4.5, f"{name} TEXT on ROW_OK")
             self.assertGreaterEqual(contrast(t["TEXT"], t["ROW_OVER"]), 4.5, f"{name} TEXT on ROW_OVER")
 
+    def test_the_status_message_stands_apart_from_the_accent_the_headings_and_the_text(self):
+        def distance(a: str, b: str) -> int:
+            return sum(abs(int(a[i:i + 2], 16) - int(b[i:i + 2], 16)) for i in (1, 3, 5))
+
+        for name, t in P.THEMES.items():
+            for other in ("ACCENT", "HEADING", "TEXT", "MUTED"):
+                self.assertGreaterEqual(distance(t["STATUS"], t[other]), 120, f"{name} STATUS against {other}")
+
     def test_apply_sets_the_tokens_and_reports_what_changed(self):
         changes = P.apply("Cyan")
         self.assertEqual((P.current(), P.BG), ("Cyan", P.THEMES["Cyan"]["BG"]))

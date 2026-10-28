@@ -304,7 +304,7 @@ Ask of every new widget: *what is the worst-case size of this content, and where
 
 ### External windows (`plugin/uikit/`)
 
-Every external (Toplevel) window uses WFMT's own navy look rather than EDMC's theme (gold titles, cyan section labels and table headings, a soft blue footer message, green for success); main-window
+Every external (Toplevel) window uses WFMT's own navy look rather than EDMC's theme (gold titles, cyan section labels and table headings, a bright footer message (yellow, or cyan on Amber), green for success); main-window
 panels still follow EDMC. See `docs/WINDOW_FRAMEWORK_SPEC.md`. The rules that matter when touching
 one:
 

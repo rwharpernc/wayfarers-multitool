@@ -574,8 +574,8 @@ class ColonizationWindow:
             sort=self._sort_choice())))
 
     def _say(self, text: str, busy: bool = False) -> None:
-        """The note under the Where to buy buttons. A search in progress is shown in the accent color so it stands out; anything else in the muted one."""
-        self._sources_note.configure(text=text, fg=P.ACCENT if busy else P.MUTED)
+        """The note under the Where to buy buttons. A search in progress is shown in the status color so it stands out; anything else in the plain text one."""
+        self._sources_note.configure(text=text, fg=P.STATUS if busy else P.TEXT)
 
     def _on_find(self) -> None:
         """Starts the search on a worker thread (Spansh can take seconds) and polls for its answer."""

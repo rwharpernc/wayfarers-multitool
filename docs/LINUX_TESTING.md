@@ -884,7 +884,7 @@ The Surface Live radar has not been looked at on Linux. The simulation shows it 
 
 ## 7k2. The navy look (new, not run on Linux)
 
-- [ ] Open the Sites window, Inventory, the Exploration Dashboard and the Mining Book. Surfaces are navy, not gray; the window title is gold; section labels and table column headers are cyan; the footer message is soft blue, and green after something succeeds. Nothing is hard to read, on Wayland or on X11.
+- [ ] Open the Sites window, Inventory, the Exploration Dashboard and the Mining Book. Surfaces are navy, not gray; the window title is gold; section labels and table column headers are cyan; the footer message is bright yellow, and green after something succeeds. Nothing is hard to read, on Wayland or on X11.
 - [ ] The Colonization overlay card's third column is headed **Acquire**.
 
 ## 7k4. Color themes (new, not run on Linux)
