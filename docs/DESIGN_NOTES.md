@@ -237,7 +237,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
   - Neither Spansh plotter's request nor its answer knows about them (the pages' scripts mention white dwarfs only as star type names).
   - So the Route Planner cannot ask Spansh to plan through them.
 - What it offers is an option, named *Mark white dwarfs the route passes*, that asks EDSM for the main star of each system on the finished route and *marks* the white dwarfs.
-  - Planning through them would need a router of WFMT's own, which this window does not offer.
+  - Planning through them would need a router of WFMT's own, which this window does not offer and which is not planned (decided 2026-10-28).
 - The ship block also says whether a fuel scoop is fitted, because the refuel stops of a route need one and Spansh cannot be told to plan without.
 - *Lesson:* a label has to say what the code does, and no more. An option labeled *Also mark white dwarfs* reads as "use them in the route", so the label says *Mark white dwarfs the route passes*.
 

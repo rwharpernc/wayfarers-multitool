@@ -865,4 +865,5 @@ The journal does not contain the data these features would require. Decisions ar
 
 - Guardian ruin and structure surveying: the journal does not record the structures' layout or contents.
 - Landing-pad diagrams: the journal provides no layout, orientation or positions.
+- Plotting routes through white dwarfs for their boost (decided 2026-10-28): Spansh's plotters know only neutron stars, and a router of WFMT's own is not worth building. The Route Planner's option to mark the white dwarfs a route passes stays as it is.
 - An FSS spectrum guide (which body types sit where on the scanner's band): the journal never records where a signal sits on the band and no open table of ranges exists, so the ranges would have to be measured in the game.
