@@ -817,7 +817,7 @@ Placement is therefore relative to the screen and aware of display size:
   - A card that grows is placed from the size it is drawn at: `overlay_placement.client_for_measured(slot, client, block, look)` takes the card's real block (so a bottom or middle anchor sits on the real edge), notes its size for the group offset, and re-applies the offsets when it changes.
   - `overlay_grid.py` is the drag-and-drop layout editor on the Placement tab.
     - It is a to-scale canvas of the screen in logical pixels with a grid, and a draggable box per slot (sized by `slot_size`).
-    - The pure conversions are `placement_from_rect` and `rect_from_placement`. In `placement_from_rect` the spot is the third of the screen the box's center is in, the offset is inward from that edge or from the center line, and within `EDGE_SNAP` pixels it snaps to 0, otherwise to the grid.
+    - The pure conversions are `placement_from_rect` and `rect_from_placement`. In `placement_from_rect` the spot (`_spot`) is the edge a box is within `EDGE_SNAP` pixels of, else the third of the screen the box's center is in, the offset is inward from that edge or from the center line, and within `EDGE_SNAP` pixels it snaps to 0, otherwise to the grid.
     - It reads and writes the same row variables as the table.
     - The picture size is saved at once under `wfmt_overlay_editor_size`.
   - Placement is applied at the call sites (never inside a `render()`), so the render functions stay pure and testable.

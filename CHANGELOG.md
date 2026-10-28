@@ -26,6 +26,9 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Fixed
 
+- **Overlay Placement:** a tall or wide box dropped flush to the top, bottom or a side of the layout editor now takes that edge. Before, the
+  spot came only from the third of the screen the box's center was in, so a box that filled more than a third of the screen could land in
+  the middle row or column with a large offset instead of snapping to the edge.
 - **Colonization:** Create Project on Raven could open its dialog out of sight, and the construction panel's depot updates (every few
   seconds) replaced the status message at once. The dialog is now centered and kept on the screen, and the message of a button you press
   stays for 30 seconds. A failure to open the dialog is written to the EDMC log.

@@ -42,6 +42,18 @@ class DropToPlacement(unittest.TestCase):
         placement = G.placement_from_rect(960 - 150 - 200, 100, 300, 200, SCREEN, grid=40)
         self.assertEqual((placement.h, placement.dx), ("center", -200))
 
+    def test_a_tall_or_wide_box_flush_to_an_edge_takes_that_edge(self):
+        placement = G.placement_from_rect(700, 5, 400, 800, SCREEN)             # taller than a third of the screen, so its center is in the middle third
+        self.assertEqual((placement.v, placement.dy), ("top", 0))
+        placement = G.placement_from_rect(3, 300, 1000, 200, SCREEN)            # wider than a third, center in the middle third
+        self.assertEqual((placement.h, placement.dx), ("left", 0))
+        placement = G.placement_from_rect(1920 - 1000 - 4, 300, 1000, 200, SCREEN)
+        self.assertEqual((placement.h, placement.dx), ("right", 0))
+        placement = G.placement_from_rect(700, 1080 - 800 - 6, 400, 800, SCREEN)
+        self.assertEqual((placement.v, placement.dy), ("bottom", 0))
+        placement = G.placement_from_rect(700, 100, 400, 800, SCREEN, grid=40)  # not flush to anything: still the third its center is in
+        self.assertEqual((placement.v, placement.dy), ("middle", -40))
+
     def test_a_box_dragged_off_the_screen_is_kept_on_it(self):
         placement = G.placement_from_rect(-50, -50, 300, 200, SCREEN)
         self.assertEqual((placement.h, placement.v, placement.dx, placement.dy), ("left", "top", 0, 0))

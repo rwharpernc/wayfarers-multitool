@@ -29,6 +29,15 @@ def snap(value: float, step: int) -> int:
     return int(math.floor(value / step + 0.5) * step) if step >= 2 else int(math.floor(value + 0.5))
 
 
+def _spot(near: float, far: float, center: float, size: float, edge: int, low: str, high: str, middle: str) -> str:
+    """The spot along one axis. A box within `edge` of an edge takes that edge, whatever third its center is in: a tall or wide box dropped flush to the
+    top (or a side) has its center well inside the screen and would otherwise land in the middle third with a large offset. Otherwise it is the third the
+    center is in. `near` and `far` are the gaps to the low and high edges."""
+    if near <= edge or far <= edge:
+        return low if near <= far else high
+    return low if center < size * THIRD else high if center > size * (1 - THIRD) else middle
+
+
 def placement_from_rect(left: float, top: float, width: float, height: float, screen: Tuple[float, float], grid: int = DEFAULT_GRID,
                         edge: int = EDGE_SNAP) -> layout.Placement:
     """The placement for a box whose top left is (`left`, `top`) and whose size is (`width`, `height`), all in logical pixels on a `screen` of that size.
@@ -39,8 +48,8 @@ def placement_from_rect(left: float, top: float, width: float, height: float, sc
     left = max(0.0, min(left, screen_w - width))
     top = max(0.0, min(top, screen_h - height))
     center_x, center_y = left + width / 2, top + height / 2
-    h = "left" if center_x < screen_w * THIRD else "right" if center_x > screen_w * (1 - THIRD) else "center"
-    v = "top" if center_y < screen_h * THIRD else "bottom" if center_y > screen_h * (1 - THIRD) else "middle"
+    h = _spot(left, screen_w - left - width, center_x, screen_w, edge, "left", "right", "center")
+    v = _spot(top, screen_h - top - height, center_y, screen_h, edge, "top", "bottom", "middle")
 
     def offset(kind: str, near: float, far: float, middle: float) -> int:
         """`near` is the gap to the near edge, `far` to the far edge and `middle` the signed distance of the box's center from the center line."""

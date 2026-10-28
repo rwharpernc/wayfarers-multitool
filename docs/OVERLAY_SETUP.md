@@ -344,7 +344,7 @@ If displays land in the wrong place or at the wrong size, check that the line on
 
 - Above the table is a to-scale picture of your screen with a grid and a box for every display.
 - Drag a box and drop it: WFMT works out the spot (the third of the screen its center is in) and the offset in screen pixels and fills in the table.
-- A box dropped within a few pixels of an edge snaps flush to it (offset 0), one near the middle snaps to the center line, and the rest snap to the grid you choose (20, 40, 60 or 120 pixels). Untick *Snap to the grid and to edges* to place a box exactly.
+- A box dropped within a few pixels of an edge snaps flush to it (offset 0), however large the box is, one near the middle snaps to the center line, and the rest snap to the grid you choose (20, 40, 60 or 120 pixels). Untick *Snap to the grid and to edges* to place a box exactly.
 - Boxes are drawn at each display's size at your text size, so what you see is the room it takes.
 - A card that grows (a list with more rows) is placed from the size it is drawn at, so a zero offset at the bottom or right is the screen edge.
 - **Picture size** (Default, Large or Extra large) makes the picture bigger for finer placement; the choice is remembered.
