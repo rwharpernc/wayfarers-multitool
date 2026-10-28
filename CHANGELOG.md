@@ -3,7 +3,7 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
-## 1.2.0 (unreleased)
+## 1.2.0 (2026-10-28)
 
 ### Added
 
