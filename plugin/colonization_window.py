@@ -192,7 +192,7 @@ class ColonizationWindow:
         self._build_detail(right)
 
         self._commodity_table = self._build_commodity_table()
-        self._shell.set_status("Select a site on the left. Everything on the right, and the buttons above, are for it.")
+        self._shell.set_status("Select a site on the left. To find where to buy something, click its commodity row, then press Where to Buy above.")
 
         repository.add_listener(self._refresh)
         if carrier is not None:
@@ -304,6 +304,9 @@ class ColonizationWindow:
     def _on_pick_commodity(self, iid: str) -> None:
         self._wanted = self._row_label.get(iid)
         colonization_buy_window.set_wanted(self._wanted)
+        if self._wanted:
+            self._announce(f"{self._wanted} is picked for Where to Buy: press Where to Buy above if its window is not open, then Find nearest "
+                           "there (or Find all for everything the site still needs).")
 
     def _on_where_to_buy(self) -> None:
         """Open the Where to Buy window (it asks Spansh only when one of its Find buttons is pressed)."""

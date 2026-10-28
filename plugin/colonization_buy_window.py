@@ -24,7 +24,7 @@ from config import appname, config
 
 from . import colonization_sources as sources, colonization_systems as systems, colonization_view as view, panelkit, system_autocomplete
 from .mining_spansh_client import search_stations_selling_all
-from .uikit import palette as P
+from .uikit import palette as P, style
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
 from .uikit.widgets import Combobox, FlatButton
@@ -57,6 +57,9 @@ _POLL_MS = 150
 _ERROR_MAX = 90    # a failure message from outside is clipped to this
 _NAME_MAX = 60     # a system or commodity name is clipped to this in a note
 _HINT = "Pick a commodity row in the Sites window, then Find nearest - or Find all to search everything still to buy."
+_STEPS = ("Find nearest searches the commodity picked in the Colonization Sites window: click its row there first. "
+          "Find all searches every commodity the selected site still needs to buy, as that window lists them (its filters apply).")
+_NONE_PICKED = "none picked - click a commodity row in the Sites window"
 _window: Optional["BuyWindow"] = None
 
 
@@ -130,7 +133,7 @@ class BuyWindow:
         self._source_rows: Dict[str, str] = {}   # result row id -> its system name, for Copy System
 
         self._shell = WindowShell(
-            parent, "Where to Buy", "", size=DEFAULT_SIZE, min_size=(MIN_WIDTH, MIN_HEIGHT),
+            parent, "Where to Buy", "The closest places to buy what a site still needs", size=DEFAULT_SIZE, min_size=(MIN_WIDTH, MIN_HEIGHT),
             load_geometry=lambda: config.get_str(CONFIG_GEOMETRY) or "",
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
@@ -147,6 +150,12 @@ class BuyWindow:
 
     def _build(self, host: tk.Misc) -> None:
         """The search: its options, the Find nearest button and the table of results."""
+        intro = tk.Frame(host, bg=P.PANE, padx=P.PAD, pady=P.PAD_SM)
+        intro.pack(fill="x")
+        self._picked = tk.Label(intro, text="", fg=P.HEADING, bg=P.PANE, anchor="w", justify="left", font=style.font(P.FONT_SECTION))
+        self._picked.pack(fill="x")
+        self._steps = tk.Label(intro, text=_STEPS, fg=P.MUTED, bg=P.PANE, anchor="w", justify="left")
+        self._steps.pack(fill="x")
         options = tk.Frame(host, bg=P.PANE, padx=P.PAD, pady=P.PAD_SM)
         options.pack(fill="x")
         first = tk.Frame(options, bg=P.PANE)
@@ -183,7 +192,7 @@ class BuyWindow:
 
         self._sources_note = tk.Label(host, text=_HINT, fg=P.MUTED, bg=P.PANE, anchor="w", justify="left", padx=P.PAD)
         self._sources_note.pack(fill="x")
-        host.bind("<Configure>", lambda e: self._sources_note.configure(wraplength=max(e.width - 2 * P.PAD, 100)))
+        host.bind("<Configure>", lambda e: [label.configure(wraplength=max(e.width - 2 * P.PAD, 100)) for label in (self._sources_note, self._picked, self._steps)])
         self._source_table = DataTable(host, _SOURCE_COLUMNS, sortable=False, on_header=self._on_source_sort,
                                        on_select=self._on_source_pick, select_groups=True, empty_text="No search yet.")
         self._source_table.tag_configure("carrier", foreground=P.INFO)
@@ -209,7 +218,7 @@ class BuyWindow:
             self._system_var.set(system)
 
     def set_wanted(self, label: Optional[str]) -> None:
-        self._shell.set_subtitle(label or "No commodity picked")
+        self._picked.configure(text="Commodity: " + (_clip(label, _NAME_MAX) if label else _NONE_PICKED))
         if label:
             self._say(f"Ready to search for {label}. Press Find nearest.")
         elif self._result is None and self._whole is None:

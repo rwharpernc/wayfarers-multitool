@@ -337,7 +337,7 @@ For anyone who does not use the overlay, the commodity table is the shopping lis
 
 **Where to buy** finds the closest places to buy a commodity. It has its own window: press **Where to Buy** in the header of the Colonization Sites window. The window remembers its size and position, opens with the picked commodity and the site's system filled in, and closes with the Sites window.
 
-1. In the Sites window, click a commodity row. The Where to Buy window's heading names it, and its note says `Ready to search for <commodity>. Press Find nearest.` Pick another row, or another site, and the open window follows.
+1. In the Sites window, click a commodity row. The Sites window's footer says what to do next, the Where to Buy window's **Commodity** line names it, and its note says `Ready to search for <commodity>. Press Find nearest.` Pick another row, or another site, and the open window follows.
 2. Check the options.
 3. Press **Find nearest**. While it runs the note is shown in the accent color and the button is disabled.
 
