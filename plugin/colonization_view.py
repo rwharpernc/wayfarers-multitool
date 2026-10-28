@@ -162,31 +162,15 @@ def totals(site: Site, cargo: Mapping[str, int], capacity: int = 0,
                   lines=len(rows), covered=sum(1 for r in rows if r.covered), buy_trips=buy_trips, haul_trips=haul_trips)
 
 
-def breakdown_lines(site: Site, cargo: Mapping[str, int], carrier: Optional[Mapping[str, int]] = None, with_carrier: bool = False) -> List[str]:
-    """A list to hand to someone who asks what the site still needs: the site, then a line for each commodity still needed with how much of it
-    is on the fleet carrier (only for a commander with one) and in the ship, and what is left to acquire. What is left to acquire comes first,
-    biggest first; commodities the ship and carrier already cover follow, marked covered. A last line adds up the tons left to acquire."""
-    rows = commodity_rows(site, cargo, carrier if with_carrier else None)
+def acquire_lines(site: Site, cargo: Mapping[str, int], carrier: Optional[Mapping[str, int]] = None) -> List[str]:
+    """A list to hand to someone who asks what the site still needs: the site, then each commodity with the tons still to acquire (what the ship and
+    the fleet carrier already hold is taken off), biggest first. Commodities already covered are left out."""
+    rows = sorted((r for r in commodity_rows(site, cargo, carrier) if r.to_get > 0), key=lambda r: (-r.to_get, r.label.casefold()))
     system = f" ({site.system})" if site.system else ""
-    lines = [f"{site.display_name()}{system} - what is left to acquire:"]
-    short = sorted((r for r in rows if r.to_get > 0), key=lambda r: (-r.to_get, r.label.casefold()))
-    covered = [r for r in rows if r.to_get <= 0]
-    for row in short + covered:
-        parts = [f"{row.remaining:,} t needed"]
-        if with_carrier and row.on_carrier:
-            parts.append(f"{row.on_carrier:,} on carrier")
-        if row.in_cargo:
-            parts.append(f"{row.in_cargo:,} in ship")
-        parts.append(f"{row.to_get:,} to acquire" if row.to_get > 0 else "covered")
-        lines.append(f"{row.label}: " + ", ".join(parts))
-    to_get, remaining = sum(r.to_get for r in rows), sum(r.remaining for r in rows)
+    lines = [f"{site.display_name()}{system} - still to acquire:"]
+    lines += [f"{row.label}: {row.to_get:,} t" for row in rows]
     if not rows:
-        lines.append("Nothing is left to deliver.")
-    elif to_get:
-        lines.append(f"Still to acquire: {to_get:,} t of {remaining:,} t still needed.")
-    else:
-        covers = "the ship and the carrier already cover" if with_carrier else "the ship already covers"
-        lines.append(f"Nothing left to acquire: {covers} everything still needed.")
+        lines.append("Nothing: everything still needed is already in the ship or on the carrier.")
     return lines
 
 

@@ -773,7 +773,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
 
 ## 7e-4. Colonization Sites window header (Windows-tested only: check on Linux)
 
-- [ ] The header has **Copy Shopping List**, **Copy To Acquire** (pastes a line per commodity with the carrier and ship shares and a Still to acquire total), **Where to Buy**, **Rescan Carrier**, **Raven Colonial ▾** and **Manage Sites ▾**. The two menus open under their buttons,
+- [ ] The header has **Copy Shopping List**, **Copy To Acquire** (pastes one line per commodity with the tons still to acquire), **Where to Buy**, **Rescan Carrier**, **Raven Colonial ▾** and **Manage Sites ▾**. The two menus open under their buttons,
       are readable (dark colors) and close when you click elsewhere or pick an item.
 - [ ] **Raven Colonial ▾** lists My Projects, Planned Builds, Raven Progress, Open Selected Build on Raven, Open This System on Raven, Raven Colonial
       Website, Create Project on Raven, Report Complete to Raven and Mark Plan Entry Demolished; the three Open items open the right page in your browser.

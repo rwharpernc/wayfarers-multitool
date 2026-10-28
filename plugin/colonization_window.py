@@ -498,14 +498,13 @@ class ColonizationWindow:
             self._shell.set_status(f"Copied the shopping list for {site.display_name()}.")
 
     def _on_copy_acquire(self) -> None:
-        """Copy a breakdown of what is left to acquire, with what is already on the carrier and in the ship, for someone who asks for the list part
-        way through loading the carrier."""
+        """Copy each commodity with the tons still to acquire (the ship's cargo and the carrier's tally taken off), for someone who asks for the list
+        part way through loading the carrier."""
         site = self._selected_site()
         if site is None:
             self._shell.set_status("Select a site on the left first.")
             return
-        with_carrier = bool(self._carrier and self._cmdr and self._carrier.has_carrier(self._cmdr))
-        lines = view.breakdown_lines(site, self._cargo, self._carrier_tons(), with_carrier)
+        lines = view.acquire_lines(site, self._cargo, self._carrier_tons())
         if panelkit.copy_to_clipboard(self._toplevel, "\n".join(lines)):
             self._announce(f"Copied what is left to acquire for {site.display_name()}.", ok=True)
 

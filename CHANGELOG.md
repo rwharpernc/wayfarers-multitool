@@ -7,9 +7,9 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Added
 
-- **Colonization:** **Copy To Acquire** in the Colonization Sites window copies a breakdown of what is left to acquire: for each commodity
-  still needed, how much is needed, how much is on your fleet carrier and in your ship, and how much is left to acquire, with a total. Handy
-  to hand over when someone asks for the list part way through loading the carrier.
+- **Colonization:** **Copy To Acquire** in the Colonization Sites window copies a short list of what is left to acquire: the site, then each
+  commodity with the tons still to get (what your ship and fleet carrier hold is taken off), biggest first. Handy to hand over when someone
+  asks for the list part way through loading the carrier.
 - **Colonization:** an **Archive** for finished sites. **Manage Sites → Archive Finished** moves every completed or failed site out of the
   Sites window into **Manage Sites → Show Archive**, a read-only list with how each ended, when it started and finished, how long it
   took and the commodities it needed. **Restore** brings one back, **Copy Summary** copies its facts and **Remove Permanently** forgets
