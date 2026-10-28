@@ -112,6 +112,8 @@ The items below are implemented and covered by unit tests, but have not all been
   - The theme name at the right end of a window's bottom line offers Navy, Cyan, Amber and Green; open windows recolor at once, nothing becomes hard to read, and the choice (and the same one under Settings → General → Window) is kept after a restart.
   - **A-** and **A+** change the text of every window; the stat tiles and status chips keep their size; at the larger sizes no window loses its title, buttons or footer.
   - Short columns are narrow and a long name column takes the spare width.
+- [ ] **Colonization Archive** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 6): Archive Finished moves complete and failed sites into Show Archive, Restore and Remove Permanently work, and the archive survives a restart and is part of Back up my data.
+- [ ] **Raven project offer** (Windows): with Raven sharing on and a key saved, a new construction site with no Raven project shows *Raven Colonial has no project for ...* on the Colonization panel; **CREATE ON RAVEN** opens the Sites window on that site and its dialog, **NOT NOW** hides it, and it is not offered again for that site.
 - [ ] **Colonization Show / List** (Windows, then Linux): with everything on the fleet carrier, **To buy** lists nothing and **To haul** lists every commodity; a commodity drops off **To haul** once it is aboard in full.
 
 ### Expedition and route planning

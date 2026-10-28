@@ -20,7 +20,7 @@ from typing import Any, Callable, Dict, FrozenSet, List, Mapping, Optional, Tupl
 
 from config import appname, config
 
-from . import colonization, colonization_builds_window, colonization_carrier, colonization_create_dialog, colonization_projects_window, colonization_sources as sources, colonization_systems as systems, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys, system_autocomplete
+from . import colonization, colonization_archive_window, colonization_builds_window, colonization_carrier, colonization_create_dialog, colonization_projects_window, colonization_sources as sources, colonization_systems as systems, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys, system_autocomplete
 from .colonization_carrier import CarrierCargo
 from .colonization import Site
 from .colonization_data import SiteRepository
@@ -202,6 +202,9 @@ class ColonizationWindow:
             ("Report Complete to Raven", self._on_report_rcc),
             ("Mark Plan Entry Demolished…", self._on_demolish_rcc)])
         self._shell.add_menu("Manage Sites", [
+            ("Archive Finished", self._on_archive_finished),
+            ("Show Archive", self._on_show_archive),
+            None,
             ("Remove Site", self._on_remove, "danger"),
             ("Remove Finished", self._on_remove_finished, "danger")])
 
@@ -403,7 +406,7 @@ class ColonizationWindow:
     def _refresh(self) -> None:
         if not self.alive:
             return
-        sites = self._repository.for_cmdr(self._cmdr)
+        sites = [s for s in self._repository.for_cmdr(self._cmdr) if not s.archived]   # archived ones are in the Archive window
         self._sites = {s.market_id: s for s in sites}
         active = sum(1 for s in sites if s.active)
         cmdr_label = self._cmdr or "(no commander detected yet)"
@@ -1315,6 +1318,17 @@ class ColonizationWindow:
             return
         self._repository.remove(self._cmdr, site.market_id)
 
+    def _on_archive_finished(self) -> None:
+        """Moves every completed or failed site to the Archive window, where it stays for reference (and can be brought back)."""
+        if not self._cmdr:
+            return
+        finished = [s.market_id for s in self._sites.values() if not s.active]
+        moved = self._repository.set_archived(self._cmdr, finished, True)
+        self._announce(f"Archived {moved} finished site{'s' if moved != 1 else ''}." if moved else "There are no finished sites to archive.")
+
+    def _on_show_archive(self) -> None:
+        colonization_archive_window.show(self._toplevel, self._repository, lambda: self._cmdr)
+
     def _on_remove_finished(self) -> None:
         """Clears every completed or failed site at once."""
         if not self._cmdr:
@@ -1326,6 +1340,7 @@ class ColonizationWindow:
 
     def close(self) -> None:
         colonization_builds_window.close()
+        colonization_archive_window.close()
         colonization_projects_window.close()
         if self._whole_job is not None:
             self._whole_job["cancel"] = True   # let the worker stop between commodities instead of running on

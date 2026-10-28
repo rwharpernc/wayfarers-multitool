@@ -345,6 +345,8 @@ Guide: [Colonization](guide/colonization.md)
 | Module | What it is |
 |---|---|
 | `colonization.py` | Pure logic for construction-site tracking |
+| `colonization_archive.py` | The facts the Archive window shows about a finished site (result, dates, time taken, tons needed) and its clipboard summary |
+| `colonization_archive_window.py` | The Colonization Archive window (Manage Sites → Show Archive): finished sites kept for reference, with Restore, Copy Summary and Remove Permanently |
 | `colonization_carrier.py` | (Includes `scan_journals`, the rebuild behind Rescan Carrier.) Tons of each commodity transferred to the commander's fleet carrier, for the window's FC column (per commander, caught up from the journals without double counting). Also decides when Frontier's CAPI cargo list may replace the tally: not within 15 minutes of the newest transfer, and not when it repeats a copy already ignored |
 | `colonization_catchup.py` | Folds the recent journals into the saved construction sites at start-up, never counting a delivery twice |
 | `colonization_data.py` | JSON persistence for construction sites (each carries `journal_at`, the newest journal event folded in) |

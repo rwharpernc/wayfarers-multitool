@@ -106,6 +106,8 @@ class Site:
     """When this tool first saw the site ("" for one saved before this was kept); for the history's build times."""
     completed_at: str = ""
     """When the depot first reported the build complete ("" while it is not, or for one finished before this was kept)."""
+    archived: bool = False
+    """Put away by the commander: a finished site kept for reference, out of the Sites window's list but still counted in the history."""
 
     @property
     def remaining_total(self) -> int:
@@ -131,7 +133,7 @@ class Site:
             "market_id": self.market_id, "name": self.name, "system": self.system,
             "progress": self.progress, "complete": self.complete, "failed": self.failed,
             "updated": self.updated, "journal_at": self.journal_at,
-            "first_seen": self.first_seen, "completed_at": self.completed_at,
+            "first_seen": self.first_seen, "completed_at": self.completed_at, "archived": self.archived,
             "resources": [
                 {"key": r.key, "label": r.label, "required": r.required,
                  "provided": r.provided, "payment": r.payment}
@@ -151,6 +153,7 @@ class Site:
             updated=str(raw.get("updated") or _now_iso()),
             journal_at=str(raw.get("journal_at") or ""),
             first_seen=str(raw.get("first_seen") or ""), completed_at=str(raw.get("completed_at") or ""),
+            archived=bool(raw.get("archived")),
             resources=[
                 Resource(
                     key=str(r.get("key") or ""), label=str(r.get("label") or ""),
@@ -229,6 +232,8 @@ def apply_depot_event(entry: Mapping[str, Any], existing: Optional[Site],
     if site.complete and not site.completed_at:
         site.completed_at = stamp
     site.failed = bool(entry.get("ConstructionFailed"))
+    if site.active:
+        site.archived = False    # a site the depot reports as under construction again is not a finished one to keep
     resources = []
     for raw in entry.get("ResourcesRequired") or []:
         if not isinstance(raw, Mapping):

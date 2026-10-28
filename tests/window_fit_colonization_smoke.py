@@ -1,4 +1,4 @@
-"""Builds the colonization pop-out windows (Colonization Sites with its where-to-buy results, Colonization History and Planned Builds) with EDMC stubbed and long data
+"""Builds the colonization pop-out windows (Colonization Sites with its where-to-buy results, Colonization History, Planned Builds, My Projects and the Archive) with EDMC stubbed and long data
 (60-character construction site and station names, 40-character system names, tonnages in the millions), and runs the layout checker (window_fit_check.py) at the window's
 minimum size, 640 px wide and 1600 px wide. Fails on text cut off, controls pushed outside the window, labels that cannot wrap and tables whose columns do not fit or do
 not use a wide window. Run by test_window_fit_colonization_smoke.py in a subprocess so the stand-ins never leak into other tests. Exits 0 if everything holds, 1 if not,
@@ -21,7 +21,7 @@ except tk.TclError:
     sys.exit(77)
 root.withdraw()
 
-from plugin import (colonization, colonization_builds_window as B, colonization_carrier, colonization_data, colonization_history_window as HW,  # noqa: E402
+from plugin import (colonization, colonization_archive_window as AW, colonization_builds_window as B, colonization_carrier, colonization_data, colonization_history_window as HW,  # noqa: E402
                     colonization_projects_window as PW, colonization_sources as S, colonization_window as W, rcc_client)
 
 problems, notes = [], []
@@ -134,6 +134,17 @@ pwin = PW._window
 settle(lambda: len(pwin._table) == 30)
 F.check_views(root, pwin._shell.window, "My Projects", None, problems, notes)
 PW.close()
+
+# --- Colonization Archive --------------------------------------------------------------------------------------------------------------
+for market_id in range(10, 40):
+    repo_sites.upsert(F.COMMANDER, make(market_id, SITE + str(market_id), complete=True))
+repo_sites.set_archived(F.COMMANDER, [2] + list(range(10, 40)), True)
+AW.show(root, repo_sites, lambda: F.COMMANDER)
+awin = AW._window
+F.pump(root)
+awin._sites_table.select("10", notify=True)
+F.check_views(root, awin._shell.window, "Colonization Archive", None, problems, notes)
+AW.close()
 
 root.destroy()
 for line in notes:

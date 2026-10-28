@@ -442,7 +442,16 @@ The results table has the columns **Station**, **System**, **Type**, **Planetary
   **Raven Colonial Website**, then **Create Project on Raven…**, **Report Complete to Raven** and **Mark Plan Entry Demolished…** (the three that write; the dots mean a question follows). See
   [Planned builds](#planned-builds), [Starting a project on Raven Colonial](#starting-a-project-on-raven-colonial) and
   [Sharing your progress with Raven Colonial](#sharing-your-progress-with-raven-colonial).
-- **Manage Sites** (a menu): **Remove Site** stops tracking the selected site, and **Remove Finished** deletes every complete or failed site and says how many it removed. Neither asks first. Removing a site only forgets WFMT's tracking of it: docking at the depot again registers it afresh.
+- **Manage Sites** (a menu): **Archive Finished** moves every complete or failed site into the [Archive](#the-archive); **Show Archive** opens it. **Remove Site** stops tracking the selected site, and **Remove Finished** deletes every complete or failed site and says how many it removed. Neither removal asks first. Removing a site only forgets WFMT's tracking of it: docking at the depot again registers it afresh.
+
+### The archive
+
+Finished sites stay in the Sites window until you remove or archive them; WFMT never clears them by itself. The **Archive** keeps them for reference without crowding the list of sites you still work on.
+
+- **Archive Finished** (Manage Sites) moves every complete or failed site there. An unfinished site is never archived.
+- **Show Archive** opens a window listing them, newest finish first: the site, its system, how it ended, when WFMT first saw it and when it finished, how long it took, and the tons it needed. Select one to see each commodity it needed and what was delivered. Delivered counts everyone's deliveries, as the depot reports them.
+- **Restore** puts the selected site back in the Sites window. **Copy Summary** copies its facts as text. **Manage → Remove Permanently** forgets it after asking; the delivery history keeps your own totals but not the site's list of commodities.
+- Archived sites still count in the [History](#history) figures, and they are in the same data file as the other sites, so **Back up my data** includes them. If a depot reports an archived site as under construction again, it returns to the Sites window.
 
 ## My Projects
 

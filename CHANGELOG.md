@@ -3,6 +3,28 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## Unreleased
+
+### Added
+
+- **Colonization:** an **Archive** for finished sites. **Manage Sites → Archive Finished** moves every completed or failed site out of the
+  Sites window into **Manage Sites → Show Archive**, a read-only list with how each ended, when it started and finished, how long it
+  took and the commodities it needed. **Restore** brings one back, **Copy Summary** copies its facts and **Remove Permanently** forgets
+  it. Archived sites are kept in the same file as the rest (so Back up my data includes them) and still count in the history.
+- **Colonization:** when a new construction site appears and Raven Colonial has no project for it, the Colonization panel offers to
+  create one (**CREATE ON RAVEN**, or **NOT NOW**). It needs the master switch and progress sharing on and your key saved, and is made once per site.
+
+### Changed
+
+- **Windows:** the footer message of WFMT's windows has its own bright color on every theme (yellow on Navy, Cyan and Green, cyan on
+  Amber) instead of a pale tint of the accent. The note under the Where to buy buttons uses it while a search runs.
+
+### Fixed
+
+- **Colonization:** Create Project on Raven could open its dialog out of sight, and the construction panel's depot updates (every few
+  seconds) replaced the status message at once. The dialog is now centered and kept on the screen, and the message of a button you press
+  stays for 30 seconds. A failure to open the dialog is written to the EDMC log.
+
 ## 1.1.0 (2026-10-27)
 
 ### Changed

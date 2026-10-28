@@ -354,7 +354,7 @@ check(menus["Raven"].entries() == ["My Projects", "Planned Builds", "Raven Progr
                                    "Raven Colonial Website", "Create Project on Raven…", "Report Complete to Raven",
                                    "Mark Plan Entry Demolished…"],
       f"Raven Colonial menu: {menus['Raven'].entries()}")
-check(menus["Manage"].entries() == ["Remove Site", "Remove Finished"], f"Manage Sites menu: {menus['Manage'].entries()}")
+check(menus["Manage"].entries() == ["Archive Finished", "Show Archive", "Remove Site", "Remove Finished"], f"Manage Sites menu: {menus['Manage'].entries()}")
 
 # Opening Raven's pages: the project's own page when it is found, the system's page when it is not; the browser is stood in for.
 opened = []

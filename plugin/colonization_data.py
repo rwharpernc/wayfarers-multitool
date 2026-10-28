@@ -101,6 +101,21 @@ class SiteRepository:
         bucket[site.market_id] = site
         self._save_and_notify()
 
+    def set_archived(self, cmdr: str, market_ids: List[int], archived: bool) -> int:
+        """Put finished sites away (or bring them back), saving once. Only a finished site can be archived. Returns how many changed."""
+        key = self._cmdr_key(cmdr) if cmdr else None
+        if key is None:
+            return 0
+        changed = 0
+        for market_id in market_ids:
+            site = self._by_cmdr[key].get(market_id)
+            if site is not None and site.archived != archived and (not archived or not site.active):
+                site.archived = archived
+                changed += 1
+        if changed:
+            self._save_and_notify()
+        return changed
+
     def remove(self, cmdr: str, market_id: int) -> None:
         key = self._cmdr_key(cmdr) if cmdr else None
         if key is None or market_id not in self._by_cmdr.get(key, {}):
