@@ -13,6 +13,7 @@ from __future__ import annotations
 import logging
 import os
 import threading
+import time
 import tkinter as tk
 import webbrowser
 from typing import Any, Callable, Dict, FrozenSet, List, Mapping, Optional, Tuple
@@ -78,6 +79,7 @@ NOT_AVAILABLE = "  (not available here)"   # after a commodity the docked market
 _SHOW_LABELS = dict(view.SHOW_CHOICES)   # key -> the dropdown text
 _SORT_CHOICES = (("Closest first", sources.SORT_DISTANCE), ("Cheapest first", sources.SORT_PRICE))
 _POLL_MS = 150
+_HOLD_S = 30.0   # how long a pressed button's message stays before the summary line may replace it
 _STATION_MAX = 24  # a station name is clipped to this in the "Only what ... sells" label
 _ERROR_MAX = 90    # a failure message from outside is clipped to this
 _NAME_MAX = 60     # a site's name or system is clipped to this in the detail heading
@@ -89,19 +91,22 @@ def show(parent: tk.Misc, repository: SiteRepository, cmdr: str, cargo: Mapping[
          current_system: Optional[Callable[[], str]] = None,
          market: Optional[Callable[[], Optional[Tuple[str, FrozenSet[str]]]]] = None,
          carrier_id: Optional[Callable[[], Optional[int]]] = None,
-         rcc_created: Optional[Callable[[int, str], None]] = None) -> None:
+         rcc_created: Optional[Callable[[int, str], None]] = None, create_for: Optional[int] = None) -> None:
     """Open the window for `cmdr`, or raise/refresh it if already open. `capacity` returns the current ship's cargo
     capacity (0 when unknown), for the trips figure; `current_system` the system the commander is in, for the
     "Here" button of the where-to-buy search; `market` the docked station's name and the commodities it has for
     sale, or None when no market has been opened (for the "Only what this station sells" filter); `carrier_id` the market id of the
-    commander's own fleet carrier (None when not known), and `rcc_created(market_id, build_id)` is told of a project made on Raven."""
+    commander's own fleet carrier (None when not known), and `rcc_created(market_id, build_id)` is told of a project made on Raven.
+    `create_for` is a site's market id: the window selects that site and goes straight to Create Project on Raven for it."""
     global _window
     if _window is not None and _window.alive:
         _window.set_cmdr(cmdr)
         _window.set_cargo(cargo)
         _window.lift()
-        return
-    _window = ColonizationWindow(parent, repository, cmdr, cargo, carrier, capacity, current_system, market, carrier_id, rcc_created)
+    else:
+        _window = ColonizationWindow(parent, repository, cmdr, cargo, carrier, capacity, current_system, market, carrier_id, rcc_created)
+    if create_for is not None:
+        _window.create_for(create_for)
 
 
 def refresh_cargo(cargo: Mapping[str, int]) -> None:
@@ -498,6 +503,8 @@ class ColonizationWindow:
         wanted_iid = next((i for i, label in self._row_label.items() if label == self._wanted), None)
         if wanted_iid:
             self._commodity_table.select(wanted_iid)
+        if time.monotonic() < self._held_until:
+            return   # an action's own message is still being read; a depot update must not wipe it
         if totals.lines and not rows:
             self._shell.set_status("The filters hide every commodity this site still needs.")
         else:
@@ -860,6 +867,14 @@ class ColonizationWindow:
 
     # --- buttons -----------------------------------------------------------
 
+    _held_until = 0.0
+
+    def _announce(self, text: str, ok: bool = False) -> None:
+        """Show a message from something the commander just pressed, and keep it up for a while: the construction panel in the game
+        sends depot updates every few seconds, and each one redraws the table and its summary line over the status."""
+        self._held_until = time.monotonic() + _HOLD_S
+        self._shell.set_status(text, ok)
+
     def _selected_site(self) -> Optional[Site]:
         return self._sites.get(self._selected) if self._selected is not None else None
 
@@ -890,10 +905,10 @@ class ColonizationWindow:
         """Open the Planned Builds window (what Raven Colonial has for this site's system). Nothing is asked until this is pressed."""
         site = self._selected_site()
         if site is None:
-            self._shell.set_status("Select a site on the left first; its system is the one looked up.")
+            self._announce("Select a site on the left first; its system is the one looked up.")
             return
         if not site.system:
-            self._shell.set_status("This site has no system name yet; dock at it once so WFMT knows where it is.")
+            self._announce("This site has no system name yet; dock at it once so WFMT knows where it is.")
             return
         colonization_builds_window.show(
             self._toplevel, site.system,
@@ -903,23 +918,23 @@ class ColonizationWindow:
         """Open Raven Colonial's page for the selected site's system in the browser (nothing is asked of Raven by WFMT)."""
         site = self._selected_site()
         if site is None or not site.system:
-            self._shell.set_status("Select a site with a known system on the left first.")
+            self._announce("Select a site with a known system on the left first.")
             return
         webbrowser.open(rcc_client.system_page_url(site.system))
-        self._shell.set_status(f"Opened {site.system} on Raven Colonial in your browser.")
+        self._announce(f"Opened {site.system} on Raven Colonial in your browser.")
 
     def _on_open_build_page(self) -> None:
         """Open Raven Colonial's page for the selected site's own project. The project is found the way Raven Progress finds it (one
         read of the system's plan); a site Raven has no project for opens its system page instead."""
         site = self._selected_site()
         if site is None:
-            self._shell.set_status("Select a site on the left first.")
+            self._announce("Select a site on the left first.")
             return
         if not site.system:
-            self._shell.set_status("This site has no system name yet; dock at it once so WFMT knows where it is.")
+            self._announce("This site has no system name yet; dock at it once so WFMT knows where it is.")
             return
         job: Dict[str, Any] = {"done": False, "build_id": "", "error": ""}
-        self._shell.set_status("Looking up the project on Raven Colonial…")
+        self._announce("Looking up the project on Raven Colonial…")
 
         def work() -> None:
             try:
@@ -941,26 +956,26 @@ class ColonizationWindow:
             self._toplevel.after(150, self._poll_open_build, job, site)
             return
         if job["error"]:
-            self._shell.set_status(job["error"])
+            self._announce(job["error"])
         elif job["build_id"]:
             webbrowser.open(rcc_client.build_page_url(job["build_id"]))
-            self._shell.set_status(f"Opened {site.display_name()} on Raven Colonial in your browser.")
+            self._announce(f"Opened {site.display_name()} on Raven Colonial in your browser.")
         else:
             webbrowser.open(rcc_client.system_page_url(site.system))
-            self._shell.set_status("Raven Colonial has no project linked to this site, so its system page was opened instead.")
+            self._announce("Raven Colonial has no project linked to this site, so its system page was opened instead.")
 
     def _on_raven_progress(self) -> None:
         """Read Raven Colonial's own figures for the selected site and set them beside WFMT's (a read; nothing is sent but the project's
         id). The site is matched on its market id in Raven's plan for the system."""
         site = self._selected_site()
         if site is None:
-            self._shell.set_status("Select a site on the left first.")
+            self._announce("Select a site on the left first.")
             return
         if not site.system:
-            self._shell.set_status("This site has no system name yet; dock at it once so WFMT knows where it is.")
+            self._announce("This site has no system name yet; dock at it once so WFMT knows where it is.")
             return
         job: Dict[str, Any] = {"done": False, "project": None, "error": ""}
-        self._shell.set_status("Asking Raven Colonial…")
+        self._announce("Asking Raven Colonial…")
 
         def work() -> None:
             try:
@@ -984,23 +999,23 @@ class ColonizationWindow:
             return
         project = job["project"]
         if project is None:
-            self._shell.set_status(job["error"] or "Raven Colonial has no project linked to this site.")
+            self._announce(job["error"] or "Raven Colonial has no project linked to this site.")
             return
         ours = site.remaining_total
         verdict = "they agree" if project.sum_need == ours else f"they differ by {abs(project.sum_need - ours):,} t"
         state = " Raven Colonial has it marked complete." if project.complete else ""
-        self._shell.set_status(f"{site.display_name()}: Raven Colonial says {project.sum_need:,} t still needed of {project.max_need:,}; "
+        self._announce(f"{site.display_name()}: Raven Colonial says {project.sum_need:,} t still needed of {project.max_need:,}; "
                                f"WFMT says {ours:,} t ({verdict}).{state}")
 
     def _on_rescan_carrier(self) -> None:
         """Rebuild the fleet carrier tally from the last 30 days of journals, for a transfer that did not register (see
         colonization_carrier.scan_journals). The files are read on a worker thread; the result is applied here on the Tk thread."""
         if self._carrier is None or not self._cmdr or not self._carrier.has_carrier(self._cmdr):
-            self._shell.set_status("Rescan Carrier needs a commander with a fleet carrier.")
+            self._announce("Rescan Carrier needs a commander with a fleet carrier.")
             return
         cmdr = self._cmdr
         job: Dict[str, Any] = {"done": False, "record": None}
-        self._shell.set_status("Rescanning the journals for carrier transfers…")
+        self._announce("Rescanning the journals for carrier transfers…")
 
         def work() -> None:
             try:
@@ -1020,12 +1035,12 @@ class ColonizationWindow:
             return
         record = job["record"]
         if record is None or self._carrier is None or cmdr != self._cmdr:
-            self._shell.set_status("The rescan failed; see the EDMC log." if record is None else "The commander changed; rescan again.")
+            self._announce("The rescan failed; see the EDMC log." if record is None else "The commander changed; rescan again.")
             return
         self._carrier.replace_from_journals(cmdr, record)
         self._carrier.commit()
         tons = self._carrier.tons(cmdr)
-        self._shell.set_status(f"Rescanned the last {colonization_carrier.MAX_DAYS} days of journals: {len(tons)} commodit"
+        self._announce(f"Rescanned the last {colonization_carrier.MAX_DAYS} days of journals: {len(tons)} commodit"
                                f"{'y' if len(tons) == 1 else 'ies'}, {sum(tons.values()):,} t on your carrier. The next Frontier "
                                "fetch can replace this with the carrier's real cargo.")
 
@@ -1033,13 +1048,13 @@ class ColonizationWindow:
         """The commander's Raven key when a write may go ahead, else "" (with the reason in the status line). Asks for the key when
         none is saved; it is kept only once a write has worked."""
         if not rcc_keys.enabled():
-            self._shell.set_status("Sending to Raven Colonial is switched off. Turn it on in Settings → Colonization → Raven Colonial.")
+            self._announce("Sending to Raven Colonial is switched off. Turn it on in Settings → Colonization → Raven Colonial.")
             return ""
         if site is None:
-            self._shell.set_status("Select a site on the left first.")
+            self._announce("Select a site on the left first.")
             return ""
         if not site.system or not self._cmdr:
-            self._shell.set_status("This site needs a system name and a commander first; dock at it once.")
+            self._announce("This site needs a system name and a commander first; dock at it once.")
             return ""
         key = rcc_keys.keys.get(self._cmdr)
         if not key:
@@ -1061,6 +1076,16 @@ class ColonizationWindow:
         except Exception:
             return {}
 
+    def create_for(self, market_id: int) -> None:
+        """Select the site with this market id and start Create Project on Raven for it (the offer made on the panel)."""
+        if market_id not in self._sites:
+            self._announce("That site is no longer in the list.")
+            return
+        self._selected = market_id
+        self._site_table.select(str(market_id))
+        self._refresh_detail()
+        self._toplevel.after(200, self._on_create_rcc)
+
     def _on_create_rcc(self) -> None:
         """Start a Raven Colonial project for the selected site: read the system's plan, then (after the commander fills in and confirms the
         dialog) create the project and link the commander (see rcc_create.py). Nothing is sent before the dialog is confirmed."""
@@ -1069,10 +1094,10 @@ class ColonizationWindow:
         if not key or site is None:
             return
         if not site.active:
-            self._shell.set_status("This site is already finished; only an active one can start a project.")
+            self._announce("This site is already finished; only an active one can start a project.")
             return
         job: Dict[str, Any] = {"done": False, "plan": None, "error": ""}
-        self._shell.set_status("Looking at the plan on Raven Colonial…")
+        self._announce("Looking at the plan on Raven Colonial…")
 
         def work() -> None:
             try:
@@ -1096,16 +1121,19 @@ class ColonizationWindow:
             return
         plan = job["plan"]
         if plan is None:
-            self._shell.set_status(job["error"] or "Raven Colonial could not be read.")
+            logger.info("Create project: the plan was not read: %s", job["error"])
+            self._announce(job["error"] or "Raven Colonial could not be read.")
             return
         try:
             existing = rcc_client.build_id_for(plan, site.market_id, site.name, self._address(site))
         except rcc_client.RccError as err:
-            self._shell.set_status(str(err))
+            logger.info("Create project: the lookup of an existing project failed: %s", err)
+            self._announce(str(err))
             return
         if existing:
+            logger.info("Create project: Raven already has build %s for market %s", existing, site.market_id)
             self._rcc_created(site.market_id, existing)
-            self._shell.set_status(f"Raven Colonial already has a project for {site.display_name()}; progress sharing will use it.")
+            self._announce(f"Raven Colonial already has a project for {site.display_name()}; progress sharing will use it.")
             return
         address, star_pos = rcc_create.locate(site.system, plan, self._game_state())
         name = rcc_create.suggested_name(site)
@@ -1113,12 +1141,14 @@ class ColonizationWindow:
         locked = ""
         if plan.is_open is False and plan.architect and plan.architect.casefold() != self._cmdr.casefold():
             locked = f"This system is locked to its architect, {plan.architect}; Raven Colonial may refuse a project here."
+        logger.info("Create project: asking about %r in %s (%d plan sites, %d bodies)", name, site.system, len(plan.sites), len(plan.bodies))
         chosen = colonization_create_dialog.ask(
             self._toplevel, site.system, name, rcc_create.planned_sites(plan.sites), rcc_create.guess_planned(plan.sites, name),
             plan.architect or self._cmdr, can_attach_carrier=isinstance(carrier_id, int), bodies=plan.bodies,
             primary_port=rcc_create.is_construction_ship(site), locked_note=locked)
         if chosen is None:
-            self._shell.set_status("Nothing was sent to Raven Colonial.")
+            logger.info("Create project: the dialog was cancelled or did not open")
+            self._announce("Nothing was sent to Raven Colonial.")
             return
         request = rcc_create.Request(
             site=site, cmdr=self._cmdr, key=key, system=site.system, system_address=address, star_pos=star_pos, name=chosen.name,
@@ -1127,10 +1157,10 @@ class ColonizationWindow:
             make_primary=chosen.make_primary, fleet_carrier=carrier_id if chosen.fleet_carrier else None)
         problem = rcc_create.validate(request)
         if problem:
-            self._shell.set_status(problem)
+            self._announce(problem)
             return
         run: Dict[str, Any] = {"done": False, "result": None, "error": ""}
-        self._shell.set_status("Creating the project on Raven Colonial…")
+        self._announce("Creating the project on Raven Colonial…")
 
         def create() -> None:
             try:
@@ -1153,12 +1183,12 @@ class ColonizationWindow:
             return
         result = run["result"]
         if result is None:
-            self._shell.set_status(_clip(run["error"] or "Raven Colonial did not create the project.", 200))
+            self._announce(_clip(run["error"] or "Raven Colonial did not create the project.", 200))
             return
         rcc_keys.keys.set(self._cmdr, key)     # saved once it has worked, so a wrong key is not kept
         rcc_client.clear_cache()
         self._rcc_created(site.market_id, result.build_id)
-        self._shell.set_status(_clip(result.summary, 300))
+        self._announce(_clip(result.summary, 300))
 
     def _on_demolish_rcc(self) -> None:
         """Mark the selected site's entry in Raven's plan as demolished (Raven's own status; nothing happens in the game). Asks first."""
@@ -1167,7 +1197,7 @@ class ColonizationWindow:
         if not key or site is None:
             return
         job: Dict[str, Any] = {"done": False, "message": ""}
-        self._shell.set_status("Looking at the plan on Raven Colonial…")
+        self._announce("Looking at the plan on Raven Colonial…")
 
         def work() -> None:
             try:
@@ -1198,14 +1228,14 @@ class ColonizationWindow:
             return
         entry = job.get("entry")
         if entry is None:
-            self._shell.set_status(job["message"])
+            self._announce(job["message"])
             return
         if not dialogs.confirm(self._toplevel, "Mark demolished on Raven Colonial",
                                f"Mark {entry.name} in {site.system} as demolished in Raven Colonial's plan?\n\nOnly its plan entry changes."):
             return
         address, cmdr, body = job["address"], self._cmdr, rcc_create.demolish_body(entry)
         run: Dict[str, Any] = {"done": False, "error": ""}
-        self._shell.set_status("Updating Raven Colonial…")
+        self._announce("Updating Raven Colonial…")
 
         def work() -> None:
             try:
@@ -1226,17 +1256,17 @@ class ColonizationWindow:
         """Tell Raven Colonial the selected site is finished. Asks first, and sends only the commander's Raven key to the one
         project's `complete` address (see rcc_client.complete_project); nothing else leaves WFMT."""
         if not rcc_keys.enabled():
-            self._shell.set_status("Sending to Raven Colonial is switched off. Turn it on in Settings → Colonization → Raven Colonial.")
+            self._announce("Sending to Raven Colonial is switched off. Turn it on in Settings → Colonization → Raven Colonial.")
             return
         site = self._selected_site()
         if site is None:
-            self._shell.set_status("Select a site on the left first.")
+            self._announce("Select a site on the left first.")
             return
         if not site.complete:
-            self._shell.set_status("Your journal has not reported this site complete yet, so there is nothing to report.")
+            self._announce("Your journal has not reported this site complete yet, so there is nothing to report.")
             return
         if not site.system or not self._cmdr:
-            self._shell.set_status("This site needs a system name and a commander before it can be reported.")
+            self._announce("This site needs a system name and a commander before it can be reported.")
             return
         key = rcc_keys.keys.get(self._cmdr)
         if not key:
@@ -1253,7 +1283,7 @@ class ColonizationWindow:
             return
         market_id, system, cmdr, site_name, address = site.market_id, site.system, self._cmdr, site.name, self._address(site)
         job: Dict[str, Any] = {"done": False, "error": ""}
-        self._shell.set_status("Reporting to Raven Colonial…")
+        self._announce("Reporting to Raven Colonial…")
 
         def work() -> None:
             try:
@@ -1276,12 +1306,12 @@ class ColonizationWindow:
         if not job["done"]:
             self._toplevel.after(150, self._poll_report, job, name, done)
             return
-        self._shell.set_status(job["error"] or done.format(name=name))
+        self._announce(job["error"] or done.format(name=name))
 
     def _on_remove(self) -> None:
         site = self._selected_site()
         if site is None or not self._cmdr:
-            self._shell.set_status("Select the site you want to remove on the left first.")
+            self._announce("Select the site you want to remove on the left first.")
             return
         self._repository.remove(self._cmdr, site.market_id)
 
@@ -1292,7 +1322,7 @@ class ColonizationWindow:
         finished = [s.market_id for s in self._sites.values() if not s.active]
         for market_id in finished:
             self._repository.remove(self._cmdr, market_id)
-        self._shell.set_status(f"Removed {len(finished)} finished site{'s' if len(finished) != 1 else ''}.")
+        self._announce(f"Removed {len(finished)} finished site{'s' if len(finished) != 1 else ''}.")
 
     def close(self) -> None:
         colonization_builds_window.close()

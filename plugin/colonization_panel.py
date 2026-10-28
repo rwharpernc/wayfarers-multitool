@@ -138,7 +138,11 @@ class ColonizationController:
         self._history_pending: set = set()
         self._history_live: list = []
         self._carrier_feed = colonization_carrier.Feeder(self._carrier_cargo)
-        self._rcc = rcc_sync.RccSync(rcc_share_progress, rcc_share_carrier, rcc_keys.keys.get)
+        self._rcc = rcc_sync.RccSync(rcc_share_progress, rcc_share_carrier, rcc_keys.keys.get, on_no_project=self._note_no_project)
+        # A site Raven has no project for, found on the sync's worker thread, offered on the Tk thread: (commander, market id, name).
+        self._offers: "queue.Queue[Tuple[str, int, str]]" = queue.Queue()
+        self._offer: Optional[Tuple[str, int, str]] = None
+        self._offer_frame: Optional[tk.Frame] = None
 
         self._vars: Dict[str, tk.StringVar] = {}      # the page's value cells, by name
         self._rows: Dict[str, tuple] = {}             # name -> (caption label, value label), to hide a row that does not apply
@@ -561,6 +565,22 @@ class ColonizationController:
         fonts = panelkit.view_fonts()
         row = 0
 
+        # The offer to make a Raven project for a new site; hidden until one is found (see _poll_offers).
+        self._vars["offer"] = tk.StringVar()
+        self._offer_frame = tk.Frame(parent)
+        self._offer_frame.grid(row=row, column=0, columnspan=3, sticky=tk.W, pady=(0, 4))
+        panelkit.wrap_label(self._offer_frame, textvariable=self._vars["offer"], anchor="w", font=fonts["bold"]).pack(anchor=tk.W)
+        offer_buttons = tk.Frame(self._offer_frame)
+        offer_buttons.pack(anchor=tk.W, pady=(2, 0))
+        create_button = tk.Button(offer_buttons, text="CREATE ON RAVEN", command=self._on_offer_create)
+        create_button.pack(side=tk.LEFT)
+        panelkit.add_tooltip(create_button, "Opens the Colonization Sites window on this site and asks what to build, then starts the project "
+                                            "on Raven Colonial. Nothing is sent until you confirm there.")
+        dismiss_button = tk.Button(offer_buttons, text="NOT NOW", command=self._clear_offer)
+        dismiss_button.pack(side=tk.LEFT, padx=(6, 0))
+        self._offer_frame.grid_remove()
+        row += 1
+
         def heading(text: str, top: int = 0) -> None:
             nonlocal row
             tk.Label(parent, text=text, font=fonts["bold"]).grid(row=row, column=0, columnspan=3, sticky=tk.W, pady=(top, 0))
@@ -629,6 +649,47 @@ class ColonizationController:
         self._refresh_summary()
         parent.after(500, self._poll_history_backfill)
         parent.after(500, self._poll_market_file)
+        parent.after(1000, self._poll_offers)
+
+    def _note_no_project(self, market_id: int, system: str, name: str) -> None:
+        """Raven Colonial has no project for this site (called on the sync's worker thread, so only queued here)."""
+        if self._cmdr:
+            self._offers.put((self._cmdr, market_id, name or system))
+
+    def _poll_offers(self) -> None:
+        if self._parent is None:
+            return
+        try:
+            while True:
+                cmdr, market_id, name = self._offers.get_nowait()
+                if cmdr == self._cmdr:
+                    self._offer = (cmdr, market_id, name)
+                    self._vars["offer"].set(f"Raven Colonial has no project for {_clip(name, _NAME_MAX)}.")
+                    if self._offer_frame is not None:
+                        self._offer_frame.grid()
+        except queue.Empty:
+            pass
+        if self._offer is not None and self._offer[0] != self._cmdr:
+            self._clear_offer()    # another commander has logged in since
+        self._parent.after(1000, self._poll_offers)
+
+    def _clear_offer(self) -> None:
+        self._offer = None
+        if self._offer_frame is not None:
+            self._offer_frame.grid_remove()
+
+    def _on_offer_create(self) -> None:
+        if self._offer is None:
+            return
+        market_id = self._offer[1]
+        self._clear_offer()
+        self._on_manage_clicked(create_for=market_id)
+
+    def _project_created(self, market_id: int, build_id: str) -> None:
+        """A project was made on Raven for a site: the sync uses it from now on, and an offer for that site is withdrawn."""
+        self._rcc.note_created(market_id, build_id)
+        if self._offer is not None and self._offer[1] == market_id:
+            self._clear_offer()
 
     def _on_show_clicked(self) -> None:
         """Manual override of the automatic screens: force the shopping list on the overlay, or let go again."""
@@ -656,12 +717,12 @@ class ColonizationController:
     def _refresh_history_window(self) -> None:
         colonization_history_window.refresh_if_open(self._history_view)
 
-    def _on_manage_clicked(self) -> None:
+    def _on_manage_clicked(self, create_for: Optional[int] = None) -> None:
         if self._parent is None:
             return
         colonization_window.show(self._parent, self._repository, self._cmdr or "", self._cargo, self._carrier_cargo,
                                lambda: self._capacity, lambda: self._system, lambda: self._market,
-                               lambda: self._carrier_feed.own_market_id, self._rcc.note_created)
+                               lambda: self._carrier_feed.own_market_id, self._project_created, create_for)
 
     # --- Settings tab --------------------------------------------------
 

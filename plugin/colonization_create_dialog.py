@@ -11,14 +11,20 @@ validates and sends.
 """
 from __future__ import annotations
 
+import logging
+import os
 import tkinter as tk
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Sequence
 
+from config import appname
+
 from . import rcc_client, rcc_create
-from .uikit import palette as P, style
+from .uikit import dialogs, palette as P, style
 from .uikit.widgets import Combobox, FlatButton, clip
 
+plugin_name = os.path.basename(os.path.dirname(__file__))
+logger = logging.getLogger(f"{appname}.{plugin_name}")
 _WIDTH_CHARS = 44
 _LABEL_CHARS = 56
 _NO_PLAN = rcc_create.NO_PLAN_ENTRY
@@ -201,11 +207,8 @@ def ask(parent: tk.Misc, system: str, name: str, planned: Sequence[rcc_client.Rc
         window.bind("<Escape>", lambda _e: finish(False))
         window.protocol("WM_DELETE_WINDOW", lambda: finish(False))
 
-        window.update_idletasks()
+        dialogs._center(window, top)    # sized to its content, never past the screen, and over `top` (or the screen)
         try:
-            x = top.winfo_rootx() + max(0, (top.winfo_width() - window.winfo_reqwidth()) // 2)
-            y = top.winfo_rooty() + max(0, (top.winfo_height() - window.winfo_reqheight()) // 3)
-            window.geometry(f"+{x}+{y}")
             if top.winfo_viewable():
                 window.transient(top)
         except tk.TclError:
@@ -213,7 +216,12 @@ def ask(parent: tk.Misc, system: str, name: str, planned: Sequence[rcc_client.Rc
         window.deiconify()
         window.lift()
         style.grab_when_visible(window)
+        window.update_idletasks()
+        logger.info("Create project dialog shown: geometry %s, wanted %dx%d, screen %dx%d, viewable %s", window.winfo_geometry(),
+                    window.winfo_reqwidth(), window.winfo_reqheight(), window.winfo_screenwidth(), window.winfo_screenheight(),
+                    window.winfo_viewable())
     except tk.TclError:
+        logger.exception("The Create Raven Colonial project dialog could not be built")
         try:
             window.destroy()
         except tk.TclError:

@@ -102,12 +102,15 @@ class RccSync:
     def __init__(self, share_progress: Callable[[], bool], share_carrier: Callable[[], bool], key_for: Callable[[str], str],
                  find_sites: Optional[Callable[[str], Any]] = None, writer: Optional[Callable[..., None]] = None,
                  by_market: Optional[Callable[[int, int], Any]] = None,
-                 now: Callable[[], float] = time.monotonic) -> None:
+                 now: Callable[[], float] = time.monotonic,
+                 on_no_project: Optional[Callable[[int, str, str], None]] = None) -> None:
         self._share_progress, self._share_carrier, self._key_for = share_progress, share_carrier, key_for
         self._find_sites = find_sites or rcc_client.fetch_system
         self._write = writer or rcc_client.send_write
         self._by_market = by_market or rcc_client.fetch_project_by_market
         self._now = now
+        self._on_no_project = on_no_project                # told (market id, system, name) once per site when Raven has no project for it
+        self._offered: Set[int] = set()
         self._queue: "queue.Queue[Tuple[Callable[[], None], str]]" = queue.Queue(QUEUE_MAX)
         self._thread: Optional[threading.Thread] = None
         self._builds: Dict[int, str] = {}                  # market id -> Raven build id
@@ -152,6 +155,7 @@ class RccSync:
         if isinstance(market_id, int) and build_id:
             self._builds[market_id] = build_id
             self._missing.pop(market_id, None)
+            self._offered.add(market_id)
 
     # --- one send at a time --------------------------------------------------------------------------
     @staticmethod
@@ -209,6 +213,9 @@ class RccSync:
         else:
             self._missing[market_id] = self._now()
             self.last_result = "Raven Colonial has no project linked to this site, so nothing was sent."
+            if self._on_no_project is not None and market_id not in self._offered:
+                self._offered.add(market_id)
+                self._on_no_project(market_id, system, name)
         return build_id
 
     def _send(self, method: str, path: str, body: Optional[Any], key: str, what: str, cmdr: str = "") -> bool:

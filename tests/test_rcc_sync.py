@@ -35,6 +35,7 @@ def plan(build_id="B-1", market_id=77):
 
 class Harness:
     def __init__(self, progress=True, carrier=False, key="k", sites=None, by_market=None):
+        self.offers = []
         self.writes = []
         self.lookups = []
         self.done = threading.Event()
@@ -50,7 +51,8 @@ class Harness:
             self.lookups.append(system)
             return self.sites
 
-        self.sync = S.RccSync(lambda: progress, lambda: carrier, lambda cmdr: key, find, writer, by_market=by_market)
+        self.sync = S.RccSync(lambda: progress, lambda: carrier, lambda cmdr: key, find, writer, by_market=by_market,
+                               on_no_project=lambda *found: self.offers.append(found))
 
     def settle(self) -> None:
         self.sync._queue.join()
@@ -115,6 +117,29 @@ class SendTests(unittest.TestCase):
         self.assertEqual(h.writes, [])
         self.assertEqual(len(h.lookups), 1)
         self.assertIn("no project", h.sync.last_result)
+
+    def test_a_new_site_with_no_project_is_offered_once(self) -> None:
+        h = Harness(sites=rcc_client.RccSystem("Sol", "", None, []))
+        h.sync.on_depot("Alice", DEPOT, "Sol", "Dolgov Depot")
+        h.settle()
+        h.sync.on_depot("Alice", dict(DEPOT, timestamp="2026-10-12T20:00:15Z"), "Sol", "Dolgov Depot")
+        h.sync.on_contribution("Alice", CONTRIBUTION, "Sol", "Dolgov Depot")
+        h.settle()
+        self.assertEqual(h.offers, [(77, "Sol", "Dolgov Depot")])
+
+    def test_no_offer_when_raven_has_the_project_sharing_is_off_or_there_is_no_key(self) -> None:
+        for h in (Harness(), Harness(progress=False, sites=rcc_client.RccSystem("Sol", "", None, [])),
+                  Harness(key="", sites=rcc_client.RccSystem("Sol", "", None, []))):
+            h.sync.on_depot("Alice", DEPOT, "Sol", "Dolgov Depot")
+            h.settle()
+            self.assertEqual(h.offers, [])
+
+    def test_a_project_made_by_the_commander_withdraws_the_offer_for_good(self) -> None:
+        h = Harness(sites=rcc_client.RccSystem("Sol", "", None, []))
+        h.sync.note_created(77, "B-9")
+        h.sync.on_depot("Alice", DEPOT, "Sol", "Dolgov Depot")
+        h.settle()
+        self.assertEqual(h.offers, [])
 
     def test_carrier_cargo_needs_its_own_switch_a_key_and_a_carrier(self) -> None:
         off = Harness(progress=True, carrier=False)
