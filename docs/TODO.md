@@ -769,6 +769,9 @@ WFMT's own tracking is the reference, and reporting to Raven Colonial is **opt-i
 
 Not implemented:
 
+- **Rename Site** (Manage Sites menu): the game's name for a site replaces any name WFMT holds each time the commander docks, so a name of the commander's own would be a separate label, kept per commander and shown wherever the site's name appears, with **Reset to game name**.
+  - Optionally, a tickbox (off by default, enabled only for a site with a Raven project) also renames the project on Raven Colonial through the project update that carries `buildName`. It needs the master switch and the key, and asks first like every Raven write.
+  - Open: whether to rename the plan entry too (a separate call on Raven's system sites), and whether WFMT still finds the project after a rename (the name is only a fallback when Raven has no market id for the site, and the market id lookup should cover it; test against a live project).
 - Assigning commodities to commanders on a project, linking other commanders, and showing other linked carriers' cargo.
 - A guided tool that fills in a system's whole plan on Raven (bodies, installations and statuses) from play.
 - Ready flags.
