@@ -1123,7 +1123,7 @@ class PowerplayController:
 
         windows_row = tk.Frame(parent)
         windows_row.grid(row=13, column=0, sticky=tk.W, pady=(4, 0))
-        report_button = tk.Button(windows_row, text="Report", command=self._show_sessions)       # opens the Powerplay Sessions window; named like the BGS panel's REPORT
+        report_button = tk.Button(windows_row, text="Report", command=self._show_sessions)       # opens the Powerplay Sessions window; named like the BGS panel's Report
         report_button.pack(side=tk.LEFT, padx=(0, 6))
         panelkit.add_tooltip(report_button, "Report - open the Powerplay Sessions window")
         rares_button = tk.Button(windows_row, text="Rares", command=self._show_rares)

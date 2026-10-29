@@ -165,7 +165,7 @@ class LogController:
 
     def _buttons_into(self, body: tk.Frame, row: int, with_log: bool) -> None:
         buttons = [("start", "Start", self._on_start, "Start a new expedition here, in this ship (stops the one that is running)"),
-                   ("pause", "Pause", self._on_pause, "Hold the running expedition: nothing is counted and its clock stops, and the card keeps showing it, until you press RESUME"),
+                   ("pause", "Pause", self._on_pause, "Hold the running expedition: nothing is counted and its clock stops, and the card keeps showing it, until you press Resume"),
                    ("stop", "Stop", self._on_stop, "Stop the expedition (running or paused): it is finished and the card goes back to saying none is running")]
         if with_log:
             buttons.append(("log", "Log", self._open_window, "Open the Expedition Log: the archive of your expeditions, to name, edit, reset and rescan them"))

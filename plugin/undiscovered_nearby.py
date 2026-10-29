@@ -1,6 +1,6 @@
-"""Real systems near a position that nobody has scanned, for the Boxel Survey RND button.
+"""Real systems near a position that nobody has scanned, for the Boxel Survey Random button.
 
-RND used to guess a procedural name inside a nearby boxel and test it against EDSM. A guess that EDSM has
+Random used to guess a procedural name inside a nearby boxel and test it against EDSM. A guess that EDSM has
 never heard of is usually a name that does not exist, so nearly everything it returned was invalid. This
 module asks Spansh for the systems that do exist around the commander, nearest first, and keeps those
 with no scan data on record. The caller then confirms each pick with EDSM before showing it.
@@ -88,7 +88,7 @@ def pick_order(candidates: List[Dict[str, Any]], pool: int = POOL_SIZE) -> List[
 
 
 class NearbyCache:
-    """Keeps the last Spansh list in memory so repeated RND clicks in one place skip the slow search.
+    """Keeps the last Spansh list in memory so repeated Random clicks in one place skip the slow search.
 
     The list is reused while it is younger than `ttl` seconds, was fetched within `radius` light-years of the
     asking position, and was requested at the same size. Names already offered, or found scanned on EDSM, are

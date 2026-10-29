@@ -235,7 +235,7 @@ class RoutePlannerWindow:
         self._shell.set_status(text, ok)
 
     def _start_expedition(self) -> None:
-        """START EXPEDITION: say what happened and, when it did start, show it on the button and in the success color for a few seconds."""
+        """Start expedition: say what happened and, when it did start, show it on the button and in the success color for a few seconds."""
         said = self._ctx.start_expedition()
         started = said.startswith("Started '")
         self._say(said, ok=started)

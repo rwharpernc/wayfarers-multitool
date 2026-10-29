@@ -13,7 +13,7 @@ re-downloading - the UPDATE button (tooltip "Refresh POI Data") forces a re-down
 cached lists ever need updating within the same EDMC session.
 
 It is one half of the POI Reference section (poi_reference_panel.py), which owns the
-FIND and UPDATE buttons, the clipboard and the section's frame; this controller owns the
+Find POI and Update POI buttons, the clipboard and the section's frame; this controller owns the
 Canonn lookup, its cache and its result line.
 """
 
@@ -41,7 +41,7 @@ _CFG_THARGOID_ENABLED = "wfmt_canonn_poi_thargoid_enabled"
 _CFG_GUARDIAN_ENABLED = "wfmt_canonn_poi_guardian_enabled"
 _CFG_SKIP_LOGGED = "wfmt_canonn_poi_skip_logged"
 
-_IDLE_TEXT = "Canonn: (jump into a system, then click FIND)"
+_IDLE_TEXT = "Canonn: (jump into a system, then click Find POI)"
 _NO_POSITION_TEXT = "Canonn: current position unknown — jump or reload first"
 _NO_CATEGORY_TEXT = "Canonn: no site categories enabled — see Settings"
 _DOWNLOADING_TEXT = "Canonn: downloading site data..."
@@ -252,7 +252,7 @@ class CanonnPoiController:
         nb.Label(
             frame,
             text=(
-                "The POI Reference section's FIND button searches Canonn "
+                "The POI Reference section's Find POI button searches Canonn "
                 "Interstellar Research's own published Thargoid/Guardian site lists for the entry "
                 "closest to your current position. Manual only — this never downloads or searches "
                 "on its own, only when you click a button. The site lists are cached after the "

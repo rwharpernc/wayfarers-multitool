@@ -96,7 +96,7 @@ class FinderController:
         nb.Label(frame, text="Nearest place to land", font=("TkDefaultFont", 9, "bold")).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
         nb.Label(
             frame,
-            text=("FIND on the Exploration panel opens a window that finds, from where you are, the nearest stations that can take your ship and the fleet carriers open "
+            text=("Find on the Exploration panel opens a window that finds, from where you are, the nearest stations that can take your ship and the fleet carriers open "
                   "to everyone. It asks Spansh, and only when you press Find in that window."),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 4))

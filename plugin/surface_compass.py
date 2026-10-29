@@ -109,7 +109,7 @@ def pick_target(choice: str, mark: Optional[surface_marks.Mark], body: str, hots
 
 
 def cycle_choices(book: surface_marks.MarkBook, body: str) -> List[str]:
-    """The targets the TARGET button steps through, in order: the nearest hotspot, each mark on this body, then none."""
+    """The targets the Target button steps through, in order: the nearest hotspot, each mark on this body, then none."""
     return [surface_marks.AUTO] + [m.id for m in book.for_body(body)] + [surface_marks.NONE]
 
 
@@ -429,7 +429,7 @@ def build_settings(notebook: nb.Notebook) -> None:
         frame,
         text=("An arrow, a name and a distance on your in-game overlay (through the overlay) pointing at a spot on the planet you are "
               "on. It replaces Mining's Surface Waypoint arrow: by default it points at the nearest hotspot you have recorded, and in "
-              "Exploration mode's Compass section you can mark spots (MARK), choose what it points at (TARGET) and manage them (MARKS). "
+              "Exploration mode's Compass section you can mark spots (Mark), choose what it points at (Target) and manage them (Marks). "
               "It works from any mode, on foot or in a vehicle on a landable surface. Where it sits is set on Overlay Placement."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 6))

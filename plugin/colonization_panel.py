@@ -578,7 +578,7 @@ class ColonizationController:
                                             "on Raven Colonial. Nothing is sent until you confirm there.")
         dismiss_button = tk.Button(offer_buttons, text="Not Now", command=self._clear_offer)
         dismiss_button.pack(side=tk.LEFT, padx=(6, 0))
-        panelkit.add_tooltip(dismiss_button, "NOT NOW - hide this offer for this site; nothing is created on Raven Colonial")
+        panelkit.add_tooltip(dismiss_button, "Not Now - hide this offer for this site; nothing is created on Raven Colonial")
         self._offer_frame.grid_remove()
         row += 1
 
@@ -739,7 +739,7 @@ class ColonizationController:
             text=(
                 "Tracks what each colonization construction site still needs delivered. Dock at a "
                 "construction depot (or open its market) once to register it; deliveries are then "
-                "tallied from your journal. Press DASHBOARD in the COL mode to "
+                "tallied from your journal. Press Dashboard in the Colony mode to "
                 "open the sites window and see each site's outstanding commodities against the cargo you're carrying, and to "
                 "copy a shopping list."
             ),
@@ -846,7 +846,7 @@ class ColonizationController:
         nb.Label(
             frame,
             text=(
-                "Leave this off to switch the overlay on and off only with the OVERLAY button on the COL page; the button works "
+                "Leave this off to switch the overlay on and off only with the Overlay button on the Colony page; the button works "
                 "either way. When ticked, the card also appears by itself in a commodity market, the carrier inventory, or docked at a "
                 "construction site. "
                 "A table for your most recently updated active site: what it still needs, what is in your ship's hold "

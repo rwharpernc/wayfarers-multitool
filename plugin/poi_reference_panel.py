@@ -1,8 +1,8 @@
 """POI Reference: one Exploration section that looks up the nearest point of interest from both edastro's GEC
 (gec_poi_panel.py) and Canonn's Thargoid and Guardian site lists (canonn_poi_panel.py).
 
-The two used to be separate sections, each with its own FIND button, so finding "something worth visiting near me"
-meant pressing two buttons and comparing two lines. Here one FIND starts both lookups at once, each source keeps its
+The two used to be separate sections, each with its own Find button, so finding "something worth visiting near me"
+meant pressing two buttons and comparing two lines. Here one Find POI starts both lookups at once, each source keeps its
 own result line and link, and the system name of whichever result is nearer goes to the clipboard to paste into the
 galaxy map. UPDATE re-downloads Canonn's lists (edastro's list is cached for six hours by its own module) and then searches.
 
@@ -31,7 +31,7 @@ PANEL_PLACEMENT = "exploration"
 
 
 class Collector:
-    """Tracks which lookups of one FIND are still running and which result is nearest. No Tk, so it can be tested."""
+    """Tracks which lookups of one Find POI are still running and which result is nearest. No Tk, so it can be tested."""
 
     def __init__(self) -> None:
         self._pending: Set[str] = set()

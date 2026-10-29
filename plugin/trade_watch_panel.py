@@ -113,7 +113,7 @@ class WatchController:
             return "Log in to use the watch list.", ""
         watched = book.watched()
         if not watched:
-            return "Nothing watched yet. Press WATCH to add commodities.", ""
+            return "Nothing watched yet. Press Watch to add commodities.", ""
         lines = [line_for(book, name) for name in watched[:_LINES_SHOWN]]
         if len(watched) > _LINES_SHOWN:
             lines.append(f"+{len(watched) - _LINES_SHOWN} more in the window")

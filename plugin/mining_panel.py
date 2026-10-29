@@ -312,7 +312,7 @@ class MiningPanelController:
         mining_simulation.open_surface_live(self._window_parent(), _settings)
 
     def _open_live(self) -> None:
-        """LIVE opens the live window for the page you are on: the radar and controls for the Rhino on the Surface page, the live numbers on the Space page."""
+        """Live opens the live window for the page you are on: the radar and controls for the Rhino on the Surface page, the live numbers on the Space page."""
         live_window.show(self._window_parent(), self._current_page, _settings)
 
     def _window_parent(self) -> tk.Misc:
@@ -320,11 +320,11 @@ class MiningPanelController:
         return self._content.winfo_toplevel() if self._content is not None else self._parent
 
     def _history_mode(self) -> str:
-        """Which half of the mining history DASHBOARD opens: the Rhino's on the Surface page, the rings' otherwise."""
+        """Which half of the mining history Dashboard opens: the Rhino's on the Surface page, the rings' otherwise."""
         return mining_history_data.SURFACE if self._current_page == mining_pages.SURFACE_MINING else mining_history_data.SPACE
 
     def _open_book(self) -> None:
-        """BOOK opens the book for the page you are on: rings on the Space Mining page, the Rhino's deposits on the Surface Mining page."""
+        """Book opens the book for the page you are on: rings on the Space Mining page, the Rhino's deposits on the Surface Mining page."""
         if self._current_page == mining_pages.SURFACE_MINING:
             ledger.show(self._window_parent())
         else:

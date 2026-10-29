@@ -129,7 +129,7 @@ RANDOM_COUNT_MAX = 100
 
 
 def random_count() -> int:
-    """How many nearby systems RND asks Spansh for (Settings), kept in a safe range."""
+    """How many nearby systems Random asks Spansh for (Settings), kept in a safe range."""
     try:
         value = int(config.get_int(_CFG_RANDOM_COUNT, default=undiscovered_nearby.PAGE_SIZE))
     except (TypeError, ValueError):
@@ -577,10 +577,10 @@ class BoxelSurveyController:
         # at row 0 of its own frame, no cross-feature row coordination needed.
 
         # The "Random" button isn't built here: it lives on the Auto-Honk /
-        # Discovery Alerts button row (RND; see build_random_button(),
+        # Discovery Alerts button row (Random; see build_random_button(),
         # called from ui.py), so it stays visible and usable even when this
         # section is collapsed, whichever sub-mode is selected.
-        if self._random_status_var is None:           # RND may be built before this panel (the panels are in alphabetical order)
+        if self._random_status_var is None:           # Random may be built before this panel (the panels are in alphabetical order)
             self._random_status_var = tk.StringVar(value="")
 
         self._title_label = tk.Label(parent, text=self._title_text(), font=panelkit.bold_font(parent), cursor="hand2")
@@ -1315,8 +1315,8 @@ class BoxelSurveyController:
         ).pack(side=tk.LEFT, padx=(6, 0))
         panelkit.wrap_label(
             frame,
-            text=(f"{RANDOM_COUNT_MIN} to {RANDOM_COUNT_MAX}, default {undiscovered_nearby.PAGE_SIZE}. A larger number gives RND more "
-                  "systems to choose from but makes the Spansh search slower; raise it only if RND often reports that "
+            text=(f"{RANDOM_COUNT_MIN} to {RANDOM_COUNT_MAX}, default {undiscovered_nearby.PAGE_SIZE}. A larger number gives Random more "
+                  "systems to choose from but makes the Spansh search slower; raise it only if Random often reports that "
                   "nothing unscanned was found."),
             fg="gray",
         ).grid(row=12, column=0, sticky=tk.W, padx=10, pady=(2, 10))

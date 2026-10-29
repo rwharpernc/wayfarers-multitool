@@ -232,11 +232,11 @@ class PlotterController:
         return made.id, " ".join(part for part in (f"Started '{made.name}': {len(made.stops)} stops.", began.log_words()) if part)
 
     def start_expedition(self) -> str:
-        """START EXPEDITION: make the expedition from the route (unless it was made already), start it and its Expedition Log run, and say so."""
+        """Start expedition: make the expedition from the route (unless it was made already), start it and its Expedition Log run, and say so."""
         return self.make_expedition(start=True)[1]
 
     def review_expedition(self) -> str:
-        """REVIEW: open the Expedition window on the expedition made from the route, making it first (not started) when there is none."""
+        """Review expedition: open the Expedition window on the expedition made from the route, making it first (not started) when there is none."""
         made, said = self.make_expedition(start=False)
         if made is not None:
             expedition_panel.open_window(select=made)

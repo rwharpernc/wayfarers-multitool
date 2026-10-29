@@ -45,7 +45,7 @@ BUTTON_ONLY: Tuple[Tuple[str, str], ...] = (
     ("Codex \"Not found\" tab (it asks when you open it, with no switch)", "Canonn"),
     ("Find Nearest POI (Exploration panel)", "edastro.com GEC and Canonn"),
     ("Where to buy, Find sources, the Raven Colonial menu, Report an issue", "Spansh, Raven Colonial, GitHub (your browser)"),
-    ("RND (Random undiscovered system, Exploration panel)", "Spansh and EDSM"),
+    ("Random (undiscovered system, Exploration panel)", "Spansh and EDSM"),
     ("Route Planner (Generate route, also opened by the Expedition window's Neutron route button, and the star lookups for the neutron stops ahead that follow), and the Expedition window's Road to Riches and Exomastery", "Spansh"),
     ("Local star index: the Download and build and Update buttons below (nothing is downloaded unless you press one; the N.S. button asks nothing once the index is installed)", "Spansh's download server"),
     ("Route Planner, only with *Mark white dwarfs the route passes* ticked: the names of the route's systems, after the route is plotted", "EDSM"),

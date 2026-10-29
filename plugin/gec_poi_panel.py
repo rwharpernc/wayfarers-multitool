@@ -11,7 +11,7 @@ network activity to gate, unlike exploration_value.py's ELW-rarity/EDSM-
 upload readouts.
 
 It is one half of the POI Reference section (poi_reference_panel.py), which owns the
-FIND button, the clipboard and the section's frame; this controller owns the edastro
+Find POI button, the clipboard and the section's frame; this controller owns the edastro
 lookup and its result line.
 """
 
@@ -35,7 +35,7 @@ from . import gec_poi_edastro, journal_files, panelkit
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
 
-_IDLE_TEXT = "GEC: (jump into a system, then click FIND)"
+_IDLE_TEXT = "GEC: (jump into a system, then click Find POI)"
 _NO_POSITION_TEXT = "GEC: current position unknown — jump or reload first"
 _CHECKING_TEXT = "GEC: checking edastro.com (the first lookup downloads their list)..."
 _ERROR_TEXT = "GEC: lookup failed — see EDMarketConnector.log"
@@ -201,7 +201,7 @@ class GecPoiController:
         nb.Label(
             frame,
             text=(
-                "The POI Reference section's FIND button looks up the "
+                "The POI Reference section's Find POI button looks up the "
                 "nearest catalogued point of interest to your current position, via edastro.com's "
                 "(Elite Dangerous Astrometrics) Galactic Exploration Catalog. Manual only — this "
                 "never makes a network call on its own, only when you click the button."

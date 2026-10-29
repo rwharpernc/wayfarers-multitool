@@ -692,7 +692,7 @@ class OrganicScanController:
             frame,
             text=(
                 "Each sample that names a species is kept, with the body's conditions and the species the prediction listed, so the prediction can be "
-                "checked against what you really find (REVIEW on the Organic Scanning panel). The record is one file shared by every commander on this "
+                "checked against what you really find (Review on the Organic Scanning panel). The record is one file shared by every commander on this "
                 "install and names none of them; nothing is sent anywhere."
             ),
             wraplength=440, justify=tk.LEFT,

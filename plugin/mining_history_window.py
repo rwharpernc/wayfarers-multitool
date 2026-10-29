@@ -46,10 +46,10 @@ _HELP = (
     ("After limpets", "Earned less what the limpets launched in the run cost, each at the price you last paid for limpets. Fuel, repairs and ammunition are not taken off. A ~ means some limpets were launched before WFMT knew a price (they were bought before the journals it has), so the figure is a little high. A run with nothing sold yet shows -."),
 )
 _HELP_SPACE = (
-    ("This window", "The ring mining in your journals: what you prospected, cracked and refined from the ship. Open DASHBOARD on the Surface Mining page for the Rhino's."),
+    ("This window", "The ring mining in your journals: what you prospected, cracked and refined from the ship. Open Dashboard on the Surface Mining page for the Rhino's."),
 )
 _HELP_SURFACE = (
-    ("This window", "The Rhino's mining in your journals: the tons refined while a Rhino was out, by body. Open DASHBOARD on the Space Mining page for ring mining."),
+    ("This window", "The Rhino's mining in your journals: the tons refined while a Rhino was out, by body. Open Dashboard on the Space Mining page for ring mining."),
     ("Sales", "Matched to each half by the commodity sold, so a commodity mined both ways counts its sales in both."),
 )
 

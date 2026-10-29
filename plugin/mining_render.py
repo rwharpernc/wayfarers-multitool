@@ -318,7 +318,7 @@ def render_ring_caution(content: tk.Frame, wrap: int, row: int, enabled: bool) -
 
 
 BUTTON_ORDER = ("ledger", "history", "live", "hotspot_finder", "price_finder", "reserve_lookup")
-"""Left-to-right order of the panel's buttons in their one row: BOOK, DASHBOARD, LIVE, HOTSPOTS, PRICES, RESERVES. A button not offered on the current page, or switched off in Settings, is
+"""Left-to-right order of the panel's buttons in their one row: Book, Dashboard, Live, Hotspots, Prices, Reserves. A button not offered on the current page, or switched off in Settings, is
 simply left out. The controls that act on the ground (Mark center, Mark border, Add hotspot, Import/export) live in the live window (`mining_live_window.py`), not on the panel."""
 
 
@@ -347,7 +347,7 @@ def place_button_bar(buttons: Optional[PanelButtons], row: int, shown: Iterable[
 
 
 def _shown_buttons(settings: PanelSettings, *, hotspot_finder: bool = False, price_finder: bool = False, reserve_lookup: bool = False) -> List[str]:
-    """Names of the buttons to show on this page: the Mining Book, the Mining History (DASHBOARD) and the live window (LIVE) always, plus the opt-in lookups (Spansh hotspot
+    """Names of the buttons to show on this page: the Mining Book, the Mining History (Dashboard) and the live window (Live) always, plus the opt-in lookups (Spansh hotspot
     finder, Spansh price finder, EDSM reserve lookup) the page offers, only when switched on in Settings."""
     shown = ["ledger", "history", "live"]
     if hotspot_finder and settings.spansh_hotspot_finder_enabled:

@@ -107,7 +107,7 @@ _MODE_TOOLTIPS = {
     "trade": "Trade - what you bought and sold this session, the value of your hold, and Spansh route and price lookups",
     "missions": "Missions - every mission you have in one view, with kill-progress bars for massacres",
     "fieldops": "Operations - screenshots, backpack/locker/cargo and saved ship builds",
-    "colonization": "Colony - the project you are building now (progress, what is left, trips); history is in the HISTORY window",
+    "colonization": "Colony - the project you are building now (progress, what is left, trips); history is in the History window",
 }
 _DEFAULT_PANEL_MODE = PANEL_MODES[0][0]
 _MODE_KEYS = {key for key, _ in PANEL_MODES}
@@ -205,10 +205,9 @@ def _stack_features(frame: tk.Frame, placement_key: str, placeholder_text: Optio
 
 
 def _mode_row_full_label_size(frame: tk.Frame) -> Tuple[int, int]:
-    """(width, height) the mode-button row had when the buttons carried their full
-    labels. EDMC sizes its main window to the widest row across every plugin, and
-    that row used to be what set WFMT's width - shortening the labels
-    were shortened, the whole EDMC window opened much narrower. Measured
+    """(width, height) of the mode-button row with every mode's full label on a button.
+    EDMC sizes its main window to the widest row across every plugin, and this row is
+    what sets WFMT's width, so it is held at this size. Measured
     from a throwaway, never-displayed row of full-label buttons, so it follows the
     user's font/DPI and is fixed by the labels in PANEL_MODES: nothing external
     can make it grow."""

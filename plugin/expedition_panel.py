@@ -195,7 +195,7 @@ class ExpeditionController:
         nb.Label(frame, text="Expedition", font=("TkDefaultFont", 9, "bold")).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
         nb.Label(
             frame,
-            text=("The Expedition planner (the Expedition window, opened with EXPEDITION on the Exploration panel) keeps a list of stops and tracks your progress "
+            text=("The Expedition planner (the Expedition window, opened with Expedition on the Exploration panel) keeps a list of stops and tracks your progress "
                   "along it. Everything comes from your journal; nothing is sent anywhere."),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 4))
