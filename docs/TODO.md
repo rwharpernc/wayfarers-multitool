@@ -711,8 +711,8 @@ The items below are implemented and covered by unit tests, but have not all been
   - **A lagging Frontier copy does not undo a transfer** (EDMC signed in to Frontier): unload cargo at your carrier, then open Carrier Management. The FC column keeps the unloaded stock and **Copy diagnostics** shows an `ignored` line from `Carrier cargo from Frontier`. After 15 minutes without a transfer, a changed Frontier figure replaces the tally and an unchanged one stays ignored. The rules and log lines are in [the Colonization guide](guide/colonization.md).
   - After **Find all** with two or more commodities, **Best single systems** lists the few best systems with their stations in visiting order; **Copy Route** copies the best system first. The note under the buttons is in the accent color while a search runs.
 - [ ] **Raven Colonial writes not yet observed:** Report Complete on a finished build, and carrier cargo sharing (the second switch).
-  - **Create Project on Raven** has never run against the live service: try it docked at a construction ship, once with a planned site and once with none, and check the project, the link, the primary project and the attached carrier on ravencolonial.com.
-  - **Mark Plan Entry Demolished** is likewise unobserved.
+  - **Create Project on Raven** has worked against the live service (1.2.0 testing). Still to try: docked at a construction ship, once with a planned site and once with none, checking the project, the link, the primary project and the attached carrier on ravencolonial.com.
+  - **Mark Plan Entry Demolished** has not been observed against the live service.
   - **My Projects:** reading was checked against the live service (an empty list for a commander with no projects). With a real project, check the rows, the counted totals, **Set as My Primary** and **Save Counted List** on ravencolonial.com.
   - Carrier cargo sharing requires a transfer at the commander's own carrier with that option enabled, followed by a check of Raven's carrier record.
   - Depot progress and deliveries have been verified, and the Test key button accepts a valid key.

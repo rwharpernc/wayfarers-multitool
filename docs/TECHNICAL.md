@@ -403,7 +403,7 @@ Trade mode (`trade_panel.py`) uses two simpler variants of the same rule, becaus
   - A key is read under its current name only.
   - The few defensive readers (a one-time overlay reset, the placement keys of a slot, the Surface Compass's copy of the Mining waypoint's settings) are described where they apply.
 - **JSON files in the plugin folder** hold real data: sessions, hotspot catalog, survey log, BGS tallies, visited systems, ship builds.
-  - Examples: `sessions.json`, `boxel_state.json`, `region_sweep_state.json`, `waypoint_route_state.json`, `visited_systems.json`, `survey_log.json`, `organic_scan_state.json`, `system_surveys.json`, `system_history.json`, `codex_completionist_state.json`, `bgs_state.json`, `powerplay_state.json`, `mining_hotspots.json`, `mining_ring_notes.json`, `mining_coverage.json`, `mining_body_cache.json`, `ship_builds.json`, `stored_modules.json`, `colonization_sites.json`, `colonization_carrier.json`, `colonization_history.json`, `notes.json`, `materials.json`, `blueprint_wishlist.json`, `route_planner_route.json`, `carrier_route.json`, `mission_pins.json`, `engineers.json`, `trade_watch.json`, `surface_marks.json`, `expeditions.json`, `trade_ledger.json`, `trade_carrier.json`, `trade_stock.json`, `trade_history.json`, `trade_journal_scan.json`, `trade_route_start.json`, `overlay_settings.json`.
+  - Examples: `sessions.json`, `boxel_state.json`, `region_sweep_state.json`, `waypoint_route_state.json`, `visited_systems.json`, `survey_log.json`, `organic_scan_state.json`, `system_surveys.json`, `system_history.json`, `codex_completionist_state.json`, `bgs_state.json`, `powerplay_state.json`, `mining_hotspots.json`, `mining_ring_notes.json`, `mining_coverage.json`, `mining_body_cache.json`, `ship_builds.json`, `stored_modules.json`, `colonization_sites.json`, `colonization_carrier.json`, `colonization_history.json`, `notes.json`, `materials.json`, `blueprint_wishlist.json`, `route_planner_route.json`, `carrier_route.json`, `mission_pins.json`, `engineers.json`, `trade_watch.json`, `surface_marks.json`, `expeditions.json`, `trade_ledger.json`, `trade_carrier.json`, `trade_stock.json`, `trade_history.json`, `trade_journal_scan.json`, `trade_route_start.json`, `overlay_settings.json`, `boxel_survey_export.csv`, `exo_observations.json`, `expedition_log.json`, `income_ledger.json`, `session_credits.json`, `mining_history.json`, `codex_catalog.json`, `rcc_keys.json`, `discord_webhooks.json`, `discord_templates.json`. The full set is `_OWN_DATA_FILES` in `update.py`, which every update, backup and restore protects.
   - `exo_observations.json` is the one data file that is global rather than per commander (facts about bodies and the species found there, pooled to check the prediction; no commander name is stored).
   - `codex_catalog.json` is a cache of a downloaded list rather than commander data, but it is protected from updates the same way.
 
@@ -1396,7 +1396,7 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
 - `create`: `PUT /api/project` with the market id, system address and name, star position, name, `buildType`, `commodities` still needed (required minus provided), `maxNeed`, a rebuilt `colonisationConstructionDepot`, and the optional fields only when known. A chosen plan entry goes in as `systemSiteId`; none leaves it out, so the project stands alone and the plan is never edited (as SrvSurvey does). The answer's `buildId` is required.
 - Then, each reporting its own failure without undoing the project: `PUT /api/project/<id>/link/<cmdr>`, `PUT /api/Cmdr/<cmdr>/primary/<id>`, `PUT /api/project/<id>/fc/<carrier market id>`.
 - The system address and position come from the plan (`id64`, `pos`) first, then EDMC's `monitor.state` when the commander is in that system (`rcc_create.locate`). The carrier id is the commander's own, from `CarrierStats` / `CarrierLocation` (`Feeder.own_market_id`).
-- **Mark Plan Entry Demolished** sends `PUT /api/v2/system/<address>/sites` with the entry's fields and status `demolish`. Neither write has run against the live service (see TODO.md).
+- **Mark Plan Entry Demolished** sends `PUT /api/v2/system/<address>/sites` with the entry's fields and status `demolish`. Create Project has been used against the live service (during 1.2.0 testing); this write has not (see TODO.md).
 
 **My Projects (Raven Colonial)**
 
@@ -1621,6 +1621,12 @@ Design decisions:
   layer: they keep listed data out of the pre-update backup and out of unpacking. Keep them in sync
   when adding a data file (section 16).
 - **Backups.** The last three (`BACKUPS_KEEP`) are kept as timestamped zips; only those are trimmed, never the `pre-restore-` safety zips that share the folder. They hold code only: `_OWN_DATA_FILES` stays out of them.
+- **Failure is quiet.** A failed check or download logs and returns; it never interrupts play.
+
+### Design decisions for other features
+
+These sit here for historical reasons; they are not about self-update.
+
 - **Exploration Dashboard.** *(Why a window that holds nothing of its own: [DESIGN_NOTES.md](DESIGN_NOTES.md#36-the-exploration-dashboard).)*
   - `explore_dashboard.py` owns the window (`explore_dashboard_window.py`) and supplies `snapshot()`:
     - the shared `system_survey.survey`
@@ -1711,7 +1717,6 @@ Design decisions:
   - `load._schedule_startup_backup` runs `run_configured_backup` on a daemon timer 60 seconds after start-up.
   - `UpdateManager._download_and_stage` runs it with `force=True` before the update is applied.
   - Files are named `WFMT-data-auto-<stamp>.zip`; `AUTO_KEEP` (10) of those are kept and nothing else in the folder is ever deleted.
-- **Failure is quiet.** A failed check or download logs and returns; it never interrupts play.
 
 ## 14. Testing
 

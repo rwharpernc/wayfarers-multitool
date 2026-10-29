@@ -10,7 +10,7 @@ How to set up, build, test and try out changes to WFMT.
 
 - **Python 3** (a recent version; the code uses modern type hints). The plugin itself runs inside
   EDMC's own Python, so you only need your own copy to run the tests and checks.
-- **Node.js** (22.2 or newer), for the small build scripts (`npm run build`, `deploy` and `package`).
+- **Node.js** (a current version), for the small build scripts (`npm run build`, `deploy` and `package`).
   Node is only used to copy and zip files. There is nothing to install with `npm install`.
 - **[EDMC](https://github.com/EDCD/EDMarketConnector)**, to try the plugin for real.
 - **Git**, to get the code and share changes.
@@ -78,7 +78,7 @@ detects the OS and EDMC's plugins folder (see "Try your changes in EDMC" above).
 
 **Setting up a fresh machine**
 
-1. Install Python 3, Node.js 22.2 or newer, and Git. On Linux the Python Tk bindings are separate
+1. Install Python 3, a current Node.js, and Git. On Linux the Python Tk bindings are separate
    (Arch/CachyOS: `sudo pacman -S --needed tk nodejs npm`). Without Tk the UI tests and the import
    smoke test fail with `libtk8.6.so` errors.
 2. Clone the repo, then run `git config core.autocrlf false` inside it.

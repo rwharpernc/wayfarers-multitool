@@ -89,7 +89,7 @@ Close EDMC and delete the `Wayfarers-Multitool` folder from the plugins folder. 
 
 ## Build from source
 
-Most people should use a release. To build or change WFMT yourself you need Python 3, Node.js 22.2 or newer and Git:
+Most people should use a release. To build or change WFMT yourself you need Python 3, a current Node.js and Git:
 
 ```bash
 git clone https://github.com/rwharpernc/wayfarers-multitool.git

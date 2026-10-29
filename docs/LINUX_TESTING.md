@@ -210,7 +210,7 @@ Use them for anything the passes did not reach.
 3. Run the unit tests: `python3 -m unittest discover -s tests`.
    - The window and panel smoke tests need a display; without one they are skipped, so run them from a desktop session.
    - On Arch and CachyOS the host needs `pacman -S nodejs npm tk python-pillow xdotool`.
-     - Node 22.2 or newer is needed for the build.
+     - A current Node is needed for the build.
      - `tk` is Python's Tkinter.
      - Pillow is used by the overlay and screenshot tests.
    - A Flatpak EDMC does not use the host's Python, so these are for the tests and the build only.

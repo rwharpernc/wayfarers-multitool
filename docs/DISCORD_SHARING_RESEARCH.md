@@ -93,6 +93,8 @@ All of these would be sent only when the commander presses a button (the options
 
 ## 6. Options
 
+*History: this section records the design as it was before stage 1 was built. What was built is described in [the guide](guide/discord.md).*
+
 | Option | What it is | For | Against |
 |---|---|---|---|
 | **A. Copy for Discord** | A **Copy for Discord** next to each existing copy button, which stays as the plain-text **Copy**. Same data, formatted with Discord's markdown: bold system names, a code block for columns, links wrapped so they do not unfurl, long reports split into messages under 2,000 characters | No network. Keeps "nothing is sent unless you opt in". Fits the existing buttons. Nothing to reverse in the specs | The commander still pastes by hand. Several messages for a long report |
@@ -104,6 +106,8 @@ press. Each report is written once as data, then rendered two ways: plain text (
 Discord markdown (used by **Copy for Discord** and **Post to Discord**).
 
 ## 7. How the webhook feature would be built
+
+*History: this section records the design as it was before stage 1 was built. The build differs in places (destinations are a named list, and posts can be customized); the code and the guide are right where they disagree.*
 
 A sketch to settle before any code is written:
 
@@ -123,6 +127,8 @@ A sketch to settle before any code is written:
   webhook and a missing URL.
 
 ## 8. Plan
+
+*History: this section records the design as it was before stage 1 was built. Stage 1 is built; stages 2 and 3 remain as planned here.*
 
 Build the shared parts once, then add one report at a time. Each phase is tested in Docker and documented before the next starts.
 
