@@ -245,7 +245,7 @@ produce a very wide image.
 upper bound on *every* dimension that affects layout.
 
 **Session strip.** Directly under the mode buttons (a frame at row 2 of the main frame, with a separator at
-row 3) are the lines shown in every mode: the plugin version, the game mode, credits, merits (once there is one), the Overlays shown line, and a catch-up line while one is running. Nothing hides them. The game mode and credits lines are each a feature
+row 3) are the lines shown in every mode: the plugin version, the game mode, credits, merits (once there is one, and not on the Powerplay page, which shows the session's merits itself), the Overlays shown line, and a catch-up line while one is running. Nothing else hides them. The game mode and credits lines are each a feature
 module of its own, independent of Powerplay and of each other (the others are `session_merits.py`, `overlay_visibility.py` and `catchup_status.py`):
 
 - `game_mode.py`: "You are in Solo mode." (Open / Solo / Private Group with its name). Set from `LoadGame`'s
@@ -1106,7 +1106,7 @@ Where it lives and how it is used:
   `FSSAllBodiesFound` and makes no call.
 
 **Hard limits on how much one click can do.**
-- A skip-check run (Sequence mode) makes at most 20 EDSM lookups. Random makes one Spansh search (kept in memory for 10 minutes and 5 ly, so repeat clicks make none) and at most 6 EDSM bodies lookups per click. Sequence's automatic "nearest real system" suggestion happens only in
+- A skip-check run (Sequence mode, or Region Sweep with *Skip systems already visited by anyone (EDSM)* on) makes at most 20 EDSM lookups. Random makes one Spansh search (kept in memory for 10 minutes and 5 ly, so repeat clicks make none) and at most 6 EDSM bodies lookups per click. Sequence's automatic "nearest real system" suggestion happens only in
   response to your own clicks, at most once per 3 **Next** clicks in a row with no jump.
 - EDSM nearby-system queries use a 100 ly cube, half the documented 200 ly maximum.
 - Reordering a Waypoint Route uses one bulk coordinate request for the whole list, not one per system.
@@ -1170,6 +1170,7 @@ The window's filters apply before the number shown:
 Spatial adjacency therefore comes from a real source:
 
 - EDSM's `cube-systems` query, centered on the journal's `StarPos`, supplies nearby real systems.
+- Region Sweep's *Skip systems already visited by anyone (EDSM)* uses `region_sweep_edsm_skip.skip_known_candidates` on a worker thread (the panel polls a result queue, and a newer jump or **Next** press makes an older check stale through a generation number). It steps past candidates `edsm_client.system_known` says EDSM knows, up to 20 per advance, keeps the candidate when a lookup fails, and caches answers (`KnownSystemCache`) for the session.
 - Region Sweep never invents a "next cube" itself; it only tracks completion for cubes it was given by a typed seed, EDSM or Spansh.
 - **Random** asks Spansh for the real systems nearest you, keeps those with no scan data, and confirms one with EDSM.
   - It checks a local per-commander visited-systems log first, because a visit without a scan leaves no trace in either service, so a system you already visited could otherwise come back as "new".
@@ -1419,7 +1420,8 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
 
 - It is `PANEL_PLACEMENT = "colonization"`, the Colony button; the mode key is `colonization`.
 - It shows a page built by `colonization_panel.build_panel`: the current project and the commander's history, filled by `_refresh_summary` from the saved sites, the ship's hold and capacity, the carrier record and the delivery ledger.
-- The figures and wording live in `colonization_stats.py` (pure; `project_for`, `history_for`, `coverage_text`, `trips_text`, `next_step`).
+- The figures and wording live in `colonization_stats.py` (pure; `project_for`, `history_for`, `coverage_text`, `trips_text`, `next_step`, `delivered_text`).
+  - The page has no separate Progress line: Delivered reads `N of M t (P%)`. Next does not repeat the Still to get figure, and Covered and Trips left are hidden once nothing is left to deliver.
   - It branches on whether the commander has a fleet carrier: no carrier means no carrier row and one trips figure of whole-ship loads; with a carrier it shows trips to buy and to haul.
   - The sites window follows the same rule (`_arrange_tiles`, one Trips column).
 - `colonization_history.py` is the per-commander delivery ledger (`colonization_history.json`: totals by commodity, site and day, a `journal_at` watermark so the start-up catch-up and live events never count a delivery twice).
@@ -1979,9 +1981,9 @@ Both modules are platform-neutral by construction; what was checked, and why it 
 - **Display.** Number formatting is fixed (`f"{n:,}"`), not locale-dependent. The glyphs used are the ellipsis and ordinary punctuation.
   - Both labels are `panelkit.wrap_label`s inside one frame, so a long private-group name wraps instead of widening EDMC's window, which matters most on Linux where window managers resize more eagerly.
   - The credits line is shown on every mode.
-- `session_merits.py`: the "Merits this session" line under it.
+- `session_merits.py`: the "Merits this session" line under it (`line_visible`; `ui._apply_panel_mode_visibility` calls `set_hidden` so the Powerplay page, whose Session and Cycle lines carry the merits, does not repeat it).
   - It keeps no data: the merits and the session start come from Powerplay's session record (`powerplay.controller.sessions.current`), and `powerplay._refresh_panel` and the feature dispatch (it runs after Powerplay in `load._FEATURES`) refresh it.
-  - Hidden (`grid_remove`) until the session has a merit.
+  - Hidden (`grid_remove`) until the session has a merit, and while the Powerplay mode is showing.
   - The rate is merits over the time from `started_at` (parsed with `calendar.timegm`, as UTC) to now.
 
 ### 18.2 Platform notes for Trade mode (`trade_*.py`)

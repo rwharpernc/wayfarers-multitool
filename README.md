@@ -76,8 +76,8 @@ WFMT is one panel with eight **modes**, and you click a button to switch between
 | **Trade** | Profit after fuel and repairs, fleet carrier cargo, saved sessions, best routes and prices, a watch list | [Trade](docs/guide/trade.md) |
 | **Missions** | Every mission in one view, progress bars, a Missions window, where to buy the cargo | [Missions](docs/guide/missions.md) |
 | **Operations** | Screenshots, backpack and cargo, materials, a blueprint browser, material traders, ship builds | [Operations](docs/guide/operations.md) |
-| **Colonization** | Your current build, history, an archive of finished sites, and every site's shopping list | [Colonization](docs/guide/colonization.md) |
-| **BGS** (**BGS**) | Faction states and what your activity does to them; share a tick's report to Discord | [BGS](docs/guide/bgs.md) |
+| **Colony** (Colonization) | Your current build, history, an archive of finished sites, and every site's shopping list | [Colonization](docs/guide/colonization.md) |
+| **BGS** | Faction states and what your activity does to them; share a tick's report to Discord | [BGS](docs/guide/bgs.md) |
 
 **Sharing reports.** The BGS report and Powerplay progress can be shared three ways: copied as plain text for anywhere, copied with Discord formatting, or posted to a Discord webhook.
 

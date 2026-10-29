@@ -24,6 +24,7 @@ are estimated, how sessions work, and how the Rare Goods Finder fits in. For how
   standing and how it moved, rebuilt from the journals as far back as needed (section 11).
 - Credit income and the game mode (Open / Solo / Private Group) are **not** part of Powerplay. They are
   shown on the always-visible lines under the mode buttons (`session_credits.py`, `game_mode.py`).
+  The "Merits this session" line that follows them (`session_merits.py`) is hidden while the Powerplay page is up (`line_visible`), because the page's own Session merits line shows the same figure.
 - Offer a Rare Goods Finder for Powerplay hauling.
 
 ## 2. Non-goals

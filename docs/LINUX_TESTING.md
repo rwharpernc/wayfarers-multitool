@@ -450,6 +450,7 @@ Use them for anything the passes did not reach.
   - The status line gives a distance and says whether EDSM confirmed it.
   - The second press nearby is much quicker.
   - Settings -> Exploration -> Boxel Survey -> **Systems to request from Spansh** takes a number from 10 to 100.
+- [ ] **Region Sweep, skip systems EDSM knows**: tick **Skip systems already visited by anyone (EDSM)** (Settings -> Exploration -> Region Sweep), add a cube and press **Next >**. The status line says `Checking EDSM...` and then how many known systems it skipped (or that the check was unavailable, with the candidate shown anyway).
 - [ ] **POI Reference**: one section with **Find POI** and **Update POI**. Find POI shows a GEC line and a Canonn line, and a paste into the galaxy map gives the nearer system.
 - [ ] **My Codex**: the Codex Completionist section has one button. The window opens on **Overview**; **Not found** has a **Where to look** column; **Backfill Journals** reads your journals.
 - [ ] **Panel order and width**: in every mode the sections are alphabetical, and switching modes or opening the Route Planner and Dashboard never widens EDMC's window (if it does, send the "The WFMT panel widened" line from EDMC's log).
@@ -604,7 +605,7 @@ Windows was checked as Trade was built. The boxes below are unticked so the list
   - Typing narrows it.
   - Up/Down/Enter/Esc work.
   - Clicking a name fills the box.
-- [ ] Layout: the Session, Routes and Market pages show orange section headings with a rule between them, values on the right, and aligned number columns.
+- [ ] Layout: the Session, Routes and Market pages show orange section headings with a rule between them where a page has more than one list (a page with a single list has no heading above it), values on the right, and aligned number columns.
   - Long station names wrap instead of being cut off.
   - Nothing is clipped on the right edge or makes the EDMC window wider.
   - The buttons and (on Market) the Commodity box and **Sell** / **Buy** are **above** the results.
@@ -828,7 +829,7 @@ Written on Windows against a 3840 x 2160 screen in EDMCModernOverlay's fill mode
 - [ ] Colony shows **Current project** for your newest active site and a **History** block; Dashboard opens the sites window, and
       Overlay toggles the overlay card (lit while on).
 - [ ] Without a fleet carrier there is no Carrier row, Trips left reads like "3 loads of 400 t", and the sites window has a single
-      Trips column. With one, Carrier is shown and Trips left reads "N to buy · N to haul".
+      Trips column (Covered and Trips left go once the site has nothing left to deliver). With one, Carrier is shown and Trips left reads "N to buy · N to haul".
 - [ ] After delivering cargo to a depot, "You delivered" and "Recently" go up by the same tons, and again after restarting EDMC
       (no double counting).
 - [ ] After a build completes, History's "done" count goes up.

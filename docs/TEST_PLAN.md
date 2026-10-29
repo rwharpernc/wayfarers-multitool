@@ -16,9 +16,9 @@ What to check in EDMC after the 1.3.1 release (and before any later one), on **W
 | Platform | Automated tests | Checks in the game |
 |---|---|---|
 | **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is proved only by the in-game pass. | Not yet recorded for 1.3.0. Sections 1 to 7 below are open. |
-| **Linux** | 3,656 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-10-29 for the 1.3.1 release (3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
+| **Linux** | 3,675 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, on the unreleased `bugfix/1.3.2` branch; 3,656 passed on 2026-10-29 for the 1.3.1 release (3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
 
-- 1.0.0 was released on 2026-10-26 (tag `v1.0.0`). 1.1.0 was released on 2026-10-27 (tag `v1.1.0`). 1.2.0 was released on 2026-10-28 (tag `v1.2.0`). 1.3.0 was released on 2026-10-29 (tag `v1.3.0`), and 1.3.1 the same day (tag `v1.3.1`). These passes are the checks to run on the released build, and a failure goes to a fix on a short `bugfix/1.3.1` branch.
+- 1.0.0 was released on 2026-10-26 (tag `v1.0.0`). 1.1.0 was released on 2026-10-27 (tag `v1.1.0`). 1.2.0 was released on 2026-10-28 (tag `v1.2.0`). 1.3.0 was released on 2026-10-29 (tag `v1.3.0`), and 1.3.1 the same day (tag `v1.3.1`). These passes are the checks to run on the released build, and a failure goes to a fix on a short bugfix branch (`bugfix/1.3.2` is open).
 - Tick a box in the sections below only when you have seen it pass; nothing here has been ticked from the automated run.
 
 **Reporting**

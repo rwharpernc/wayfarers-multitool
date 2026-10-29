@@ -101,7 +101,7 @@ Just play. Press **Powerplay** in the mode bar to open the page. Top to bottom i
 - a status line (`Awaiting PowerPlay activity…` until the game reports your pledge, then `Pledged to <Power>`, `Left PowerPlay`, `Defected to <Power>` or `CMDR <name>: not a PP Pledge`),
 - the current system in bold, as `<system> — <state> (<controller>)` (for example `Nervi — Exploited (Zachary Hudson)`); the part in brackets is the controlling Power, `contested` when several Powers are in the system, or `uncontested`; with no Powerplay data the state reads `no PP data`,
 - `Here: N merits` and a `CP:` line, what you've earned in that system this session,
-- `Session merits` and `Session CP`, the running totals for this login,
+- `Session merits` and `Session CP`, the running totals for this login (left out when the Cycle pair below would read the same),
 - `Cycle N merits` and `Cycle N CP`, running totals for the **whole Powerplay cycle** so far, across every system. When this login has earned everything the cycle has (the first session of a cycle) the two would read the same, so the panel shows just the Cycle pair, with `(all this session)` after the merits, until the cycle has something your login does not. These carry over
   between game sessions and reset when the cycle ends (Thursday 07:00 UTC); the Cycles tab shows the same numbers per cycle,
 - `Cycle N megaships: 5 (2,340 merits)`,

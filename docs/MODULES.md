@@ -69,7 +69,7 @@ Spec: [TECHNICAL.md](TECHNICAL.md) sections 3 to 5 and 10
 | `shortcuts.py` | The shortcuts' runtime and Settings page (General → Shortcuts): the Windows global key combinations on their own thread, the chat commands read from the journal's `SendText` event, running each action on the Tk thread and the optional sound |
 | `overlay_placement.py` | Global overlay placement: reads the real window size, mode and display scaling from EDMCModernOverlay's log (falling back to Elite's `DisplaySettings.xml` and Windows' scaling, then to the window size alone from the overlay's log when that file cannot be read), keeps every display's saved spot, places a card from the size it is drawn at (`client_for_measured`), and the Overlay Placement Settings tab with its preview and the drag-and-drop layout editor |
 | `overlay_grid.py` | The drag-and-drop layout editor on the Overlay Placement tab: a to-scale picture of the screen with a grid and a box for every display; dropping a box writes the spot and offset (snapping flush to an edge or the center line, and to the grid); the conversions between a dropped box and a placement are pure |
-| `panelkit.py` | Shared Tk helpers for the main panel and Settings: wrapping labels (a `min_wrap` per label, so a section can wrap at the window's width without ever widening a narrow one), separators, toggles, tooltips, collapsible sections, page arrows, theming, and `fit_entry` / `fit_button_row`, which cap an entry box and a row of buttons in pixels whatever the font |
+| `panelkit.py` | Shared Tk helpers for the main panel and Settings: wrapping labels (a `min_wrap` per label, so a section can wrap at the window's width without ever widening a narrow one), separators, toggles, tooltips (`uikit/tooltip.py`'s `add_tooltip`, re-exported), collapsible sections, page arrows, theming, `fit_entry` / `fit_button_row`, which cap an entry box and a row of buttons in pixels whatever the font, and `flow_buttons`, which wraps a row of buttons onto a second line before it passes the width EDMC's window is held at |
 | `platform_support.py` | Windows/Linux differences in one place: Elite's folders, key presses (`xdotool`), host programs under Flatpak, the primary display's size from the operating system (`primary_display_size`: `GetDeviceCaps` on Windows, `xrandr` on Linux), "Works on" notes |
 | `restore.py` | Names the last commander from the newest journal and tells every feature when EDMC starts without the game running, so nothing waits for a login |
 | `settings_scroll.py` | Wraps each Settings page in a height-capped scrolling frame so a long page never pushes the OK button off the screen |
@@ -81,7 +81,7 @@ Spec: [TECHNICAL.md](TECHNICAL.md) sections 3 to 5 and 10
 | Module | What it is |
 |---|---|
 | `game_mode.py` | The "You are in Solo / Open / Private Group" line under the mode buttons |
-| `session_merits.py` | The "Merits this session" line under the credits line (Powerplay merits since login, with a per-hour rate) |
+| `session_merits.py` | The "Merits this session" line under the credits line (Powerplay merits since login, with a per-hour rate; hidden on the Powerplay page, which shows them itself) |
 | `session_credits.py` | The "Credits this session" line (earned or lost since login, with a per-hour rate); clicking it opens the Credits Ledger |
 | `credits_ledger.py` | The Credits Ledger feature's entry point: folds live income events into the commander's book, rebuilds the past from the journals once on a worker thread, reads the newest `Statistics` event, opens the window |
 | `income_ledger.py` | The Credits Ledger's data: income per commander by activity (trade profit, exploration data, exobiology data, mission rewards, bounties and bonds) and by day, counted without double counting; pure, no Tk |
@@ -98,7 +98,7 @@ Spec: [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md)
 |---|---|
 | `formulas.py` | Merit to Control Point conversion for Powerplay activities |
 | `feature_dispatch.py` | Hands each journal event to every feature in turn without letting one feature's failure stop the others |
-| `powerplay.py` | Powerplay mode: pledged Power, merits, the current system's Powerplay context and activity classification |
+| `powerplay.py` | Powerplay mode: pledged Power, merits (the Session and Cycle tally lines, merged into one Cycle pair when they say the same), the current system's Powerplay context and activity classification |
 | `powerplay_backfill.py` | Rebuilds the per-system ledger, and the megaship scans, from journal files for cycles played while EDMC was closed |
 | `powerplay_clipboard.py` | Formats the Sessions window's "Copy Progress" text, and builds the per-system progress rows (`progress_rows`) that Copy Progress and the Discord copy and post share |
 | `powerplay_discord.py` | Powerplay progress as Discord messages: a linked line for each system with merits and estimated CP, and the cycle's total |
@@ -293,7 +293,7 @@ Spec: [TRADE_TECH_SPEC.md](TRADE_TECH_SPEC.md) (has its own module table with mo
 | `trade_commodities.py` | Commodity name matching and the type-ahead list |
 | `trade_commodities_data.py` | The generated commodity table |
 | `trade_commodity_entry.py` | The type-ahead Commodity box widget |
-| `trade_hold.py` | Mission and stolen tons in the ship's hold, from the `Cargo` inventory |
+| `trade_hold.py` | Mission and stolen tons in the ship's hold, from the `Cargo` inventory, and the Trade panel's "Hold space" text (blank when there is no split to show) |
 | `trade_history.py` | Saved sessions, the `HistoryBook` and `trade_history.json` |
 | `trade_history_window.py` | The Trade History window (it widens to fit its widest table) |
 | `trade_journal_scan.py` | Finds journal files not read yet (or grown) and applies them to the ledger, stock and carrier; `trade_journal_scan.json` |
@@ -478,8 +478,8 @@ Spec: [WINDOW_FRAMEWORK_SPEC.md](WINDOW_FRAMEWORK_SPEC.md). Pure tkinter; nothin
 | `uikit/form.py` | `FormDialog`: labeled fields under section headings with an error line and Save and Cancel, in the window shell; the shared add/edit form (hotspots, ship builds), with `parse_optional_int` and `parse_optional_float` |
 | `uikit/mapview.py` | Canvas map widget (coverage, hotspots, position, dashed rings, zoom) |
 | `uikit/palette.py` | Color and font tokens for WFMT's own window look, and its four themes (Navy, Cyan, Amber, Green) with `apply` |
-| `uikit/shell.py` | The window shell: header, body, status footer, saved geometry; and `TabShell`, the same shell for a window that lives in a tab of another window |
+| `uikit/shell.py` | The window shell: header (action buttons and menus take a tooltip), body, status footer, saved geometry; and `TabShell`, the same shell for a window that lives in a tab of another window |
 | `uikit/style.py` | Fonts and per-window skinning |
 | `uikit/tooltip.py` | `add_tooltip`: the hover tooltip every button uses, on the main panel and in the windows (`panelkit` re-exports it); Tk only |
 | `uikit/table.py` | `DataTable`, the replacement for `ttk.Treeview` |
-| `uikit/widgets.py` | Reusable widgets (buttons, combobox, scrollbar, progress bar, tabs) |
+| `uikit/widgets.py` | Reusable widgets (buttons with a tooltip, combobox, scrollbar, progress bar, tabs) |

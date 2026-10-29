@@ -237,6 +237,7 @@ The rest of the board:
 - `MissionsUI.__live_rows` supplies the live data.
 - The panel's two buttons (Missions window, Find sources) are built once in `build_panel`, in grid row 1
   below the canvas, so they show on every page.
+- The category page's title is `Name (N)`; `missions_ui._nav_title` leaves the count off when the header's `Missions: N/20` line is shown and this is the only category holding missions, since it would repeat that line.
 
 Pins:
 

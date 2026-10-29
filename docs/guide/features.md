@@ -10,8 +10,8 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 |---|---|---|
 | Track my Powerplay merits and Control Points | The **Powerplay** panel, **Report** for the Sessions window | [Powerplay](powerplay.md#using-it) |
 | Find a rare good near me, and see where it's illegal | **Rares** in Powerplay mode | [Rare Goods Finder](powerplay.md#rare-goods-finder) |
-| Fire the Discovery Scanner on every jump | **Auto-Honk** (Auto-Honk) | [Auto-Honk](exploration.md#auto-honk) |
-| Be told about an unscanned system or a first discovery | **Discovery Alerts** (Discovery Alerts) | [Discovery Alerts](exploration.md#discovery-alerts) |
+| Fire the Discovery Scanner on every jump | **Auto-Honk** | [Auto-Honk](exploration.md#auto-honk) |
+| Be told about an unscanned system or a first discovery | **Discovery Alerts** | [Discovery Alerts](exploration.md#discovery-alerts) |
 | Plot a neutron route for my ship | **Plot** in Exploration mode (the Route Planner) | [Route Planner](exploration.md#route-planner) |
 | Plot a route for my fleet carrier | **Carrier route** in the Route Planner window | [Carrier route](exploration.md#carrier-route) |
 | Plan a trip and tick off stops as I arrive | **Expedition** in Exploration mode | [Expedition](exploration.md#expedition) |

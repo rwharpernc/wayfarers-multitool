@@ -135,7 +135,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Press **Start** in the Expedition window's Log tab: the section shows the Log's own lines (name and time, systems, jumps and light-years, bodies and species, earned and unsold).
   - **Pause** in the window becomes **Resume** and the section's lines gain `(paused)`. **Stop** ends it. The section itself has no Start, Pause or Stop.
   - Start a planned expedition (Plan tab, **Start**): the section shows its stops, jumps, light-years, time and next stop and, under them, the systems, bodies, species and credits, with the name and jumps said once.
-  - Fold the section: the title says what is running.
+  - Fold the section: the title says only whether one is running or paused (the name and figures are in the open section).
   - **Copy Next** and **Copy on arrival** work as before.
   - The section must not widen EDMC's window.
 - [ ] **One Expedition window with Plan, Route and Log tabs.**
@@ -315,7 +315,7 @@ The items below are implemented and covered by unit tests, but have not all been
 - [ ] **Hold full in.** Mine a ring with the Space page, the HUD overlay and the Live window open.
   - Once a minute of mining has passed, a line `Hold full in about N min` appears under *Run average* on all three.
   - N matches the free tons divided by the run average (for example 100 t free at 75 t/h is about 80 min).
-  - It drops as the hold fills, and it reads `Hold is full` when the hold is at capacity.
+  - It drops as the hold fills, and it reads `Hold is full` when the hold is at capacity (on the Space page only with *Show the cargo bar* off, since the Hold line already says it).
   - It does not show before a Loadout has been seen (no capacity), and not at all while nothing is being refined.
   - Launch the Rhino and check `SRV hold full in about N min` on the Surface page for the 72 t hold. It is gone once the Rhino is stowed.
   - Check the extra line fits the panel width and the HUD panel.
@@ -551,6 +551,10 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that the status line gives a distance and says whether EDSM confirmed it.
   - Check that a second press within 5 ly is much quicker (the Spansh list is cached for 10 minutes) and offers a different system.
   - Check that **Settings → Exploration → Boxel Survey → Systems to request from Spansh** changes how many systems are requested.
+  - Then Linux.
+- [ ] **Region Sweep: skip systems EDSM knows.** Tick **Skip systems already visited by anyone (EDSM)** in Settings → Exploration → Region Sweep, add a cube and press **Next >** (or jump).
+  - The status line says `Checking EDSM...`, then `Skipped N systems already known to EDSM - next: <name>` when it stepped past some. A run of known systems stops at 20 and says so.
+  - Offline, it says `EDSM check unavailable - showing candidate anyway` and offers the candidate.
   - Then Linux.
 - [ ] **System targets, visit history.** Restart EDMC and watch the card.
   - It should say `Reading your journals for a visit history (n%)` for the first read (about 40 seconds for thousands of journals).

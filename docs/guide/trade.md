@@ -109,7 +109,7 @@ safe in History.
 
 It reads your journal only. Nothing is sent anywhere. Top to bottom:
 
-**This session.** Before anything has been traded the page says `No trades yet this session.` and `Buy or sell at a market and they are counted here.` If you have only had running costs, it lists them with a **Net** figure.
+**Top of the page.** Before anything has been traded the page says `No trades yet this session.` and `Buy or sell at a market and they are counted here.` If you have only had running costs, it lists them with a **Net** figure.
 
 **Profit.** Trade profit is what you were paid minus what the sold tons cost you, as the game reports it. Stolen or
 black-market cargo counts the whole sale. Credits per hour (`+1,200,000 cr/hr`) appears once you've traded for about three minutes (it uses
@@ -306,7 +306,7 @@ The **Commodity** box and the **Sell** / **Buy** buttons beside **I want to:** a
 3. **Press Near me** to look within a radius of your system (100 ly unless you change it), or **Galaxy** to look
    everywhere. You can press both. While a search is running the **Near me** button becomes **Cancel**, and the page counts the seconds.
 
-Before you search, the page shows what it will use: your ship and landing pad, whether you are buying or selling, the commodity and amount, and the radius.
+Before you search, the page shows what it will use: your ship and landing pad, the commodity and amount (marked `(your free hold space)` when you are buying), and the radius. The lit **Sell** or **Buy** button shows which way you are searching.
 
 **Example.** You're hauling 200 t of Palladium and want to sell. Leave the box empty (it picks Palladium), press
 **Sell**, then **Near me**. You get a list of stations within 100 ly ranked by what your whole load would earn.
@@ -320,7 +320,7 @@ Before you search, the page shows what it will use: your ship and landing pad, w
   Stations that can only supply part come after, marked "only N t in stock".
 
 Once you've run both searches (near and galaxy), it tells you which is better and by how much (more money when
-selling, a lower price when buying), and how much further away it is.
+selling, a lower price when buying), and how much further away it is. When nothing in the galaxy beats the best nearby it says only `Best overall is nearby.` (the station is the first one listed).
 
 ### What each result tells you
 

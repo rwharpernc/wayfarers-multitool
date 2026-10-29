@@ -37,7 +37,7 @@ The Settings tabs for Auto-Honk, the screenshot auto-timer and the sound options
 | Finding your screen size for overlay placement | Elite's own window (built-in overlay), `DisplaySettings.xml`, or the operating system's hardware resolution | EDMCModernOverlay's log, `DisplaySettings.xml` (a Flatpak needs permission 5), then `xrandr`. Display scaling cannot be read, so set it by hand ([Overlay Placement](../OVERLAY_SETUP.md#moving-things-around)) |
 | Overlay **Corners**, **Keep showing when Elite is not the window in front** and the Windows capture-tool detection | Yes (built-in overlay) | No (they belong to the built-in overlay) |
 | Credits line, Credits Ledger, Settings, windows and their Help buttons | Yes | Yes (same journal data; the Journal directory must be set) |
-| Copy to clipboard buttons (Copy system, Copy next, Copy Shopping List) | Yes | Yes, needs a working clipboard |
+| Copy to clipboard buttons (Copy System, Copy Next, Copy Shopping List) | Yes | Yes, needs a working clipboard |
 
 ## Windows only
 

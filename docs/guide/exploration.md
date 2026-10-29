@@ -3,7 +3,7 @@
 Exploration mode is one scrolling panel (press **Explore** in the mode row to show it). It has a row of buttons at the top, then several sections stacked top to bottom in
 alphabetical order of their names (in every mode the sections are alphabetical, so one can be found without scanning).
 
-- **The top row** holds **Auto-Honk** (Auto-Honk), **Discovery Alerts** (Discovery Alerts), **Neutron Star** and **White Dwarf** (nearest neutron star and white dwarf) and **Random** (a system nobody
+- **The top row** holds **Auto-Honk** and **Discovery Alerts** (toggles for those two features), **Neutron Star** and **White Dwarf** (nearest neutron star and white dwarf) and **Random** (a system nobody
   has scanned). A short status line under it reports Discovery Alerts and the last Neutron Star or White Dwarf answer.
 - **The sections** are Boxel Survey, Codex Completionist, Compass, Dashboard, Expedition, Nearest place to land, Notes, Organic Scanning, POI Reference and Route Planner.
 - **Folding.** Every section with a ▸ / ▾ in its title starts folded: click the title to open it. A section you open stays open until EDMC restarts, and
@@ -506,7 +506,7 @@ Helps you find and identify exobiology life on a planet's surface: which species
 Sample and Analyse progress, and when you have walked far enough for the next sample. It also has four overlay cards for the body you are on (bio status,
 predicted species, a sample radar and a popup after each sample), leads you back to plants you identified, and shows the first footfall bonus.
 
-The section starts folded (click its title to open it) and has two text readouts, `Predicted species` and `Active scan`, and a **Review** button for the prediction review window. All of it is in its own guide: **[Exobiology](exobiology.md)**. You can switch the panel's section off under **Settings → WFMT → Exploration → Organic Scanning**
+The section starts folded (click its title to open it) and has the `Predicted species` readout, an `Active scan` readout that appears only once a scan has started, and a **Review** button for the prediction review window. All of it is in its own guide: **[Exobiology](exobiology.md)**. You can switch the panel's section off under **Settings → WFMT → Exploration → Organic Scanning**
 (**Show predicted species and scan progress**); it uses only your own journal and makes no internet connection.
 
 ## Codex Completionist
@@ -1368,7 +1368,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 | The Route Planner's fuel figures to include a white dwarf boost | Spansh's plotter knows only neutron stars. | White dwarfs are marked as extra boosts only when you tick the EDSM option; the jump counts do not include them. |
 | Boxel Survey to know where a system is | It works with **names**, not coordinates. It counts through the trailing number to make the next name and does not know whether that system exists. | The galaxy map is the judge. Press **Next >** to skip a name that won't plot. |
 | The game to tell WFMT a candidate failed to plot | Nothing is written to the journal when the galaxy map can't find a name. | After 3 skips WFMT asks EDSM for a real nearby system. Press **Set** to move there. |
-| Whether anyone has flown to an Random system | Random offers real systems with no scans on Spansh or EDSM. A visit without a scan leaves no trace in either. | Treat a result as a strong lead; the first scan you upload settles it. |
+| Whether anyone has flown to a system Random offers | Random offers real systems with no scans on Spansh or EDSM. A visit without a scan leaves no trace in either. | Treat a result as a strong lead; the first scan you upload settles it. |
 | A cube's real system count | WFMT only knows what EDSM, Spansh and your own visits revealed, so "complete" means every system **known** is done, or you marked it **Empty**. | Use **Mark Empty** when you have judged a cube done. |
 | The color of a gas giant | The game never records it. The Green gas giant rule uses the Codex or matches the surface temperature of a confirmed green one. | Treat it as a lead and check the body in the system map. |
 | Notable Bodies to be certain | A match comes from scan data, using its default limits. | Check the body before you plan around it. |
@@ -1378,5 +1378,5 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 | The sale line to include sales before the current journal file | It is read from the current journal file when EDMC starts, then kept up to date live. | It resets to "none yet" when you restart EDMC after a new game session. |
 | Codex Completionist to cover everything | Canonn's catalog has no geological or anomaly entries, so those never appear under **Not found**. The tally is per commander. | Use the game's Codex for those. Press **Refresh Catalog** if the saved copy is old. |
 | POI lists to be current | They are snapshots from Canonn and edastro, and are fetched only when you ask. | Press **Find POI** or **Update POI** to refresh. |
-| edastro's own "nearest" lookup to work | It does not use your position: a check on 2026-10-10 got "The Solar System" for every coordinate and name tried. WFMT downloads the full list and finds the nearest itself. | None needed. If FIND says the lookup failed, edastro's list could not be downloaded; try again later. |
+| edastro's own "nearest" lookup to work | It does not use your position: a check on 2026-10-10 got "The Solar System" for every coordinate and name tried. WFMT downloads the full list and finds the nearest itself. | None needed. If Find POI says the lookup failed, edastro's list could not be downloaded; try again later. |
 

@@ -476,6 +476,7 @@ the commander marks them:
 The **Live** button opens one window for each page (`mining_live_window.py`): geometry is saved per page, it redraws
 once a second, and the page's lines are drawn by the same code as the panel (`mining_render`, with no button bar), so
 the two cannot disagree.
+The window will not shrink below `MIN_SIZE` (1120 by 520 pixels on the Surface page, 520 by 420 on the Space page), so the header buttons keep their room.
 
 - **Surface Live** has the radar (`mining_radar_view.render`, drawn by `mining_coverage_render.render_radar`): the Rhino
   in the middle, north up, range rings, the driven ground (a 2,000 m disc at each recorded point), marked locations,
@@ -540,6 +541,8 @@ Two details shared with [Trade mode](TRADE_TECH_SPEC.md):
   Galaxy search uses (the Mining dialog still always passes a distance).
 
 The page arrows on the Mining panel are the shared `panelkit.nav_arrow`.
+
+The panel's buttons (`mining_render.BUTTON_ORDER`: Book, Dashboard, Live, Hotspots, Prices, Reserves) carry their full names and are laid out by `panelkit.flow_buttons`, which wraps them onto a second line rather than widen the window. Every button on the panel and in the windows has a hover tip in the form "Name - what it does".
 
 ## 9. Optional extras
 

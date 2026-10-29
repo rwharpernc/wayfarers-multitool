@@ -39,11 +39,13 @@ A consequence:
 - **Style** (`style.py`): applies the look to a window's classic widgets, and holds the shared text size (-2 to +6 points, changed by the footer's A- and A+ or Settings → General → Window). Fonts derive from
   `TkDefaultFont` so Linux and high-DPI displays behave.
 - **Window shell** (`shell.py`): a singleton Toplevel with saved geometry, a minimum size, a header (title,
-  subtitle, action buttons, a Help button), a status footer and Esc-to-close. `TabShell` is the same shell for a window that
+  subtitle, action buttons, a Help button), a status footer and Esc-to-close. `add_action(text, command, accent=False, tip=None)` and `add_menu(text, items, tip=None)` take the button's tooltip as `tip` (the Help button has its own). `TabShell` is the same shell for a window that
   lives in a tab of another window (the Expedition window's Plan, Route and Log tabs): its size and place are the host's. It never touches EDMC's config: the window
   passes it `load_geometry` and `save_geometry` callables. Windows are built hidden and shown once their
   content is laid out, so they never flash at a default size.
 - **Widgets** (`widgets.py`, `table.py`): `Card`, `Pill` (status chip), `StatTile` and `TileRow`, `Row` (a selectable list row), `FlatButton`, `MenuButton` (a button that posts a menu), `Combobox`, `SuggestEntry` (a text box that suggests as you type, used for system and commodity names), `SlimScrollbar`, `ProgressBar`, `Tabs`, `FoldList`, `ScrollFrame`, `NoteLabel`, `field_grid` and `DataTable`.
+  - `FlatButton(parent, text, command, kind="normal", tip=None)` and `MenuButton` take `tip`, the button's tooltip, written "Name - what it does" like the main panel's buttons. It may be a function returning the text, read each time the tooltip opens, for a button whose caption changes with its state. Every button in a window has one.
+  - The tooltip itself is `add_tooltip` in `tooltip.py` (Tk only; `panelkit` re-exports it): a small borderless popup that appears when the pointer has rested on the widget for half a second and so cannot change the size of any window.
   - `Tabs` has an `on_select` callback so a window can redraw only the tab being shown, and `compact=True` for tabs nested inside a pane: smaller labels, the pane's color.
   - `FoldList` is a collapsible grouped list.
   - `NoteLabel` is a body-size note that spans the full width and re-wraps as the window is resized, for hints under a table.

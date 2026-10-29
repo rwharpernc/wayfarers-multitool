@@ -9,6 +9,12 @@ Read this first when picking the project up on a machine that has not seen the r
 
 - **1.3.1** is the version number in `plugin/__init__.py` and `package.json`. It was released on 2026-10-29 (tag `v1.3.1`) from the `bugfix/1.3.1` branch, which was merged into `master` and deleted.
   - 1.3.1 makes the Region Sweep EDSM skip option work, starts the Colonization Show and List choices at the same place, corrects three Settings texts and brings the documentation in line with the code, with a checker that keeps it so.
+  - Unreleased, on the `bugfix/1.3.2` branch (the version number is still 1.3.1):
+    - the mode buttons carry full names (Powerplay, BGS, Explore, Mining, Trade, Missions, Operations, Colony), and every panel and window button is spelled out in Mixed Case with a tooltip ("Name - what it does"); rows of panel buttons wrap instead of widening EDMC's window
+    - the Powerplay panel shows one Cycle pair, "(all this session)", when the session has earned everything the cycle has, and the "Merits this session" line is hidden on the Powerplay page
+    - lines that repeated another line were removed from the Colony, Trade, Mining, Exploration, Missions and BGS panels
+    - the Route Planner and Mining live windows have larger minimum sizes
+    - the guide file `field-ops.md` is now `operations.md`
   - 1.3.0 was released on 2026-10-29 (tag `v1.3.0`) from the `release/1.3.0` branch, which was merged into `master` and deleted.
   - 1.3.0 adds sharing to Discord (Copy for Discord and Post to Discord for the BGS report and Powerplay progress, with a named list of webhook destinations for each commander and a dialog to customize how the posts look), the Expedition Log's three Start from my last buttons, a shopping-list overlay that follows the Sites window's Show choice, and a README and guides with how-tos and worked examples. It changes expeditions to be managed only in the Expedition window, makes the Bio status card wider and shorter, folds the Organic Scanning section by default, and drops the green under the To haul filter in favor of a tint for the rows in your hold. It fixes sampling a different genus, which now abandons the unfinished one. The full list is in [CHANGELOG.md](../CHANGELOG.md).
   - 1.2.0 was released on 2026-10-28 (tag `v1.2.0`) from the `release/1.2.0` branch, which was merged into `master` and deleted.
@@ -53,7 +59,7 @@ There is one long-lived branch, `master`.
 
 ### Linux, next pass
 
-- Automated: 3,656 tests pass in the Docker container (12 skipped), run on 2026-10-29 for the 1.3.1 release (3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
+- Automated: 3,675 tests pass in the Docker container (12 skipped) on the unreleased `bugfix/1.3.2` branch; 3,656 passed on 2026-10-29 for the 1.3.1 release (3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
 - Manual: 1.3.0 (and the released 1.2.0, 1.1.0 and 1.0.0) is still to be tested on CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC.
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Report the session type (Wayland or X11) with the results.
@@ -112,7 +118,7 @@ Written 2026-10-21 on the Windows machine. This is work done since the last Linu
   - Docker with Noto Sans reproduced only about 10 of the desktop's 101 findings, so a Docker pass does not promise a desktop pass.
   - Not yet checked natively on Windows. The Expedition and Plan dialog minimum heights went up, so check they still fit a small screen.
   - Still to check by eye:
-    - Colonization Sites, Surface Mining Book, Notes and Powerplay Sessions, whose minimum sizes went up
+    - Colonization Sites, Surface Mining Book, Notes, Powerplay Sessions, the Route Planner and the Mining live window, whose minimum sizes went up
     - that no minimum is too large for a small screen
   - Stretch columns in tables now clip their text to the width they get, so the checker's cut-text notes are gone. That is also new on both OSes, so look at a long name in a wide and a narrow window.
 - **Screen size from the operating system (new, not run on Linux).** With no game files or overlay log to read, the screen size now comes from the primary monitor (`xrandr --current`, through the host from a Flatpak) instead of an assumed 1920 x 1080.

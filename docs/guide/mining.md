@@ -167,8 +167,8 @@ Both pages carry the buttons below, and the Surface Mining Book and the coverage
 
 ## The buttons
 
-The buttons sit side by side in one row, in this order. Which ones you see depends on the page and on your
-Settings. Hover for the full name.
+The buttons sit side by side, in this order, and wrap onto a second line when they would not fit the window. Which ones you see depends on the page and on your
+Settings. Hover over a button for a tip that gives its name and what it does.
 
 | Button | What it does | Shown when |
 |---|---|---|

@@ -36,7 +36,7 @@ Short task lists. Each one links to the section with the detail. The numbers in 
 **See your current build.**
 
 1. Press **Colony** in EDMC.
-2. Read **Current project**: the progress line, **Still to get**, **Trips left** and **Next**.
+2. Read **Current project**: **Delivered**, **Still to get**, **Trips left** and **Next**.
 3. If you have more than one active site, the **Others** line says so. Press **Dashboard** to pick a different one.
 
 See [The Colony page](#the-colony-page).

@@ -119,6 +119,7 @@ and **Round trip** (section 8.2).
 - The toggle is two buttons using the same on/off look as the mode buttons
   (`panelkit.apply_toggle_button_state`), not radio buttons, which EDMC's theme doesn't color reliably.
 - Every button carries its full label, not an abbreviation.
+- Every button also has a hover tip, "Name - what it does" (`trade_panel.BUTTON_TIPS`, looked up by the button text before any colon, so `Hops: 3` finds `Hops`). The row of page buttons wraps instead of widening the panel.
 - Selling with an empty box = the commodity you carry most of; buying needs a typed commodity.
 
 **How a page is drawn.** Each page builds a list of typed blocks (`trade_blocks.py`) rather than lines of
