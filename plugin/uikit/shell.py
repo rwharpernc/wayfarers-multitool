@@ -10,6 +10,7 @@ import tkinter as tk
 from typing import Callable, Optional, Sequence, Union
 
 from . import palette as P
+from . import placement
 from . import style
 from .widgets import FlatButton, MenuButton, ScrollFrame
 
@@ -149,7 +150,11 @@ class WindowShell(_Parts):
         self.window.configure(bg=P.BG)
         self.window.minsize(*min_size)
         self._save_geometry = save_geometry
-        self.window.geometry(self._geometry(load_geometry, size, min_size))
+        geometry = self._geometry(load_geometry, size, min_size)
+        shape = _GEOMETRY.match(geometry)
+        if shape:      # opens on EDMC's monitor unless it was left somewhere that is still on a monitor (see placement.py)
+            geometry = placement.geometry_for(parent, geometry, (int(shape.group(1)), int(shape.group(2))))
+        self.window.geometry(geometry)
         self.window.bind("<Escape>", lambda _e: self.close())
         self.window.protocol("WM_DELETE_WINDOW", self.close)
 

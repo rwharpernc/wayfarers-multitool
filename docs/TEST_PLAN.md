@@ -133,6 +133,13 @@ The longer wording for each is in [TODO.md](TODO.md). Tick a box only when you h
 - [ ] **Colonization:** the Sites window's **Show** choice and the overlay follow each other; under **To haul** there is no green, and the rows in your hold are tinted (in each theme) in the window and drawn in the theme's blue on the overlay, with the ✓ kept.
 - [ ] **Exobiology:** the Bio status card is a wide strip with the distance line beside the species and reward; the Organic Scanning section starts folded; sampling a different genus abandons the unfinished one (back to 0 of 3).
 
+## 8. Added on the 1.3.2 branch (unreleased)
+
+- [ ] **Windows open on EDMC's monitor:** with EDMC on one monitor and another connected, open a window you have never opened (the Notes window, say): it opens over the EDMC window on that monitor. Drag it to the other monitor, close it and open it again: it reopens on the other monitor.
+- [ ] **Always on EDMC's monitor:** tick *Always open WFMT's windows on EDMC's monitor* (Settings → WFMT → General → Window) and open that window again: it now opens over the EDMC window, wherever you left it. Untick it: it goes back to reopening where you left it.
+- [ ] **A monitor that is gone:** with a window left on the second monitor, disconnect that monitor (or on Windows set the display to the first monitor only) and open the window: it opens over the EDMC window, not off-screen.
+- [ ] **Buttons and tooltips:** the mode row reads Powerplay, BGS, Explore, Mining, Trade, Missions, Operations, Colony without making EDMC's window wider; every button on the panels and in the windows shows a tooltip when hovered; no button label is in capitals.
+
 ## Linux specifics
 
 The same checks apply. The points that differ:

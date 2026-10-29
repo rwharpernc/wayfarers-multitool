@@ -478,6 +478,7 @@ Spec: [WINDOW_FRAMEWORK_SPEC.md](WINDOW_FRAMEWORK_SPEC.md). Pure tkinter; nothin
 | `uikit/form.py` | `FormDialog`: labeled fields under section headings with an error line and Save and Cancel, in the window shell; the shared add/edit form (hotspots, ship builds), with `parse_optional_int` and `parse_optional_float` |
 | `uikit/mapview.py` | Canvas map widget (coverage, hotspots, position, dashed rings, zoom) |
 | `uikit/palette.py` | Color and font tokens for WFMT's own window look, and its four themes (Navy, Cyan, Amber, Green) with `apply` |
+| `uikit/placement.py` | Where a pop-out window opens: the remembered position while it is still on a connected monitor, otherwise over EDMC's window on EDMC's monitor (every time with the "Always open WFMT's windows on EDMC's monitor" setting); `place` is pure, monitors come from user32 on Windows and the Tk virtual screen elsewhere |
 | `uikit/shell.py` | The window shell: header (action buttons and menus take a tooltip), body, status footer, saved geometry; and `TabShell`, the same shell for a window that lives in a tab of another window |
 | `uikit/style.py` | Fonts and per-window skinning |
 | `uikit/tooltip.py` | `add_tooltip`: the hover tooltip every button uses, on the main panel and in the windows (`panelkit` re-exports it); Tk only |

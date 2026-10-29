@@ -98,4 +98,5 @@ Things that surprise people, and what to do about them. Back to the [README](../
 
 ## Windows
 
+- A WFMT window opens on the monitor EDMC is on the first time, and again there if the monitor you left it on is gone. To have every window open there, tick *Always open WFMT's windows on EDMC's monitor* in Settings → WFMT → General → Window. A window you left on a second screen otherwise reopens there.
 - If screenshots don't save, Windows **Controlled Folder Access** or your antivirus may be blocking EDMC. Allow it, or choose another folder.

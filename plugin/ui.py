@@ -42,7 +42,7 @@ from . import (
     credits_ledger, game_mode, session_credits, session_merits, settings_scroll, system_names, trade_panel, trade_watch_panel,
 )
 from . import __version__, data_backup, issue_report, settings_online
-from .uikit import dialogs, style
+from .uikit import dialogs, placement, style
 from .update import CONFIG_AUTO_UPDATE, RELEASES_PAGE_URL
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
@@ -82,6 +82,7 @@ _SIDE_BY_SIDE_PAIRS = {autohonk: discovery}
 CONFIG_PANEL_MODE = "wfmt_active_panel_mode"
 CONFIG_MODE_HIDDEN = "wfmt_mode_hidden_"     # + the mode key: that mode's button is hidden from the main panel
 CONFIG_FIT_HEIGHT = "wfmt_fit_window_height"
+CONFIG_WINDOWS_ON_EDMC = "wfmt_windows_always_on_edmc_monitor"      # True: every pop-out window opens on the monitor EDMC is on (see uikit/placement.py)
 CONFIG_THEME = "wfmt_window_theme"   # the color theme of WFMT's own windows: a name from uikit.palette.THEMES
 CONFIG_TEXT_DELTA = "wfmt_window_text_delta"   # points added to the text of WFMT's own windows (the A- and A+ buttons, Settings -> General -> Window)
 _DEFAULT_FIT_HEIGHT = True
@@ -135,6 +136,7 @@ _text_size_var: Optional[tk.StringVar] = None
 _theme_var: Optional[tk.StringVar] = None
 _look_opened: tuple = ("", "")   # the theme and text size the Settings page showed when it was built
 _suggest_var: Optional[tk.BooleanVar] = None
+_windows_on_edmc_var: Optional[tk.BooleanVar] = None
 
 PLUGIN_DISPLAY_NAME = "Wayfarer's Multitool (WFMT)"
 
@@ -229,6 +231,7 @@ def create_plugin_app(parent: tk.Frame) -> tk.Frame:
     _frame.columnconfigure(1, weight=1)
     _frame.bind("<Configure>", panelkit.on_frame_configure)
 
+    placement.set_always(config.get_bool(CONFIG_WINDOWS_ON_EDMC, default=False))
     _panel_mode = config.get_str(CONFIG_PANEL_MODE) or _DEFAULT_PANEL_MODE
     if _panel_mode not in _MODE_KEYS:
         _panel_mode = _DEFAULT_PANEL_MODE
@@ -763,7 +766,7 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
     """Window behavior. Everything here is placed with `grid` (never `pack`) - an
     nb.Frame already holds a gridded child, and packing into it makes the whole
     WFMT Settings tab vanish (tests/test_settings_layout.py)."""
-    global _fit_height_var, _suggest_var, _text_size_var, _theme_var, _look_opened
+    global _fit_height_var, _suggest_var, _windows_on_edmc_var, _text_size_var, _theme_var, _look_opened
 
     frame = nb.Frame(notebook)
     frame.columnconfigure(0, weight=1)
@@ -836,6 +839,17 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
               "also the ones already open, and never changes EDMC or the overlay cards. The same choice is under the Theme label in a window's bottom line."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=12, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+
+    _windows_on_edmc_var = tk.BooleanVar(value=config.get_bool(CONFIG_WINDOWS_ON_EDMC, default=False))
+    nb.Checkbutton(
+        frame, text="Always open WFMT's windows on EDMC's monitor", variable=_windows_on_edmc_var,
+    ).grid(row=13, column=0, sticky=tk.W, padx=10, pady=(10, 2))
+    nb.Label(
+        frame,
+        text=("A window opens where you last left it. The first time, or if that place is no longer on a connected monitor, it opens over the EDMC window, "
+              "on EDMC's monitor. Tick this to open every window there each time instead, wherever you left it."),
+        wraplength=440, justify=tk.LEFT,
+    ).grid(row=14, column=0, sticky=tk.W, padx=10, pady=(0, 10))
 
 
 def _create_updates_tab(notebook: nb.Notebook) -> None:
@@ -1030,6 +1044,9 @@ def save_prefs() -> None:
         config.set(CONFIG_AUTO_UPDATE, bool(_auto_update_var.get()))
     if _suggest_var is not None:
         config.set(system_names.CFG_REMOTE, bool(_suggest_var.get()))
+    if _windows_on_edmc_var is not None:
+        config.set(CONFIG_WINDOWS_ON_EDMC, bool(_windows_on_edmc_var.get()))
+        placement.set_always(bool(_windows_on_edmc_var.get()))
     if _auto_backup_vars is not None:
         enabled, folder, days = _auto_backup_vars
         config.set(data_backup.CFG_AUTO, bool(enabled.get()))

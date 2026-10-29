@@ -38,7 +38,7 @@ A consequence:
   alone (the minimap markers work the same way).
 - **Style** (`style.py`): applies the look to a window's classic widgets, and holds the shared text size (-2 to +6 points, changed by the footer's A- and A+ or Settings → General → Window). Fonts derive from
   `TkDefaultFont` so Linux and high-DPI displays behave.
-- **Window shell** (`shell.py`): a singleton Toplevel with saved geometry, a minimum size, a header (title,
+- **Window shell** (`shell.py`): a singleton Toplevel with saved geometry (its position chosen by `placement.py`: the remembered one while it is still on a monitor, otherwise over EDMC's window on EDMC's monitor, or always there with the Settings tick), a minimum size, a header (title,
   subtitle, action buttons, a Help button), a status footer and Esc-to-close. `add_action(text, command, accent=False, tip=None)` and `add_menu(text, items, tip=None)` take the button's tooltip as `tip` (the Help button has its own). `TabShell` is the same shell for a window that
   lives in a tab of another window (the Expedition window's Plan, Route and Log tabs): its size and place are the host's. It never touches EDMC's config: the window
   passes it `load_geometry` and `save_geometry` callables. Windows are built hidden and shown once their

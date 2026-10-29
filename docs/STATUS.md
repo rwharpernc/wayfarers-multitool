@@ -15,6 +15,7 @@ Read this first when picking the project up on a machine that has not seen the r
     - lines that repeated another line were removed from the Colony, Trade, Mining, Exploration, Missions and BGS panels
     - the Route Planner and Mining live windows have larger minimum sizes
     - the guide file `field-ops.md` is now `operations.md`
+    - pop-out windows open on EDMC's monitor when they have no remembered place or it is no longer on a monitor, with a Settings tick to always do so
   - 1.3.0 was released on 2026-10-29 (tag `v1.3.0`) from the `release/1.3.0` branch, which was merged into `master` and deleted.
   - 1.3.0 adds sharing to Discord (Copy for Discord and Post to Discord for the BGS report and Powerplay progress, with a named list of webhook destinations for each commander and a dialog to customize how the posts look), the Expedition Log's three Start from my last buttons, a shopping-list overlay that follows the Sites window's Show choice, and a README and guides with how-tos and worked examples. It changes expeditions to be managed only in the Expedition window, makes the Bio status card wider and shorter, folds the Organic Scanning section by default, and drops the green under the To haul filter in favor of a tint for the rows in your hold. It fixes sampling a different genus, which now abandons the unfinished one. The full list is in [CHANGELOG.md](../CHANGELOG.md).
   - 1.2.0 was released on 2026-10-28 (tag `v1.2.0`) from the `release/1.2.0` branch, which was merged into `master` and deleted.

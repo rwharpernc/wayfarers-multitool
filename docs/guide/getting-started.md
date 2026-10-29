@@ -318,7 +318,7 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 | **Online lookups** | A read-out (not controls) of every switch that lets WFMT ask another service: On or Off, what it does, who it asks and which tab changes it; the lookups that need no switch and run only when you press a button; and the **Local star index** group below it |
 | **Shortcuts** | One row per action (Mark the center, Mark the border, Rig placed, Radar range, Open the Live window, Hide or show overlays): the last key of Ctrl+Alt+Shift plus a key (C, B, R, Z, L and O to start; any letter, digit, F1 to F12, or Off), with a warning if two actions share a key or Elite already uses the combination; *Chat commands* (labelled `Chat commands (type  !wf <word>  in Elite's chat)`) (off); *Play a sound when a shortcut worked* (on). The key choices work on Windows only. See [Shortcuts](shortcuts.md) |
 | **Updates** | *Automatically download and install updates* (off); the **Release notes** link. See [Updating](#updating) |
-| **Window** | *Resize the EDMC window's height to fit WFMT automatically* (on); *Suggest system names from Spansh while typing* (off); *Mode buttons on the main panel*: a tick for each of Powerplay, BGS, Explore, Mining, Trade, Missions, Operations and Colony (all ticked; unticking every one shows them all); *Text size in WFMT's windows* (points larger than normal, -2 to 6; 0); *Color theme of WFMT's windows* (Navy, Cyan, Amber or Green; Navy) |
+| **Window** | *Resize the EDMC window's height to fit WFMT automatically* (on); *Suggest system names from Spansh while typing* (off); *Mode buttons on the main panel*: a tick for each of Powerplay, BGS, Explore, Mining, Trade, Missions, Operations and Colony (all ticked; unticking every one shows them all); *Text size in WFMT's windows* (points larger than normal, -2 to 6; 0); *Color theme of WFMT's windows* (Navy, Cyan, Amber or Green; Navy); *Always open WFMT's windows on EDMC's monitor* (off) |
 
 **The Local star index group** (bottom of Online lookups) is optional; WFMT works fully without it.
 
@@ -386,7 +386,7 @@ Every pop-out window has the same layout:
 - **Help:** most windows (not the Exploration Dashboard, Inventory, Missions, Ship Builds, Colonization Sites, Where to Buy, Nearest place to land, Prediction review, Source commodities or Surface Mining Book windows) have a **Help** button at the right of the header. It opens a small window of short entries that explain the columns, the colors and the buttons, so the explanation is not a paragraph in the window itself. Press **Help** again and the same window comes forward.
 - **Body:** tables you can sort by clicking a heading where the window says so. Windows that are tabs of another window (the Expedition window's Plan, Route and Log tabs) share its header.
 - **Status line:** the line at the foot of the window gives the result of what you pressed (a copy, a search, a refusal) and wraps rather than cutting off.
-- **Size and place:** remembered for next time; a window opens at least as big as its minimum so nothing is clipped.
+- **Size and place:** remembered for next time; a window opens at least as big as its minimum so nothing is clipped. A window that has never been opened, or whose remembered place is no longer on a connected monitor, opens over the EDMC window on EDMC's monitor. Tick *Always open WFMT's windows on EDMC's monitor* (Settings → WFMT → General → Window) to open every window there instead of where you left it.
 
 ## Opening the pop-out windows
 
