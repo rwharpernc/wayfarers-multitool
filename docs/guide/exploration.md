@@ -647,7 +647,7 @@ Once you have honked, it also knows how many bodies the system has, so a stop re
 Unless you untick *Start the Expedition Log when I start an expedition* (Settings → WFMT → Exploration → Expedition; it is on to start with), **Start** also starts a run in the [Expedition Log](#expedition-log) under the same name, in the ship you are flying. The status line says so (*Logging in Expedition Log.*).
 
 - **Pause** pauses the run, **Stop** stops it, and starting the expedition again carries the same run on.
-- The other way works too: **PAUSE**, **RESUME** and **STOP** on the panel's Expedition section pause, resume and stop the expedition. So that section, the Exploration Dashboard and the overlay card always agree.
+- The Log tab's **Pause**, **Resume** and **Stop** act on the expedition too. The panel's Expedition section only shows what is running, so that section, the Exploration Dashboard and the overlay card always agree with the window.
 - Starting a second expedition sets the first aside. It is paused, and its run is paused with it (or stopped, when the new expedition gets a run of its own, because the log keeps one run going at a time).
 - An expedition started with the box unticked, or one made before this was added, has no run. Its time is counted from its start on the wall clock.
 
@@ -661,8 +661,8 @@ visit; the log records what **happened** on a trip, whether or not you planned a
 
 **An expedition from the planner.** Starting an expedition in the [Expedition planner](#expedition) or the [Route Planner](#route-planner) also starts a run here with the same name, unless that is switched off (Settings → WFMT → Exploration → Expedition, *Start the Expedition Log when I start an expedition*).
 
-- The run and the expedition are linked. **PAUSE**, **RESUME** and **STOP** here pause, resume and stop the expedition too, and the other way round.
-- Starting a different run here (**START**) stops the expedition that was linked to the run it replaces.
+- The run and the expedition are linked. **Pause**, **Resume** and **Stop** in the Log tab pause, resume and stop the expedition too, and the other way round.
+- Starting a different run here (**Start**) stops the expedition that was linked to the run it replaces.
 - Deleting a run from the log leaves the expedition as it is, without a run.
 
 **Starting an expedition you are already on.** In the LOG window, the **Start from my last** row has three buttons. Each begins an expedition one second after a sale in your journals:
@@ -676,13 +676,13 @@ visit; the log records what **happened** on a trip, whether or not you planned a
 - It then carries on counting live.
 - It is how to pick up a trip that was under way before you used the log.
 
-**The row.** The Log has no section of its own: its figures and buttons are in the Exploration panel's **Expedition** section ([above](#expedition)).
+**The row.** The Log has no section of its own: its figures are in the Exploration panel's **Expedition** section ([above](#expedition)). That section only shows what is running: you start, pause and stop expeditions in the Expedition window (the **EXPEDITION** button).
 
 - While an expedition is running the section shows the expedition's own lines (its name, stops, jumps, light-years and time, the next stop). Under them it shows what the Log adds: the systems, bodies and species, what you have earned and the unsold data (`paused` in front while it is held).
-- A Log run that was started with **START** and has no planned expedition behind it is shown in the Log's own words: its name and how long, systems, jumps and light-years, bodies and species, earned and unsold.
+- A Log run that was started with **Start** and has no planned expedition behind it is shown in the Log's own words: its name and how long, systems, jumps and light-years, bodies and species, earned and unsold.
 - The section's title says what is running even while it is folded.
-- **START** begins a new expedition now, from the system you are in and in the ship you are flying, and stops the one that was running.
-- **PAUSE** becomes **RESUME** while paused. **STOP** ends it.
+- **Start** (in the Expedition window) begins a new expedition now, from the system you are in and in the ship you are flying, and stops the one that was running.
+- **Pause** becomes **Resume** while paused. **Stop** ends it.
 - The archive is the **Log** tab of the Expedition window (**EXPEDITION**, then the Log tab).
 
 **What it counts**, from your journal, while an expedition runs:
@@ -701,7 +701,7 @@ Earned figures are what the game reports when you sell, so they count when you s
 
 **The LOG window** is the archive (the **Log** tab of the Expedition window). Up to 200 expeditions are kept.
 
-- **The header** has **Start**, **Pause** and **Stop**.
+- **The header** has **Start**, **Pause** and **Stop**. They are the only place on the Exploration side to manage an expedition: the panel's Expedition section has no such buttons.
 - **The starter row** has the **New expedition name** box (optional; **Start** begins it now, from where you are) and the **Start from my last** row (**sale**, **Discovery Data sale** and **Exobiology Data sale**).
 - **The table** lists every expedition, newest first. Its columns are **Name**, **Status**, **Started (UTC)**, **Ended (UTC)**, **Systems**, **Jumps**, **Bodies**, **Species**, **Exploration cr**, **Exobiology cr** and **Total cr**.
 - **Under the table** is everything the selected expedition recorded, then the editor.

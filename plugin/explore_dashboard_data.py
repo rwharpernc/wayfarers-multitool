@@ -430,7 +430,7 @@ def vehicle_fields(view: Optional[organic_scan.BodyView]) -> Fields:
 def expedition_fields(run: Optional[expedition_log.Run], now: Optional[float] = None) -> Fields:
     """The running expedition, or why there is none."""
     if run is None:
-        return [("Expedition", "none running: START one in the Expedition Log on the Exploration panel")]
+        return [("Expedition", "none running: start one in the Expedition window")]
     t = run.totals
     return [
         ("Expedition", run.name), ("Time", expedition_log.duration_text(run.elapsed(now))), ("Started in", run.start_system or DASH),

@@ -100,7 +100,7 @@ Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 und
   - The plan dialog's **Start it now** tick starts a Road to Riches or Exomastery plan.
 - **One Expedition window.** **EXPEDITION** and **PLOT** on the panel open the same window with Plan, Route and Log tabs.
   - It is never opened twice.
-  - The panel has one Expedition section (with START, PAUSE and STOP and the Log's figures) and no Expedition Log section.
+  - The panel has one Expedition section (the Log's figures, COPY and EXPEDITION, with no START, PAUSE or STOP) and no Expedition Log section.
   - The tabs' buttons and tables fit at its smallest size and at the full screen width.
   - Report whether the window takes the focus when it opens (it should not steal it from the game).
 - **Mining.**

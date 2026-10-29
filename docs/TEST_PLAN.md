@@ -75,7 +75,7 @@ What to check in EDMC after the 1.2.0 release (and before any later one), on **W
 ## 4. Expedition, Route Planner and overlays
 
 - [ ] **EXPEDITION** and **PLOT** on the panel open one window with Plan, Route and Log tabs, never twice; its size and position are remembered.
-  - The Expedition section holds the Log's figures and START, PAUSE and STOP.
+  - The Expedition section holds the Log's figures, COPY and EXPEDITION, and has no START, PAUSE or STOP.
   - There is no Expedition Log section.
 - [ ] The Expedition window's **Neutron route** switches to the Route tab.
   - **Road to Riches** and **Exomastery** open their dialog and **Plot** works.

@@ -132,8 +132,8 @@ The items below are implemented and covered by unit tests, but have not all been
   - Then Linux.
 - [ ] **One Expedition section on the panel.** The Exploration panel has an **Expedition** section and no separate Expedition Log section.
   - With nothing running it says so.
-  - Press **START**: the section shows the Log's own lines (name and time, systems, jumps and light-years, bodies and species, earned and unsold).
-  - **PAUSE** becomes **RESUME** and the lines gain `(paused)`. **STOP** ends it.
+  - Press **Start** in the Expedition window's Log tab: the section shows the Log's own lines (name and time, systems, jumps and light-years, bodies and species, earned and unsold).
+  - **Pause** in the window becomes **Resume** and the section's lines gain `(paused)`. **Stop** ends it. The section itself has no START, PAUSE or STOP.
   - Start a planned expedition (Plan tab, **Start**): the section shows its stops, jumps, light-years, time and next stop and, under them, the systems, bodies, species and credits, with the name and jumps said once.
   - Fold the section: the title says what is running.
   - **COPY** and **Copy on arrival** work as before.
@@ -167,7 +167,7 @@ The items below are implemented and covered by unit tests, but have not all been
 - [ ] **Expedition survey tracking.** Start an Expedition with two or three stops.
   - Confirm that arriving in a stop updates its totals in the Expedition row (bodies scanned of the honk's count, first discoveries, maps).
   - Confirm that a body scanned twice counts once.
-- [ ] **Expedition Log.** Press START in the Expedition section, make a few jumps, scan and map a few bodies, analyze a species and sell the data.
+- [ ] **Expedition Log.** Press **Start** in the Expedition window, make a few jumps, scan and map a few bodies, analyze a species and sell the data.
   - The section and the card (Settings → Overlays → Expedition Log) should count each.
   - The earned figures should match what the game paid.
   - Open the Expedition window's Log tab and try each of these:
@@ -180,7 +180,7 @@ The items below are implemented and covered by unit tests, but have not all been
     - **Start since my last sale**: it should start just after your last exploration or exobiology sale, fill in the totals from your journals and carry on counting
   - Check another commander sees none of it and that `expedition_log.json` survives an update.
   - The earned figures assume the journal's sale events (`MultiSellExplorationData`, `SellExplorationData`, `SellOrganicData`) carry the totals as read here. Confirm against a real sale.
-- [ ] **Expedition Log: pause and stop.** Turn the Expedition Log overlay on, press START, jump or scan a little, then **PAUSE**.
+- [ ] **Expedition Log: pause and stop.** Turn the Expedition Log overlay on, press **Start** in the Expedition window, jump or scan a little, then **Pause**.
   - The card should keep its totals with `paused` in its heading and nothing more should count.
   - RESUME should carry on (check the clock did not run while paused).
   - Restart EDMC while paused: it should still be paused.

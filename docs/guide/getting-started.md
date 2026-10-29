@@ -467,8 +467,7 @@ shows its full name.** Buttons inside pop-out windows and Settings keep their fu
 | **MY CODEX** | My Codex window: overview, found, not found and backfill (Codex Completionist) | Exploration |
 | **ADD** | Save the line you typed as a note about the system you are in | Exploration (Notes section) |
 | **NOTES** | Open the Notes window | Exploration (Notes section) |
-| **START** / **PAUSE** (**RESUME**) / **STOP** | Start a new Expedition Log run here, in this ship; hold the running one (the button reads **RESUME** while it is held); finish it | Exploration (Expedition section) |
-| **EXPEDITION** | Open the Expedition window (tabs Plan, Route and Log) | Exploration (Expedition section) |
+| **EXPEDITION** | Open the Expedition window (tabs Plan, Route and Log), where expeditions are started, paused and stopped | Exploration (Expedition section) |
 | **Copy on arrival** (tick) | Copy the next stop's system name to the clipboard every time you arrive anywhere | Exploration (Expedition section) |
 | **COPY** | Copy the next expedition stop's system name to the clipboard, to paste into the galaxy map | Exploration (Expedition section) |
 | **FIND** | Open the Nearest place to land window | Exploration (Nearest place to land section) |

@@ -1,4 +1,4 @@
-"""Expedition Log: the Exploration panel's row for it (what is running, START and STOP, and the button that opens the archive window).
+"""Expedition Log: the controller behind the Expedition window's Log tab and the Exploration panel's Expedition section (which only shows what is running; expeditions are started, paused and stopped in the Expedition window).
 
 The model, the totals and the saving are `expedition_log.py`; the window is `expedition_log_window.py`; the overlay card is `expedition_log_overlay.py`. This module is the
 journal hook and the controller they share: it hands every journal event to the log (`book.apply`, which counts it for the expedition that is running), remembers the
@@ -20,8 +20,8 @@ plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 PANEL_PLACEMENT = None
-"""The Log has no section of its own: its figures and START, PAUSE and STOP are in the Expedition section (`expedition_panel.py`, which calls `LogController.build_into`), and its archive is the
-Log tab of the Expedition window. `build_panel` still builds a section of its own for the tests that open it alone."""
+"""The Log has no section of its own: its figures are in the Expedition section (`expedition_panel.py`, which calls `LogController.build_into`), and it is started, paused and stopped in the Expedition window, whose archive is the
+Log tab. `build_panel` still builds a section of its own, with buttons, for the tests that open it alone."""
 
 _NAME_SHOWN = 50
 _WRAP_PX = 200
@@ -36,7 +36,7 @@ def summary_text(book_: expedition_log.LogBook, now: Optional[float] = None) -> 
     run = book_.active()
     if run is None:
         count = len(book_.runs())
-        return f"No expedition running ({count} in the archive)." if count else "No expedition yet. START one when you set off."
+        return f"No expedition running ({count} in the archive)." if count else "No expedition yet. Start one in the Expedition window."
     totals = run.totals
     lines = [f"{expedition_log.clip(run.name, _NAME_SHOWN)}: {expedition_log.duration_text(run.elapsed(now))}" + (" (paused)" if run.status == expedition_log.PAUSED else ""),
              f"{len(run.systems):,} systems · {totals.jumps:,} jumps · {totals.light_years:,.0f} ly",
@@ -156,12 +156,12 @@ class LogController:
         self._update()
 
     def build_into(self, parent: tk.Frame, body: tk.Frame, row: int) -> int:
-        """Put START, PAUSE and STOP in `body` (the Expedition section) at `row`; the section shows the figures. Returns the next free row."""
+        """Hook the Expedition section (`body`) up to the Log, which it only shows: there are no buttons here, expeditions are started, paused and stopped in the Expedition window.
+        Returns the next free row."""
         self._parent = parent
         self._register_tab()
-        self._buttons_into(body, row, with_log=False)
         self._update()
-        return row + 1
+        return row
 
     def _buttons_into(self, body: tk.Frame, row: int, with_log: bool) -> None:
         buttons = [("start", "START", self._on_start, "Start a new expedition here, in this ship (stops the one that is running)"),

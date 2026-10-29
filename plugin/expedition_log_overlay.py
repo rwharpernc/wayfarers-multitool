@@ -88,7 +88,7 @@ def idle_card(has_commander: bool = True) -> Card:
     """What the card says while it is switched on and no expedition is running, so a card that is on but empty is never a mystery."""
     if not has_commander:
         return Card((("Waiting for a commander (log in)", "muted"),), title=("Expedition Log", "title"))
-    return Card((("No expedition is running", "muted"), ("Press START in the Exploration panel,", "muted"), ("or LOG, then Start since my last sale", "muted")),
+    return Card((("No expedition is running", "muted"), ("Start one in the Expedition window", "muted"), ("(EXPEDITION on the Exploration panel)", "muted")),
                 title=("Expedition Log", "title"))
 
 

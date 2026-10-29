@@ -256,13 +256,13 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
   - The standalone windows remain in the code only as the path the tests and `host=None` use.
 - The panel's two rows are one section too:
   - The Log has no section of its own (`expedition_log_panel.PANEL_PLACEMENT` is `None`).
-  - Its START, PAUSE and STOP are built into the Expedition section by `build_into`.
+  - The section has no START, PAUSE or STOP: expeditions are started, paused and stopped only in the Expedition window (`build_into` just hooks the section up to the Log).
   - The section words the Log's extra figures under the expedition's own lines instead of saying the name, jumps and time twice.
   - A Log run with no plan behind it is shown as the Log words it.
   - The LOG button went: the archive is a tab of the window.
 - *Cost:*
   - The section's folded state is the Expedition section's (the Log row's saved folded state is no longer read).
-  - START, PAUSE and STOP are the Log's, so with a planned expedition running they act on it through the link, and with none they start a Log run only.
+  - Start, Pause and Stop live in the Expedition window (the Plan and Log tabs), so there is one place to manage an expedition. With a planned expedition they act on it through the link, and with none they start a Log run only.
 - **Start expedition** does not switch tabs. It is pressed on the Route tab of an open window, so it stays there and reports in the status line, and **Review** is the way to the Plan tab.
 
 **One linked start for an expedition**

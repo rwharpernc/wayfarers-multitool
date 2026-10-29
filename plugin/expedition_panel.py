@@ -5,7 +5,7 @@ it started, the next stop with its distance and note, and the note of the stop j
 clipboard (to paste into the galaxy map), and a tick copies it automatically on every arrival. The expeditions (`expedition.py`) are kept per
 commander and never leave the computer. Progress comes from the journal: `FSDJump`, `CarrierJump` and `Location` (at login) carry the system, and
 the first two its position; `FSDJump` also carries the jump distance. The next stop's distance is a straight line from the last position the
-game gave, and is left out when either position is unknown. Starting, pausing and stopping an expedition go through `expedition_link.py`, which keeps the Expedition Log run
+game gave, and is left out when either position is unknown. Starting, pausing and stopping an expedition is done in the Expedition window, through `expedition_link.py`, which keeps the Expedition Log run
 linked to it in step; the time shown is that run's clock when there is one."""
 from __future__ import annotations
 
@@ -171,7 +171,7 @@ class ExpeditionController:
         # EDMC's window past the width it already has.
         panelkit.wrap_label(body, min_wrap=_WRAP_PX, textvariable=self._summary_var, anchor="w").grid(
             row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
-        next_row = expedition_log_panel.controller.build_into(parent, body, 2)      # START, PAUSE and STOP, for the Expedition Log run
+        next_row = expedition_log_panel.controller.build_into(parent, body, 2)      # the Log's hook-up (no buttons: expeditions are started and stopped in the Expedition window)
         copy = tk.Button(body, text="COPY", command=self.copy_next)
         copy.grid(row=next_row, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.add_tooltip(copy, "Copy the next stop's system name to the clipboard, to paste into the galaxy map")
@@ -180,7 +180,7 @@ class ExpeditionController:
         panelkit.add_tooltip(tick, "Copy the next stop's system name to the clipboard every time you arrive anywhere")
         window = tk.Button(body, text="EXPEDITION", command=self._open_window)
         window.grid(row=next_row, column=1, sticky=tk.W, padx=(6, 0), pady=(4, 0))
-        panelkit.add_tooltip(window, "Open the Expedition window: plan, route and review expeditions, and read the Expedition Log")
+        panelkit.add_tooltip(window, "Open the Expedition window: start, pause and stop expeditions, plan, route and review them, and read the Expedition Log")
         self._update_summary()
 
     def _save_autocopy(self) -> None:

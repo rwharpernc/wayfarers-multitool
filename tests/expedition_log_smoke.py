@@ -144,7 +144,7 @@ check(any(r[0] == "Earned" and r[1].startswith("1.5M") for r in card.rows) and a
 check("Total earned 6.5M" in card.footer[0], f"and the total: {card.footer}")
 check(not OV.build_card(None), "no expedition, no run card")
 idle = OV.idle_card(True)
-check(idle and "No expedition is running" in idle.header[0][0] and "START" in idle.header[1][0], f"with the card on and nothing running it says what to do: {idle.header}")
+check(idle and "No expedition is running" in idle.header[0][0] and "Expedition window" in idle.header[1][0], f"with the card on and nothing running it says what to do: {idle.header}")
 check("log in" in OV.idle_card(False).header[0][0], "and before a commander is known it says to log in")
 check(OV.build_card(OV.sample_run()), "the sample card builds")
 

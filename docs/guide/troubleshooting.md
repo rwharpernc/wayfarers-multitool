@@ -21,7 +21,7 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | A Route Planner route on the Route overlay card | The route is plotted in the Route Planner, and **Enable the Route overlay** is ticked (it does not turn the card on by itself) | Exploration panel, and Settings → WFMT → Overlays → Route |
 | The Route Planner copying the next system for you | **Copy the next system to the clipboard automatically** (one tickbox, on the Exploration panel and in the plotter) | Exploration panel (Route Planner) |
 | Backups made for you | **Back up automatically** and a folder | Settings → WFMT → General → Backup |
-| The running expedition's totals on the game screen | **Enable the Expedition Log card** (and press START in the Exploration panel's Expedition section) | Settings → WFMT → Overlays → Expedition Log |
+| The running expedition's totals on the game screen | **Enable the Expedition Log card** (and press Start in the Expedition window) | Settings → WFMT → Overlays → Expedition Log |
 | What is left to map and sample in a system | **Enable the System targets card** | Settings → WFMT → Overlays → System targets |
 | A card describing the body you target or are near | **Enable the Body info card** | Settings → WFMT → Overlays → Body info |
 | Sampling progress, predicted species, the sample radar, the sample popup | The tick for each of the four Exobiology cards | Settings → WFMT → Overlays → Exobiology |
@@ -258,13 +258,13 @@ See also [Exobiology](exobiology.md#what-the-game-does-and-doesnt-tell-us-and-ho
 
 ### The Expedition Log shows nothing, or its numbers look low
 
-The buttons (**START**, **PAUSE**, which reads **RESUME** while the expedition is held, and **STOP**) are inside the **Expedition** section of the Exploration panel, which starts folded each time EDMC starts: click its title (▸) to open it. The archive of your expeditions is the **Log** tab of the Expedition window (the **EXPEDITION** button).
+You start, pause and stop expeditions in the Expedition window (the **EXPEDITION** button in the **Expedition** section of the Exploration panel, which starts folded each time EDMC starts: click its title (▸) to open it). The section only shows what is running. The archive of your expeditions is the **Log** tab of that window.
 
 With the card switched on and no expedition running, the card says so (`No expedition is running`) and how to start one.
 
 The log counts only while an expedition is **running**:
 
-- Press **START** in the Exploration panel (or **Start** in the Log tab) when you set off, and the section and the card show it.
+- Press **Start** in the Expedition window (Plan or Log tab) when you set off, and the section and the card show it.
 - Anything that happened before you pressed it, or while EDMC was closed, is not counted until you press **Rescan** on that expedition in the Log tab (it works the totals out again from your journals between the expedition's start and end).
 - **Start from my last** (**sale**, **Discovery Data sale** or **Exobiology Data sale**) begins one from that sale and fills it in.
 

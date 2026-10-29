@@ -1,5 +1,5 @@
-"""Opens the real Expedition section (plugin/expedition_panel.py) with the Expedition Log's figures and START, PAUSE and STOP in it, and EDMC stubbed: one section where there were two, the
-planned expedition's lines with the Log's extra figures under them, a Log run with no plan behind it worded as the Log words it, the three buttons working and following the run, and the section
+"""Opens the real Expedition section (plugin/expedition_panel.py) with the Expedition Log's figures in it (and no START, PAUSE or STOP), and EDMC stubbed: one section where there were two, the
+planned expedition's lines with the Log's extra figures under them, a Log run with no plan behind it worded as the Log words it, a run started, paused and stopped from the window showing in it, and the section
 not widening the panel. Run by test_expedition_row_smoke in a subprocess so the stand-ins never leak into other tests. Exits 0 if everything holds, 1 if not, 77 if Tk is unavailable."""
 import quiet_tk  # noqa: F401  (keeps the test windows from taking focus)
 import os
@@ -99,16 +99,15 @@ host.pack()
 PLAN.controller.build_panel(host)
 pump()
 
-# --- one section, with the Log's buttons in it ---------------------------------------------------------------------------------------------
+# --- one section, which shows what is running and has no START, PAUSE or STOP (those are in the Expedition window) ------------------------------------------------
 shown = texts(host)
 check(any("Expedition" in t and t != "EXPEDITION" for t in shown), f"there is an Expedition section: {shown}")
 check(not any("Expedition Log" in t for t in shown), f"there is no section of its own for the Log: {shown}")
-for word in ("START", "PAUSE", "STOP", "COPY", "EXPEDITION"):
+for word in ("COPY", "EXPEDITION"):
     check(word in shown, f"the section has {word}")
-check("LOG" not in shown, "there is no separate LOG button (the Log is a tab of the window)")
-buttons = LOGP.controller._buttons
-check(set(buttons) == {"start", "pause", "stop"}, f"the Log's buttons built into the section: {sorted(buttons)}")
-check(str(buttons["stop"]["state"]) == "disabled" and str(buttons["pause"]["state"]) == "disabled", "STOP and PAUSE wait for a run")
+for word in ("START", "PAUSE", "STOP", "RESUME", "LOG"):
+    check(word not in shown, f"the section has no {word} button: expeditions are managed in the Expedition window")
+check(not LOGP.controller._buttons, f"no Log buttons are built into the section: {sorted(LOGP.controller._buttons)}")
 check(LOGP.PANEL_PLACEMENT is None, "the Log module asks for no section of its own")
 
 # --- before a commander, and with one -------------------------------------------------------------------------------------------------------------
@@ -117,23 +116,22 @@ PLAN.controller.handle_event({"event": "LoadGame"}, "CMDR A", "Sol", None, {})
 LOGP.controller.handle_event({"event": "LoadGame", "Commander": "CMDR A"}, "CMDR A", "Sol", None, {})
 check(PLAN.controller.summary()[0] == "No expedition yet.", f"with a commander and nothing: {PLAN.controller.summary()}")
 
-# --- START makes a Log run with no plan behind it: the Log's own words ----------------------------------------------------------------------------------------
-buttons["start"].invoke()
+# --- a Log run started from the Expedition window has no plan behind it: the Log's own words ------------------------------------------------------------------
+LOGP.controller.start_expedition()
 pump()
-check(LOGP.book.active() is not None, "START starts a Log run")
+check(LOGP.book.active() is not None, "starting from the window starts a Log run")
 text, suffix = PLAN.controller.summary()
 check("systems" in text and "Earned" in text and " jumps" in text, f"a Log run alone is worded as the Log words it: {text!r}")
 check(suffix.startswith(" - ") and "earned" in suffix, f"and the folded title says what is running: {suffix!r}")
-check(str(buttons["stop"]["state"]) == "normal" and str(buttons["pause"]["state"]) == "normal", "STOP and PAUSE can be pressed")
-buttons["pause"].invoke()
+LOGP.controller.toggle_pause()
 pump()
-check(buttons["pause"]["text"] == "RESUME" and "(paused)" in PLAN.controller.summary()[0], f"PAUSE holds it and the button reads RESUME: {PLAN.controller.summary()[0]!r}")
-buttons["pause"].invoke()
+check("(paused)" in PLAN.controller.summary()[0], f"pausing it shows in the section: {PLAN.controller.summary()[0]!r}")
+LOGP.controller.toggle_pause()
 pump()
-check(buttons["pause"]["text"] == "PAUSE", "RESUME carries on")
-buttons["stop"].invoke()
+check("(paused)" not in PLAN.controller.summary()[0], "resuming carries on")
+LOGP.controller.stop_expedition()
 pump()
-check(LOGP.book.active() is None and str(buttons["stop"]["state"]) == "disabled", "STOP ends it")
+check(LOGP.book.active() is None, "stopping ends it")
 check(PLAN.controller.summary()[0] == "No expedition yet.", f"nothing is running again: {PLAN.controller.summary()}")
 
 # --- a planned expedition: its lines, then the Log's extra figures ----------------------------------------------------------------------------------------
