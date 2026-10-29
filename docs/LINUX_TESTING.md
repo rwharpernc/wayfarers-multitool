@@ -437,7 +437,7 @@ Use them for anything the passes did not reach.
 - [ ] Network lookups (EDSM, Spansh, Canonn, GEC) return results.
 - [ ] Exploration **N.S.** and **W.D.** buttons: after a jump, each shows a system and distance and copies the
       name to the clipboard (paste it elsewhere to check).
-- [ ] Hovering a short-named button (for example **A.H.**, **RND**, **SES**, **P.P.**) shows its full name in a
+- [ ] Hovering a short-named button (for example **A.H.**, **RND**, **REPORT**, **P.P.**) shows its full name in a
       tooltip that disappears when you move away, and the GEC, Canonn and Codex sections start minimized.
 - [ ] Powerplay → **RARES** (rares) opens the Rare Goods Finder: after a jump or login it lists the nearest
       rare goods, the Controlling Power column fills in from Spansh, and double-click opens Inara in
@@ -507,7 +507,7 @@ Use them for anything the passes did not reach.
   - Nothing goes online.
 
 - [ ] **Megaship scans** (Powerplay, Windows-tested only): in a Powerplay system, drop out of supercruise at a megaship and scan its datalink.
-  - The Powerplay panel gains `Cycle N megaships: 1 (N merits)` and **SES → Megaships** lists it with its name and system.
+  - The Powerplay panel gains `Cycle N megaships: 1 (N merits)` and **REPORT → Megaships** lists it with its name and system.
   - Scanning it again changes nothing.
   - A scan at a station or a settlement adds nothing.
   - After restarting EDMC the list is still there.

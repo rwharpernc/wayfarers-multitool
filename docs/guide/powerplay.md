@@ -37,14 +37,14 @@ earlier game sessions.
 
 ### See which systems earned you the most
 
-1. Press **P.P.**, then **SES**.
+1. Press **P.P.**, then **REPORT**.
 2. On the **Current session** tab, read **By System**: the **Merits**, **Est. CP** and **Activity breakdown** columns
    list each system you worked this login.
 3. For a whole cycle, open the **Systems** tab, or the **Cycles** tab for one row per cycle.
 
 ### Check a system you are defending
 
-1. Open **SES**, then the **Systems** tab.
+1. Open **REPORT**, then the **Systems** tab.
 2. Find the system's tab (your last 6 systems get one). If it is missing, type its name in **SHOW A SYSTEM** and press
    **Add system**.
 3. Compare **Baseline** and **Latest** in the **STANDING** table. The **Change** column shows whether it is gaining or
@@ -56,7 +56,7 @@ and jump in again whenever you want a fresh reading: the figures only update whe
 
 ### Fix a session count that looks wrong
 
-1. If you only want to remove a mistaken count, open **SES** and press **Reset Current System** (this system) or
+1. If you only want to remove a mistaken count, open **REPORT** and press **Reset Current System** (this system) or
    **Reset Session** (everything this login). Both ask first and cannot be undone.
 2. If merits were missed after restarting EDMC, press **RESCAN** on the Powerplay panel instead. It re-reads the current
    journal from scratch.
@@ -65,7 +65,7 @@ Resets change the session only. Cycle totals come from your journal and are not 
 
 ### Share your progress
 
-1. Open **SES** and press **Copy Progress**. The button changes to a confirmation for a moment.
+1. Open **REPORT** and press **Copy Progress**. The button changes to a confirmation for a moment.
 2. Paste into Discord or a forum post. With the default format each system is one line, for example
    `[Nervi](link) - 120 merits (~48 CP) - Exploited`.
 3. To change the layout, edit the **Clipboard** format under **Settings → WFMT → Powerplay**.
@@ -113,13 +113,13 @@ Your game mode and credits are on the two lines under the mode buttons, and a li
 
 Three buttons on the bottom row:
 
-- **SES** opens the Sessions window.
+- **REPORT** opens the Sessions window.
 - **RARES** opens the Rare Goods Finder (see below).
 - **RESCAN** re-reads the current journal from scratch to recover merits missed after an EDMC restart. Use it if a session's numbers ever look wrong. Hover over a button for a one-line reminder.
 
 ## The Sessions window
 
-Click **SES**. It has six tabs.
+Click **REPORT**. It has six tabs.
 
 | Tab | What it shows |
 |---|---|

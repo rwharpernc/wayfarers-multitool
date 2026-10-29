@@ -396,8 +396,8 @@ Switch to the mode first, then use the button listed here.
 | Window | Mode | How to open it |
 |---|---|---|
 | Credits Ledger (tabs: Income, By day, Lifetime) | Any mode | Click the **Credits this session** line under the mode buttons |
-| Powerplay Sessions (tabs: Current session, Systems, Cycles, Daily, Megaships, History) | Powerplay | **SES** button (bottom row of the panel) |
-| Rare Goods Finder | Powerplay | **RARES** button, next to SES |
+| Powerplay Sessions (tabs: Current session, Systems, Cycles, Daily, Megaships, History) | Powerplay | **REPORT** button (bottom row of the panel) |
+| Rare Goods Finder | Powerplay | **RARES** button, next to REPORT |
 | BGS Report | BGS | **REPORT** button |
 | Codex Completionist | Exploration | **MY CODEX** button in the Codex Completionist section |
 | Notes | Exploration | **NOTES** button in the Notes section |
@@ -450,7 +450,7 @@ shows its full name.** Buttons inside pop-out windows and Settings keep their fu
 | **MSN** | Missions | Mode buttons |
 | **OPS** | Field Ops | Mode buttons |
 | **COL** | Colonization | Mode buttons |
-| **SES** | Sessions | Powerplay |
+| **REPORT** | Powerplay Sessions window | Powerplay |
 | **RARES** | Rares (rare goods finder) | Powerplay |
 | **RESCAN** | Rescan | Powerplay |
 | **REPORT** | View BGS report | BGS |

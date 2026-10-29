@@ -37,6 +37,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 - **Bio status card:** it is twice as wide (a strip 108 characters wide) and about a quarter shorter, because the distance line now sits beside the species and reward when it fits. The
   tracked-plant lines are no longer cut off.
 - **Organic Scanning:** the panel section starts folded, like the other sections.
+- **Powerplay:** the **SES** button is now **REPORT**, matching the BGS panel's **REPORT** button. It opens the same Powerplay Sessions window.
 - **Colonization, To haul:** with the **To haul** filter on, the Sites window no longer tints every row green. The rows in your ship's hold, the ones you are hauling now, get a tint of
   their own that fits the selected theme. The overlay drops the green too (the **✓** stays) and draws the rows in your hold in the theme's blue.
 

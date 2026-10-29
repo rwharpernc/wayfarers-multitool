@@ -17,7 +17,7 @@ Nothing is ever posted on its own. Every post follows a button press.
 | Report | Where | The buttons |
 |---|---|---|
 | **BGS report**: the tick shown in the window, a block for each system with the factions, their states and influence, and what you did | BGS mode, **REPORT** window | **Copy Summary**, and the **Discord** menu in the window's header: **Copy for Discord** and **Post to Discord** |
-| **Powerplay progress**: this session's merits and estimated Control Points for each system, and the cycle's total | Powerplay mode, **SES** (the Powerplay Sessions window) | **Copy Progress**, and **Copy for Discord** and **Post to Discord** in a row above the tabs |
+| **Powerplay progress**: this session's merits and estimated Control Points for each system, and the cycle's total | Powerplay mode, **REPORT** (the Powerplay Sessions window) | **Copy Progress**, and **Copy for Discord** and **Post to Discord** in a row above the tabs |
 
 Coming later, as separate builds: expedition sales and announcements, colonization and team building (shopping lists, progress, a call for helpers), and carrier movement. They are planned in
 [the Discord sharing research](../DISCORD_SHARING_RESEARCH.md) and are not in WFMT yet.
@@ -27,7 +27,7 @@ Coming later, as separate builds: expedition sales and announcements, colonizati
 1. In Discord, make a webhook for the channel you want ([Set up Discord](#set-up-discord-make-a-webhook)) and copy its link.
 2. In EDMC open **File → Settings → WFMT → Discord**, tick **Allow Post to Discord**, give the destination a name, paste the link, and press **Test** ([Set up WFMT](#set-up-wfmt)).
 3. Close Settings with **OK** to save.
-4. Open a report (**REPORT** in BGS mode, or **SES** in Powerplay mode) and press **Post to Discord**. With more than one destination saved, a small menu asks which one.
+4. Open a report (**REPORT** in BGS mode or in Powerplay mode) and press **Post to Discord**. With more than one destination saved, a small menu asks which one.
 
 **Copy for Discord** and the plain copy buttons need no setup at all.
 
@@ -223,7 +223,7 @@ restart EDMC; after a restart, posting the same tick again adds a new message.
 
 ### Share your Powerplay progress
 
-1. In Powerplay mode press **SES** to open the Powerplay Sessions window.
+1. In Powerplay mode press **REPORT** to open the Powerplay Sessions window.
 2. Press **Post to Discord** (above the tabs, at the right).
 3. The post has this session's merits for each system, with the estimated Control Points marked `~` because they are estimates, then the cycle's total line:
 

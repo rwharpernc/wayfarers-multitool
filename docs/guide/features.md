@@ -8,7 +8,7 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 
 | I want to… | Use | Where |
 |---|---|---|
-| Track my Powerplay merits and Control Points | The **P.P.** panel, **SES** for the Sessions window | [Powerplay](powerplay.md#using-it) |
+| Track my Powerplay merits and Control Points | The **P.P.** panel, **REPORT** for the Sessions window | [Powerplay](powerplay.md#using-it) |
 | Find a rare good near me, and see where it's illegal | **RARES** in Powerplay mode | [Rare Goods Finder](powerplay.md#rare-goods-finder) |
 | Fire the Discovery Scanner on every jump | **A.H.** (Auto-Honk) | [Auto-Honk](exploration.md#auto-honk) |
 | Be told about an unscanned system or a first discovery | **D.A.** (Discovery Alerts) | [Discovery Alerts](exploration.md#discovery-alerts) |
@@ -77,12 +77,12 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 ### Powerplay ([guide](powerplay.md))
 
-**Controls:** the panel shows live numbers. **SES** opens the Sessions window, **RARES** opens the Rare Goods Finder, **RESCAN** rebuilds from your journals. **Settings → WFMT → Powerplay** holds the CP ratios and the journal scan depth.
+**Controls:** the panel shows live numbers. **REPORT** opens the Sessions window, **RARES** opens the Rare Goods Finder, **RESCAN** rebuilds from your journals. **Settings → WFMT → Powerplay** holds the CP ratios and the journal scan depth.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
 | Live merits and Control Points | Your merits and estimated CP for this system, this session and the whole Powerplay cycle | Just play; the panel updates | [Using it](powerplay.md#using-it) |
-| Sessions window | Tabs for the current session, systems, cycles, days, megaships and history | **SES**; drop-downs pick an earlier cycle; **Copy Progress**, **Reset Current System** and **Reset Session** are in the header | [The Sessions window](powerplay.md#the-sessions-window) |
+| Sessions window | Tabs for the current session, systems, cycles, days, megaships and history | **REPORT**; drop-downs pick an earlier cycle; **Copy Progress**, **Reset Current System** and **Reset Session** are in the header | [The Sessions window](powerplay.md#the-sessions-window) |
 | Systems tab | A tab per system with its standing and what you earned; pin up to five | **☆ Pin**, **Show a system** and **Add system**, **× Close tab** | [The Systems tab](powerplay.md#the-systems-tab) |
 | Catch-up | Rebuilds cycles from your journals so playing without EDMC loses nothing | Automatic at start-up; **RESCAN** to rebuild | [Catching up](powerplay.md#catching-up-from-your-journals) |
 | Megaships | The megaships whose datalink you scanned this cycle, with a count and where | Drop out of supercruise at the megaship, then scan; see the **Megaships** tab | [Megaships](powerplay.md#megaships) |

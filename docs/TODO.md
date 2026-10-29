@@ -612,7 +612,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that **Backfill Journals** reports in the window's status bar and the section.
   - Then Linux.
 - [ ] **Megaship scans.** In a Powerplay system, drop out of supercruise at a megaship and scan its datalink.
-  - Confirm that the panel line and the **SES → Megaships** row appear with the correct name and system.
+  - Confirm that the panel line and the **REPORT → Megaships** row appear with the correct name and system.
   - Confirm that the merits are filled in shortly afterward.
   - Confirm that a second scan of the same megaship changes nothing, and that a scan at a station adds nothing.
   - Restart EDMC and confirm that the list is retained.
