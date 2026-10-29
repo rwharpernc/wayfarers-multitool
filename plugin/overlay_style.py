@@ -1,12 +1,12 @@
 """How WFMT's overlay displays look: one set of choices that every overlay in the plugin follows. Pure logic (no Tk, no EDMC).
 
-Four choices, all on the Overlays -> Appearance Settings tab:
+Four choices (the Overlays -> Appearance Settings tab offers the color scheme, the text size and the panel opacity; padding and line spacing are fixed):
 
 - **Color scheme**: a named palette. Every display takes its colors from roles (title, text, covered, warning ...) so changing
   the scheme recolors them all together.
 - **Text size**: steps each display's text up or down through the overlay's four sizes (small, normal, large, huge). The
   overlay offers only those four, so the steps are about a third of a size apart; a display already at the largest size stays
-  there.
+  there. The tab offers Default and Larger.
 - **Padding**: extra space between a card's border and its text.
 - **Line spacing**: extra space between lines.
 

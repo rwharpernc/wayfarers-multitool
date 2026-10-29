@@ -3,7 +3,7 @@
 What the Mining pages cannot show: every mining run found in the commander's journals, added up. There is one window for each half of mining and the button opens the one for the page it
 is on: from the Space Mining page the ring runs (**Overview** with totals, prospecting, limpets, sales and the best runs; **Commodities**; **Rings**; **Runs**), from the Surface Mining
 page the Rhino's (**Overview** with totals, the bodies mined on, sales and the best runs; **Commodities**; **Bodies**; **Runs**). Every table is sortable. The runs come from `mining_history` (read from the journals in the background, saved per commander) and the
-numbers from `mining_history_data`; this module only draws them. It re-reads the newest journal every few seconds while it is open, so a run in progress is included, and the
+numbers from `mining_history_data`; this module only draws them. It re-reads the newest journal every 15 seconds while it is open, so a run in progress is included, and the
 first time it opens it shows how far the one-time read of the older journals has got.
 
 It reuses the Exploration Dashboard's table and block widgets (`explore_dashboard_window`) so the two windows look and sort alike.

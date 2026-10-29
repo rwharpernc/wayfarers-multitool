@@ -214,7 +214,7 @@ def _mode_row_full_label_size(frame: tk.Frame) -> Tuple[int, int]:
     that row used to be what set WFMT's width - shortening the labels
     (_MODE_BUTTON_TEXT) alone made the whole EDMC window open much narrower. Measured
     from a throwaway, never-displayed row of full-label buttons, so it follows the
-    user's font/DPI and is fixed by the six labels in PANEL_MODES: nothing external
+    user's font/DPI and is fixed by the labels in PANEL_MODES: nothing external
     can make it grow."""
     probe = tk.Frame(frame)
     for _key, label in PANEL_MODES:
@@ -258,7 +258,7 @@ def create_plugin_app(parent: tk.Frame) -> tk.Frame:
     # Each line is its own module (game_mode.py, session_credits.py, session_merits.py).
     session_strip = tk.Frame(_frame)
     session_strip.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(6, 0))
-    _version_label = panelkit.wrap_label(session_strip, anchor="w", cursor="hand2")   # "Plugin: v1.8.0" / "v1.8.1 download - Restart EDMC"
+    _version_label = panelkit.wrap_label(session_strip, anchor="w", cursor="hand2")   # "Plugin: v1.2.0" / "v1.2.1 download - Restart EDMC"
     _version_label.grid(row=0, column=0, columnspan=3, sticky=tk.W)
     _version_label.bind("<Button-1>", lambda _e: webbrowser.open(RELEASES_PAGE_URL))
     _show_version_state()          # an update may already have finished before the panel existed

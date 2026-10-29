@@ -20,7 +20,7 @@ WFMT runs on Linux wherever EDMC does. It has been tested on one real install: K
 **On-screen overlays on Linux need EDMCModernOverlay.**
 
 - WFMT's own built-in overlay is **Windows only**, and a Linux version is being researched (it needs window handling that differs between X11 and Wayland). Until one exists, this is the overlay to use.
-- Linux has no built-in overlay to switch to, so install [EDMCModernOverlay](https://github.com/SweetJonnySauce/EDMCModernOverlay) (step 5) for every WFMT on-screen display.
+- Linux has no built-in overlay to switch to, so install [EDMCModernOverlay](https://github.com/SweetJonnySauce/EDMCModernOverlay) (Step 1) for every WFMT on-screen display.
 - Without it everything else in WFMT still works.
 - If EDMCModernOverlay is not found, the overlay settings pages say so, in orange at the top. The settings can still be changed and are kept; nothing appears on screen until it is installed.
 
@@ -180,7 +180,7 @@ Other points:
 
 Nothing extra to install, but a Flatpak EDMC has a few limits:
 
-- **Back up my data** (Settings → WFMT → General → Backup) and **Back up automatically** write to a folder you choose, and the folder must be outside the plugin folder. A Flatpak EDMC can only write to folders it has been given, so pick one it can reach (its own data folder, or one you grant with `flatpak override --user --filesystem=<folder> io.edcd.EDMarketConnector`). This version shows no result line after a manual backup; check the folder for the new `WFMT-data-<date>.zip`. The data backup has not been tried on Linux yet, so please say if it misbehaves.
+- **Back up my data** (Settings → WFMT → General → Backup) and **Back up automatically** write to a folder you choose, and the folder must be outside the plugin folder. A Flatpak EDMC can only write to folders it has been given, so pick one it can reach (its own data folder, or one you grant with `flatpak override --user --filesystem=<folder> io.edcd.EDMarketConnector`). A manual backup shows a line under the button (`Saved N files (size) to <path>`, or the reason it failed); the new file is `WFMT-data-<date>.zip`. The data backup has not been tried on Linux yet, so please say if it misbehaves.
 - **Restore my data...** needs the same folder permission to read the zip. The restore is applied the next time EDMC starts.
 - **The Local star index** (General → Online lookups) downloads one file from Spansh (about 173 MB) and builds an index in the plugin folder, which needs about 300 MB free while it builds. It is optional.
 - **Automatic updates** (General → Updates) work the same on Linux. The update waits for you to restart EDMC.

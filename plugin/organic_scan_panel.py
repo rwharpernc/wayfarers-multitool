@@ -1,4 +1,4 @@
-"""Organic Scanning — a new Exploration feature (see organic_scan.py's own
+"""Organic Scanning — an Exploration feature (see organic_scan.py's own
 docstring for the rationale and scope boundaries).
 
 Lives inside Exploration mode's panel (PANEL_PLACEMENT = "exploration"),
@@ -6,6 +6,7 @@ alongside Auto-Honk/Discovery/Boxel Survey/Exploration Value - each gets
 its own dedicated child frame (see
 ui.py's create_plugin_app/_stack_features()), separated by a thin
 panelkit-drawn rule, so no cross-feature row coordination is needed here.
+The panel is a collapsible section (panelkit.collapsible_section), folded by default.
 
 Per-body state (habitability conditions, detected genera, confirmed-
 species scan progress) is persisted per commander via organic_scan_state.py

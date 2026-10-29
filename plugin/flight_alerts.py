@@ -11,7 +11,7 @@
   `fuel_alerts.py` for the sources and what WFMT cannot know (what a jump costs in fuel).
 
 Nothing is sent anywhere: it reads the journal, EDMC's copy of `Status.json` and the clock, and draws through the shared overlay
-connection (EDMCModernOverlay, which WFMT does not install or launch). Settings-tab-only, like Interdiction Warning, and off until
+connection (WFMT's built-in overlay, or EDMCModernOverlay, which WFMT does not install or launch). Settings-tab-only, like Interdiction Warning, and off until
 ticked, like every overlay. Where the card sits is the global Overlay Placement setting ("Flight alerts")."""
 
 from __future__ import annotations

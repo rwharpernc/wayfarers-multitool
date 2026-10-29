@@ -11,7 +11,7 @@ What to check in EDMC after the 1.2.0 release (and before any later one), on **W
 - The unit and smoke tests pass, but they cannot show what the game, the overlay and a real clipboard do.
 - The overview is in [CHANGELOG.md](../CHANGELOG.md) and [STATUS.md](STATUS.md). The longer wording for each check is in [TODO.md](TODO.md) (under "Verification in the game").
 
-## Where the testing stands (2026-10-27)
+## Where the testing stands (2026-10-28)
 
 | Platform | Automated tests | Checks in the game |
 |---|---|---|

@@ -35,7 +35,7 @@ class SpeciesRuleset:
     somewhere in the system (not necessarily the body being scanned) -
     matched against organic_scan.BodyConditions.system_body_types, every
     PlanetClass scanned so far this system."""
-    nebula: Optional[str] = None  # unused in v1 - proximity to a named nebula
+    nebula: Optional[str] = None  # not used by the prediction - proximity to a named nebula
     system: Optional[str] = None  # single-system special case, e.g. Radicoida Unicus
     max_orbital_period: Optional[float] = None  # days
     distance: Optional[float] = None  # body's own distance requirement, ls (rare - source-specific)

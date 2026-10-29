@@ -58,7 +58,7 @@ def new_session(
         # this session rather than a new one. See SessionManager.sync_session.
         "journal_file": journal_file,
         # "timestamp" of the last PowerplayMerits event actually recorded
-        # into this session — the high-water mark load._rescan_journal uses
+        # into this session — the high-water mark powerplay.rescan_journal uses
         # to tell an already-counted merit gain apart from one that fell into
         # an EDMC-restart gap (see there). None until the first merit gain.
         "last_merit_ts": None,
@@ -156,7 +156,7 @@ class SessionManager:
             # the journal file's merit history those totals already reflect,
             # so treat "now" as the earliest point a rescan can safely
             # recover from, rather than risk re-counting everything already
-            # tallied. See load._rescan_journal.
+            # tallied. See powerplay.rescan_journal.
             self.current["last_merit_ts"] = _now_iso()
 
     @property

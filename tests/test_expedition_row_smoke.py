@@ -1,6 +1,6 @@
 """
-Opens the Expedition section with the Expedition Log's figures and buttons in it and EDMC stubbed, and fails if the Log still has a section of its own, the lines say the same thing twice, the
-buttons do not follow the run or the section widens the panel. Skipped when Tk has no display.
+Opens the Expedition section with the Expedition Log's figures in it (and no START, PAUSE or STOP buttons) and EDMC stubbed, and fails if the Log still has a section of its own, the lines say the same thing twice, the
+section offers buttons that belong in the Expedition window or the section widens the panel. Skipped when Tk has no display.
 Run with: python -m unittest discover -s tests
 """
 

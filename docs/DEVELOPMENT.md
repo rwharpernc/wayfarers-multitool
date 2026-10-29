@@ -273,7 +273,7 @@ A release is cut from a clean `master`:
 5. Publish the release with the zip as its asset:
 
    ```bash
-   gh release create v<version> dist/Wayfarers-Multitool.zip --title "WFMT <version>" --notes-file <the changelog section for 1.0.0>
+   gh release create v<version> dist/Wayfarers-Multitool.zip --title "WFMT <version>" --notes-file <the changelog section for the version>
    ```
 
    The title is `WFMT <version>` with no `v`; the tag keeps the `v` (`v1.0.0`, for example), and the in-app updater reads the tag, not the title.

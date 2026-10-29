@@ -223,7 +223,7 @@ In Exploration, POI Reference (GEC and Canonn) and Codex share one "POI Referenc
 
 **Collapsible sections**
 
-- `panelkit.collapsible_section` gives POI Reference and Codex Completionist a clickable ▸/▾ title over a body frame.
+- `panelkit.collapsible_section` gives the collapsible panel sections (POI Reference, Codex Completionist, Organic Scanning, Expedition and others) a clickable ▸/▾ title over a body frame.
 - Every section starts folded each time EDMC starts: opening one lasts for the session and is not remembered, so the panel is the same height every launch (no collapsed state is stored).
 - Boxel Survey keeps its own equivalent, which also starts folded.
 
@@ -617,7 +617,7 @@ Spansh planners:
 - The style is saved under `wfmt_chemistry_style` (symbols by default).
 - The Body info card is its only user; the other displays that name chemicals (Engineering, Materials) keep full names.
 
-**Expedition Log** (`expedition_log.py` model, `expedition_log_panel.py` journal hook and Exploration row, `expedition_log_window.py` archive window, `expedition_log_overlay.py` card)
+**Expedition Log** (`expedition_log.py` model, `expedition_log_panel.py` journal hook and the Log lines in the panel's Expedition section, `expedition_log_window.py` archive window, `expedition_log_overlay.py` card)
 
 - It keeps per-commander `Run`s in `expedition_log.json` (`commander_data.py`).
 - A `Tally` adds each journal event to the running expedition:
@@ -644,6 +644,7 @@ Spansh planners:
   - the commander's position and heading
   - the ship (`Touchdown`/`Liftoff`) and SRV (`LaunchSRV`/`Disembark`/`DockSRV`/`Embark`) positions
 - Four `_Display` objects (status, list, radar, popup) each have a `LiveCard`, a placement slot and a settings switch. `Status.json` changes and the relevant journal events refresh them.
+- The Bio status card is one wide strip (`STATUS_CHARS`, 108 characters, `WideCardLayout`) that folds the distance line into the headline row when it fits.
 - The radar (`exo_radar.build_plan`) turns the positions into pixels with a flat-earth offset rotated to the heading, and picks the scale so every circle fits (the overlay cannot clip).
 - `RadarLayout` draws it with circle shapes (`OverlayClient.send_circle`).
 

@@ -62,7 +62,7 @@ RESTORE_DELAY_MS = 4000
 _updater: Optional[UpdateManager] = None
 
 # One shared overlay connection for every overlay-drawing feature
-# (Interdiction/Landing/Discovery) - see overlay.py's own docstring for why
+# (every feature that draws an overlay) - see overlay.py's own docstring for why
 # a persistent, shared connection is required rather than one per feature.
 _overlay = overlay.OverlayClient()
 
@@ -353,17 +353,17 @@ def capi_fleetcarrier(data: Any) -> None:
     """EDMC calls this when fresh CAPI `/fleetcarrier` data arrives
     (requires Frontier auth; fetched on CarrierBuy/CarrierStats, ~15min
     throttle) - a separate hook from journal_entry, not a journal event.
-    Only Inventory's fleet-carrier-locker tracking currently needs this."""
+    Inventory's fleet-carrier-locker tracking and the Colonization panel's carrier cargo need this."""
     inventory_panel.capi_fleetcarrier(data)
     colonization_panel.capi_fleetcarrier(data)
 
 
 def dashboard_entry(cmdr: str, is_beta: bool, entry: Dict[str, Any]) -> None:
     """EDMC calls this on every Status.json change (roughly once a second in
-    flight) - entry is the parsed file directly. The only thing WFMT reads
-    from it is the Flags bitmask, for Interdiction's "Being Interdicted" bit
-    (the earliest interdiction signal, before any resolving journal event -
-    see interdiction.py)."""
+    flight) - entry is the parsed file directly. Interdiction reads the Flags
+    bitmask for its "Being Interdicted" bit (the earliest interdiction signal,
+    before any resolving journal event - see interdiction.py); the features
+    below take the position, body and other fields they track from it."""
     flags = entry.get("Flags")
     if isinstance(flags, int):
         interdiction.handle_dashboard_flags(flags)

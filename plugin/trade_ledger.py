@@ -23,8 +23,8 @@ Costs only count from when WFMT saw them, like trades, so a refuel before EDMC s
 The credits-per-hour clock still runs first trade to last trade, so a refuel before the first sale
 doesn't stretch it.
 
-Beyond the totals the ledger keeps what a saved session needs to be looked at later (docs/TRADE_TECH_SPEC.md, "Trade
-history"): `log`, one entry per trade or cost with the station and system it happened at (so routes can be worked
+Beyond the totals the ledger keeps what a saved session needs to be looked at later (docs/TRADE_TECH_SPEC.md, section 5.2,
+"Trade History: saved sessions"): `log`, one entry per trade or cost with the station and system it happened at (so routes can be worked
 out), `meta` (when the session started, the balance at login, jumps and light years travelled), and the `routes` and
 `searches` done during it. It is all bounded, and an older saved ledger without any of it still loads.
 

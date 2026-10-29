@@ -3,8 +3,8 @@ Mode-agnostic "advance on jump" state machine for boxel-survey walking.
 
 BoxelWalker currently drives Boxel Survey only. It's kept separate from
 boxel.py (pure sequence math) and from boxel_survey.py (EDMC wiring) so the
-same advance/visited-tracking/persistence machinery could be reused for a
-future waypoint route mode without duplicating it.
+same advance/visited-tracking/persistence machinery could be reused by
+another sequence-driven mode without duplicating it.
 """
 
 from __future__ import annotations

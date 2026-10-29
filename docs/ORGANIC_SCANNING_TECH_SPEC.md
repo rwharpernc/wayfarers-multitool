@@ -136,6 +136,7 @@ and **Analyze** (third, far enough from the second), and the third is the one th
 - Each genus has a **minimum distance** between samples (it varies by genus). WFMT measures your
   distance from the last sample using great-circle distance on the body's radius and tells you when
   you've gone far enough.
+- Sampling a different genus abandons one left part-way (the game makes you start it over), so its stage and positions are cleared; a new first sample of the same genus restarts it too.
 - The **credit estimate** is the species' value from the data.
 
 ## 7. Persistence

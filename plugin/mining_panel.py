@@ -2,17 +2,15 @@
 Mining mode's feature-module contract entry point. Owns the panel's
 persistent chrome (page nav between Space Mining/Surface Mining, the
 scrollable Canvas/Scrollbar frame mirroring missions_ui.py's own
-pattern, and the six persistent hotspot/finder buttons - see their own
-docstring below for why they're never destroyed/recreated), the
+pattern, and the six persistent buttons (H.S., PRICE, RES, BOOK, DASHBOARD,
+LIVE) - see their own docstring below for why they're never destroyed/recreated), the
 Settings tab, and the full journal/dashboard dispatch. Per-page content
 rendering lives in `mining_render.py`; HUD-overlay pushes live in
 `mining_overlay.py`; the data models live in `mining_space.py`/
 `mining_surface.py`/`mining_hotspots.py`.
 
-`PANEL_PLACEMENT = "mining"` - the last mode this project's own
-placeholder ("Mining - coming soon.") covered; landing this file's
-import in `ui.py`'s FEATURES tuple is what makes that placeholder
-disappear.
+`PANEL_PLACEMENT = "mining"` - this module's entry in `ui.py`'s FEATURES
+tuple is what puts the panel in Mining mode.
 """
 from __future__ import annotations
 

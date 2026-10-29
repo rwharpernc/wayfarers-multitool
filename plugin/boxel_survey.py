@@ -577,7 +577,7 @@ class BoxelSurveyController:
         # at row 0 of its own frame, no cross-feature row coordination needed.
 
         # The "Random" button isn't built here: it lives on the Auto-Honk /
-        # Discovery Alerts / Neutron button row (see build_random_button(),
+        # Discovery Alerts button row (RND; see build_random_button(),
         # called from ui.py), so it stays visible and usable even when this
         # section is collapsed, whichever sub-mode is selected.
         if self._random_status_var is None:           # RND may be built before this panel (the panels are in alphabetical order)

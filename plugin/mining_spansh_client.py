@@ -2,7 +2,7 @@
 Opt-in lookup against Spansh's (https://spansh.co.uk) body-search API to
 find nearby rings with a confirmed hotspot for a given commodity - "where
 do I go next" once the current ring's worth is exhausted. Gated behind
-the "Spansh Nearby Hotspot Finder" setting (default off, like WFMT's own
+the "Enable Spansh nearby hotspot finder" setting (default off, like WFMT's own
 shared updater) - a real outbound network call unlike anything else
 Mining mode does by default.
 

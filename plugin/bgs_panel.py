@@ -1,6 +1,6 @@
 """BGS (Background Simulation) tracking — a mode (PANEL_PLACEMENT = "bgs"),
 its own top-level main-panel mode alongside Powerplay/Exploration/Mining/
-Missions/Field Ops (see ui.py's PANEL_MODES).
+Trade/Missions/Field Ops/Colony (see ui.py's PANEL_MODES).
 
 The main panel shows only the system the commander is in: each faction's
 state and influence, plus what the commander has done to it since the last

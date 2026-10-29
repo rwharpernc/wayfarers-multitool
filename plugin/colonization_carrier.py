@@ -12,7 +12,7 @@ When EDMC is signed in to Frontier, `apply_capi_cargo` replaces the tally with t
 top. A fetch that arrives within `CAPI_GRACE` of the newest transfer is ignored, because Frontier's copy may predate that
 transfer and would undo it, and so is one that repeats the copy already ignored (`capi_ignored`): Frontier's copy has been
 seen to stay unchanged for longer than the grace period. That second rule expires `CAPI_REPEAT_EXPIRY` after the copy was first
-ignored (`capi_ignored_at`), so a stable figure is applied in the end even when it never moves. Without it:
+ignored (`capi_ignored_at`), so a stable figure is applied in the end even when it never moves.
 
 What it cannot see: stock that reached the carrier another way (bought through its market, a trade order) or left it
 (sold, a trade order, moved by a squadron mate) is not a `CargoTransfer`, so it is not counted. It is "what this tool

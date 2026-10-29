@@ -1,10 +1,10 @@
-"""Codex Completionist — a new Exploration feature: a personal "how many
+"""Codex Completionist — an Exploration feature: a personal "how many
 of each scannable thing have I ever found" tally (see codex_completionist.py's
 own docstring for the rationale and scope boundaries — no galaxy-wide completion percentage).
 
 Lives inside Exploration mode's panel (PANEL_PLACEMENT = "exploration"),
 alongside Auto-Honk/Discovery/Boxel Survey/Exploration Value/Organic
-Scanning - each gets its own dedicated
+Scanning and the other sections - each gets its own dedicated
 child frame (see ui.py's create_plugin_app/_stack_features()), separated
 by a thin panelkit-drawn rule, so no cross-feature row coordination is
 needed here.

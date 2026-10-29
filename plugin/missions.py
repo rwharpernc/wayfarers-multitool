@@ -18,7 +18,7 @@ directly. The data/logic layer is split across several files:
 - `journal_scan.py` — historic journal-backlog scan (this module's `start`
   calls it once, on plugin_start3)
 - `missions_ui.py` — the main-panel content (Canvas+Scrollbar category
-  pages) and the "All Missions"/mission-detail popups, which self-registers
+  pages), which opens the Missions window (`missions_window.py`) and self-registers
   onto `kill_missions`'/`all_missions`'/`community_goal_state`'s
   listener lists the same way
 

@@ -7,8 +7,8 @@ game's station layout: any correct implementation reproduces the same
 numbers. The docking state machine, status text, auto-hide timer and overlay
 rendering are this project's own code.
 
-Mode-independent (PANEL_PLACEMENT = "always") - not one of WFMT's five
-WFMT modes, so its main-panel widgets sit outside any mode frame,
+Mode-independent (PANEL_PLACEMENT = "always") - not one of WFMT's
+panel modes, so its main-panel widgets sit outside any mode frame,
 visible regardless of which mode is selected.
 
 Purely journal-driven (DockingRequested/Granted/Denied/Timeout/Cancelled,

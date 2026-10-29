@@ -1,4 +1,4 @@
-"""The commodities chosen as mining targets in Settings → WFMT → Mining, read from the one text box that holds them. Pure Python: no Tk, no network, no EDMC.
+"""The commodities chosen as mining targets in Settings → Mining, read from the one text box that holds them. Pure Python: no Tk, no network, no EDMC.
 
 The box takes one or several commodities separated by commas or semicolons, each optionally followed by the least percent of a rock that makes it worth cracking:
 "Painite 30, Platinum 25, Void Opals". A name with no number uses the single percentage beside the box (`default_percent`), so a box holding one plain name behaves exactly as it

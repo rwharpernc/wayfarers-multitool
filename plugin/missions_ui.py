@@ -326,7 +326,7 @@ def _bind_mission_click(widget: tk.Widget, mission_id: int,
     """Makes an entire mission card clickable: binds a hand cursor and
     <Button-1> on every widget in its subtree, not just the outer frame -
     a click can land on any label, or the unfilled gaps between them, and
-    all of it should open that mission's detail popup."""
+    all of it should open that mission in the Missions window."""
     widget.configure(cursor="hand2")
     widget.bind("<Button-1>", lambda _e: on_click(mission_id))
     for child in widget.winfo_children():
@@ -604,8 +604,8 @@ def _display_all_missions_row(frame: tk.Frame, mission: all_missions.MissionSumm
 
     Built inside its own `card` frame (rather than laying lines directly
     into `frame` as before) so the whole card - not just one label - can be
-    bound clickable in one recursive pass, opening a detail popup for this
-    mission."""
+    bound clickable in one recursive pass, opening this mission in the
+    Missions window."""
     fonts = _get_fonts()
     cmdr = kill_tracker.current_cmdr
     is_complete, status_text = _mission_status(mission.id, cmdr)

@@ -4,7 +4,7 @@
 other WFMT windows. Built on the shared window kit (plugin/uikit - see
 docs/WINDOW_FRAMEWORK_SPEC.md).
 
-Both tabs sort by clicking a column heading (click again to reverse). The
+All three tabs sort by clicking a column heading (click again to reverse). The
 tables are grouped, so sorting is done here - each group's rows are
 re-inserted in the new order - rather than by DataTable's own flat sort.
 

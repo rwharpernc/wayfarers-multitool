@@ -16,9 +16,7 @@ feature registers (`GROUP_NAME`/`GROUP_PREFIX` below) uses WFMT's own
 feature's overlay ids shares one prefix
 (`wfmt_inventory_`) so a single group registration covers both the pillage
 stack and the bars — a genuine multi-shape composite (the pillage stack
-sits directly above the bars as one HUD panel), unlike every earlier
-overlay feature in this project, which deliberately did not register a
-group.
+sits directly above the bars as one HUD panel).
 """
 
 from __future__ import annotations

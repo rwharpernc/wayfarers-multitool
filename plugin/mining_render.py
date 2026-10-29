@@ -2,7 +2,7 @@
 Mining mode's per-page content rendering: this module owns "what goes on the panel for the Space Mining /
 Surface Mining page", while
 `mining_panel.py` owns the panel's persistent chrome (page nav, the
-scrollable Canvas/Scrollbar frame, the persistent hotspot/finder
+scrollable Canvas/Scrollbar frame, the persistent
 buttons) and calls into `render_space_mining()`/`render_surface_mining()`
 each time it needs to redraw.
 

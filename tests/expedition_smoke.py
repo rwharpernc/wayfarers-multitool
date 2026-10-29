@@ -553,7 +553,7 @@ check(running.status == expedition.PAUSED, "the expedition that was running is s
 win._pause()
 check(fresh.status == expedition.PAUSED and logs.get(fresh.log_run_id).status == expedition_log.PAUSED and "paused too" in win._shell._status.cget("text"), "Pause pauses the run too")
 check("paused" in expedition_log_panel.title_suffix(logs) and expedition_log_panel.summary_text(logs).count("(paused)") == 1, "and the Expedition Log row shows it paused")
-expedition_log_panel.controller.toggle_pause()           # RESUME on the log's own row
+expedition_log_panel.controller.toggle_pause()           # RESUME through the Expedition Log's controller (its window's button)
 check(fresh.status == expedition.ACTIVE and logs.get(fresh.log_run_id).status == expedition_log.RUNNING, "RESUME on the Expedition Log row carries the expedition on")
 expedition_log_panel.controller.toggle_pause()
 check(fresh.status == expedition.PAUSED, "PAUSE on the Expedition Log row pauses the expedition")

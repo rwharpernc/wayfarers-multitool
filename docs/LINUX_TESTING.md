@@ -146,7 +146,7 @@ Use them for anything the passes did not reach.
   - tracked plant marker rings
   - the Bio radar's north mark
   - The built-in overlay is Windows only, so Linux keeps EDMCModernOverlay.
-- The Exobiology cards (Bio status, Biology, Bio radar, Sample popup), System targets and Body info, the Expedition Log (START, STOP, LOG window, Start from my last sale), the drag-and-drop layout editor on Overlay Placement, panel opacity and legible text on every color scheme, and species shown as `Genus species` (the items are in section 6 below).
+- The Exobiology cards (Bio status, Biology, Bio radar, Sample popup), System targets and Body info, the Expedition Log (Start and Stop in the Expedition window, the Log tab, Start from my last sale), the drag-and-drop layout editor on Overlay Placement, panel opacity and legible text on every color scheme, and species shown as `Genus species` (the items are in section 6 below).
 - The Route overlay, the Expedition card and survey counts, and the overlay padding and alignment (every card's text starts at the same left edge, the same distance from its border), plus a look at the default overlay spots.
 - **Section 5, Overlay:** the Colonization card still shows when the game's Market event arrives late (the overlay also watches `Market.json`).
 - **Section 7f, Overlay Placement:** an exact position that is off the overlay's canvas (such as a leftover `x = 1280`) falls back to the default spot.
@@ -331,7 +331,7 @@ Use them for anything the passes did not reach.
   - **From plotted route** (after plotting a route in the game) and **Import CSV** add many.
   - **Road to Riches** and **Exomastery** (Spansh): press **Plot**, wait, check the new expedition's stops, notes and order against Spansh's own page.
   - **Neutron route** opens the Route Planner.
-  - **Start**, then jump to a stop: the section ticks it, counts the jump and shows the next stop with its distance.
+  - **Start** (in the Expedition window), then jump to a stop: the section ticks it, counts the jump and shows the next stop with its distance.
   - **COPY** and **Copy on arrival** put the next stop's name on the clipboard (check it pastes into the galaxy map's search box).
   - **Locate and reorder (EDSM)** orders the unvisited stops.
   - **Export CSV** saves a file and **Import CSV** reads it back.
@@ -382,9 +382,9 @@ Use them for anything the passes did not reach.
   - **Add font file...** copies a `.ttf` and selects it.
   - **Open fonts folder** opens it.
   - After a restart the overlay text shows lower case.
-- [ ] Expedition Log (Exploration → Expedition Log; Settings → Overlays → Expedition Log):
-  - START, a few jumps and scans, STOP.
-  - LOG opens a window with the expedition, its facts and editor.
+- [ ] Expedition Log (Expedition window, Log tab; Settings → Overlays → Expedition Log):
+  - Start, a few jumps and scans, Stop (the buttons are in the Expedition window; the panel's Expedition section has none).
+  - The Log tab shows the expedition, its facts and editor.
   - Rescan, Reset and Delete (asking twice) work.
   - Export CSV writes a file.
   - The overlay card shows the running totals.

@@ -2,9 +2,9 @@
 
 It keeps what the plotter needs from the game: the ship (the `Loadout` event, and the cargo on board from Status.json), the system the commander is in and its address, and the
 route once one is plotted. Spansh's exact plotter works out the jump range from the ship itself, so nothing about the ship is typed. Arriving in a system on the route moves the position along it, which the window shows and (if ticked) copies the next system for. The line
-under the button says what is next. Nothing is stored on disk and nothing is sent until the window's **Plot** button is pressed.
+under the button says what is next. The plotted route is kept per commander (route_planner_state.py) so it survives a restart; nothing is sent until the window's **Generate route** button is pressed.
 
-The button is a plain row at the top of the Exploration panel, not inside a folded section, so the plotter is always one click away.
+The button sits in the Exploration panel's collapsible Route Planner section (folded by default).
 """
 from __future__ import annotations
 

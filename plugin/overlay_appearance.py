@@ -1,9 +1,8 @@
-"""Overlay appearance: the color scheme every WFMT overlay display follows, and the one fixed text size, padding and line spacing.
+"""Overlay appearance: the color scheme every WFMT overlay display follows, and the text size, and the fixed padding and line spacing.
 
-`overlay_style.py` is the model (palettes, and the size estimates that make a card fit its text). This module keeps the four
-choice of scheme in EDMC's settings, hands every display the current `Look`, and builds the **Overlays -> Appearance** Settings tab,
+`overlay_style.py` is the model (palettes, and the size estimates that make a card fit its text). This module keeps the choice of scheme, text size and panel opacity in EDMC's settings, hands every display the current `Look`, and builds the **Overlays -> Appearance** Settings tab,
 whose **Show sample** button draws the Colonization card (the richest display) with the scheme as picked, where that display sits.
-Text size, padding and line spacing are fixed (below): column alignment depends on estimates of the text width, and one size keeps it stable.
+Padding and line spacing are fixed (below): column alignment depends on estimates of the text width, and one spacing keeps it stable. The text size is Default or Larger, and every box is sized from it.
 """
 
 from __future__ import annotations

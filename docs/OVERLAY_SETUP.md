@@ -187,7 +187,7 @@ Four ticks, all off: *Enable the Bio status card (progress, current species, dis
 
 ### Expedition Log
 
-*Enable the Expedition Log card* (off); **Test Card**. The card shows the expedition that is running or paused. A paused one keeps its totals until you resume or stop it; stopping resets the card. You start, pause and stop an expedition in the Expedition section of the Exploration panel, and name and edit them in the Log tab of the Expedition window. See [Expedition Log](guide/exploration.md#expedition-log).
+*Enable the Expedition Log card* (off); **Test Card**. The card shows the expedition that is running or paused. A paused one keeps its totals until you resume or stop it; stopping resets the card. You start, pause and stop an expedition in the Expedition window (its Plan and Log tabs; the Expedition section of the Exploration panel has no such buttons), and name and edit them in the Log tab. See [Expedition Log](guide/exploration.md#expedition-log).
 
 ### Flight Alerts
 

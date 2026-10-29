@@ -1,6 +1,6 @@
 """A list-style overlay card: lines of text over a two-column list, in one box, every line starting at the card's left padding.
 
-Used by the Route overlay, the System targets card and the Body info card. A `Card` is plain data (header lines, rows of (left text, right
+Used by the Route overlay, the System targets card, the Body info card, the Exobiology cards and the Expedition Log card. A `Card` is plain data (header lines, rows of (left text, right
 text, color role), an optional footer); a `CardLayout` knows where one card kind is drawn, how wide and tall it must be for its text (the overlay
 cannot measure text, so widths come from `overlay_style.Look`'s estimates), and how to send or clear it. The box has a fixed top and width and grows
 downward as lines are added, so where it sits on the screen (the global Overlay Placement setting) never changes with what it says. Pure: no Tk, no

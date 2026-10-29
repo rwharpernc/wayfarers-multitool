@@ -1,18 +1,18 @@
 """Route overlay: the route you are following, on one overlay card: a copy of what the Route Planner plotted, or of the route the game's galaxy map worked out.
 
-The card says where you are going and in how many jumps, then lists the systems still to visit, names only, the next first, and ends with the light years left:
+The card says where you are going and in how many jumps, then lists the systems still to visit, the next first, each with its star in a color, and ends with the light years left:
 
     You are navigating to:
     <the destination>
     You will be there in 12 jumps.
     ------
-    <next system>
+    <next system>        NEUTRON
     <the one after> ...
     ------
     4,310 LY left to jump.
 
 A system is taken off the list as you reach it, and the jump count and the light years follow. A route plotted in the Route Planner replaces the game's plotted route on
-the card until its last jump; with neither, nothing is drawn. Fuel, range and the stars of the route are not on this card (the Exploration Dashboard shows them).
+the card until its last jump; with neither, nothing is drawn. Fuel and range are not on this card (the Exploration Dashboard shows them).
 
 Nothing is sent anywhere unless the EDSM option is ticked: the card reads the journal, `NavRoute.json` and EDMC's copy of `Status.json`, and draws through the shared
 overlay connection (EDMCModernOverlay, which WFMT does not install or launch). Settings-tab-only and off until ticked, like every overlay. Where the card sits is the global

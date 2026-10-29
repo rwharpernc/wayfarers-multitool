@@ -3,7 +3,7 @@ Back up my data: one zip of everything WFMT has saved about play, written to a f
 
 WFMT keeps its saved data as JSON files beside the plugin (the list is `update._OWN_DATA_FILES`) plus the optional
 `mining_sessions` archive. The updater never touches them but its own pre-update backups leave them out on purpose, so
-until now nothing archived them. This module copies them into a timestamped zip so they can be kept, moved to another
+nothing else archives them. This module copies them into a timestamped zip so they can be kept, moved to another
 machine or read by other tools.
 
 Restoring is staged, not immediate: WFMT keeps its data in memory while EDMC runs and would write it back over a restored

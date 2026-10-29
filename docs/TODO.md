@@ -123,7 +123,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - The Expedition section, the Dashboard and the Expedition Log card show it running.
   - **Review** opens the Expedition window with that expedition selected (also when another expedition is running or the window is already open).
   - Press it again on the same route: no duplicate.
-  - Pause and Resume from the Expedition window, then from the Log row. Check both agree and the time excludes the pause.
+  - Pause and Resume from the Expedition window, then from the Log tab. Check both agree and the time excludes the pause.
   - Stop from either side.
   - Restart EDMC while paused and check both stay paused.
   - With *Start the Expedition Log when I start an expedition* unticked (Settings → Exploration → Expedition), starting an expedition starts no Log run.
@@ -177,7 +177,7 @@ The items below are implemented and covered by unit tests, but have not all been
     - Reset and Delete (each asks twice)
     - **Rescan** an expedition you gave an earlier start, and check the totals fill in from your journals
     - Copy summary and Export CSV
-    - **Start since my last sale**: it should start just after your last exploration or exobiology sale, fill in the totals from your journals and carry on counting
+    - **Start from my last** (sale, Discovery Data sale, Exobiology Data sale): each should start just after that kind of sale (a plain sale is the earlier of the two kinds), fill in the totals from your journals and carry on counting
   - Check another commander sees none of it and that `expedition_log.json` survives an update.
   - The earned figures assume the journal's sale events (`MultiSellExplorationData`, `SellExplorationData`, `SellOrganicData`) carry the totals as read here. Confirm against a real sale.
 - [ ] **Expedition Log: pause and stop.** Turn the Expedition Log overlay on, press **Start** in the Expedition window, jump or scan a little, then **Pause**.

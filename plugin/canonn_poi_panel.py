@@ -9,7 +9,7 @@ in one way: Canonn has no queryable "nearest" REST endpoint of its own, so
 this downloads the full Thargoid/Guardian site lists once per session (two
 independent third-party Google Sheets/Drive fetches) and caches them in
 memory, computing "nearest" client-side on every click rather than
-re-downloading - a "Refresh POI Data" button forces a re-download if the
+re-downloading - the UPDATE button (tooltip "Refresh POI Data") forces a re-download if the
 cached lists ever need updating within the same EDMC session.
 
 It is one half of the POI Reference section (poi_reference_panel.py), which owns the
@@ -73,7 +73,7 @@ class CanonnPoiController:
     def __init__(self) -> None:
         self._star_pos: Optional[Tuple[float, float, float]] = None
 
-        # In-memory cache, populated on first click (or "Refresh POI Data")
+        # In-memory cache, populated on first click (or UPDATE)
         # - never re-downloaded automatically, same on-demand-only design as
         # the lookup itself.
         self._thargoid_sites: Optional[List[canonn_poi_data.CanonnPoi]] = None

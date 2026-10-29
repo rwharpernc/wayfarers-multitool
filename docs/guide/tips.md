@@ -14,7 +14,7 @@ Things that surprise people, and what to do about them. Back to the [README](../
 ## Your data and backups
 
 - WFMT keeps what it records about your play in files inside its plugin folder, one section per commander. Updates never touch them, but deleting or reinstalling the folder loses them.
-- **Back it up** (Settings → WFMT → General → Backup). Ticking *Back up automatically* with a folder outside the plugin folder (Documents or a cloud-synced folder) makes a zip every 7 days when EDMC starts, and one just before an update installs. A manual **Back up my data** shows no result line in this version, so look in the folder for the new zip.
+- **Back it up** (Settings → WFMT → General → Backup). Ticking *Back up automatically* with a folder outside the plugin folder (Documents or a cloud-synced folder) makes a zip every 7 days when EDMC starts, and one just before an update installs. A manual **Back up my data** shows a line under the button, `Saved N files (size) to <path>`, or the reason it failed.
 - **Restore** is applied when EDMC next starts, so restart EDMC after choosing a zip. The files it replaced are kept in `backups/pre-restore-<date>.zip` inside the plugin folder.
 - The Raven Colonial key, the downloaded Codex catalog and the Local star index are not in a backup. Type the key again (or paste it) on a new install.
 - Click the **Credits this session** line under the mode buttons to open the **Credits Ledger**: your income by activity and by day, and the game's lifetime totals.

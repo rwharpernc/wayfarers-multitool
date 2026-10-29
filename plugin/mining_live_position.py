@@ -10,7 +10,7 @@ piggybacking on mining_surface.py's journal-event-driven tracking.
 Only meaningful while Status.json's `Flags` has `FlagsHasLatLong` (bit
 21, per EDCD's edmc_data.py) set - i.e. on foot or in a vehicle on a
 landable body's surface, which is where a Rhino deployment's recorded
-hotspots would be. Used by mining_overlay.py's bearing/distance
+hotspots would be. Used by surface_compass.py's bearing/distance
 calculation to the nearest recorded hotspot on the current body.
 
 Status.json also carries a live `PlanetRadius` (meters) alongside
@@ -55,7 +55,7 @@ def set_status(entry: dict[str, Any]) -> None:
     dict on every update. Clears the tracked position the moment
     FlagsHasLatLong drops (lifting off, boarding a taxi, fast-travelling
     away, etc.) so a stale position doesn't linger and point
-    mining_overlay.py at a spot that's no longer meaningful."""
+    surface_compass.py at a spot that's no longer meaningful."""
     global _current, _in_srv
     flags = entry.get("Flags")
     _in_srv = isinstance(flags, int) and bool(flags & FLAGS_IN_SRV)
