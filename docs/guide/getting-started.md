@@ -87,9 +87,9 @@ releases (a draft or a pre-release is ignored). The **Release notes** link on th
 4. **When it takes effect.** The new files are staged now and run when EDMC starts again; nothing is swapped into a running program. Restart EDMC when you are ready.
 5. **If it fails.** A failed check or download is written to EDMC's log and tried again at the next start. The panel is unchanged. Extracting the ZIP by hand always works.
 
-The first line under the mode buttons always says which version you are running (**Plugin: v1.3.1**).
+The first line under the mode buttons always says which version you are running (**Plugin: v1.3.2**).
 
-- While an update is coming it says, for example, **Plugin: v1.3.1 (downloading v1.3.2...)**.
+- While an update is coming it says, for example, **Plugin: v1.3.2 (downloading v1.3.3...)**.
 - Once the update is downloaded it turns bold black on **orange** and reads **the new version's number, then download - Restart EDMC**.
 - The update only takes effect when EDMC starts again; nothing is swapped in while it runs.
 - After the restart the line shows the new version with **(updated)** after it, in green for 15 seconds.
@@ -136,7 +136,7 @@ mining and flip to Trade to check a price, your mining stats keep counting.
 
 Just under the mode buttons, above the page itself, WFMT shows these lines, on every mode:
 
-- **Plugin**: the version you are running, for example `Plugin: v1.3.1` (see "Updating" for what it says during an update). Click it to open the latest release's page.
+- **Plugin**: the version you are running, for example `Plugin: v1.3.2` (see "Updating" for what it says during an update). Click it to open the latest release's page.
 - **Game mode**: `You are in Open mode.`, `You are in Solo mode.` or `You are in Private Group mode (the group's name).` Until the game has logged in it reads `Game mode: waiting for login…`.
 - **Credits this session**: what you've earned or lost since you logged in, for example `Credits this session: +1,234,567 cr earned (+411,522 cr/hr)`, `Credits this session: -5,000 cr lost` or `Credits this session: no change yet`. It is your balance now minus your balance at login (`waiting for your balance…` until EDMC has told WFMT the balance).
   - The hourly rate appears once the session is about three minutes old.

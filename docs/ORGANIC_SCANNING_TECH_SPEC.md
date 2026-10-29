@@ -5,7 +5,7 @@ prediction, how scan progress is tracked, and where its answers can be wrong. Fo
 [Exobiology guide](guide/exobiology.md). For how the code is organized in general, see
 [TECHNICAL.md](TECHNICAL.md).
 
-- **Author:** R.W. Harper (CMDR Tiber Caelvox)
+- **Author:** R.W. Harper (CMDR Mactavious)
 
 **Design principle.**
 

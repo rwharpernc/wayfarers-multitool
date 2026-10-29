@@ -7,15 +7,10 @@ Read this first when picking the project up on a machine that has not seen the r
 
 ## Release
 
-- **1.3.1** is the version number in `plugin/__init__.py` and `package.json`. It was released on 2026-10-29 (tag `v1.3.1`) from the `bugfix/1.3.1` branch, which was merged into `master` and deleted.
-  - 1.3.1 makes the Region Sweep EDSM skip option work, starts the Colonization Show and List choices at the same place, corrects three Settings texts and brings the documentation in line with the code, with a checker that keeps it so.
-  - Unreleased, on the `bugfix/1.3.2` branch (the version number is still 1.3.1):
-    - the mode buttons carry full names (Powerplay, BGS, Explore, Mining, Trade, Missions, Operations, Colony), and every panel and window button is spelled out in Mixed Case with a tooltip ("Name - what it does"); rows of panel buttons wrap instead of widening EDMC's window
-    - the Powerplay panel shows one Cycle pair, "(all this session)", when the session has earned everything the cycle has, and the "Merits this session" line is hidden on the Powerplay page
-    - lines that repeated another line were removed from the Colony, Trade, Mining, Exploration, Missions and BGS panels
-    - the Route Planner and Mining live windows have larger minimum sizes
-    - the guide file `field-ops.md` is now `operations.md`
-    - pop-out windows open on EDMC's monitor when they have no remembered place or it is no longer on a monitor, with a Settings tick to always do so
+- **1.3.2** is the version number in `plugin/__init__.py` and `package.json`. It was released on 2026-10-29 (tag `v1.3.2`) from the `bugfix/1.3.2` branch, which was merged into `master` and deleted.
+  - 1.3.2 gives the mode buttons full names (Powerplay, BGS, Explore, Mining, Trade, Missions, Operations, Colony) and every panel and window button a Mixed Case name and a tooltip, and rows of panel buttons wrap instead of widening EDMC's window.
+  - 1.3.2 also merges the Powerplay panel's Session and Cycle lines when they would repeat, removes lines that repeated another on the Colony, Trade, Mining, Exploration, Missions and BGS panels, opens pop-out windows on EDMC's monitor (with a Settings tick to always do so), gives the Route Planner and Mining live windows larger minimum sizes, and renames the guide file `field-ops.md` to `operations.md`.
+  - 1.3.1 was released on 2026-10-29 (tag `v1.3.1`) from the `bugfix/1.3.1` branch, which was merged into `master` and deleted. It made the Region Sweep EDSM skip option work, started the Colonization Show and List choices at the same place, corrected three Settings texts and brought the documentation in line with the code, with a checker that keeps it so.
   - 1.3.0 was released on 2026-10-29 (tag `v1.3.0`) from the `release/1.3.0` branch, which was merged into `master` and deleted.
   - 1.3.0 adds sharing to Discord (Copy for Discord and Post to Discord for the BGS report and Powerplay progress, with a named list of webhook destinations for each commander and a dialog to customize how the posts look), the Expedition Log's three Start from my last buttons, a shopping-list overlay that follows the Sites window's Show choice, and a README and guides with how-tos and worked examples. It changes expeditions to be managed only in the Expedition window, makes the Bio status card wider and shorter, folds the Organic Scanning section by default, and drops the green under the To haul filter in favor of a tint for the rows in your hold. It fixes sampling a different genus, which now abandons the unfinished one. The full list is in [CHANGELOG.md](../CHANGELOG.md).
   - 1.2.0 was released on 2026-10-28 (tag `v1.2.0`) from the `release/1.2.0` branch, which was merged into `master` and deleted.
@@ -24,15 +19,15 @@ Read this first when picking the project up on a machine that has not seen the r
   - The project was renamed Wayfarer's Multitool (WFMT) and its version history restarted at 1.0.0 on 2026-10-21.
   - Everything built up to 2026-10-26 is the first release, published as 1.0.0.
   - The checks to run first are in [TEST_PLAN.md](TEST_PLAN.md), and the open in-game checks are in [TODO.md](TODO.md).
-- The latest release is 1.3.1, published on 2026-10-29 (1.3.0 was published the same day, 1.2.0 was published on 2026-10-28, 1.1.0 on 2026-10-27 and 1.0.0 on 2026-10-26), and the repository is public.
+- The latest release is 1.3.2, published on 2026-10-29 (1.3.1 and 1.3.0 were published the same day, 1.2.0 was published on 2026-10-28, 1.1.0 on 2026-10-27 and 1.0.0 on 2026-10-26), and the repository is public.
   - The in-app updater and the README's "latest release" link read GitHub's public releases API.
 
 ## Branches
 
 There is one long-lived branch, `master`.
 
-- A release is built on a branch named for it (`release/1.3.0` was the last; 1.3.1 was a fix on `bugfix/1.3.1`), merged fast-forward into `master` and deleted after it is tagged.
-- For a fix to a released version, cut a short branch from `master` (for example `bugfix/1.3.2`), and merge it back.
+- A release is built on a branch named for it (`release/1.3.0` was the last; 1.3.1 and 1.3.2 were fixes on `bugfix/1.3.1` and `bugfix/1.3.2`), merged fast-forward into `master` and deleted after it is tagged.
+- For a fix to a released version, cut a short branch from `master` (for example `bugfix/1.3.3`), and merge it back.
 
 ## Testing
 
@@ -60,7 +55,7 @@ There is one long-lived branch, `master`.
 
 ### Linux, next pass
 
-- Automated: 3,675 tests pass in the Docker container (12 skipped) on the unreleased `bugfix/1.3.2` branch; 3,656 passed on 2026-10-29 for the 1.3.1 release (3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
+- Automated: 3,687 tests pass in the Docker container (12 skipped), run on 2026-10-29 for the 1.3.2 release (3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
 - Manual: 1.3.0 (and the released 1.2.0, 1.1.0 and 1.0.0) is still to be tested on CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC.
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Report the session type (Wayland or X11) with the results.
@@ -175,7 +170,7 @@ Written 2026-10-21 on the Windows machine. This is work done since the last Linu
 
 ## Decisions already made
 
-- The tests keep using Mactavious as a second test commander (a fixture name for checking that commanders' data stays apart). It is a test name only, and is not the credited author (see the README and [ATTRIBUTIONS.md](ATTRIBUTIONS.md)).
+- The tests use Mactavious, the author's own commander name (see the README and [ATTRIBUTIONS.md](ATTRIBUTIONS.md)), as a second test commander, to check that commanders' data stays apart.
 - Every online lookup is either opt-in in Settings or runs only when a button is pressed, and is listed in `docs/guide/internet-and-privacy.md`.
 - Out of scope: Guardian ruin surveying, landing-pad diagrams and an FSS spectrum guide.
   - The journal lacks what they would need.

@@ -4,7 +4,7 @@ The standing reference for Missions mode: what it reads, the rules it applies, a
 and can't tell you. For how to use it, see the [README](guide/missions.md). For how the code is
 organized in general, see [TECHNICAL.md](TECHNICAL.md).
 
-- **Author:** R.W. Harper (CMDR Tiber Caelvox)
+- **Author:** R.W. Harper (CMDR Mactavious)
 
 **Design principle.**
 

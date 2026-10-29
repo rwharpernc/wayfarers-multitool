@@ -4,7 +4,7 @@ WFMT is a multitool I built for Elite Dangerous commanders. Elite Dangerous has 
 features were shaped by what they have built. This page credits the projects and people whose ideas, and in some cases published data and
 services, helped.
 
-Author: R.W. Harper: CMDR Tiber Caelvox. Licensed under the GNU GPL v3.0; see `LICENSE`.
+Author: R.W. Harper (CMDR Mactavious). Licensed under the GNU GPL v3.0; see `LICENSE`.
 Notices that a license requires are in `THIRD-PARTY-NOTICES.md`.
 
 **On this page**

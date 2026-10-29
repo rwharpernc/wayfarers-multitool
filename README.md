@@ -42,7 +42,7 @@ perfect, but it has the bells and whistles I always wanted, and I am sharing it 
 | **What it covers** | Powerplay, exploration and exobiology, mining, trading, missions, on-foot and cargo tracking, colonization, the BGS, sharing reports to Discord and more |
 | **Where it runs** | Inside [EDMC](https://github.com/EDCD/EDMarketConnector), on Windows and Linux |
 | **What you need to know** | Nothing about programming |
-| **Latest release** | **1.3.1**, published 2026-10-29 ([changelog](CHANGELOG.md)) |
+| **Latest release** | **1.3.2**, published 2026-10-29 ([changelog](CHANGELOG.md)) |
 | **Cost and privacy** | Free. Alerts, overlays and online lookups are off until you turn them on, and every online lookup is listed on [one page](docs/guide/internet-and-privacy.md) |
 
 ## Download and install
@@ -203,7 +203,7 @@ holding anyone back.
 
 The longer version is in [docs/ATTRIBUTIONS.md](docs/ATTRIBUTIONS.md#included-data-and-reusing-wfmt).
 
-Built and maintained by R.W. Harper: CMDR Tiber Caelvox. Copyright (c) 2026 R.W. Harper. Released under the
+Built and maintained by R.W. Harper (CMDR Mactavious). Copyright (c) 2026 R.W. Harper. Released under the
 [GNU General Public License v3.0](LICENSE).
 
 *Elite Dangerous* is a trademark of Frontier Developments plc. WFMT is a fan-made tool and is not official Frontier software.

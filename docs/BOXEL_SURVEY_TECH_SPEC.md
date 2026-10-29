@@ -4,7 +4,7 @@ The standing reference for Boxel Survey across all three sub-modes (Sequence, Re
 Route): what's true about the system right now, why, and what's still unknown. Release history is in
 `CHANGELOG.md`.
 
-- **Author:** R.W. Harper (CMDR Tiber Caelvox)
+- **Author:** R.W. Harper (CMDR Mactavious)
 - **Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 **Design principle.**

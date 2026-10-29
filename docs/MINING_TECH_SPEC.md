@@ -5,7 +5,7 @@ files it keeps, and the outside lookups it can make. For how to use it, see the
 [README](guide/mining.md). For how the code is organized in general, see
 [TECHNICAL.md](TECHNICAL.md).
 
-- **Author:** R.W. Harper (CMDR Tiber Caelvox)
+- **Author:** R.W. Harper (CMDR Mactavious)
 
 **Design principle.**
 

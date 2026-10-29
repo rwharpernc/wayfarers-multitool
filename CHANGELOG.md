@@ -3,12 +3,13 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
-## Unreleased
+## 1.3.2 (2026-10-29)
 
 ### Changed
 
 - **Panel buttons:** the mode buttons and the other abbreviated buttons now carry their full names: Powerplay, Exploration, Mining, Trade, Missions, Field Ops and Colony; Auto-Honk, Discovery Alerts, Neutron Star, White Dwarf and Random; Hotspots, Prices and Reserves on Mining; Copy System, Copy Next, Add Note, Find POI and Update POI. The window does not grow, because it was already as wide as the full mode names. Every button on the panels now has a tooltip, including the Trade page buttons and the Boxel Survey, Region Sweep and Waypoint buttons. A row of buttons that would be wider than the window (the Mining bar, Region Sweep's Discover buttons and the Waypoints list buttons) now wraps onto a second line.
 - **Window buttons:** the buttons in the pop-out windows now have tooltips too (the Help button included), and the terse ones are spelled out: in the Mining live window **Mark center**, **Mark border**, **Add hotspot**, **Import/export**, **Hotspots**, **Prices** and **Reserves**; **Review expedition** and **Move up** / **Move down** in the Expedition windows; **Add build**, **Edit build** and **Delete build** for Ship Builds; **Clear filter** in the Inventory window; **Copy Coriolis link** and **Copy EDSY link** in the Ship planner. The Route Planner and the two Mining live windows are a little wider at their smallest size so the longer names fit. The two Settings shortcut rows are now **Mark the center** and **Mark the border**.
+- **Author line:** the author is credited as R.W. Harper (CMDR Mactavious) in the README, the acknowledgements and the specifications.
 - **Windows open on EDMC's monitor:** a pop-out window that has never been opened, or whose remembered place is no longer on a connected monitor (a monitor was unplugged), now opens over the EDMC window on EDMC's monitor instead of wherever the window manager puts it. A window you left on another monitor still reopens there. A new tick in Settings → WFMT → General → Window, *Always open WFMT's windows on EDMC's monitor* (off), opens every window on EDMC's monitor wherever you left it.
 - **Button capitals:** buttons that were in capitals (Report, Rares, Rescan, Dashboard, Overlay, Projects, History, My Codex, Find, Plot, Clear Route, Review, Book, Live, Notes, Expedition, Mark, Target and the rest) are now in Mixed Case like the others, in the panels, the docs and the tooltips.
 - **Renamed:** the Field Ops mode is now **Operations** (its button, Settings tab and guide, which is now `operations.md`), and the Exploration mode button is now **Explore**. The Exploration section, Settings tab and guide keep their names.

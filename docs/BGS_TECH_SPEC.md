@@ -2,7 +2,7 @@
 
 The standing reference for BGS tracking: what it records from the journal, how it attributes your actions to factions and systems, how a tick is detected, and what its numbers can and can't tell you. For how to use it, see the [BGS guide](guide/bgs.md). For how the code is organized in general, see [TECHNICAL.md](TECHNICAL.md).
 
-- **Author:** R.W. Harper (CMDR Tiber Caelvox)
+- **Author:** R.W. Harper (CMDR Mactavious)
 - **Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 **Design principle.**

@@ -48,7 +48,7 @@ For anyone testing WFMT on Linux with Elite Dangerous under Steam Proton (or Win
 
 Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 under "Getting set up") and work through these. They are the work added since the earlier passes; each has its longer wording in `docs/TODO.md` under "Verification in the game".
 
-- **Added on the 1.3.2 branch (not yet run on Linux).**
+- **Added in 1.3.2 (not yet run on Linux).**
   - **Windows open on EDMC's monitor.** With two monitors, open a WFMT window you have not opened before (the Notes window, say). On Linux Tk cannot list the monitors, so it opens centered over the EDMC window and kept on the visible screen; note which monitor it lands on, under X11 and under Wayland. Drag it to the other monitor, close it and open it again: it should reopen there. Then tick *Always open WFMT's windows on EDMC's monitor* (Settings → WFMT → General → Window) and open it again: it should open over the EDMC window.
 - **Added 2026-10-23 (none of it run on Linux).** The Windows side of each is in [TEST_PLAN.md](TEST_PLAN.md) section 5.
   - **Every overlay off.** After `git pull --rebase`, start EDMC. The log has `All WFMT overlays reset to disabled (one-time), including the saved choices of N commander(s)` once, and no card shows for any commander. Turn one on and restart: it stays on.
@@ -204,7 +204,7 @@ Use them for anything the passes did not reach.
 
 1. Install the plugin: the zip from the [releases page](https://github.com/rwharpernc/wayfarers-multitool/releases/latest), or `npm run deploy` (step 4 below).
    - Restart EDMC.
-   - The line under the mode buttons should read `Plugin: v1.3.1`.
+   - The line under the mode buttons should read `Plugin: v1.3.2`.
    - Work through sections 0 and 1 below first.
 2. To get the checklist and the test suite, fetch the repository and use `master`:
    - `git fetch --all --tags`, then `git switch master`, then `git pull --rebase`.

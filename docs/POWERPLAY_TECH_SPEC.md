@@ -5,7 +5,7 @@ are estimated, how sessions work, and how the Rare Goods Finder fits in. For how
 [README](guide/powerplay.md). For how the code is organized in general, see
 [TECHNICAL.md](TECHNICAL.md).
 
-- **Author:** R.W. Harper (CMDR Tiber Caelvox)
+- **Author:** R.W. Harper (CMDR Mactavious)
 - **Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 **Design principle.**

@@ -6,7 +6,7 @@ pictures, and how it all differs on Linux. For how to use them, see the
 [README](guide/operations.md). For how the code is organized in general, see
 [TECHNICAL.md](TECHNICAL.md).
 
-- **Author:** R.W. Harper (CMDR Tiber Caelvox)
+- **Author:** R.W. Harper (CMDR Mactavious)
 
 **Design principle.**
 
