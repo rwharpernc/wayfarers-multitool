@@ -723,8 +723,10 @@ The items below are implemented and covered by unit tests, but have not all been
 ### Screenshots, settings and general
 
 - [ ] **Discord sharing (needs a real webhook in a private test channel of your own; Claude never posts to Discord).** Follow [Sharing reports to Discord](guide/discord.md) from a fresh webhook.
-  - **Settings → WFMT → Discord:** tick **Allow Post to Discord**, paste the link, add a nickname, press **Test webhook** (it says `Works: <name>.` and posts nothing), close Settings.
-  - **BGS Report → Discord → Post to Discord:** the post appears in the channel with bold system names and bullets, and the window says `Posted to <nickname>.` Post again: the same message is edited (`Updated your earlier post in ...`).
+  - **Settings → WFMT → Discord:** tick **Allow Post to Discord**, name the first destination, paste the link, press **Test** (it says `Works: <name>.` and posts nothing), close Settings with **OK**.
+  - **Several destinations:** add a second destination (a second webhook in another channel) and **OK**. **Post to Discord** now shows a small menu of the two names; pick each in turn and check each channel got its own post, and that posting again edits only the chosen destination's message. With one destination there is no menu.
+  - **Two commanders:** log in as another commander: their Discord tab starts empty, **Copy their destinations** copies the first commander's, and each commander's post carries their own report.
+  - **BGS Report → Discord → Post to Discord:** the post appears in the channel with bold system names and bullets, and the window says `Posted to <destination name>.` Post again: the same message is edited (`Updated your earlier post in ...`).
   - **Powerplay Sessions → Post to Discord:** the progress post appears with Inara links and the cycle line. Post again in the same session: edited. Log in again (a new session): a new post.
   - **Copy for Discord** (both windows) puts formatted text on the clipboard; paste it into the channel and check it reads the same. A long report copies as several messages with a blank line between.
   - **Thread:** save a Thread ID and post: it lands in the thread. A wrong ID says so.

@@ -28,6 +28,7 @@ from plugin import discord_client, discord_settings, discord_share as S, discord
 
 TOKEN = "SECRETtoken_abc-123"
 LINK = f"https://discord.com/api/webhooks/1234567890/{TOKEN}"
+LINK2 = f"https://discord.com/api/webhooks/1234567891/{TOKEN}2"
 
 
 class FakeResponse:
@@ -79,7 +80,7 @@ class Base(unittest.TestCase):
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
         store = discord_webhooks.DiscordWebhooks(self._tmp.name)
-        store.set("CMDR A", LINK, "Squadron BGS", "")
+        store.set_destinations("CMDR A", [{"name": "Squadron BGS", "url": LINK, "thread": ""}])
         for patcher in (mock.patch.object(discord_webhooks, "webhooks", store),
                         mock.patch.object(discord_webhooks, "config", types.SimpleNamespace(get_bool=lambda key, default=False: True)),
                         mock.patch.object(discord_settings, "_cmdr", "CMDR A")):
@@ -91,44 +92,75 @@ class Base(unittest.TestCase):
 
 class Sending(Base):
     def test_a_report_is_posted_in_order(self):
-        text = S.send("CMDR A", ["one", "two"], "bgs:tick", self.discord, no_sleep)
+        text = S.send("CMDR A", ["one", "two"], "bgs:tick", "", self.discord, no_sleep)
         self.assertEqual(text, "Posted to Squadron BGS (2 messages).")
         self.assertEqual(list(self.discord.messages.values()), ["one", "two"])
         self.assertEqual([c[0] for c in self.discord.calls], ["POST", "POST"])
 
     def test_the_same_report_again_edits_the_earlier_messages(self):
-        S.send("CMDR A", ["one", "two"], "bgs:tick", self.discord, no_sleep)
-        text = S.send("CMDR A", ["ONE", "TWO"], "bgs:tick", self.discord, no_sleep)
+        S.send("CMDR A", ["one", "two"], "bgs:tick", "", self.discord, no_sleep)
+        text = S.send("CMDR A", ["ONE", "TWO"], "bgs:tick", "", self.discord, no_sleep)
         self.assertEqual(text, "Updated your earlier post in Squadron BGS.")
         self.assertEqual(sorted(self.discord.messages.values()), ["ONE", "TWO"])
         self.assertEqual([c[0] for c in self.discord.calls], ["POST", "POST", "PATCH", "PATCH"])
 
     def test_a_longer_report_adds_messages_and_a_shorter_one_removes_them(self):
-        S.send("CMDR A", ["one"], "k", self.discord, no_sleep)
-        text = S.send("CMDR A", ["one", "two", "three"], "k", self.discord, no_sleep)
+        S.send("CMDR A", ["one"], "k", "", self.discord, no_sleep)
+        text = S.send("CMDR A", ["one", "two", "three"], "k", "", self.discord, no_sleep)
         self.assertIn("added 2 more messages", text)
-        S.send("CMDR A", ["only"], "k", self.discord, no_sleep)
+        S.send("CMDR A", ["only"], "k", "", self.discord, no_sleep)
         self.assertEqual(list(self.discord.messages.values()), ["only"])
         self.assertIn("DELETE", [c[0] for c in self.discord.calls])
 
     def test_a_message_deleted_in_discord_is_posted_again(self):
-        S.send("CMDR A", ["one"], "k", self.discord, no_sleep)
+        S.send("CMDR A", ["one"], "k", "", self.discord, no_sleep)
         self.discord.deleted_ids.add(next(iter(self.discord.messages)))
-        text = S.send("CMDR A", ["one again"], "k", self.discord, no_sleep)
+        text = S.send("CMDR A", ["one again"], "k", "", self.discord, no_sleep)
         self.assertTrue(text.startswith("Posted to"))
         self.assertIn("one again", self.discord.messages.values())
 
     def test_different_reports_do_not_share_ids(self):
-        S.send("CMDR A", ["a"], "bgs:1", self.discord, no_sleep)
-        S.send("CMDR A", ["b"], "bgs:2", self.discord, no_sleep)
+        S.send("CMDR A", ["a"], "bgs:1", "", self.discord, no_sleep)
+        S.send("CMDR A", ["b"], "bgs:2", "", self.discord, no_sleep)
         self.assertEqual([c[0] for c in self.discord.calls], ["POST", "POST"])
 
     def test_nothing_saved_or_nothing_to_post(self):
         with self.assertRaises(discord_client.DiscordError):
-            S.send("CMDR B", ["x"], "k", self.discord, no_sleep)
+            S.send("CMDR B", ["x"], "k", "", self.discord, no_sleep)
         with self.assertRaises(discord_client.DiscordError):
-            S.send("CMDR A", [], "k", self.discord, no_sleep)
+            S.send("CMDR A", [], "k", "", self.discord, no_sleep)
         self.assertEqual(self.discord.calls, [])
+
+
+class Destinations(Base):
+    def setUp(self):
+        super().setUp()
+        discord_webhooks.webhooks.set_destinations("CMDR A", [{"name": "Squadron BGS", "url": LINK, "thread": ""},
+                                                              {"name": "Friends", "url": LINK2, "thread": "42"}])
+
+    def test_a_named_destination_is_the_one_posted_to(self):
+        text = S.send("CMDR A", ["hello"], "k", "friends", self.discord, no_sleep)
+        self.assertEqual(text, "Posted to Friends.")
+        self.assertIn("1234567891", self.discord.calls[0][1])
+        self.assertTrue(self.discord.calls[0][1].endswith("thread_id=42"))
+
+    def test_no_name_means_the_first_destination(self):
+        self.assertEqual(S.send("CMDR A", ["hello"], "k", "", self.discord, no_sleep), "Posted to Squadron BGS.")
+        self.assertIn("1234567890", self.discord.calls[0][1])
+
+    def test_an_unknown_destination_is_refused_before_anything_is_sent(self):
+        with self.assertRaises(discord_client.DiscordError) as caught:
+            S.send("CMDR A", ["hello"], "k", "Nowhere", self.discord, no_sleep)
+        self.assertIn("Nowhere", str(caught.exception))
+        self.assertEqual(self.discord.calls, [])
+
+    def test_the_same_report_keeps_its_own_posts_for_each_destination(self):
+        S.send("CMDR A", ["one"], "k", "Squadron BGS", self.discord, no_sleep)
+        S.send("CMDR A", ["one"], "k", "Friends", self.discord, no_sleep)
+        self.assertEqual([c[0] for c in self.discord.calls], ["POST", "POST"])            # the second destination is not an edit of the first
+        again = S.send("CMDR A", ["ONE"], "k", "Friends", self.discord, no_sleep)
+        self.assertEqual(again, "Updated your earlier post in Friends.")
+        self.assertEqual([c[0] for c in self.discord.calls], ["POST", "POST", "PATCH"])
 
 
 class Window:
@@ -139,9 +171,9 @@ class Window:
 
 
 class Async(Base):
-    def run_post(self, messages, key="k", opener=None):
+    def run_post(self, messages, key="k", opener=None, destination=""):
         results = []
-        S.post_async(Window(), messages, key, lambda text, ok: results.append((text, ok)), opener or self.discord, no_sleep)
+        S.post_async(Window(), messages, key, lambda text, ok: results.append((text, ok)), destination, opener or self.discord, no_sleep)
         for thread in threading.enumerate():
             if thread.name == "WFMT-discord-post":
                 thread.join(5)
@@ -182,10 +214,49 @@ class Async(Base):
         self.assertTrue(S._busy.acquire(blocking=False))
         try:
             results = []
-            S.post_async(Window(), ["x"], "k", lambda text, ok: results.append((text, ok)), self.discord, no_sleep)
+            S.post_async(Window(), ["x"], "k", lambda text, ok: results.append((text, ok)), "", self.discord, no_sleep)
             self.assertEqual(results, [("A post is already on its way.", False)])
         finally:
             S._busy.release()
+
+
+class Choosing(Base):
+    def choose_and_post(self, messages, popup=None):
+        results = []
+        S.post_choosing(Window(), messages, "k", lambda text, ok: results.append((text, ok)), popup, opener=self.discord, sleep=no_sleep)
+        for thread in threading.enumerate():
+            if thread.name == "WFMT-discord-post":
+                thread.join(5)
+        return results
+
+    def test_one_destination_is_posted_to_without_asking(self):
+        asked = []
+        self.assertEqual(self.choose_and_post(["hello"], lambda widget, names, choose: asked.append(names)), [("Posted to Squadron BGS.", True)])
+        self.assertEqual(asked, [])
+
+    def test_several_destinations_ask_and_post_to_the_one_picked(self):
+        discord_webhooks.webhooks.set_destinations("CMDR A", [{"name": "Squadron BGS", "url": LINK, "thread": ""}, {"name": "Friends", "url": LINK2, "thread": ""}])
+        asked = []
+
+        def pick_second(widget, names, choose):
+            asked.append(list(names))
+            choose(names[1])
+
+        self.assertEqual(self.choose_and_post(["hello"], pick_second), [("Posted to Friends.", True)])
+        self.assertEqual(asked, [["Squadron BGS", "Friends"]])
+        self.assertIn("1234567891", self.discord.calls[0][1])
+
+    def test_closing_the_menu_without_a_choice_posts_nothing(self):
+        discord_webhooks.webhooks.set_destinations("CMDR A", [{"name": "A", "url": LINK, "thread": ""}, {"name": "B", "url": LINK2, "thread": ""}])
+        self.assertEqual(self.choose_and_post(["hello"], lambda widget, names, choose: None), [])
+        self.assertEqual(self.discord.calls, [])
+
+    def test_nothing_saved_or_the_switch_off_says_what_to_set_up(self):
+        with mock.patch.object(discord_webhooks, "config", types.SimpleNamespace(get_bool=lambda key, default=False: False)):
+            self.assertEqual(self.choose_and_post(["hello"]), [(S.NOT_READY, False)])
+        discord_webhooks.webhooks.set_destinations("CMDR A", [])
+        self.assertEqual(self.choose_and_post(["hello"]), [(S.NOT_READY, False)])
+        self.assertEqual(self.discord.calls, [])
 
 
 class Copying(unittest.TestCase):

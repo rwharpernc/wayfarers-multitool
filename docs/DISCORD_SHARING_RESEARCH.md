@@ -2,7 +2,7 @@
 
 **Status:** research and plan, written 2026-10-29. **Decisions (2026-10-29):** Discord webhooks are in scope, because posting by webhook is
 now an expected feature for Discord users, and **plain copy and paste stays in scope for everyone else**, so commanders who use other chat
-programs, forums or notes are not left out. **Stage 1 is built** (the shared formatter, webhook client, per-commander store and Settings tab, and the BGS report and Powerplay progress); stages 2 and 3 are not. The sections below were written before the build, so where they differ the code and [the guide](guide/discord.md) are right. This page records what other tools do, what Discord allows,
+programs, forums or notes are not left out. **Stage 1 is built** (the shared formatter, webhook client, per-commander store and Settings tab, and the BGS report and Powerplay progress); stages 2 and 3 are not. The sections below were written before the build, so where they differ the code and [the guide](guide/discord.md) are right. One change was made after stage 1 first shipped: a webhook belongs to one channel, so each commander now saves a named **list of destinations** (not one webhook), **Post to Discord** asks which one when there are several, the same report keeps a separate earlier post for each destination, and Settings can copy another commander's list. This page records what other tools do, what Discord allows,
 what WFMT already has, the options considered and the plan.
 
 **Decisions this changes.** [BGS_TECH_SPEC.md](BGS_TECH_SPEC.md) listed a Discord webhook as a non-goal; that note now points here. An earlier

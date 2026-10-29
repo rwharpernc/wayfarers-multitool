@@ -300,7 +300,7 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 |---|---|---|
 | **BGS** | *Show BGS faction states and activity* (on); *Detect BGS ticks (polls tick.infomancer.uk every 60s)* (on); *Keep previous ticks for [n] days* (1 to 90, 7 by default) | [BGS settings](bgs.md#settings) |
 | **Colonization** | The Raven Colonial group: *Allow WFMT to write to Raven Colonial (master switch)* (off), *Report my construction progress and deliveries to Raven Colonial* (off), *Also report cargo I move to and from my fleet carrier* (off), your *Raven Colonial key* (hidden as you type) with **Test key**, and a link to the page where the key is made. The two reporting ticks stay grayed out until the master switch is on | [Colonization](colonization.md#sharing-your-progress-with-raven-colonial) |
-| **Discord** | *Allow Post to Discord* (off); your *Webhook link* (hidden as you type), *Nickname* and *Thread ID*, saved for the commander you are playing; **Test webhook**. See [Sharing reports to Discord](discord.md) | [Sharing reports to Discord](discord.md) |
+| **Discord** | *Allow Post to Discord* (off); your **Destinations** (each a *Name*, a *Webhook link* hidden as you type, and an optional *Thread ID*), saved for the commander you are playing, with **Test**, **Remove**, **Add destination** and **Copy their destinations**; See [Sharing reports to Discord](discord.md) | [Sharing reports to Discord](discord.md) |
 | **Exploration** | A row of inner tabs, below | [Exploration](exploration.md) |
 | **Field Ops** | A row of inner tabs, below | [Field Ops](field-ops.md) |
 | **General** | A row of inner tabs, below | this page |

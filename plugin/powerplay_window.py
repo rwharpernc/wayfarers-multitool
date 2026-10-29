@@ -252,8 +252,8 @@ class SessionWindow:
             self._shell.set_status("No merits earned this session yet.")
             return
         self._shell.set_status("Posting to Discord...")
-        discord_share.post_async(self._toplevel, messages, powerplay_discord.report_key(self._sessions.current),
-                                 lambda text, ok: self.alive and self._shell.set_status(text, ok=ok))
+        discord_share.post_choosing(self._toplevel, messages, powerplay_discord.report_key(self._sessions.current),
+                                    lambda text, ok: self.alive and self._shell.set_status(text, ok=ok))
 
     def close(self) -> None:
         if self._flush_job is not None:

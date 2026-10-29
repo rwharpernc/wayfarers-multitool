@@ -420,9 +420,9 @@ Spec: [BGS_TECH_SPEC.md](BGS_TECH_SPEC.md)
 |---|---|
 | `discord_client.py` | Posts, edits, deletes and checks through a Discord webhook: validates the link, sends no mentions, retries once on a pause, and words its errors without the link |
 | `discord_format.py` | Pure Discord text helpers: escaping names, links, code blocks, time tags and splitting a report into messages under 2,000 characters |
-| `discord_settings.py` | The Discord Settings tab (switch, webhook link, nickname, thread id, Test webhook) and the commander the reports are shared for |
-| `discord_share.py` | What the report windows call: copy for Discord, post on a background thread, and edit an earlier post of the same report |
-| `discord_webhooks.py` | Each commander's saved webhook (`discord_webhooks.json`, a secret left out of backups) and the master switch |
+| `discord_settings.py` | The Discord Settings tab (the switch and a list of named destinations, each a webhook link and an optional thread id, with Test, Remove, Add and Copy their destinations) and the commander the reports are shared for |
+| `discord_share.py` | What the report windows call: copy for Discord, post on a background thread to a chosen destination (a menu when there are several), and edit an earlier post of the same report |
+| `discord_webhooks.py` | Each commander's saved destinations: a list of named webhooks (`discord_webhooks.json`, secrets left out of backups), and the master switch |
 
 ## Always on: Landing Assist and Interdiction Warning
 

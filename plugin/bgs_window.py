@@ -371,8 +371,8 @@ class BgsWindow:
             self._shell.set_status("There is no tick to post yet.")
             return
         self._shell.set_status("Posting to Discord...")
-        discord_share.post_async(self._toplevel, messages, bgs_discord.report_key(view),
-                                 lambda text, ok: self.alive and self._shell.set_status(text, ok=ok))
+        discord_share.post_choosing(self._toplevel, messages, bgs_discord.report_key(view),
+                                    lambda text, ok: self.alive and self._shell.set_status(text, ok=ok))
 
     def close(self) -> None:
         self._shell.close()
