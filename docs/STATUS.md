@@ -7,7 +7,7 @@ Read this first when picking the project up on a machine that has not seen the r
 
 ## Release
 
-- **1.3.0** is the version number in `plugin/__init__.py` and `package.json`. It is prepared on the `release/1.3.0` branch and is not tagged or published yet; when it is, this section and the next bullet change to say so.
+- **1.3.0** is the version number in `plugin/__init__.py` and `package.json`. It was released on 2026-10-29 (tag `v1.3.0`) from the `release/1.3.0` branch, which was merged into `master` and deleted.
   - 1.3.0 adds sharing to Discord (Copy for Discord and Post to Discord for the BGS report and Powerplay progress, with a named list of webhook destinations for each commander and a dialog to customize how the posts look), the Expedition Log's three Start from my last buttons, a shopping-list overlay that follows the Sites window's Show choice, and a README and guides with how-tos and worked examples. It changes expeditions to be managed only in the Expedition window, makes the Bio status card wider and shorter, folds the Organic Scanning section by default, and drops the green under the To haul filter in favor of a tint for the rows in your hold. It fixes sampling a different genus, which now abandons the unfinished one. The full list is in [CHANGELOG.md](../CHANGELOG.md).
   - 1.2.0 was released on 2026-10-28 (tag `v1.2.0`) from the `release/1.2.0` branch, which was merged into `master` and deleted.
   - 1.2.0 adds the Colonization Archive, the offer to create a Raven Colonial project for a new site, a Where to Buy window of its own, Copy To Acquire, one row per candidate species on the Biology overlay card and a brighter footer message. It fixes Create Project on Raven (its dialog opening out of sight and its status message being overwritten) and the layout editor's snapping of large boxes to the top, bottom and sides.
@@ -15,14 +15,14 @@ Read this first when picking the project up on a machine that has not seen the r
   - The project was renamed Wayfarer's Multitool (WFMT) and its version history restarted at 1.0.0 on 2026-10-21.
   - Everything built up to 2026-10-26 is the first release, published as 1.0.0.
   - The checks to run first are in [TEST_PLAN.md](TEST_PLAN.md), and the open in-game checks are in [TODO.md](TODO.md).
-- The latest published release is 1.2.0, on 2026-10-28 (1.1.0 was published on 2026-10-27 and 1.0.0 on 2026-10-26), and the repository is public. 1.3.0 comes after the in-game checks.
+- The latest release is 1.3.0, published on 2026-10-29 (1.2.0 was published on 2026-10-28, 1.1.0 on 2026-10-27 and 1.0.0 on 2026-10-26), and the repository is public.
   - The in-app updater and the README's "latest release" link read GitHub's public releases API.
 
 ## Branches
 
 There is one long-lived branch, `master`.
 
-- A release is built on a branch named for it (`release/1.3.0` now), merged fast-forward into `master` and deleted after it is tagged.
+- A release is built on a branch named for it (`release/1.3.0` was the last), merged fast-forward into `master` and deleted after it is tagged.
 - For a fix to a released version, cut a short branch from `master` (for example `bugfix/1.3.1`), and merge it back.
 
 ## Testing
@@ -37,7 +37,7 @@ There is one long-lived branch, `master`.
   - the Where to Buy window, the Biology card's new rows (through Test Cards) and the layout editor's top-edge snap work on Windows; Copy To Acquire was deployed and looked right
   - still to try in the game: the Biology rows on a real body with several candidate species; the offer on the COL page when a new site has no Raven project (needs sharing on and a saved key); the 30-second hold of a button's message
 - Bugs found are fixed on `master` or a short bug fix branch.
-- Not yet recorded for the released 1.2.0 (2026-10-28), and still open for 1.1.0 (2026-10-27) and 1.0.0 (2026-10-26): the in-game pass in [TEST_PLAN.md](TEST_PLAN.md), sections 1 to 6. Sections 5 (2026-10-23) and 6 (Colonization, 2026-10-26) are the newest:
+- Not yet recorded for the released 1.3.0 (2026-10-29) and 1.2.0 (2026-10-28), and still open for 1.1.0 (2026-10-27) and 1.0.0 (2026-10-26): the in-game pass in [TEST_PLAN.md](TEST_PLAN.md), sections 1 to 6. Sections 5 (2026-10-23) and 6 (Colonization, 2026-10-26) are the newest:
   - every overlay is off after the first start, for every commander, with one log line
   - a stopped expedition carries on from where it stopped, and Rescan leaves out paused and stopped time
   - Overlay Placement names where the screen size came from, and reads the real hardware size when the game's files are not found
