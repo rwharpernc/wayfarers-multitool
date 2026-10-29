@@ -33,7 +33,7 @@ import tkinter as tk
 import myNotebook as nb
 from config import appname, config
 
-from . import boxel, edsm_client, panelkit, region_sweep_spansh, region_sweep_state, system_autocomplete
+from . import boxel, edsm_client, panelkit, region_sweep_edsm_skip, region_sweep_spansh, region_sweep_state, system_autocomplete
 from .region_sweep_queue import CubeEntry, RegionSweepQueue, RegionSweepSnapshot
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
@@ -117,6 +117,16 @@ class RegionSweepController:
         self._edsm_result_queue: "queue.Queue[Dict[str, List[str]]]" = queue.Queue()
         self._spansh_result_queue: "queue.Queue[Tuple[str, List[str], Optional[str]]]" = queue.Queue()
         self._fss_result_queue: "queue.Queue[Tuple[str, bool]]" = queue.Queue()
+
+        # "Skip systems already visited by anyone (EDSM)": the check runs on a worker thread
+        # (region_sweep_edsm_skip.py holds the logic). Each advance gets a generation number so
+        # a result that a newer jump or Next press has overtaken is dropped. Answers are cached
+        # for the session, and the lock keeps the worker and the Tk thread from stepping the
+        # same cube's walker at once.
+        self._skip_cache = region_sweep_edsm_skip.KnownSystemCache()
+        self._skip_generation = 0
+        self._skip_lock = threading.Lock()
+        self._skip_result_queue: "queue.Queue[Tuple[int, region_sweep_edsm_skip.SkipResult, Optional[str]]]" = queue.Queue()
 
         # Guards against firing a second auto-discover lookup while one is
         # already in flight (e.g. two jumps landing before the first
@@ -232,13 +242,17 @@ class RegionSweepController:
             return
 
         complete_now = not complete_on_fss_enabled()
-        next_target = self._queue.on_jump(
-            star_system, skip_visited=skip_visited_enabled(), complete=complete_now,
-        )
+        with self._skip_lock:
+            next_target = self._queue.on_jump(
+                star_system, skip_visited=skip_visited_enabled(), complete=complete_now,
+            )
         self._refresh_list()
         self._maybe_auto_discover()
         if next_target is None:
             self._set_status(f"Arrived {star_system}")
+            return
+        if skip_edsm_visited_enabled():
+            self._start_edsm_skip(next_target, star_system)
             return
         self._set_target(next_target)
         if autocopy_enabled():
@@ -324,6 +338,7 @@ class RegionSweepController:
         parent.after(200, self._poll_edsm_queue)
         parent.after(200, self._poll_spansh_queue)
         parent.after(200, self._poll_fss_queue)
+        parent.after(200, self._poll_skip_queue)
 
     # --- widget helpers --------------------------------------------------
 
@@ -469,19 +484,81 @@ class RegionSweepController:
             self._set_status("Add a cube first")
             return
         try:
-            target = cube.walker.advance(skip_visited=skip_visited_enabled())
+            with self._skip_lock:
+                target = cube.walker.advance(skip_visited=skip_visited_enabled())
         except Exception:
             logger.exception("_on_next failed")
             return
+        if target and skip_edsm_visited_enabled():
+            self._start_edsm_skip(target, None)
+            return
+        self._skip_generation += 1  # a check still running for an earlier advance is now out of date
         self._set_target(target)
         self._refresh_list()
         self._set_status("Manual advance" if target else "Add a cube first")
+
+    def _start_edsm_skip(self, candidate: str, arrival: Optional[str]) -> None:
+        """Check `candidate` (and, chained, the ones after it) against EDSM on a worker thread. The target is shown, and copied after a jump, only when the check is done."""
+        cube = self._queue.current
+        if cube is None:
+            return
+        self._skip_generation += 1
+        self._set_status("Checking EDSM...")
+        threading.Thread(
+            target=self._edsm_skip_worker,
+            args=(self._skip_generation, cube, candidate, skip_visited_enabled(), arrival),
+            daemon=True,
+        ).start()
+
+    def _edsm_skip_worker(
+        self, generation: int, cube: CubeEntry, candidate: str, skip_visited: bool, arrival: Optional[str],
+    ) -> None:
+        """Runs off the main thread - must not touch any Tk widget directly. A failure of any kind keeps the candidate."""
+        def advance() -> Optional[str]:
+            with self._skip_lock:
+                return cube.walker.advance(skip_visited=skip_visited)
+
+        try:
+            result = region_sweep_edsm_skip.skip_known_candidates(
+                candidate, advance, edsm_client.system_known, self._skip_cache,
+            )
+        except Exception:
+            logger.exception("_edsm_skip_worker failed")
+            result = region_sweep_edsm_skip.SkipResult(candidate, 0, False, True)
+        self._skip_result_queue.put((generation, result, arrival))
+
+    def _poll_skip_queue(self) -> None:
+        """Runs on the main thread via after() - safe to touch widgets here."""
+        try:
+            generation, result, arrival = self._skip_result_queue.get_nowait()
+        except queue.Empty:
+            pass
+        else:
+            if generation == self._skip_generation:  # otherwise a newer jump or Next press overtook it
+                self._set_target(result.candidate)
+                self._refresh_list()
+                if result.gave_up:
+                    self._set_status(f"EDSM check capped after {result.skipped} already-known systems - showing {result.candidate} anyway")
+                elif result.lookup_failed:
+                    self._set_status("EDSM check unavailable - showing candidate anyway")
+                elif result.skipped:
+                    plural = "s" if result.skipped != 1 else ""
+                    self._set_status(f"Skipped {result.skipped} system{plural} already known to EDSM - next: {result.candidate}")
+                elif arrival:
+                    self._set_status(f"Arrived {arrival} - next target ready")
+                else:
+                    self._set_status("Manual advance")
+                if arrival and autocopy_enabled():
+                    self._copy_current()
+        if self._parent is not None:
+            self._parent.after(200, self._poll_skip_queue)
 
     def _on_prev(self) -> None:
         cube = self._queue.current
         if cube is None:
             self._set_status("Add a cube first")
             return
+        self._skip_generation += 1  # drop a pending EDSM check
         try:
             target = cube.walker.retreat()
         except ValueError:

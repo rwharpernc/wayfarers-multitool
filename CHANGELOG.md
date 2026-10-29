@@ -3,6 +3,13 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## Unreleased
+
+### Fixed
+
+- **Region Sweep:** the option **Skip systems already visited by anyone (EDSM)** was saved but did nothing. It now checks each candidate target with EDSM, after a jump or **Next >**, and steps
+  past systems EDSM already knows (at most 20 in a row). If EDSM cannot be reached nothing is skipped. Each name is asked about once per session and only the system name is sent.
+
 ## 1.3.0 (2026-10-29)
 
 ### Added

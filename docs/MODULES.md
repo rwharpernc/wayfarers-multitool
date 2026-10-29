@@ -203,6 +203,7 @@ Spec: [BOXEL_SURVEY_TECH_SPEC.md](BOXEL_SURVEY_TECH_SPEC.md)
 | `boxel_survey.py` | The Boxel Survey section: walks a boxel's sequence and copies the next target |
 | `boxel_walker.py` | The "advance on jump" state machine |
 | `edsm_client.py` | EDSM client for nearby-system queries, whether systems are known (`systems_known`), their positions, and the main star of each (`primary_star_types`, for the Route Planner's white dwarf marking) |
+| `region_sweep_edsm_skip.py` | Pure logic for Region Sweep's *Skip systems already visited by anyone (EDSM)*: steps past candidates a lookup says EDSM knows (capped at 20 per advance), keeps the candidate when the lookup fails, and caches answers for the session |
 | `region_sweep_panel.py` | Region Sweep, Boxel Survey's second sub-mode |
 | `region_sweep_queue.py` | Pure logic for the Region Sweep cube queue |
 | `region_sweep_spansh.py` | Spansh systems typeahead used by Region Sweep |

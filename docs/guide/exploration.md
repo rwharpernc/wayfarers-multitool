@@ -401,9 +401,16 @@ sweep moves on to the next unfinished cube in the queue (wrapping around to the 
 |---|---|
 | Auto-copy next target to clipboard on jump | On |
 | Skip systems already visited this session | On |
-| Skip systems already visited by anyone (EDSM) | Off |
+| Skip systems already visited by anyone (EDSM) | Off. When on, each candidate target is checked with EDSM before it is offered, and WFMT steps past systems EDSM already knows (at most 20 in a row) |
 | Require a full FSS scan (not just arrival) to mark a system complete | Off |
 | Auto-discover more nearby cubes (EDSM) when the queue is running low | Off. When on, runs the Discover Nearby lookup after a jump once one or fewer cubes still have work left |
+
+**What *Skip systems already visited by anyone (EDSM)* does.** With it ticked, WFMT asks EDSM about each candidate before showing it as the next target, whether it came from a jump or from **Next >**.
+- If EDSM already has the system, WFMT moves on to the next candidate in the cube and asks again. It stops after 20 in a row and shows the last one, and the status line says so.
+- The target (and the copy to the clipboard) appears when the check is done. The status line reads `Checking EDSM...` meanwhile.
+- If EDSM cannot be reached, nothing is skipped: the candidate is shown and the status line says `EDSM check unavailable`.
+- Each name is asked about once per session. Only the system name is sent (see [What goes on the internet](internet-and-privacy.md)).
+- A skipped system is not marked visited or complete in your queue; it is only passed over.
 
 ### Waypoints
 
