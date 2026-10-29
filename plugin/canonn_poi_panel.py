@@ -220,8 +220,8 @@ class CanonnPoiController:
         )
         self._action_row = tk.Frame(body)
         self._action_row.grid(row=row + 1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
-        self._copy_button = tk.Button(self._action_row, text="COPY", command=self._copy_system)
-        panelkit.add_tooltip(self._copy_button, "Copy this Canonn result's system name to paste into the galaxy map")
+        self._copy_button = tk.Button(self._action_row, text="COPY SYSTEM", command=self._copy_system)
+        panelkit.add_tooltip(self._copy_button, "Copy System - copy this Canonn result's system name to paste into the galaxy map")
         self._copy_button.pack(side=tk.LEFT)
         self._link_label = HyperlinkLabel(
             self._action_row, text="View site details", background=nb.Label().cget("background"), underline=True,

@@ -87,6 +87,25 @@ _CFG_SHIP_PAD = "wfmt_trade_ship_pad_override"  # "" = work it out from the ship
 _DEFAULT_MAX_HOPS = 3
 _DEFAULT_PRICE_AGE_H = 72
 _DEFAULT_MIN_STOCK = 200
+# Hover text for the changing buttons under the Trade panel, keyed by the text before any ":" on the button.
+BUTTON_TIPS = {
+    "Sell": "Sell - search for the best prices to sell the commodity at",
+    "Buy": "Buy - search for the best prices to buy the commodity at",
+    "Reset": "Reset - start the session tally again (offers to save it first)",
+    "Save session": "Save session - keep this session in Trade History",
+    "History": "History - open the saved Trade History window",
+    "Rebuild": "Rebuild - recount the session from the journals since a time you give",
+    "Find routes": "Find routes - plan trade routes from your station (Spansh)",
+    "Cancel": "Cancel - stop the search that is running",
+    "Copy next system": "Copy next system - copy the next system on the route to the clipboard",
+    "Hops": "Hops - click to cycle how many hops the route planner may use",
+    "Round trip": "Round trip - find the best back-and-forth pair from your station (Spansh)",
+    "Near me": "Near me - find the best prices within the search radius (Spansh)",
+    "Galaxy": "Galaxy - find the best prices anywhere in the galaxy (Spansh)",
+    "Best picks": "Best picks - closest, best nearby, cheapest and recommended stations (Spansh)",
+    "Price finder": "Price finder - open the commodity price search window",
+}
+
 _HOP_CHOICES = (2, 3, 4, 5)  # the Hops button on the Routes page cycles through these
 _DEFAULT_MAX_ARRIVAL_LS = 5000
 _FALLBACK_JUMP_RANGE_LY = 30.0
@@ -507,6 +526,7 @@ class TradePanelController:
         for value, text in ((trade_prices.SELL, "Sell"), (trade_prices.BUY, "Buy")):
             button = tk.Button(self._side_row, text=text, command=lambda v=value: self._set_side(v))
             button.pack(side=tk.LEFT, padx=(0, 6))
+            panelkit.add_tooltip(button, BUTTON_TIPS[text])
             self._side_buttons[value] = button
         self._side_off_colors = panelkit.capture_toggle_off_colors(self._side_buttons[trade_prices.SELL])
         self._paint_side_buttons()
@@ -527,6 +547,8 @@ class TradePanelController:
         self._button_d.pack(side=tk.LEFT, padx=(6, 0))
         self._button_e = tk.Button(extra, text="")
         self._button_e.pack(side=tk.LEFT, pady=(3, 0))
+        for button in (self._button_a, self._button_b, self._button_c, self._button_d, self._button_e):
+            panelkit.add_tooltip(button, lambda b=button: BUTTON_TIPS.get(str(b.cget("text")).split(":")[0], ""))
 
         self._refresh()
         parent.after(2000, self._poll_carrier_history)

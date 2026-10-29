@@ -767,6 +767,12 @@ class ScreenshotsController:
                 parent, image=self._icon_off, relief=tk.FLAT, command=self._toggle_auto_capture,
             )
             self._toggle_button.grid(row=0, column=1, sticky=tk.E, padx=(4, 0))
+            panelkit.add_tooltip(
+                self._toggle_button,
+                lambda: ("Screenshot timer (on) - click to stop taking screenshots automatically"
+                         if self._auto_capture_enabled else
+                         "Screenshot timer (off) - click to start taking a screenshot at each timer interval while Elite is in focus"),
+            )
             self._apply_show_timer_icon()
 
         # HyperlinkLabel, not a plain Label: it's EDMC's standard clickable-

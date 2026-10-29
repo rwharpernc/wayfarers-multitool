@@ -98,12 +98,7 @@ PANEL_MODES: Tuple[Tuple[str, str], ...] = (
     ("fieldops", "Field Ops"),
     ("colonization", "Colony"),
 )
-# Short text for the mode-select buttons - EDMC's main window is small and shared
-# with every other plugin - with the full label plus a one-line description (_MODE_TOOLTIPS) as the tooltip.
-_MODE_BUTTON_TEXT = {
-    "powerplay": "P.P.", "bgs": "BGS", "exploration": "EXP", "mining": "MIN", "trade": "TRD", "missions": "MSN",
-    "fieldops": "OPS", "colonization": "COL",
-}
+# The mode-select buttons carry the PANEL_MODES labels as written; each tooltip (_MODE_TOOLTIPS) adds a one-line description.
 _MODE_TOOLTIPS = {
     "powerplay": "Powerplay - merits and Control Points you earn for your Power, and the rare goods finder",
     "bgs": "BGS - faction states in the Background Simulation, and what your own activity does to them",
@@ -112,7 +107,7 @@ _MODE_TOOLTIPS = {
     "trade": "Trade - what you bought and sold this session, the value of your hold, and Spansh route and price lookups",
     "missions": "Missions - every mission you have in one view, with kill-progress bars for massacres",
     "fieldops": "Field Ops - screenshots, backpack/locker/cargo and saved ship builds",
-    "colonization": "Colonization - the project you are building now (progress, what is left, trips); history is in the HISTORY window",
+    "colonization": "Colony - the project you are building now (progress, what is left, trips); history is in the HISTORY window",
 }
 _DEFAULT_PANEL_MODE = PANEL_MODES[0][0]
 _MODE_KEYS = {key for key, _ in PANEL_MODES}
@@ -213,7 +208,7 @@ def _mode_row_full_label_size(frame: tk.Frame) -> Tuple[int, int]:
     """(width, height) the mode-button row had when the buttons carried their full
     labels. EDMC sizes its main window to the widest row across every plugin, and
     that row used to be what set WFMT's width - shortening the labels
-    (_MODE_BUTTON_TEXT) alone made the whole EDMC window open much narrower. Measured
+    were shortened, the whole EDMC window opened much narrower. Measured
     from a throwaway, never-displayed row of full-label buttons, so it follows the
     user's font/DPI and is fixed by the labels in PANEL_MODES: nothing external
     can make it grow."""
@@ -239,16 +234,17 @@ def create_plugin_app(parent: tk.Frame) -> tk.Frame:
     if _panel_mode not in _MODE_KEYS:
         _panel_mode = _DEFAULT_PANEL_MODE
 
-    # The row itself is held at the full-label size (see _mode_row_full_label_size) with
-    # the short buttons left-justified inside it - no extra widget sits over the buttons.
+    # The row itself is held at the full-label size (see _mode_row_full_label_size), which the
+    # buttons now match exactly - no extra widget sits over the buttons.
     row_width, row_height = _mode_row_full_label_size(_frame)
+    panelkit.set_row_cap(row_width)      # a row of panel buttons wider than this wraps to a second line (panelkit.flow_buttons)
     mode_row = tk.Frame(_frame, width=row_width, height=row_height)
     mode_row.pack_propagate(False)
     mode_row.grid(row=1, column=0, columnspan=3, sticky=tk.W, pady=(6, 0))
     mode_buttons_frame = tk.Frame(mode_row)
     mode_buttons_frame.place(relx=0, rely=0.5, anchor=tk.W)
     for key, label in PANEL_MODES:
-        btn = tk.Button(mode_buttons_frame, text=_MODE_BUTTON_TEXT.get(key, label), command=lambda k=key: _on_panel_mode_click(k))
+        btn = tk.Button(mode_buttons_frame, text=label, command=lambda k=key: _on_panel_mode_click(k))
         panelkit.add_tooltip(btn, _MODE_TOOLTIPS.get(key, label))
         _mode_buttons[key] = btn
     _apply_mode_buttons()

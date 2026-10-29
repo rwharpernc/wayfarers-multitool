@@ -1,6 +1,6 @@
-"""POI Reference (poi_reference_panel.py): one FIND runs the GEC and Canonn lookups together, and the nearer result is the one copied.
+"""POI Reference (poi_reference_panel.py): one FIND POI runs the GEC and Canonn lookups together, and the nearer result is the one copied.
 
-The Collector is the part with logic and no Tk: it waits for every lookup of one FIND to end, then names the nearest system.
+The Collector is the part with logic and no Tk: it waits for every lookup of one FIND POI to end, then names the nearest system.
 """
 from __future__ import annotations
 

@@ -103,7 +103,7 @@ pump()
 shown = texts(host)
 check(any("Expedition" in t and t != "EXPEDITION" for t in shown), f"there is an Expedition section: {shown}")
 check(not any("Expedition Log" in t for t in shown), f"there is no section of its own for the Log: {shown}")
-for word in ("COPY", "EXPEDITION"):
+for word in ("COPY NEXT", "EXPEDITION"):
     check(word in shown, f"the section has {word}")
 for word in ("START", "PAUSE", "STOP", "RESUME", "LOG"):
     check(word not in shown, f"the section has no {word} button: expeditions are managed in the Expedition window")

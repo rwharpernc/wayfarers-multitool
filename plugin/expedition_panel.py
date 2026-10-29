@@ -172,9 +172,9 @@ class ExpeditionController:
         panelkit.wrap_label(body, min_wrap=_WRAP_PX, textvariable=self._summary_var, anchor="w").grid(
             row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
         next_row = expedition_log_panel.controller.build_into(parent, body, 2)      # the Log's hook-up (no buttons: expeditions are started and stopped in the Expedition window)
-        copy = tk.Button(body, text="COPY", command=self.copy_next)
+        copy = tk.Button(body, text="COPY NEXT", command=self.copy_next)
         copy.grid(row=next_row, column=0, sticky=tk.W, pady=(4, 0))
-        panelkit.add_tooltip(copy, "Copy the next stop's system name to the clipboard, to paste into the galaxy map")
+        panelkit.add_tooltip(copy, "Copy Next - copy the next stop's system name to the clipboard, to paste into the galaxy map")
         tick = tk.Checkbutton(body, text="Copy on arrival", variable=self._autocopy_var, command=self._save_autocopy)
         tick.grid(row=next_row + 1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
         panelkit.add_tooltip(tick, "Copy the next stop's system name to the clipboard every time you arrive anywhere")

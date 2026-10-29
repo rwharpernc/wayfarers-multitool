@@ -384,9 +384,9 @@ _STAR_SEARCHING = "searching..."
 _STAR_FAILED = "lookup failed - see EDMarketConnector.log"
 # (button label, tooltip, finder function) - the label doubles as the result-line prefix.
 _STAR_FINDERS = (
-    ("N.S.", "Neutron Star - find the nearest system whose primary star is a neutron star",
+    ("Neutron Star", "Neutron Star - find the nearest system whose primary star is a neutron star",
      neutron_finder.find_nearest_neutron),
-    ("W.D.", "White Dwarf - find the nearest system whose primary star is a white dwarf",
+    ("White Dwarf", "White Dwarf - find the nearest system whose primary star is a white dwarf",
      neutron_finder.find_nearest_white_dwarf),
 )
 
@@ -417,7 +417,7 @@ class DiscoveryController:
         self._dependent_widgets = []
         self._result_label: Optional[nb.Label] = None
 
-        # "N.S." / "W.D." buttons (see neutron_finder.py): position comes from the
+        # "Neutron Star" / "White Dwarf" buttons (see neutron_finder.py): position comes from the
         # journal's StarPos; the lookup runs on a worker thread and hands its
         # result back through a queue polled via after(), like gec_poi_panel.py.
         self._star_pos: Optional[Tuple[float, float, float]] = None
@@ -471,7 +471,7 @@ class DiscoveryController:
     def build_panel(self, parent: tk.Frame) -> None:
         row = tk.Frame(parent)
         row.grid(row=0, column=0, sticky=tk.W, pady=(4, 0))
-        self._toggle_btn = tk.Button(row, text="D.A.", command=self._on_toggle_click)
+        self._toggle_btn = tk.Button(row, text="Discovery Alerts", command=self._on_toggle_click)
         self._toggle_btn.pack(side=tk.LEFT)
         panelkit.add_tooltip(self._toggle_btn, "Discovery Alerts - toggle the on-screen alert for undiscovered systems and first scans/maps")
         self._toggle_off_colors = panelkit.capture_toggle_off_colors(self._toggle_btn)
@@ -495,7 +495,7 @@ class DiscoveryController:
         self._neutron_parent = parent
         parent.after(200, self._poll_neutron_queue)
 
-    # --- N.S. / W.D. buttons ------------------------------------------------
+    # --- Neutron Star / White Dwarf buttons ------------------------------------------------
 
     def _show_neutron_text(self, text: str) -> None:
         if self._neutron_label is not None:

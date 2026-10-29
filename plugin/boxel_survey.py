@@ -596,14 +596,17 @@ class BoxelSurveyController:
             mode_row, text="Sequence", command=lambda: self._on_submode_click(_SUBMODE_SEQUENCE),
         )
         self._sequence_button.pack(side=tk.LEFT)
+        panelkit.add_tooltip(self._sequence_button, "Sequence - walk the boxels of one mass-code sequence from a seed system")
         self._region_sweep_button = tk.Button(
             mode_row, text="Region Sweep", command=lambda: self._on_submode_click(_SUBMODE_REGION_SWEEP),
         )
         self._region_sweep_button.pack(side=tk.LEFT, padx=(4, 0))
+        panelkit.add_tooltip(self._region_sweep_button, "Region Sweep - sweep a region cube by cube and track which are empty")
         self._waypoint_route_button = tk.Button(
             mode_row, text="Waypoints", command=lambda: self._on_submode_click(_SUBMODE_WAYPOINTS),
         )
         self._waypoint_route_button.pack(side=tk.LEFT, padx=(4, 0))
+        panelkit.add_tooltip(self._waypoint_route_button, "Waypoints - build and follow your own list of waypoint systems")
         # Same button-row-plus-grid_remove toggle pattern ui.py itself uses
         # for the Powerplay/Exploration/Mining/... mode select - there's no
         # notebook/tab widget at this level anywhere in WFMT to reuse instead.
@@ -680,9 +683,15 @@ class BoxelSurveyController:
 
         button_row = tk.Frame(parent)
         button_row.grid(row=4, column=0, columnspan=3, sticky=tk.W)
-        tk.Button(button_row, text="< Prev", command=self._on_prev).pack(side=tk.LEFT)
-        tk.Button(button_row, text="Next >", command=self._on_next).pack(side=tk.LEFT, padx=(4, 0))
-        tk.Button(button_row, text="Copy", command=self._copy_current).pack(side=tk.LEFT, padx=(4, 0))
+        prev_button = tk.Button(button_row, text="< Prev", command=self._on_prev)
+        prev_button.pack(side=tk.LEFT)
+        panelkit.add_tooltip(prev_button, "< Prev - go back to the previous target in the sequence")
+        next_button = tk.Button(button_row, text="Next >", command=self._on_next)
+        next_button.pack(side=tk.LEFT, padx=(4, 0))
+        panelkit.add_tooltip(next_button, "Next > - move on to the next target in the sequence")
+        copy_button = tk.Button(button_row, text="Copy", command=self._copy_current)
+        copy_button.pack(side=tk.LEFT, padx=(4, 0))
+        panelkit.add_tooltip(copy_button, "Copy - copy the current target system name to the clipboard")
 
         tk.Label(parent, text="Seed system:").grid(row=5, column=0, sticky=tk.W)
         seed_box = tk.Entry(parent, textvariable=self._seed_var, width=28)
@@ -691,14 +700,16 @@ class BoxelSurveyController:
 
         seed_button_row = tk.Frame(parent)
         seed_button_row.grid(row=5, column=2, sticky=tk.W)
-        tk.Button(seed_button_row, text="Use Current", command=self._on_use_current).pack(side=tk.LEFT)
-        tk.Button(seed_button_row, text="Set", command=lambda: self._on_set_seed(self._seed_var.get())).pack(
-            side=tk.LEFT, padx=(4, 0),
-        )
+        use_current_button = tk.Button(seed_button_row, text="Use Current", command=self._on_use_current)
+        use_current_button.pack(side=tk.LEFT)
+        panelkit.add_tooltip(use_current_button, "Use Current - start the survey from the system you are in")
+        set_button = tk.Button(seed_button_row, text="Set", command=lambda: self._on_set_seed(self._seed_var.get()))
+        set_button.pack(side=tk.LEFT, padx=(4, 0))
+        panelkit.add_tooltip(set_button, "Set - start the survey from the seed system typed here")
 
-        tk.Button(parent, text="Find Nearby (EDSM)", command=self._on_find_nearby).grid(
-            row=6, column=0, columnspan=3, sticky=tk.W,
-        )
+        find_nearby_button = tk.Button(parent, text="Find Nearby (EDSM)", command=self._on_find_nearby)
+        find_nearby_button.grid(row=6, column=0, columnspan=3, sticky=tk.W)
+        panelkit.add_tooltip(find_nearby_button, "Find Nearby (EDSM) - look up a known system near you to use as the seed")
 
         seed_hint_label = panelkit.wrap_label(parent, textvariable=self._seed_hint_var, fg="gray", font=panelkit.view_fonts()["small"])
         seed_hint_label.grid(row=7, column=0, columnspan=3, sticky=tk.W)
@@ -1027,7 +1038,7 @@ class BoxelSurveyController:
         `status_parent`, hidden until there is something to say."""
         if self._random_status_var is None:           # built before Boxel Survey's own panel when the panels are alphabetical
             self._random_status_var = tk.StringVar(value="")
-        random_button = tk.Button(button_row, text="RND", command=self._on_random)
+        random_button = tk.Button(button_row, text="Random", command=self._on_random)
         random_button.pack(side=tk.LEFT, padx=(6, 0))
         panelkit.add_tooltip(
             random_button, "Random - find an undiscovered system near you and copy its name to the clipboard")

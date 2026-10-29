@@ -1,7 +1,7 @@
 """
 On-demand lookup against Spansh's (https://spansh.co.uk) body-search API to
 find the nearest system whose *primary* (main) star is a neutron star or a
-white dwarf - the "N.S." and "W.D." buttons in Exploration mode's panel, next
+white dwarf - the "Neutron Star" and "White Dwarf" buttons in Exploration mode's panel, next
 to Discovery Alerts. Useful for neutron-boost plotting and white-dwarf
 visits: a star that is only a secondary companion isn't what you want to jump
 to, so the search is restricted to `is_main_star`.

@@ -1,6 +1,6 @@
 """
 Opens the Expedition row with EDMC stubbed and feeds it journal-shaped events, and fails if the lines, the ticking off of stops, the distance and
-notes, COPY and copy-on-arrival, a commander change or the row's width misbehave. Skipped when Tk has no display.
+notes, COPY NEXT and copy-on-arrival, a commander change or the row's width misbehave. Skipped when Tk has no display.
 Run with: python -m unittest discover -s tests
 """
 

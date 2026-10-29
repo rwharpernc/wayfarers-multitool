@@ -181,12 +181,18 @@ class WaypointRouteController:
         system_autocomplete.attach(add_box, self._add_var)
         add_button_row = tk.Frame(parent)
         add_button_row.grid(row=0, column=2, sticky=tk.W)
-        tk.Button(add_button_row, text="Use Current", command=self._on_use_current).pack(side=tk.LEFT)
-        tk.Button(add_button_row, text="Add", command=self._on_add).pack(side=tk.LEFT, padx=(4, 0))
+        use_current_button = tk.Button(add_button_row, text="Use Current", command=self._on_use_current)
+        use_current_button.pack(side=tk.LEFT)
+        panelkit.add_tooltip(use_current_button, "Use Current - fill in the system you are in")
+        add_button = tk.Button(add_button_row, text="Add", command=self._on_add)
+        add_button.pack(side=tk.LEFT, padx=(4, 0))
+        panelkit.add_tooltip(add_button, "Add - add the system typed here to the end of the waypoint list")
 
         import_row = tk.Frame(parent)
         import_row.grid(row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
-        tk.Button(import_row, text="Import CSV…", command=self._on_import_csv).pack(side=tk.LEFT)
+        import_button = tk.Button(import_row, text="Import CSV…", command=self._on_import_csv)
+        import_button.pack(side=tk.LEFT)
+        panelkit.add_tooltip(import_button, "Import CSV - add the system names from a CSV file you choose")
         route_button = tk.Button(import_row, text="From plotted route", command=self._on_import_navroute)
         route_button.pack(side=tk.LEFT, padx=(4, 0))
         panelkit.add_tooltip(route_button, "Add the systems of the route you have plotted in the game (the galaxy map's route), with their coordinates")
@@ -203,22 +209,26 @@ class WaypointRouteController:
 
         list_button_row = tk.Frame(parent)
         list_button_row.grid(row=3, column=0, columnspan=3, sticky=tk.W)
-        tk.Button(list_button_row, text="Remove", command=self._on_remove_selected).pack(side=tk.LEFT)
-        tk.Button(list_button_row, text="Move Up", command=lambda: self._on_move_selected(-1)).pack(
-            side=tk.LEFT, padx=(4, 0),
-        )
-        tk.Button(list_button_row, text="Move Down", command=lambda: self._on_move_selected(1)).pack(
-            side=tk.LEFT, padx=(4, 0),
-        )
-        tk.Button(list_button_row, text="Reorder (Nearest-Neighbor, EDSM)", command=self._on_reorder).pack(
-            side=tk.LEFT, padx=(4, 0),
-        )
+        list_buttons = []
+        for text, command, tip in (
+            ("Remove", self._on_remove_selected, "Remove - take the selected waypoint out of the list"),
+            ("Move Up", lambda: self._on_move_selected(-1), "Move Up - move the selected waypoint one place earlier"),
+            ("Move Down", lambda: self._on_move_selected(1), "Move Down - move the selected waypoint one place later"),
+            ("Reorder (Nearest-Neighbor, EDSM)", self._on_reorder,
+             "Reorder (Nearest-Neighbor, EDSM) - put the unvisited waypoints in nearest-first order from where you are, using EDSM coordinates"),
+        ):
+            list_button = tk.Button(list_button_row, text=text, command=command)
+            list_buttons.append(list_button)
+            panelkit.add_tooltip(list_button, tip)
+        panelkit.flow_buttons(list_button_row, list_buttons)     # on two lines when they would widen the window
 
         tk.Label(parent, text="Target:").grid(row=4, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.wrap_label(parent, textvariable=self._target_var, anchor="w").grid(
             row=4, column=1, columnspan=2, sticky=tk.W, pady=(4, 0),
         )
-        tk.Button(parent, text="Copy", command=self._copy_current).grid(row=5, column=0, sticky=tk.W)
+        copy_button = tk.Button(parent, text="Copy", command=self._copy_current)
+        copy_button.grid(row=5, column=0, sticky=tk.W)
+        panelkit.add_tooltip(copy_button, "Copy - copy the current target system name to the clipboard")
 
         panelkit.wrap_label(parent, textvariable=self._status_var, fg="gray").grid(
             row=6, column=0, columnspan=3, sticky=tk.W,

@@ -1,6 +1,6 @@
-"""RND's source of systems (undiscovered_nearby.py): real systems from Spansh, filtered to those with no scans on record.
+"""Random's source of systems (undiscovered_nearby.py): real systems from Spansh, filtered to those with no scans on record.
 
-No test touches a live service. RND used to guess names inside a boxel; these tests pin the replacement's contract: only
+No test touches a live service. Random used to guess names inside a boxel; these tests pin the replacement's contract: only
 systems Spansh listed are ever offered, a scanned system or one the commander already visited is dropped, and the request
 is a nearest-first search around the given position.
 """

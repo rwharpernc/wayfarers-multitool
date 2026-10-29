@@ -1,5 +1,5 @@
 """Opens the real Expedition row (plugin/expedition_panel.py) with EDMC stubbed and feeds it journal-shaped events: the row's lines before and during
-an expedition, ticking stops off from jumps, the distance and notes, COPY and copy-on-arrival, a commander change, and that nothing shown can widen
+an expedition, ticking stops off from jumps, the distance and notes, COPY NEXT and copy-on-arrival, a commander change, and that nothing shown can widen
 the panel. Run by test_expedition_smoke.py in a subprocess so the stand-ins never leak into other tests. Exits 0 if everything holds, 1 if not, 77
 if Tk is unavailable."""
 import quiet_tk  # noqa: F401  (keeps the test windows from taking focus)
@@ -162,12 +162,12 @@ panel.handle_event(jump("Sagittarius A*", (25.2, -20.9, 25899.97), 100.0), "Boch
 text = panel.summary()[0]
 check("All stops visited" in text and "That was the last stop." in text, f"the last stop says so: {text!r}")
 
-# COPY and copy-on-arrival
+# COPY NEXT and copy-on-arrival
 book.reset(e.id)
 book.start(e.id)
 panel.handle_event({"event": "Music"}, "Bocheaux", "Sol", None, {})
 check(panel.next_system() == "Sol", f"the next system: {panel.next_system()!r}")
-check(panel.copy_next(), "COPY works")
+check(panel.copy_next(), "COPY NEXT works")
 check(root.clipboard_get() == "Sol", f"the clipboard holds the next stop: {root.clipboard_get()!r}")
 saved["wfmt_expedition_autocopy"] = True
 saved["wfmt_expedition_lookup_names"] = False        # the EDSM name check is tested on its own below
@@ -177,7 +177,7 @@ saved["wfmt_expedition_autocopy"] = False
 panel.handle_event(jump("Elsewhere", (1.0, 1.0, 1.0), 5.0), "Bocheaux", "Elsewhere", None, {})
 check(root.clipboard_get() == "Sagittarius A*", "and with it off the clipboard is left alone")
 book.pause(e.id)
-check(not panel.copy_next(), "COPY with nothing running does nothing")
+check(not panel.copy_next(), "COPY NEXT with nothing running does nothing")
 
 # a very long name, note and system never widen the row
 book.reset(e.id)

@@ -267,14 +267,14 @@ class MiningPanelController:
         self._buttons = render.PanelButtons(
             bar=button_bar,
             hotspot_finder=tk.Button(
-                button_bar, text="H.S.",
+                button_bar, text="HOTSPOTS",
                 command=lambda: hotspot_finder_dialog.open_hotspot_finder_dialog(self._window_parent())),
             price_finder=tk.Button(
-                button_bar, text="PRICE",
+                button_bar, text="PRICES",
                 command=lambda: price_finder_dialog.open_price_finder_dialog(
                     self._window_parent(), suggested_commodities=self._current_run_refined_commodities())),
             reserve_lookup=tk.Button(
-                button_bar, text="RES",
+                button_bar, text="RESERVES",
                 command=lambda: reserve_lookup_dialog.open_reserve_lookup_dialog(self._window_parent())),
             ledger=tk.Button(
                 button_bar, text="BOOK",
@@ -287,9 +287,9 @@ class MiningPanelController:
                 command=self._open_live),
         )
         for button, tip in (
-                (self._buttons.hotspot_finder, "Find Nearby Hotspots - find rings with a confirmed hotspot for a commodity (Spansh)"),
-                (self._buttons.price_finder, "Find Best Price - find the best-paying station for a commodity (Spansh)"),
-                (self._buttons.reserve_lookup, "Check Ring Reserve Level - look up a ring's reserve level"),
+                (self._buttons.hotspot_finder, "Hotspots - find rings with a confirmed hotspot for a commodity (Spansh)"),
+                (self._buttons.price_finder, "Prices - find the best-paying station for a commodity (Spansh)"),
+                (self._buttons.reserve_lookup, "Reserves - look up a ring's reserve level"),
                 (self._buttons.ledger, "Mining Book - the Space Mining Book (your rings) on the Space page, the Surface Mining Book (Rhino deposits) on the Surface page"),
                 (self._buttons.live, "Live view - a window to keep on a second screen: the radar, the live numbers and the controls (CTR, BRD, +H.S., I/E) for this page"),
                 (self._buttons.history, "Mining History - the runs found in your journals, added up for this page: ring mining on the Space page (tons, rates, commodities, rings and what the sales paid), the Rhino on the Surface page (by body)")):

@@ -578,6 +578,7 @@ class ColonizationController:
                                             "on Raven Colonial. Nothing is sent until you confirm there.")
         dismiss_button = tk.Button(offer_buttons, text="NOT NOW", command=self._clear_offer)
         dismiss_button.pack(side=tk.LEFT, padx=(6, 0))
+        panelkit.add_tooltip(dismiss_button, "NOT NOW - hide this offer for this site; nothing is created on Raven Colonial")
         self._offer_frame.grid_remove()
         row += 1
 

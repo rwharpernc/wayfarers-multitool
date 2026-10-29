@@ -47,7 +47,7 @@ class PickNearestTests(unittest.TestCase):
 
 
 class LocalIndexTests(unittest.TestCase):
-    """The N.S. button uses the local index when there is a usable one and asks Spansh otherwise."""
+    """The Neutron Star button uses the local index when there is a usable one and asks Spansh otherwise."""
 
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()

@@ -17,7 +17,7 @@ import dataclasses
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from . import mining_alerts
+from . import mining_alerts, panelkit
 from . import mining_bearing as bearing
 from . import mining_coverage as coverage
 from . import mining_coverage_render as coverage_render
@@ -318,7 +318,7 @@ def render_ring_caution(content: tk.Frame, wrap: int, row: int, enabled: bool) -
 
 
 BUTTON_ORDER = ("ledger", "history", "live", "hotspot_finder", "price_finder", "reserve_lookup")
-"""Left-to-right order of the panel's buttons in their one row: BOOK, DASHBOARD, LIVE, H.S., PRICE, RES. A button not offered on the current page, or switched off in Settings, is
+"""Left-to-right order of the panel's buttons in their one row: BOOK, DASHBOARD, LIVE, HOTSPOTS, PRICES, RESERVES. A button not offered on the current page, or switched off in Settings, is
 simply left out. The controls that act on the ground (CTR, BRD, +H.S., I/E) live in the live window (`mining_live_window.py`), not on the panel."""
 
 
@@ -334,14 +334,11 @@ def place_button_bar(buttons: Optional[PanelButtons], row: int, shown: Iterable[
     if buttons is None:
         return
     shown = set(shown)
-    for column, name in enumerate(BUTTON_ORDER):
+    for name in BUTTON_ORDER:
         button = getattr(buttons, name)
-        info = button.grid_info()
-        if name in shown:
-            if info.get("column") != column:
-                button.grid(row=0, column=column, padx=(0, 6))
-        elif info:
+        if name not in shown and button.grid_info():
             button.grid_remove()
+    panelkit.flow_buttons(buttons.bar, [getattr(buttons, name) for name in BUTTON_ORDER if name in shown], gap=6)    # wraps to a second line if they would widen the window
     if not shown:
         if buttons.bar.grid_info():
             buttons.bar.grid_remove()

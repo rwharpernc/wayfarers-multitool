@@ -96,7 +96,7 @@ class StarIndexGroup:
             button.pack(side=tk.LEFT, padx=(0, 6))
             self.buttons[key] = button
         self.use = tk.BooleanVar(value=bool(config.get_bool(star_index.CONFIG_USE, default=True)))
-        nb.Checkbutton(parent, text="Use the local index for N.S. when it is installed", variable=self.use, command=self.save).grid(row=row + 4, column=0, sticky=tk.W, padx=10, pady=(4, 0))
+        nb.Checkbutton(parent, text="Use the local index for Neutron Star when it is installed", variable=self.use, command=self.save).grid(row=row + 4, column=0, sticky=tk.W, padx=10, pady=(4, 0))
         self.message = ""
         self.refresh()
         parent.after(POLL_MS, self._poll)

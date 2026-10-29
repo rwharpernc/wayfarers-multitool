@@ -22,7 +22,7 @@ import os
 import time
 import tkinter as tk
 import tkinter.font as tkfont
-from typing import Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from config import appname, config
 from theme import theme
@@ -292,6 +292,43 @@ def fit_entry(entry: tk.Entry, max_px: int, min_chars: int = 8) -> tk.Entry:
     return entry
 
 
+_row_cap_px = 0
+
+
+def set_row_cap(pixels: int) -> None:
+    """The width EDMC's window is already held at (the mode-button row, measured by ui.py). A row of buttons wider than this starts a second line, see flow_buttons."""
+    global _row_cap_px
+    _row_cap_px = max(0, int(pixels))
+
+
+def flow_positions(widths: List[int], cap: int, gap: int = 4) -> List[Tuple[int, int]]:
+    """(row, column) for each button in a row of buttons `widths` pixels wide, wrapping to a new line when the next button would pass `cap`.
+    A button wider than the cap sits alone on its line. With no cap (0) everything stays on one line."""
+    positions: List[Tuple[int, int]] = []
+    row = column = used = 0
+    for width in widths:
+        if column and cap and used + gap + width > cap:
+            row += 1
+            column = used = 0
+        used += (gap if column else 0) + width
+        positions.append((row, column))
+        column += 1
+    return positions
+
+
+def flow_buttons(container: tk.Misc, buttons: List[tk.Button], gap: int = 4, cap: int = 0) -> None:
+    """Grid `buttons` into `container` left to right, on as many lines as it takes to stay within the cap (the window's pinned width unless `cap` is given),
+    so a row of full-length labels never widens EDMC's window. Only touches a button whose place changes, so a redraw that changes nothing does not flicker."""
+    if not buttons:
+        return
+    cap = cap or _row_cap_px
+    buttons[0].update_idletasks()
+    for button, (row, column) in zip(buttons, flow_positions([b.winfo_reqwidth() for b in buttons], cap, gap)):
+        info = button.grid_info()
+        if info.get("row") != row or info.get("column") != column:
+            button.grid(row=row, column=column, padx=(gap if column else 0, 0), pady=(2 if row else 0, 0), sticky=tk.W)
+
+
 def fit_button_row(buttons: List[tk.Button], max_px: int, gap: int = 4) -> None:
     """Narrow a row of buttons until the row asks for no more than `max_px` pixels, whatever the font. A button's width is its text plus
     its inner padding, so a wide font makes the same row several pixels wider, and EDMC sizes its whole window to the widest row. The inner
@@ -316,11 +353,13 @@ def fit_button_row(buttons: List[tk.Button], max_px: int, gap: int = 4) -> None:
             b.configure(font=(font.actual("family"), size))
 
 
-def add_tooltip(widget: tk.Widget, text: str) -> None:
+def add_tooltip(widget: tk.Widget, text: Union[str, Callable[[], str]]) -> None:
     """Shows `text` in a small popup next to `widget` after the pointer rests on
     it for TOOLTIP_DELAY_MS, and hides it on leave/click. The popup is its own
     borderless top-level window, so it never affects the size of EDMC's main
-    window; fixed light colors keep it legible under every EDMC theme."""
+    window; fixed light colors keep it legible under every EDMC theme. `text` may be a
+    function returning the text, read each time the popup opens, for a button whose
+    meaning changes with its label."""
     state = {"after": None, "tip": None}
 
     def hide(_event: object = None) -> None:
@@ -337,8 +376,12 @@ def add_tooltip(widget: tk.Widget, text: str) -> None:
             tip = tk.Toplevel(widget)
             tip.wm_overrideredirect(True)
             tip.wm_geometry(f"+{widget.winfo_rootx() + 8}+{widget.winfo_rooty() + widget.winfo_height() + 4}")
+            shown = text() if callable(text) else text
+            if not shown:
+                tip.destroy()
+                return
             tk.Label(
-                tip, text=text, justify=tk.LEFT, wraplength=TOOLTIP_WRAP, background="#ffffe0",
+                tip, text=shown, justify=tk.LEFT, wraplength=TOOLTIP_WRAP, background="#ffffe0",
                 foreground="#000000", relief=tk.SOLID, borderwidth=1, padx=4, pady=2,
             ).pack()
             state["tip"] = tip

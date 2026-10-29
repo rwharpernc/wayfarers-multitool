@@ -563,7 +563,7 @@ class AutoHonkController:
     def build_panel(self, parent: tk.Frame) -> None:
         row = tk.Frame(parent)
         row.grid(row=0, column=0, sticky=tk.W, pady=(4, 0))
-        self._toggle_btn = tk.Button(row, text="A.H.", command=self._on_toggle_click)
+        self._toggle_btn = tk.Button(row, text="Auto-Honk", command=self._on_toggle_click)
         self._toggle_btn.pack(side=tk.LEFT)
         panelkit.add_tooltip(self._toggle_btn, "Auto-Honk - toggle firing your Discovery Scanner automatically on each jump")
 

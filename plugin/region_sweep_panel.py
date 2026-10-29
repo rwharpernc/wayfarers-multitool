@@ -278,8 +278,12 @@ class RegionSweepController:
         system_autocomplete.attach(seed_box, self._add_seed_var)
         add_button_row = tk.Frame(parent)
         add_button_row.grid(row=0, column=2, sticky=tk.W)
-        tk.Button(add_button_row, text="Use Current", command=self._on_use_current).pack(side=tk.LEFT)
-        tk.Button(add_button_row, text="Add", command=self._on_add_cube).pack(side=tk.LEFT, padx=(4, 0))
+        use_current_button = tk.Button(add_button_row, text="Use Current", command=self._on_use_current)
+        use_current_button.pack(side=tk.LEFT)
+        panelkit.add_tooltip(use_current_button, "Use Current - fill in the system you are in as the seed")
+        add_button = tk.Button(add_button_row, text="Add", command=self._on_add_cube)
+        add_button.pack(side=tk.LEFT, padx=(4, 0))
+        panelkit.add_tooltip(add_button, "Add - add the cube that contains the seed system to the list")
 
         add_hint_label = panelkit.wrap_label(parent, textvariable=self._add_seed_hint_var, fg="gray")
         add_hint_label.grid(row=1, column=0, columnspan=3, sticky=tk.W)
@@ -287,12 +291,13 @@ class RegionSweepController:
 
         discover_row = tk.Frame(parent)
         discover_row.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
-        tk.Button(discover_row, text="Discover Nearby Cubes (EDSM)", command=self._on_discover_nearby).pack(
-            side=tk.LEFT,
-        )
-        tk.Button(discover_row, text="Discover Known Systems (Spansh)", command=self._on_discover_spansh).pack(
-            side=tk.LEFT, padx=(4, 0),
-        )
+        discover_nearby_button = tk.Button(discover_row, text="Discover Nearby Cubes (EDSM)", command=self._on_discover_nearby)
+        discover_buttons = [discover_nearby_button]
+        panelkit.add_tooltip(discover_nearby_button, "Discover Nearby Cubes (EDSM) - add cubes near you that EDSM knows systems in")
+        discover_spansh_button = tk.Button(discover_row, text="Discover Known Systems (Spansh)", command=self._on_discover_spansh)
+        discover_buttons.append(discover_spansh_button)
+        panelkit.flow_buttons(discover_row, discover_buttons)     # on two lines when they would widen the window
+        panelkit.add_tooltip(discover_spansh_button, "Discover Known Systems (Spansh) - look up the selected cube's systems Spansh already knows, so the sweep can skip them")
 
         list_frame = tk.Frame(parent)
         list_frame.grid(row=3, column=0, columnspan=3, sticky=tk.W, pady=(4, 0))
@@ -306,12 +311,15 @@ class RegionSweepController:
 
         queue_button_row = tk.Frame(parent)
         queue_button_row.grid(row=4, column=0, columnspan=3, sticky=tk.W)
-        tk.Button(queue_button_row, text="Set Current", command=self._on_set_current).pack(side=tk.LEFT)
-        tk.Button(queue_button_row, text="Remove", command=self._on_remove_selected).pack(side=tk.LEFT, padx=(4, 0))
-        tk.Button(queue_button_row, text="Mark Empty", command=self._on_mark_empty).pack(side=tk.LEFT, padx=(4, 0))
-        tk.Button(queue_button_row, text="Unmark Empty", command=self._on_unmark_empty).pack(
-            side=tk.LEFT, padx=(4, 0),
-        )
+        for text, command, tip in (
+            ("Set Current", self._on_set_current, "Set Current - make the selected cube the one being swept"),
+            ("Remove", self._on_remove_selected, "Remove - take the selected cube out of the list"),
+            ("Mark Empty", self._on_mark_empty, "Mark Empty - record the selected (or current) cube as having no more systems"),
+            ("Unmark Empty", self._on_unmark_empty, "Unmark Empty - clear the empty mark on the selected (or current) cube"),
+        ):
+            queue_button = tk.Button(queue_button_row, text=text, command=command)
+            queue_button.pack(side=tk.LEFT, padx=(0 if text == "Set Current" else 4, 0))
+            panelkit.add_tooltip(queue_button, tip)
 
         tk.Label(parent, text="Target:").grid(row=5, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.wrap_label(parent, textvariable=self._target_var, anchor="w").grid(
@@ -320,9 +328,14 @@ class RegionSweepController:
 
         target_button_row = tk.Frame(parent)
         target_button_row.grid(row=6, column=0, columnspan=3, sticky=tk.W)
-        tk.Button(target_button_row, text="< Prev", command=self._on_prev).pack(side=tk.LEFT)
-        tk.Button(target_button_row, text="Next >", command=self._on_next).pack(side=tk.LEFT, padx=(4, 0))
-        tk.Button(target_button_row, text="Copy", command=self._copy_current).pack(side=tk.LEFT, padx=(4, 0))
+        for text, command, tip in (
+            ("< Prev", self._on_prev, "< Prev - go back to the previous target in the current cube"),
+            ("Next >", self._on_next, "Next > - move on to the next target in the current cube"),
+            ("Copy", self._copy_current, "Copy - copy the current target system name to the clipboard"),
+        ):
+            target_button = tk.Button(target_button_row, text=text, command=command)
+            target_button.pack(side=tk.LEFT, padx=(0 if text == "< Prev" else 4, 0))
+            panelkit.add_tooltip(target_button, tip)
 
         panelkit.wrap_label(parent, textvariable=self._stats_var, anchor="w").grid(
             row=7, column=0, columnspan=3, sticky=tk.W,

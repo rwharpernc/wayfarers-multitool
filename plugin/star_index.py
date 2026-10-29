@@ -94,7 +94,7 @@ class IndexStatus:
 
 
 # --- locations ------------------------------------------------------------------------------------------------------------
-CONFIG_USE = "wfmt_star_index_use"  # Settings > General > Online lookups: use the local index for N.S. when it is installed (on unless turned off)
+CONFIG_USE = "wfmt_star_index_use"  # Settings > General > Online lookups: use the local index for Neutron Star when it is installed (on unless turned off)
 
 
 def use_local_index() -> bool:
