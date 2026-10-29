@@ -146,7 +146,7 @@ Use them for anything the passes did not reach.
   - tracked plant marker rings
   - the Bio radar's north mark
   - The built-in overlay is Windows only, so Linux keeps EDMCModernOverlay.
-- The Exobiology cards (Bio status, Biology, Bio radar, Sample popup), System targets and Body info, the Expedition Log (START, STOP, LOG window, Start since my last sale), the drag-and-drop layout editor on Overlay Placement, panel opacity and legible text on every color scheme, and species shown as `Genus species` (the items are in section 6 below).
+- The Exobiology cards (Bio status, Biology, Bio radar, Sample popup), System targets and Body info, the Expedition Log (START, STOP, LOG window, Start from my last sale), the drag-and-drop layout editor on Overlay Placement, panel opacity and legible text on every color scheme, and species shown as `Genus species` (the items are in section 6 below).
 - The Route overlay, the Expedition card and survey counts, and the overlay padding and alignment (every card's text starts at the same left edge, the same distance from its border), plus a look at the default overlay spots.
 - **Section 5, Overlay:** the Colonization card still shows when the game's Market event arrives late (the overlay also watches `Market.json`).
 - **Section 7f, Overlay Placement:** an exact position that is off the overlay's canvas (such as a leftover `x = 1280`) falls back to the default spot.
@@ -389,7 +389,7 @@ Use them for anything the passes did not reach.
   - Export CSV writes a file.
   - The overlay card shows the running totals.
 - [ ] Body info as symbols and formulas, the Biology card's ranges and percentages, and Settings → Overlays → Appearance → Panel opacity (a lower value makes every card's background fainter, the text stays solid).
-- [ ] Expedition Log's **Start since my last sale** (just after your last sale, filled in from your journals, then counting live).
+- [ ] Expedition Log's **Start from my last** buttons (**sale**, **Discovery Data sale**, **Exobiology Data sale**: just after that sale, filled in from your journals, then counting live).
 - [ ] Layout editor (Settings → Overlays → Overlay Placement):
   - The picture of the screen shows with a box per display.
   - Dragging a box fills in the table.

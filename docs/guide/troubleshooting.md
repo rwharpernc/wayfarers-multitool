@@ -266,7 +266,7 @@ The log counts only while an expedition is **running**:
 
 - Press **START** in the Exploration panel (or **Start** in the Log tab) when you set off, and the section and the card show it.
 - Anything that happened before you pressed it, or while EDMC was closed, is not counted until you press **Rescan** on that expedition in the Log tab (it works the totals out again from your journals between the expedition's start and end).
-- **Start since my last sale** begins one from your last sale and fills it in.
+- **Start from my last** (**sale**, **Discovery Data sale** or **Exobiology Data sale**) begins one from that sale and fills it in.
 
 Other things to know:
 

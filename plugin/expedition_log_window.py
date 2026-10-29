@@ -68,7 +68,7 @@ _HELP = (
 
 def show(parent: tk.Misc, book: expedition_log.LogBook, ctx: Any, host: Optional[Callable[..., Any]] = None) -> "LogWindow":
     """Open the window, or raise it if it is already open. `ctx` is the controller: `system()`, `ship()`, `commander()`, `start_expedition(name)`, `stop_expedition()`,
-    `rescan_totals(run_id, folder)`, `plan_since_last_sale(folder)` and `begin_since_last_sale(plan, name)`. `host` builds the window in a tab of the Expedition window
+    `rescan_totals(run_id, folder)`, `plan_since_last_sale(folder, kind)` and `begin_since_last_sale(plan, name)`. `host` builds the window in a tab of the Expedition window
     (`expedition_hub.py`) instead of a window of its own. Returns the window."""
     global _window
     if _window is not None and _window.alive:
@@ -124,7 +124,13 @@ class LogWindow:
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
         entry.bind("<Return>", lambda _e: self._start())
         tk.Label(starter, text="(optional; Start begins it now, from where you are)", fg=P.FAINT, bg=P.BG).pack(side="left", padx=(0, P.PAD))
-        FlatButton(starter, "Start since my last sale", self._start_since_sale).pack(side="left")
+
+        since = tk.Frame(body, bg=P.BG)
+        since.pack(fill="x", pady=(0, P.PAD_SM))
+        tk.Label(since, text="Start from my last", fg=P.MUTED, bg=P.BG).pack(side="left", padx=(0, P.PAD_SM))
+        for text, kind in (("sale", expedition_log.SINCE_ANY), ("Discovery Data sale", expedition_log.SINCE_EXPLORATION), ("Exobiology Data sale", expedition_log.SINCE_EXOBIOLOGY)):
+            FlatButton(since, text, lambda kind=kind: self._start_since_sale(kind)).pack(side="left", padx=(0, P.PAD_SM))
+        tk.Label(since, text="(a plain sale is the earlier of the two kinds)", fg=P.FAINT, bg=P.BG).pack(side="left")
 
         self._table = DataTable(body, _COLUMNS, on_select=self._pick, sortable=False, visible_rows=8,
                                 empty_text="No expeditions yet. Press Start when you set off.")
@@ -263,20 +269,21 @@ class LogWindow:
         self.refresh()
         self._say(f"Started {run.name} from {run.start_system or 'where you are'}.")
 
-    def _start_since_sale(self) -> None:
-        """Starts an expedition that carries on from the data you are still holding: it begins just after your last sale and takes the totals your journals give since."""
+    def _start_since_sale(self, kind: str = expedition_log.SINCE_ANY) -> None:
+        """Starts an expedition that carries on from the data you are still holding: it begins just after your last sale (the last Discovery Data or Exobiology Data sale when
+        `kind` names one) and takes the totals your journals give since."""
         if self._busy:
             return
         if not self._book.ready:
             self._say("Log in first: an expedition belongs to a commander.")
             return
         self._busy = True
-        self._say("Reading your journals for your last sale...")
+        self._say("Reading your journals for your last " + {expedition_log.SINCE_EXPLORATION: "Discovery Data sale", expedition_log.SINCE_EXOBIOLOGY: "Exobiology Data sale"}.get(kind, "sale") + "...")
         folder, name = journal_folder(), self._new_name.get()
 
         def worker() -> None:
             try:
-                self._results.put(("sale", name, self._ctx.plan_since_last_sale(folder)))
+                self._results.put(("sale", name, self._ctx.plan_since_last_sale(folder, kind)))
             except Exception as problem:   # reading journals must never leave the window stuck
                 logger.exception("Expedition Log: could not plan an expedition since the last sale")
                 self._results.put(("error", name, problem))
@@ -362,7 +369,7 @@ class LogWindow:
                 self._busy = False
                 if kind == "sale":
                     if payload is None:
-                        self._say("Your journals show no sale, so there is no last sale to start from. Use Start instead.")
+                        self._say("Your journals show no sale of that kind, so there is nothing to start from. Use Start instead.")
                     else:
                         run = self._ctx.begin_since_last_sale(payload, run_id)
                         if run is not None:

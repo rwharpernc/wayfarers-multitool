@@ -665,7 +665,12 @@ visit; the log records what **happened** on a trip, whether or not you planned a
 - Starting a different run here (**START**) stops the expedition that was linked to the run it replaces.
 - Deleting a run from the log leaves the expedition as it is, without a run.
 
-**Starting an expedition you are already on.** In the LOG window, **Start since my last sale** begins an expedition just after your last exploration or exobiology sale (the earlier of the two).
+**Starting an expedition you are already on.** In the LOG window, the **Start from my last** row has three buttons. Each begins an expedition one second after a sale in your journals:
+
+- **sale** is the earlier of your last Discovery Data sale and your last Exobiology Data sale, so it covers everything you are still holding. If you have only ever sold one kind, it is that one.
+- **Discovery Data sale** is your last exploration sale alone.
+- **Exobiology Data sale** is your last exobiology sale alone.
+- If your journals hold no sale of the kind you chose, it says so and starts nothing. Use **Start** instead.
 
 - It fills the expedition in from your journals since then, so the data you are still holding is what the expedition covers.
 - It then carries on counting live.
@@ -697,7 +702,7 @@ Earned figures are what the game reports when you sell, so they count when you s
 **The LOG window** is the archive (the **Log** tab of the Expedition window). Up to 200 expeditions are kept.
 
 - **The header** has **Start**, **Pause** and **Stop**.
-- **The starter row** has the **New expedition name** box (optional; **Start** begins it now, from where you are) and **Start since my last sale**.
+- **The starter row** has the **New expedition name** box (optional; **Start** begins it now, from where you are) and the **Start from my last** row (**sale**, **Discovery Data sale** and **Exobiology Data sale**).
 - **The table** lists every expedition, newest first. Its columns are **Name**, **Status**, **Started (UTC)**, **Ended (UTC)**, **Systems**, **Jumps**, **Bodies**, **Species**, **Exploration cr**, **Exobiology cr** and **Total cr**.
 - **Under the table** is everything the selected expedition recorded, then the editor.
 

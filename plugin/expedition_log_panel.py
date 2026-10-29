@@ -110,14 +110,14 @@ class LogController:
         """Starts an expedition from here, in the ship the commander is in (stopping the one that is running)."""
         return book.start(name, self._system, self._ship)
 
-    def plan_since_last_sale(self, folder: Optional[str] = None) -> Optional[dict]:
-        """What an expedition carried on from the data the commander is holding would be (see `expedition_log.plan_since_last_sale`). Reads files only, so it may run on a worker
+    def plan_since_last_sale(self, folder: Optional[str] = None, kind: str = expedition_log.SINCE_ANY) -> Optional[dict]:
+        """What an expedition carried on from the data the commander is holding would be (see `expedition_log.plan_since_last_sale`; `kind` picks which sale it follows). Reads files only, so it may run on a worker
         thread; `begin_since_last_sale` then starts it on the main thread."""
-        return expedition_log.plan_since_last_sale(book.commander, folder) if book.commander else None
+        return expedition_log.plan_since_last_sale(book.commander, folder, kind) if book.commander else None
 
     def begin_since_last_sale(self, plan: dict, name: str = "") -> Optional[expedition_log.Run]:
         """Starts the expedition `plan_since_last_sale` worked out, in the ship the commander is in; it carries on counting live from there."""
-        return book.start_at(plan["started"], name or "Expedition since my last sale", self._system, self._ship, plan["rebuilt"])
+        return book.start_at(plan["started"], name or expedition_log.SINCE_NAMES.get(plan.get("kind", ""), expedition_log.SINCE_NAMES[expedition_log.SINCE_ANY]), self._system, self._ship, plan["rebuilt"])
 
     def stop_expedition(self) -> Optional[expedition_log.Run]:
         """Ends the expedition that is running or paused."""

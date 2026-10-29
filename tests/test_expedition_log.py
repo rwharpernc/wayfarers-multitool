@@ -414,6 +414,24 @@ class SinceLastSale(unittest.TestCase):
         self.assertEqual(L.since_last_sale([{"event": "SellOrganicData", "timestamp": "2026-09-25T17:47:16Z"}]), "2026-09-25T17:47:17Z")
         self.assertIsNone(L.since_last_sale([{"event": "FSDJump", "timestamp": "2026-09-25T17:47:16Z"}]))
 
+    def test_it_can_begin_after_the_last_sale_of_one_kind(self):
+        events = [{"event": "SellOrganicData", "timestamp": "2026-09-25T17:47:16Z"}, {"event": "MultiSellExplorationData", "timestamp": "2026-09-30T10:36:24Z"},
+                  {"event": "SellExplorationData", "timestamp": "2026-09-12T00:00:00Z"}]
+        self.assertEqual(L.since_last_sale(events, L.SINCE_EXPLORATION), "2026-09-30T10:36:25Z")
+        self.assertEqual(L.since_last_sale(events, L.SINCE_EXOBIOLOGY), "2026-09-25T17:47:17Z")
+        self.assertIsNone(L.since_last_sale([events[0]], L.SINCE_EXPLORATION))
+        self.assertIsNone(L.since_last_sale([events[1]], L.SINCE_EXOBIOLOGY))
+
+    def test_the_plan_follows_the_chosen_kind_of_sale(self):
+        with tempfile.TemporaryDirectory() as folder:
+            self.write(folder, "Journal.2026-10-01T000000.01.log", "CMDR A", [
+                {"event": "SellOrganicData", "BioData": [], "timestamp": "2026-10-01T02:00:00Z"}, dict(jump("Mid", 5.0), timestamp="2026-10-01T03:00:00Z"),
+                {"event": "SellExplorationData", "Systems": [], "TotalEarnings": 10, "timestamp": "2026-10-01T04:00:00Z"}, dict(jump("After", 7.0), timestamp="2026-10-01T05:00:00Z")])
+            self.assertEqual(L.plan_since_last_sale("CMDR A", folder)["started"], "2026-10-01T02:00:01Z")
+            plan = L.plan_since_last_sale("CMDR A", folder, L.SINCE_EXPLORATION)
+            self.assertEqual((plan["started"], plan["kind"], plan["rebuilt"].totals.jumps), ("2026-10-01T04:00:01Z", L.SINCE_EXPLORATION, 1))
+            self.assertEqual(L.plan_since_last_sale("CMDR A", folder, L.SINCE_EXOBIOLOGY)["rebuilt"].totals.jumps, 2)
+
     def test_the_plan_carries_the_totals_gathered_since_the_sale_for_that_commander_only(self):
         with tempfile.TemporaryDirectory() as folder:
             self.write(folder, "Journal.2026-10-01T000000.01.log", "CMDR A", [

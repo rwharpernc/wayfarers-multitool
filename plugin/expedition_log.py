@@ -823,9 +823,15 @@ def csv_rows(runs: Iterable[Run]) -> List[List[Any]]:
     return rows
 
 
-def since_last_sale(events: Iterable[Mapping[str, Any]]) -> Optional[str]:
-    """Where an expedition that carries on from the data you are still holding begins: one second after the earlier of your last exploration sale and your last exobiology
-    sale (the data you have not sold is what has been gathered since). If you have only ever sold one kind, that sale; None when you have sold nothing."""
+SINCE_ANY, SINCE_EXPLORATION, SINCE_EXOBIOLOGY = "", "exploration", "exobiology"      # which sale an expedition begins after
+SINCE_NAMES = {SINCE_ANY: "Expedition since my last sale", SINCE_EXPLORATION: "Expedition since my last Discovery Data sale",
+               SINCE_EXOBIOLOGY: "Expedition since my last Exobiology Data sale"}
+
+
+def since_last_sale(events: Iterable[Mapping[str, Any]], kind: str = SINCE_ANY) -> Optional[str]:
+    """Where an expedition that carries on from the data you are still holding begins. By default one second after the earlier of your last exploration sale and your last
+    exobiology sale (the data you have not sold is what has been gathered since); if you have only ever sold one kind, that sale. `kind` SINCE_EXPLORATION or SINCE_EXOBIOLOGY
+    begins it after the last sale of that kind alone. None when there is no such sale."""
     exploration = organic = None
     for entry in events:
         when = parse_time(entry.get("timestamp"))
@@ -836,13 +842,13 @@ def since_last_sale(events: Iterable[Mapping[str, Any]]) -> Optional[str]:
             exploration = when if exploration is None else max(exploration, when)
         elif event == "SellOrganicData":
             organic = when if organic is None else max(organic, when)
-    chosen = [t for t in (exploration, organic) if t is not None]
+    chosen = [t for t in ((exploration, organic) if kind == SINCE_ANY else (exploration,) if kind == SINCE_EXPLORATION else (organic,)) if t is not None]
     return stamp(min(chosen) + 1) if chosen else None
 
 
-def plan_since_last_sale(commander: str, folder: Optional[str] = None) -> Optional[Dict[str, Any]]:
-    """What starting an expedition from the last sale would be: its start and the totals the journals give since then. Reads the commander's journals and changes nothing,
-    so it can run on a worker thread. None when the commander has never sold anything."""
+def plan_since_last_sale(commander: str, folder: Optional[str] = None, kind: str = SINCE_ANY) -> Optional[Dict[str, Any]]:
+    """What starting an expedition from the last sale (of `kind`, see `since_last_sale`) would be: its start and the totals the journals give since then. Reads the commander's journals and changes nothing,
+    so it can run on a worker thread. None when the commander has never made that sale."""
     from . import journal_files
     wanted = commander_data.key_for(commander)
     sales: List[Dict[str, Any]] = []
@@ -852,8 +858,8 @@ def plan_since_last_sale(commander: str, folder: Optional[str] = None) -> Option
         if wanted and owner and owner != wanted:
             continue
         sales.extend(e for e in whole if e.get("event") in SALE_EVENTS)
-    started = since_last_sale(sales)
+    started = since_last_sale(sales, kind)
     if started is None:
         return None
     events = events_from_journals(commander, started, folder)
-    return {"started": started, "rebuilt": rebuild(started, "", events)}
+    return {"started": started, "rebuilt": rebuild(started, "", events), "kind": kind}
