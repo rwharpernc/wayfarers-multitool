@@ -2,7 +2,7 @@
 
 A table lists every expedition (newest first) with its dates and its headline totals. Select one to read everything it recorded and to edit its details: the name, when
 it started and ended (UTC), where it started and ended, the ships used, and notes. **Start** begins a new expedition now (in the ship and system you are in; the one
-running is stopped), **Stop** ends the running one, **Resume** carries on counting one that was stopped, **Reset** clears an expedition's totals and starts it counting
+running is stopped), **Pause** pauses the running one or resumes the paused one, **Stop** ends the running one, **Resume** carries on counting one that was stopped, the **Start from my last** buttons begin one just after your last sale (any, Discovery Data or Exobiology Data), **Reset** clears an expedition's totals and starts it counting
 again from now, **Rescan** works its totals out again from your own journals between its start and its end (which fills in an expedition that missed events, or one given
 an earlier start), **Delete** removes it from the archive, **Copy summary** puts what it recorded on the clipboard and **Export CSV** writes the whole archive for a
 spreadsheet. Reset and Delete ask for a second press.
@@ -60,14 +60,17 @@ _COLUMNS = (
 
 
 _HELP = (
-    ("Start", "Press it when you set off."),
+    ("Start", "Press it when you set off with no stops planned: the expedition begins from the system you are in. To follow planned stops, start it on the Plan tab instead."),
+    ("Example", "Type Bubble to the Rim and press Start. Explore. Press Pause for a break and Stop when you finish."),
+    ("Start from my last", "Already on a trip? Press sale (everything you are still holding), Discovery Data sale or Exobiology Data sale: it begins just after that sale and fills itself in from your journals."),
+    ("Pause and Stop", "Pause holds it (the button then reads Resume). Stop ends it. An expedition started on the Plan tab stops with its run."),
     ("Totals", "Come from the journal while the expedition runs."),
     ("Rescan", "Works the totals out again from your journals."),
 )
 
 
 def show(parent: tk.Misc, book: expedition_log.LogBook, ctx: Any, host: Optional[Callable[..., Any]] = None) -> "LogWindow":
-    """Open the window, or raise it if it is already open. `ctx` is the controller: `system()`, `ship()`, `commander()`, `start_expedition(name)`, `stop_expedition()`,
+    """Open the window, or raise it if it is already open. `ctx` is the controller: `system()`, `ship()`, `commander()`, `start_expedition(name)`, `stop_expedition()`, `toggle_pause()`,
     `rescan_totals(run_id, folder)`, `plan_since_last_sale(folder, kind)` and `begin_since_last_sale(plan, name)`. `host` builds the window in a tab of the Expedition window
     (`expedition_hub.py`) instead of a window of its own. Returns the window."""
     global _window

@@ -64,7 +64,10 @@ _COLUMNS = (
 
 
 _HELP = (
+    ("Starting", "Pick an expedition (or type a name and press New), add its stops, then press Start. Everything about starting, pausing and stopping is done here; the panel in EDMC only shows what is running."),
+    ("Example", "Type Colonia run, press New. Add the stops Sol and Colonia. Press Start. Each time you arrive in a stop it is ticked off. Pause for a break, Stop when you are done."),
     ("Ticking off stops", "A stop is ticked off when you arrive in its system while the expedition is active (after Start)."),
+    ("The Log", "Start also starts a run in the Log tab with the same name, and Pause and Stop follow it. To record a trip with no stops, or to start from your last sale, use the Log tab."),
     ("Positions", "Come from the game or EDSM."),
 )
 
