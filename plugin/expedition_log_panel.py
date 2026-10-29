@@ -164,11 +164,11 @@ class LogController:
         return row
 
     def _buttons_into(self, body: tk.Frame, row: int, with_log: bool) -> None:
-        buttons = [("start", "START", self._on_start, "Start a new expedition here, in this ship (stops the one that is running)"),
-                   ("pause", "PAUSE", self._on_pause, "Hold the running expedition: nothing is counted and its clock stops, and the card keeps showing it, until you press RESUME"),
-                   ("stop", "STOP", self._on_stop, "Stop the expedition (running or paused): it is finished and the card goes back to saying none is running")]
+        buttons = [("start", "Start", self._on_start, "Start a new expedition here, in this ship (stops the one that is running)"),
+                   ("pause", "Pause", self._on_pause, "Hold the running expedition: nothing is counted and its clock stops, and the card keeps showing it, until you press RESUME"),
+                   ("stop", "Stop", self._on_stop, "Stop the expedition (running or paused): it is finished and the card goes back to saying none is running")]
         if with_log:
-            buttons.append(("log", "LOG", self._open_window, "Open the Expedition Log: the archive of your expeditions, to name, edit, reset and rescan them"))
+            buttons.append(("log", "Log", self._open_window, "Open the Expedition Log: the archive of your expeditions, to name, edit, reset and rescan them"))
         for column, (key, text, command, tip) in enumerate(buttons):
             button = tk.Button(body, text=text, command=command)
             button.grid(row=row, column=column, sticky=tk.W, padx=(0 if column == 0 else 6, 0), pady=(4, 0))
@@ -185,7 +185,7 @@ class LogController:
                 active = book.active()
                 self._buttons["stop"].configure(state=tk.NORMAL if active is not None else tk.DISABLED)
                 self._buttons["pause"].configure(state=tk.NORMAL if active is not None else tk.DISABLED,
-                                                 text="RESUME" if active is not None and active.status == expedition_log.PAUSED else "PAUSE")
+                                                 text="Resume" if active is not None and active.status == expedition_log.PAUSED else "Pause")
                 self._buttons["start"].configure(state=tk.NORMAL if book.ready else tk.DISABLED)
         except tk.TclError:
             pass   # the panel is gone

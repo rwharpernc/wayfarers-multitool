@@ -352,14 +352,14 @@ class PlotterController:
         self._register_tab()
         self._summary = tk.StringVar(value=summary_text(self.route, self.copied))
         body = panelkit.collapsible_section(parent, "Route Planner", "wfmt_route_planner_collapsed")
-        button = tk.Button(body, text="PLOT", command=self.open)
+        button = tk.Button(body, text="Plot", command=self.open)
         button.grid(row=0, column=0, sticky=tk.W, pady=(2, 0))
         panelkit.add_tooltip(button, "Route Planner: plot a neutron-star route to another system with Spansh's exact plotter, using your ship's numbers from the journal (no jump range to type). "
                                      "Best for long trips (the Bubble to deep space, Colonia). You paste each system into the galaxy map yourself; the next one is kept on the clipboard. "
                                      "Online, only when you press Plot in the window.")
         panelkit.wrap_label(body, min_wrap=150, textvariable=self._summary, anchor="w", font=panelkit.view_fonts()["small"]).grid(
             row=0, column=1, columnspan=2, sticky=tk.W, padx=(8, 0), pady=(2, 0))
-        self._clear_button = tk.Button(body, text="CLEAR ROUTE", command=self.clear_all)
+        self._clear_button = tk.Button(body, text="Clear Route", command=self.clear_all)
         panelkit.add_tooltip(self._clear_button, "Clear the route: forget the route plotted here and the route the Route overlay is following, so the overlay closes")
         self._clear_button.grid(row=2, column=0, sticky=tk.W, pady=(2, 0))
         self.auto_var = tk.BooleanVar(master=parent, value=self.auto_copy)

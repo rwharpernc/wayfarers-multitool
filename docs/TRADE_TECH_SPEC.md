@@ -83,7 +83,7 @@ All in `plugin/`. Pure modules have no Tk and no EDMC-only imports, so they are 
 | `trade_watch_window.py` | UI | The Watch list window (uikit) |
 
 Reused from elsewhere: `mining_spansh_client.search_best_price_stations` (the station price search, shared
-with Mining's PRICES button), `mining_price_finder_dialog` (the **Price finder** button), `inventory_names`
+with Mining's Prices button), `mining_price_finder_dialog` (the **Price finder** button), `inventory_names`
 (display-name fallback), `panelkit` (wrapping labels, tooltips, the page arrows, clipboard).
 
 ## 3. The three pages

@@ -538,7 +538,7 @@ Two situations mean a feature can start with an incomplete picture:
 
 Some things are deliberately *not* automatic:
 
-- Codex Completionist's full backfill ("Backfill Journals" in the MY CODEX window) is a button because reading years of journal files is real I/O; it does no work until asked.
+- Codex Completionist's full backfill ("Backfill Journals" in the My Codex window) is a button because reading years of journal files is real I/O; it does no work until asked.
 - Boxel Survey's survey log is not caught up either: its `bodies_scanned` counter is not idempotent, so a replay would double-count.
 
 ### Reading journals defensively
@@ -699,7 +699,7 @@ Card drawing:
 **An expedition and its Expedition Log run are linked** (`expedition_link.py`):
 
 - `Expedition.log_run_id` (written only when set) names the run, and `ExpeditionBook.set_log_run` sets it.
-- One controller applies Start, Pause, Resume and Stop to both so they never disagree, in either direction (a Log STOP stops the linked expedition, a Log Resume of a stopped run reopens it).
+- One controller applies Start, Pause, Resume and Stop to both so they never disagree, in either direction (a Log Stop stops the linked expedition, a Log Resume of a stopped run reopens it).
 - A linked expedition shows the run's elapsed time, which excludes paused time.
 - An unlinked one (the setting `wfmt_expedition_start_log` off, or no Log commander) keeps wall-clock time and its Pause only changes status.
 - The link is built in `expedition_panel` and takes the two books and the "start a run" function as arguments, so the module has no imports of either panel.
@@ -1491,7 +1491,7 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 4. The `Music` event's track is `FleetCarrier_Managment` (Carrier Management; both opening and closing are announced).
 5. Optionally (`wfmt_colonization_overlay_right_panel`) `GuiFocus` 1 anywhere.
 
-A manual `forced` flag (the Colony page OVERLAY button) overrides all of it and the enabled setting.
+A manual `forced` flag (the Colony page Overlay button) overrides all of it and the enabled setting.
 
 Settings keys: `wfmt_colonization_overlay_enabled` and `wfmt_colonization_overlay_row_limit` (0 shows every row, at most 60). The position is set on Overlay Placement; the older `_x` and `_y` keys are read only as a starting point.
 

@@ -61,9 +61,9 @@ More: [Routes](#routes) and [Market](#market).
 
 **Use the watch list**
 
-1. Open the **Watch list** row in Trade mode and press **WATCH**.
+1. Open the **Watch list** row in Trade mode and press **Watch**.
 2. In the box beside **Add a commodity**, type a name, pick it from the suggestions, and press **Add**.
-3. Press **REFRESH** to ask Spansh for prices, or open station markets in the game to record them.
+3. Press **Refresh** to ask Spansh for prices, or open station markets in the game to record them.
 
 More: [Watch list](#watch-list).
 
@@ -366,7 +366,7 @@ The same four picks for a mission's cargo are in the Missions mode ([Source comm
 
 ### Price finder
 
-Opens the finder that Mining's **PRICES** button also uses ([Find Best Price](mining.md#prices-find-best-price)), for any commodity, to buy or sell, with its own **Where** distance
+Opens the finder that Mining's **Prices** button also uses ([Find Best Price](mining.md#prices-find-best-price)), for any commodity, to buy or sell, with its own **Where** distance
 drop-down. The button is grayed out until Trade's Spansh lookups are on. Its suggestions list what you carry and what this station buys first, then every commodity. The finder always leaves fleet carriers out and asks only for markets updated in the last 30 days, whatever the Trade settings say.
 
 **Prices are only as fresh as the last player who docked there.** Markets older than 30 days are ignored. Check the
@@ -375,7 +375,7 @@ market when you arrive.
 ## Watch list
 
 A short list of the commodities you care about, with the best price to buy and to sell each at a glance. It is a collapsible **Watch list**
-row in Trade mode, under the page (it starts folded; click its heading to open or fold it, and the heading shows `- 3 watched` when folded). Each line reads like `Gold: buy 9,100 / sell 11,200`, with `-` for a side nobody has a price for. Five commodities are listed, then `+N more in the window`. Two buttons sit under the lines: **REFRESH** asks Spansh, and **WATCH** opens the window. A status line under the list says what the last refresh did. With nothing watched the row says `Nothing watched yet. Press WATCH to add commodities.`
+row in Trade mode, under the page (it starts folded; click its heading to open or fold it, and the heading shows `- 3 watched` when folded). Each line reads like `Gold: buy 9,100 / sell 11,200`, with `-` for a side nobody has a price for. Five commodities are listed, then `+N more in the window`. Two buttons sit under the lines: **Refresh** asks Spansh, and **Watch** opens the window. A status line under the list says what the last refresh did. With nothing watched the row says `Nothing watched yet. Press Watch to add commodities.`
 
 - **Add a commodity** in the window: click the box beside **Add a commodity**, start typing and pick from the suggestions (the same names the Market page uses), then
   press **Add** or Enter. Up to 30. Select a commodity and press **Remove** to take it off and forget its prices; press it twice (the first press asks, the second, within a few seconds, removes).
@@ -383,7 +383,7 @@ row in Trade mode, under the page (it starts folded; click its heading to open o
 - **Where the prices come from.** Every time you open a station's commodity market in the game, WFMT reads it and keeps the buy price
   (what the station charges), the sell price (what it pays), the stock and the demand of each commodity you watch, for the newest 12
   stations. This needs nothing turned on and sends nothing anywhere. Pick a commodity in the window to see every market it was seen at.
-- **Refresh from Spansh.** **REFRESH** on the row (or **Refresh from Spansh** in the window) asks Spansh for the cheapest station to buy and
+- **Refresh from Spansh.** **Refresh** on the row (or **Refresh from Spansh** in the window) asks Spansh for the cheapest station to buy and
   the dearest to sell each watched commodity, within your "Near me" radius of the system you are in.
   - It needs *Enable Spansh trade lookups* in Settings.
   - It sends only the commodity names and your system name, never your commander name.
@@ -397,7 +397,7 @@ row in Trade mode, under the page (it starts folded; click its heading to open o
 
 **Example.** You want to keep an eye on Gold and Palladium.
 
-1. Open the **Watch list** row and press **WATCH**.
+1. Open the **Watch list** row and press **Watch**.
 2. In the box beside **Add a commodity**, type `Gold`, pick it and press **Add**. Do the same for `Palladium`.
 3. Press **Refresh from Spansh** in the window. The status line says when it is done.
 4. Close the window. The row now shows lines such as `Gold: buy 9,100 / sell 11,200` (example prices).
@@ -528,7 +528,7 @@ it goes away.
 ### Watch list
 
 - **A seen price is a snapshot.** The game only writes a market when you open it, so a watched commodity has no price until you have
-  visited a station that trades it (or pressed REFRESH). It never updates by itself.
+  visited a station that trades it (or pressed Refresh). It never updates by itself.
 - **Stock and demand are from that moment too.** A station that showed 5,000 t last week may be empty now.
 - **Fleet carriers are not in the Spansh refresh**, so a carrier that sells a commodity cheaply only shows up if you opened its market.
 - **The Spansh refresh makes two requests per commodity** (buy, then sell), at least 0.4 seconds apart, so thirty commodities take

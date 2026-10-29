@@ -143,11 +143,11 @@ class WatchController:
             row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
         panelkit.wrap_label(body, min_wrap=_WRAP_PX, textvariable=self._status_var, anchor="w").grid(
             row=2, column=0, columnspan=3, sticky=tk.W)
-        self._refresh_button = tk.Button(body, text="REFRESH", command=self.refresh)
+        self._refresh_button = tk.Button(body, text="Refresh", command=self.refresh)
         self._refresh_button.grid(row=3, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.add_tooltip(self._refresh_button, "Ask Spansh for the best buy and sell price of each watched commodity near this "
                                                    "system (needs Trade lookups turned on in Settings)")
-        watch = tk.Button(body, text="WATCH", command=self._open_window)
+        watch = tk.Button(body, text="Watch", command=self._open_window)
         watch.grid(row=3, column=1, sticky=tk.W, padx=(4, 0), pady=(4, 0))
         panelkit.add_tooltip(watch, "Open the watch list window: add or remove commodities and read every price")
         self._update_summary()

@@ -77,7 +77,7 @@ class FinderController:
         self._summary = tk.StringVar(value=summary_text(self.tracker))
         body = panelkit.collapsible_section(parent, "Nearest place to land", "wfmt_landing_finder_collapsed")
         panelkit.wrap_label(body, min_wrap=_WRAP_PX, textvariable=self._summary, anchor="w").grid(row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
-        button = tk.Button(body, text="FIND", command=self._open)
+        button = tk.Button(body, text="Find", command=self._open)
         button.grid(row=2, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.add_tooltip(button, "Find the nearest station that can take your ship (repair, refuel, rearm), and fleet carriers open to all. Online, only when you press Find in the window.")
 

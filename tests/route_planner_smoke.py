@@ -142,10 +142,10 @@ def descendants(widget):
 
 all_buttons = [w for w in descendants(frame) if isinstance(w, tk.Button)]
 buttons = [b for b in all_buttons if b.winfo_manager()]
-check(sorted(b.cget("text") for b in buttons) == ["CLEAR ROUTE", "PLOT"], "the panel shows PLOT and CLEAR ROUTE, with or without a route: %s" % [b.cget("text") for b in buttons])
+check(sorted(b.cget("text") for b in buttons) == ["Clear Route", "Plot"], "the panel shows Plot and Clear Route, with or without a route: %s" % [b.cget("text") for b in buttons])
 titles = [w.cget("text") for w in frame.winfo_children() if isinstance(w, tk.Label)]
 check(any("Route Planner" in t and t.startswith("▸") for t in titles), "the section has a folding title and starts folded: %s" % titles)
-check(sorted(b.cget("text") for b in all_buttons) == ["CLEAR ROUTE", "PLOT"], "the panel has a CLEAR ROUTE button")
+check(sorted(b.cget("text") for b in all_buttons) == ["Clear Route", "Plot"], "the panel has a Clear Route button")
 # EDMC started after the game: no Loadout was seen, so the plotter reads the ship from the journals
 from plugin import ship_current  # noqa: E402
 ship_current.latest_loadout = lambda folder=None: LOADOUT
@@ -375,7 +375,7 @@ window._animate()
 window._finished()
 
 # --- abandoning the route ---------------------------------------------------------------------------------------------------------------
-clear_button = next(b for b in descendants(frame) if isinstance(b, tk.Button) and b.cget("text") == "CLEAR ROUTE")
+clear_button = next(b for b in descendants(frame) if isinstance(b, tk.Button) and b.cget("text") == "Clear Route")
 check(clear_button.winfo_manager() == "grid", "CLEAR ROUTE shows on the panel while a route is plotted")
 game_state = route_overlay.get_state()
 game_state.tracker.set_route([route_overlay.Hop("Sol", "G", (0.0, 0.0, 0.0)), route_overlay.Hop("Somewhere", "K", (10.0, 0.0, 0.0))])

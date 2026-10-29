@@ -35,7 +35,7 @@ For anyone testing WFMT on Linux with Elite Dangerous under Steam Proton (or Win
   - compact data files
   - the Random rebuild
   - POI Reference
-  - the MY CODEX window
+  - the My Codex window
   - alphabetical sections in every mode
   - the wrapped-text width fix
   - overlay cards that leave in one step
@@ -98,9 +98,9 @@ Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 und
   - **Review expedition** opens the Expedition window on it.
   - Pause and Resume from either side agree, and a restart while paused keeps both paused.
   - The plan dialog's **Start it now** tick starts a Road to Riches or Exomastery plan.
-- **One Expedition window.** **EXPEDITION** and **PLOT** on the panel open the same window with Plan, Route and Log tabs.
+- **One Expedition window.** **Expedition** and **Plot** on the panel open the same window with Plan, Route and Log tabs.
   - It is never opened twice.
-  - The panel has one Expedition section (the Log's figures, COPY NEXT and EXPEDITION, with no START, PAUSE or STOP) and no Expedition Log section.
+  - The panel has one Expedition section (the Log's figures, Copy Next and Expedition, with no Start, Pause or Stop) and no Expedition Log section.
   - The tabs' buttons and tables fit at its smallest size and at the full screen width.
   - Report whether the window takes the focus when it opens (it should not steal it from the game).
 - **Mining.**
@@ -168,7 +168,7 @@ Use them for anything the passes did not reach.
   - Depleted marks that stay and say how long ago
   - the Neutron route in the Expedition window
 - The System targets visit history and Spansh lookup items in section 6 and `docs/TODO.md` (the journal folder is found on Linux, the first read finishes, the lookup says what it is doing).
-- The Credits Ledger window (click the Credits line: it opens, fits, and the tabs fill), the Colonization History window (HISTORY button), fold sections starting folded, and Ship Builds folding.
+- The Credits Ledger window (click the Credits line: it opens, fits, and the tabs fill), the Colonization History window (History button), fold sections starting folded, and Ship Builds folding.
 - The items in section 6 below marked "Windows-tested only": mission progress colors, the alert widths, the Missions window and pinned missions, Best picks and Source commodities, the Missions overlay card, the Upgrade planner, Megaship scans and the Ship planner's subtract option.
 - Settings → General → **Help** (Report an issue, Copy diagnostics).
 - The Engineering window's **Engineers** tab (places, unlock steps, the Bubble / Colonia filter) and **Ship planner** tab.
@@ -181,7 +181,7 @@ Use them for anything the passes did not reach.
 - A Related settings link opens its page.
 - The mode buttons can be hidden under General → Window.
 - Number boxes snap back into their range.
-- The Prediction review window opens from REVIEW and its tabs are whole.
+- The Prediction review window opens from Review and its tabs are whole.
 - The Route overlay's EDSM option marks a system EDSM does not know.
 
 **Wrapping and panel width**
@@ -191,8 +191,8 @@ Use them for anything the passes did not reach.
   - In Expedition, Materials, Notes and the Trade watch list, lines use the whole width of the window when it is wide, and a narrow window is still never widened.
 - **Panel width:**
   - With Expedition (Exploration mode) and Materials (Operations mode) open, the main EDMC window must not grow wider.
-  - In Expedition, **Copy on arrival** sits on its own line under **COPY NEXT** and **EXPEDITION**.
-  - In Materials, **BLUEPRINTS** sits under **MATERIALS**, not beside it.
+  - In Expedition, **Copy on arrival** sits on its own line under **Copy Next** and **Expedition**.
+  - In Materials, **Blueprints** sits under **Materials**, not beside it.
   - With a large font the Trade page and the Trade History window should not widen the EDMC window either.
 - **History heading and Busiest site:**
   - The Colonization History heading names the commander (`History - NAME`).
@@ -285,16 +285,16 @@ Use them for anything the passes did not reach.
 - [ ] Surface Compass (Exploration mode, **Compass** section; Settings → Overlays → Surface Compass):
   - **Test Compass** draws an arrow and a name on the left.
   - On a planet surface the section shows the nearest hotspot with a distance.
-  - **MARK** makes a mark.
-  - **TARGET** steps through the marks here.
-  - **MARKS** opens the window (edit, **Here**, Delete twice).
+  - **Mark** makes a mark.
+  - **Target** steps through the marks here.
+  - **Marks** opens the window (edit, **Here**, Delete twice).
   - With the compass enabled the arrow follows the target as you move and turn, and clears when you lift off.
   - Check the Mining settings tab has no waypoint tick.
 - [ ] Materials (Operations mode, **Materials** section):
   - Log in and the row shows the pieces of each type.
   - Collect or discard a material and "Last: ..." follows.
   - A material at its limit is named.
-  - **MATERIALS** opens the window.
+  - **Materials** opens the window.
   - Search, Type, Grade and **Only what is at the limit** narrow the table, and headings sort.
   - The window keeps its size and place.
   - Restart EDMC mid-session and the counts are right.
@@ -305,7 +305,7 @@ Use them for anything the passes did not reach.
   - **Here** refills the system, and a typed system works.
   - Double-click copies the system name.
   - With no network the status says Spansh could not be reached and **Find** works again afterwards.
-- [ ] Engineering (Operations, **BLUEPRINTS** on the Materials section):
+- [ ] Engineering (Operations, **Blueprints** on the Materials section):
   - The window opens with **Blueprints** and **Wishlist** tabs.
   - Search (it waits a moment after typing) and the Module drop-down narrow the list.
   - Picking a row shows its ingredients, what you hold and where each is found.
@@ -325,31 +325,31 @@ Use them for anything the passes did not reach.
   - The list must appear in front of the window on your desktop and Wayland compositor, and go away when the box loses focus.
   - Tick *Suggest system names from Spansh while typing*, type `outot`: after a pause systems from Spansh appear.
 - [ ] Expedition (Exploration mode, **Expedition** section):
-  - **EXPEDITION** opens the window.
+  - **Expedition** opens the window.
   - **New** makes an expedition.
   - **Add stop** (and **Here**) add stops.
   - **From plotted route** (after plotting a route in the game) and **Import CSV** add many.
   - **Road to Riches** and **Exomastery** (Spansh): press **Plot**, wait, check the new expedition's stops, notes and order against Spansh's own page.
   - **Neutron route** opens the Route Planner.
   - **Start** (in the Expedition window), then jump to a stop: the section ticks it, counts the jump and shows the next stop with its distance.
-  - **COPY NEXT** and **Copy on arrival** put the next stop's name on the clipboard (check it pastes into the galaxy map's search box).
+  - **Copy Next** and **Copy on arrival** put the next stop's name on the clipboard (check it pastes into the galaxy map's search box).
   - **Locate and reorder (EDSM)** orders the unvisited stops.
   - **Export CSV** saves a file and **Import CSV** reads it back.
   - **Reset** and **Delete** ask twice.
   - The section stays narrow with a long name, and the window keeps its size and place.
 - [ ] Notes (Exploration mode, **Notes** section):
   - The quick-add box saves a line against the current system.
-  - **NOTES** opens the window.
+  - **Notes** opens the window.
   - The editor's text box takes typing and paste.
   - **Here** fills the system and body.
   - **Delete** asks twice.
   - The window keeps its size and place after closing and reopening.
 - [ ] Trade Watch list (Trade mode, **Watch list** row):
-  - **WATCH** opens the window.
+  - **Watch** opens the window.
   - Add a commodity by typing (the suggestion list appears and a click or Enter picks it) and **Add**.
   - Open a station's commodity market in the game and the commodity gets a price, with the station under it when picked.
   - **Remove** asks twice.
-  - With Trade lookups on, **REFRESH** fills in Spansh prices and says so. With them off it says to turn them on.
+  - With Trade lookups on, **Refresh** fills in Spansh prices and says so. With them off it says to turn them on.
   - The row stays narrow with a long system name.
   - Restarting EDMC keeps the list and the seen prices.
 - [ ] Route overlay (Settings → Overlays → Route):
@@ -369,7 +369,7 @@ Use them for anything the passes did not reach.
   - With one overlay window running, Overlay Connection → Check connection says only that it is connected.
   - Start a second copy of the overlay and it adds a line naming two windows.
   - Copy diagnostics shows `Overlay windows running: N` (read from `/proc` on Linux).
-- [ ] Nearest place to land (Exploration → Nearest place to land → FIND):
+- [ ] Nearest place to land (Exploration → Nearest place to land → Find):
   - The window opens and fits.
   - The box for the lookup must be ticked before Find works.
   - After a jump it shows your system and coordinates and your ship's pad.
@@ -427,36 +427,36 @@ Use them for anything the passes did not reach.
 ## 6. Other features
 
 - [ ] The Inventory pickup **sound** plays (Operations → Inventory settings).
-- [ ] Codex **MY CODEX** opens, and its **Backfill Journals** action finds your journals.
+- [ ] Codex **My Codex** opens, and its **Backfill Journals** action finds your journals.
 - [ ] Codex details window: the Entry and Times found headings sort both ways, the **Not found** tab fills in
       (needs network the first time), and double-clicking an entry opens its Canonn search in your browser.
-- [ ] Colony mode → **DASHBOARD** (colonization sites): after docking at a construction depot, the site appears with its
+- [ ] Colony mode → **Dashboard** (colonization sites): after docking at a construction depot, the site appears with its
       outstanding commodities, In Cargo matches your hold, and **Copy Shopping List** pastes elsewhere.
 - [ ] Mining: journal backfill works, and in an SRV the surface bearing arrow and coverage map work.
 - [ ] Copy buttons (Powerplay, BGS, Boxel **Random**): pasting into another app works. **Random** names are real systems that plot on the galaxy map, and a second press nearby is quicker.
 - [ ] Network lookups (EDSM, Spansh, Canonn, GEC) return results.
 - [ ] Exploration **Neutron Star** and **White Dwarf** buttons: after a jump, each shows a system and distance and copies the
       name to the clipboard (paste it elsewhere to check).
-- [ ] Hovering a button (for example **Auto-Honk**, **Random**, **REPORT**, **Powerplay**) shows its name and what it does in a
+- [ ] Hovering a button (for example **Auto-Honk**, **Random**, **Report**, **Powerplay**) shows its name and what it does in a
       tooltip that disappears when you move away, and the GEC, Canonn and Codex sections start minimized.
-- [ ] Powerplay → **RARES** (rares) opens the Rare Goods Finder: after a jump or login it lists the nearest
+- [ ] Powerplay → **Rares** (rares) opens the Rare Goods Finder: after a jump or login it lists the nearest
       rare goods, the Controlling Power column fills in from Spansh, and double-click opens Inara in
       your browser.
 - [ ] Restart EDMC: per-commander data (BGS, Boxel, Codex) is still there.
 
-- [ ] **Mining History**: **DASHBOARD** in Mining mode reads your journals (check it finds the journal folder), fills the Overview and the three tables, and a run made with EDMC closed appears after a restart.
+- [ ] **Mining History**: **Dashboard** in Mining mode reads your journals (check it finds the journal folder), fills the Overview and the three tables, and a run made with EDMC closed appears after a restart.
 - [ ] **Random**: press **Random** twice near a procedurally named system.
   - The name plots on the galaxy map.
   - The status line gives a distance and says whether EDSM confirmed it.
   - The second press nearby is much quicker.
   - Settings -> Exploration -> Boxel Survey -> **Systems to request from Spansh** takes a number from 10 to 100.
-- [ ] **POI Reference**: one section with **FIND POI** and **UPDATE POI**. FIND POI shows a GEC line and a Canonn line, and a paste into the galaxy map gives the nearer system.
-- [ ] **MY CODEX**: the Codex Completionist section has one button. The window opens on **Overview**; **Not found** has a **Where to look** column; **Backfill Journals** reads your journals.
+- [ ] **POI Reference**: one section with **Find POI** and **Update POI**. Find POI shows a GEC line and a Canonn line, and a paste into the galaxy map gives the nearer system.
+- [ ] **My Codex**: the Codex Completionist section has one button. The window opens on **Overview**; **Not found** has a **Where to look** column; **Backfill Journals** reads your journals.
 - [ ] **Panel order and width**: in every mode the sections are alphabetical, and switching modes or opening the Route Planner and Dashboard never widens EDMC's window (if it does, send the "The WFMT panel widened" line from EDMC's log).
 - [ ] **Overlay exit**: when a card goes away its panel goes with its text, in one step (no empty shell left for a few seconds).
   - Switch the Dashboard's Exploration overlays off and on: the cards go together.
   - They come back once Elite is in front (EDMCModernOverlay only shows them while Elite is the window in front).
-- [ ] **Route Planner**: **PLOT** in the Route Planner section of the Exploration panel (unfold it first) opens the window with your ship read from the journal (no jump range to type).
+- [ ] **Route Planner**: **Plot** in the Route Planner section of the Exploration panel (unfold it first) opens the window with your ship read from the journal (no jump range to type).
   - Generate route returns a route (every jump listed).
   - **Copy next system** and the **Copy the next system to the clipboard automatically** tickbox put the name on the clipboard (check a paste works in the galaxy map under Proton).
   - Arriving at a system turns its row green and moves the panel's next-jump line on.
@@ -469,9 +469,9 @@ Use them for anything the passes did not reach.
   - Each system shows its star in green (scoopable), yellow (not scoopable), blue (neutron star) or red (white dwarf).
   - At the last system it says the route has ended and is being reset for ten seconds, then closes.
 - [ ] **Folding sections**: the Dashboard and Route Planner sections start folded and open on a click of their title.
-  - The Dashboard section holds the Exploration Value lines under its DASHBOARD button.
-  - POI Reference has **UPDATE POI** and a **COPY SYSTEM** button and a details link under both the Canonn and the GEC result.
-- [ ] **Exploration Dashboard**: **DASHBOARD** on the Exploration panel opens the window (check it opens whole on your screen and the tabs wrap).
+  - The Dashboard section holds the Exploration Value lines under its Dashboard button.
+  - POI Reference has **Update POI** and a **Copy System** button and a details link under both the Canonn and the GEC result.
+- [ ] **Exploration Dashboard**: **Dashboard** on the Exploration panel opens the window (check it opens whole on your screen and the tabs wrap).
   - It follows the system after a honk and scans, switches to Surface on landing and back to Orbit on lift-off.
   - The header buttons **Exploration overlays** and **Exobiology overlays** hide and show those cards with EDMCModernOverlay (a hidden card must clear at once, and come back when shown) without changing Settings.
 - [ ] Settings -> WFMT -> General -> **Backup** -> **Back up my data** (Windows-tested only):
@@ -507,7 +507,7 @@ Use them for anything the passes did not reach.
   - Nothing goes online.
 
 - [ ] **Megaship scans** (Powerplay, Windows-tested only): in a Powerplay system, drop out of supercruise at a megaship and scan its datalink.
-  - The Powerplay panel gains `Cycle N megaships: 1 (N merits)` and **REPORT → Megaships** lists it with its name and system.
+  - The Powerplay panel gains `Cycle N megaships: 1 (N merits)` and **Report → Megaships** lists it with its name and system.
   - Scanning it again changes nothing.
   - A scan at a station or a settlement adds nothing.
   - After restarting EDMC the list is still there.
@@ -631,7 +631,7 @@ Windows was checked as Trade was built. The boxes below are unticked so the list
 - [ ] The BGS panel's gray line shows "Last tick: ..." within a few seconds (network call works).
 - [ ] With the Journal directory set, the log has "BGS journal replay done for [CMDR]" and the totals
       cover the whole tick. With it cleared, the log says the replay was skipped and why.
-- [ ] **REPORT** (view BGS report) opens; the tick drop-down, the tabs (full system names, wrapping onto a second row
+- [ ] **Report** (view BGS report) opens; the tick drop-down, the tabs (full system names, wrapping onto a second row
       when there are many), **Pin**, **× Close tab** and the footer key all render, with no missing glyphs.
 - [ ] **Show a system**: typing narrows the list while you keep typing (the list must not steal the
       keyboard), the arrow shows every system, Up/Down/Enter/Esc work, clicking a name adds its tab.
@@ -705,7 +705,7 @@ Written and tried on Linux (Flatpak EDMC, Proton game, EDMCModernOverlay). The c
   - with the right-hand cockpit panel open when docked at the carrier (the cargo transfer)
   - in Carrier Management
   - docked at a construction site
-  - It goes when you leave, and the OVERLAY button forces it on and off.
+  - It goes when you leave, and the Overlay button forces it on and off.
   - The EDMC debug log lines "Colonization overlay ..." say what was decided and why.
 - [ ] Rows left at the default list every commodity not yet covered; the card fits on screen from the default position (20, 300).
 - [ ] **List (overlay card):** with **To buy** (the default) a commodity the hold plus the carrier cover is left out and the footer still counts it; **All** brings the covered rows back; **To haul** lists only the covered rows not yet aboard in full (put everything on the carrier and check that the card still lists them, and that a row drops off once its whole need is in the hold).
@@ -737,7 +737,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
 - [ ] With no network, the panel says the search failed and the button comes back.
 - [ ] **Find all**: lists a heading per commodity still to buy with up to 5 stations under each; the
       button reads **Stop** while it runs and stopping keeps what was found; the window stays responsive.
-- [ ] **My Projects (needs the internet):** press **PROJECTS** on the Colony page (or **My Projects** in the **Raven Colonial** menu).
+- [ ] **My Projects (needs the internet):** press **Projects** on the Colony page (or **My Projects** in the **Raven Colonial** menu).
   - A window lists your Raven Colonial projects with building, progress and tons still needed; the subtitle adds up the counted ones.
   - Double-clicking a row changes whether it counts, and the subtitle says there are unsaved changes.
   - **More** has Copy Shopping List, the two Open items, Set as My Primary and Save Counted List; the last two ask first and refuse while the master switch is off.
@@ -825,8 +825,8 @@ Written on Windows against a 3840 x 2160 screen in EDMCModernOverlay's fill mode
 ## 7h. Colonization mode (Windows-tested only: check on Linux)
 
 - [ ] The button row has a **Colony** button (eight buttons); the panel is not noticeably wider than the other modes'.
-- [ ] Colony shows **Current project** for your newest active site and a **History** block; DASHBOARD opens the sites window, and
-      OVERLAY toggles the overlay card (lit while on).
+- [ ] Colony shows **Current project** for your newest active site and a **History** block; Dashboard opens the sites window, and
+      Overlay toggles the overlay card (lit while on).
 - [ ] Without a fleet carrier there is no Carrier row, Trips left reads like "3 loads of 400 t", and the sites window has a single
       Trips column. With one, Carrier is shown and Trips left reads "N to buy · N to haul".
 - [ ] After delivering cargo to a depot, "You delivered" and "Recently" go up by the same tons, and again after restarting EDMC
@@ -882,7 +882,7 @@ The Surface Live radar has not been looked at on Linux. The simulation shows it 
   - with a target commodity set in Settings → Mining (try Painite or Platinum), a bright line to the nearest saved deposit of it with the nearest of any kind dotted
   - Press **Help** and check each entry matches what you see, and that the window and its text are whole.
 - [ ] **Save map** opens your desktop's save dialog (check it appears in front of the window and takes clicks), writes a PNG, and the picture opens in an image viewer with the title, the marks and the legend legible.
-- [ ] Close it, open the real LIVE window from the Mining page, and check none of the pretend deposits or marks are there.
+- [ ] Close it, open the real Live window from the Mining page, and check none of the pretend deposits or marks are there.
 - [ ] Report the distro, desktop, X11 or Wayland, native or Flatpak EDMC, and any `Plugin "WFMT" failed` or traceback lines in EDMC's log.
 
 ## 7k2. The navy look (new, not run on Linux)
@@ -925,7 +925,7 @@ Keyboard shortcuts are Windows only; the chat commands are the same on both syst
 
 ## 7m. What pays (Windows-tested only: check on Linux)
 
-- [ ] With *Enable Spansh best price finder* ticked (Settings → Mining) and a few saved deposits, **BOOK** → **What pays** opens a window.
+- [ ] With *Enable Spansh best price finder* ticked (Settings → Mining) and a few saved deposits, **Book** → **What pays** opens a window.
   - *Near* holds your system, and *Within 100 ly* is chosen.
   - The table fills in one commodity at a time and is then ordered best price first.
   - Nothing is cut off at the default size.
@@ -935,7 +935,7 @@ Keyboard shortcuts are Windows only; the chat commands are the same on both syst
 
 ## 7n. Get body info and a body's size from Status.json (Windows-tested only: check on Linux)
 
-- [ ] With *Enable body lookup* ticked (Settings → Mining), in a system you are in, **BOOK** → **Get body info** says it is asking EDSM and Spansh and then how many landable bodies it listed and added, with sizes and mining-location counts.
+- [ ] With *Enable body lookup* ticked (Settings → Mining), in a system you are in, **Book** → **Get body info** says it is asking EDSM and Spansh and then how many landable bodies it listed and added, with sizes and mining-location counts.
   - The Book's body list gains them and nothing already there changes.
   - Straight after starting EDMC with no jump or login yet, it says Spansh was not asked.
   - With the box unticked it says to turn the setting on and asks nothing.

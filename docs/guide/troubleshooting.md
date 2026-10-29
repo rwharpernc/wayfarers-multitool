@@ -32,11 +32,11 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | Mining stats on the game screen | **Enable HUD Overlay** | Settings → WFMT → Overlays → Mining |
 | The Mining radar (the Surface Live radar) over the game | **Show the Mining radar over the game while the Rhino is out**, and WFMT's built-in overlay chosen (Windows) | Settings → WFMT → Overlays → Mining and Overlay Connection |
 | "Screenshot saved" message on the game screen | **Show a notification on the in-game overlay when a screenshot is saved** | Settings → WFMT → Overlays → Screenshots |
-| The Colonization shopping list appears by itself at markets | **Also show the shopping list automatically**. Otherwise only the **OVERLAY** button on the Colony page shows it | Settings → WFMT → Overlays → Colonization |
+| The Colonization shopping list appears by itself at markets | **Also show the shopping list automatically**. Otherwise only the **Overlay** button on the Colony page shows it | Settings → WFMT → Overlays → Colonization |
 | Auto-Honk | **Enable Auto-Honk** or the **Auto-Honk** button | Settings → WFMT → Exploration → Auto-Honk |
 | **Find sources** (Missions) and **Best picks** (Trade) | **Enable Spansh trade lookups**; Find sources asks to turn it on when you press it | Settings → WFMT → Trade |
 | Routes and Market on the Trade page | **Enable Spansh trade lookups** ([details](#the-lookup-buttons-are-grayed-out-or-there-is-no-commodity-box)) | Settings → WFMT → Trade |
-| The **HOTSPOTS**, **PRICES** or **RESERVES** buttons in Mining | **Enable Spansh nearby hotspot finder**, **Enable Spansh best price finder**, **Enable EDSM ring reserve lookup** (each separately) | Settings → WFMT → Mining |
+| The **Hotspots**, **Prices** or **Reserves** buttons in Mining | **Enable Spansh nearby hotspot finder**, **Enable Spansh best price finder**, **Enable EDSM ring reserve lookup** (each separately) | Settings → WFMT → Mining |
 | ELW rarity or EDSM upload status in Exploration | The two options under Exploration Value | Settings → WFMT → Exploration → Exploration Value |
 | Fleet carriers missing from "where to buy" results | **Include fleet carriers** in the Where to Buy window | Where to Buy window (the **Where to Buy** button in the Colonization Sites window) |
 | Raven Colonial not updating | The master switch and the two options under it ([steps](#raven-colonial-doesnt-update-as-i-deliver)) | Settings → WFMT → Colonization → Raven Colonial |
@@ -83,8 +83,8 @@ when EDMC starts and catches up by itself; the table in
 [If EDMC wasn't running](getting-started.md#if-edmc-wasnt-running) shows what each feature catches up on and how far
 back. Things to try if a figure is still off:
 
-- Powerplay has a **RESCAN** button.
-- Codex Completionist has **Backfill Journals** (in the **MY CODEX** window) for the commander you are playing, for finds older than the automatic catch-up.
+- Powerplay has a **Rescan** button.
+- Codex Completionist has **Backfill Journals** (in the **My Codex** window) for the commander you are playing, for finds older than the automatic catch-up.
 - Trade's **Rebuild** button recounts a session from a start time you give; see
   [How a trading session works](trade.md#how-a-trading-session-works).
 - Missions shows what the journals say is active. If a mission expired without the game writing anything, log in
@@ -105,7 +105,7 @@ They belong to one commander each, so a commander you have not used before start
 - **The Codex tally** is built from each commander's own journals the first time they log in; the panel says so
   while it reads (the section title shows "rebuilding..." even when folded) and the summary fills in when it finishes (a
   minute or two for years of journals). If it was
-  interrupted, log in again or press **Backfill Journals** in the **MY CODEX** window.
+  interrupted, log in again or press **Backfill Journals** in the **My Codex** window.
 - The Powerplay Sessions window's **History** tab shows the commander you are playing. The other commanders' sessions are still saved.
 
 ### EDMC shows "Frontier CAPI query failure" for a commander with no fleet carrier
@@ -147,7 +147,7 @@ See [Ship planner](operations.md#engineering-blueprints-and-a-wishlist).
 - **"Spansh does not know a system called ..."**: check the spelling of the destination (or the source, if you typed one). The route is for systems Spansh has on file.
 - **"Could not reach Spansh"**: check your connection; nothing was plotted. A long route can take a minute or two, and **Cancel** stops waiting.
 - **The route is longer than you expected, or you run short of fuel**: Spansh plans from a **full tank** with the ship as the journal describes it. If you changed modules or took on cargo after plotting, plot again. Try another **Algorithm** or **Refuel every scoopable**.
-- **Nothing is copied to the clipboard**: tick **Copy the next system to the clipboard automatically** (Exploration panel, under **PLOT**), or press **Copy next system** in the plotter.
+- **Nothing is copied to the clipboard**: tick **Copy the next system to the clipboard automatically** (Exploration panel, under **Plot**), or press **Copy next system** in the plotter.
 - **The Route overlay does not show the route**: the overlay itself must be switched on (Settings → WFMT → Overlays → Route); a route plotted in the Route Planner takes over its card once it is on. When you reach the last system the card says the route has ended and closes after ten seconds.
 
 ### Back up my data made no zip, or a restore did nothing
@@ -258,7 +258,7 @@ See also [Exobiology](exobiology.md#what-the-game-does-and-doesnt-tell-us-and-ho
 
 ### The Expedition Log shows nothing, or its numbers look low
 
-You start, pause and stop expeditions in the Expedition window (the **EXPEDITION** button in the **Expedition** section of the Exploration panel, which starts folded each time EDMC starts: click its title (▸) to open it). The section only shows what is running. The archive of your expeditions is the **Log** tab of that window.
+You start, pause and stop expeditions in the Expedition window (the **Expedition** button in the **Expedition** section of the Exploration panel, which starts folded each time EDMC starts: click its title (▸) to open it). The section only shows what is running. The archive of your expeditions is the **Log** tab of that window.
 
 With the card switched on and no expedition running, the card says so (`No expedition is running`) and how to start one.
 

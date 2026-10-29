@@ -70,44 +70,44 @@ Short step lists for the things players ask for most. Each links to the section 
 
 **Use the Codex Completionist** ([details](#codex-completionist))
 
-1. Open the **Codex Completionist** section and press **MY CODEX**.
+1. Open the **Codex Completionist** section and press **My Codex**.
 2. On the **Overview** tab read **Closest to complete** to see which types are quickest to finish.
 3. On the **Not found** tab read **Where to look** to choose a planet.
 4. Press **Backfill Journals** once to bring in older finds.
 
 **Use the Route Planner** ([details](#route-planner))
 
-1. Press **PLOT** in the Route Planner section.
+1. Press **Plot** in the Route Planner section.
 2. Type the destination and press **Generate route**.
 3. Open the galaxy map and paste the system that is on your clipboard. Repeat after every jump.
 
 **Use the surface compass** ([details](#compass))
 
 1. Land (or get out of your ship) on a planet.
-2. Type a name in the Compass box and press **MARK** to save the spot.
-3. Press **TARGET** until it says `Now aiming at ...` and your mark.
+2. Type a name in the Compass box and press **Mark** to save the spot.
+3. Press **Target** until it says `Now aiming at ...` and your mark.
 4. Tick **Enable Surface Compass** under **Settings → WFMT → Overlays → Surface Compass** to see the arrow on your screen.
 
 **Use the Dashboard** ([details](#exploration-dashboard))
 
-1. Press **DASHBOARD** in the Dashboard section.
+1. Press **Dashboard** in the Dashboard section.
 2. Read the tab that opens (**Orbit** in space, **Surface** when landed), or pick **Overview** or **Exploration**.
 3. Click a heading on the **Orbit** tab to sort the bodies, and click a row for that body in full.
 
 **Write a note** ([details](#notes))
 
-1. Open the **Notes** section, type a line in the box and press **ADD NOTE**.
-2. Press **NOTES** to search, change or delete notes.
+1. Open the **Notes** section, type a line in the box and press **Add Note**.
+2. Press **Notes** to search, change or delete notes.
 
 **Find somewhere to land** ([details](#nearest-place-to-land))
 
-1. Press **FIND** in the Nearest place to land section.
+1. Press **Find** in the Nearest place to land section.
 2. Tick what you need, tick **Allow this lookup**, and press **Find**.
 3. Double-click a row to copy its system name.
 
 **Find a point of interest** ([details](#poi-reference))
 
-1. Press **FIND POI** in the POI Reference section.
+1. Press **Find POI** in the POI Reference section.
 2. Paste the system name that is now on your clipboard into the galaxy map.
 
 ## Auto-Honk
@@ -481,7 +481,7 @@ More detail: [Boxel Survey specification](../BOXEL_SURVEY_TECH_SPEC.md).
 
 ## Exploration Value
 
-A quiet readout of what you're finding, in the **Dashboard** section of the Exploration panel (click its title to unfold it; the **DASHBOARD** button and a one-line summary of the system sit at the top of that section). Nothing to turn on. The lines read:
+A quiet readout of what you're finding, in the **Dashboard** section of the Exploration panel (click its title to unfold it; the **Dashboard** button and a one-line summary of the system sit at the top of that section). Nothing to turn on. The lines read:
 
 | Line | What it says |
 |---|---|
@@ -506,7 +506,7 @@ Helps you find and identify exobiology life on a planet's surface: which species
 Sample and Analyse progress, and when you have walked far enough for the next sample. It also has four overlay cards for the body you are on (bio status,
 predicted species, a sample radar and a popup after each sample), leads you back to plants you identified, and shows the first footfall bonus.
 
-The section starts folded (click its title to open it) and has two text readouts, `Predicted species` and `Active scan`, and a **REVIEW** button for the prediction review window. All of it is in its own guide: **[Exobiology](exobiology.md)**. You can switch the panel's section off under **Settings → WFMT → Exploration → Organic Scanning**
+The section starts folded (click its title to open it) and has two text readouts, `Predicted species` and `Active scan`, and a **Review** button for the prediction review window. All of it is in its own guide: **[Exobiology](exobiology.md)**. You can switch the panel's section off under **Settings → WFMT → Exploration → Organic Scanning**
 (**Show predicted species and scan progress**); it uses only your own journal and makes no internet connection.
 
 ## Codex Completionist
@@ -517,7 +517,7 @@ A running tally of the Codex entries your game has reported, such as biological,
 Thargoid finds. It is built from the `CodexEntry` events in your journal.
 
 - The section shows one summary line, for example `120 distinct entries, 340 total finds`, followed by your three biggest categories.
-- It has one button: **MY CODEX**, which opens the [My Codex window](#the-my-codex-window).
+- It has one button: **My Codex**, which opens the [My Codex window](#the-my-codex-window).
 - It is on by default. Switch it off with *Track codex entries* in **Settings → WFMT → Exploration → POI Reference**, where there is also a *View Canonn Codex* link.
 
 **Each commander has their own tally.** Switching commander switches the tally (the window's subtitle names whose it is), and one commander's finds never appear in another's.
@@ -533,7 +533,7 @@ that starting point, so use **Backfill Journals** once to bring in older history
 
 ### The My Codex window
 
-Press **MY CODEX**. The subtitle reads, for example, `120 distinct entries — 340 total finds — 95 of 1,070
+Press **My Codex**. The subtitle reads, for example, `120 distinct entries — 340 total finds — 95 of 1,070
 catalogued entries found (9%)`, and there are three tabs:
 
 - **Overview**: how far along you are. The first row is every catalogued entry; **Closest to complete** lists the
@@ -574,7 +574,7 @@ the saved copy if there is one.
 
 **Example: choosing what to hunt for.** You have found 95 of 1,070 catalogued entries and want the quickest category to finish.
 
-1. Press **MY CODEX** and stay on the **Overview** tab.
+1. Press **My Codex** and stay on the **Overview** tab.
 2. Under **Closest to complete**, read the first row. Types are listed with the fewest entries left first, and the columns show **Found**, **Of**, **Left** and **Done**.
 3. Switch to the **Not found** tab and look for entries of that type. Click the **Where to look** heading to sort if you like.
 4. Read the hint for an entry such as `Bacterium Aurasus - Teal`. It gives the body type, atmosphere, gravity and temperature the species needs, and what decides the color (`Teal: orbiting a class M star`). Use it to choose a planet; it says where the entry can appear, not where one is.
@@ -588,9 +588,9 @@ Codex Completionist has no specification page of its own. The code is `codex_com
 
 *(Starts minimized.)*
 
-One section for finding somewhere worth visiting near you, from two catalogs. Click **FIND POI** and WFMT looks in both at
+One section for finding somewhere worth visiting near you, from two catalogs. Click **Find POI** and WFMT looks in both at
 once, shows the nearest result from each on its own line, and copies the system name of the **nearer** of the two to
-your clipboard so you can paste it into the galaxy map. It only looks something up when you ask. **UPDATE POI** downloads
+your clipboard so you can paste it into the galaxy map. It only looks something up when you ask. **Update POI** downloads
 Canonn's lists again and then searches.
 
 It needs to know where you are, so jump (or log in) first. If EDMC started after you were already in the game, it reads
@@ -602,15 +602,15 @@ your position from the current journal.
 - **the system to look for in the galaxy map**,
 - how far away it is, its region and rating,
 - a link to its page (the system's Inara search when edastro gives none),
-- a **COPY SYSTEM** button for the system name, which is useful when the Canonn result was the nearer one.
+- a **Copy System** button for the system name, which is useful when the Canonn result was the nearer one.
 
-**The first FIND POI of a session downloads edastro's whole list** (about 2 MB, 650 points of interest) and works out the nearest one itself. Later presses use that list for six hours without another download.
+**The first Find POI of a session downloads edastro's whole list** (about 2 MB, 650 points of interest) and works out the nearest one itself. Later presses use that list for six hours without another download.
 
 **Canonn.** The nearest of Canonn's Thargoid and Guardian sites.
 
 - The first click downloads the lists, which are then kept for the rest of your session.
-- A **COPY SYSTEM** button under the result puts that result's system name on your clipboard (FIND POI copies only the nearer of
-  the two sources, so use COPY SYSTEM when you want Canonn's).
+- A **Copy System** button under the result puts that result's system name on your clipboard (Find POI copies only the nearer of
+  the two sources, so use Copy System when you want Canonn's).
 - A **View site details** link beside it opens that site's page in your browser. Canonn's list gives no page for some
   sites; for those the link opens the system's Inara search instead.
 - Choose which kinds of site to include in **Settings → WFMT → Exploration → POI Reference**.
@@ -619,11 +619,11 @@ your position from the current journal.
 
 **Example: finding a Guardian site.**
 
-1. Jump or log in so WFMT knows your position, then open the **POI Reference** section and press **FIND POI**.
+1. Jump or log in so WFMT knows your position, then open the **POI Reference** section and press **Find POI**.
 2. Two result lines appear, one for **GEC (edastro.com)** and one for **Canonn**, each with its nearest result. The name of the nearer system is already on your clipboard.
-3. Paste it into the galaxy map and plot the jump. If you wanted the other source's result instead, press that line's **COPY SYSTEM** button.
+3. Paste it into the galaxy map and plot the jump. If you wanted the other source's result instead, press that line's **Copy System** button.
 4. Press **View site details** on the Canonn line to read about the site in your browser.
-5. Press **UPDATE POI** if you want Canonn's lists downloaded again before searching.
+5. Press **Update POI** if you want Canonn's lists downloaded again before searching.
 
 ## Notes
 
@@ -636,9 +636,9 @@ the same install does not see them). Nothing is sent anywhere.
 The section shows the newest note for the system you are in, so a note you wrote on an earlier visit is in front of
 you when you arrive. With the section folded, the title says how many the system has, such as `- 2 here`.
 
-- **Quick note:** type a line in the box and press **ADD NOTE** (or Enter). It is saved against the system you are in, and the body too
+- **Quick note:** type a line in the box and press **Add Note** (or Enter). It is saved against the system you are in, and the body too
   when you are near one (the game's `Status.json` names it).
-- **NOTES** opens the Notes window: a **Search** box (every word you type must appear in the system, body or note), a list of every
+- **Notes** opens the Notes window: a **Search** box (every word you type must appear in the system, body or note), a list of every
   note, newest change first, and an editor underneath. The list's columns are **System**, **Body**, **Note** (the start of it) and **Changed (UTC)**. Select a note to change it, press **New note** (in the header) to write another. **Here**
   beside the System and Body boxes fills in where you are now (the System box also suggests names as you type). Press **Save** to keep what is in the editor. Tick **Only the system I am in** to see just this system's notes.
 - **Delete** asks you to press it a second time, because a note cannot be got back.
@@ -647,10 +647,10 @@ you when you arrive. With the section folded, the title says how many the system
 
 **Example: leave yourself a reminder.** You find an Earth-like world with a moon and want to come back.
 
-1. Open the **Notes** section, type `ELW with a moon, scan the other side` in the box and press **ADD NOTE** (or Enter). The note is saved against the system you are in, and the body too when the game names one near you.
+1. Open the **Notes** section, type `ELW with a moon, scan the other side` in the box and press **Add Note** (or Enter). The note is saved against the system you are in, and the body too when the game names one near you.
 2. Fold the section. Its title now reads `- 1 here`.
-3. Later, when you arrive in that system, the section shows the note again. To change it, press **NOTES**, select it in the list, edit it and press **Save**.
-4. To find it from anywhere, press **NOTES** and type a word from the system, body or note into **Search**.
+3. Later, when you arrive in that system, the section shows the note again. To change it, press **Notes**, select it in the list, edit it and press **Save**.
+4. To find it from anywhere, press **Notes** and type a word from the system, body or note into **Search**.
 
 Notes are matched to a system by its name (ignoring capitals and spaces at the ends), so a note about `Sol` shows when you are in Sol.
 
@@ -661,7 +661,7 @@ off as you arrive and keeps the totals; you can keep several expeditions and run
 
 ### Starting and managing an expedition
 
-**Everything is done in the Expedition window.** Press **EXPEDITION** in the panel's Expedition section to open it. The panel only shows what is running (and has **COPY NEXT** and **Copy on arrival**); it has no Start, Pause or Stop.
+**Everything is done in the Expedition window.** Press **Expedition** in the panel's Expedition section to open it. The panel only shows what is running (and has **Copy Next** and **Copy on arrival**); it has no Start, Pause or Stop.
 
 There are two ways to start, and you pick one by the tab you are on:
 
@@ -680,7 +680,7 @@ Whichever you use, the same buttons manage it afterwards, on either tab:
 
 **Example 1: plan a trip from Sol to Colonia.**
 
-1. Press **EXPEDITION**. On the **Plan** tab type `Colonia run` in the **Name** box and press **New**.
+1. Press **Expedition**. On the **Plan** tab type `Colonia run` in the **Name** box and press **New**.
 2. Type `Sol` in **System** and press **Add stop**. Type `Colonia` and press **Add stop** again. (**Here** fills in the system you are in.)
 3. Press **Start**. The status line says it started and that it is logging in the Expedition Log.
 4. Play. Each time you arrive in Sol or Colonia the stop is ticked off, and every jump adds to the totals. The panel shows `1 of 2 stops` and the next stop; while the section is folded its title shows `- 1/2` instead.
@@ -688,14 +688,14 @@ Whichever you use, the same buttons manage it afterwards, on either tab:
 
 **Example 2: record a trip with no plan.** You are leaving the Bubble to explore and have no route yet.
 
-1. Open **EXPEDITION** and switch to the **Log** tab.
+1. Open **Expedition** and switch to the **Log** tab.
 2. Type a name such as `Bubble to the Rim` in **New expedition name** (or leave it empty) and press **Start**.
 3. Explore. The Log counts systems, jumps, light-years, bodies, mapping, species and credits from your journal. The panel and the overlay card show the running totals.
 4. Press **Stop** when you finish.
 
 **Example 3: you are already out there.** You have been exploring for two days and have not sold anything since leaving.
 
-1. Open **EXPEDITION** and switch to the **Log** tab.
+1. Open **Expedition** and switch to the **Log** tab.
 2. Press **Start from my last** and **sale**. It begins just after your last sale, so everything you are still holding counts.
 3. To count only the exobiology you have gathered, press **Exobiology Data sale** instead (or **Discovery Data sale** for exploration data alone).
 4. It then carries on counting live. Press **Stop** when you sell up and finish.
@@ -710,9 +710,9 @@ Whichever you use, the same buttons manage it afterwards, on either tab:
 
 Buttons:
 
-- **COPY NEXT** puts the next stop's system name on the clipboard to paste into the galaxy map.
+- **Copy Next** puts the next stop's system name on the clipboard to paste into the galaxy map.
 - **Copy on arrival** does it for you every time you arrive anywhere. It is off until ticked. The same switch is in Settings → WFMT → Exploration → Expedition.
-- **EXPEDITION** opens the window.
+- **Expedition** opens the window.
 
 **One window, three tabs.** The Expedition window has a tab for each part of a trip:
 
@@ -722,7 +722,7 @@ Buttons:
 
 How the tabs work together:
 
-- **EXPEDITION** and **PLOT** on the panel each open this same window (on the Plan and Route tabs).
+- **Expedition** and **Plot** on the panel each open this same window (on the Plan and Route tabs).
 - The tabs switch from one to the next.
 - **Neutron route** and **Review expedition** switch to the tab they need, so a trip is planned, plotted and recorded in one place.
 - **Start expedition** is pressed on the Route tab, so it stays there. The status line says what happened, and **Review expedition** takes you to the Plan tab.
@@ -744,7 +744,7 @@ Once you have honked, it also knows how many bodies the system has, so a stop re
 
 ### The Expedition window
 
-**EXPEDITION** on the panel opens it on the **Plan** tab. From top to bottom:
+**Expedition** on the panel opens it on the **Plan** tab. From top to bottom:
 
 - **The header** has **Start**, **Pause** and **Stop** for the expedition picked below, and a Help button. The subtitle names the commander and how many expeditions they have (up to 30).
 - **The picker** is a list of your expeditions, each written as `Name (status, 3 of 20)`. The status is *planned*, *active*, *paused* or *done*. **Name** and **New**, **Rename**, **Reset** and **Delete** are beside it.
@@ -840,7 +840,7 @@ visit; the log records what **happened** on a trip, whether or not you planned a
 - Starting a different run here (**Start**) stops the expedition that was linked to the run it replaces.
 - Deleting a run from the log leaves the expedition as it is, without a run.
 
-**Starting an expedition you are already on.** In the LOG window, the **Start from my last** row has three buttons. Each begins an expedition one second after a sale in your journals:
+**Starting an expedition you are already on.** In the Log window, the **Start from my last** row has three buttons. Each begins an expedition one second after a sale in your journals:
 
 - **sale** is the earlier of your last Discovery Data sale and your last Exobiology Data sale, so it covers everything you are still holding. If you have only ever sold one kind, it is that one.
 - **Discovery Data sale** is your last exploration sale alone.
@@ -851,14 +851,14 @@ visit; the log records what **happened** on a trip, whether or not you planned a
 - It then carries on counting live.
 - It is how to pick up a trip that was under way before you used the log.
 
-**The row.** The Log has no section of its own: its figures are in the Exploration panel's **Expedition** section ([above](#expedition)). That section only shows what is running: you start, pause and stop expeditions in the Expedition window (the **EXPEDITION** button).
+**The row.** The Log has no section of its own: its figures are in the Exploration panel's **Expedition** section ([above](#expedition)). That section only shows what is running: you start, pause and stop expeditions in the Expedition window (the **Expedition** button).
 
 - While an expedition is running the section shows the expedition's own lines (its name, stops, jumps, light-years and time, the next stop). Under them it shows what the Log adds: the systems, bodies and species, what you have earned and the unsold data (`paused` in front while it is held).
 - A Log run that was started with **Start** and has no planned expedition behind it is shown in the Log's own words: its name and how long, systems, jumps and light-years, bodies and species, earned and unsold.
 - The section's title says whether a run is going (`- running` or `- paused`) even while it is folded; the open section has the name and figures.
 - **Start** (in the Expedition window) begins a new expedition now, from the system you are in and in the ship you are flying, and stops the one that was running.
 - **Pause** becomes **Resume** while paused. **Stop** ends it.
-- The archive is the **Log** tab of the Expedition window (**EXPEDITION**, then the Log tab).
+- The archive is the **Log** tab of the Expedition window (**Expedition**, then the Log tab).
 
 **What it counts**, from your journal, while an expedition runs:
 
@@ -874,7 +874,7 @@ Earned figures are what the game reports when you sell, so they count when you s
 - The estimates follow the community formula: the base value of the body from its class and mass, the first-discovery multiplier, the mapping multipliers (for a first map, a first map of an already discovered body, and an already mapped body), the efficiency bonus when your probe run met the target, and the Odyssey bonus.
 - Expect them to be close, not exact.
 
-**The LOG window** is the archive (the **Log** tab of the Expedition window). Up to 200 expeditions are kept.
+**The Log window** is the archive (the **Log** tab of the Expedition window). Up to 200 expeditions are kept.
 
 - **The header** has **Start**, **Pause** and **Stop**. They are the only place on the Exploration side to manage an expedition: the panel's Expedition section has no such buttons.
 - **The starter row** has the **New expedition name** box (optional; **Start** begins it now, from where you are) and the **Start from my last** row (**sale**, **Discovery Data sale** and **Exobiology Data sale**).
@@ -915,7 +915,7 @@ Everything is kept for your commander only (another commander has their own arch
 
 - **Pause** holds an expedition. Nothing is counted while it is paused, and its clock stops (the time paused is not part of the expedition's time). The row and the card keep showing it. It stays paused across an EDMC restart.
 - **Resume** carries on counting, and the clock starts again.
-- **Stop** ends the expedition, whether it was running or paused, and the card resets. A stopped expedition can still be resumed from the LOG window, and its clock picks up from the time it stopped at (the time stopped is not part of the expedition's time).
+- **Stop** ends the expedition, whether it was running or paused, and the card resets. A stopped expedition can still be resumed from the Log window, and its clock picks up from the time it stopped at (the time stopped is not part of the expedition's time).
 - **Rescan** works an expedition out from the journals between its start and its end. What happened while it was paused, or stopped between a stop and its restart, is left out, because nothing was counted then.
 
 **What it cannot tell you:**
@@ -1043,7 +1043,7 @@ The Exobiology cards (bio status, predicted species, the sample radar and the sa
 
 The overlays draw over the game. The **Exploration Dashboard** is for the times you would rather read than have your screen cluttered.
 
-The **DASHBOARD** button in the Dashboard section of the Exploration panel (which also holds the [Exploration Value](#exploration-value) lines, and a one-line summary of the system beside the button: its name, how many bodies are worth mapping and how many have life still to do) opens a window with everything WFMT knows about:
+The **Dashboard** button in the Dashboard section of the Exploration panel (which also holds the [Exploration Value](#exploration-value) lines, and a one-line summary of the system beside the button: its name, how many bodies are worth mapping and how many have life still to do) opens a window with everything WFMT knows about:
 
 - the system you are in,
 - the body under you,
@@ -1078,7 +1078,7 @@ are on **Orbit** or **Surface**: if you picked **Overview** or **Exploration** y
 
 **Example: a landing.** You drop to a planet's surface.
 
-1. Press **DASHBOARD**. The window opens on the tab that suits where you are.
+1. Press **Dashboard**. The window opens on the tab that suits where you are.
 2. When you land it switches to **Surface** by itself. There you see the body's conditions and materials, each genus with what it could be and its pay, and progress such as `Collecting: 1/3`.
 3. It also shows how far you are from your last sample and how far you must be for the next one.
 4. When you lift off it switches back to **Orbit**, where you can click the **Scan value** heading to sort the system's bodies by value and click a row to see that body in full.
@@ -1101,7 +1101,7 @@ exactly). Spansh's finds appear only when you have switched that lookup on. The 
 
 ## Route Planner
 
-The **PLOT** button in the Route Planner section of the Exploration panel (click its title to unfold it) (and **Route Planner** in the Dashboard's header) opens a window that plots a route with
+The **Plot** button in the Route Planner section of the Exploration panel (click its title to unfold it) (and **Route Planner** in the Dashboard's header) opens a window that plots a route with
 [Spansh](https://spansh.co.uk/)'s **exact plotter** for **your ship**. You type where you are going; nothing about the ship.
 
 **When to use it.**
@@ -1151,7 +1151,7 @@ The **PLOT** button in the Route Planner section of the Exploration panel (click
 
 **Example: a long trip to Colonia.** You are flying a ship with a Guardian FSD booster.
 
-1. Press **PLOT** (the window shows your ship, drive and booster as read from the journal).
+1. Press **Plot** (the window shows your ship, drive and booster as read from the journal).
 2. Leave the source as the system you are in, type `Colonia` as the destination and press **Generate route**. Leave **Use supercharge** on. Tick **Use FSD injections** only if you carry the materials and want them used.
 3. Wait for the bar and timer. A long route can take a minute or two.
 4. The table lists every jump with **Distance (ly)**, **Left (ly)**, **Fuel (t)** and **At this system** (supercharge at a neutron star, refuel, use an injection).
@@ -1192,7 +1192,7 @@ Spansh counts a supercharge at any system with a neutron star, even when that st
 - **On the Route overlay.** A plotted route also shows on the [Route overlay](always-on.md#route-overlay), in place of the game's plotted route, until you have made every jump. Each system's star is in a color, and a message shows when the route ends.
   - The overlay's own switch under Settings → WFMT → Overlays → Route still decides whether it is drawn.
   - Its option to mark systems EDSM does not know applies to the neutron route too.
-- **Clearing the route.** **Clear route** in the window, or **CLEAR ROUTE** in the Route Planner section of the Exploration panel (always there), clears everything the Route overlay is following.
+- **Clearing the route.** **Clear route** in the window, or **Clear Route** in the Route Planner section of the Exploration panel (always there), clears everything the Route overlay is following.
   - That is the route plotted here (the panel line, the window's table) and the route it was following from the game, so the card closes.
   - The game's own route is not touched in the game. The overlay follows it again after the next route you plot in the galaxy map, or after a restart.
   - Plotting a new route replaces the old one without clearing.
@@ -1262,11 +1262,11 @@ These come from `CarrierLocation` and `CarrierStats`, which the game writes at l
 
 For deep space and emergencies: the nearest station that can take your ship and has what you need, and the nearest fleet carriers that let anyone dock.
 
-The panel section has a line saying where you are and which pad your ship needs (`From Sol; your ship needs a large pad.`, or `Needs your position: it comes from your next jump, or from the journal when you log in.`) and a **FIND** button that opens the window.
+The panel section has a line saying where you are and which pad your ship needs (`From Sol; your ship needs a large pad.`, or `Needs your position: it comes from your next jump, or from the journal when you log in.`) and a **Find** button that opens the window.
 
 **To use it:**
 
-1. Press **FIND**. The window opens with **From** showing your system and coordinates.
+1. Press **Find**. The window opens with **From** showing your system and coordinates.
 2. Under **I need**, tick what the place must offer: **Refuel**, **Repair**, **Rearm (restock)** and **Outfitting**. Refuel and Repair are ticked at first. Only stations that offer *all* the ticked services are listed.
 3. Choose the **Landing pad**: **My ship's pad** (the default), **Any size**, **Medium or larger** or **Large only**. With **My ship's pad** WFMT uses your ship's size from your last loadout (a Python is never sent to an outpost with only small pads); a small ship has no restriction, since it fits everywhere.
 4. Leave **Include fleet carriers open to all, updated within** ticked to list carriers too, and choose how fresh a carrier's record must be: **7 days**, **14 days** (the default), **30 days** or **90 days**. Untick it to leave carriers out; the carrier table then says `Fleet carriers were not asked for`.
@@ -1275,7 +1275,7 @@ The panel section has a line saying where you are and which pad your ship needs 
 
 **Example: low on fuel in deep space.**
 
-1. Press **FIND**. **From** shows your system and coordinates.
+1. Press **Find**. **From** shows your system and coordinates.
 2. Leave **Refuel** and **Repair** ticked, and leave **Landing pad** on **My ship's pad** so a large ship is not sent to a small outpost.
 3. Tick **Allow this lookup**, then press **Find**.
 4. Read the **Stations** table for the nearest place with a suitable pad (the **Pads** and **Has** columns say what it offers), and the carrier table for carriers open to all. Check a carrier's **Last reported** age before relying on it.
@@ -1313,19 +1313,19 @@ What it can point at:
 
 **The panel section** shows a line saying what it is aiming at and how far (`↗ Ship - 340m NE`; the arrow is left out until the game has given your heading), a box and three buttons:
 
-- **MARK** saves where you are now as a mark, named with what you typed in the box (or `Mark 1`, `Mark 2` ... if it is empty), then clears the box. The body
+- **Mark** saves where you are now as a mark, named with what you typed in the box (or `Mark 1`, `Mark 2` ... if it is empty), then clears the box. The body
   comes from the game's `Status.json`. Without a surface position it says `No surface position yet: land, or get out, first.`
-- **TARGET** steps through what to aim at: the nearest hotspot, then each mark on this body, then nothing, then round again. It says `Now aiming at ...`.
-- **MARKS** opens the Marks window.
+- **Target** steps through what to aim at: the nearest hotspot, then each mark on this body, then nothing, then round again. It says `Now aiming at ...`.
+- **Marks** opens the Marks window.
 
 When the target is a mark on another body than the one you are on, the line says so (`Mark Ship is on <body>, not here.`) instead of pointing.
 
 **Example: finding your way back to a spot.** You land by a crashed ship and want to return to it after exploring.
 
-1. Standing at the spot, type `Wreck` in the Compass box and press **MARK**. The box clears and the mark is saved with the body and your latitude and longitude.
-2. Go exploring. Press **TARGET** until the line reads `Now aiming at ...` with `Wreck`.
+1. Standing at the spot, type `Wreck` in the Compass box and press **Mark**. The box clears and the mark is saved with the body and your latitude and longitude.
+2. Go exploring. Press **Target** until the line reads `Now aiming at ...` with `Wreck`.
 3. The line shows the distance and direction, for example `↗ Wreck - 340m NE`. With **Enable Surface Compass** ticked, the arrow on your screen turns as you turn, and straight up means straight ahead.
-4. To check or edit the mark, press **MARKS**, select it and use **Save** or **Delete**. In that window, **Nearest hotspot** and **Nothing** change what the compass points at.
+4. To check or edit the mark, press **Marks**, select it and use **Save** or **Delete**. In that window, **Nearest hotspot** and **Nothing** change what the compass points at.
 
 **The Marks window.** Its table lists every mark with the columns **Name**, **Body**, **Latitude**, **Longitude** and **From here** (the distance from you now, when the mark is on your body). Under the heading **The compass points at:** (with what it is now aiming at) are three buttons: **Nearest hotspot**, **Selected mark** and **Nothing**. Below the table is the editor:
 
@@ -1377,6 +1377,6 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 | Bodies-scanned count to be right after a restart | The honk (`FSSDiscoveryScan`) gives the body count and each scan counts one. If EDMC started after the honk, WFMT replays the current journal file for them. | If it still says to honk, honk again. A system's scans made in another journal file are not included. |
 | The sale line to include sales before the current journal file | It is read from the current journal file when EDMC starts, then kept up to date live. | It resets to "none yet" when you restart EDMC after a new game session. |
 | Codex Completionist to cover everything | Canonn's catalog has no geological or anomaly entries, so those never appear under **Not found**. The tally is per commander. | Use the game's Codex for those. Press **Refresh Catalog** if the saved copy is old. |
-| POI lists to be current | They are snapshots from Canonn and edastro, and are fetched only when you ask. | Press **FIND POI** or **UPDATE POI** to refresh. |
+| POI lists to be current | They are snapshots from Canonn and edastro, and are fetched only when you ask. | Press **Find POI** or **Update POI** to refresh. |
 | edastro's own "nearest" lookup to work | It does not use your position: a check on 2026-10-10 got "The Solar System" for every coordinate and name tried. WFMT downloads the full list and finds the nearest itself. | None needed. If FIND says the lookup failed, edastro's list could not be downloaded; try again later. |
 

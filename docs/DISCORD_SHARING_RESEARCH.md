@@ -34,8 +34,8 @@ When this research began, all of this was copy to the clipboard and nothing was 
 
 | Report | What exists | Where |
 |---|---|---|
-| BGS report | **REPORT**, then **Copy Summary**: every tick and system as plain text, starting `WFMT BGS Report`. Written so it can be posted "without any Discord-specific formatting" | `plugin/bgs_format.py` (`summary_text`) |
-| Powerplay progress | **Copy Progress** in **REPORT**: one line per system visited this session, in a format you edit (placeholders `{system}`, `{system_url}`, `{merits}`, `{cp}`, `{state}`) | [Powerplay guide](guide/powerplay.md#share-your-progress) |
+| BGS report | **Report**, then **Copy Summary**: every tick and system as plain text, starting `WFMT BGS Report`. Written so it can be posted "without any Discord-specific formatting" | `plugin/bgs_format.py` (`summary_text`) |
+| Powerplay progress | **Copy Progress** in **Report**: one line per system visited this session, in a format you edit (placeholders `{system}`, `{system_url}`, `{merits}`, `{cp}`, `{state}`) | [Powerplay guide](guide/powerplay.md#share-your-progress) |
 | Exploration and exobiology sales | The Expedition Log keeps each expedition's totals, including credits earned from exploration data sales and exobiology sales, and the Log window can copy what an expedition recorded | `plugin/expedition_log.py` (`facts_lines`), `plugin/expedition_log_window.py` |
 | Carrier movement | Read from the journal for the **Carrier jump countdown** on the Flight Alerts card: the request (destination system, body and departure time), a cancellation, and the completed jump | `plugin/carrier_jump_timer.py` |
 | Expedition announcements | The Expedition planner knows the name, the stops, the next stop and each stop reached. It can copy the stop list and the next stop's name, but has no announcement text | `plugin/expedition.py`, [Expedition guide](guide/exploration.md#expedition) |

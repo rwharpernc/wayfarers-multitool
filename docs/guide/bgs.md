@@ -27,28 +27,28 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 1. Jump into the system (or log in there). The game only gives WFMT the faction list at that moment.
 2. Press **BGS** in the mode bar.
 3. Read one line per faction: state and influence, controller first. See [The panel](#the-panel).
-4. To see the pending, recovering and active states, press **REPORT** and open the system's tab. See [The BGS Report window](#the-bgs-report-window).
+4. To see the pending, recovering and active states, press **Report** and open the system's tab. See [The BGS Report window](#the-bgs-report-window).
 
 **See what your activity did for a faction**
 
 1. Do the work in the system (missions, bounties, trade, exploration data, and so on). See [What it counts](#what-it-counts).
 2. Open the BGS page and look for the `↳` line under the faction.
-3. For the full breakdown, press **REPORT** and read the **WHAT YOU DID** table on the system's tab.
+3. For the full breakdown, press **Report** and read the **WHAT YOU DID** table on the system's tab.
 
 **Read the ledger for an earlier tick**
 
-1. Press **REPORT** on the BGS page.
+1. Press **Report** on the BGS page.
 2. Open the **TICK** drop-down and pick the period (`<start> → <end>`). The archive keeps 7 days by default. See [Resets and history](#resets-and-history).
 3. Pick a system tab. If it is not there, type its name in **SHOW A SYSTEM** and press **Add system**. See [Which systems get a tab?](#which-systems-get-a-tab).
 
 **Copy the whole ledger to share**
 
-1. Press **REPORT**, then **Copy Summary**.
+1. Press **Report**, then **Copy Summary**.
 2. Paste it into a note or chat. It holds every tick and system, whatever tabs are shown. It is plain text with no Discord marks, so it reads cleanly anywhere.
 
 **Share the tick to Discord**
 
-1. Press **REPORT** and pick the tick in the **TICK** drop-down.
+1. Press **Report** and pick the tick in the **TICK** drop-down.
 2. Open the **Discord** menu in the window's header. **Copy for Discord** puts the tick on the clipboard with Discord's formatting to paste yourself, and **Post to Discord** sends it to the webhook you saved.
 3. Post the same tick again later and WFMT edits the earlier post instead of adding another. **Customize post…** in the same menu changes how the post looks (presets, which parts appear, saved templates).
 4. A new Discord webhook takes a minute to set up: the full walk-through, with examples, is in [Sharing reports to Discord](discord.md).
@@ -76,7 +76,7 @@ In one tick you complete two missions for Example Union (`+2/-0` and `+1/-0`), s
 
 ## The panel
 
-Press **BGS** in the mode bar to open the page. It has the system block, a small gray tick line and a **REPORT** button.
+Press **BGS** in the mode bar to open the page. It has the system block, a small gray tick line and a **Report** button.
 
 The system block shows **only the system you're in**:
 
@@ -115,7 +115,7 @@ Only play from the start of the current tick counts; the totals reset at each ti
 
 ## The BGS Report window
 
-Click **REPORT** (view BGS report) on the BGS page.
+Click **Report** (view BGS report) on the BGS page.
 
 - The **TICK** drop-down at the top picks the period: `Current tick — since <time>`, or an earlier one from the archive (`<start> → <end>`). The subtitle reads `N tab(s) — last 6 systems plus N pinned`.
 - There is **one tab per system** (see below). The tabs wrap onto more than one row when there are many.

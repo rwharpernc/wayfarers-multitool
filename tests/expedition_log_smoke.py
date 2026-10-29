@@ -150,11 +150,11 @@ check(OV.build_card(OV.sample_run()), "the sample card builds")
 
 # --- PAUSE keeps the card, STOP resets it ----------------------------------------------------------------------------------------------
 pause_button, stop_button = PA.controller._buttons["pause"], PA.controller._buttons["stop"]
-check(pause_button.cget("text") == "PAUSE" and str(pause_button.cget("state")) == "normal", "PAUSE is offered while an expedition runs")
+check(pause_button.cget("text") == "Pause" and str(pause_button.cget("state")) == "normal", "Pause is offered while an expedition runs")
 PA.controller.toggle_pause()
 pump()
 check(run.status == "paused" and PA.book.active() is run and PA.book.running() is None, "PAUSE holds it: still the active expedition, no longer counting")
-check(pause_button.cget("text") == "RESUME", "the button now offers RESUME")
+check(pause_button.cget("text") == "Resume", "the button now offers Resume")
 check("(paused)" in PA.summary_text(PA.book) and PA.title_suffix(PA.book) == " - paused", "the row says it is paused")
 check(OV._shown_run() is run, "the overlay card keeps showing a paused expedition")
 check(OV.build_card(run, stamp0 + 7_500).badge.startswith("paused"), f"its badge says paused: {OV.build_card(run, stamp0 + 7_500).badge}")
@@ -163,7 +163,7 @@ ev({"event": "FSDJump", "StarSystem": "Gamma", "SystemAddress": 4, "JumpDist": 5
 check(run.totals.jumps == jumps_before, "nothing is counted while it is paused")
 PA.controller.toggle_pause()
 pump()
-check(run.status == "running" and pause_button.cget("text") == "PAUSE", "RESUME carries on counting")
+check(run.status == "running" and pause_button.cget("text") == "Pause", "Resume carries on counting")
 PA.controller.toggle_pause()
 pump()
 PA.controller.stop_expedition()

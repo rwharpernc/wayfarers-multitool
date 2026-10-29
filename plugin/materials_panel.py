@@ -141,10 +141,10 @@ class MaterialsController:
         # EDMC's window past the width it already has.
         panelkit.wrap_label(body, min_wrap=_WRAP_PX, textvariable=self._summary_var, anchor="w").grid(
             row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
-        button = tk.Button(body, text="MATERIALS", command=self._open_window)
+        button = tk.Button(body, text="Materials", command=self._open_window)
         button.grid(row=2, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.add_tooltip(button, "Open the Materials window: search and filter every material with its grade and limit")
-        engineering = tk.Button(body, text="BLUEPRINTS", command=self._open_blueprints)
+        engineering = tk.Button(body, text="Blueprints", command=self._open_blueprints)
         engineering.grid(row=3, column=0, columnspan=3, sticky=tk.W, pady=(4, 0))   # under, not beside: two buttons side by side outgrow the panel
         panelkit.add_tooltip(engineering, "Open the Engineering window: browse blueprints, keep a wishlist and see what you still need")
         self._update_summary()

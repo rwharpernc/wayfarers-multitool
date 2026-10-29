@@ -58,7 +58,7 @@ More in [Finding your way back to a plant](#finding-your-way-back-to-a-plant).
 ### Review the predictions
 
 1. Sample species as you play. Each sample that names a species adds a line to the record.
-2. Open Exploration mode and press **REVIEW** on the Organic Scanning panel.
+2. Open Exploration mode and press **Review** on the Organic Scanning panel.
 3. On **Finds**, use the **Show** box (for example *Not on the predicted list*) and select a find to see the body's conditions and the species that were listed.
 4. Pick a **Review**, type a **Note** and press **Save review**.
 5. Use **Copy report** to copy everything as text.
@@ -150,7 +150,7 @@ Helps you find and identify exobiology life on a planet's surface.
 
 - **`Predicted species: (land on a body with biological signals)`** until you are on a body that has them. When you are, and the body has been scanned, it reads `Predicted species (<body>):` and one line for each genus: `Tussock: Tussock pennatis (~1,000,000 cr)` when only one species fits, or `Bacterium: Bacterium aurasus, Bacterium nebulus` when several do, or `<genus>: unknown` when the body's conditions match none of the rules. Until the body's scan arrives it says `waiting on body scan data...`.
 - **`Active scan`** is hidden until you sample. Then it shows one line for each organism in progress: `Tussock pennatis: Sample (2/3)`, with `(~1,000,000 cr)` once it is analyzed and ` - next sample ready` or ` - move further away` while you walk between samples. The stage names are Log, Sample and Analyse, and the count is out of three.
-- **REVIEW** opens the [Prediction review window](#the-prediction-review-window).
+- **Review** opens the [Prediction review window](#the-prediction-review-window).
 
 **How to use it, step by step.**
 
@@ -332,7 +332,7 @@ It is used to check the prediction over time: how often the species was on the l
 
 ### The Prediction review window
 
-Press **REVIEW** on the Organic Scanning panel (Exploration mode) to open it.
+Press **Review** on the Organic Scanning panel (Exploration mode) to open it.
 
 - **Finds** lists every confirmed species. The columns are **Result** (`On list` or `MISSED`, with a **!** added when the body was outside the range the data allows that species), **Species**, **System and body**, **Body type / atmosphere**, **Listed** (how many species the prediction listed for that genus) and **Review**.
   - The **Show** box filters the list: *All finds*, *Not on the predicted list*, *Outside a rule's range*, *Not reviewed yet*, *Needs a rule change*, *Look at again later* and *Recorded live only*. A count (`12 of 40`) shows how many match.

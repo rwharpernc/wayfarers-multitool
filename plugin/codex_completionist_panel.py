@@ -183,7 +183,7 @@ class CodexCompletionistController:
 
         button_row = tk.Frame(body)
         button_row.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
-        codex_button = tk.Button(button_row, text="MY CODEX", command=self._on_view_details)
+        codex_button = tk.Button(button_row, text="My Codex", command=self._on_view_details)
         codex_button.pack(side=tk.LEFT)
         panelkit.add_tooltip(
             codex_button, "My Codex - how far along you are, what you have found, what is missing and where to look, and the backfill from your journals")

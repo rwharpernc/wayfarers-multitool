@@ -16,8 +16,8 @@ Nothing is ever posted on its own. Every post follows a button press. You can al
 
 | Report | Where | The buttons |
 |---|---|---|
-| **BGS report**: the tick shown in the window, a block for each system with the factions, their states and influence, and what you did | BGS mode, **REPORT** window | **Copy Summary**, and the **Discord** menu in the window's header: **Copy for Discord**, **Post to Discord** and **Customize post…** |
-| **Powerplay progress**: this session's merits and estimated Control Points for each system, and the cycle's total | Powerplay mode, **REPORT** (the Powerplay Sessions window) | **Copy Progress**, and **Copy for Discord**, **Post to Discord** and **Customize…** in a row above the tabs |
+| **BGS report**: the tick shown in the window, a block for each system with the factions, their states and influence, and what you did | BGS mode, **Report** window | **Copy Summary**, and the **Discord** menu in the window's header: **Copy for Discord**, **Post to Discord** and **Customize post…** |
+| **Powerplay progress**: this session's merits and estimated Control Points for each system, and the cycle's total | Powerplay mode, **Report** (the Powerplay Sessions window) | **Copy Progress**, and **Copy for Discord**, **Post to Discord** and **Customize…** in a row above the tabs |
 
 Coming later, as separate builds: expedition sales and announcements, colonization and team building (shopping lists, progress, a call for helpers), and carrier movement. They are planned in
 [the Discord sharing research](../DISCORD_SHARING_RESEARCH.md) and are not in WFMT yet.
@@ -27,7 +27,7 @@ Coming later, as separate builds: expedition sales and announcements, colonizati
 1. In Discord, make a webhook for the channel you want ([Set up Discord](#set-up-discord-make-a-webhook)) and copy its link.
 2. In EDMC open **File → Settings → WFMT → Discord**, tick **Allow Post to Discord**, give the destination a name, paste the link, and press **Test** ([Set up WFMT](#set-up-wfmt)).
 3. Close Settings with **OK** to save.
-4. Open a report (**REPORT** in BGS mode or in Powerplay mode) and press **Post to Discord**. With more than one destination saved, a small menu asks which one.
+4. Open a report (**Report** in BGS mode or in Powerplay mode) and press **Post to Discord**. With more than one destination saved, a small menu asks which one.
 
 **Copy for Discord** and the plain copy buttons need no setup at all.
 
@@ -198,7 +198,7 @@ switched off, so nothing can ping anyone. Long posts are still split under Disco
 
 You have flown a few missions for your faction and want your squadron to see the result.
 
-1. Open BGS mode and press **REPORT**. The window opens on the current tick. (Use the tick drop-down at the top to choose an earlier tick.)
+1. Open BGS mode and press **Report**. The window opens on the current tick. (Use the tick drop-down at the top to choose an earlier tick.)
 2. Open the **Discord** menu in the window's header and choose **Post to Discord**.
 3. With one destination, the line at the foot of the window says `Posting to Discord...`, then `Posted to Squadron BGS.` (the destination's name). With several, a small menu asks which one first.
 
@@ -223,7 +223,7 @@ restart EDMC; after a restart, posting the same tick again adds a new message.
 
 ### Share your Powerplay progress
 
-1. In Powerplay mode press **REPORT** to open the Powerplay Sessions window.
+1. In Powerplay mode press **Report** to open the Powerplay Sessions window.
 2. Press **Post to Discord** (above the tabs, at the right).
 3. The post has this session's merits for each system, with the estimated Control Points marked `~` because they are estimates, then the cycle's total line:
 
@@ -275,7 +275,7 @@ request. If the thread is archived, Discord reopens it for the post.
 The plain copy buttons are for everywhere else, and they are unchanged: **Copy Summary** on the BGS report and **Copy Progress** on the Powerplay
 Sessions window. They copy plain text with no Discord marks, so a forum post, an email, a note or another chat program shows it cleanly.
 
-**Example: a forum post.** In BGS mode open **REPORT**, press **Copy Summary**, and paste into the post. You get lines such as `Nervi:` then
+**Example: a forum post.** In BGS mode open **Report**, press **Copy Summary**, and paste into the post. You get lines such as `Nervi:` then
 `  * Nervi Brotherhood — Boom, 45.2% (+1.3)`. **Copy Progress** gives one line for each system (by default
 `[Nervi](https://inara.cz/...) - 120 merits (~48.0 CP) - Exploited`, which several forums and chat programs turn into a link). Its layout is
 editable under **Settings → WFMT → Powerplay → Clipboard**.

@@ -640,7 +640,7 @@ class OrganicScanController:
         self._active_label = panelkit.wrap_label(body, textvariable=self._active_var, anchor="w")
         self._active_label.grid(row=1, column=0, columnspan=3, sticky=tk.W)
         self._active_label.grid_remove()      # shown only once a scan has started
-        review = tk.Button(body, text="REVIEW", command=self._open_review)
+        review = tk.Button(body, text="Review", command=self._open_review)
         review.grid(row=2, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.add_tooltip(review, "Open the Prediction review window: how the species prediction did against what you found, and a way to review each find")
 

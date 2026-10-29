@@ -366,9 +366,9 @@ class CompassController:
         entry = panelkit.fit_entry(tk.Entry(body, textvariable=self._entry_var, width=_ENTRY_WIDTH), _ENTRY_MAX_PX)
         entry.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(4, 0))
         entry.bind("<Return>", lambda _e: self._on_mark())
-        buttons = (("MARK", self._on_mark, "Save where you are as a mark, named with what is typed above (or Mark 1, Mark 2, ...)"),
-                   ("TARGET", self.cycle_target, "Aim at the next target: the nearest hotspot, each mark on this body, then none"),
-                   ("MARKS", self._open_window, "Open the Marks window: every mark, edit, delete, choose the target"))
+        buttons = (("Mark", self._on_mark, "Save where you are as a mark, named with what is typed above (or Mark 1, Mark 2, ...)"),
+                   ("Target", self.cycle_target, "Aim at the next target: the nearest hotspot, each mark on this body, then none"),
+                   ("Marks", self._open_window, "Open the Marks window: every mark, edit, delete, choose the target"))
         made = []
         for column, (text, command, tip) in enumerate(buttons):
             button = tk.Button(body, text=text, command=command)

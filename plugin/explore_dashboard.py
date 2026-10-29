@@ -130,7 +130,7 @@ class DashboardController:
         self._parent = parent
         self._summary = tk.StringVar()
         body = panelkit.collapsible_section(parent, "Dashboard", "wfmt_explore_dashboard_collapsed")
-        button = tk.Button(body, text="DASHBOARD", command=self._open)
+        button = tk.Button(body, text="Dashboard", command=self._open)
         button.grid(row=0, column=0, sticky=tk.W, pady=(2, 0))
         panelkit.add_tooltip(button, "Open a window with everything WFMT knows about this system, the body you are on, its biology and your exploration so far. "
                                      "Its header buttons switch the exploration and exobiology overlays off and on.")

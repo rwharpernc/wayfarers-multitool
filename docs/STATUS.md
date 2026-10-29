@@ -124,7 +124,7 @@ Written 2026-10-21 on the Windows machine. This is work done since the last Linu
 - **Ship planner In storage column (new, not run on Linux).** Steps are in `docs/LINUX_TESTING.md`.
 - **Table text caps (new, both OSes).** The caps went to 60 on the non-stretch name columns of Missions, Source commodities, Ship Builds and My Codex. Look at a long name at a narrow and a wide size.
 - **Colonization, added 2026-10-26 (not run on Linux).** Steps are in `docs/LINUX_TESTING.md` and section 6 of [TEST_PLAN.md](TEST_PLAN.md).
-  - Raven Colonial: **Create Project on Raven**, the **My Projects** window (the PROJECTS button) and finding a site's project by market id as well as name. Create Project, Mark Plan Entry Demolished and the My Projects writes have not yet run against the live service.
+  - Raven Colonial: **Create Project on Raven**, the **My Projects** window (the Projects button) and finding a site's project by market id as well as name. Create Project, Mark Plan Entry Demolished and the My Projects writes have not yet run against the live service.
   - The Sites window's **Acquire** column now shows what is still to get (the need less the ship's hold and the fleet carrier), and the overlay card matches it, with no To buy column and a choice, To buy by default, of which stage of the work it lists (All, To buy or To haul); the window has the same **Show** dropdown.
   - The ship's hold is read from the game's `Cargo.json`, so the In Cargo figures follow a purchase.
   - **Best single systems** after Find all, and the accent color for a search in progress.

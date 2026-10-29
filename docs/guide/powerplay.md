@@ -37,14 +37,14 @@ earlier game sessions.
 
 ### See which systems earned you the most
 
-1. Press **Powerplay**, then **REPORT**.
+1. Press **Powerplay**, then **Report**.
 2. On the **Current session** tab, read **By System**: the **Merits**, **Est. CP** and **Activity breakdown** columns
    list each system you worked this login.
 3. For a whole cycle, open the **Systems** tab, or the **Cycles** tab for one row per cycle.
 
 ### Check a system you are defending
 
-1. Open **REPORT**, then the **Systems** tab.
+1. Open **Report**, then the **Systems** tab.
 2. Find the system's tab (your last 6 systems get one). If it is missing, type its name in **SHOW A SYSTEM** and press
    **Add system**.
 3. Compare **Baseline** and **Latest** in the **STANDING** table. The **Change** column shows whether it is gaining or
@@ -56,16 +56,16 @@ and jump in again whenever you want a fresh reading: the figures only update whe
 
 ### Fix a session count that looks wrong
 
-1. If you only want to remove a mistaken count, open **REPORT** and press **Reset Current System** (this system) or
+1. If you only want to remove a mistaken count, open **Report** and press **Reset Current System** (this system) or
    **Reset Session** (everything this login). Both ask first and cannot be undone.
-2. If merits were missed after restarting EDMC, press **RESCAN** on the Powerplay panel instead. It re-reads the current
+2. If merits were missed after restarting EDMC, press **Rescan** on the Powerplay panel instead. It re-reads the current
    journal from scratch.
 
 Resets change the session only. Cycle totals come from your journal and are not affected.
 
 ### Share your progress
 
-1. Open **REPORT** and press **Copy Progress**. The button changes to a confirmation for a moment.
+1. Open **Report** and press **Copy Progress**. The button changes to a confirmation for a moment.
 2. Paste into Discord or a forum post. With the default format each system is one line, for example
    `[Nervi](link) - 120 merits (~48 CP) - Exploited`.
 3. To change the layout, edit the **Clipboard** format under **Settings → WFMT → Powerplay**.
@@ -78,7 +78,7 @@ Resets change the session only. Cycle totals come from your journal and are not 
 
 ### Find a rare good to haul
 
-1. Press **RARES**, then set **Show nearest** (type a number and press Enter or **Apply**).
+1. Press **Rares**, then set **Show nearest** (type a number and press Enter or **Apply**).
 2. Tick **Large pads only** if you fly a large ship, and **Only my Power** to keep rares from systems your Power controls.
 3. Select a row, then press **Copy system** and paste the name into the galaxy map's search.
 
@@ -113,13 +113,13 @@ Your game mode and credits are on the two lines under the mode buttons, and a li
 
 Three buttons on the bottom row:
 
-- **REPORT** opens the Sessions window.
-- **RARES** opens the Rare Goods Finder (see below).
-- **RESCAN** re-reads the current journal from scratch to recover merits missed after an EDMC restart. Use it if a session's numbers ever look wrong. Hover over a button for a one-line reminder.
+- **Report** opens the Sessions window.
+- **Rares** opens the Rare Goods Finder (see below).
+- **Rescan** re-reads the current journal from scratch to recover merits missed after an EDMC restart. Use it if a session's numbers ever look wrong. Hover over a button for a one-line reminder.
 
 ## The Sessions window
 
-Click **REPORT**. It has six tabs.
+Click **Report**. It has six tabs.
 
 | Tab | What it shows |
 |---|---|
@@ -168,7 +168,7 @@ scan, and counts them for the cycle.
   and can't be undone. Use it to correct a bad count.
 
 Both resets change the **session** only. The cycle totals on the panel and the Systems, Cycles and Daily tabs come from your
-journal, so they are not affected; **RESCAN** is the way to rebuild a session from the journal.
+journal, so they are not affected; **Rescan** is the way to rebuild a session from the journal.
 
 ### The Systems tab
 
@@ -227,7 +227,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 ## Rare Goods Finder
 
-Click **RARES** to see the rare commodities closest to where you are. Each row shows:
+Click **Rares** to see the rare commodities closest to where you are. Each row shows:
 
 - the origin system and its **Distance** in light years from the system you are in,
 - the station and its **Arrival** distance, how far it is from the arrival star in light seconds (approximate: the figures were compiled once and some may be off by a little),
@@ -237,7 +237,7 @@ Click **RARES** to see the rare commodities closest to where you are. Each row s
 
 **How to use it:**
 
-1. Press **RARES**. The list needs your position, so it says "Awaiting system data" until your first jump or login after EDMC starts. If the game is closed, press **Use last known location** to take your commander's last position from the journals.
+1. Press **Rares**. The list needs your position, so it says "Awaiting system data" until your first jump or login after EDMC starts. If the game is closed, press **Use last known location** to take your commander's last position from the journals.
 2. Choose how many to see with **Show nearest** (type a number, press Enter or **Apply**; 10 by default, at most 141). The list holds 141 rare goods.
 3. Narrow it with **Large pads only** and **Only my Power** if you want. Both apply *before* the number shown, so with "Show nearest: 10" you get the ten nearest that match.
 4. Click a heading to sort by it (numbers sort as numbers; a second click reverses). Select a row to see where that rare is illegal.
@@ -249,7 +249,7 @@ The table has the columns **Rare Good**, **Origin System**, **Distance**, **Stat
 
 | Control | What it does |
 |---|---|
-| **RARES** (Powerplay panel) | Opens the window |
+| **Rares** (Powerplay panel) | Opens the window |
 | **Show nearest** and **Apply** | How many rows to show (remembered) |
 | **Large pads only** | Keeps the rares sold at large-pad stations (20 of the 141), for a large ship |
 | **Only my Power** (shown as **Only my Power (Your Power)**) | Keeps the rares whose origin system is controlled by the Power you are pledged to. Grayed out, and labeled `(not pledged or not known yet)`, until WFMT knows your Power (the journal writes it at login when you are pledged). To find them WFMT asks Spansh which Power controls each origin system, nearest first and ten at a time, until it has enough (at most all 141, once per session) |

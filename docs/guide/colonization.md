@@ -4,10 +4,10 @@ Colonization has its own mode: press the **Colony** button.
 
 - The page shows the project you are building now and nothing historical.
 - Four buttons sit under it, left to right:
-  - **DASHBOARD** opens the full [Colonization Sites window](#the-colonization-sites-window).
-  - **OVERLAY** turns the [shopping list on the overlay](#the-shopping-list-on-the-overlay) on or off. It is lit while the card is on.
-  - **PROJECTS** opens [My Projects](#my-projects): everything you have on Raven Colonial.
-  - **HISTORY** opens your [history](#history) in its own window.
+  - **Dashboard** opens the full [Colonization Sites window](#the-colonization-sites-window).
+  - **Overlay** turns the [shopping list on the overlay](#the-shopping-list-on-the-overlay) on or off. It is lit while the card is on.
+  - **Projects** opens [My Projects](#my-projects): everything you have on Raven Colonial.
+  - **History** opens your [history](#history) in its own window.
   - Hover over a button for a one-line reminder of what it does.
 - It works the same for a commander with a fleet carrier and for one without. The wording changes to match, and the carrier lines are left out when you have none.
 
@@ -37,20 +37,20 @@ Short task lists. Each one links to the section with the detail. The numbers in 
 
 1. Press **Colony** in EDMC.
 2. Read **Current project**: the progress line, **Still to get**, **Trips left** and **Next**.
-3. If you have more than one active site, the **Others** line says so. Press **DASHBOARD** to pick a different one.
+3. If you have more than one active site, the **Others** line says so. Press **Dashboard** to pick a different one.
 
 See [The Colony page](#the-colony-page).
 
 **Track a new construction site.**
 
 1. Dock at the construction depot, or open its market, once.
-2. Press **Colony**. The site is under **Current project**, or press **DASHBOARD** to see it in the list.
+2. Press **Colony**. The site is under **Current project**, or press **Dashboard** to see it in the list.
 
 See [Starting to track a site](#starting-to-track-a-site).
 
 **Build a shopping list.**
 
-1. Press **DASHBOARD** and click the site on the left.
+1. Press **Dashboard** and click the site on the left.
 2. Use **Show** (**To buy**) and the **Filter** box to narrow the table to what you are working on.
 3. Press **Copy Shopping List** (top right) and paste it into a note or chat.
 
@@ -67,7 +67,7 @@ See [Where to buy](#where-to-buy).
 
 **Copy a To Acquire list for someone who asks what you still need.**
 
-1. Press **DASHBOARD** and click the site.
+1. Press **Dashboard** and click the site.
 2. If a transfer to your carrier did not register, press **Rescan Carrier** first.
 3. Press **Copy To Acquire** and paste the result.
 
@@ -76,14 +76,14 @@ See [Buttons](#buttons).
 **Start a Raven Colonial project for a new site.**
 
 1. Tick the master switch in **Settings → WFMT → Colonization → Raven Colonial** and save your Raven key there (get it at ravencolonial.com/user).
-2. Dock at the new site. On the Colony page press **CREATE ON RAVEN**, or in the Sites window pick the site and choose **Raven Colonial → Create Project on Raven…**.
+2. Dock at the new site. On the Colony page press **Create on Raven**, or in the Sites window pick the site and choose **Raven Colonial → Create Project on Raven…**.
 3. In the dialog choose the plan entry (or **None**), the Location, Building and Layout, then press **Create**.
 
 See [Starting a project on Raven Colonial](#starting-a-project-on-raven-colonial).
 
 **Archive a finished site.**
 
-1. Press **DASHBOARD**.
+1. Press **Dashboard**.
 2. Choose **Manage Sites → Archive Finished**.
 3. To look at it later, choose **Manage Sites → Show Archive**. Select the site and press **Restore** to bring it back.
 
@@ -92,7 +92,7 @@ See [The archive](#the-archive).
 **Use the shopping list on the overlay.**
 
 1. Make sure an overlay is running ([Setting up the overlay](../OVERLAY_SETUP.md)).
-2. Press **OVERLAY** on the Colony page. It lights while the card is on.
+2. Press **Overlay** on the Colony page. It lights while the card is on.
 3. Press it again to turn the card off. It stays as you left it after a restart.
 
 See [The shopping list on the overlay](#the-shopping-list-on-the-overlay).
@@ -126,13 +126,13 @@ Trips left      9 to buy · 17 to haul (400 t ship)
 
 Read it as: ten commodities are still outstanding, three need nothing more, and you should expect about nine buying loads and seventeen hauling loads to finish. The **Next** line then tells you in one sentence what to do now.
 
-**An offer to start a Raven project.** When a construction site appears for the first time and [Raven Colonial](https://ravencolonial.com) has no project for it, a line above **Current project** says `Raven Colonial has no project for <site>.` with two buttons. **CREATE ON RAVEN** opens the Colonization Sites window on that site and its [Create dialog](#starting-a-project-on-raven-colonial); **NOT NOW** hides the line. It is made once per site and goes away once a project exists. It needs the master switch and progress sharing on, and your Raven key saved, because WFMT only looks at Raven for a site when it is allowed to share.
+**An offer to start a Raven project.** When a construction site appears for the first time and [Raven Colonial](https://ravencolonial.com) has no project for it, a line above **Current project** says `Raven Colonial has no project for <site>.` with two buttons. **Create on Raven** opens the Colonization Sites window on that site and its [Create dialog](#starting-a-project-on-raven-colonial); **Not Now** hides the line. It is made once per site and goes away once a project exists. It needs the master switch and progress sharing on, and your Raven key saved, because WFMT only looks at Raven for a site when it is allowed to share.
 
 **A finished build** is shown by its own name. The game calls a depot `Orbital Construction Site: Example Station` while it is being built. Once the build is complete, WFMT drops the `Construction Site:` part (`Example Station`) in the sites window, the shopping list and the history.
 
 ### History
 
-History is yours alone (everything is per commander) and is kept off the page. Press **HISTORY** to open the Colonization History window, which names the commander it is for under its title. It has four tabs:
+History is yours alone (everything is per commander) and is kept off the page. Press **History** to open the Colonization History window, which names the commander it is for under its title. It has four tabs:
 
 - **Overview**
 - **By day**: tons delivered on each day (UTC), newest first. Only days with a delivery are listed
@@ -154,7 +154,7 @@ The Overview says:
 | Average build | Days from the first time WFMT saw a site to the day the depot reported it complete, over the sites for which both are known |
 | Counted since | The first delivery WFMT has counted |
 
-**Example: finding your busiest week.** Press **HISTORY**, open **Overview**, and read **Recently** (for example `3,200 t this week · 9,800 t this month`) and **Best day**. Switch to **By day** to see which days made up that week, to **Commodities** to see what you moved most of, and to **Sites** to see which depot took the most. The numbers there are examples of the layout only.
+**Example: finding your busiest week.** Press **History**, open **Overview**, and read **Recently** (for example `3,200 t this week · 9,800 t this month`) and **Best day**. Switch to **By day** to see which days made up that week, to **Commodities** to see what you moved most of, and to **Sites** to see which depot took the most. The numbers there are examples of the layout only.
 
 **How far back the history goes.**
 
@@ -186,9 +186,9 @@ construction depot or open its market, and a `ColonisationContribution` event ea
 1. Dock at the construction depot, or open its market, **once**. There is nothing to type in.
 2. The **Colony** page shows that site under **Current project** (see below). It is your most recently updated active
    site, with a line `+N more active sites` if you have others. With none it says `No active construction site. Dock at one to register it.`, and before WFMT knows the commander, `Waiting for commander login`.
-3. Press **DASHBOARD** to open the **Colonization Sites** window.
+3. Press **Dashboard** to open the **Colonization Sites** window.
 
-**Example.** You fly to a new Orbital Construction Site and dock. You do nothing else. Press **Colony**: the site is now under **Current project**, with the name the game gave the depot's market. Press **DASHBOARD** and it is in the list on the left, with its tons in **Left** and a percentage in **Status**. Had you only flown past it without docking or opening its market, it would not appear.
+**Example.** You fly to a new Orbital Construction Site and dock. You do nothing else. Press **Colony**: the site is now under **Current project**, with the name the game gave the depot's market. Press **Dashboard** and it is in the list on the left, with its tons in **Left** and a percentage in **Status**. Had you only flown past it without docking or opening its market, it would not appear.
 
 ### Who is playing
 
@@ -593,7 +593,7 @@ Finished sites stay in the Sites window until you remove or archive them; WFMT n
 
 ## My Projects
 
-The Colonization Sites window only knows sites you have docked at. **My Projects** (the **PROJECTS** button on the Colony page, or **My Projects** in the **Raven Colonial** menu) lists every active project your commander has on [Raven Colonial](https://ravencolonial.com), across systems.
+The Colonization Sites window only knows sites you have docked at. **My Projects** (the **Projects** button on the Colony page, or **My Projects** in the **Raven Colonial** menu) lists every active project your commander has on [Raven Colonial](https://ravencolonial.com), across systems.
 
 - **Reading needs no key and no switch.** Opening the window sends only your commander name, to read your projects, your hidden list and your primary project.
 - **The table** has the columns **Count** (a tick when counted), **Project**, **System**, **Building** (the game's name and the build type Raven knows it by, such as *Industrial Outpost (vulcan)*), **Done** (percent delivered), **Still needed** (tons, or `complete`) and **Note**. The Note column says **Primary** for your primary project and **Here** for a site WFMT also tracks from your journal. Completed and uncounted projects are grayed.
@@ -714,7 +714,7 @@ When you dock at a construction ship or site that Raven Colonial has no project 
 **Example: first project in a new system (made-up).** The Colony page shows `Raven Colonial has no project for Example Outpost.`
 
 1. Check that **Allow WFMT to write to Raven Colonial** is ticked and your key is set in Settings.
-2. Press **CREATE ON RAVEN**. The Sites window opens on that site with the Create dialog.
+2. Press **Create on Raven**. The Sites window opens on that site with the Create dialog.
 3. Pick the matching **Plan entry** (its Location, Building and Layout fill in), or leave **None** and choose them yourself.
 4. Press **Create**. The status line says what worked. From then on your deliveries are shared as they happen.
 
@@ -741,7 +741,7 @@ Select a site your journal has reported **complete** and press **Report Complete
 
 Optional, and **off until you ask for it**. It needs an overlay running; see [Setting up the overlay](../OVERLAY_SETUP.md).
 
-- Press **OVERLAY** on the Colony page to put it up whatever screen you are on.
+- Press **Overlay** on the Colony page to put it up whatever screen you are on.
 - Or tick **Also show the shopping list automatically (markets, carrier inventory, construction sites)** in **Settings → WFMT → Overlays → Colonization**, so it appears by itself in the places listed below.
 
 ### The table
@@ -814,7 +814,7 @@ A last line gives the tons remaining (still to get, as in the Acquire column) an
   - Optionally, **whenever the right-hand cockpit panel is open, anywhere** (even in flight). Off by
     default; tick **Also show whenever the right-hand cockpit panel is open, anywhere** in the Colonization settings.
 
-  **Prefer to switch it yourself?** Leave the automatic option unticked and use the **OVERLAY** button beside DASHBOARD on the Colony page.
+  **Prefer to switch it yourself?** Leave the automatic option unticked and use the **Overlay** button beside Dashboard on the Colony page.
   - It turns the card on or off, whatever screen you are on.
   - The button lights up while the card is on. Its name does not change.
   - It works whether or not the automatic option is ticked, and it **stays as you left it, even after you restart EDMC**.

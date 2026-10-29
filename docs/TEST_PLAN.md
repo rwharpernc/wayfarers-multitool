@@ -33,7 +33,7 @@ What to check in EDMC after the 1.3.1 release (and before any later one), on **W
 1. Run `npm run deploy` from the branch being tested. It builds and merges the result into EDMC's plugins folder (native or Flatpak). Restart EDMC (every deploy needs a restart).
 2. New files appear beside the plugin as you use the features: `carrier_route.json` (Carrier Route) and `mining_history.json` (Mining History), one record per commander.
 
-## 1. Rare Goods Finder (Powerplay mode, RARES)
+## 1. Rare Goods Finder (Powerplay mode, Rares)
 
 - [ ] The window shows **Distance**, **Arrival**, **Legality** and the other columns without cutting any off, and fits your screen.
 - [ ] Distance is 0.0 ly for a rare in your own system and grows down the list; it updates after a jump. Clicking a heading sorts by number, and a second click reverses it.
@@ -54,11 +54,11 @@ What to check in EDMC after the 1.3.1 release (and before any later one), on **W
   - Low limpets and a nearly full hold give amber cards.
   - None shows while you are not mining.
   - The sound plays if ticked.
-- [ ] **Mining History** (the DASHBOARD button): the Overview, Commodities, Rings and Runs tabs fill from your journals and sort; the totals look right against what you remember.
-- [ ] **BOOK** on the Space Mining page opens the **Space Mining Book**.
+- [ ] **Mining History** (the Dashboard button): the Overview, Commodities, Rings and Runs tabs fill from your journals and sort; the totals look right against what you remember.
+- [ ] **Book** on the Space Mining page opens the **Space Mining Book**.
   - It lists rings from your journals with hotspots per mineral, class, reserve level, tons mined and last mined.
   - Try a note, a favorite, **Find**, **Add ring** and **Copy system**. Restart EDMC and the notes remain.
-  - **BOOK** on the Surface Mining page opens the **Surface Mining Book**, with a **From your journals** group (bodies with mining locations and the tons refined on them).
+  - **Book** on the Surface Mining page opens the **Surface Mining Book**, with a **From your journals** group (bodies with mining locations and the tons refined on them).
 - [ ] **This system** (in both books):
   - In a system you have mined it goes to the ring or body. In one you have not it says `You have not worked this system yet.`
   - On the first open of each book a notice says the journals are being read, and the list does not flicker while it grows.
@@ -74,8 +74,8 @@ What to check in EDMC after the 1.3.1 release (and before any later one), on **W
 
 ## 4. Expedition, Route Planner and overlays
 
-- [ ] **EXPEDITION** and **PLOT** on the panel open one window with Plan, Route and Log tabs, never twice; its size and position are remembered.
-  - The Expedition section holds the Log's figures, COPY NEXT and EXPEDITION, and has no START, PAUSE or STOP.
+- [ ] **Expedition** and **Plot** on the panel open one window with Plan, Route and Log tabs, never twice; its size and position are remembered.
+  - The Expedition section holds the Log's figures, Copy Next and Expedition, and has no Start, Pause or Stop.
   - There is no Expedition Log section.
 - [ ] The Expedition window's **Neutron route** switches to the Route tab.
   - **Road to Riches** and **Exomastery** open their dialog and **Plot** works.
@@ -93,7 +93,7 @@ Do these on **Windows** and again on **Linux**. Where the two differ the line sa
   - Turn one card on, restart, and check it is still on (the reset runs once).
   - Windows: log in as each commander you have and check none shows a card. Linux: the same, and check `overlay_settings.json` beside the plugin.
 - [ ] **A stopped expedition carries on from where it stopped.**
-  - Start an expedition, jump or scan, press STOP, wait a minute, start it again from the Route tab, and check the clock carries on from where it stopped.
+  - Start an expedition, jump or scan, press Stop, wait a minute, start it again from the Route tab, and check the clock carries on from where it stopped.
   - The Log's **Resume** does the same.
   - Pause one for a minute, make a few jumps while it is paused, resume it, press **Rescan** in the Log window, and check the rescanned totals do not include the jumps made while it was paused.
 - [ ] **The screen size.** Settings → Overlays → Overlay Placement says where the size came from.
@@ -112,7 +112,7 @@ Do these on **Windows** and again on **Linux**. The longer steps are in [TODO.md
 - [ ] **Color themes.** Open the Sites window and press the theme name at the right end of its bottom line: choose Cyan, then Amber, then Green, then Navy. Each time every open WFMT window changes colors at once (surfaces, titles, headings, table rows, buttons, the footer message), nothing becomes hard to read, and a window opened afterwards has the same theme. Settings → WFMT → General → Window → Color theme shows the same name, and the choice is kept after a restart. The stat tiles at the top of a dashboard do not grow when **A+** is pressed.
 - [ ] **Text size and column fit.** In the Sites window press **A+** twice at the right end of the bottom line: every window's text grows and columns stay aligned; **A-** shrinks it. Settings → WFMT → General → Window → Text size shows the number and keeps it after a restart. Short columns (such as Required) are narrow and a long name column takes the spare width.
 - [ ] **Colonization Archive.** With at least one finished site in the Sites window, open **Manage Sites → Archive Finished**: the finished sites leave the list and the status line counts them (unfinished sites stay). **Manage Sites → Show Archive** lists them with result, dates, time taken and tons needed, and selecting one shows its commodities. **Restore** returns one to the Sites window, **Copy Summary** pastes readable text, and **Manage → Remove Permanently** asks first. Restart EDMC: the archive is still there. The History figures and **Back up my data** still include archived sites. Nothing is cut off at the window's smallest size.
-- [ ] **Raven project offer and Create Project.** With Raven sharing on and your key saved, dock at a new construction site that Raven has no project for. A line on the Colony page says `Raven Colonial has no project for <site>.` with **CREATE ON RAVEN** and **NOT NOW**. **CREATE ON RAVEN** opens the Sites window on that site and the Create dialog, centered and fully on the screen; **NOT NOW** hides the line, and it is not offered again for that site. After creating the project the line is gone. Press **Create Project on Raven** from the menu yourself on a site with a project: the status line says Raven Colonial already has a project for the site and stays up for 30 seconds while the game's construction panel is open. Nothing is sent until you press **Create** in the dialog.
+- [ ] **Raven project offer and Create Project.** With Raven sharing on and your key saved, dock at a new construction site that Raven has no project for. A line on the Colony page says `Raven Colonial has no project for <site>.` with **Create on Raven** and **Not Now**. **Create on Raven** opens the Sites window on that site and the Create dialog, centered and fully on the screen; **Not Now** hides the line, and it is not offered again for that site. After creating the project the line is gone. Press **Create Project on Raven** from the menu yourself on a site with a project: the status line says Raven Colonial already has a project for the site and stays up for 30 seconds while the game's construction panel is open. Nothing is sent until you press **Create** in the dialog.
 - [ ] **The navy look.** Open the Sites window, Inventory, the Exploration Dashboard and the Mining Book. Surfaces are navy, not gray; the window title is gold; section labels and table column headers are cyan; the footer message is bright yellow, and green after something succeeds (for example Start expedition). Nothing is hard to read, and the Colonization overlay card's header over the third column reads **Acquire**.
 - [ ] **Acquire is what is still to get.** It falls as you load the ship or the carrier and reaches 0 once the whole amount is acquired; **Haul Trips** still counts everything the site needs. The overlay card shows the same Acquire and no To buy column.
 - [ ] **A lagging Frontier copy does not undo a transfer.** With EDMC signed in to Frontier, unload cargo at your fleet carrier, then open Carrier Management or fly back for another load. The FC column keeps the unloaded stock, and an `ignored` line from `Carrier cargo from Frontier` is in the WFMT log lines (press **Copy diagnostics** to see them). After 15 minutes without a transfer, open Carrier Management again: a Frontier figure that has changed replaces the tally, and one that is unchanged stays ignored.
@@ -120,7 +120,7 @@ Do these on **Windows** and again on **Linux**. The longer steps are in [TODO.md
 - [ ] **Best single systems.** After **Find all** with two or more commodities, the results start with the best single systems, each with its coverage, distance, basket cost and stations in the order to visit. **Copy Route** copies the best system first, and **Stop** keeps what was found.
 - [ ] **Where to Buy window and Copy To Acquire.** In the Sites window click a commodity row: the footer says what to do next. **Where to Buy** opens its own window with the site's system and a **Commodity** line naming the row; pick another row or site and it follows; **Find nearest** and **Find all** work as before; it remembers its size and position and closes with the Sites window. **Copy To Acquire** pastes the site and one line per commodity with the tons still to acquire (the ship and carrier already taken off).
 - [ ] **Biology overlay card and the layout editor.** Settings → Overlays → Exobiology → **Test Cards** shows the Biology card with a row for each candidate species and its value and share at the right; on a real body with several candidate species check the same, including `+N more` and a long species name. In Overlay Placement drag a tall box (the Biology card) flush to the top: it lands as a top placement with offset 0.
-- [ ] **Raven Colonial.** **PROJECTS** opens My Projects (reading needs no key). **Create Project on Raven** at a construction site you are docked at: check the project, the link, the primary project and the attached carrier on ravencolonial.com.
+- [ ] **Raven Colonial.** **Projects** opens My Projects (reading needs no key). **Create Project on Raven** at a construction site you are docked at: check the project, the link, the primary project and the attached carrier on ravencolonial.com.
 
 ## 7. Added in 1.3.0 (2026-10-29)
 
@@ -129,7 +129,7 @@ The longer wording for each is in [TODO.md](TODO.md). Tick a box only when you h
 - [ ] **Discord sharing** (needs a webhook in a private test channel of your own): **Settings → WFMT → Discord**, one destination and then two; **Post to Discord** from the BGS Report and the Powerplay Sessions window, posting again to edit, the destination menu, **Copy for Discord**, and the plain **Copy Summary** and **Copy Progress**. The checklist is in [TODO.md](TODO.md) under "Screenshots, settings and general".
 - [ ] **Customize Discord posts:** the dialog opens from the BGS Report, the Powerplay Sessions window and the Discord tab; the presets, checkboxes, preview, **Save as…**, **Rename…** and **Delete** work, a saved template survives a restart, and the chosen template is what **Copy for Discord** and **Post to Discord** produce.
 - [ ] **Expedition Log:** the three **Start from my last** buttons (sale, Discovery Data sale, Exobiology Data sale).
-- [ ] **Expeditions are managed in the Expedition window:** the Exploration panel's Expedition section has no START, PAUSE or STOP, and the Expedition window's Plan and Log tabs start, pause and stop them.
+- [ ] **Expeditions are managed in the Expedition window:** the Exploration panel's Expedition section has no Start, Pause or Stop, and the Expedition window's Plan and Log tabs start, pause and stop them.
 - [ ] **Colonization:** the Sites window's **Show** choice and the overlay follow each other; under **To haul** there is no green, and the rows in your hold are tinted (in each theme) in the window and drawn in the theme's blue on the overlay, with the ✓ kept.
 - [ ] **Exobiology:** the Bio status card is a wide strip with the distance line beside the species and reward; the Organic Scanning section starts folded; sampling a different genus abandons the unfinished one (back to 0 of 3).
 

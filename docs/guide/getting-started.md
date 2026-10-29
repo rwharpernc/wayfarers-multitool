@@ -273,8 +273,8 @@ mode's guide for the limits.
 | The marker for a plant you identified with the Composition Scanner is missing | The marker comes from the scan event while EDMC runs, and is not rebuilt from old journals (rebuilding it could bring back plants you already sampled) | Scan the plant with the Composition Scanner again |
 | The distance to the last sample on a body is wrong or blank | The journal does not record where a sample was taken; WFMT reads your position from `Status.json` as you sample | None: it is right again from your next sample |
 | An expedition's totals look low | The Expedition Log reads the journal live | Press **Rescan** on the expedition |
-| Codex entries you found before WFMT first ran (a new install, or a commander new to it) | Codex Completionist catches up forward from the last find it counted, so it starts from nothing for a new install | **MY CODEX → Backfill Journals** once |
-| A Powerplay session or a BGS period looks wrong | Their catch-ups are limited by the scan depth and the tick | **RESCAN** (Powerplay); BGS rebuilds a closed period by itself |
+| Codex entries you found before WFMT first ran (a new install, or a commander new to it) | Codex Completionist catches up forward from the last find it counted, so it starts from nothing for a new install | **My Codex → Backfill Journals** once |
+| A Powerplay session or a BGS period looks wrong | Their catch-ups are limited by the scan depth and the tick | **Rescan** (Powerplay); BGS rebuilds a closed period by itself |
 | A mining run that began before a restart | The Mining pages read the current journal file only (Mining History and the two books read every journal) | The run carries on from the journal file in use; an earlier file's run is not rejoined |
 
 None of these is lost data in the game; they are limits of what WFMT can read back from the journals.
@@ -350,7 +350,7 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 |---|---|
 | **Inventory** | The *Pillage message* format (placeholders `{item}` and `{total}`); *Play a sound on pickup* (off; grayed out where no sound can play); *Announce pickups for* each category; the per-loadout backpack capacity overrides. See [Inventory](operations.md#inventory) |
 | **Screenshots** | *Delete original file after conversion* (off); *Include WFMT's built-in overlay in the converted screenshot* (off; Windows, built-in overlay); *Group converted files into a per-system subfolder* (off); *Show the auto-capture timer icon on the main window* (on); *Filename Mask* (a preset list); *Auto-capture poll interval (seconds)*; *Use high-resolution capture on the auto-timer (Solo play only)* (off); *Automatically capture a screenshot when scanning a Thargoid signal* (on). See [Screenshots](operations.md#screenshots) |
-| **Ship Builds** | An explanation only: the builds are kept by link in the Ship Builds window (**SHIPS**) |
+| **Ship Builds** | An explanation only: the builds are kept by link in the Ship Builds window (**Ships**) |
 
 **Overlays** (inner tabs: Overlay Connection, Appearance and Overlay Placement first, then in order Body info, Colonization, Discovery, Exobiology, Expedition Log, Flight Alerts, Hide overlays, Interdiction Warning, Inventory, Landing, Mining, Missions, Notable Bodies, Route, Screenshots, Surface Compass, System targets). Every option, with its starting value, is in [Setting up the overlay](../OVERLAY_SETUP.md#every-overlays-tab-in-detail).
 
@@ -395,34 +395,34 @@ Switch to the mode first, then use the button listed here.
 | Window | Mode | How to open it |
 |---|---|---|
 | Credits Ledger (tabs: Income, By day, Lifetime) | Any mode | Click the **Credits this session** line under the mode buttons |
-| Powerplay Sessions (tabs: Current session, Systems, Cycles, Daily, Megaships, History) | Powerplay | **REPORT** button (bottom row of the panel) |
-| Rare Goods Finder | Powerplay | **RARES** button, next to REPORT |
-| BGS Report | BGS | **REPORT** button |
-| Codex Completionist | Exploration | **MY CODEX** button in the Codex Completionist section |
-| Notes | Exploration | **NOTES** button in the Notes section |
-| Expedition (tabs: Plan, Route, Log; the Log tab is the Expedition Log archive) | Exploration | **EXPEDITION** button in the Expedition section; **PLOT** and the Dashboard's **Route Planner** open it on the Route tab |
-| Prediction review (Organic Scanning) | Exploration | **REVIEW** button in the Organic Scanning section |
-| Nearest place to land | Exploration | **FIND** button in the Nearest place to land section |
-| Route Planner | Exploration | **PLOT** button in its section of the panel (or **Route Planner** in the Dashboard's header) |
+| Powerplay Sessions (tabs: Current session, Systems, Cycles, Daily, Megaships, History) | Powerplay | **Report** button (bottom row of the panel) |
+| Rare Goods Finder | Powerplay | **Rares** button, next to Report |
+| BGS Report | BGS | **Report** button |
+| Codex Completionist | Exploration | **My Codex** button in the Codex Completionist section |
+| Notes | Exploration | **Notes** button in the Notes section |
+| Expedition (tabs: Plan, Route, Log; the Log tab is the Expedition Log archive) | Exploration | **Expedition** button in the Expedition section; **Plot** and the Dashboard's **Route Planner** open it on the Route tab |
+| Prediction review (Organic Scanning) | Exploration | **Review** button in the Organic Scanning section |
+| Nearest place to land | Exploration | **Find** button in the Nearest place to land section |
+| Route Planner | Exploration | **Plot** button in its section of the panel (or **Route Planner** in the Dashboard's header) |
 | Carrier Route | Exploration | **Carrier route** button in the Route Planner window |
-| Exploration Dashboard (tabs: Overview, Orbit, Surface, Exploration) | Exploration | **DASHBOARD** button in the Dashboard section |
-| Marks (for the Surface Compass) | Exploration | **MARKS** button in the Compass section |
-| Watch list | Trade | **WATCH** button in the Watch list section |
+| Exploration Dashboard (tabs: Overview, Orbit, Surface, Exploration) | Exploration | **Dashboard** button in the Dashboard section |
+| Marks (for the Surface Compass) | Exploration | **Marks** button in the Compass section |
+| Watch list | Trade | **Watch** button in the Watch list section |
 | Missions window (tabs: Active, By place) | Missions | **Missions window** button at the very bottom of the panel, or click a mission's card |
 | Source commodities | Missions | **Find sources** button at the very bottom of the panel (or **Sources** in the Missions window) |
 | Inventory | Operations | Click one of the **inventory bars** (there is no button) |
-| Materials | Operations | **MATERIALS** button in the Materials section |
-| Engineering (blueprints, wishlist, ship and Odyssey upgrade planners, engineers) | Operations | **BLUEPRINTS** button in the Materials section |
+| Materials | Operations | **Materials** button in the Materials section |
+| Engineering (blueprints, wishlist, ship and Odyssey upgrade planners, engineers) | Operations | **Blueprints** button in the Materials section |
 | Material trader | Operations | **Find a trader** button in the Materials window |
-| Ship Builds | Operations | **SHIPS** button |
-| Colonization Sites | Colonization | **DASHBOARD** button |
-| Colonization History (tabs: Overview, By day, Commodities, Sites) | Colonization | **HISTORY** button |
-| My Projects (your projects on Raven Colonial) | Colonization | **PROJECTS** button, or **Raven Colonial → My Projects** in the Colonization Sites window |
+| Ship Builds | Operations | **Ships** button |
+| Colonization Sites | Colonization | **Dashboard** button |
+| Colonization History (tabs: Overview, By day, Commodities, Sites) | Colonization | **History** button |
+| My Projects (your projects on Raven Colonial) | Colonization | **Projects** button, or **Raven Colonial → My Projects** in the Colonization Sites window |
 | Planned Builds, Raven Progress and Create Project on Raven | Colonization | **Raven Colonial** menu in the Colonization Sites window |
-| Space Mining Book | Mining | **BOOK** button on the Space Mining page |
-| Surface Mining Book | Mining | **BOOK** button on the Surface Mining page |
-| Mining History | Mining | **DASHBOARD** button, on both mining pages |
-| Mining live window (Surface and Space) | Mining | **LIVE** button, on each mining page |
+| Space Mining Book | Mining | **Book** button on the Space Mining page |
+| Surface Mining Book | Mining | **Book** button on the Surface Mining page |
+| Mining History | Mining | **Dashboard** button, on both mining pages |
+| Mining live window (Surface and Space) | Mining | **Live** button, on each mining page |
 | Trade History (tabs: Overview, Commodities, Stations, Route, Trades, Stock & carrier, Lookups) | Trade | **History** button on the Session page |
 
 Notes:
@@ -449,10 +449,10 @@ a moment and a tooltip shows its full name and what it does.** The same goes for
 | **Missions** | Missions | Mode buttons |
 | **Operations** | Operations | Mode buttons |
 | **Colony** | Colonization | Mode buttons |
-| **REPORT** | Powerplay Sessions window | Powerplay |
-| **RARES** | Rares (rare goods finder) | Powerplay |
-| **RESCAN** | Rescan | Powerplay |
-| **REPORT** | View BGS report | BGS |
+| **Report** | Powerplay Sessions window | Powerplay |
+| **Rares** | Rares (rare goods finder) | Powerplay |
+| **Rescan** | Rescan | Powerplay |
+| **Report** | View BGS report | BGS |
 | **Auto-Honk** | Auto-Honk | Exploration |
 | **Discovery Alerts** | Discovery Alerts | Exploration |
 | **Neutron Star** | Nearest neutron star (primary star), from the Spansh search or the optional local star index | Exploration |
@@ -462,35 +462,35 @@ a moment and a tooltip shows its full name and what it does.** The same goes for
 | **< Prev** / **Next >** / **Copy** | Step to the previous or next target in the sub-mode, or copy the current target's system name to the clipboard | Exploration (Boxel Survey section) |
 | **Use Current** / **Set** | Fill the box with the system you are in / start the survey from the name in the box | Exploration (Boxel Survey section, Sequence) |
 | **Find Nearby (EDSM)** | Ask EDSM for the nearest real procedurally named system outside the current cube and put it in the Seed box (press **Set** to move the survey there) | Exploration (Boxel Survey section, Sequence) |
-| **FIND POI** | Find nearest POI (GEC and Canonn) | Exploration |
-| **UPDATE POI** | Refresh POI data (Canonn) | Exploration |
-| **MY CODEX** | My Codex window: overview, found and not found, with a Backfill Journals button (Codex Completionist) | Exploration |
-| **ADD NOTE** | Save the line you typed as a note about the system you are in | Exploration (Notes section) |
-| **NOTES** | Open the Notes window | Exploration (Notes section) |
-| **EXPEDITION** | Open the Expedition window (tabs Plan, Route and Log), where expeditions are started, paused and stopped | Exploration (Expedition section) |
+| **Find POI** | Find nearest POI (GEC and Canonn) | Exploration |
+| **Update POI** | Refresh POI data (Canonn) | Exploration |
+| **My Codex** | My Codex window: overview, found and not found, with a Backfill Journals button (Codex Completionist) | Exploration |
+| **Add Note** | Save the line you typed as a note about the system you are in | Exploration (Notes section) |
+| **Notes** | Open the Notes window | Exploration (Notes section) |
+| **Expedition** | Open the Expedition window (tabs Plan, Route and Log), where expeditions are started, paused and stopped | Exploration (Expedition section) |
 | **Copy on arrival** (tick) | Copy the next stop's system name to the clipboard every time you arrive anywhere | Exploration (Expedition section) |
-| **COPY NEXT** | Copy the next expedition stop's system name to the clipboard, to paste into the galaxy map | Exploration (Expedition section) |
-| **FIND** | Open the Nearest place to land window | Exploration (Nearest place to land section) |
-| **PLOT** | Open the Route Planner, which plots a neutron-star route for your ship with Spansh | Exploration (Route Planner section) |
-| **CLEAR ROUTE** | Forget the Route Planner's route and the route the Route overlay is following from the game, so the overlay closes | Exploration (Route Planner section) |
+| **Copy Next** | Copy the next expedition stop's system name to the clipboard, to paste into the galaxy map | Exploration (Expedition section) |
+| **Find** | Open the Nearest place to land window | Exploration (Nearest place to land section) |
+| **Plot** | Open the Route Planner, which plots a neutron-star route for your ship with Spansh | Exploration (Route Planner section) |
+| **Clear Route** | Forget the Route Planner's route and the route the Route overlay is following from the game, so the overlay closes | Exploration (Route Planner section) |
 | **Copy the next system to the clipboard automatically** (tick) | Put the next system of the plotted route on the clipboard when you plot and at each stop | Exploration (Route Planner section) |
-| **REVIEW** | Open the Prediction review (what the species prediction listed against what you found) | Exploration (Organic Scanning section) |
-| **DASHBOARD** | Open the Exploration Dashboard (not the Colonization one below: this is in Exploration) | Exploration (Dashboard section) |
-| **MARK** | Save where you are as a mark for the Surface Compass | Exploration (Compass section) |
-| **TARGET** | Aim the compass at the next target: the nearest hotspot, each mark on this body, then none | Exploration (Compass section) |
-| **MARKS** | Open the Marks window | Exploration (Compass section) |
-| **MATERIALS** | Open the Materials window | Operations (Materials section) |
-| **BLUEPRINTS** | Open the Engineering window (blueprints, wishlist, ship and Odyssey upgrade planners, engineers) | Operations (Materials section) |
-| **HOTSPOTS** | Find nearby hotspots | Mining |
+| **Review** | Open the Prediction review (what the species prediction listed against what you found) | Exploration (Organic Scanning section) |
+| **Dashboard** | Open the Exploration Dashboard (not the Colonization one below: this is in Exploration) | Exploration (Dashboard section) |
+| **Mark** | Save where you are as a mark for the Surface Compass | Exploration (Compass section) |
+| **Target** | Aim the compass at the next target: the nearest hotspot, each mark on this body, then none | Exploration (Compass section) |
+| **Marks** | Open the Marks window | Exploration (Compass section) |
+| **Materials** | Open the Materials window | Operations (Materials section) |
+| **Blueprints** | Open the Engineering window (blueprints, wishlist, ship and Odyssey upgrade planners, engineers) | Operations (Materials section) |
+| **Hotspots** | Find nearby hotspots | Mining |
 | **Add hotspot** | Save hotspot here | Mining (the live window's header) |
-| **PRICES** | Find best price | Mining |
-| **RESERVES** | Check ring reserve level | Mining |
+| **Prices** | Find best price | Mining |
+| **Reserves** | Check ring reserve level | Mining |
 | **Import/export** | Import/export hotspots | Mining (the live window's header) |
 | **Mark center** | Mark the center of a surface mining location | Mining (the live window's header) |
 | **Mark border** | Mark the border of a surface mining location | Mining (the live window's header) |
-| **LIVE** | Open the live window for the Mining page you are on (a radar and the controls on Surface, the live numbers on Space) | Mining |
-| **BOOK** | Space Mining Book (Space page) or Surface Mining Book (Surface page) | Mining |
-| **DASHBOARD** | Open Mining History (the Mining mode's own button) | Mining |
+| **Live** | Open the live window for the Mining page you are on (a radar and the controls on Surface, the live numbers on Space) | Mining |
+| **Book** | Space Mining Book (Space page) or Surface Mining Book (Surface page) | Mining |
+| **Dashboard** | Open Mining History (the Mining mode's own button) | Mining |
 | **Reset** | End this session and start a new tally (offers to save first) | Trade (Session page) |
 | **Save session** | Keep this session in Trade History (the tally keeps running; press Reset to start a new one) | Trade (Session page) |
 | **History** | Open the Trade History window | Trade (Session page) |
@@ -502,18 +502,18 @@ a moment and a tooltip shows its full name and what it does.** The same goes for
 | **Sell** / **Buy** | Choose whether the search is for selling or buying | Trade (Market page) |
 | **Near me** / **Galaxy** | Best place to sell or buy, near you / anywhere | Trade (Market page) |
 | **Best picks** | Closest, best local, cheapest or highest anywhere, and a price within 10% of the best, for the commodity in the box | Trade (Market page) |
-| **Price finder** | The finder behind Mining's **PRICES** button, for any commodity | Trade (Market page) |
-| **REFRESH** | Ask Spansh for the best buy and sell price of each watched commodity near you (needs Trade lookups on) | Trade (Watch list section) |
-| **WATCH** | Open the Watch list window | Trade (Watch list section) |
+| **Price finder** | The finder behind Mining's **Prices** button, for any commodity | Trade (Market page) |
+| **Refresh** | Ask Spansh for the best buy and sell price of each watched commodity near you (needs Trade lookups on) | Trade (Watch list section) |
+| **Watch** | Open the Watch list window | Trade (Watch list section) |
 | **◀** / **▶** | Previous / next page | Mining, Trade, Missions |
 | **Missions window** | Open the window listing every active mission, with progress and pinning | Missions (bottom of every page) |
 | **Find sources** | Where to buy the cargo your Collect and Mining missions need, and where to pick up a Delivery mission's cargo (needs Trade lookups on) | Missions (bottom of every page) |
-| **SHIPS** | Manage ship builds | Operations |
-| **DASHBOARD** | Colonization sites (the Colonization mode's own button) | Colonization |
-| **OVERLAY** | Force the colonization shopping list onto the overlay (lit while on), press again to let go | Colonization |
-| **PROJECTS** | Open My Projects, every active project you have on Raven Colonial | Colonization |
-| **HISTORY** | Open Colonization History, what you have delivered over time | Colonization |
-| **CREATE ON RAVEN** / **NOT NOW** | Shown only when Raven Colonial has no project for a new construction site: open the Create dialog for it / hide the offer | Colonization |
+| **Ships** | Manage ship builds | Operations |
+| **Dashboard** | Colonization sites (the Colonization mode's own button) | Colonization |
+| **Overlay** | Force the colonization shopping list onto the overlay (lit while on), press again to let go | Colonization |
+| **Projects** | Open My Projects, every active project you have on Raven Colonial | Colonization |
+| **History** | Open Colonization History, what you have delivered over time | Colonization |
+| **Create on Raven** / **Not Now** | Shown only when Raven Colonial has no project for a new construction site: open the Create dialog for it / hide the offer | Colonization |
 
 ---
 

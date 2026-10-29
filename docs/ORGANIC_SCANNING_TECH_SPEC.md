@@ -187,7 +187,7 @@ pools every commander's finds on the install, and it stores no commander name.
 
 **Prediction review window**
 
-- The same analysis (`exo_analysis.py`) is the **Prediction review window**, opened with REVIEW on the
+- The same analysis (`exo_analysis.py`) is the **Prediction review window**, opened with Review on the
   Organic Scanning panel.
 - A Finds tab has a filter, each find's conditions and the species the prediction listed, and a review
   status (*Needs a rule change*, *Bad data or journal quirk*, *Expected, no change*, *Look at again

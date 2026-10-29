@@ -175,7 +175,7 @@ Things true of every feature tab:
 
 ### Colonization
 
-*Also show the shopping list automatically (markets, carrier inventory, construction sites)* (off); *Also show whenever the right-hand cockpit panel is open, anywhere* (off); **Rows** (0 to 60; 0, the starting value, lists every commodity and a number limits the list, the rest being summarized); **List** (All, To buy, To haul; To buy); **Test Overlay**. The **OVERLAY** button on the Colony page switches the card on and off whether or not the first tick is on. See [the shopping list on the overlay](guide/colonization.md#the-shopping-list-on-the-overlay).
+*Also show the shopping list automatically (markets, carrier inventory, construction sites)* (off); *Also show whenever the right-hand cockpit panel is open, anywhere* (off); **Rows** (0 to 60; 0, the starting value, lists every commodity and a number limits the list, the rest being summarized); **List** (All, To buy, To haul; To buy); **Test Overlay**. The **Overlay** button on the Colony page switches the card on and off whether or not the first tick is on. See [the shopping list on the overlay](guide/colonization.md#the-shopping-list-on-the-overlay).
 
 ### Discovery
 
@@ -251,7 +251,7 @@ If several bodies match at once the cards take turns. See [Notable Bodies](guide
 
 ### Surface Compass
 
-*Enable Surface Compass* (off); **Test Compass**. An arrow, a name and a distance pointing at a hotspot or a mark on the planet you are on. What it points at is chosen in the Compass section of the Exploration panel (**MARK**, **TARGET**, **MARKS**); by default it points at the nearest hotspot you have recorded. See [Compass](guide/exploration.md#compass).
+*Enable Surface Compass* (off); **Test Compass**. An arrow, a name and a distance pointing at a hotspot or a mark on the planet you are on. What it points at is chosen in the Compass section of the Exploration panel (**Mark**, **Target**, **Marks**); by default it points at the nearest hotspot you have recorded. See [Compass](guide/exploration.md#compass).
 
 ### System targets
 

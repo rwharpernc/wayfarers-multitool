@@ -129,7 +129,7 @@ pump()
 from plugin import exploration_value as EV  # noqa: E402
 check(EV._NO_SCAN_TEXT in all_text(frame), "the Exploration Value lines are drawn inside the Dashboard section")
 check("Exploration Value" not in all_text(frame), "there is no section of its own called Exploration Value")
-check("DASHBOARD" in all_buttons_text(frame), "the panel has a DASHBOARD button")
+check("Dashboard" in all_buttons_text(frame), "the panel has a Dashboard button")
 DASH.handle_event({"event": "Scan"}, "CMDR A", "Smoke Sys", None, {})
 root.after(400, root.quit)
 root.mainloop()

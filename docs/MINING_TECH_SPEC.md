@@ -58,7 +58,7 @@ mining_coverage.py       The driven-ground record.  mining_coverage_render.py: d
 mining_live_position.py  The live surface position from Status.json.
 mining_bearing.py        Distance and bearing between two surface points.
 mining_overlay.py        The optional on-screen stats HUD (hold, rates, hold full in, limpets remaining).
-mining_live_window.py    The LIVE window (Surface Live with the radar and the ground controls; Space Live with the page's lines).
+mining_live_window.py    The Live window (Surface Live with the radar and the ground controls; Space Live with the page's lines).
 mining_radar_view.py     The radar picture from the Mining data, one recipe for the Live window and the card over the game.
 mining_radar_overlay.py  The Mining radar card over the game (built-in overlay, Windows).   mining_map_picture.py: the Save map picture.
 mining_drive_rings.py    The rings to drive round a marked mining location.   mining_rigs.py: the rigs noted with Rig placed.
@@ -67,7 +67,7 @@ mining_depletion.py      When a Depleted mark comes off, and the dated bookkeepi
 mining_share.py          The WFMT-SPOT1 share line for one deposit.   mining_hotspot_import_export.py: the file import and export.
 mining_hotspot_settings.py The Known Surface Hotspots list on the Settings page.
 mining_simulation.py     The pretend Rhino for the Live window.   mining_sources.py: where the renderers read their data from.
-mining_history.py        Every mining run read from the journals, per commander.   mining_history_data.py (pure) and mining_history_window.py: the DASHBOARD.
+mining_history.py        Every mining run read from the journals, per commander.   mining_history_data.py (pure) and mining_history_window.py: the Dashboard.
 mining_alerts.py         Core, rich-rock, limpet and hold alerts for Flight Alerts; the rock reading shared with the Space page.
 mining_market.py         What the open market pays against the galactic average.   mining_missions.py: the mission-needs lines.
 mining_market_research*.py, mining_what_pays*.py   Market research and What pays: the plan (pure) and the windows.
@@ -412,7 +412,7 @@ kind of ground: the share of your saved deposits, per material, with the sample 
 
 ### 6.4 The Space Mining Book
 
-The BOOK button opens the book for the page it is on: `mining_ring_book.py` on the Space Mining page,
+The Book button opens the book for the page it is on: `mining_ring_book.py` on the Space Mining page,
 `mining_ledger.py` (the Surface Mining Book above) on the Surface Mining page.
 
 **The Space Mining Book** is a catalog of **rings**, built from the journals instead of typed in.
@@ -473,7 +473,7 @@ the commander marks them:
   uses.
 
 ### 7.3 The Live window and the radar
-The **LIVE** button opens one window for each page (`mining_live_window.py`): geometry is saved per page, it redraws
+The **Live** button opens one window for each page (`mining_live_window.py`): geometry is saved per page, it redraws
 once a second, and the page's lines are drawn by the same code as the panel (`mining_render`, with no button bar), so
 the two cannot disagree.
 

@@ -100,7 +100,7 @@ These are written as rules so a new feature can be checked against them.
 - For the same reason nothing in the main panel may let outside data widen it: EDMC sizes its window to the widest row of any plugin, so one unbounded widget widens everyone's.
 - See [WINDOW_FRAMEWORK_SPEC.md](WINDOW_FRAMEWORK_SPEC.md).
 
-**One word for an overview page: DASHBOARD.**
+**One word for an overview page: Dashboard.**
 
 - *Why:* it is the one label for a page that gathers everything about a mode in one place (Colonization has one, and so does Exploration).
 - The same label may sit on buttons in different modes, because the mode already says which one it is, but no mode may have two.
@@ -191,7 +191,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 
 ### 3.6 The Exploration Dashboard
 
-- **Decision:** a window, opened from a DASHBOARD button on the Exploration panel, that reads what the other features already hold and draws it in four tabs (Overview, Orbit, Surface, Exploration).
+- **Decision:** a window, opened from a Dashboard button on the Exploration panel, that reads what the other features already hold and draws it in four tabs (Overview, Orbit, Surface, Exploration).
 - **Why a window:** the overlays draw on the game; sometimes the want is to read the same facts without cluttering the screen.
 - **Why it holds nothing of its own:** it asks the system survey, Organic Scanning, the Expedition Log and the Route for their state, so it can never disagree with the cards.
   - All the numbers come from a pure module (`explore_dashboard_data.py`), so they are tested without a screen, and the window only draws.
@@ -256,10 +256,10 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
   - The standalone windows remain in the code only as the path the tests and `host=None` use.
 - The panel's two rows are one section too:
   - The Log has no section of its own (`expedition_log_panel.PANEL_PLACEMENT` is `None`).
-  - The section has no START, PAUSE or STOP: expeditions are started, paused and stopped only in the Expedition window (`build_into` just hooks the section up to the Log).
+  - The section has no Start, Pause or Stop: expeditions are started, paused and stopped only in the Expedition window (`build_into` just hooks the section up to the Log).
   - The section words the Log's extra figures under the expedition's own lines instead of saying the name, jumps and time twice.
   - A Log run with no plan behind it is shown as the Log words it.
-  - The LOG button went: the archive is a tab of the window.
+  - The Log button went: the archive is a tab of the window.
 - *Cost:*
   - The section's folded state is the Expedition section's (the Log row's saved folded state is no longer read).
   - Start, Pause and Stop live in the Expedition window (the Plan and Log tabs), so there is one place to manage an expedition. With a planned expedition they act on it through the link, and with none they start a Log run only.
@@ -351,7 +351,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 
 ### 3.13 POI Reference and the section order
 
-- **Decision:** GEC Nearby POI and Canonn Nearby POI are one section, POI Reference, with one FIND POI.
+- **Decision:** GEC Nearby POI and Canonn Nearby POI are one section, POI Reference, with one Find POI.
   - The controllers are separate modules (`gec_poi_panel.py`, `canonn_poi_panel.py`) because the sources differ. One downloads a single list and caches it for six hours; the other uses two Google-hosted sheets cached for the session, with different settings.
   - `poi_reference_panel.py` owns the buttons and the frame.
   - A small `Collector` waits for both lookups and names the nearer system. It has no Tk so a test can drive it.
@@ -377,8 +377,8 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 
 ### 3.15 My Codex
 
-- **Decision:** the Codex Completionist section keeps its summary line and has one button, MY CODEX.
-  - DASHBOARD is not used because Exploration already has one and a name is never used twice in a mode.
+- **Decision:** the Codex Completionist section keeps its summary line and has one button, My Codex.
+  - Dashboard is not used because Exploration already has one and a name is never used twice in a mode.
   - The window has an Overview tab and a Where to look column, and the backfill is in the window.
 - **Why an overview:** the Found and Not found lists answer "what do I have" but not "what should I go after", and a thousand-row list does not show that one genus is nearly finished. Ranking started types by entries left gives a first answer.
 - **Why the hint is built from existing data:**
@@ -482,7 +482,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 ### 3.22 Exploration Value lives inside the Dashboard section
 
 - **Decision:** the Exploration Value readouts and the Dashboard window show the same figures (the Dashboard's *Panel readouts* are literally Exploration Value's lines), so they share one panel section.
-  - The readout lines are drawn under the DASHBOARD button (`exploration_value.build_rows`).
+  - The readout lines are drawn under the Dashboard button (`exploration_value.build_rows`).
   - Exploration Value has no section of its own (`PANEL_PLACEMENT = None`).
   - Its Settings tab, switches and the two online extras stay.
 - **Why:** two sections would take two lines of a crowded panel to show one thing. The Dashboard and the Route Planner sections fold like the others.

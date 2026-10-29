@@ -113,7 +113,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - **A-** and **A+** change the text of every window; the stat tiles and status chips keep their size; at the larger sizes no window loses its title, buttons or footer.
   - Short columns are narrow and a long name column takes the spare width.
 - [ ] **Colonization Archive** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 6): Archive Finished moves complete and failed sites into Show Archive, Restore and Remove Permanently work, and the archive survives a restart and is part of Back up my data.
-- [ ] **Raven project offer** (Windows): with Raven sharing on and a key saved, a new construction site with no Raven project shows *Raven Colonial has no project for ...* on the Colonization panel; **CREATE ON RAVEN** opens the Sites window on that site and its dialog, **NOT NOW** hides it, and it is not offered again for that site.
+- [ ] **Raven project offer** (Windows): with Raven sharing on and a key saved, a new construction site with no Raven project shows *Raven Colonial has no project for ...* on the Colonization panel; **Create on Raven** opens the Sites window on that site and its dialog, **Not Now** hides it, and it is not offered again for that site.
 - [ ] **Colonization Show / List** (Windows, then Linux): with everything on the fleet carrier, **To buy** lists nothing and **To haul** lists every commodity; a commodity drops off **To haul** once it is aboard in full.
 
 ### Expedition and route planning
@@ -133,13 +133,13 @@ The items below are implemented and covered by unit tests, but have not all been
 - [ ] **One Expedition section on the panel.** The Exploration panel has an **Expedition** section and no separate Expedition Log section.
   - With nothing running it says so.
   - Press **Start** in the Expedition window's Log tab: the section shows the Log's own lines (name and time, systems, jumps and light-years, bodies and species, earned and unsold).
-  - **Pause** in the window becomes **Resume** and the section's lines gain `(paused)`. **Stop** ends it. The section itself has no START, PAUSE or STOP.
+  - **Pause** in the window becomes **Resume** and the section's lines gain `(paused)`. **Stop** ends it. The section itself has no Start, Pause or Stop.
   - Start a planned expedition (Plan tab, **Start**): the section shows its stops, jumps, light-years, time and next stop and, under them, the systems, bodies, species and credits, with the name and jumps said once.
   - Fold the section: the title says what is running.
-  - **COPY NEXT** and **Copy on arrival** work as before.
+  - **Copy Next** and **Copy on arrival** work as before.
   - The section must not widen EDMC's window.
 - [ ] **One Expedition window with Plan, Route and Log tabs.**
-  - Press **EXPEDITION** and **PLOT** on the panel in turn.
+  - Press **Expedition** and **Plot** on the panel in turn.
     - Each opens the same window (never a second one) on its tab.
     - The Log tab shows the archive.
     - The window opens in a sensible place at a sensible size.
@@ -161,7 +161,7 @@ The items below are implemented and covered by unit tests, but have not all been
     - Check the **Road to Riches** and **Exomastery** buttons: press Plot and compare the new expedition's stops and notes with spansh.co.uk/riches and /exobiology. Both endpoints were checked with live requests.
     - Create an expedition and add stops manually, from a plotted route and from a CSV file.
     - Press Start. Jump to a stop and confirm that it is ticked, the jump is counted and the next stop's distance is shown.
-    - Verify COPY NEXT and Copy on arrival pasting into the galaxy map.
+    - Verify Copy Next and Copy on arrival pasting into the galaxy map.
     - Verify **Locate and reorder (EDSM)** against EDSM.
     - Check that the row does not widen the EDMC window.
 - [ ] **Expedition survey tracking.** Start an Expedition with two or three stops.
@@ -182,12 +182,12 @@ The items below are implemented and covered by unit tests, but have not all been
   - The earned figures assume the journal's sale events (`MultiSellExplorationData`, `SellExplorationData`, `SellOrganicData`) carry the totals as read here. Confirm against a real sale.
 - [ ] **Expedition Log: pause and stop.** Turn the Expedition Log overlay on, press **Start** in the Expedition window, jump or scan a little, then **Pause**.
   - The card should keep its totals with `paused` in its heading and nothing more should count.
-  - RESUME should carry on (check the clock did not run while paused).
+  - Resume should carry on (check the clock did not run while paused).
   - Restart EDMC while paused: it should still be paused.
-  - Then **STOP**: the card should reset to saying none is running, even after a pause.
+  - Then **Stop**: the card should reset to saying none is running, even after a pause.
 - [ ] **Expedition: restart a stopped one, and Rescan.** (Windows and Linux; steps also in [TEST_PLAN.md](TEST_PLAN.md) section 5.)
-  - Start an expedition, jump or scan, press **STOP**, wait a minute, then start it again from the Route tab: the clock carries on from where it stopped, not a minute later. The Log's **Resume** does the same.
-  - Pause one, make a few jumps while it is paused, **RESUME**, then press **Rescan** in the Log window: the totals do not include those jumps. Stop one, play a little, start it again and Rescan: the same.
+  - Start an expedition, jump or scan, press **Stop**, wait a minute, then start it again from the Route tab: the clock carries on from where it stopped, not a minute later. The Log's **Resume** does the same.
+  - Pause one, make a few jumps while it is paused, **Resume**, then press **Rescan** in the Log window: the totals do not include those jumps. Stop one, play a little, start it again and Rescan: the same.
   - An expedition that was paused before this build has no pause recorded, so its Rescan can still count that pause.
 - [ ] **Neutron route, Share line, Market.json.**
   - Expedition window: press **Neutron route** and check it opens the Route Planner.
@@ -196,7 +196,7 @@ The items below are implemented and covered by unit tests, but have not all been
     - **Paste spot** on a second commander: refused for a spot within 100 m of one saved, accepted otherwise after the prompt.
     - Damage a line by deleting its last characters and check the message.
   - Dock at a station and open the commodities market right after docking, several times, on a slow disk if possible. Check Trade Watch and Trade show that station's prices (the log has no read errors).
-- [ ] **Route Planner.** Press **PLOT** (in the Route Planner section of the Exploration panel, which starts folded, and the Route Planner button in the Dashboard's header).
+- [ ] **Route Planner.** Press **Plot** (in the Route Planner section of the Exploration panel, which starts folded, and the Route Planner button in the Dashboard's header).
   - Check the ship block against the game for the same ship (name, drive class and rating, booster, optimal mass, supercharge, cargo).
     - It never changes while you fly (only a new loadout or cargo does).
     - The source is the system you are in.
@@ -219,7 +219,7 @@ The items below are implemented and covered by unit tests, but have not all been
     - Unticking it removes them.
   - Block the network to EDSM and check the status line says white dwarfs are not marked.
   - Fit no fuel scoop (or use a ship without one). Check the ship block says NONE FITTED and a route with refuel stops warns.
-  - Check the Canonn and GEC **COPY SYSTEM** buttons and links (the fallback to Inara when no URL is given).
+  - Check the Canonn and GEC **Copy System** buttons and links (the fallback to Inara when no URL is given).
   - Then Linux.
 - [ ] **Ship known after an EDMC restart.** With the game running and logged in, restart EDMC without relogging.
   - The Route Planner window's ship block should show your ship at once.
@@ -233,9 +233,9 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that a stop 20 or more jumps ahead is marked once you are within about a dozen neutron stops of it.
 - [ ] **Route Planner: the route survives a restart.** Plot a route, jump a system or two along it, restart EDMC (with the game running, and again with it closed).
   - The panel line, the window's table and the Route overlay should show the same route from where you are on it.
-  - Press CLEAR ROUTE and restart: it should stay gone.
+  - Press Clear Route and restart: it should stay gone.
   - Check a second commander does not see the first one's route.
-- [ ] **Route Planner: clearing a route.** Plot a route, then press **CLEAR ROUTE** on the Exploration panel and **Clear route** in the window (plot again between).
+- [ ] **Route Planner: clearing a route.** Plot a route, then press **Clear Route** on the Exploration panel and **Clear route** in the window (plot again between).
   - The panel line, the window's table and the Route overlay's card should all go, and the card should close, even when the card was following a route from the galaxy map.
   - The button should be there before any route is plotted (and say so when there is nothing to clear).
   - Check the destination line on the card reads whole for a long procedural name.
@@ -294,7 +294,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that the first open after updating re-reads your journals once.
   - Compare the cost with your own credit balance for a run you remember.
   - Check the new column fits the window at its smallest size.
-- [ ] **Mining History.** In Mining mode press **DASHBOARD**.
+- [ ] **Mining History.** In Mining mode press **Dashboard**.
   - The header shows the one-time read of your journals.
   - The Overview should add up to what you remember (tons, hours, credits from sales).
   - Check **Commodities** against a few sales.
@@ -332,16 +332,16 @@ The items below are implemented and covered by unit tests, but have not all been
     - none while you are not mining
     - the sound if ticked
   - Then Linux.
-- [ ] **Space Mining Book.** On the Space Mining page press **BOOK**.
+- [ ] **Space Mining Book.** On the Space Mining page press **Book**.
   - The window fills with the rings your journals show (it reads them once in the background, so give it a moment on the first open). It shows hotspots per mineral, class, reserve level, tons mined and last mined.
   - Compare a few rings with the game (the hotspot counts, the reserve level).
   - Type a note, press **Favorite**, **Find** by a mineral, **Add ring** by hand and remove it, and **Copy system**.
   - Restart EDMC: notes and favorites remain. A second commander sees none.
-  - Check **BOOK** on the Surface Mining page opens the Surface Mining Book as before.
+  - Check **Book** on the Surface Mining page opens the Surface Mining Book as before.
   - Check its body list has a **From your journals** group of bodies with mining locations and tons refined (compare a body or two with what you remember).
   - Then Linux.
 - [ ] **Surface Live radar: drive rings, stops, target line, Save map.** *Windows: tried on the simulation only.*
-  - On a body with a marked location (Mark center, then Mark border) and several saved deposits, open **LIVE**.
+  - On a body with a marked location (Mark center, then Mark border) and several saved deposits, open **Live**.
   - Check the orange dashed rings are drawn as described. The 2 km reach behind them is a community figure that will not be measured (see STATUS.md).
   - Check that the first ring starts at the center and the last sits on the border, and that before a border is marked they reach as far as you have driven.
   - Check that violet circles sit round the best stops (the radius is Settings → Mining).
@@ -378,13 +378,13 @@ The items below are implemented and covered by unit tests, but have not all been
 - [ ] **Surface mining on a body you never scanned, and Get body info.** Land on a body with no `Scan` event in your journals and launch the Rhino.
   - The ground trail should start on the Live radar.
   - **Mark center** and **Mark border** should mark (the body's name and size come from `Status.json`).
-  - Tick *Enable body lookup* (Settings → Mining), open **BOOK** and press **Get body info**.
+  - Tick *Enable body lookup* (Settings → Mining), open **Book** and press **Get body info**.
     - The system's landable bodies appear in the list with their kinds, sizes and mining-location counts. The counts come from Spansh and need a jump or login since EDMC started.
     - The status line says how many were added.
   - Check a body your journals did give keeps its own data.
   - Check that FSS-scanning a body fills its mining-location count.
   - Restart EDMC (or jump away and back): the body list should return at once, and `mining_body_cache.json` should appear beside the plugin with no commander in its name.
-- [ ] **What pays.** Tick *Enable Spansh best price finder*, save deposits of two or three materials, open **BOOK** then **What pays**.
+- [ ] **What pays.** Tick *Enable Spansh best price finder*, save deposits of two or three materials, open **Book** then **What pays**.
   - Check the ranking against Spansh's own price search for the same commodities.
   - Check that a commodity nobody pays for says so.
   - Check that *Near* and *Within* change the answer.
@@ -408,8 +408,8 @@ The items below are implemented and covered by unit tests, but have not all been
 - [ ] **Surface Compass.** The compass replaces the Mining waypoint arrow. On a landable surface, verify:
   - **Test Compass**.
   - The arrow follows the nearest hotspot as the commander turns.
-  - **MARK** (the body name is taken from `Status.json`'s `BodyName`, which was seen in a real file on 2026-10-16, game 4.4.1.1).
-  - **TARGET**.
+  - **Mark** (the body name is taken from `Status.json`'s `BodyName`, which was seen in a real file on 2026-10-16, game 4.4.1.1).
+  - **Target**.
   - The Marks window.
   - The previous Mining tick and arrow are removed while the saved placement is kept.
 
@@ -524,7 +524,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Then Linux:
     - The plugin folder of a Flatpak EDMC is writable and has room (about 300 MB free while building).
     - Check the real build time on the real 173 MB file and on an update.
-- [ ] **Exploration Dashboard.** Press **DASHBOARD** on the Exploration panel in each of these places and check the window against the game and your overlays.
+- [ ] **Exploration Dashboard.** Press **Dashboard** on the Exploration panel in each of these places and check the window against the game and your overlays.
   - In a system with several bodies after a honk and some scans (Orbit):
     - Orbit lists every body with sensible distance, gravity, atmosphere and values.
     - Click a row for the details.
@@ -573,7 +573,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - For a system you were in before WFMT was installed, the first return should rebuild it from your journals within a second or two.
   - Check that another commander sees none of it.
   - Check that `system_surveys.json` appears beside the plugin, survives an update, and stays small.
-- [ ] **Nearest place to land.** In the game: press FIND in Exploration, tick the box, press Find.
+- [ ] **Nearest place to land.** In the game: press Find in Exploration, tick the box, press Find.
   - Check your system, coordinates and ship's pad are right.
   - Check the nearest stations and carriers look sensible against the galaxy map (for the carriers, the age shown).
   - Check that a pad your ship cannot use never appears.
@@ -602,9 +602,9 @@ The items below are implemented and covered by unit tests, but have not all been
   - On a body with life, check the Biology card's `Likely color` matches the color a sample then names, and that a multi-star system can be wrong.
 - [ ] **Prediction review and the record of finds.** Sample a few species with WFMT running.
   - Check that `exo_observations.json` gains a record for each.
-  - Open **REVIEW** on the Organic Scanning panel and check the Finds, By genus, Ranges and Together tabs, a review status and note, and Copy report.
+  - Open **Review** on the Organic Scanning panel and check the Finds, By genus, Ranges and Together tabs, a review status and note, and Copy report.
   - Turn the record off and clear it under Settings → Exploration → Organic Scanning.
-- [ ] **MY CODEX.** Press **MY CODEX** in the Codex Completionist section.
+- [ ] **My Codex.** Press **My Codex** in the Codex Completionist section.
   - Check the Overview totals against the Found tab.
   - Check that Closest to complete lists types that are started but not finished.
   - Check that a missing biological entry's **Where to look** names conditions and a star class or material you can check in the game.
@@ -612,7 +612,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that **Backfill Journals** reports in the window's status bar and the section.
   - Then Linux.
 - [ ] **Megaship scans.** In a Powerplay system, drop out of supercruise at a megaship and scan its datalink.
-  - Confirm that the panel line and the **REPORT → Megaships** row appear with the correct name and system.
+  - Confirm that the panel line and the **Report → Megaships** row appear with the correct name and system.
   - Confirm that the merits are filled in shortly afterward.
   - Confirm that a second scan of the same megaship changes nothing, and that a scan at a station adds nothing.
   - Restart EDMC and confirm that the list is retained.
@@ -683,7 +683,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Restart EDMC with an uncollected delivery active and check the station is still named.
   - Check that a Collect or Mining mission still shows market picks.
 - [ ] **Trade Watch list.** Add several commodities and open real markets (the `Market` event and `Market.json` for a watched item).
-  - Press **REFRESH** against Spansh with Trade lookups enabled (two requests per commodity).
+  - Press **Refresh** against Spansh with Trade lookups enabled (two requests per commodity).
   - Verify the age and place columns and removal.
   - Verify that the EDMC window does not become wider.
 - [ ] **Themed confirmations and prompts.** Open each from its place and check it is centered over its window, blocks that window until answered, wraps long text, and that Esc cancels and Enter takes the highlighted button.
@@ -701,7 +701,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Verify that clicking the Credits line opens the ledger.
   - Verify that the Income, By day and Lifetime tabs fill for each commander.
   - Verify that **Rebuild from journals** reports its progress and result.
-  - Verify that the HISTORY button on the Colonization panel opens its window.
+  - Verify that the History button on the Colonization panel opens its window.
 - [ ] **BGS** after a tick passes while EDMC is closed: the period that closed should contain the play made in the meantime. Also verify that a finished Colonization build is displayed without the "Construction Site:" prefix.
 - [ ] Colonization window: **Find all** against Spansh, **Only what [station] sells** with a real `Market.json`, and copying a system by clicking a result row.
 - [ ] **Colonization: hold, Acquire and best single systems** (Windows, then Linux; steps in [LINUX_TESTING.md](LINUX_TESTING.md)).

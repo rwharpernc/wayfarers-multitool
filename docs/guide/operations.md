@@ -40,21 +40,21 @@ The most common tasks, step by step. Each one links to the section with the full
 
 **Check materials for a blueprint** (details: [Engineering](#engineering-blueprints-and-a-wishlist))
 
-1. Press **BLUEPRINTS** on the Materials row to open the Engineering window.
+1. Press **Blueprints** on the Materials row to open the Engineering window.
 2. On the **Blueprints** tab, type the module or effect in **Search** and pick the blueprint. Its ingredients show what one craft takes and how many you hold.
 3. Set **Crafts**, then press **Add to wishlist**.
 4. Open the **Wishlist** tab to see whether it **can be made now** and what you are **short** of.
 
 **Find a material trader** (details: [Materials](#materials))
 
-1. Press **MATERIALS**, then **Find a trader** in the Materials window.
+1. Press **Materials**, then **Find a trader** in the Materials window.
 2. Pick the **Type**, **Within** distance and **Pad** size, and check **Search from**.
 3. Press **Find**. The **Material trader** window lists the closest stations first.
 
 **Save a ship build** (details: [Ship Builds](#ship-builds))
 
 1. Design the build on Coriolis, EDSY or Spansh and copy its address from your browser.
-2. Press **SHIPS** in the **Ship Builds** row, then **Add build**.
+2. Press **Ships** in the **Ship Builds** row, then **Add build**.
 3. Fill in **Name**, **Ship**, **Site** and **Link**, then press **Save**.
 
 **Plan a whole ship's engineering** (details: the Ship planner in [Engineering](#engineering-blueprints-and-a-wishlist))
@@ -229,13 +229,13 @@ A collapsible **Materials** row shows (click its title to fold it; the folded ti
 
 Before the game has told WFMT anything the row says `Log in to see your materials.`, and with an empty book `No materials yet. The counts fill in when you are in the game.`
 
-**MATERIALS** opens the window, and **BLUEPRINTS** (under it) opens the Engineering window.
+**Materials** opens the window, and **Blueprints** (under it) opens the Engineering window.
 
 **To use it:**
 1. Switch to Operations mode and open the **Materials** row if it is folded. Log in to the game once, so WFMT has the full list.
 2. Read the row: pieces held of each type, the last change, and anything at the limit.
-3. Press **MATERIALS** to search, filter and sort. To find where to swap materials, press **Find a trader** inside that window (see below).
-4. To plan crafts, press **BLUEPRINTS** (see [Engineering](#engineering-blueprints-and-a-wishlist)).
+3. Press **Materials** to search, filter and sort. To find where to swap materials, press **Find a trader** inside that window (see below).
+4. To plan crafts, press **Blueprints** (see [Engineering](#engineering-blueprints-and-a-wishlist)).
 
 **The window** lists every material you hold in the columns **Material**, **Type**, **Grade**, **Held**, **Limit** and **Room**. A help button repeats these notes. Type in **Search** (every word must be in
 the name), pick a **Type** or **Grade**, tick **Only what is at the limit**, and click a heading to sort.
@@ -265,7 +265,7 @@ Pressing **Find** is the only thing that goes online: it sends Spansh the system
 
 **Worked example: swapping away surplus Raw materials.** Your Materials row says `At the limit: ...` and lists several Raw materials.
 
-1. Press **MATERIALS**, then **Find a trader**. **Type** starts as the type with the most materials at the limit, here Raw.
+1. Press **Materials**, then **Find a trader**. **Type** starts as the type with the most materials at the limit, here Raw.
 2. Leave **Within** at 100 ly. If your ship needs it, set **Pad** to **Large only**.
 3. Check **Search from** (it starts as your current system) and press **Find**.
 4. In the **Material trader** window, read the closest station first: its **Where** column says whether it is in space or on a surface, with the distance from the arrival star. Above the list, the grades you hold of that type show what is worth swapping.
@@ -274,10 +274,10 @@ Pressing **Find** is the only thing that goes online: it sends Spansh the system
 
 ## Engineering: blueprints and a wishlist
 
-**BLUEPRINTS** on the Materials row opens the Engineering window. It has five tabs: Blueprints, Wishlist, Ship planner, Upgrade planner and Engineers. **Refresh counts** (top right) re-reads what you hold, which the Have and Short figures use.
+**Blueprints** on the Materials row opens the Engineering window. It has five tabs: Blueprints, Wishlist, Ship planner, Upgrade planner and Engineers. **Refresh counts** (top right) re-reads what you hold, which the Have and Short figures use.
 
 **To use it:**
-1. Press **BLUEPRINTS** on the Materials row. On the **Blueprints** tab, search for a module or an effect and pick a blueprint.
+1. Press **Blueprints** on the Materials row. On the **Blueprints** tab, search for a module or an effect and pick a blueprint.
 2. Read its ingredients: how many one craft takes, how many you hold and where each is found. Set **Crafts** to the number you expect to need.
 3. Press **Add to wishlist**. Repeat for everything you plan to build.
 4. Open the **Wishlist** tab: it says which entries can be made now, what you are short of, and the shopping list for all of it.
@@ -285,7 +285,7 @@ Pressing **Find** is the only thing that goes online: it sends Spansh the system
 
 **Worked example: planning two crafts.** You want to know whether you can build a blueprint twice.
 
-1. Press **BLUEPRINTS** and stay on the **Blueprints** tab. Type the module name in **Search**; every word you type must match.
+1. Press **Blueprints** and stay on the **Blueprints** tab. Type the module name in **Search**; every word you type must match.
 2. Pick the blueprint. Under it you see who offers it, its effects and what **one craft** takes: each ingredient with how many you need, how many you hold and where it is found.
 3. Set **Crafts** to 2 and press **Add to wishlist**.
 4. Open the **Wishlist** tab. The entry says whether it **can be made now** and how many pieces it is **short**. The shopping list below lists each ingredient's need, have and short, with what is short at the top, and where it is found.
@@ -429,7 +429,7 @@ doesn't design ships itself. This just helps you find a build again later.
 **To save a build:**
 
 1. Design your build on whichever site you like.
-2. Click **SHIPS** (manage ship builds) in the **Ship Builds** row of the WFMT panel. The row is collapsible, and its text shows how many builds you have.
+2. Click **Ships** (manage ship builds) in the **Ship Builds** row of the WFMT panel. The row is collapsible, and its text shows how many builds you have.
 3. Click **Add build** (the highlighted button).
 4. Fill in the **Add Ship Build** form. **Name**, **Ship**, **Site** and **Link** are required. **Ship** starts as the ship you are flying; **Role** is what the build is for, such as "PvE Exploration"; **Notes** is free text.
 5. Pick the **Site** (**Coriolis**, **EDSY (E:D Shipyard)**, **Spansh** or **Other**; you can also type another name) and paste the build's web address, which must start with `http://` or `https://`, into **Link**.
@@ -440,7 +440,7 @@ browser's address bar.
 
 **Worked example: finding a build again.** Months later you want your exploration build.
 
-1. Press **SHIPS** in the **Ship Builds** row. The **Builds** tab lists your builds with their **Name**, **Ship**, **Role**, **Site** and **Updated**.
+1. Press **Ships** in the **Ship Builds** row. The **Builds** tab lists your builds with their **Name**, **Ship**, **Role**, **Site** and **Updated**.
 2. Select `Krait Phantom explorer`, then press **Open Link** to open it in your browser, or **Copy Link** to copy the address.
 3. If the site's address changed, press **Edit build**, paste the new link and save.
 

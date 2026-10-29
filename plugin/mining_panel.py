@@ -267,23 +267,23 @@ class MiningPanelController:
         self._buttons = render.PanelButtons(
             bar=button_bar,
             hotspot_finder=tk.Button(
-                button_bar, text="HOTSPOTS",
+                button_bar, text="Hotspots",
                 command=lambda: hotspot_finder_dialog.open_hotspot_finder_dialog(self._window_parent())),
             price_finder=tk.Button(
-                button_bar, text="PRICES",
+                button_bar, text="Prices",
                 command=lambda: price_finder_dialog.open_price_finder_dialog(
                     self._window_parent(), suggested_commodities=self._current_run_refined_commodities())),
             reserve_lookup=tk.Button(
-                button_bar, text="RESERVES",
+                button_bar, text="Reserves",
                 command=lambda: reserve_lookup_dialog.open_reserve_lookup_dialog(self._window_parent())),
             ledger=tk.Button(
-                button_bar, text="BOOK",
+                button_bar, text="Book",
                 command=self._open_book),
             history=tk.Button(
-                button_bar, text="DASHBOARD",
+                button_bar, text="Dashboard",
                 command=lambda: history_window.show(self._window_parent(), self._history_mode())),
             live=tk.Button(
-                button_bar, text="LIVE",
+                button_bar, text="Live",
                 command=self._open_live),
         )
         for button, tip in (
