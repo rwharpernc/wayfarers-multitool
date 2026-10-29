@@ -1,5 +1,5 @@
 """
-GUI focus detection and per-panel crop rectangles for Field Ops screenshot
+GUI focus detection and per-panel crop rectangles for Operations screenshot
 capture.
 
 Elite Dangerous does not report which HUD panel is open in the Screenshot

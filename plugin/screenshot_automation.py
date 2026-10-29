@@ -5,7 +5,7 @@ Automation: detects Elite Dangerous and simulates the screenshot hotkey
 Windows uses pywin32, already bundled with EDMC, instead of hand-rolled
 ctypes structures. Linux uses `xdotool` (see platform_support.py), so it is
 only available there when xdotool is installed. Every entry point is a safe
-no-op when unsupported, so the rest of Field Ops' screenshot handling
+no-op when unsupported, so the rest of Operations' screenshot handling
 (conversion, cropping, UI) works unmodified everywhere, including macOS.
 """
 

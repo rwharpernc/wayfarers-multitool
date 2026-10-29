@@ -1,4 +1,4 @@
-"""The Add/Edit Ship Build window (SHIPS in Field Ops), on the shared form (`uikit/form.py`). `build_ship` turns the typed text into a `ShipBuild` or says what is wrong, without a window, so it can
+"""The Add/Edit Ship Build window (SHIPS in Operations), on the shared form (`uikit/form.py`). `build_ship` turns the typed text into a `ShipBuild` or says what is wrong, without a window, so it can
 be tested; `open_ship_build_dialog` shows the form. Parented on the caller's toplevel, not on a frame the panel rebuilds every second (which would take the window with it).
 """
 from __future__ import annotations

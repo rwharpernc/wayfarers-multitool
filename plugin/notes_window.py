@@ -80,7 +80,8 @@ class NotesWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Notes help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("New note", self._new, accent=True)
+        self._shell.add_action("New note", self._new, accent=True,
+                                tip="New note - start a new note with the system you are in filled in")
 
         filters = tk.Frame(self._shell.body, bg=P.BG)
         filters.pack(fill="x", pady=(0, P.PAD_SM))
@@ -109,7 +110,8 @@ class NotesWindow:
             box.grid(row=row, column=1, sticky="w", padx=P.PAD_SM, pady=2)
             if row == 0:
                 system_autocomplete.attach(box, variable)
-            FlatButton(editor, "Here", lambda r=row: self._fill_here(r)).grid(row=row, column=2, sticky="w", pady=2)
+            FlatButton(editor, "Here", lambda r=row: self._fill_here(r),
+                       tip="Here - fill in the " + ("system" if row == 0 else "body") + " you are at now").grid(row=row, column=2, sticky="w", pady=2)
         tk.Label(editor, text="Note", fg=P.MUTED, bg=P.PANE).grid(row=2, column=0, sticky="nw", pady=2)
         self._text = tk.Text(editor, height=3, wrap="word", bg=P.CARD, fg=P.TEXT, insertbackground=P.TEXT, relief="flat")
         self._text.grid(row=2, column=1, columnspan=2, sticky="nsew", padx=P.PAD_SM, pady=2)
@@ -117,8 +119,8 @@ class NotesWindow:
 
         buttons = tk.Frame(editor, bg=P.PANE)
         buttons.grid(row=3, column=1, columnspan=2, sticky="w", pady=(P.PAD_SM, 0))
-        FlatButton(buttons, "Save", self._save, kind="accent").pack(side="left")
-        self._delete_button = FlatButton(buttons, "Delete", self._delete, kind="danger")
+        FlatButton(buttons, "Save", self._save, kind="accent", tip="Save - save this note, as a new one or as changes to the selected one").pack(side="left")
+        self._delete_button = FlatButton(buttons, "Delete", self._delete, kind="danger", tip="Delete - remove the selected note for good; asks to be pressed twice")
         self._delete_button.pack(side="left", padx=(6, 0))
         self._delete_button.set_enabled(False)
 

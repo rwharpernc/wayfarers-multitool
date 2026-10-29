@@ -1,4 +1,4 @@
-"""Materials: the commander's Raw, Manufactured and Encoded engineering materials, in Field Ops mode's panel.
+"""Materials: the commander's Raw, Manufactured and Encoded engineering materials, in Operations mode's panel.
 
 A collapsible "Materials" row shows how many pieces of each type are held, the last change the journal reported and which materials are at the
 most the game lets you hold, with a MATERIALS button that opens the window (`materials_window.py`) to search, filter and read every count with

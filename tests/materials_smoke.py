@@ -1,4 +1,4 @@
-"""Opens the real Materials window and Field Ops row (plugin/materials_window.py, plugin/materials_panel.py) with EDMC stubbed, and checks that the
+"""Opens the real Materials window and Operations row (plugin/materials_window.py, plugin/materials_panel.py) with EDMC stubbed, and checks that the
 row follows the login list and the events, shows what is at the limit, that the window filters and sorts, follows a commander change, and that
 nothing shown can widen the panel. Run by test_materials_smoke.py in a subprocess so the stand-ins never leak into other tests. Exits 0 if
 everything holds, 1 if not, 77 if Tk is unavailable."""

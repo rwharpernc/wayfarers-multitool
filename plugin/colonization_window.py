@@ -161,10 +161,14 @@ class ColonizationWindow:
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._toplevel = self._shell.window
 
-        self._shell.add_action("Copy Shopping List", self._on_copy, accent=True)
-        self._shell.add_action("Copy To Acquire", self._on_copy_acquire)
-        self._shell.add_action("Where to Buy", self._on_where_to_buy)
-        self._shell.add_action("Rescan Carrier", self._on_rescan_carrier)
+        self._shell.add_action("Copy Shopping List", self._on_copy, accent=True,
+                                tip="Copy Shopping List - copy what the selected site still needs to the clipboard")
+        self._shell.add_action("Copy To Acquire", self._on_copy_acquire,
+                                tip="Copy To Acquire - copy the tons still to acquire, after your ship and carrier, to the clipboard")
+        self._shell.add_action("Where to Buy", self._on_where_to_buy,
+                                tip="Where to Buy - open the window that finds stations selling the commodities (Spansh, only when you press Find)")
+        self._shell.add_action("Rescan Carrier", self._on_rescan_carrier,
+                                tip="Rescan Carrier - rebuild the fleet carrier tally from the last 30 days of journals")
         # Raven Colonial's actions under one heading: the first ones only read, the last three write (each asks first).
         self._shell.add_menu("Raven Colonial", [
             ("My Projects", self._on_projects),
@@ -177,13 +181,15 @@ class ColonizationWindow:
             None,
             ("Create Project on Raven…", self._on_create_rcc),
             ("Report Complete to Raven", self._on_report_rcc),
-            ("Mark Plan Entry Demolished…", self._on_demolish_rcc)])
+            ("Mark Plan Entry Demolished…", self._on_demolish_rcc)],
+            tip="Raven Colonial - view your projects and planned builds, open Raven pages, or create and report projects (Raven)")
         self._shell.add_menu("Manage Sites", [
             ("Archive Finished", self._on_archive_finished),
             ("Show Archive", self._on_show_archive),
             None,
             ("Remove Site", self._on_remove, "danger"),
-            ("Remove Finished", self._on_remove_finished, "danger")])
+            ("Remove Finished", self._on_remove_finished, "danger")],
+            tip="Manage Sites - archive, show the archive of, or remove colonization sites")
 
         self._show = tk.StringVar(master=self._toplevel, value=_SHOW_LABELS[_saved_show()])   # the Show dropdown: which stage of the work to list (the overlay card's choice too)
         self._filter_text = tk.StringVar(master=self._toplevel, value="")

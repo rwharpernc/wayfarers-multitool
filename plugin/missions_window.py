@@ -84,11 +84,12 @@ class MissionsWindow:
             load_geometry=lambda: (config.get_str(_CFG_GEOMETRY) if config else "") or "",
             save_geometry=lambda value: config.set(_CFG_GEOMETRY, value) if config else None)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Pin / Unpin", self.toggle_pin, accent=True)
-        self._shell.add_action("Pin all here", self.pin_here)
-        self._shell.add_action("Unpin all", self.unpin_all)
-        self._shell.add_action("Copy system", self.copy_system)
-        self._shell.add_action("Sources", self._open_sources)
+        self._shell.add_action("Pin / Unpin", self.toggle_pin, accent=True,
+                                tip="Pin / Unpin - pin the selected mission to the main panel, or unpin it if it is pinned")
+        self._shell.add_action("Pin all here", self.pin_here, tip="Pin all here - pin every mission whose destination is your current system")
+        self._shell.add_action("Unpin all", self.unpin_all, tip="Unpin all - remove every pinned mission")
+        self._shell.add_action("Copy system", self.copy_system, tip="Copy system - copy the selected mission's destination system for the galaxy map search")
+        self._shell.add_action("Sources", self._open_sources, tip="Sources - open the window that finds where to get missions")
 
         self._detail = tk.Frame(self._shell.window, bg=P.BG, padx=P.PAD * 2, pady=P.PAD_SM)
         self._detail.pack(side="bottom", fill="x", before=self._shell.body)   # before the body, so a short window cannot squeeze the strip out of sight

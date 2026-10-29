@@ -1,4 +1,4 @@
-"""Tabbed inventory browser popup for Field Ops' Inventory content.
+"""Tabbed inventory browser popup for Operations' Inventory content.
 
 Built on the shared window kit (plugin/uikit: WindowShell, Tabs, DataTable,
 ProgressBar - see docs/WINDOW_FRAMEWORK_SPEC.md); the counts, capacities and
@@ -114,7 +114,7 @@ class InventoryWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._toplevel = self._shell.window
-        self._shell.add_action("Refresh", self.refresh)
+        self._shell.add_action("Refresh", self.refresh, tip="Refresh - reload the backpack, locker and cargo lists from the latest data")
 
         filter_bar = tk.Frame(self._shell.body, bg=P.BG)
         filter_bar.pack(fill="x", pady=(0, P.PAD_SM))
@@ -122,7 +122,7 @@ class InventoryWindow:
         self._filter_var = tk.StringVar()
         self._filter_var.trace_add("write", lambda *_args: self.refresh())
         tk.Entry(filter_bar, textvariable=self._filter_var).pack(side="left", fill="x", expand=True)
-        FlatButton(filter_bar, "Clear", self._clear_filter).pack(side="left", padx=(6, 0))
+        FlatButton(filter_bar, "Clear filter", self._clear_filter, tip="Clear filter - empty the filter box and show every item").pack(side="left", padx=(6, 0))
 
         self._tab_bar = Tabs(self._shell.body)
         self._tab_bar.pack(fill="both", expand=True, pady=(0, P.PAD_SM))

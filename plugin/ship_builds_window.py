@@ -76,11 +76,11 @@ class ShipBuildsWindow:
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._toplevel = self._shell.window
 
-        self._shell.add_action("Add", self._on_add, accent=True)
-        self._shell.add_action("Edit", self._on_edit)
-        self._shell.add_action("Delete", self._on_delete)
-        self._shell.add_action("Open Link", self._on_open)
-        self._shell.add_action("Copy Link", self._on_copy)
+        self._shell.add_action("Add build", self._on_add, accent=True, tip="Add build - record a new ship build with its link")
+        self._shell.add_action("Edit build", self._on_edit, tip="Edit build - change the selected build")
+        self._shell.add_action("Delete build", self._on_delete, tip="Delete build - remove the selected build from the list")
+        self._shell.add_action("Open Link", self._on_open, tip="Open Link - open the selected build's link in your web browser")
+        self._shell.add_action("Copy Link", self._on_copy, tip="Copy Link - copy the selected build's link to the clipboard")
 
         self._tabs = Tabs(self._shell.body)
         self._tabs.pack(fill="both", expand=True)

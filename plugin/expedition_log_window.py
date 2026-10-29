@@ -114,9 +114,11 @@ class LogWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Expedition Log help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Start", self._start, accent=True)
-        self._shell.add_action("Pause", self._pause)
-        self._shell.add_action("Stop", self._stop)
+        self._shell.add_action("Start", self._start, accent=True,
+                                tip="Start - begin a new expedition now, from where you are, using the name typed below if any")
+        self._shell.add_action("Pause", self._pause,
+                                tip="Pause - pause the running expedition so nothing is counted, or press again to resume the paused one")
+        self._shell.add_action("Stop", self._stop, tip="Stop - end the running expedition")
 
         body = self._shell.body
         starter = tk.Frame(body, bg=P.BG)
@@ -131,8 +133,13 @@ class LogWindow:
         since = tk.Frame(body, bg=P.BG)
         since.pack(fill="x", pady=(0, P.PAD_SM))
         tk.Label(since, text="Start from my last", fg=P.MUTED, bg=P.BG).pack(side="left", padx=(0, P.PAD_SM))
-        for text, kind in (("sale", expedition_log.SINCE_ANY), ("Discovery Data sale", expedition_log.SINCE_EXPLORATION), ("Exobiology Data sale", expedition_log.SINCE_EXOBIOLOGY)):
-            FlatButton(since, text, lambda kind=kind: self._start_since_sale(kind)).pack(side="left", padx=(0, P.PAD_SM))
+        for text, kind, tip in (
+                ("sale", expedition_log.SINCE_ANY, "Last sale - start an expedition just after your last data sale of either kind, with the totals your journals give since"),
+                ("Discovery Data sale", expedition_log.SINCE_EXPLORATION,
+                 "Last Discovery Data sale - start an expedition just after your last Discovery Data sale, with the totals your journals give since"),
+                ("Exobiology Data sale", expedition_log.SINCE_EXOBIOLOGY,
+                 "Last Exobiology Data sale - start an expedition just after your last Exobiology Data sale, with the totals your journals give since")):
+            FlatButton(since, text, lambda kind=kind: self._start_since_sale(kind), tip=tip).pack(side="left", padx=(0, P.PAD_SM))
         tk.Label(since, text="(a plain sale is the earlier of the two kinds)", fg=P.FAINT, bg=P.BG).pack(side="left")
 
         self._table = DataTable(body, _COLUMNS, on_select=self._pick, sortable=False, visible_rows=8,
@@ -171,10 +178,15 @@ class LogWindow:
 
         buttons = tk.Frame(body, bg=P.BG)
         buttons.pack(side="bottom", fill="x", pady=(P.PAD_SM, 0), before=scroll)
-        for text, command, kind in (("Save changes", self._save, "accent"), ("Resume", self._resume, "normal"), ("Rescan", self._rescan, "normal"),
-                                    ("Reset", self._reset, "danger"), ("Delete", self._delete, "danger"), ("Copy summary", self._copy, "normal"),
-                                    ("Export CSV", self._export, "normal")):
-            FlatButton(buttons, text, command, kind=kind).pack(side="left", padx=(0, 6))
+        for text, command, kind, tip in (
+                ("Save changes", self._save, "accent", "Save changes - save the edited name, dates, locations, ships and notes onto the selected expedition"),
+                ("Resume", self._resume, "normal", "Resume - make the selected expedition count again"),
+                ("Rescan", self._rescan, "normal", "Rescan - read your journals again for the selected expedition and rebuild its totals"),
+                ("Reset", self._reset, "danger", "Reset - clear the selected expedition's totals and count from now; asks to be pressed twice"),
+                ("Delete", self._delete, "danger", "Delete - remove the selected expedition from the archive; asks to be pressed twice"),
+                ("Copy summary", self._copy, "normal", "Copy summary - copy what the selected expedition recorded to the clipboard"),
+                ("Export CSV", self._export, "normal", "Export CSV - save every expedition in the archive to a CSV file")):
+            FlatButton(buttons, text, command, kind=kind, tip=tip).pack(side="left", padx=(0, 6))
 
         book.add_listener(self._on_book_changed)
         self.refresh()

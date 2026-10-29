@@ -1,4 +1,4 @@
-"""Opens the Surface Live window on the Mining simulation (Settings -> Mining -> Simulation, plugin/mining_simulation.py): the radar must draw, CTR must mark on the pretend ground,
+"""Opens the Surface Live window on the Mining simulation (Settings -> Mining -> Simulation, plugin/mining_simulation.py): the radar must draw, Mark center must mark on the pretend ground,
 the window must keep running, and WFMT's own repositories must not change. Run by test_mining_simulation_window_smoke in a subprocess. Exits 0 if everything holds, 1 if not, 77 if
 Tk is unavailable."""
 import os
@@ -106,7 +106,7 @@ try:
         sites = len(window._src.coverage.for_body(simulation.SYSTEM, simulation.BODY).sites)
         window._mark(False)
         root.update()
-        check(len(window._src.coverage.for_body(simulation.SYSTEM, simulation.BODY).sites) == sites + 1, "CTR marks a site on the pretend ground")
+        check(len(window._src.coverage.for_body(simulation.SYSTEM, simulation.BODY).sites) == sites + 1, "Mark center marks a site on the pretend ground")
         for meters in live.radar.RADAR_RANGES_M:
             window._set_range(meters)
             root.update()

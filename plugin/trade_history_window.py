@@ -225,9 +225,11 @@ class _TradesTab:
     def __init__(self, parent: tk.Frame) -> None:
         bar = tk.Frame(parent, bg=P.PANE)
         bar.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, 0))
-        self._older = FlatButton(bar, "◀ Earlier", lambda: self._go(-1), kind="normal")
+        self._older = FlatButton(bar, "◀ Earlier", lambda: self._go(-1), kind="normal",
+                                tip="Earlier - show the previous page of trades in this session")
         self._older.pack(side="left")
-        self._newer = FlatButton(bar, "Later ▶", lambda: self._go(1), kind="normal")
+        self._newer = FlatButton(bar, "Later ▶", lambda: self._go(1), kind="normal",
+                                tip="Later - show the next page of trades in this session")
         self._newer.pack(side="left", padx=(6, 0))
         self._where = tk.Label(bar, text="", fg=P.MUTED, bg=P.PANE)
         self._where.pack(side="left", padx=P.PAD)
@@ -328,9 +330,9 @@ class HistoryWindow:
         self._shell.add_help("Trade History help", HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._toplevel = self._shell.window
-        self._copy_button = self._shell.add_action("Copy summary", self._on_copy)
-        self._shell.add_action("Export log (CSV)", self._on_export)
-        self._shell.add_action("Delete session", self._on_delete)
+        self._copy_button = self._shell.add_action("Copy summary", self._on_copy, tip="Copy summary - copy this session's totals to the clipboard as text")
+        self._shell.add_action("Export log (CSV)", self._on_export, tip="Export log (CSV) - save every trade in this session to a CSV file")
+        self._shell.add_action("Delete session", self._on_delete, tip="Delete session - remove this saved session after you confirm")
 
         picker = tk.Frame(self._shell.body, bg=P.BG)
         picker.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, P.PAD_SM))

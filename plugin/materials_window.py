@@ -93,7 +93,7 @@ class MaterialsWindow:
         self._shell.add_help("Materials help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         if ctx is not None:
-            self._shell.add_action("Find a trader", self._find_trader)
+            self._shell.add_action("Find a trader", self._find_trader, tip="Find a trader - open the window that finds the closest material traders")
 
         filters = tk.Frame(self._shell.body, bg=P.BG)
         filters.pack(fill="x", pady=(0, P.PAD_SM))

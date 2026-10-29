@@ -1,5 +1,5 @@
 """Opens the real Mining live windows (plugin/mining_live_window.py) with EDMC stubbed and a Rhino position faked: the Surface window draws a radar, shows the panel's lines, marks a mining location
-from its CTR and BRD buttons, moves the radar's reach with the zoom buttons and remembers it, and survives the panel's content frame being destroyed; the Space window shows its lines and only the
+from its Mark center and Mark border buttons, moves the radar's reach with the zoom buttons and remembers it, and survives the panel's content frame being destroyed; the Space window shows its lines and only the
 lookups switched on in Settings. Run by test_mining_live_window_smoke in a subprocess so the stand-ins never leak into other tests. Exits 0 if everything holds, 1 if not, 77 if Tk is unavailable."""
 import quiet_tk  # noqa: F401  (keeps the test windows from taking focus)
 import os
@@ -122,11 +122,11 @@ check("Smoke 1" in win._shell._subtitle.cget("text"), f"the subtitle: {win._shel
 # the controls
 win._mark(False)
 body = coverage.coverage_repository.for_body("Smoke", "Smoke 1")
-check(body is not None and len(body.sites) == 1, "CTR did not mark a center")
-check("Center marked" in win._shell._status.cget("text"), f"CTR said: {win._shell._status.cget('text')!r}")
+check(body is not None and len(body.sites) == 1, "Mark center did not mark a center")
+check("Center marked" in win._shell._status.cget("text"), f"Mark center said: {win._shell._status.cget('text')!r}")
 LP.set_status({"Flags": LP.FLAGS_HAS_LAT_LONG, "Latitude": 10.0 + 1500 / M_PER_DEG, "Longitude": 20.0, "Heading": 0, "PlanetRadius": RADIUS, "Altitude": 0})
 win._mark(True)
-check(body.sites[0].border is not None and "1.50 km" in win._shell._status.cget("text"), f"BRD said: {win._shell._status.cget('text')!r}")
+check(body.sites[0].border is not None and "1.50 km" in win._shell._status.cget("text"), f"Mark border said: {win._shell._status.cget('text')!r}")
 marked = "\n".join(texts(win._info.body))
 check("Nearest marked location: 1.50 km radius, you are" in marked, f"the marked location line is missing: {marked!r}")
 

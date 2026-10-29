@@ -68,7 +68,7 @@ class CoveragePoint:
 
 
 SAME_SITE_M = 100.0
-"""Pressing CTR within this distance of a marked center moves that center instead of starting another site (the same reasoning as a hotspot saved again at a spot)."""
+"""Pressing Mark center within this distance of a marked center moves that center instead of starting another site (the same reasoning as a hotspot saved again at a spot)."""
 
 MAX_SITES_PER_BODY = 12
 EDGE_SAMPLES = 72
@@ -78,7 +78,7 @@ EDGE_SAMPLES = 72
 @dataclass
 class Site:
     """One mining location (the circle a surface mining signal covers) marked by the commander: the center, and a point on its border once marked. The journal gives neither, so
-    both are where the commander stood when pressing CTR and BRD, and the radius is the distance between them."""
+    both are where the commander stood when pressing Mark center and Mark border, and the radius is the distance between them."""
     center: CoveragePoint
     border: Optional[CoveragePoint] = None
 
@@ -116,7 +116,7 @@ class BodyCoverage:
         return best
 
     def mark_center(self, latitude: float, longitude: float, radius_m: float) -> str:
-        """CTR: a new site centered here, or the nearby site's center moved here. Returns what was done, for the panel to say."""
+        """Mark center: a new site centered here, or the nearby site's center moved here. Returns what was done, for the panel to say."""
         near = self.nearest_site(latitude, longitude, radius_m)
         if near is not None and near[1] <= SAME_SITE_M:
             near[0].center = CoveragePoint(latitude, longitude)
@@ -124,16 +124,16 @@ class BodyCoverage:
         self.sites.append(Site(CoveragePoint(latitude, longitude)))
         if len(self.sites) > MAX_SITES_PER_BODY:
             del self.sites[: len(self.sites) - MAX_SITES_PER_BODY]
-        return "Center marked. Drive to the edge of the signal and press BRD."
+        return "Center marked. Drive to the edge of the signal and press Mark border."
 
     def mark_border(self, latitude: float, longitude: float, radius_m: float) -> str:
-        """BRD: the border of the nearest site, whose radius is then the distance to it."""
+        """Mark border: the border of the nearest site, whose radius is then the distance to it."""
         near = self.nearest_site(latitude, longitude, radius_m)
         if near is None:
-            return "No center marked on this body yet: stand at the middle of the signal and press CTR first."
+            return "No center marked on this body yet: stand at the middle of the signal and press Mark center first."
         site, distance = near
         if distance < SAME_SITE_M:
-            return f"You are only {distance:,.0f} m from the center. Drive to the edge of the signal and press BRD there."
+            return f"You are only {distance:,.0f} m from the center. Drive to the edge of the signal and press Mark border there."
         site.border = CoveragePoint(latitude, longitude)
         return f"Border marked: the signal is {distance / 1000:.2f} km in radius."
 
@@ -188,7 +188,7 @@ class CoverageRepository:
         self._plugin_dir: Optional[str] = None
         self._store = commander_data.new_store()
         self._cmdr = ""
-        self.last_message = ""                         # what CTR or BRD last did, shown on the Surface page until the next press
+        self.last_message = ""                         # what Mark center or Mark border last did, shown on the Surface page until the next press
 
     def load(self, plugin_dir: str) -> None:
         """Read the file. Nothing is shown until `set_commander` says whose map to use. A file written before coverage
@@ -243,7 +243,7 @@ class CoverageRepository:
             self._save()
 
     def mark(self, system: str, body: str, latitude: float, longitude: float, radius_m: float, border: bool) -> str:
-        """CTR (`border` False) or BRD (True) at this position; saved. Says what was done, or why not."""
+        """Mark center (`border` False) or Mark border (True) at this position; saved. Says what was done, or why not."""
         if not system or not body or not radius_m:
             return "WFMT does not know the body yet: land first."
         coverage = self._by_body.setdefault(self._key(system, body), BodyCoverage())

@@ -199,9 +199,11 @@ class _SystemTab:
         content = scroll.body
         bar = tk.Frame(content, bg=P.PANE)
         bar.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, 0))
-        FlatButton(bar, "× Close tab", lambda: actions().close(system), kind="normal").pack(side="right")
-        FlatButton(bar, "★ Unpin" if pinned else "☆ Pin", lambda: on_pin(system), kind="normal").pack(
-            side="right", padx=(0, 6))
+        FlatButton(bar, "× Close tab", lambda: actions().close(system), kind="normal",
+                   tip="Close tab - hide this system's tab and unpin it until you add the system again").pack(side="right")
+        FlatButton(bar, "★ Unpin" if pinned else "☆ Pin", lambda: on_pin(system), kind="normal",
+                   tip="Unpin - stop keeping this system's tab in every cycle" if pinned
+                   else "Pin - keep this system's tab in every cycle, even with no data").pack(side="right", padx=(0, 6))
         tk.Label(content, text="STANDING", fg=P.MUTED, bg=P.PANE, anchor="w", padx=P.PAD,
                  font=style.font(P.FONT_SMALL)).pack(fill="x", pady=(P.PAD_SM, 0))
         self.standing = DataTable(content, _STANDING_COLUMNS, sortable=False, visible_rows=6,
@@ -246,7 +248,8 @@ class SystemsTab:
         self._cycle_box.pack(side="left", padx=(P.PAD_SM, 0))
         self._cycle_box.bind("<<ComboboxSelected>>", lambda _e: self._on_cycle_selected())
 
-        FlatButton(picker, "Add system", self._on_add, kind="normal").pack(side="right")
+        FlatButton(picker, "Add system", self._on_add, kind="normal",
+                   tip="Add system - open a tab for the system typed in the box").pack(side="right")
         self._add_var = tk.StringVar()
         SuggestEntry(picker, self._add_var, self._known_systems, self._on_add, width=22).pack(
             side="right", padx=(0, 6))

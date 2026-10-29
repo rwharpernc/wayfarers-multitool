@@ -259,7 +259,7 @@ def flat_buttons(widget):
 
 
 buttons_in_window = flat_buttons(window._shell.window)
-check({"Start expedition", "Review", "Copy next system", "Clear route", "Carrier route"} <= set(buttons_in_window), "the window has Start expedition, Review and the route buttons: %s" % sorted(buttons_in_window))
+check({"Start expedition", "Review expedition", "Copy next system", "Clear route", "Carrier route"} <= set(buttons_in_window), "the window has Start expedition, Review expedition and the route buttons: %s" % sorted(buttons_in_window))
 check("Make an expedition" not in buttons_in_window and "Expedition" not in buttons_in_window, "the old Make an expedition and Expedition buttons are gone")
 said = PANEL.controller.start_expedition()
 check("Log in" in said or "no commander" in said, "an expedition needs a commander (said: %s)" % said)

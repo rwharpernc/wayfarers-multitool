@@ -103,8 +103,10 @@ class CarrierRouteWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Carrier Route help", HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._plot_button = self._shell.add_action("Generate route", self._plot, accent=True)
-        self._cancel_button = self._shell.add_action("Cancel", self._cancel_or_close)
+        self._plot_button = self._shell.add_action("Generate route", self._plot, accent=True,
+                                                tip="Generate route - ask Spansh for a carrier jump route from where it is to the destination system")
+        self._cancel_button = self._shell.add_action("Cancel", self._cancel_or_close,
+                                                  tip="Cancel - stop waiting for Spansh while a route is being worked out, or close this window")
         body = self._shell.body
 
         top = tk.Frame(body, bg=P.BG)
@@ -143,10 +145,10 @@ class CarrierRouteWindow:
 
         actions = tk.Frame(body, bg=P.BG)
         actions.pack(fill="x", pady=(0, P.PAD_SM))
-        FlatButton(actions, "Copy next system", self._copy_next).pack(side="left")
-        FlatButton(actions, "Copy all remaining", self._copy_all).pack(side="left", padx=(6, 0))
-        FlatButton(actions, "Mark next as reached", self._mark_reached).pack(side="left", padx=(6, 0))
-        FlatButton(actions, "Clear route", self._clear_route).pack(side="left", padx=(6, 0))
+        FlatButton(actions, "Copy next system", self._copy_next, tip="Copy next system - copy the next system of the carrier route to the clipboard").pack(side="left")
+        FlatButton(actions, "Copy all remaining", self._copy_all, tip="Copy all remaining - copy every system still left on the carrier route to the clipboard").pack(side="left", padx=(6, 0))
+        FlatButton(actions, "Mark next as reached", self._mark_reached, tip="Mark next as reached - move the route on by one jump").pack(side="left", padx=(6, 0))
+        FlatButton(actions, "Clear route", self._clear_route, tip="Clear route - forget the carrier route").pack(side="left", padx=(6, 0))
 
         self._table = TableBox(body, "The route (double-click a system to copy it)", route_table(None), on_activate=self._copy_row)
         self._table.pack(fill="both", expand=True)

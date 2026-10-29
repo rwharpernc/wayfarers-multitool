@@ -1,4 +1,4 @@
-"""The Check Ring Reserve Level window (the RES button on the Space Mining page): the reserve level and ring type EDSM has for a system's rings, with a warning for a ring that is not Metallic.
+"""The Check Ring Reserve Level window (the RESERVES button on the Space Mining page): the reserve level and ring type EDSM has for a system's rings, with a warning for a ring that is not Metallic.
 
 Type a system (it starts as the one you are in) and, if you want one body, its name or a ring's name (it starts as the ring you are in); leave the name empty to list every ringed body in the system.
 The results fill a table: the ring, the body it circles, the body's reserve level (Pristine, Major, Common, Low, Depleted) and the ring's type, with a note on each ring that is not Metallic, since
@@ -151,8 +151,8 @@ class ReserveWindow:
             load_geometry=lambda: config.get_str(CONFIG_GEOMETRY) or "",
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Copy ring", lambda: self._copy("ring"))
-        self._shell.add_action("Copy system", lambda: self._copy("system"))
+        self._shell.add_action("Copy ring", lambda: self._copy("ring"), tip="Copy ring - copy the selected result's ring name to the clipboard")
+        self._shell.add_action("Copy system", lambda: self._copy("system"), tip="Copy system - copy the selected result's system name to the clipboard")
         body = self._shell.body
 
         first = tk.Frame(body, bg=P.BG)
@@ -163,7 +163,7 @@ class ReserveWindow:
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
         system_autocomplete.attach(entry, self._system)
         entry.bind("<Return>", lambda _e: self._search())
-        FlatButton(first, "Here", self._fill_here).pack(side="left")
+        FlatButton(first, "Here", self._fill_here, tip="Here - fill in the system you are in").pack(side="left")
 
         second = tk.Frame(body, bg=P.BG)
         second.pack(fill="x", pady=(0, P.PAD_SM))
@@ -173,7 +173,7 @@ class ReserveWindow:
         name_entry = tk.Entry(second, textvariable=self._name, width=38)
         name_entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
         name_entry.bind("<Return>", lambda _e: self._search())
-        self._search_button = FlatButton(second, "Search", self._search, kind="accent")
+        self._search_button = FlatButton(second, "Search", self._search, kind="accent", tip="Search - look up the reserve level and type of the system's rings (EDSM)")
         self._search_button.pack(side="left", padx=(0, P.PAD))
         NoteLabel(second, "Leave empty to list every ringed body in the system.", fg=P.MUTED, bg=P.BG, padx=0).pack(side="left", fill="x", expand=True)
 

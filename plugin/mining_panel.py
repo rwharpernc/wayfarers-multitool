@@ -2,7 +2,7 @@
 Mining mode's feature-module contract entry point. Owns the panel's
 persistent chrome (page nav between Space Mining/Surface Mining, the
 scrollable Canvas/Scrollbar frame mirroring missions_ui.py's own
-pattern, and the six persistent buttons (H.S., PRICE, RES, BOOK, DASHBOARD,
+pattern, and the six persistent buttons (HOTSPOTS, PRICES, RESERVES, BOOK, DASHBOARD,
 LIVE) - see their own docstring below for why they're never destroyed/recreated), the
 Settings tab, and the full journal/dashboard dispatch. Per-page content
 rendering lives in `mining_render.py`; HUD-overlay pushes live in
@@ -291,7 +291,7 @@ class MiningPanelController:
                 (self._buttons.price_finder, "Prices - find the best-paying station for a commodity (Spansh)"),
                 (self._buttons.reserve_lookup, "Reserves - look up a ring's reserve level"),
                 (self._buttons.ledger, "Mining Book - the Space Mining Book (your rings) on the Space page, the Surface Mining Book (Rhino deposits) on the Surface page"),
-                (self._buttons.live, "Live view - a window to keep on a second screen: the radar, the live numbers and the controls (CTR, BRD, +H.S., I/E) for this page"),
+                (self._buttons.live, "Live view - a window to keep on a second screen: the radar, the live numbers and the controls (Mark center, Mark border, Add hotspot, Import/export) for this page"),
                 (self._buttons.history, "Mining History - the runs found in your journals, added up for this page: ring mining on the Space page (tons, rates, commodities, rings and what the sales paid), the Rhino on the Surface page (by body)")):
             panelkit.add_tooltip(button, tip)
         for button in (self._buttons.hotspot_finder, self._buttons.price_finder, self._buttons.reserve_lookup,
@@ -727,7 +727,7 @@ class MiningPanelController:
         surface_repo = surface_mining.surface_mining_repository
         position = live_position.current_position()
         # A body's size normally comes from the Scan event, which the journal only writes when the body was scanned in this session; Status.json carries the
-        # body's name and radius whenever the commander is near the ground, so use them too. Without this the ground driven, CTR, BRD and the distances
+        # body's name and radius whenever the commander is near the ground, so use them too. Without this the ground driven, Mark center, Mark border and the distances
         # to marks and deposits all did nothing on a body that had not been scanned.
         status_body = entry.get("BodyName")
         if position is not None and position.planet_radius and isinstance(status_body, str) and status_body:
@@ -849,8 +849,8 @@ class MiningPanelController:
         nb.Label(gap_row, text="Too close to place another rig (m, 0 = off):").pack(side=tk.LEFT)
         tk.Spinbox(gap_row, from_=0, to=mining_stops.MAX_RIG_GAP_M, increment=mining_stops.STEP_RIG_GAP_M, width=6,
                    textvariable=self._rig_gap_var).pack(side=tk.LEFT, padx=6)
-        nb.Label(frame, text=("The game does not publish how close rigs may be. Measure it with CTR and BRD (stand at one rig, press CTR, "
-                              "drive until the game lets you place the next, press BRD) and enter it; the Surface Mining page then says whether "
+        nb.Label(frame, text=("The game does not publish how close rigs may be. Measure it with Mark center and Mark border (stand at one rig, press Mark center, "
+                              "drive until the game lets you place the next, press Mark border) and enter it; the Surface Mining page then says whether "
                               "your nearest saved deposit is far enough away. 0 turns it off."), wraplength=440, justify=tk.LEFT).grid(
             row=19, column=0, sticky=tk.W, padx=10)
 

@@ -152,10 +152,13 @@ class CodexCompletionistWindow:
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._toplevel = self._shell.window
 
-        self._shell.add_action("Open Reference", self._on_open_reference, accent=True)
-        self._shell.add_action("Refresh Catalog", self._on_refresh_catalog)
+        self._shell.add_action("Open Reference", self._on_open_reference, accent=True,
+                                tip="Open Reference - open the selected entry's Canonn reference page in your browser")
+        self._shell.add_action("Refresh Catalog", self._on_refresh_catalog,
+                                tip="Refresh Catalog - download the codex entry catalog again from Canonn")
         if on_backfill is not None:
-            self._shell.add_action("Backfill Journals", on_backfill)
+            self._shell.add_action("Backfill Journals", on_backfill,
+                                    tip="Backfill Journals - read your old journals for codex entries you have already found")
 
         self._tabs = Tabs(self._shell.body)
         self._tabs.pack(fill="both", expand=True, pady=(0, P.PAD_SM))

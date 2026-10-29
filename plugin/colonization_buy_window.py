@@ -165,7 +165,8 @@ class BuyWindow:
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
         system_autocomplete.attach(entry, self._system_var, on_pick=lambda: setattr(self, "_system_edited", True))
         entry.bind("<KeyRelease>", lambda _e: setattr(self, "_system_edited", True))
-        FlatButton(first, "Here", self._on_here).pack(side="left", padx=(0, P.PAD))
+        FlatButton(first, "Here", self._on_here,
+                   tip="Here - fill in the system you are in now").pack(side="left", padx=(0, P.PAD))
         tk.Label(first, text="Within", fg=P.MUTED, bg=P.PANE).pack(side="left")
         self._radius = Combobox(first, state="readonly", width=9,
                                 values=[f"{r} ly" for r in sources.RADIUS_CHOICES] + [_NO_LIMIT])
@@ -183,12 +184,16 @@ class BuyWindow:
         self._pad.set(next((text for key, text in sources.PAD_CHOICES if key == self._prefs.pad), sources.PAD_CHOICES[0][1]))
         self._pad.pack(side="left", padx=(P.PAD_SM, P.PAD))
         tk.Checkbutton(second, text="Include fleet carriers", variable=self._carriers_var).pack(side="left")
-        self._find_button = FlatButton(second, "Find nearest", self._on_find, kind="accent")
+        self._find_button = FlatButton(second, "Find nearest", self._on_find, kind="accent",
+                                       tip="Find nearest - search for the nearest stations selling the selected commodity (Spansh)")
         self._find_button.pack(side="right")
-        self._find_all_button = FlatButton(second, "Find all", self._on_find_all)
+        self._find_all_button = FlatButton(second, "Find all", self._on_find_all,
+                                           tip="Find all - search for every commodity still to buy and plan a route (Spansh); press again to stop")
         self._find_all_button.pack(side="right", padx=(0, 6))
-        FlatButton(second, "Copy System", self._on_copy_system).pack(side="right", padx=(0, 6))
-        FlatButton(second, "Copy Route", self._on_copy_route).pack(side="right", padx=(0, 6))
+        FlatButton(second, "Copy System", self._on_copy_system,
+                   tip="Copy System - copy the selected result's system name to the clipboard").pack(side="right", padx=(0, 6))
+        FlatButton(second, "Copy Route", self._on_copy_route,
+                   tip="Copy Route - copy the shopping route from the last Find all to the clipboard").pack(side="right", padx=(0, 6))
 
         self._sources_note = tk.Label(host, text=_HINT, fg=P.MUTED, bg=P.PANE, anchor="w", justify="left", padx=P.PAD)
         self._sources_note.pack(fill="x")

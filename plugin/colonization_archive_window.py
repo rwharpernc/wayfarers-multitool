@@ -86,9 +86,12 @@ class ArchiveWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Colonization Archive help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Restore", self._on_restore, accent=True)
-        self._shell.add_action("Copy Summary", self._on_copy)
-        self._shell.add_menu("Manage", [("Remove Permanently", self._on_remove, "danger")])
+        self._shell.add_action("Restore", self._on_restore, accent=True,
+                                tip="Restore - move the selected site back to the Colonization Sites window")
+        self._shell.add_action("Copy Summary", self._on_copy,
+                                tip="Copy Summary - copy the selected archived site's summary to the clipboard")
+        self._shell.add_menu("Manage", [("Remove Permanently", self._on_remove, "danger")],
+                              tip="Manage - forget the selected archived site for good")
         self._sites_table = DataTable(self._shell.body, _SITE_COLUMNS, on_select=lambda _iid: self._show_detail(),
                                       empty_text="Nothing is archived yet. Archive Finished in the Manage Sites menu puts finished sites here.")
         self._sites_table.tag_configure("failed", foreground=P.DANGER)

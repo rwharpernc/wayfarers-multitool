@@ -90,7 +90,7 @@ class UpgradePlanTab:
 
         mine = tk.Frame(pad, bg=P.PANE)
         mine.pack(fill="x", pady=(0, P.PAD_SM))
-        FlatButton(mine, "Read my gear", self.read_gear).pack(side="left")
+        FlatButton(mine, "Read my gear", self.read_gear, tip="Read my gear - list the suits and weapons found in your journal so you can pick one").pack(side="left")
         self._mine = tk.StringVar(value="")
         self._mine_box = Combobox(mine, textvariable=self._mine, values=[], state="readonly", width=44)
         self._mine_box.pack(side="left", padx=(P.PAD, 0))
@@ -115,7 +115,8 @@ class UpgradePlanTab:
         self._table.pack(fill="x", pady=(0, P.PAD_SM))
         controls = tk.Frame(pad, bg=P.PANE)
         controls.pack(fill="x")
-        FlatButton(controls, "Add to wishlist", self.add_to_wishlist, kind="accent").pack(side="left")
+        FlatButton(controls, "Add to wishlist", self.add_to_wishlist, kind="accent",
+                   tip="Add to wishlist - put the materials this upgrade plan needs on your wishlist").pack(side="left")
         self._summary = NoteLabel(pad, fg=P.TEXT, padx=0)
         self._summary.pack(fill="x", pady=(P.PAD_SM, 0))
         self._notes = NoteLabel(pad, padx=0)

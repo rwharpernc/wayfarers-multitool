@@ -171,9 +171,11 @@ class ExploreDashboardWindow:
             load_geometry=lambda: config.get_str(CONFIG_GEOMETRY) or "",
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Route Planner", self._ctx.open_neutron)
-        self._exploration_button = self._shell.add_action("", lambda: self._toggle("exploration"))
-        self._exobiology_button = self._shell.add_action("", lambda: self._toggle("exobiology"))
+        self._shell.add_action("Route Planner", self._ctx.open_neutron, tip="Route Planner - open the Route Planner, which plots a neutron route (Spansh)")
+        self._exploration_button = self._shell.add_action(
+            "", lambda: self._toggle("exploration"), tip=lambda: self._overlay_tip("exploration", "Exploration overlays"))
+        self._exobiology_button = self._shell.add_action(
+            "", lambda: self._toggle("exobiology"), tip=lambda: self._overlay_tip("exobiology", "Exobiology overlays"))
 
         self._tabs = Tabs(self._shell.body)
         self._tabs.pack(fill="both", expand=True)
@@ -285,6 +287,9 @@ class ExploreDashboardWindow:
     def _toggle(self, name: str) -> None:
         self._ctx.toggle_overlays(name)
         self.sync_overlay_buttons()
+
+    def _overlay_tip(self, name: str, label: str) -> str:
+        return f"{label} - " + ("show the hidden overlays of this group again" if self._ctx.overlay_hidden(name) else "hide the overlays of this group until you show them again")
 
     def sync_overlay_buttons(self) -> None:
         """The two header buttons say what pressing them will do."""

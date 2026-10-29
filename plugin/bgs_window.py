@@ -138,9 +138,11 @@ class _SystemTab:
     def __init__(self, content: tk.Frame, system: str, pinned: bool, actions: TabActions) -> None:
         bar = tk.Frame(content, bg=P.PANE)
         bar.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, 0))
-        FlatButton(bar, "× Close tab", lambda: actions.close(system), kind="normal").pack(side="right")
+        FlatButton(bar, "× Close tab", lambda: actions.close(system), kind="normal",
+                   tip="Close tab - hide this system's tab and unpin it until you add the system again").pack(side="right")
         FlatButton(
             bar, "★ Unpin" if pinned else "☆ Pin", lambda: actions.toggle_pin(system), kind="normal",
+            tip="Unpin - stop keeping this system's tab always shown" if pinned else "Pin - keep this system's tab always shown, however long ago you were there",
         ).pack(side="right", padx=(0, 6))
         tk.Label(content, text="FACTIONS", fg=P.MUTED, bg=P.PANE, anchor="w", padx=P.PAD,
                  font=style.font(P.FONT_SMALL)).pack(fill="x", pady=(P.PAD_SM, 0))
@@ -208,9 +210,11 @@ class BgsWindow:
         self._shell.add_help("BGS Report help", HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._toplevel = self._shell.window
-        self._copy_button = self._shell.add_action("Copy Summary", self._on_copy)
+        self._copy_button = self._shell.add_action("Copy Summary", self._on_copy,
+                                                 tip="Copy Summary - copy a text summary of the current and pinned systems to the clipboard")
         self._shell.add_menu("Discord", [("Copy for Discord", self._on_copy_discord), ("Post to Discord", self._on_post_discord), None,
-                                         ("Customize post…", self._on_customize_discord)])
+                                         ("Customize post…", self._on_customize_discord)],
+                                tip="Discord - copy the BGS report for Discord, post it to your webhook (Discord), or customize the post")
         discord_customize.register_data(discord_templates.BGS, self._customize_data)      # the dialog's preview uses the tick shown here
 
         picker = tk.Frame(self._shell.body, bg=P.BG)
@@ -221,7 +225,8 @@ class BgsWindow:
         self._period_box.pack(side="left", padx=(P.PAD_SM, 0))
         self._period_box.bind("<<ComboboxSelected>>", lambda _e: self._on_period_selected())
 
-        FlatButton(picker, "Add system", self._on_add, kind="normal").pack(side="right")
+        FlatButton(picker, "Add system", self._on_add, kind="normal",
+                   tip="Add system - open a tab for the system typed in the box").pack(side="right")
         self._add_var = tk.StringVar()
         SuggestEntry(picker, self._add_var, self.known_systems, self._on_add, width=24).pack(
             side="right", padx=(0, 6))

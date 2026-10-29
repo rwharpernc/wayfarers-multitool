@@ -1,4 +1,4 @@
-"""Field Ops mode: screenshot capture/conversion/thumbnail management.
+"""Operations mode: screenshot capture/conversion/thumbnail management.
 
 Watches for the game's `Screenshot` journal event, converts the raw
 BMP/PNG into a renamed PNG (per a user-selected filename mask), shows an
@@ -378,7 +378,8 @@ class PreviewWindow:
             ("Resizing", "The image is scaled to fit the window and is never enlarged past its own size."),
         ))
         if folder:
-            self._shell.add_action("Open Folder", lambda: open_folder(folder))
+            self._shell.add_action("Open Folder", lambda: open_folder(folder),
+                                   tip="Open Folder - open the folder this screenshot was saved in")
         self._shell.add_action("Close", self._shell.close, accent=True)
 
         self._label = tk.Label(self._shell.body, bg=P.BG)

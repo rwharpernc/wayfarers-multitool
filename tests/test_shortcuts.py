@@ -101,7 +101,7 @@ class RunTests(unittest.TestCase):
             self.assertEqual(shortcuts.run("overlays"), "Overlays shown.")
 
     def test_center_and_border_mark_through_the_live_window_module(self) -> None:
-        with mock.patch.object(mining_live_window, "mark_here", return_value="Center marked. Drive to the edge of the signal and press BRD.") as mark:
+        with mock.patch.object(mining_live_window, "mark_here", return_value="Center marked. Drive to the edge of the signal and press Mark border.") as mark:
             self.assertTrue(shortcuts.run("center").startswith("Center marked"))
             mark.assert_called_once_with(False)
         with mock.patch.object(mining_live_window, "mark_here", return_value="Border marked: the signal is 4.50 km in radius.") as mark:

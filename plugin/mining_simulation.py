@@ -2,7 +2,7 @@
 
 Settings → Mining → Simulation opens the Surface Live window on made-up data: a Rhino that drives a ring round the middle of a made-up mining location, leaving a trail, with
 saved deposits and marked locations to find, refining ore as it goes. The sizes follow real work: a mining signal is several kilometers across and the scanner reaches 2 km, so the
-Rhino drives a ring 3.75 km out from the middle of a signal 4.5 km in radius. It exists so the radar, the info lines and the CTR, BRD and +H.S. buttons can be checked the same way
+Rhino drives a ring 3.75 km out from the middle of a signal 4.5 km in radius. It exists so the radar, the info lines and the Mark center, Mark border and Add hotspot buttons can be checked the same way
 on Windows and on Linux (and by anyone without Elite running).
 
 Nothing here touches the commander's data. The simulation builds its own repositories (never the real singletons) and never gives them a plugin folder or a commander, so none of

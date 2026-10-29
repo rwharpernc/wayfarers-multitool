@@ -8,6 +8,7 @@ from typing import Callable, Optional, Sequence
 
 from . import palette as P
 from . import style
+from .tooltip import add_tooltip
 
 
 def clip(text: object, limit: int = 40) -> str:
@@ -297,7 +298,8 @@ class FoldList(ScrollFrame):
 class FlatButton(tk.Label):
     """A flat label-button (classic tk buttons and ttk buttons both draw
     native chrome on Windows that ignores our colors). kind: "normal",
-    "accent" (primary action) or "danger"."""
+    "accent" (primary action) or "danger". `tip` is the tooltip, "Name - what it does" like the main panel's buttons (it may be a function
+    returning the text, for a button whose caption changes with its state)."""
 
     @staticmethod
     def _kinds() -> dict:
@@ -309,13 +311,15 @@ class FlatButton(tk.Label):
         }
 
     def __init__(self, parent: tk.Misc, text: str, command: Callable[[], None],
-                 kind: str = "normal", **kwargs) -> None:
+                 kind: str = "normal", tip=None, **kwargs) -> None:
         self._bg, self._hover, fg = self._kinds()[kind]
         weight = P.FONT_BOLD if kind == "accent" else P.FONT_BODY
         super().__init__(parent, text=text, fg=fg, bg=self._bg, padx=14, pady=6,
                          cursor="hand2", font=style.font(weight), **kwargs)
         self._command = command
         self._enabled = True
+        if tip:
+            add_tooltip(self, tip)
         self.bind("<Enter>", lambda _e: self._enabled and self.configure(bg=self._hover))
         self.bind("<Leave>", lambda _e: self.configure(bg=self._bg))
         self.bind("<ButtonRelease-1>", self._on_release)

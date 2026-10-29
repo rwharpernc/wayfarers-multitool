@@ -125,7 +125,7 @@ class WhatPaysWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._shell.add_help("What pays help", _HELP)
-        self._shell.add_action("Copy report", self._copy_report)
+        self._shell.add_action("Copy report", self._copy_report, tip="Copy report - copy the ranked list as text to the clipboard")
         body = self._shell.body
         first = tk.Frame(body, bg=P.BG)
         first.pack(fill="x", pady=(0, P.PAD_SM))
@@ -137,7 +137,7 @@ class WhatPaysWindow:
         system_autocomplete.attach(entry, self._origin)
         self._where = tk.StringVar(value=DEFAULT_WHERE)
         Combobox(first, textvariable=self._where, values=[name for name, _ in price_finder.WHERE_CHOICES], state="readonly", width=16).pack(side="left", padx=(0, P.PAD))
-        self._search_button = FlatButton(first, "Search", self.search, kind="accent")
+        self._search_button = FlatButton(first, "Search", self.search, kind="accent", tip="Search - rank what you could mine by the best price nearby (Spansh)")
         self._search_button.pack(side="left")
         second = tk.Frame(body, bg=P.BG)
         second.pack(fill="x", pady=(0, P.PAD_SM))

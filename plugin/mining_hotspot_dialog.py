@@ -1,4 +1,4 @@
-"""The Add/Edit Hotspot window, shared by the Surface Mining page's live window (+H.S.), the Surface Mining Book and the Settings tab's hotspot list (`mining_hotspot_settings.py`). The same fields and
+"""The Add/Edit Hotspot window, shared by the Surface Mining page's live window (Add hotspot), the Surface Mining Book and the Settings tab's hotspot list (`mining_hotspot_settings.py`). The same fields and
 checks either way: only the prefilled values and the save callback differ.
 
 Built on the shared form (`uikit/form.py`): fields grouped under Where, Deposit and Filing, one error line, Save and Cancel. What the form means is here and testable without a window: `build_hotspot`

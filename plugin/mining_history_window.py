@@ -86,8 +86,9 @@ class MiningHistoryWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY[mode], geometry))
         self._shell.add_help(f"{TITLES[mode]} help", _HELP + (_HELP_SURFACE if surface else _HELP_SPACE))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Refresh", self.refresh_now)
-        self._shell.add_action("Rebuild from journals", self._rebuild)
+        self._shell.add_action("Refresh", self.refresh_now, tip="Refresh - read the newest journal and redraw the figures")
+        self._shell.add_action("Rebuild from journals", self._rebuild,
+                                tip="Rebuild from journals - clear the history and read every journal again")
 
         self._tabs = Tabs(self._shell.body)
         self._tabs.pack(fill="both", expand=True)

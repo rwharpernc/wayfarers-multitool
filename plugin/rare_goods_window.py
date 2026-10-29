@@ -125,9 +125,10 @@ class RareGoodsWindow:
             load_geometry=lambda: config.get_str(CONFIG_GEOMETRY) or "",
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Copy system", self._copy_selected)
-        self._shell.add_action("Refresh", self._refresh_again)
-        self._shell.add_action("Use last known location", self._use_last_known)
+        self._shell.add_action("Copy system", self._copy_selected, tip="Copy system - copy the selected rare good's origin system for the galaxy map search")
+        self._shell.add_action("Refresh", self._refresh_again, tip="Refresh - rebuild the list from your current location")
+        self._shell.add_action("Use last known location", self._use_last_known,
+                                tip="Use last known location - take your last journal location, for when the game is closed")
         self._shell.add_help("Rare Goods Finder help", self._HELP)
 
         controls = tk.Frame(self._shell.body, bg=P.BG)
@@ -137,7 +138,7 @@ class RareGoodsWindow:
         limit_entry = tk.Entry(controls, textvariable=self._limit_var, width=4)
         limit_entry.pack(side="left", padx=(6, 6))
         limit_entry.bind("<Return>", lambda _e: self._apply_limit())
-        FlatButton(controls, "Apply", self._apply_limit).pack(side="left")
+        FlatButton(controls, "Apply", self._apply_limit, tip="Apply - show the nearest number of rare goods typed here and remember it").pack(side="left")
         self._large_var = tk.BooleanVar(value=config.get_str(CONFIG_LARGE_ONLY) == "1")
         self._mine_var = tk.BooleanVar(value=config.get_str(CONFIG_MY_POWER) == "1")
         check_look = dict(fg=P.TEXT, bg=P.BG, selectcolor=P.PANE, activebackground=P.BG, activeforeground=P.TEXT)

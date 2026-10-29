@@ -1,4 +1,4 @@
-"""Current suit tracking and backpack capacity for Field Ops' Inventory content.
+"""Current suit tracking and backpack capacity for Operations' Inventory content.
 
 The journal never reports backpack capacity, so it is hardcoded here per suit
 type and looked up from the SuitName / SuitMods fields of SuitLoadout and

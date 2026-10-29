@@ -41,7 +41,7 @@ CONFIG_GEOMETRY = "wfmt_neutron_plotter_geometry"
 CONFIG_AUTO_COPY = "wfmt_neutron_plotter_auto_copy"
 CONFIG_OPTIONS = "wfmt_neutron_plotter_options"          # the last route choices, as JSON
 DEFAULT_SIZE = (1040, 800)
-MIN_SIZE = (860, 580)
+MIN_SIZE = (940, 580)
 POLL_MS = 200
 ANIMATE_MS = 90
 BAR_HEIGHT = 8
@@ -137,8 +137,10 @@ class RoutePlannerWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Route Planner help", HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._plot_button = self._shell.add_action("Generate route", self._plot, accent=True)
-        self._cancel_button = self._shell.add_action("Cancel", self._cancel_or_close)
+        self._plot_button = self._shell.add_action("Generate route", self._plot, accent=True,
+                                                tip="Generate route - ask Spansh for a neutron-boosted route from the source to the destination system for your ship")
+        self._cancel_button = self._shell.add_action("Cancel", self._cancel_or_close,
+                                                  tip="Cancel - stop waiting for Spansh while a route is being worked out, or close this window")
         body = self._shell.body
 
         top = tk.Frame(body, bg=P.BG)
@@ -186,13 +188,16 @@ class RoutePlannerWindow:
 
         actions = tk.Frame(body, bg=P.BG)
         actions.pack(fill="x", pady=(0, P.PAD_SM))
-        FlatButton(actions, "Copy next system", self._copy_next).pack(side="left")
-        FlatButton(actions, "Copy all remaining", self._copy_all).pack(side="left", padx=(6, 0))
-        self._start = FlatButton(actions, "Start expedition", self._start_expedition, width=len("Start expedition"))
+        FlatButton(actions, "Copy next system", self._copy_next, tip="Copy next system - copy the next system of the route to the clipboard").pack(side="left")
+        FlatButton(actions, "Copy all remaining", self._copy_all, tip="Copy all remaining - copy every system still left on the route to the clipboard").pack(side="left", padx=(6, 0))
+        self._start = FlatButton(actions, "Start expedition", self._start_expedition, width=len("Start expedition"),
+                                   tip="Start expedition - make an expedition from this route and start it")
         self._start.pack(side="left", padx=(6, 0))
-        FlatButton(actions, "Review", lambda: self._say(self._ctx.review_expedition())).pack(side="left", padx=(6, 0))
-        FlatButton(actions, "Clear route", self._clear_route).pack(side="left", padx=(6, 0))
-        FlatButton(actions, "Carrier route", lambda: carrier_route_window.show(self._shell.window)).pack(side="left", padx=(6, 0))
+        FlatButton(actions, "Review expedition", lambda: self._say(self._ctx.review_expedition()),
+                   tip="Review expedition - open the Expedition window on the expedition made from this route, making it first (not started) if there is none").pack(side="left", padx=(6, 0))
+        FlatButton(actions, "Clear route", self._clear_route, tip="Clear route - forget the route, here, in the panel and in the Route overlay").pack(side="left", padx=(6, 0))
+        FlatButton(actions, "Carrier route", lambda: carrier_route_window.show(self._shell.window),
+                   tip="Carrier route - open the Carrier Route window, which plots a fleet carrier jump route").pack(side="left", padx=(6, 0))
         self._auto = ctx.auto_var if ctx.auto_var is not None else tk.BooleanVar(master=self._shell.window, value=ctx.auto_copy)
         tk.Checkbutton(body, text="Copy the next system to the clipboard automatically", variable=self._auto, command=self._save_auto, fg=P.TEXT, bg=P.BG,
                        selectcolor=P.PANE, activebackground=P.BG, activeforeground=P.TEXT).pack(anchor="w", pady=(0, P.PAD_SM))

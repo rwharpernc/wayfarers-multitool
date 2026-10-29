@@ -190,7 +190,7 @@ class BlueprintsWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Engineering help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Refresh counts", self.refresh)
+        self._shell.add_action("Refresh counts", self.refresh, tip="Refresh counts - recount the materials you hold against the wishlist")
 
         self._tabs = Tabs(self._shell.body)
         self._tabs.pack(fill="both", expand=True)
@@ -247,7 +247,8 @@ class BlueprintsWindow:
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD))
         entry.bind("<Return>", lambda _e: self._add())
         self._crafts.trace_add("write", lambda *_: self._fill_detail())
-        self._add_button = FlatButton(adding, "Add to wishlist", self._add, kind="accent")
+        self._add_button = FlatButton(adding, "Add to wishlist", self._add, kind="accent",
+                                     tip="Add to wishlist - add the selected blueprint, for the number of crafts typed, to your wishlist")
         self._add_button.pack(side="left")
         self._add_button.set_enabled(False)
 
@@ -333,9 +334,11 @@ class BlueprintsWindow:
         entry = tk.Entry(controls, textvariable=self._wish_crafts, width=5)
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD))
         entry.bind("<Return>", lambda _e: self._set_crafts())
-        FlatButton(controls, "Set crafts", self._set_crafts).pack(side="left")
-        FlatButton(controls, "Remove", self._remove, kind="danger").pack(side="left", padx=(P.PAD, 0))
-        FlatButton(controls, "Clear list", self._clear, kind="danger").pack(side="left", padx=(6, 0))
+        FlatButton(controls, "Set crafts", self._set_crafts, tip="Set crafts - change how many times the selected wishlist entry is crafted").pack(side="left")
+        FlatButton(controls, "Remove", self._remove, kind="danger",
+                   tip="Remove - take the selected blueprint off the wishlist (press twice to confirm)").pack(side="left", padx=(P.PAD, 0))
+        FlatButton(controls, "Clear list", self._clear, kind="danger",
+                   tip="Clear list - empty the whole wishlist (press twice to confirm)").pack(side="left", padx=(6, 0))
 
         self._shopping_title = tk.Label(pad, text="Shopping list", fg=P.TEXT, bg=P.PANE, anchor="w", font=style.font(P.FONT_BOLD))
         self._shopping_title.pack(fill="x")
@@ -437,8 +440,10 @@ class BlueprintsWindow:
         self._engineer_table.pack(fill="x", pady=(0, P.PAD_SM))
         controls = tk.Frame(pad, bg=P.PANE)
         controls.pack(fill="x")
-        FlatButton(controls, "Show their blueprints", self._show_engineer_blueprints).pack(side="left")
-        FlatButton(controls, "Put their unlock on the wishlist", self._add_unlock).pack(side="left", padx=(P.PAD, 0))
+        FlatButton(controls, "Show their blueprints", self._show_engineer_blueprints,
+                   tip="Show their blueprints - list the blueprints the selected engineer offers").pack(side="left")
+        FlatButton(controls, "Put their unlock on the wishlist", self._add_unlock,
+                   tip="Put their unlock on the wishlist - add the selected engineer's unlock items to your wishlist").pack(side="left", padx=(P.PAD, 0))
         self._engineer_note = NoteLabel(pad, padx=0)
         self._engineer_note.pack(fill="x", pady=(P.PAD_SM, 0))
         NoteLabel(pad, text="Ship engineers open higher grades by the net profit you sell at their workshop: " + engineers.grade_profit_text()

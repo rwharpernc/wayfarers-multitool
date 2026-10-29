@@ -95,7 +95,8 @@ class LedgerWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Credits Ledger help", HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._rebuild = self._shell.add_action("Rebuild from journals", self._on_rebuild)
+        self._rebuild = self._shell.add_action("Rebuild from journals", self._on_rebuild,
+                                            tip="Rebuild from journals - recalculate the credits ledger by reading all your journal files again")
         self._tabs = Tabs(self._shell.body)
         self._tabs.pack(fill="both", expand=True)
         income = self._tabs.add("Income")

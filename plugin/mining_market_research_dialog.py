@@ -149,7 +149,7 @@ class MarketResearchWindow:
             load_geometry=lambda: config.get_str(CONFIG_GEOMETRY) or "",
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Copy report", self._copy_report)
+        self._shell.add_action("Copy report", self._copy_report, tip="Copy report - copy the findings as text to the clipboard")
         body = self._shell.body
         row = tk.Frame(body, bg=P.BG)
         row.pack(fill="x", pady=(0, P.PAD_SM))
@@ -158,7 +158,7 @@ class MarketResearchWindow:
         entry = tk.Entry(row, textvariable=self._extra, width=44)
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
         entry.bind("<Return>", lambda _e: self.search())
-        self._search_button = FlatButton(row, "Search", self.search, kind="accent")
+        self._search_button = FlatButton(row, "Search", self.search, kind="accent", tip="Search - find markets that buy what you could mine here (Spansh)")
         self._search_button.pack(side="left")
         tk.Label(row, text="Commodities, separated by commas.", fg=P.MUTED, bg=P.BG).pack(side="left", padx=(P.PAD, 0))
         self._heading = tk.Label(body, text="", fg=P.MUTED, bg=P.BG, anchor="w", font=style.font(P.FONT_BOLD))

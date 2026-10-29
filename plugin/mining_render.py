@@ -319,7 +319,7 @@ def render_ring_caution(content: tk.Frame, wrap: int, row: int, enabled: bool) -
 
 BUTTON_ORDER = ("ledger", "history", "live", "hotspot_finder", "price_finder", "reserve_lookup")
 """Left-to-right order of the panel's buttons in their one row: BOOK, DASHBOARD, LIVE, HOTSPOTS, PRICES, RESERVES. A button not offered on the current page, or switched off in Settings, is
-simply left out. The controls that act on the ground (CTR, BRD, +H.S., I/E) live in the live window (`mining_live_window.py`), not on the panel."""
+simply left out. The controls that act on the ground (Mark center, Mark border, Add hotspot, Import/export) live in the live window (`mining_live_window.py`), not on the panel."""
 
 
 def place_button_bar(buttons: Optional[PanelButtons], row: int, shown: Iterable[str]) -> None:
@@ -560,7 +560,7 @@ def render_rig_line(content: tk.Frame, row: int, wrap: int, src: mining_sources.
 
 def render_site_lines(content: tk.Frame, row: int, wrap: int, system: Optional[str], body: str, saved: list, rig_gap_m: int = 0,
                       sources: Optional[mining_sources.Sources] = None) -> int:
-    """What CTR and BRD last did; for the marked mining location nearest you its size, whether you are inside it, where its center is and how much of its edge the ground driven covers;
+    """What Mark center and Mark border last did; for the marked mining location nearest you its size, whether you are inside it, where its center is and how much of its edge the ground driven covers;
     and the saved deposit nearest you, with, when the commander has set a distance, whether it is far enough away to place another rig."""
     src = sources or mining_sources.real()
     store = src.coverage
@@ -579,7 +579,7 @@ def render_site_lines(content: tk.Frame, row: int, wrap: int, system: Optional[s
         where = f"center {format_distance(distance)} {heading} of you"
         site_radius = site.radius_m(body_radius)
         if site_radius is None:
-            add_line(content, row, wrap, f"Nearest marked location: {where}. Border not marked yet (BRD).")
+            add_line(content, row, wrap, f"Nearest marked location: {where}. Border not marked yet (Mark border).")
         else:
             covered = body_coverage.edge_covered(site, body_radius)
             edge = f", edge driven {covered * 100:.0f}%" if covered is not None else ""
@@ -634,7 +634,7 @@ def render_coverage_minimap(content: tk.Frame, row: int, system: Optional[str], 
 
 
 def mark_site(border: bool, sources: Optional[mining_sources.Sources] = None) -> str:
-    """CTR (`border` False) or BRD (True): mark the center or the border of the mining location you are at, from the live position. Returns what was done, or why not."""
+    """Mark center (`border` False) or Mark border (True): mark the center or the border of the mining location you are at, from the live position. Returns what was done, or why not."""
     src = sources or mining_sources.real()
     repo = src.surface
     position = src.position()

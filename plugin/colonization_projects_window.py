@@ -100,8 +100,10 @@ class ProjectsWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("My Projects help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Refresh", self.refresh, accent=True)
-        self._shell.add_action("Count / Don't Count", self._on_toggle)
+        self._shell.add_action("Refresh", self.refresh, accent=True,
+                                tip="Refresh - ask Raven Colonial again for your projects")
+        self._shell.add_action("Count / Don't Count", self._on_toggle,
+                                tip="Count / Don't Count - include or leave out the selected project in the shopping list")
         self._shell.add_menu("More", [
             ("Copy Shopping List", self._on_copy),
             None,
@@ -109,7 +111,8 @@ class ProjectsWindow:
             ("Open My Projects on Raven", lambda: webbrowser.open(rcc_client.WEB_URL + "/build")),
             None,
             ("Set as My Primary…", self._on_set_primary),
-            ("Save Counted List…", self._on_save_hidden)])
+            ("Save Counted List…", self._on_save_hidden)],
+            tip="More - copy the shopping list, open Raven Colonial pages, set your primary project or save the counted list")
         self._table = DataTable(self._shell.body, _COLUMNS, sortable=False, on_activate=self._toggle_row,
                                 empty_text="No projects yet.")
         self._table.tag_configure("done", foreground=P.MUTED)

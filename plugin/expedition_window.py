@@ -150,9 +150,10 @@ class ExpeditionWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Expedition help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Start", self._start, accent=True)
-        self._shell.add_action("Pause", self._pause)
-        self._shell.add_action("Stop", self._stop)
+        self._shell.add_action("Start", self._start, accent=True,
+                                tip="Start - begin the chosen expedition so each arrival counts as a visit")
+        self._shell.add_action("Pause", self._pause, tip="Pause - pause the chosen expedition and keep its progress")
+        self._shell.add_action("Stop", self._stop, tip="Stop - end the chosen expedition")
 
         body = self._shell.body
         picker = tk.Frame(body, bg=P.BG)
@@ -168,10 +169,13 @@ class ExpeditionWindow:
         self._name_entry = entry
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
         entry.bind("<Return>", lambda _e: self._new())
-        FlatButton(picker, "New", self._new).pack(side="left")
-        FlatButton(picker, "Rename", self._rename).pack(side="left", padx=(6, 0))
-        FlatButton(picker, "Reset", self._reset, kind="danger").pack(side="left", padx=(P.PAD, 0))
-        FlatButton(picker, "Delete", self._delete, kind="danger").pack(side="left", padx=(6, 0))
+        FlatButton(picker, "New", self._new, tip="New - create an expedition with the name typed in the Name box").pack(side="left")
+        FlatButton(picker, "Rename", self._rename,
+                   tip="Rename - put the current name in the Name box to edit, then press again to rename the expedition").pack(side="left", padx=(6, 0))
+        FlatButton(picker, "Reset", self._reset, kind="danger",
+                   tip="Reset - forget the progress of the chosen expedition (visits, jumps, distance, times) and keep its stops; asks to be pressed twice").pack(side="left", padx=(P.PAD, 0))
+        FlatButton(picker, "Delete", self._delete, kind="danger",
+                   tip="Delete - delete the chosen expedition and all its stops; asks to be pressed twice").pack(side="left", padx=(6, 0))
 
         self._stats = tk.Label(body, text="", fg=P.TEXT, bg=P.BG, anchor="w", font=style.font(P.FONT_BOLD))
         self._stats.pack(fill="x", pady=(0, P.PAD_SM))
@@ -189,17 +193,21 @@ class ExpeditionWindow:
         system_entry.grid(row=0, column=1, sticky="w", padx=P.PAD_SM, pady=2)
         system_autocomplete.attach(system_entry, self._system)
         system_entry.bind("<Return>", lambda _e: self._add_stop())
-        FlatButton(editor, "Here", self._fill_here).grid(row=0, column=2, sticky="w", pady=2)
+        FlatButton(editor, "Here", self._fill_here, tip="Here - fill in the system you are in now").grid(row=0, column=2, sticky="w", pady=2)
         tk.Label(editor, text="Body (optional)", fg=P.MUTED, bg=P.PANE).grid(row=1, column=0, sticky="w", pady=2)
         tk.Entry(editor, textvariable=self._body_var, width=40).grid(row=1, column=1, sticky="w", padx=P.PAD_SM, pady=2)
         tk.Label(editor, text="Note (optional)", fg=P.MUTED, bg=P.PANE).grid(row=2, column=0, sticky="w", pady=2)
         tk.Entry(editor, textvariable=self._note, width=80).grid(row=2, column=1, columnspan=2, sticky="w", padx=P.PAD_SM, pady=2)
         stop_buttons = tk.Frame(editor, bg=P.PANE)
         stop_buttons.grid(row=3, column=0, columnspan=3, sticky="w", pady=(P.PAD_SM, 0))
-        for text, command, kind in (("Add stop", self._add_stop, "accent"), ("Save changes", self._save_stop, "normal"),
-                                    ("Mark visited", self._toggle_visited, "normal"), ("Up", lambda: self._move(-1), "normal"),
-                                    ("Down", lambda: self._move(1), "normal"), ("Remove", self._remove_stop, "danger")):
-            FlatButton(stop_buttons, text, command, kind=kind).pack(side="left", padx=(0, 6))
+        for text, command, kind, tip in (
+                ("Add stop", self._add_stop, "accent", "Add stop - add the system, body and note above as a new stop (EDSM checks the name when the box below is ticked)"),
+                ("Save changes", self._save_stop, "normal", "Save changes - save the system, body and note above onto the selected stop"),
+                ("Mark visited", self._toggle_visited, "normal", "Mark visited - mark the selected stop as visited, or clear the mark"),
+                ("Move up", lambda: self._move(-1), "normal", "Move up - move the selected stop one place earlier in the list"),
+                ("Move down", lambda: self._move(1), "normal", "Move down - move the selected stop one place later in the list"),
+                ("Remove", self._remove_stop, "danger", "Remove - take the selected stop off the expedition; asks to be pressed twice")):
+            FlatButton(stop_buttons, text, command, kind=kind, tip=tip).pack(side="left", padx=(0, 6))
         self._lookup_var = tk.BooleanVar(value=config.get_bool(CONFIG_LOOKUP, default=True))
         tk.Checkbutton(editor, text="Check system names on EDSM when adding (fixes capitals, finds the position)", variable=self._lookup_var,
                        command=lambda: config.set(CONFIG_LOOKUP, self._lookup_var.get()), fg=P.TEXT, bg=P.PANE, selectcolor=P.BG,
@@ -208,15 +216,25 @@ class ExpeditionWindow:
         planners = tk.Frame(body, bg=P.BG)
         planners.pack(fill="x", pady=(0, P.PAD_SM))
         tk.Label(planners, text="Make an expedition with Spansh", fg=P.MUTED, bg=P.BG).pack(side="left", padx=(0, P.PAD))
-        for text, command in (("Road to Riches", lambda: self._plan(spansh_planners.RICHES)), ("Exomastery", lambda: self._plan(spansh_planners.EXOBIOLOGY)),
-                              ("Neutron route", self._open_route_planner)):
-            FlatButton(planners, text, command).pack(side="left", padx=(0, 6))
+        for text, command, tip in (
+                ("Road to Riches", lambda: self._plan(spansh_planners.RICHES),
+                 "Road to Riches - ask Spansh for a route past valuable bodies to scan, and make it an expedition"),
+                ("Exomastery", lambda: self._plan(spansh_planners.EXOBIOLOGY),
+                 "Exomastery - ask Spansh for a route to biological signals to scan, and make it an expedition"),
+                ("Neutron route", self._open_route_planner,
+                 "Neutron route - open the Route Planner, which plots a neutron-boosted route (Spansh) that can become an expedition")):
+            FlatButton(planners, text, command, tip=tip).pack(side="left", padx=(0, 6))
         tools = tk.Frame(body, bg=P.BG)
         tools.pack(fill="x")
-        for text, command in (("From plotted route", self._from_route), ("Import CSV", self._import_csv),
-                              ("Locate and reorder (EDSM)", self._locate), ("Copy list", self._copy_list),
-                              ("Export CSV", self._export_csv), ("Copy next", self._copy_next)):
-            FlatButton(tools, text, command).pack(side="left", padx=(0, 6))
+        for text, command, tip in (
+                ("From plotted route", self._from_route, "From plotted route - add the stops of the route plotted in the game (NavRoute.json) to the chosen expedition"),
+                ("Import CSV", self._import_csv, "Import CSV - add the stops listed in a CSV file to the chosen expedition"),
+                ("Locate and reorder (EDSM)", self._locate,
+                 "Locate and reorder (EDSM) - look up the positions of the unvisited stops on EDSM and order them nearest first"),
+                ("Copy list", self._copy_list, "Copy list - copy the chosen expedition's stops to the clipboard"),
+                ("Export CSV", self._export_csv, "Export CSV - save the chosen expedition's stops to a CSV file"),
+                ("Copy next", self._copy_next, "Copy next - copy the next unvisited stop's system name to the clipboard")):
+            FlatButton(tools, text, command, tip=tip).pack(side="left", padx=(0, 6))
 
         book.add_listener(self._on_book_changed)
         self.refresh()

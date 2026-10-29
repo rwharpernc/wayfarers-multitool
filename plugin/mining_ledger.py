@@ -99,12 +99,18 @@ class MiningBook:
             load_geometry=lambda: config.get_str(CONFIG_GEOMETRY) or "",
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Add hotspot", self._add_hotspot, accent=True)
-        self._shell.add_action("Market research", self._market_research)
-        self._shell.add_action("What pays", self._what_pays)
-        self._shell.add_action("Get body info", self._get_body_info)
-        self._shell.add_action("Paste spot", self._paste_spot)
-        self._shell.add_action("This system", self._find_here)
+        self._shell.add_action("Add hotspot", self._add_hotspot, accent=True,
+                                tip="Add hotspot - save a hotspot; your system, body and position are filled in when you are on the ground")
+        self._shell.add_action("Market research", self._market_research,
+                                tip="Market research - find markets that buy what you could mine on the selected body (Spansh)")
+        self._shell.add_action("What pays", self._what_pays,
+                                tip="What pays - rank the commodities you could mine by the best price nearby (Spansh)")
+        self._shell.add_action("Get body info", self._get_body_info,
+                                tip="Get body info - fill in the system's landable bodies from online records (EDSM and Spansh)")
+        self._shell.add_action("Paste spot", self._paste_spot,
+                                tip="Paste spot - add a hotspot from a Share line copied to the clipboard")
+        self._shell.add_action("This system", self._find_here,
+                                tip="This system - go to the body you have worked in the system you are in")
 
         self._body_entry: Optional[data.BodyEntry] = None
         self._entries: dict[str, data.BodyEntry] = {}
@@ -562,12 +568,13 @@ class MiningBook:
         buttons = tk.Frame(self._card, bg=P.CARD)
         buttons.pack(fill="x", pady=(10, 0))
         buttons.columnconfigure((0, 1), weight=1)
-        actions = [("Mark depleted", self._mark_depleted, spot.amount != "Depleted"),
-                   ("Copy coords", self._copy_coords, spot.has_position()),
-                   ("Share line", self._copy_share_line, share.can_share(spot)),
-                   ("Edit", self._edit, True), ("Delete", self._delete, True)]
-        for index, (text, command, enabled) in enumerate(a for a in actions if a[2]):
-            FlatButton(buttons, text, command, kind="danger" if text == "Delete" else "normal"
+        actions = [("Mark depleted", self._mark_depleted, spot.amount != "Depleted", "Mark depleted - note that this deposit has run out"),
+                   ("Copy coords", self._copy_coords, spot.has_position(), "Copy coords - copy the deposit's latitude and longitude to the clipboard"),
+                   ("Share line", self._copy_share_line, share.can_share(spot), "Share line - copy one line describing this hotspot, to paste into Discord or another Mining Book"),
+                   ("Edit", self._edit, True, "Edit - change this hotspot's details"),
+                   ("Delete", self._delete, True, "Delete - remove this hotspot from your list")]
+        for index, (text, command, enabled, tip) in enumerate(a for a in actions if a[2]):
+            FlatButton(buttons, text, command, kind="danger" if text == "Delete" else "normal", tip=tip
                        ).grid(row=index // 2, column=index % 2, sticky="ew", padx=2, pady=2)
 
     # --- actions ---------------------------------------------------------------

@@ -62,14 +62,15 @@ class _Parts:
         stop = style.add_theme_listener(retheme)
         theme.bind("<Destroy>", lambda _e: stop(), add="+")
 
-    def add_action(self, text: str, command: Callable[[], None], accent: bool = False) -> FlatButton:
-        button = FlatButton(self.actions, text, command, kind="accent" if accent else "normal")
+    def add_action(self, text: str, command: Callable[[], None], accent: bool = False, tip=None) -> FlatButton:
+        """A header button. `tip` is its tooltip ("Name - what it does")."""
+        button = FlatButton(self.actions, text, command, kind="accent" if accent else "normal", tip=tip)
         button.pack(side="left", padx=(6, 0))
         return button
 
-    def add_menu(self, text: str, items: Sequence[Optional[tuple]]) -> MenuButton:
-        """A header button that opens a menu of related actions (see `MenuButton`)."""
-        button = MenuButton(self.actions, text, items)
+    def add_menu(self, text: str, items: Sequence[Optional[tuple]], tip=None) -> MenuButton:
+        """A header button that opens a menu of related actions (see `MenuButton`). `tip` is its tooltip."""
+        button = MenuButton(self.actions, text, items, tip=tip)
         button.pack(side="left", padx=(6, 0))
         return button
 
@@ -121,7 +122,7 @@ class _Parts:
             self._help_window = window
 
         self._show_help = show
-        return self.add_action("Help", show)
+        return self.add_action("Help", show, tip="Help - what this window's buttons and tabs do")
 
     def set_subtitle(self, text: str) -> None:
         self._subtitle.configure(text=text)

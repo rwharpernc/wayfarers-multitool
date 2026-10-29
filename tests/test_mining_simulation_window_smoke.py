@@ -1,4 +1,4 @@
-"""Opens the Surface Live window on the Mining simulation (tests/mining_simulation_window_smoke.py): the radar draws, CTR marks pretend ground and WFMT's own data is left alone.
+"""Opens the Surface Live window on the Mining simulation (tests/mining_simulation_window_smoke.py): the radar draws, Mark center marks pretend ground and WFMT's own data is left alone.
 Skipped when Tk has no display. Run with: python -m unittest discover -s tests"""
 
 from __future__ import annotations

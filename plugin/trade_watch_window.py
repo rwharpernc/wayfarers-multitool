@@ -128,15 +128,17 @@ class WatchWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Watch list help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._refresh_action = self._shell.add_action("Refresh from Spansh", self._refresh_spansh, accent=True)
+        self._refresh_action = self._shell.add_action("Refresh from Spansh", self._refresh_spansh, accent=True,
+                                                   tip="Refresh from Spansh - look up current prices for the watched commodities (Spansh)")
 
         adding = tk.Frame(self._shell.body, bg=P.BG)
         adding.pack(fill="x", pady=(0, P.PAD_SM))
         tk.Label(adding, text="Add a commodity", fg=P.MUTED, bg=P.BG).pack(side="left")
         self._entry = CommodityEntry(adding, preferred=lambda: [], on_submit=self._add)
         self._entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
-        FlatButton(adding, "Add", self._add).pack(side="left")
-        self._remove_button = FlatButton(adding, "Remove", self._remove, kind="danger")
+        FlatButton(adding, "Add", self._add, tip="Add - start watching the commodity typed in the box").pack(side="left")
+        self._remove_button = FlatButton(adding, "Remove", self._remove, kind="danger",
+                                     tip="Remove - stop watching the selected commodity and forget its prices (press twice to confirm)")
         self._remove_button.pack(side="left", padx=(P.PAD, 0))
         self._remove_button.set_enabled(False)
 

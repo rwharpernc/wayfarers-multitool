@@ -103,7 +103,8 @@ class CustomizeWindow:
         self._shell.add_help("Customize Discord posts help", HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._toplevel = self._shell.window
-        self._shell.add_action("Done", self.close, accent=True)
+        self._shell.add_action("Done", self.close, accent=True,
+                                tip="Done - close this window; saved templates stay")
 
         body = self._shell.body
         top = tk.Frame(body, bg=P.BG)
@@ -121,9 +122,12 @@ class CustomizeWindow:
 
         buttons = tk.Frame(body, bg=P.BG)
         buttons.pack(fill="x", pady=(0, P.PAD_SM))
-        for text, command, kind in (("Save", self._on_save, "normal"), ("Save as…", self._on_save_as, "normal"), ("Rename…", self._on_rename, "normal"),
-                                    ("Delete", self._on_delete, "danger")):
-            FlatButton(buttons, text, command, kind=kind).pack(side="left", padx=(0, 6))
+        for text, command, kind, tip in (
+                ("Save", self._on_save, "normal", "Save - store your changes in the current template"),
+                ("Save as…", self._on_save_as, "normal", "Save as - store these choices as a new template under a name"),
+                ("Rename…", self._on_rename, "normal", "Rename - give the current template a new name"),
+                ("Delete", self._on_delete, "danger", "Delete - remove the current template; posts go back to Standard")):
+            FlatButton(buttons, text, command, kind=kind, tip=tip).pack(side="left", padx=(0, 6))
         self._note = tk.Label(body, text="", fg=P.MUTED, bg=P.BG, anchor="w", justify="left", wraplength=780)
         self._note.pack(fill="x", pady=(0, P.PAD_SM))
 

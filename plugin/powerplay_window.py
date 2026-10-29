@@ -117,16 +117,22 @@ class SessionWindow:
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._toplevel = self._shell.window
 
-        self._shell.add_action("Refresh", self._flush)
-        self._copy_button = self._shell.add_action("Copy Progress", self._copy_progress)
-        self._shell.add_action("Reset Current System", self._reset_current_system)
-        self._shell.add_action("Reset Session", self._reset_session)
+        self._shell.add_action("Refresh", self._flush, tip="Refresh - redraw the tab you are looking at with the latest merit counts")
+        self._copy_button = self._shell.add_action("Copy Progress", self._copy_progress,
+                                                 tip="Copy Progress - copy one line per system from the By System table, using your clipboard template")
+        self._shell.add_action("Reset Current System", self._reset_current_system,
+                                tip="Reset Current System - zero this session's merits for the system you are in (asks first)")
+        self._shell.add_action("Reset Session", self._reset_session,
+                                tip="Reset Session - zero all of this session's merit totals without ending the session (asks first)")
 
         share = tk.Frame(self._shell.body, bg=P.BG)      # a row of its own: the header bar has no room for more buttons at a narrow width
         share.pack(fill="x", pady=(0, P.PAD_SM))
-        FlatButton(share, "Post to Discord", self._on_post_discord).pack(side="right")
-        FlatButton(share, "Copy for Discord", self._on_copy_discord).pack(side="right", padx=(0, 6))
-        FlatButton(share, "Customize…", self._on_customize_discord).pack(side="right", padx=(0, 6))
+        FlatButton(share, "Post to Discord", self._on_post_discord,
+                   tip="Post to Discord - send this session's merit report to your Discord webhook (Discord)").pack(side="right")
+        FlatButton(share, "Copy for Discord", self._on_copy_discord,
+                   tip="Copy for Discord - copy this session's merit report, formatted for pasting into Discord").pack(side="right", padx=(0, 6))
+        FlatButton(share, "Customize…", self._on_customize_discord,
+                   tip="Customize - choose how the Discord report is worded and laid out").pack(side="right", padx=(0, 6))
         discord_customize.register_data(discord_templates.POWERPLAY, self._customize_data)      # the dialog's preview uses this session
 
         self._tabs = tabs = Tabs(self._shell.body)

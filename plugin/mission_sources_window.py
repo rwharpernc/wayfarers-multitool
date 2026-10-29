@@ -110,8 +110,9 @@ class MissionSourcesWindow:
             load_geometry=lambda: (config.get_str(_CFG_GEOMETRY) if config else "") or "",
             save_geometry=lambda value: config.set(_CFG_GEOMETRY, value) if config else None)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._find = self._shell.add_action("Find sources", self._start, accent=True)
-        self._shell.add_action("Copy system", self._copy)
+        self._find = self._shell.add_action("Find sources", self._start, accent=True,
+                                       tip="Find sources - look up where to get the cargo your active missions need (Spansh); press again to cancel")
+        self._shell.add_action("Copy system", self._copy, tip="Copy system - copy the selected row's system for the galaxy map search")
 
         bar = tk.Frame(self._shell.body, bg=P.BG)
         bar.pack(fill="x", pady=(P.PAD_SM, P.PAD_SM))

@@ -83,9 +83,9 @@ class RingBook:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Space Mining Book help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Add ring", self._add_ring, accent=True)
-        self._shell.add_action("This system", self._find_here)
-        self._shell.add_action("Refresh", self._reread)
+        self._shell.add_action("Add ring", self._add_ring, accent=True, tip="Add ring - add a ring by hand to the book")
+        self._shell.add_action("This system", self._find_here, tip="This system - go to the rings in the system you are in")
+        self._shell.add_action("Refresh", self._reread, tip="Refresh - read the newest journal again and redraw the list")
         body = self._shell.body
 
         controls = tk.Frame(body, bg=P.BG)
@@ -117,10 +117,10 @@ class RingBook:
         note_entry.bind("<Return>", lambda _e: self._save_note())
         actions = tk.Frame(card, bg=P.CARD)
         actions.grid(row=1, column=2, columnspan=2, sticky="e", pady=(4, 0))
-        FlatButton(actions, "Save note", self._save_note).pack(side="left")
-        FlatButton(actions, "Favorite", self._toggle_favorite).pack(side="left", padx=(6, 0))
-        FlatButton(actions, "Copy system", self._copy_system).pack(side="left", padx=(6, 0))
-        FlatButton(actions, "Remove", self._remove).pack(side="left", padx=(6, 0))
+        FlatButton(actions, "Save note", self._save_note, tip="Save note - keep your note on the selected ring").pack(side="left")
+        FlatButton(actions, "Favorite", self._toggle_favorite, tip="Favorite - mark or unmark the selected ring as a favorite").pack(side="left", padx=(6, 0))
+        FlatButton(actions, "Copy system", self._copy_system, tip="Copy system - copy the selected ring's system name to the clipboard").pack(side="left", padx=(6, 0))
+        FlatButton(actions, "Remove", self._remove, tip="Remove - remove the selected ring (only a ring you added by hand)").pack(side="left", padx=(6, 0))
         self.refresh()
         self._shell.window.after(TICK_MS, self._tick)
 

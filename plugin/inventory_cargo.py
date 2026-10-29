@@ -1,5 +1,5 @@
 """
-Ship/SRV cargo-hold tracking for Field Ops' Inventory content.
+Ship/SRV cargo-hold tracking for Operations' Inventory content.
 
 Cargo tonnage is a different game system from the on-foot microresources
 tracked in inventory.py — this module is deliberately separate and only

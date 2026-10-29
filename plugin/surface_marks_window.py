@@ -82,7 +82,8 @@ class MarksWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Marks help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("New mark", self._new, accent=True)
+        self._shell.add_action("New mark", self._new, accent=True,
+                                tip="New mark - start a new mark with where you are now filled in")
 
         scroll = ScrollFrame(self._shell.body, bg=P.BG)     # at the smallest window size the editor is reached by scrolling, not squeezed
         scroll.pack(fill="both", expand=True)
@@ -92,9 +93,10 @@ class MarksWindow:
         tk.Label(aim, text="The compass points at:", fg=P.MUTED, bg=P.BG).pack(side="left")
         self._aim_label = tk.Label(aim, text="", fg=P.ACCENT, bg=P.BG)
         self._aim_label.pack(side="left", padx=(P.PAD_SM, P.PAD))
-        FlatButton(aim, "Nearest hotspot", lambda: self._set_target(surface_marks.AUTO)).pack(side="left")
-        FlatButton(aim, "Selected mark", self._target_selected).pack(side="left", padx=(6, 0))
-        FlatButton(aim, "Nothing", lambda: self._set_target(surface_marks.NONE)).pack(side="left", padx=(6, 0))
+        FlatButton(aim, "Nearest hotspot", lambda: self._set_target(surface_marks.AUTO),
+                   tip="Nearest hotspot - point the compass at the nearest mining hotspot on this body").pack(side="left")
+        FlatButton(aim, "Selected mark", self._target_selected, tip="Selected mark - point the compass at the mark selected in the list").pack(side="left", padx=(6, 0))
+        FlatButton(aim, "Nothing", lambda: self._set_target(surface_marks.NONE), tip="Nothing - point the compass at nothing").pack(side="left", padx=(6, 0))
 
         self._table = DataTable(stage, _COLUMNS, on_select=self._load_into_editor,
                                 empty_text="No marks yet. Stand where you want one and press Here, then Save.", visible_rows=8)
@@ -111,15 +113,15 @@ class MarksWindow:
         for row, (label, variable, width) in enumerate(fields):
             tk.Label(editor, text=label, fg=P.MUTED, bg=P.PANE).grid(row=row, column=0, sticky="w", pady=2)
             tk.Entry(editor, textvariable=variable, width=width).grid(row=row, column=1, sticky="w", padx=P.PAD_SM, pady=2)
-        FlatButton(editor, "Here", self._fill_here).grid(row=1, column=2, rowspan=3, sticky="nw", pady=2)
+        FlatButton(editor, "Here", self._fill_here, tip="Here - fill in the body and the latitude and longitude where you are now").grid(row=1, column=2, rowspan=3, sticky="nw", pady=2)
         editor.columnconfigure(1, weight=1)
         NoteLabel(editor, "Here fills in the body and your position now. Latitude and longitude are in degrees "
                           "(north and east positive).", fg=P.FAINT, bg=P.PANE, padx=0).grid(row=4, column=1, columnspan=2, sticky="ew", pady=(2, 0))
 
         buttons = tk.Frame(editor, bg=P.PANE)
         buttons.grid(row=5, column=1, columnspan=2, sticky="w", pady=(P.PAD_SM, 0))
-        FlatButton(buttons, "Save", self._save, kind="accent").pack(side="left")
-        self._delete_button = FlatButton(buttons, "Delete", self._delete, kind="danger")
+        FlatButton(buttons, "Save", self._save, kind="accent", tip="Save - save this mark, as a new one or as changes to the selected one").pack(side="left")
+        self._delete_button = FlatButton(buttons, "Delete", self._delete, kind="danger", tip="Delete - remove the selected mark for good; asks to be pressed twice")
         self._delete_button.pack(side="left", padx=(6, 0))
         self._delete_button.set_enabled(False)
 

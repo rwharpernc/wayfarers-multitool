@@ -83,7 +83,8 @@ class BuildsWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.add_help("Planned Builds help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Refresh", self.refresh, accent=True)
+        self._shell.add_action("Refresh", self.refresh, accent=True,
+                                tip="Refresh - ask Raven Colonial again for this system's planned builds")
         self._table = DataTable(self._shell.body, _COLUMNS, sortable=False, on_select=self._on_pick,
                                 empty_text="Nothing to show yet.")
         self._table.tag_configure(rcc_client.STATUS_BUILDING, foreground=P.ACCENT)

@@ -123,7 +123,7 @@ class SiteMarkTests(unittest.TestCase):
 
     def test_center_then_border_gives_the_radius(self) -> None:
         body = coverage.BodyCoverage()
-        self.assertIn("press BRD", body.mark_center(10.0, 20.0, self.R))
+        self.assertIn("press Mark border", body.mark_center(10.0, 20.0, self.R))
         message = body.mark_border(10.0 + self.north(1500), 20.0, self.R)
         self.assertIn("1.50 km", message)
         self.assertAlmostEqual(body.sites[0].radius_m(self.R), 1500.0, delta=2.0)
@@ -138,7 +138,7 @@ class SiteMarkTests(unittest.TestCase):
 
     def test_border_needs_a_center_and_a_distance_from_it(self) -> None:
         body = coverage.BodyCoverage()
-        self.assertIn("press CTR first", body.mark_border(10.0, 20.0, self.R))
+        self.assertIn("press Mark center first", body.mark_border(10.0, 20.0, self.R))
         body.mark_center(10.0, 20.0, self.R)
         self.assertIn("only", body.mark_border(10.0 + self.north(20), 20.0, self.R))
         self.assertIsNone(body.sites[0].border)

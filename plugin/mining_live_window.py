@@ -1,10 +1,10 @@
 """The Mining live window: the LIVE button on both Mining pages, a window for a second screen (or a corner of the first) that carries what the EDMC panel would otherwise have to.
 
 Surface Mining: a **radar** centered on the Rhino, north up, with range rings, the ground driven, the mining locations you marked, your saved deposits and a line to the nearest one; beside it the
-same lines the panel shows (the run, cargo, refined, the nearest marked location and saved deposit); and the controls that act on the ground: **CTR** and **BRD** (mark a mining location's
-center and border), **+H.S.** (save a deposit where you stand) and **I/E** (import or export your saved deposits). Five buttons under the radar set how far it reaches (50 m to 2 km).
+same lines the panel shows (the run, cargo, refined, the nearest marked location and saved deposit); and the controls that act on the ground: **Mark center** and **Mark border** (mark a mining location's
+center and border), **Add hotspot** (save a deposit where you stand) and **Import/export** (import or export your saved deposits). Five buttons under the radar set how far it reaches (50 m to 2 km).
 
-Space Mining: the same live lines as the panel, large and readable, with the lookups the panel offers (H.S., PRICE, RES) when they are switched on. There is no radar here: the journal does not say
+Space Mining: the same live lines as the panel, large and readable, with the lookups the panel offers (Hotspots, Prices, Reserves) when they are switched on. There is no radar here: the journal does not say
 where a ring's hotspots are, so there is nothing to place on one.
 
 It needs no overlay: everything it shows is drawn in the window, and it redraws once a second while open. The page is drawn by the same code as the panel (`mining_render.render_surface_mining` and
@@ -47,7 +47,7 @@ CONFIG_GEOMETRY = {mining_pages.SURFACE_MINING: "wfmt_mining_live_surface_geomet
 CONFIG_RANGE = mining_radar_view.CONFIG_RANGE            # the range is shared with the radar card over the game
 saved_range = mining_radar_view.saved_range
 DEFAULT_SIZE = {mining_pages.SURFACE_MINING: (1180, 700), mining_pages.SPACE_MINING: (620, 640)}
-MIN_SIZE = {mining_pages.SURFACE_MINING: (920, 520), mining_pages.SPACE_MINING: (460, 420)}
+MIN_SIZE = {mining_pages.SURFACE_MINING: (1120, 520), mining_pages.SPACE_MINING: (520, 420)}
 TICK_MS = 1000
 RADAR_MIN_PX, RADAR_MAX_PX = 240, 1200
 WRAP_MIN, WRAP_MAX = 240, 700
@@ -62,10 +62,10 @@ _SURFACE_HELP = (
                    "the game does not log a scan."),
     ("Dotted line", "Your track."),
     ("Black patches", "Ground inside the green that nothing has been driven near."),
-    ("Yellow +", "The center of a mining location you marked with CTR."),
-    ("Yellow circle", "The border you marked with BRD: its radius is the distance from the center to where you pressed it."),
+    ("Yellow +", "The center of a mining location you marked with Mark center."),
+    ("Yellow circle", "The border you marked with Mark border: its radius is the distance from the center to where you pressed it."),
     ("Orange dashed circles", "Where to drive to cover the nearest marked location: rings worked out from the 2 km scanner reach, the first at 2 km from the center and the rest a little under "
-                              "4 km further out, the last on the border. They are a guide from that one estimate, not a measurement of where deposits are. Mark the border (BRD) to get them right."),
+                              "4 km further out, the last on the border. They are a guide from that one estimate, not a measurement of where deposits are. Mark the border (Mark border) to get them right."),
     ("Violet circles", "The best stops: deposits close enough to work from one place (the stop radius is in Settings → Mining)."),
     ("Cream dots", "Your saved deposits, with the first letters of the material. The nearest has a line to it and its distance beside it."),
     ("Bright yellow line", "Set a target commodity (Settings → Mining) and the radar points at the nearest saved deposit of it, with the nearest of any kind dotted. A deposit beyond the radar is "
@@ -77,9 +77,9 @@ _SURFACE_HELP = (
     ("Rig bands", "With a rig gap set in Settings → Mining, a band of that radius round each noted rig: a filled red-brown disc while the Rhino is inside it, a thin teal outline once it is clear, so the next rig goes down outside every band. The rigs are forgotten when the Rhino is stowed or launched, or destroyed. Clear rigs forgets them now."),
     ("Save map", "Saves a picture of this location (the ground driven, the border, the drive rings, the stops and the deposits, with a title and a legend) to a PNG file you choose, "
                  "to post or keep. It holds no commander name."),
-    ("CTR, BRD", "Mark the center and the border of the mining location you are at."),
-    ("+H.S.", "Save a deposit where you stand."),
-    ("I/E", "Import or export your saved deposits."),
+    ("Mark center, Mark border", "Mark the center and the border of the mining location you are at."),
+    ("Add hotspot", "Save a deposit where you stand."),
+    ("Import/export", "Import or export your saved deposits."),
 )
 
 _windows: Dict[str, "LiveWindow"] = {}
@@ -108,7 +108,7 @@ def _real_window() -> Optional["LiveWindow"]:
 
 
 def mark_here(border: bool) -> str:
-    """CTR (`border` False) or BRD (True) from outside the window (a keyboard shortcut or a chat command): marks on WFMT's own data and, when the Surface Live window is open, says
+    """Mark center (`border` False) or Mark border (True) from outside the window (a keyboard shortcut or a chat command): marks on WFMT's own data and, when the Surface Live window is open, says
     so in its status line and redraws it. Returns what was done, or why not."""
     message = render.mark_site(border)
     held = _real_window()
@@ -172,21 +172,31 @@ class LiveWindow:
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY[page], geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         if surface:
-            self._shell.add_action("CTR", lambda: self._mark(False))
-            self._shell.add_action("BRD", lambda: self._mark(True))
-            self._shell.add_action("+H.S.", self._save_hotspot)
-            self._shell.add_action("Save map", self._save_map)
-            self._shell.add_action("Clear rigs", self._clear_rigs)
-            self._shell.add_action("Rig placed", self._place_rig)
+            self._shell.add_action("Mark center", lambda: self._mark(False),
+                                    tip="Mark center - mark the center of the mining location you are at, from your live position")
+            self._shell.add_action("Mark border", lambda: self._mark(True),
+                                    tip="Mark border - mark the edge of the mining location you are at, which gives its radius (mark its center first)")
+            self._shell.add_action("Add hotspot", self._save_hotspot,
+                                    tip="Add hotspot - save the deposit where you stand as a hotspot; the form opens filled in with your position")
+            self._shell.add_action("Save map", self._save_map,
+                                    tip="Save map - save a picture of this mining location (ground driven, border, rings, stops, deposits) to a PNG file you choose")
+            self._shell.add_action("Clear rigs", self._clear_rigs,
+                                    tip="Clear rigs - forget the mining rigs noted on this body (nothing about them is saved)")
+            self._shell.add_action("Rig placed", self._place_rig,
+                                    tip="Rig placed - note the Rhino's position as a mining rig you have just placed")
             if not self._simulated:        # importing and exporting work on the saved deposits, which a simulation must not touch
-                self._shell.add_action("I/E", lambda: hotspot_import_export.open_import_export_dialog(self._shell.window))
+                self._shell.add_action("Import/export", lambda: hotspot_import_export.open_import_export_dialog(self._shell.window),
+                                    tip="Import/export - open the window that imports or exports your saved hotspots")
             self._shell.add_help("Surface Mining Live help", (
                 ("This is a simulation: the Rhino, the ground and the deposits are made up and nothing here is saved.",) if self._simulated else ()) + _SURFACE_HELP)
         else:
             self._lookup_buttons = {
-                "hotspot_finder": self._shell.add_action("H.S.", lambda: hotspot_finder_dialog.open_hotspot_finder_dialog(self._shell.window)),
-                "price_finder": self._shell.add_action("PRICE", lambda: price_finder_dialog.open_price_finder_dialog(self._shell.window)),
-                "reserve_lookup": self._shell.add_action("RES", lambda: reserve_lookup_dialog.open_reserve_lookup_dialog(self._shell.window)),
+                "hotspot_finder": self._shell.add_action("Hotspots", lambda: hotspot_finder_dialog.open_hotspot_finder_dialog(self._shell.window),
+                    tip="Hotspots - find nearby ring hotspots for a material (Spansh)"),
+                "price_finder": self._shell.add_action("Prices", lambda: price_finder_dialog.open_price_finder_dialog(self._shell.window),
+                    tip="Prices - find the stations that pay the most for a commodity (Spansh)"),
+                "reserve_lookup": self._shell.add_action("Reserves", lambda: reserve_lookup_dialog.open_reserve_lookup_dialog(self._shell.window),
+                    tip="Reserves - check the reserve level and type of a system's rings (EDSM)"),
             }
         body = self._shell.body
         body.columnconfigure(0, weight=3 if surface else 0)
@@ -208,7 +218,8 @@ class LiveWindow:
             tk.Label(zoom, text="Radar reaches", fg=P.MUTED, bg=P.BG).pack(side="left", padx=(0, P.PAD_SM))
             self._zoom_buttons: Dict[float, FlatButton] = {}
             for meters in radar.RADAR_RANGES_M:
-                button = FlatButton(zoom, radar.range_text(meters), lambda m=meters: self._set_range(m))
+                button = FlatButton(zoom, radar.range_text(meters), lambda m=meters: self._set_range(m),
+                                    tip=f"{radar.range_text(meters)} - set how far the radar reaches")
                 button.pack(side="left", padx=(0, 6))
                 self._zoom_buttons[meters] = button
             self._show_zoom()

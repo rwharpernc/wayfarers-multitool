@@ -5,7 +5,7 @@ EDMC's own Shipyard provider setting already does that for your current
 ship - this just organizes the links a commander saves after designing a
 build on one of those sites" framing.
 
-Field Ops only (PANEL_PLACEMENT = "fieldops") - ship loadouts are part of
+Operations only (PANEL_PLACEMENT = "fieldops") - ship loadouts are part of
 gearing up for on-foot/cargo ops, not every mode.
 Keeps the main-panel footprint to one summary line + one button (same
 "summary in panel, full CRUD list in a popup window" split as

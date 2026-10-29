@@ -1,4 +1,4 @@
-"""A body's size from Status.json (plugin/mining_panel.py's dashboard_status): the Rhino's ground trail, CTR and BRD work on a body the journal never gave a Scan event for. No Tk window and
+"""A body's size from Status.json (plugin/mining_panel.py's dashboard_status): the Rhino's ground trail, Mark center and Mark border work on a body the journal never gave a Scan event for. No Tk window and
 no EDMC."""
 
 import os

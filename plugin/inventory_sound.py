@@ -1,4 +1,4 @@
-"""Optional notification sound for Field Ops pillage pickups.
+"""Optional notification sound for Operations pillage pickups.
 
 Windows uses the stdlib-only `winsound` module. Linux plays the desktop's
 message sound through `canberra-gtk-play` or `paplay` when either is

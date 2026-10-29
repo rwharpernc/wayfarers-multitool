@@ -140,8 +140,9 @@ class MaterialTraderWindow:
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
         system_autocomplete.attach(entry, self._origin)
         entry.bind("<Return>", lambda _e: self._find())
-        FlatButton(origin, "Here", self._fill_here).pack(side="left")
-        self._find_button = FlatButton(origin, "Find", self._find, kind="accent")
+        FlatButton(origin, "Here", self._fill_here, tip="Here - put your current system in the search box").pack(side="left")
+        self._find_button = FlatButton(origin, "Find", self._find, kind="accent",
+                                      tip="Find - search for the closest material traders of the chosen kind (Spansh)")
         self._find_button.pack(side="left", padx=(P.PAD, 0))
 
         self._holdings = tk.Label(body, text="", fg=P.TEXT, bg=P.BG, anchor="w", justify="left")

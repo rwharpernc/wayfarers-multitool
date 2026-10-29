@@ -1,5 +1,5 @@
-"""Field Ops mode: Odyssey on-foot/cargo inventory tracking, alongside
-Screenshots in Field Ops.
+"""Operations mode: Odyssey on-foot/cargo inventory tracking, alongside
+Screenshots in Operations.
 
 Tracks backpack/ship-locker/fleet-carrier-locker micro-resource counts, the
 worn suit's backpack capacity, and ship/SRV cargo tonnage; fires a

@@ -2,7 +2,7 @@
 journal), see what engineering it holds module by module, and put the whole plan on the wishlist.
 
 Nothing here goes online by itself: the text comes from the clipboard or the box, `ship_plan.py` (with `ship_links.py` for a link) does the reading, and **Add plan
-to wishlist** hands the result to `blueprint_wishlist.WishBook.add_many`, all or nothing. The **Coriolis link** and **EDSY link** buttons copy a link that opens the
+to wishlist** hands the result to `blueprint_wishlist.WishBook.add_many`, all or nothing. The **Copy Coriolis link** and **Copy EDSY link** buttons copy a link that opens the
 selected build on that site, and the **Open** buttons open it in the browser (the one request, made by the player's browser). How many crafts each grade takes depends on the game's dice, so **Rolls per grade** says how
 many to plan for (an experimental effect is one craft). The tab is built into a frame the window gives it; it owns no window of its own.
 """
@@ -53,9 +53,11 @@ class ShipPlanTab:
 
         buttons = tk.Frame(pad, bg=P.PANE)
         buttons.pack(fill="x", pady=(0, P.PAD_SM))
-        FlatButton(buttons, "Paste from clipboard", self.paste).pack(side="left")
-        FlatButton(buttons, "Read loadout", self.read, kind="accent").pack(side="left", padx=(P.PAD, 0))
-        FlatButton(buttons, "Clear", self.clear).pack(side="left", padx=(P.PAD, 0))
+        FlatButton(buttons, "Paste from clipboard", self.paste,
+                   tip="Paste from clipboard - put the copied loadout in the box and read it").pack(side="left")
+        FlatButton(buttons, "Read loadout", self.read, kind="accent",
+                   tip="Read loadout - read the ships and modules in the box and build the engineering plan").pack(side="left", padx=(P.PAD, 0))
+        FlatButton(buttons, "Clear", self.clear, tip="Clear - empty the box and the plan").pack(side="left", padx=(P.PAD, 0))
         tk.Label(buttons, text="Ship", fg=P.MUTED, bg=P.PANE).pack(side="left", padx=(P.PAD, P.PAD_SM))
         self._ship = tk.StringVar()
         self._ship_box = Combobox(buttons, textvariable=self._ship, values=[], state="readonly", width=34)
@@ -73,17 +75,22 @@ class ShipPlanTab:
         rolls = Combobox(controls, textvariable=self._rolls, values=[str(n) for n in range(1, ship_plan.MAX_ROLLS + 1)], state="readonly", width=4)
         rolls.pack(side="left", padx=(P.PAD_SM, P.PAD))
         rolls.bind("<<ComboboxSelected>>", lambda _e: self._summarize())
-        FlatButton(controls, "Add plan to wishlist", self.add_to_wishlist, kind="accent").pack(side="left")
+        FlatButton(controls, "Add plan to wishlist", self.add_to_wishlist, kind="accent",
+                   tip="Add plan to wishlist - put the materials this plan needs on your wishlist").pack(side="left")
         self._subtract = tk.BooleanVar(value=False)
         tk.Checkbutton(controls, text="Subtract what my current ship already has", variable=self._subtract, command=self._choose,
                        fg=P.TEXT, bg=P.PANE, selectcolor=P.CARD, activebackground=P.PANE, activeforeground=P.TEXT).pack(side="left", padx=(P.PAD, 0))
         share = tk.Frame(pad, bg=P.PANE)
         share.pack(fill="x", pady=(P.PAD_SM, 0))
         tk.Label(share, text="This build on a site", fg=P.MUTED, bg=P.PANE).pack(side="left", padx=(0, P.PAD_SM))
-        FlatButton(share, "Coriolis link", lambda: self.share("coriolis", "copy")).pack(side="left")
-        FlatButton(share, "EDSY link", lambda: self.share("edsy", "copy")).pack(side="left", padx=(P.PAD_SM, 0))
-        FlatButton(share, "Open in Coriolis", lambda: self.share("coriolis", "open")).pack(side="left", padx=(P.PAD, 0))
-        FlatButton(share, "Open in EDSY", lambda: self.share("edsy", "open")).pack(side="left", padx=(P.PAD_SM, 0))
+        FlatButton(share, "Copy Coriolis link", lambda: self.share("coriolis", "copy"),
+                   tip="Copy Coriolis link - copy a link that shows the selected ship on Coriolis").pack(side="left")
+        FlatButton(share, "Copy EDSY link", lambda: self.share("edsy", "copy"),
+                   tip="Copy EDSY link - copy a link that shows the selected ship on EDSY").pack(side="left", padx=(P.PAD_SM, 0))
+        FlatButton(share, "Open in Coriolis", lambda: self.share("coriolis", "open"),
+                   tip="Open in Coriolis - show the selected ship on Coriolis in your web browser").pack(side="left", padx=(P.PAD, 0))
+        FlatButton(share, "Open in EDSY", lambda: self.share("edsy", "open"),
+                   tip="Open in EDSY - show the selected ship on EDSY in your web browser").pack(side="left", padx=(P.PAD_SM, 0))
         self._summary = NoteLabel(pad, fg=P.TEXT, padx=0)
         self._summary.pack(fill="x", pady=(P.PAD_SM, 0))
         self._note = NoteLabel(pad, padx=0)

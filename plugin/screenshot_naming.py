@@ -1,5 +1,5 @@
 """
-Output filename generation for Field Ops screenshot capture.
+Output filename generation for Operations screenshot capture.
 
 Builds the converted PNG's path from a user-selected mask template
 (SYSTEM/BODY/CMDR/DATE/NNNNN tokens) plus a per-directory sequence number.

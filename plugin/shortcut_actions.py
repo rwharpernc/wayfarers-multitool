@@ -35,8 +35,8 @@ class Action:
 
 
 ACTIONS: Tuple[Action, ...] = (
-    Action("center", "Mark the center (CTR)", "center", "C", "Marks the center of the mining location you are at, as CTR does in the Live window."),
-    Action("border", "Mark the border (BRD)", "border", "B", "Marks the border of the nearest marked location, as BRD does."),
+    Action("center", "Mark the center", "center", "C", "Marks the center of the mining location you are at, as Mark center does in the Live window."),
+    Action("border", "Mark the border", "border", "B", "Marks the border of the nearest marked location, as Mark border does."),
     Action("rig", "Rig placed", "rig", "R", "Notes the Rhino's position as a mining rig you have just placed, so the radar can show how close the next one may go."),
     Action("zoom", "Radar range", "zoom", "Z", "Steps the Live radar's reach through 50 m, 250 m, 500 m, 1 km and 2 km."),
     Action("live", "Open the Live window", "live", "L", "Opens the Surface Mining Live window, or raises it if it is open."),

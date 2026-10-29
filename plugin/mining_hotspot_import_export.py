@@ -1,7 +1,7 @@
 """
 Import/export for the known-surface-hotspots list (mining_hotspots.py),
 shared between the Settings tab's hotspot section
-(mining_hotspot_settings.py) and the Import and Export window (the I/E
+(mining_hotspot_settings.py) and the Import and Export window (the Import/export
 button in the Surface Mining live window) so the file-picker/merge-prompt/
 error-handling logic exists in exactly one place.
 """
@@ -67,7 +67,7 @@ _window: Optional[WindowShell] = None
 
 
 def open_import_export_dialog(parent: tk.Misc) -> None:
-    """The Import and Export window (the I/E button in the Surface Mining live window): what the list holds, and the two actions, each with a line saying what it does. The Settings tab keeps its own
+    """The Import and Export window (the Import/export button in the Surface Mining live window): what the list holds, and the two actions, each with a line saying what it does. The Settings tab keeps its own
     Import and Export buttons (`mining_hotspot_settings.py`). Parented on the caller's toplevel, not on a frame the panel rebuilds every second (which would take the window with it)."""
     global _window
     if _window is not None and _window.alive:
@@ -78,12 +78,14 @@ def open_import_export_dialog(parent: tk.Misc) -> None:
     _window = shell
     shell.window.transient(parent.winfo_toplevel())
     body = shell.body
-    for text, action, label in (
-            ("Import", lambda: _run(shell, import_hotspots), "Reads a hotspot file exported by WFMT, from you or another commander, and asks whether to add to your list or replace it."),
-            ("Export", lambda: _run(shell, export_hotspots), "Writes your saved hotspots to a file you choose, to keep or to give another commander.")):
+    for text, action, label, tip in (
+            ("Import", lambda: _run(shell, import_hotspots), "Reads a hotspot file exported by WFMT, from you or another commander, and asks whether to add to your list or replace it.",
+             "Import - read a hotspot file exported by WFMT and add it to, or replace, your list"),
+            ("Export", lambda: _run(shell, export_hotspots), "Writes your saved hotspots to a file you choose, to keep or to give another commander.",
+             "Export - write your saved hotspots to a file you choose")):
         row = tk.Frame(body, bg=P.BG)
         row.pack(fill="x", pady=(0, P.PAD))
-        FlatButton(row, text, action, kind="accent" if text == "Import" else "normal").pack(side="left", padx=(0, P.PAD))
+        FlatButton(row, text, action, kind="accent" if text == "Import" else "normal", tip=tip).pack(side="left", padx=(0, P.PAD))
         NoteLabel(row, label, bg=P.BG, padx=0).pack(side="left", fill="x", expand=True)
     FlatButton(body, "Close", shell.close).pack(anchor="e", pady=(P.PAD, 0))
     shell.set_status("Hotspots are kept for the commander you are playing; an export holds only that commander's list.")

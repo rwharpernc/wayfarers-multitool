@@ -1,5 +1,5 @@
 """
-Opens the Materials window and the Field Ops row with EDMC stubbed, and fails if the row's lines, the window's filters, a commander change or
+Opens the Materials window and the Operations row with EDMC stubbed, and fails if the row's lines, the window's filters, a commander change or
 the row's width misbehave. Skipped when Tk has no display.
 Run with: python -m unittest discover -s tests
 """

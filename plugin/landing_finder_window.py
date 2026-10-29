@@ -156,7 +156,8 @@ class LandingFinderWindow:
         ask.pack(fill="x", pady=(0, P.PAD_SM))
         self._allowed = tk.BooleanVar(value=config.get_bool(CONFIG_ALLOWED, default=False))
         # The button is packed first so a long label wraps beside it instead of pushing it out of the window.
-        self._find_button = FlatButton(ask, "Find", self._find, kind="accent")
+        self._find_button = FlatButton(ask, "Find", self._find, kind="accent",
+                                       tip="Find - ask Spansh for the nearest stations and fleet carriers that suit your choices (needs the tick box)")
         self._find_button.pack(side="right")
         tk.Checkbutton(ask, text="Allow this lookup: pressing Find sends Spansh my position, the pad size and these choices, nothing else", variable=self._allowed,
                        command=self._save_choices, wraplength=560, justify="left").pack(side="left")

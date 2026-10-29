@@ -122,7 +122,8 @@ class ExoReviewWindow:
             load_geometry=lambda: config.get_str(CONFIG_GEOMETRY) or "",
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Copy report", self._copy_report)
+        self._shell.add_action("Copy report", self._copy_report,
+                                tip="Copy report - copy the exobiology prediction report for every recorded body to the clipboard")
 
         self._tabs = tabs = Tabs(self._shell.body)
         tabs.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
@@ -174,7 +175,8 @@ class ExoReviewWindow:
         self._note = tk.StringVar()
         self._note_box = tk.Entry(detail, textvariable=self._note, bg=P.PANE, fg=P.TEXT, insertbackground=P.TEXT, relief="flat")
         self._note_box.grid(row=3, column=1, sticky="ew", padx=P.PAD_SM, pady=2)
-        self._save_button = FlatButton(detail, "Save review", self._save_review, kind="accent")
+        self._save_button = FlatButton(detail, "Save review", self._save_review, kind="accent",
+                                      tip="Save review - save the review result and note on the selected find")
         self._save_button.grid(row=3, column=2, sticky="e")
         self._save_button.set_enabled(False)
 

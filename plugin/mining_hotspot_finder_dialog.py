@@ -1,4 +1,4 @@
-"""The Find Nearby Hotspots window (the H.S. button on the Space Mining page): the nearest rings Spansh confirms have a hotspot for a material, closest first.
+"""The Find Nearby Hotspots window (the Hotspots button on the Space Mining page): the nearest rings Spansh confirms have a hotspot for a material, closest first.
 
 Type a material, say how far to look and the system to search from (it starts as the one you are in), then press **Search**. The results fill a table you can sort by any column: the ring and the
 body it circles, the system, how many hotspots of that material the ring has, the distance in light years, the distance from the arrival star and the body's reserve level. Double-click a row, or
@@ -97,9 +97,9 @@ class HotspotFinderWindow:
             load_geometry=lambda: config.get_str(CONFIG_GEOMETRY) or "",
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Copy ring", lambda: self._copy("ring"))
-        self._shell.add_action("Copy body", lambda: self._copy("body"))
-        self._shell.add_action("Copy system", lambda: self._copy("system"))
+        self._shell.add_action("Copy ring", lambda: self._copy("ring"), tip="Copy ring - copy the selected result's ring name to the clipboard")
+        self._shell.add_action("Copy body", lambda: self._copy("body"), tip="Copy body - copy the selected result's body name to the clipboard")
+        self._shell.add_action("Copy system", lambda: self._copy("system"), tip="Copy system - copy the selected result's system name to the clipboard")
         body = self._shell.body
 
         first = tk.Frame(body, bg=P.BG)
@@ -120,8 +120,8 @@ class HotspotFinderWindow:
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
         system_autocomplete.attach(entry, self._origin)
         entry.bind("<Return>", lambda _e: self._search())
-        FlatButton(second, "Here", self._fill_here).pack(side="left")
-        self._search_button = FlatButton(second, "Search", self._search, kind="accent")
+        FlatButton(second, "Here", self._fill_here, tip="Here - fill in the system you are in").pack(side="left")
+        self._search_button = FlatButton(second, "Search", self._search, kind="accent", tip="Search - find hotspots for the material near that system (Spansh)")
         self._search_button.pack(side="left", padx=(P.PAD, 0))
 
         self._heading = NoteLabel(body, fg=P.MUTED, bg=P.BG, font=P.FONT_BOLD, padx=0)

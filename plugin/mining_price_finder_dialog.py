@@ -1,4 +1,4 @@
-"""The Find Best Price window (the PRICE button on both Mining pages, and on the Trade page): the stations Spansh lists as paying the most for a commodity, or selling it the cheapest.
+"""The Find Best Price window (the PRICES button on both Mining pages, and on the Trade page): the stations Spansh lists as paying the most for a commodity, or selling it the cheapest.
 
 Type a commodity, say whether you are selling or buying, how far to look (or this system only, for goods that have to be sold inside a Powerplay system) and the system to search from (it starts
 as the one you are in), then press **Search**. The results fill a table you can sort by any column: the station and its system, the price, the demand (selling) or the supply (buying), the distance
@@ -126,8 +126,8 @@ class PriceFinderWindow:
             load_geometry=lambda: config.get_str(CONFIG_GEOMETRY) or "",
             save_geometry=lambda geometry: config.set(CONFIG_GEOMETRY, geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._shell.add_action("Copy station", lambda: self._copy("station"))
-        self._shell.add_action("Copy system", lambda: self._copy("system"))
+        self._shell.add_action("Copy station", lambda: self._copy("station"), tip="Copy station - copy the selected result's station name to the clipboard")
+        self._shell.add_action("Copy system", lambda: self._copy("system"), tip="Copy system - copy the selected result's system name to the clipboard")
         body = self._shell.body
 
         first = tk.Frame(body, bg=P.BG)
@@ -163,8 +163,8 @@ class PriceFinderWindow:
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
         system_autocomplete.attach(entry, self._origin)
         entry.bind("<Return>", lambda _e: self._search())
-        FlatButton(second, "Here", self._fill_here).pack(side="left")
-        self._search_button = FlatButton(second, "Search", self._search, kind="accent")
+        FlatButton(second, "Here", self._fill_here, tip="Here - fill in the system you are in").pack(side="left")
+        self._search_button = FlatButton(second, "Search", self._search, kind="accent", tip="Search - find the stations that pay the most for the commodity, or sell it cheapest (Spansh)")
         self._search_button.pack(side="left", padx=(P.PAD, 0))
 
         self._heading = NoteLabel(body, fg=P.MUTED, bg=P.BG, font=P.FONT_BOLD, padx=0)

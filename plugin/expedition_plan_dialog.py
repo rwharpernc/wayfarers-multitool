@@ -73,8 +73,10 @@ class PlanDialog:
         self._shell = WindowShell(parent, title, "Plan a route of places worth visiting", size=SIZE, min_size=MIN_SIZE)
         self._shell.add_help("Plot help", _HELP)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
-        self._plot_button = self._shell.add_action("Plot", self._plot, accent=True)
-        self._shell.add_action("Cancel", self._cancel_or_close)
+        self._plot_button = self._shell.add_action("Plot", self._plot, accent=True,
+                                                tip="Plot - ask Spansh for a route with the settings below")
+        self._shell.add_action("Cancel", self._cancel_or_close,
+                                tip="Cancel - stop waiting for Spansh while plotting, or close this window")
 
         body = self._shell.body
         NoteLabel(body, _BLURBS[kind], bg=P.BG, padx=0).pack(fill="x", pady=(0, P.PAD))

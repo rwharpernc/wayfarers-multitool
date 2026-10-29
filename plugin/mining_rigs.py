@@ -2,7 +2,7 @@
 
 The journal does not say where a rig was put down, so this holds only what the commander tells WFMT: the **Rig placed** action (a button in the Surface Live window, a keyboard shortcut or the
 `!wf rig` chat command) notes the Rhino's position as a rig. With the **rig gap** from Settings → Mining (how close the game lets two rigs be; it does not publish the figure, so the
-commander measures it with CTR and BRD), the radar draws a band of that radius round each rig, filled while the Rhino is inside one and an outline once it is clear, so the next rig goes
+commander measures it with Mark center and Mark border), the radar draws a band of that radius round each rig, filled while the Rhino is inside one and an outline once it is clear, so the next rig goes
 down outside every band. Nothing is saved: the rigs belong to this deployment and are forgotten when the Rhino is launched or stowed, destroyed, or the body changes. Pure: no Tk, no EDMC.
 """
 from __future__ import annotations
