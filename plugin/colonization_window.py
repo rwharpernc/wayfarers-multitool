@@ -33,6 +33,8 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 CONFIG_GEOMETRY = "wfmt_colonization_window_geometry"
 CONFIG_GROUP = "wfmt_colonization_group_by_category"   # the commodity table groups rows under market categories (default on)
+CONFIG_SHOW = "wfmt_colonization_overlay_show"   # the Show choice ("all", "buy" or "haul"): one setting for this window and the shopping-list overlay card, so the card lists what the window lists
+show_listener: Optional[Callable[[], None]] = None   # called after the Show choice changes, so the overlay card redraws at once (the colonization panel sets it)
 
 MIN_WIDTH = 1300
 MIN_HEIGHT = 640
@@ -111,6 +113,12 @@ def refresh_cmdr(cmdr: str) -> None:
         _window.set_cmdr(cmdr)
 
 
+def _saved_show() -> str:
+    """The Show choice kept from last time (see CONFIG_SHOW), or All when none has been chosen yet."""
+    saved = config.get_str(CONFIG_SHOW)
+    return saved if saved in _SHOW_LABELS else view.SHOW_ALL
+
+
 def _clip(text: str, limit: int) -> str:
     return text if len(text) <= limit else text[:limit - 1] + "…"
 
@@ -170,7 +178,7 @@ class ColonizationWindow:
             ("Remove Site", self._on_remove, "danger"),
             ("Remove Finished", self._on_remove_finished, "danger")])
 
-        self._show = tk.StringVar(master=self._toplevel, value=_SHOW_LABELS[view.SHOW_ALL])   # the Show dropdown: which stage of the work to list
+        self._show = tk.StringVar(master=self._toplevel, value=_SHOW_LABELS[_saved_show()])   # the Show dropdown: which stage of the work to list (the overlay card's choice too)
         self._filter_text = tk.StringVar(master=self._toplevel, value="")
         self._station_only = tk.BooleanVar(master=self._toplevel, value=False)
         self._group_by_category = tk.BooleanVar(master=self._toplevel, value=config.get_bool(CONFIG_GROUP, default=True))
@@ -232,7 +240,7 @@ class ColonizationWindow:
         tk.Label(filters, text="Show", fg=P.MUTED, bg=P.PANE).pack(side="left")
         show_box = Combobox(filters, textvariable=self._show, state="readonly", width=8, values=list(_SHOW_LABELS.values()))
         show_box.pack(side="left", padx=(P.PAD_SM, 0))
-        show_box.bind("<<ComboboxSelected>>", lambda _e: self._refresh_detail())
+        show_box.bind("<<ComboboxSelected>>", lambda _e: self._on_show_changed())
         # What the docked station sells, from its market (Market.json); off and grayed out until a market is opened.
         self._station_check = tk.Checkbutton(filters, text="Only what this station sells", variable=self._station_only,
                                              command=self._refresh_detail)
@@ -347,6 +355,14 @@ class ColonizationWindow:
         if self._selected is not None:
             self._site_table.select(str(self._selected))
         self._refresh_detail()
+
+    def _on_show_changed(self) -> None:
+        """The Show dropdown changed: keep it, so the shopping-list overlay card lists the same rows, and redraw both."""
+        key = next((k for k, text in _SHOW_LABELS.items() if text == self._show.get()), view.SHOW_ALL)
+        config.set(CONFIG_SHOW, key)
+        self._refresh_detail()
+        if show_listener is not None:
+            show_listener()
 
     def _on_group_changed(self) -> None:
         config.set(CONFIG_GROUP, self._group_by_category.get())

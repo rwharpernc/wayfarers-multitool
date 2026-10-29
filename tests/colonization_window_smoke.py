@@ -144,7 +144,18 @@ check(window._selected == 1, "clicking the first site should select it again")
 window._show.set("To buy")
 window._refresh_detail()
 check(len(window._commodity_table) == 2, "To buy should drop Water")
+# The Show choice is the overlay card's setting too: choosing it saves it and redraws the card.
+redraws = []
+W.show_listener = lambda: redraws.append(1)
+window._on_show_changed()
+check(saved.get(W.CONFIG_SHOW) == "buy" and redraws == [1], f"Show saves the shared setting and redraws the card: {saved.get(W.CONFIG_SHOW)!r}, {redraws}")
+window._show.set("To haul")
+window._on_show_changed()
+check(saved.get(W.CONFIG_SHOW) == "haul", "Show To haul is saved for the overlay card too")
+W.show_listener = None
 window._show.set("All")
+window._on_show_changed()
+check(saved.get(W.CONFIG_SHOW) == "all", "Show All is saved too")
 window._filter_text.set("ste")
 check(len(window._commodity_table) == 1, "the text filter should keep only Steel")
 window._filter_text.set("")

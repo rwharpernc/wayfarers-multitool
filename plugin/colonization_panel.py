@@ -40,7 +40,7 @@ _CFG_OVERLAY_ENABLED = "wfmt_colonization_overlay_enabled"
 _CFG_OVERLAY_ROWS = "wfmt_colonization_overlay_row_limit"   # 0 = all; the older "..._rows" key held a default of 10
 _CFG_OVERLAY_RIGHT_PANEL = "wfmt_colonization_overlay_right_panel"
 _CFG_OVERLAY_HIDE_COVERED = "wfmt_colonization_overlay_hide_covered"   # the older tick box (rows the hold plus the carrier cover); read only until _CFG_OVERLAY_SHOW is saved
-_CFG_OVERLAY_SHOW = "wfmt_colonization_overlay_show"   # which stage of the work the card lists: "all", "buy" or "haul" (colonization_view.SHOW_*)
+_CFG_OVERLAY_SHOW = colonization_window.CONFIG_SHOW   # which stage of the work the card lists: "all", "buy" or "haul" (colonization_view.SHOW_*); the Sites window's Show dropdown sets it too
 _CFG_OVERLAY_FORCED = "wfmt_colonization_overlay_forced"   # the OVERLAY button: the card stays on until switched off, across restarts
 _CFG_RCC_PROGRESS = "wfmt_rcc_share_progress"      # report depot progress and deliveries to Raven Colonial (off by default)
 _CFG_RCC_CARRIER = "wfmt_rcc_share_carrier"        # report fleet carrier cargo changes to Raven Colonial (off by default)
@@ -198,6 +198,7 @@ class ColonizationController:
             logger.exception("Colonization journal catch-up failed")
         self._repository.add_listener(self._refresh_summary)
         self._repository.add_listener(self._update_overlay)
+        colonization_window.show_listener = self._update_overlay      # the Sites window's Show dropdown redraws the card
         self._carrier_cargo.add_listener(self._update_overlay)
         self._carrier_cargo.add_listener(self._refresh_summary)
         self._ledger.add_listener(self._refresh_summary)
@@ -879,7 +880,7 @@ class ColonizationController:
         labels = dict(view.SHOW_CHOICES)
         self._show_var = tk.StringVar(value=labels[overlay_show()])
         tk.OptionMenu(show_row, self._show_var, *labels.values()).pack(side=tk.LEFT, padx=(4, 8))
-        nb.Label(show_row, text="All, To buy (not yet covered by the hold and the fleet carrier) or To haul (covered, not all aboard yet)",
+        nb.Label(show_row, text="All, To buy (not yet covered by the hold and the fleet carrier) or To haul (covered, not all aboard yet). The Show dropdown in the Colonization Sites window changes this too",
                  wraplength=360, justify=tk.LEFT).pack(side=tk.LEFT)
 
         action_row = tk.Frame(frame)

@@ -248,7 +248,7 @@ Building a colony has two legs, and the window counts them apart.
 ### Filters and sorting
 
 - The **Filter** box keeps the commodities whose names contain what you type.
-- **Show** picks the stage of the work you are on, and starts at **All** each time the window opens (see the colors below for what counts as covered):
+- **Show** picks the stage of the work you are on (see the colors below for what counts as covered). It starts at **All** until you choose, then keeps your choice, and the [shopping-list overlay](#the-shopping-list-on-the-overlay) lists the same rows: change **Show** here and the card follows at once. The **Filter** box and the two tick boxes apply to the window only:
   - **To buy** lists only what is not covered yet, the rows you still have to buy or mine.
   - **To haul** is for the middle step, once everything is bought and parked on the carrier: it lists the rows that are covered but not yet aboard your ship in full, so a row leaves the list when you have loaded its whole need, and the site drops it for good once it is delivered. **To buy** would be empty by then.
   - **All** lists every commodity the site still needs.
@@ -824,7 +824,7 @@ A last line gives the tons remaining (still to get, as in the Acquire column) an
 - **Settings:**
   - Where the card sits: Settings → WFMT → Overlays → Overlay Placement. The default is the left edge, vertically centered, on any screen shape.
   - **Rows:** how many commodities to list (1 to 60; any more are summarized as `+N more`). The default, 0, lists them all.
-  - **List** (**All**, **To buy** or **To haul**, the same choices as the window's **Show**) picks which rows the card lists. **To buy** (the starting choice) leaves out the rows that already show a **✓**, so the card lists only what you still have to get; **To haul** lists the rows that are covered but not yet aboard your ship in full, for when everything is on the carrier. The last line still counts every commodity the site needs, and when no row is listed the card shows just that line. A choice made with the older *Hide commodities already covered* tick box carries over.
+  - **List** (**All**, **To buy** or **To haul**, the same choices as the window's **Show**) picks which rows the card lists. It is the same setting as the **Show** dropdown in the Sites window, so choosing one changes the other. **To buy** (the starting choice) leaves out the rows that already show a **✓**, so the card lists only what you still have to get; **To haul** lists the rows that are covered but not yet aboard your ship in full, for when everything is on the carrier. The last line still counts every commodity the site needs, and when no row is listed the card shows just that line. A choice made with the older *Hide commodities already covered* tick box carries over.
   - **Test Overlay** shows a sample card for about 8 seconds, even while the option is off, and says `Sent - check your overlay.` or that it could not reach the overlay.
 - It is cleared when EDMC closes. If the overlay program isn't running, nothing is drawn and nothing breaks.
 
