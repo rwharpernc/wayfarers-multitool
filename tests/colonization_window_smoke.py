@@ -111,6 +111,9 @@ for _ in range(4):
     root.update()
 
 check(window._selected == 1, f"the first active site should be picked, got {window._selected}")
+check(window._show.get() == "To buy", f"with no saved choice Show should start at To buy, like the overlay card, got {window._show.get()}")
+window._show.set("All")             # the rest of this script looks at every row
+window._on_show_changed()
 check(len(window._site_table) == 2, "both of the commander's sites should be listed (not the other commander's)")
 check(len(window._commodity_table) == 3, "three commodities are outstanding")
 check(window._tile_get.winfo_exists(), "the totals tiles should exist")

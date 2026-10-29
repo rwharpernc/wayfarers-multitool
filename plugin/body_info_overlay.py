@@ -289,7 +289,7 @@ def build_settings(notebook: nb.Notebook) -> None:
     nb.Label(
         frame,
         text=("What WFMT cannot know: a body's details are known only after you have scanned it, so a body you have not scanned shows only its "
-              "name. The scan value is an estimate and does not include what mapping pays. Gravity of 2.0 g and over is shown in the warning color; "
+              "name. The scan value is an estimate; for a planet that is not mapped yet, a Mapped value row estimates what mapping would pay on top. Gravity of 2.0 g and over is shown in the warning color; "
               "the real limit differs by ship and vehicle."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=6, column=0, sticky=tk.W, padx=10, pady=(6, 4))

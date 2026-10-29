@@ -248,7 +248,7 @@ Building a colony has two legs, and the window counts them apart.
 ### Filters and sorting
 
 - The **Filter** box keeps the commodities whose names contain what you type.
-- **Show** picks the stage of the work you are on (see the colors below for what counts as covered). It starts at **All** until you choose, then keeps your choice, and the [shopping-list overlay](#the-shopping-list-on-the-overlay) lists the same rows: change **Show** here and the card follows at once. The **Filter** box and the two tick boxes apply to the window only:
+- **Show** picks the stage of the work you are on (see the colors below for what counts as covered). It starts at **To buy** until you choose, then keeps your choice, and the [shopping-list overlay](#the-shopping-list-on-the-overlay) lists the same rows: change **Show** here and the card follows at once. The **Filter** box and the two tick boxes apply to the window only:
   - **To buy** lists only what is not covered yet, the rows you still have to buy or mine.
   - **To haul** is for the middle step, once everything is bought and parked on the carrier: it lists the rows that are covered but not yet aboard your ship in full, so a row leaves the list when you have loaded its whole need, and the site drops it for good once it is delivered. **To buy** would be empty by then.
   - **All** lists every commodity the site still needs.

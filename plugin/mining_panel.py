@@ -783,7 +783,7 @@ class MiningPanelController:
         ).grid(row=5, column=0, sticky=tk.W, padx=10)
         nb.Checkbutton(
             frame, text=("Enable EDSM ring reserve lookup (Space Mining page - automatically contacts "
-                        "edsm.net every time you drop into a ring, plus manual search)"),
+                        "edsm.net when you drop into a ring, once for each ring until EDMC restarts, plus manual search)"),
             variable=self._edsm_reserve_lookup_var,
         ).grid(row=6, column=0, sticky=tk.W, padx=10)
         nb.Label(frame, text="The in-game HUD overlay is set up on the Overlays tab (the surface compass is its own tab there).").grid(

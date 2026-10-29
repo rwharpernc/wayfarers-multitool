@@ -41,7 +41,8 @@ LOOKUPS: Tuple[Tuple[str, str, str, bool, str], ...] = (
 
 # Lookups with no switch because they run only when a button is pressed, listed so the page is the whole picture.
 BUTTON_ONLY: Tuple[Tuple[str, str], ...] = (
-    ("Rare Goods Finder window and the Codex \"Not found\" tab (they ask when you open them, with no switch)", "Spansh and Canonn"),
+    ("Rare Goods Finder window (it asks when you open it, with no switch)", "Spansh"),
+    ("Codex \"Not found\" tab (it asks when you open it, with no switch)", "Canonn"),
     ("Find Nearest POI (Exploration panel)", "edastro.com GEC and Canonn"),
     ("Where to buy, Find sources, the Raven Colonial menu, Report an issue", "Spansh, Raven Colonial, GitHub (your browser)"),
     ("RND (Random undiscovered system, Exploration panel)", "Spansh and EDSM"),

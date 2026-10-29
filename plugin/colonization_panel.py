@@ -39,7 +39,6 @@ PANEL_PLACEMENT = "colonization"
 _CFG_OVERLAY_ENABLED = "wfmt_colonization_overlay_enabled"
 _CFG_OVERLAY_ROWS = "wfmt_colonization_overlay_row_limit"   # 0 = all; the older "..._rows" key held a default of 10
 _CFG_OVERLAY_RIGHT_PANEL = "wfmt_colonization_overlay_right_panel"
-_CFG_OVERLAY_HIDE_COVERED = "wfmt_colonization_overlay_hide_covered"   # the older tick box (rows the hold plus the carrier cover); read only until _CFG_OVERLAY_SHOW is saved
 _CFG_OVERLAY_SHOW = colonization_window.CONFIG_SHOW   # which stage of the work the card lists: "all", "buy" or "haul" (colonization_view.SHOW_*); the Sites window's Show dropdown sets it too
 _CFG_OVERLAY_FORCED = "wfmt_colonization_overlay_forced"   # the OVERLAY button: the card stays on until switched off, across restarts
 _CFG_RCC_PROGRESS = "wfmt_rcc_share_progress"      # report depot progress and deliveries to Raven Colonial (off by default)
@@ -85,7 +84,7 @@ def overlay_show() -> str:
     saved = config.get_str(_CFG_OVERLAY_SHOW)
     if saved in dict(view.SHOW_CHOICES):
         return saved
-    return view.SHOW_BUY if config.get_bool(_CFG_OVERLAY_HIDE_COVERED, default=True) else view.SHOW_ALL
+    return colonization_window.default_show()
 
 
 def overlay_shift(shown: Optional[card.Card], look=None) -> tuple:

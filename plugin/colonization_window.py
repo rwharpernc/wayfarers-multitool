@@ -33,6 +33,7 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 CONFIG_GEOMETRY = "wfmt_colonization_window_geometry"
 CONFIG_GROUP = "wfmt_colonization_group_by_category"   # the commodity table groups rows under market categories (default on)
+_CFG_HIDE_COVERED_LEGACY = "wfmt_colonization_overlay_hide_covered"   # the older tick box (rows the hold plus the carrier cover); read only until CONFIG_SHOW is saved
 CONFIG_SHOW = "wfmt_colonization_overlay_show"   # the Show choice ("all", "buy" or "haul"): one setting for this window and the shopping-list overlay card, so the card lists what the window lists
 show_listener: Optional[Callable[[], None]] = None   # called after the Show choice changes, so the overlay card redraws at once (the colonization panel sets it)
 
@@ -113,10 +114,16 @@ def refresh_cmdr(cmdr: str) -> None:
         _window.set_cmdr(cmdr)
 
 
+def default_show() -> str:
+    """The Show choice before one is saved, for this window and the overlay card alike. The older tick box decides: ticked (the default) is To buy."""
+    return view.SHOW_BUY if config.get_bool(_CFG_HIDE_COVERED_LEGACY, default=True) else view.SHOW_ALL
+
+
 def _saved_show() -> str:
-    """The Show choice kept from last time (see CONFIG_SHOW), or All when none has been chosen yet."""
+    """The Show choice kept from last time (see CONFIG_SHOW), or the card's own default (To buy) when none has been chosen yet,
+    so the window and the overlay card list the same rows until you pick."""
     saved = config.get_str(CONFIG_SHOW)
-    return saved if saved in _SHOW_LABELS else view.SHOW_ALL
+    return saved if saved in _SHOW_LABELS else default_show()
 
 
 def _clip(text: str, limit: int) -> str:
