@@ -204,7 +204,7 @@ read by strangers, so its preview shows exactly what will be sent, and the comma
 
 ## 11. Customizing posts: a dialog, presets and saved templates (brainstormed 2026-10-29)
 
-**Status: brainstormed and scoped, not built.** Today each report has one fixed layout (`bgs_discord.py`, `powerplay_discord.py`). The only customization anywhere is Powerplay's
+**Status: the first build is done** (2026-10-29): presets, section toggles, a live preview and saved named templates, chosen for each report, in `discord_customize.py`, `discord_templates.py`, `discord_preview.py` and the options on `bgs_discord.py` and `powerplay_discord.py`. Templates are shared by every commander and the choice is for the installation (the simplest answer to the first open question below). The "Later" list is not built. The text below is the brainstorm it was built from. Before it, each report had one fixed layout (`bgs_discord.py`, `powerplay_discord.py`). The only customization anywhere is Powerplay's
 plain-text **Copy Progress** template under Settings. The idea is a separate dialog for customizing how a Discord (or other) post is formatted, with templates the commander can
 save and choose between.
 

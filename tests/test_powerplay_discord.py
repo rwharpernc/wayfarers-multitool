@@ -96,6 +96,55 @@ class Discord(unittest.TestCase):
         self.assertTrue(all(len(m) <= fmt.MESSAGE_LIMIT for m in messages))
         self.assertTrue(all(line.startswith(("-", "**", "*", "CYCLE")) for m in messages for line in m.split("\n")))
 
+    def test_standard_options_give_the_layout_the_posts_always_had(self):
+        from plugin import discord_templates as T
+        standard = T.preset(T.POWERPLAY, "Standard").options
+        args = (self.rows(), "Aisling Duval", "CYCLE 12 TOTAL — 3,400 merits")
+        self.assertEqual(D.progress_messages(*args, options=standard), D.progress_messages(*args))
+        self.assertEqual(D.row_line(self.rows()[0], standard), D.row_line(self.rows()[0]))
+
+    def test_each_part_can_be_left_out(self):
+        row = C.ProgressRow("Nervi", 120, 48.0, "Exploited", (("Acquisition", 80), ("Reinforcement", 40)))
+        self.assertNotIn("CP", D.row_line(row, {"cp": False}))
+        self.assertNotIn("Exploited", D.row_line(row, {"state": False}))
+        self.assertNotIn("inara", D.row_line(row, {"links": False}))
+        self.assertTrue(D.row_line(row, {"links": False}).startswith("- Nervi — 120 merits"))
+        self.assertNotIn("Acquisition", D.row_line(row))
+        self.assertIn("Acquisition 80, Reinforcement 40", D.row_line(row, {"activities": True}))
+        (message,) = D.progress_messages([row], "Aisling Duval", "CYCLE 12 TOTAL", {"heading": False, "cycle": False})
+        self.assertEqual(message, D.row_line(row))
+        (message,) = D.progress_messages([row], "Aisling Duval", "CYCLE 12 TOTAL", {"power": False, "cp": False})
+        self.assertNotIn("Aisling", message)
+        self.assertIn("*This session.*", message)
+
+    def test_plain_has_no_marks_and_escapes_names(self):
+        row = C.ProgressRow("A*B @everyone", 5, 2.0, "Fortified_*")
+        (message,) = D.progress_messages([row], "@here", "CYCLE 12 TOTAL", {"plain": True})
+        self.assertNotIn("**", message.replace("\\*", ""))
+        self.assertNotIn("@everyone", message)
+        self.assertIn("• ", message)
+        self.assertIn("<https://inara.cz", message)
+        self.assertNotIn("](", message)
+
+    def test_every_option_combination_still_fits(self):
+        import itertools
+        rows = [C.ProgressRow(f"Some Long System Name {i}", i, i / 2.5, "Exploited", (("Acquisition", i), ("Reinforcement", i))) for i in range(60)]
+        keys = ["heading", "power", "links", "cp", "state", "activities", "cycle", "plain"]
+        for values in itertools.product([False, True], repeat=len(keys)):
+            messages = D.progress_messages(rows, "Aisling Duval", "CYCLE 1 TOTAL", dict(zip(keys, values)))
+            self.assertTrue(all(len(m) <= fmt.MESSAGE_LIMIT for m in messages))
+
+    def test_the_rows_carry_the_merits_for_each_activity(self):
+        sess = {"started_at": "x", "by_system": {"Nervi": {"totals": {"acquisition": 80, "reinforcement": 20}, "events": {}, "last_seen_at": "2026-10-29T10:00:00Z"}}}
+        from plugin.formulas import ACTIVITIES, ACTIVITY_LABELS
+        sess["by_system"]["Nervi"]["totals"] = {ACTIVITIES[0]: 80, ACTIVITIES[1]: 20}
+        (row,) = C.progress_rows(sess, "", "", RATIOS.get)
+        self.assertEqual(row.by_activity, ((ACTIVITY_LABELS[ACTIVITIES[0]], 80), (ACTIVITY_LABELS[ACTIVITIES[1]], 20)))
+
+    def test_the_sample_rows_make_a_post(self):
+        messages = D.progress_messages(D.sample_rows(), D.SAMPLE_POWER, D.SAMPLE_CYCLE_LINE)
+        self.assertTrue(messages and "Example System" in messages[0])
+
     def test_the_key_names_the_session(self):
         self.assertEqual(D.report_key({"started_at": "2026-10-29T09:00:00Z"}), "powerplay:2026-10-29T09:00:00Z")
         self.assertEqual(D.report_key({}), "powerplay:session")

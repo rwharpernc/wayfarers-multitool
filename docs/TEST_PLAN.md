@@ -16,7 +16,7 @@ What to check in EDMC after the 1.3.0 release (and before any later one), on **W
 | Platform | Automated tests | Checks in the game |
 |---|---|---|
 | **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is proved only by the in-game pass. | Not yet recorded for 1.3.0. Sections 1 to 7 below are open. |
-| **Linux** | 3,598 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-10-29 for the 1.3.0 release (3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
+| **Linux** | 3,639 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-10-29 for the 1.3.0 release (3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
 
 - 1.0.0 was released on 2026-10-26 (tag `v1.0.0`). 1.1.0 was released on 2026-10-27 (tag `v1.1.0`). 1.2.0 was released on 2026-10-28 (tag `v1.2.0`). These passes are the checks to run on the released build, and a failure goes to a fix on a short `bugfix/1.2.1` branch.
 - Tick a box in the sections below only when you have seen it pass; nothing here has been ticked from the automated run.
@@ -127,6 +127,7 @@ Do these on **Windows** and again on **Linux**. The longer steps are in [TODO.md
 The longer wording for each is in [TODO.md](TODO.md). Tick a box only when you have seen it pass.
 
 - [ ] **Discord sharing** (needs a webhook in a private test channel of your own): **Settings → WFMT → Discord**, one destination and then two; **Post to Discord** from the BGS Report and the Powerplay Sessions window, posting again to edit, the destination menu, **Copy for Discord**, and the plain **Copy Summary** and **Copy Progress**. The checklist is in [TODO.md](TODO.md) under "Screenshots, settings and general".
+- [ ] **Customize Discord posts:** the dialog opens from the BGS Report, the Powerplay Sessions window and the Discord tab; the presets, checkboxes, preview, **Save as…**, **Rename…** and **Delete** work, a saved template survives a restart, and the chosen template is what **Copy for Discord** and **Post to Discord** produce.
 - [ ] **Expedition Log:** the three **Start from my last** buttons (sale, Discovery Data sale, Exobiology Data sale).
 - [ ] **Expeditions are managed in the Expedition window:** the Exploration panel's Expedition section has no START, PAUSE or STOP, and the Expedition window's Plan and Log tabs start, pause and stop them.
 - [ ] **Colonization:** the Sites window's **Show** choice and the overlay follow each other; under **To haul** there is no green, and the rows in your hold are tinted (in each theme) in the window and drawn in the theme's blue on the overlay, with the ✓ kept.

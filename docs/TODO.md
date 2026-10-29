@@ -734,6 +734,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - **Names:** a faction or system with `*`, `_` or `@everyone` in its name shows as written and pings nobody.
   - **Privacy:** the link does not appear in the EDMC log, **Copy diagnostics** or a **Back up my data** zip; each commander has their own saved link.
   - **Plain copy:** **Copy Summary** (BGS) and **Copy Progress** (Powerplay) still paste plain text.
+  - **Customize:** open **Customize post…** (BGS Report, Discord menu) and **Customize…** (Powerplay Sessions). Pick **Compact**, then **Detailed** and **Plain**; the preview changes and the next **Copy for Discord** and **Post to Discord** use the picked one. Change a checkbox, **Save as…** a name, restart EDMC and check the template is still there and chosen. **Rename…** and **Delete** it. Check a preset cannot be saved over, renamed or deleted. In the real channel check **Compact** and **Plain** look right, and that a second post to the same destination edits the earlier one in the new layout.
 
 - [ ] **Screenshot preview window.** Take a screenshot with a preview shown, from a very wide source (a triple-screen or ultrawide capture) and a tall one.
   - The window stays on the screen and the picture is whole.

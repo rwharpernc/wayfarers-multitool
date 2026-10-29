@@ -74,7 +74,7 @@ Resets change the session only. Cycle totals come from your journal and are not 
 
 1. **Copy for Discord** puts this session's progress on the clipboard with Discord's formatting (each system links to Inara; the estimated CP is marked `~`), followed by the cycle's total line. Paste it into Discord yourself.
 2. **Post to Discord** sends the same text to the webhook you saved on **Settings → WFMT → Discord**. Press it again later in the same session and the earlier post is edited; a new login is a new post.
-3. The editable clipboard format above applies to **Copy Progress** only. Set up Discord, with examples, in [Sharing reports to Discord](discord.md).
+3. **Customize…** changes how the Discord post looks (presets, which parts appear, saved templates). The editable clipboard format above applies to **Copy Progress** only. Set up Discord, with examples, in [Sharing reports to Discord](discord.md).
 
 ### Find a rare good to haul
 

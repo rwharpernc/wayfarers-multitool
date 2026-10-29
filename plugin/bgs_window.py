@@ -30,7 +30,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 from config import appname, config
 
-from . import bgs_discord, bgs_format, discord_share, panelkit
+from . import bgs_discord, bgs_format, discord_customize, discord_share, discord_templates, panelkit
 from .bgs_ledger import RECENT_SYSTEMS, FactionTrack, PeriodView
 from .bgs_tracker import FactionActivity
 from .uikit import palette as P
@@ -209,7 +209,9 @@ class BgsWindow:
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._toplevel = self._shell.window
         self._copy_button = self._shell.add_action("Copy Summary", self._on_copy)
-        self._shell.add_menu("Discord", [("Copy for Discord", self._on_copy_discord), ("Post to Discord", self._on_post_discord)])
+        self._shell.add_menu("Discord", [("Copy for Discord", self._on_copy_discord), ("Post to Discord", self._on_post_discord), None,
+                                         ("Customize post…", self._on_customize_discord)])
+        discord_customize.register_data(discord_templates.BGS, self._customize_data)      # the dialog's preview uses the tick shown here
 
         picker = tk.Frame(self._shell.body, bg=P.BG)
         picker.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, P.PAD_SM))
@@ -355,7 +357,16 @@ class BgsWindow:
     def _discord_messages(self) -> List[str]:
         """The tick shown in the window, as Discord messages (see bgs_discord.py)."""
         view = self._labels.get(self._period_var.get())
-        return bgs_discord.report_messages(view, self._current_system, self._pinned) if view is not None else []
+        options = discord_templates.templates.chosen(discord_templates.BGS).options
+        return bgs_discord.report_messages(view, self._current_system, self._pinned, options) if view is not None else []
+
+    def _customize_data(self) -> Optional[tuple]:
+        """What the Customize dialog's preview is made from: the tick shown, the current system and the pinned systems (None before there is a tick)."""
+        view = self._labels.get(self._period_var.get())
+        return (view, self._current_system, list(self._pinned)) if view is not None else None
+
+    def _on_customize_discord(self) -> None:
+        discord_customize.show(self._toplevel, discord_templates.BGS)
 
     def _on_copy_discord(self) -> None:
         messages = self._discord_messages()
@@ -375,4 +386,5 @@ class BgsWindow:
                                     lambda text, ok: self.alive and self._shell.set_status(text, ok=ok))
 
     def close(self) -> None:
+        discord_customize.unregister_data(discord_templates.BGS, self._customize_data)
         self._shell.close()

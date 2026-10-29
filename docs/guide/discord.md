@@ -10,7 +10,7 @@ WFMT can share its reports three ways, so you can use whichever fits the place y
 
 Nothing is ever posted on its own. Every post follows a button press.
 
-**On this page:** [What you can share](#what-you-can-share) · [Quick start](#quick-start) · [Set up Discord](#set-up-discord-make-a-webhook) · [Set up WFMT](#set-up-wfmt) · [Webhooks, commanders and channels](#webhooks-commanders-and-channels) · [Common questions](#common-questions) · [Examples](#examples) · [Sharing somewhere that is not Discord](#sharing-somewhere-that-is-not-discord) · [What is sent, and who can see it](#what-is-sent-and-who-can-see-it) · [Changing or removing a destination](#changing-or-removing-a-destination) · [When something goes wrong](#when-something-goes-wrong)
+**On this page:** [What you can share](#what-you-can-share) · [Quick start](#quick-start) · [Set up Discord](#set-up-discord-make-a-webhook) · [Set up WFMT](#set-up-wfmt) · [Webhooks, commanders and channels](#webhooks-commanders-and-channels) · [Common questions](#common-questions) · [Customize how your posts look](#customize-how-your-posts-look) · [Examples](#examples) · [Sharing somewhere that is not Discord](#sharing-somewhere-that-is-not-discord) · [What is sent, and who can see it](#what-is-sent-and-who-can-see-it) · [Changing or removing a destination](#changing-or-removing-a-destination) · [When something goes wrong](#when-something-goes-wrong)
 
 ## What you can share
 
@@ -117,6 +117,80 @@ carries no commander name, so what you see is the name the webhook was given.
 - **One name for each webhook.** Everyone who posts through the same webhook shows the same name. If two commanders should appear under their own names, make a second webhook in the
   channel, name it for the second commander, and save it as that commander's destination.
 - **Names Discord refuses.** Discord does not allow some names for webhooks. If it rejects the one you choose, it says so when you save, and you can pick another.
+
+## Customize how your posts look
+
+By default each report is posted in one layout. A dialog lets you choose another, switch parts of a post on and off, and save your own looks as templates. It changes **Copy for
+Discord** and **Post to Discord** together (they always use the same template). The plain **Copy Summary** and **Copy Progress** are not affected.
+
+**Open it** from the BGS Report's **Discord** menu (**Customize post…**), the **Customize…** button in the Powerplay Sessions window, or **Customize posts…** on the **Settings → WFMT →
+Discord** tab. A **Report** box at the top switches between the BGS report and Powerplay progress.
+
+**Templates.** Pick one in the **Template** box and it becomes the one that report's posts use at once.
+- **Standard** is the layout the posts have always had. **Compact**, **Detailed** and **Plain** are the other built-in presets. The presets cannot be changed or deleted.
+- Change the checkboxes, then **Save as…** to keep your version under a name of your own. **Save** replaces one of your own templates, **Rename…** and **Delete** act on them. You can keep
+  30 for each report.
+- Changing a checkbox only changes the **preview** until you save. Posts keep using the template shown in the box, and the note under the buttons says when your changes are not saved yet.
+- Templates are kept for the whole installation (not for each commander), are included in **Back up my data**, and are kept across updates. They are only looks, so there is nothing secret in them.
+
+**The preview** shows the post made from your current tick or session (or made-up example data when there is none yet), roughly as Discord will draw it, with how many characters and
+messages it comes to. Discord allows 2,000 characters in a message, so a long report is several messages.
+
+**What you can switch, for the BGS report**
+
+| Checkbox | What it does |
+|---|---|
+| Heading with the tick time | The title and the tick's time span at the top |
+| Star on pinned systems | A star before the name of a system you pinned |
+| Controlling faction in bold | Makes the faction that controls the system stand out |
+| State changes | Shows a change such as `None → Boom` |
+| Influence and its change | Shows `45.2% (+1.3)` |
+| Pending, recovering and active states | The lines listing those states |
+| What you did (the You: lines) | Your missions, trade, exploration data and so on, for each faction |
+| Government and allegiance | Adds `Democracy / Federation` to each faction |
+| One line for each system | The compact layout: the controlling faction and what you did, on one line |
+| No formatting marks | Bullets without bold or italics, for a quieter post |
+| Systems: every system, or only where you acted | Leaves out systems you only passed through |
+
+**What you can switch, for Powerplay progress**
+
+| Checkbox | What it does |
+|---|---|
+| Heading | The title and the note that CP is an estimate |
+| Your Power in the heading | Adds your Power's name to the title |
+| Link each system to Inara | Makes each system name a link, without a preview card |
+| Estimated Control Points | The `(~48.0 CP)` part of each line |
+| The system's Powerplay state | Adds `Exploited`, `Fortified` and so on, for the system you are in |
+| Merits by activity | Adds `Acquisition 80, Reinforcement 40` to each line |
+| The cycle's total line | The cycle's merits, estimated CP and systems worked |
+| No formatting marks | Bullets without bold or italics |
+
+**The built-in presets**
+
+| Preset | BGS report | Powerplay progress |
+|---|---|---|
+| **Standard** | The layout the posts have always had | The layout the posts have always had |
+| **Compact** | One line for each system, without the pending, recovering and active lists | No Inara links, no state and no cycle line |
+| **Detailed** | Standard with the government and allegiance | Standard with the merits for each activity |
+| **Plain** | No bold or italics | No bold or italics (links appear as the address in angle brackets) |
+
+**What no setting can change.** Every name is still escaped, so a faction or system called `@everyone` or `*Raiders*` shows as written, and every post is still sent with mentions
+switched off, so nothing can ping anyone. Long posts are still split under Discord's limit, and a template that would make a very long post just means more messages.
+
+**Example: a short post for a busy channel.** Your squadron's `#bgs-reports` channel is busy, so you want one line for each system.
+1. Open the BGS Report, then the **Discord** menu, then **Customize post…**.
+2. Pick the **Compact** template. The preview shows lines like
+   `Example System — Example Union (None → Boom, 45.2% (+1.3)) — You: Example Union 2 mission(s) done, INF +4/-0; 1,500,000 cr exploration data`.
+3. Press **Done**, and **Post to Discord** now posts that layout.
+
+**Example: only the systems you worked, without the heading.**
+1. In the dialog, tick **Only systems where you acted** and untick **Heading with the tick time**. The preview loses the title and the systems you passed through.
+2. Press **Save as…** and name it `My systems`. It is now the template for BGS posts, and you can pick **Standard** again from the box any time.
+
+**Example: Powerplay progress with the activity breakdown but no cycle line.**
+1. Open the Powerplay Sessions window and press **Customize…**.
+2. Pick **Detailed**, then untick **The cycle's total line**. The preview lines read like `Example System — 120 merits (~48.0 CP) — Acquisition 80, Reinforcement 40 — Exploited`.
+3. **Save as…** `Squadron update`. It is chosen, so the next **Post to Discord** uses it.
 
 ## Examples
 

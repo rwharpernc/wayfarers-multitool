@@ -142,6 +142,14 @@ if "inara.cz" not in root.clipboard_get():
     problems.append("Powerplay Sessions: the plain Copy Progress no longer copies the Inara lines")
 powerplay_window.close()
 
+# --- Customize Discord posts ---------------------------------------------------------------------------------------------------------
+from plugin import discord_customize, discord_templates  # noqa: E402
+for report in discord_templates.REPORTS:
+    cwin = discord_customize.show(root, report)
+    F.pump(root)
+    F.check_views(root, cwin._toplevel, "Customize Discord posts / " + discord_templates.REPORT_LABELS[report], None, problems, notes)
+    cwin.close()
+
 root.destroy()
 for line in notes:
     print("note:", line)

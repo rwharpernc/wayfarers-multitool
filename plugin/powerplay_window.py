@@ -15,7 +15,7 @@ from config import appname, config
 from . import panelkit, store
 from .formulas import ACTIVITIES, ACTIVITY_LABELS, NO_CP_ACTIVITIES, merits_to_cp
 from .powerplay import PowerplayTracker, clipboard_template, ratio_for
-from . import discord_share, powerplay_discord
+from . import discord_customize, discord_share, discord_templates, powerplay_discord
 from .powerplay_clipboard import format_system_line, progress_rows
 from .powerplay_systems_tab import cycle_summary
 from .session import (
@@ -126,6 +126,8 @@ class SessionWindow:
         share.pack(fill="x", pady=(0, P.PAD_SM))
         FlatButton(share, "Post to Discord", self._on_post_discord).pack(side="right")
         FlatButton(share, "Copy for Discord", self._on_copy_discord).pack(side="right", padx=(0, 6))
+        FlatButton(share, "Customize…", self._on_customize_discord).pack(side="right", padx=(0, 6))
+        discord_customize.register_data(discord_templates.POWERPLAY, self._customize_data)      # the dialog's preview uses this session
 
         self._tabs = tabs = Tabs(self._shell.body)
         tabs.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
@@ -237,7 +239,17 @@ class SessionWindow:
         """This session's progress as Discord messages (see powerplay_discord.py), with the cycle's totals when the cycles are known."""
         views = self._systems.views() if self._systems is not None else []
         rows = progress_rows(self._sessions.current, self._current_system, self._pp.system_state, ratio_for)
-        return powerplay_discord.progress_messages(rows, self._sessions.current.get("power") or "", cycle_summary(views[0]) if views else "")
+        options = discord_templates.templates.chosen(discord_templates.POWERPLAY).options
+        return powerplay_discord.progress_messages(rows, self._sessions.current.get("power") or "", cycle_summary(views[0]) if views else "", options)
+
+    def _customize_data(self) -> Optional[tuple]:
+        """What the Customize dialog's preview is made from: this session's rows, the Power and the cycle's total line (None when nothing is earned yet)."""
+        views = self._systems.views() if self._systems is not None else []
+        rows = progress_rows(self._sessions.current, self._current_system, self._pp.system_state, ratio_for)
+        return (rows, self._sessions.current.get("power") or "", cycle_summary(views[0]) if views else "") if rows else None
+
+    def _on_customize_discord(self) -> None:
+        discord_customize.show(self._toplevel, discord_templates.POWERPLAY)
 
     def _on_copy_discord(self) -> None:
         messages = self._discord_messages()
@@ -256,6 +268,7 @@ class SessionWindow:
                                     lambda text, ok: self.alive and self._shell.set_status(text, ok=ok))
 
     def close(self) -> None:
+        discord_customize.unregister_data(discord_templates.POWERPLAY, self._customize_data)
         if self._flush_job is not None:
             try:
                 self._toplevel.after_cancel(self._flush_job)

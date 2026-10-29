@@ -69,6 +69,7 @@ NOT_COMMANDER_DATA = {
     "boxel_survey_export.csv": "an on-demand export of the active commander's survey finds; running it for another "
                                "commander overwrites it",
     "codex_catalog.json": "a cache of Canonn's public list of Codex entries",
+    "discord_templates.json": "the looks a commander saved for Discord posts and which one each report uses: a layout, not a commander's play, shared by every commander on purpose (discord_templates.py)",
     "session_credits.json": "the current login only: one record that names its commander and is replaced when another "
                             "commander logs in (session_credits.sync_session)",
     "trade_journal_scan.json": "which journal files have been read (a fact about files, not about a commander)",

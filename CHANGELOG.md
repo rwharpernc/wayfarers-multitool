@@ -17,6 +17,10 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
     one ever appeared.
   - Posting the same BGS tick or Powerplay session again to the same destination edits the earlier post instead of adding another. Names with `*`, `_` or `@` cannot format a message
     or ping anyone.
+  - **Customize how posts look:** the BGS Report's **Discord** menu (**Customize post…**), the Powerplay Sessions window's **Customize…** button and the Discord tab's **Customize posts…** open a
+    dialog with the presets Standard, Compact, Detailed and Plain, checkboxes for which parts of each post appear, a live preview with its length, and templates you save, rename and
+    delete. The template shown is the one **Copy for Discord** and **Post to Discord** use for that report. Names are still escaped and posts are still split under Discord's limit,
+    whatever the settings.
   - The new guide, [Sharing reports to Discord](docs/guide/discord.md), walks through making the webhook in Discord (with a private test channel), finding a thread id, how commanders
     and channels fit together, and what every message means.
 - **Expedition Log:** **Start from my last** has three buttons. **sale** is the earlier of your last two sales (what the old button did), **Discovery Data sale** begins just after your

@@ -8,10 +8,10 @@ copy and post (powerplay_discord.py) are built from.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Tuple
 from urllib.parse import quote
 
-from .formulas import ACTIVITIES, NO_CP_ACTIVITIES, merits_to_cp
+from .formulas import ACTIVITIES, ACTIVITY_LABELS, NO_CP_ACTIVITIES, merits_to_cp
 from .session import system_merit_total, system_totals, visited_systems
 
 DEFAULT_TEMPLATE = "[{system}]({system_url}) - {merits} merits (~{cp} CP) - {state}"
@@ -36,6 +36,7 @@ class ProgressRow:
     merits: int
     cp: float
     state: str
+    by_activity: Tuple[Tuple[str, int], ...] = ()      # (activity label, merits) for each activity that earned merits there, for the Discord post's breakdown
 
 
 def progress_rows(session: Dict[str, Any], current_system: str, current_state: str, ratio_for: Callable[[str], float]) -> List[ProgressRow]:
@@ -51,7 +52,9 @@ def progress_rows(session: Dict[str, Any], current_system: str, current_state: s
         cp = sum(merits_to_cp(system_totals(session, name).get(activity, 0), ratio_for(activity))
                  for activity in ACTIVITIES if activity not in NO_CP_ACTIVITIES)
         state = current_state if name == current_system and current_state else "—"
-        rows.append(ProgressRow(name, system_merit_total(session, name), cp, state))
+        totals = system_totals(session, name)
+        breakdown = tuple((ACTIVITY_LABELS.get(activity, activity), totals[activity]) for activity in ACTIVITIES if totals.get(activity))
+        rows.append(ProgressRow(name, system_merit_total(session, name), cp, state, breakdown))
     return rows
 
 

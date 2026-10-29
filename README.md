@@ -84,6 +84,7 @@ WFMT is one panel with eight **modes**, and you click a button to switch between
 - **Nothing is posted on its own.** Every post follows a button press, and the switch is off until you turn it on.
 - **Several channels or servers.** A webhook belongs to one channel, so each commander saves a named list of destinations, and **Post to Discord** asks which one when there are several. Commanders can copy each other's lists.
 - **Posts from anywhere.** You do not need to be in the channel, or have Discord open, to post to it. Posting the same report again edits the earlier post.
+- **Make it look the way you like.** A customize dialog has presets (Standard, Compact, Detailed, Plain), checkboxes for which parts of a post appear, a live preview, and templates you can save.
 - **Your links stay private.** They are saved on your computer for each commander, left out of backups and never logged.
 
 Step by step, with the Discord side explained (making the webhook, thread ids, naming the posts, common questions): [Sharing reports to Discord](docs/guide/discord.md).

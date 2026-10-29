@@ -8,7 +8,7 @@ Read this first when picking the project up on a machine that has not seen the r
 ## Release
 
 - **1.3.0** is the version number in `plugin/__init__.py` and `package.json`. It is prepared on the `release/1.3.0` branch and is not tagged or published yet; when it is, this section and the next bullet change to say so.
-  - 1.3.0 adds sharing to Discord (Copy for Discord and Post to Discord for the BGS report and Powerplay progress, with a named list of webhook destinations for each commander), the Expedition Log's three Start from my last buttons, a shopping-list overlay that follows the Sites window's Show choice, and a README and guides with how-tos and worked examples. It changes expeditions to be managed only in the Expedition window, makes the Bio status card wider and shorter, folds the Organic Scanning section by default, and drops the green under the To haul filter in favor of a tint for the rows in your hold. It fixes sampling a different genus, which now abandons the unfinished one. The full list is in [CHANGELOG.md](../CHANGELOG.md).
+  - 1.3.0 adds sharing to Discord (Copy for Discord and Post to Discord for the BGS report and Powerplay progress, with a named list of webhook destinations for each commander and a dialog to customize how the posts look), the Expedition Log's three Start from my last buttons, a shopping-list overlay that follows the Sites window's Show choice, and a README and guides with how-tos and worked examples. It changes expeditions to be managed only in the Expedition window, makes the Bio status card wider and shorter, folds the Organic Scanning section by default, and drops the green under the To haul filter in favor of a tint for the rows in your hold. It fixes sampling a different genus, which now abandons the unfinished one. The full list is in [CHANGELOG.md](../CHANGELOG.md).
   - 1.2.0 was released on 2026-10-28 (tag `v1.2.0`) from the `release/1.2.0` branch, which was merged into `master` and deleted.
   - 1.2.0 adds the Colonization Archive, the offer to create a Raven Colonial project for a new site, a Where to Buy window of its own, Copy To Acquire, one row per candidate species on the Biology overlay card and a brighter footer message. It fixes Create Project on Raven (its dialog opening out of sight and its status message being overwritten) and the layout editor's snapping of large boxes to the top, bottom and sides.
   - 1.1.0 was released on 2026-10-27 (tag `v1.1.0`) from the `release/1.1.0` branch, which was merged into `master` and deleted. It added the color themes and the text size for WFMT's own windows, the Colonization Show / List choice and the Acquire column name, and carried the fleet carrier figure fix.
@@ -51,7 +51,7 @@ There is one long-lived branch, `master`.
 
 ### Linux, next pass
 
-- Automated: 3,598 tests pass in the Docker container (12 skipped), run on 2026-10-29 for the 1.3.0 release (3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
+- Automated: 3,639 tests pass in the Docker container (12 skipped), run on 2026-10-29 for the 1.3.0 release (3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
 - Manual: 1.3.0 (and the released 1.2.0, 1.1.0 and 1.0.0) is still to be tested on CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC.
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Report the session type (Wayland or X11) with the results.

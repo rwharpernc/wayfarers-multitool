@@ -93,6 +93,84 @@ class Report(unittest.TestCase):
         self.assertEqual(D.report_key(self.view), "bgs:" + WHEN)
         self.assertEqual(D.report_key(PeriodView(None, None, True)), "bgs:current")
 
+    # --- options (discord_templates) -----------------------------------------------------------------------------
+
+    def test_standard_options_give_the_layout_the_posts_always_had(self):
+        from plugin import discord_templates as T
+        standard = T.preset(T.BGS, "Standard").options
+        self.assertEqual(D.report_messages(self.view, "Nervi", [], standard), D.report_messages(self.view, "Nervi", []))
+        self.assertEqual(D.system_block(self.view, "Nervi", True, standard), D.system_block(self.view, "Nervi", True))
+
+    def test_each_section_can_be_left_out(self):
+        base = D.system_block(self.view, "Nervi", True)
+        self.assertNotIn("Pending", D.system_block(self.view, "Nervi", False, {"state_lists": False}))
+        self.assertNotIn("You:", D.system_block(self.view, "Nervi", False, {"activity": False}))
+        self.assertNotIn("45.2%", D.system_block(self.view, "Nervi", False, {"influence": False}))
+        self.assertNotIn("None → Boom", D.system_block(self.view, "Nervi", False, {"states": False}))
+        self.assertNotIn("★", D.system_block(self.view, "Nervi", True, {"pinned_star": False}))
+        self.assertIn("★", base)
+        self.assertNotIn("**Nervi Brotherhood**", D.system_block(self.view, "Nervi", False, {"bold_controller": False}))
+        self.assertIn("Nervi Brotherhood", D.system_block(self.view, "Nervi", False, {"bold_controller": False}))
+        self.assertNotIn("WFMT BGS report", "\n".join(D.report_messages(self.view, "Nervi", [], {"heading": False})))
+
+    def test_with_no_state_or_influence_a_faction_is_just_its_name(self):
+        text = D.system_block(self.view, "Nervi", False, {"states": False, "influence": False})
+        self.assertIn("- **Nervi Brotherhood**\n", text + "\n")
+
+    def test_details_add_government_and_allegiance(self):
+        v = view([FactionTrack("Sol", "Mother Gaia", now=snap("Sol", "Mother Gaia", "Boom", 0.5, True, government="Democracy", allegiance="Federation"))])
+        self.assertIn("Mother Gaia** — Boom, 50.0%, Democracy / Federation", D.system_block(v, "Sol", False, {"details": True}))
+        self.assertNotIn("Democracy", D.system_block(v, "Sol", False))
+
+    def test_compact_is_one_line_for_each_system(self):
+        text = D.system_block(self.view, "Nervi", False, {"compact": True})
+        self.assertEqual(len(text.split("\n")), 1)
+        self.assertIn("**Nervi**", text)
+        self.assertIn("Nervi Brotherhood", text)
+        self.assertIn("You: Nervi Brotherhood 2 mission", text)
+        self.assertNotIn("Allied Forces", text)                    # only the controlling faction
+        self.assertEqual(D.system_block(self.view, "Sol", False, {"compact": True}), "- **Sol** — *nothing recorded*")
+        self.assertNotIn("You:", D.system_block(self.view, "Nervi", False, {"compact": True, "activity": False}))
+
+    def test_plain_has_no_marks_but_names_are_still_escaped(self):
+        nasty = [FactionTrack("A*B", "@everyone *Raiders*", now=snap("A*B", "@everyone *Raiders*", "Boom", 0.5, True))]
+        messages = D.report_messages(view(nasty), "A*B", [], {"plain": True})
+        text = "\n".join(messages)
+        self.assertNotIn("**", text.replace("\\*", ""))
+        self.assertNotIn("@everyone", text)
+        self.assertIn("• ", text)
+        self.assertNotIn("\n- ", text)
+
+    def test_only_systems_you_acted_in(self):
+        both = [FactionTrack("Nervi", "Nervi Brotherhood", now=snap("Nervi", "Nervi Brotherhood", "Boom", 0.4, True)),
+                FactionTrack("Sol", "Mother Gaia", now=snap("Sol", "Mother Gaia", "None", 0.5, True))]
+        v = view(both, [FactionActivity("Nervi", "Nervi Brotherhood", missions=1, inf_plus=1)])
+        everything = "\n".join(D.report_messages(v, "Sol", []))
+        worked = "\n".join(D.report_messages(v, "Sol", [], {"scope": "worked"}))
+        self.assertIn("**Sol**", everything)
+        self.assertNotIn("Sol", worked)
+        self.assertIn("**Nervi**", worked)
+        none_worked = D.report_messages(view(both), "Sol", [], {"scope": "worked"})
+        self.assertIn("no activity", "\n".join(none_worked))
+
+    def test_every_option_combination_still_fits_and_never_pings(self):
+        import itertools
+        from plugin import discord_templates as T
+        tracks = [FactionTrack(f"System {i}", f"@everyone Faction *{j}*", snap(f"System {i}", f"@everyone Faction *{j}*", "Boom", 0.1, j == 0),
+                               snap(f"System {i}", f"@everyone Faction *{j}*", "War", 0.2, j == 0, pending_states=["Famine"] * 3)) for i in range(30) for j in range(5)]
+        acts = [FactionActivity(f"System {i}", f"@everyone Faction *{j}*", missions=3, inf_plus=2, exploration_credits=9_000_000) for i in range(30) for j in range(5)]
+        big = view(tracks, acts)
+        keys = ["heading", "compact", "plain", "activity", "details", "state_lists"]
+        for values in itertools.product([False, True], repeat=len(keys)):
+            for scope in T.SCOPES:
+                messages = D.report_messages(big, None, [], dict(zip(keys, values), scope=scope))
+                self.assertTrue(all(len(m) <= fmt.MESSAGE_LIMIT for m in messages))
+                self.assertNotIn("@everyone", "\n".join(messages))
+
+    def test_the_sample_view_makes_a_post(self):
+        messages = D.report_messages(D.sample_view(), "Example System", [])
+        self.assertTrue(messages and "Example Union" in "\n".join(messages))
+
     def test_the_plain_copy_is_unchanged_and_has_no_discord_marks(self):
         plain = bgs_format.summary_text([self.view], "Nervi", [])
         self.assertTrue(plain.startswith("WFMT BGS Report"))

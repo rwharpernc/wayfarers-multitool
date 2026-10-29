@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional
 import myNotebook as nb
 from config import appname, config
 
-from . import discord_client, discord_webhooks
+from . import discord_client, discord_customize, discord_templates, discord_webhooks
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -134,6 +134,7 @@ def build_settings(notebook: nb.Notebook) -> None:
     buttons = tk.Frame(frame)
     buttons.grid(row=5, column=0, sticky=tk.W, padx=(30, 10), pady=(2, 2))
     tk.Button(buttons, text="Add destination", command=_add_row).pack(side=tk.LEFT)
+    tk.Button(buttons, text="Customize posts…", command=lambda: discord_customize.show(frame, discord_templates.BGS)).pack(side=tk.LEFT, padx=(14, 0))
     others = discord_webhooks.webhooks.other_commanders(_cmdr)
     if others:
         chosen = tk.StringVar(value=others[0])

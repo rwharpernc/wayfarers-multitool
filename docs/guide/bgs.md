@@ -50,7 +50,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 1. Press **REPORT** and pick the tick in the **TICK** drop-down.
 2. Open the **Discord** menu in the window's header. **Copy for Discord** puts the tick on the clipboard with Discord's formatting to paste yourself, and **Post to Discord** sends it to the webhook you saved.
-3. Post the same tick again later and WFMT edits the earlier post instead of adding another.
+3. Post the same tick again later and WFMT edits the earlier post instead of adding another. **Customize post…** in the same menu changes how the post looks (presets, which parts appear, saved templates).
 4. A new Discord webhook takes a minute to set up: the full walk-through, with examples, is in [Sharing reports to Discord](discord.md).
 
 **Worked example: supporting a faction by selling exploration data**
