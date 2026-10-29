@@ -41,9 +41,6 @@ def summary_text(survey: Any, threshold: int, basis: str) -> str:
     if not survey.name:
         return "Everything WFMT knows about the system, the body under you and your exploration."
     parts = [survey.name]
-    scanned = survey.scanned_count()
-    if scanned:
-        parts.append(f"{scanned}/{survey.body_count} scanned" if survey.body_count else f"{scanned} scanned")
     worth = len(survey.to_map(threshold, basis))
     if worth:
         parts.append(f"{worth} worth mapping")

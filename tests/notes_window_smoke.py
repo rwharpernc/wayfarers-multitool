@@ -113,7 +113,7 @@ panel._entry_var.set("  Rings are lovely  ")
 panel._add_quick()
 check(book.count() == 1 and book.all()[0].system == "Sol" and book.all()[0].text == "Rings are lovely", f"quick add: {book.all()}")
 check(panel._entry_var.get() == "", "the quick-add box is emptied")
-check(panel.summary()[0].startswith("1 note for Sol. Newest: Rings are lovely"), f"summary after an add: {panel.summary()}")
+check(panel.summary()[0].startswith("Newest: Rings are lovely"), f"summary after an add: {panel.summary()}")
 check(panel.summary()[1] == "- 1 here", "the folded title says how many")
 
 panel._entry_var.set("   ")
@@ -132,7 +132,7 @@ check(panel.context()[0] == "Colonia", "an event that does not know the system k
 panel.handle_event({"event": "LoadGame"}, "Other Cmdr", "Sol", None, {})
 check(panel.summary() == ("No notes for Sol.", ""), f"another commander does not see them: {panel.summary()}")
 panel.handle_event({"event": "LoadGame"}, "BOCHEAUX", "Sol", None, {})
-check(panel.summary()[0].startswith("1 note for Sol"), f"the first commander's notes are back: {panel.summary()}")
+check(panel.summary()[0].startswith("Newest:"), f"the first commander's notes are back: {panel.summary()}")
 
 # The panel never gets wider because of what is typed or saved.
 long_text = "word " * 400

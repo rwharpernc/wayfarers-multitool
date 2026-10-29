@@ -155,10 +155,10 @@ def rock_finding(entry: Mapping[str, Any], target: str = "", threshold: int = DE
     return RockFinding(tuple(found), grade, _number(entry.get("Remaining")), core_name(entry), hits[0] if hits else None, prospect_key(entry.get("Materials")), tuple(hits))
 
 
-def rock_text(finding: RockFinding, limit: int = 3) -> str:
-    """One line for the Space Mining page: "Last rock: Painite 34%, Platinum 12% (High)"."""
+def rock_text(finding: RockFinding, limit: int = 3, last_core: str = "") -> str:
+    """One line for the Space Mining page: "Last rock: Painite 34%, Platinum 12% (High)". `last_core` is the core the run's "Core asteroids found" line already names; the rock's core is left off when it is that one."""
     parts = ", ".join(f"{name} {percent:.0f}%" for name, percent in finding.materials[:limit]) or "no materials listed"
-    return f"Last rock: {parts} ({finding.grade})" + (f", core: {finding.core}" if finding.core else "") + (f", target: {_hit_names(finding)}" if finding.target else "")
+    return f"Last rock: {parts} ({finding.grade})" + (f", core: {finding.core}" if finding.core and finding.core != last_core else "") + (f", target: {_hit_names(finding)}" if finding.target else "")
 
 
 def _hit_names(finding: RockFinding, limit: int = MAX_TARGET_CARDS) -> str:

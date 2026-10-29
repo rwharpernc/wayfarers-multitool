@@ -474,7 +474,10 @@ class InventoryPanelController:
         if pillage_messages:
             self._sound.play()
             self._set_last_event(pillage_messages[-1])
-            self._set_status(f"+{len(pillage_messages)} item(s) pillaged")
+            # The green last-event line already names the item; the status
+            # only reports the count when there is no such line to show.
+            if self._last_event_label is None:
+                self._set_status(f"+{len(pillage_messages)} item(s) pillaged")
 
     def _refresh_bars(self, state: Dict[str, Any]) -> None:
         """Redraw the main-panel inventory bars and, for whichever of them

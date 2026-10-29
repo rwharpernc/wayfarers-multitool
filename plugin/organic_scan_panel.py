@@ -47,7 +47,6 @@ _CFG_ENABLED = "wfmt_organic_enabled"
 _CFG_OBSERVE = "wfmt_exo_observations_enabled"     # keep the record of finds that the Prediction review reads (exo_observations.py)
 
 _NO_BODY_TEXT = "Predicted species: (land on a body with biological signals)"
-_NO_ACTIVE_TEXT = "Active scan: (none yet)"
 _DISABLED_TEXT = "Organic Scanning is disabled — see Settings."
 
 
@@ -108,6 +107,7 @@ class OrganicScanController:
 
         self._predictions_var: Optional[tk.StringVar] = None
         self._active_var: Optional[tk.StringVar] = None
+        self._active_label: Optional[tk.Widget] = None
         self._enabled_var: Optional[tk.BooleanVar] = None
 
     # --- lifecycle / persistence -----------------------------------------
@@ -591,12 +591,21 @@ class OrganicScanController:
             radius_m=self._current_planet_radius or 0.0, ship=self._ship_pos, srv=self._srv_pos, active=self._active_genus,
             waypoints=waypoints, focus=focus)
 
+    def _set_active(self, text: str) -> None:
+        """The Active scan text; the label is hidden while there is none (no scan has started)."""
+        if self._active_var is None:
+            return
+        self._active_var.set(text)
+        label = self._active_label
+        if label is not None:
+            (label.grid if text else label.grid_remove)()
+
     def _refresh_active(self) -> None:
         if self._active_var is None or not enabled():
             return
         organisms = [o for o in self._tracker.organisms if o.stage > 0]
         if not organisms:
-            self._active_var.set(_NO_ACTIVE_TEXT)
+            self._set_active("")
             return
         parts = []
         for organism in organisms:
@@ -613,7 +622,7 @@ class OrganicScanController:
                 elif ok is False:
                     distance_text = " — move further away"
             parts.append(f"{name}: {organism.stage_name} ({organism.stage}/{organic_scan.REQUIRED_SAMPLES}){value_text}{distance_text}")
-        self._active_var.set("Active scan:\n" + "\n".join(parts))
+        self._set_active("Active scan:\n" + "\n".join(parts))
 
     # --- main-panel widgets -----------------------------------------------
 
@@ -623,14 +632,14 @@ class OrganicScanController:
         body = panelkit.collapsible_section(parent, "Organic Scanning", "wfmt_organic_scanning_collapsed")
 
         self._predictions_var = tk.StringVar(value=_NO_BODY_TEXT if enabled() else _DISABLED_TEXT)
-        self._active_var = tk.StringVar(value=_NO_ACTIVE_TEXT if enabled() else "")
+        self._active_var = tk.StringVar(value="")
 
         panelkit.wrap_label(body, textvariable=self._predictions_var, anchor="w").grid(
             row=0, column=0, columnspan=3, sticky=tk.W, pady=(2, 0),
         )
-        panelkit.wrap_label(body, textvariable=self._active_var, anchor="w").grid(
-            row=1, column=0, columnspan=3, sticky=tk.W,
-        )
+        self._active_label = panelkit.wrap_label(body, textvariable=self._active_var, anchor="w")
+        self._active_label.grid(row=1, column=0, columnspan=3, sticky=tk.W)
+        self._active_label.grid_remove()      # shown only once a scan has started
         review = tk.Button(body, text="REVIEW", command=self._open_review)
         review.grid(row=2, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.add_tooltip(review, "Open the Prediction review window: how the species prediction did against what you found, and a way to review each find")
@@ -644,10 +653,10 @@ class OrganicScanController:
             return
         if enabled():
             self._predictions_var.set(_NO_BODY_TEXT)
-            self._active_var.set(_NO_ACTIVE_TEXT)
+            self._set_active("")
         else:
             self._predictions_var.set(_DISABLED_TEXT)
-            self._active_var.set("")
+            self._set_active("")
 
     # --- Settings tab --------------------------------------------------
 

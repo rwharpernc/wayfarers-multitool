@@ -1,5 +1,5 @@
 """The "Merits this session" line: Powerplay merits earned since logging in, with a per-hour rate, shown under the
-"Credits this session" line in every mode (see ui.py's create_plugin_app).
+"Credits this session" line in every mode except Powerplay, whose page shows the session's merits itself (see ui.py's create_plugin_app).
 
 It owns no data. The merits and the session's start come from Powerplay's own session record
 (`powerplay.controller.sessions.current`), so the numbers always agree with the Powerplay panel and the Sessions
@@ -48,9 +48,20 @@ def _current_session() -> Optional[Dict[str, Any]]:
     return sessions.current if sessions is not None else None
 
 
+def line_visible(merits: int, hidden: bool) -> bool:
+    """The line shows once there is a merit, except while the Powerplay page is up: it carries the session's merits itself."""
+    return merits > 0 and not hidden
+
+
 class SessionMerits:
     def __init__(self) -> None:
         self._label: Optional[tk.Label] = None
+        self._hidden = False        # True while the Powerplay mode is showing
+
+    def set_hidden(self, hidden: bool) -> None:
+        """Tell the line whether the page below already shows the session's merits (the Powerplay mode does)."""
+        self._hidden = hidden
+        self.refresh()
 
     def merits(self) -> int:
         from .session import total_merits
@@ -75,7 +86,7 @@ class SessionMerits:
     def refresh(self) -> None:
         if self._label is None:
             return
-        if self.merits() > 0:
+        if line_visible(self.merits(), self._hidden):
             self._label["text"] = self.text()
             self._label.grid()
         else:

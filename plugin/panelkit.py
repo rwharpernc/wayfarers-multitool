@@ -358,24 +358,27 @@ def add_tooltip(widget: tk.Widget, text: str) -> None:
 def collapsible_section(parent: tk.Frame, title: str, config_key: str, default_collapsed: bool = True) -> tk.Frame:
     """A bold, click-to-toggle title (▸ collapsed / ▾ expanded) in row 0 of
     `parent`, with a body frame in row 1 that the caller builds its widgets
-    into (`body.set_title_suffix(text)` adds a note to the title that shows even when folded). A section always starts
+    into (`body.set_title_suffix(text, folded_only=False)` adds a note to the title that shows even when folded). A section always starts
     collapsed (`default_collapsed`) each time EDMC starts: opening it lasts for the session and is not remembered, so the
     panel is the same short height every launch. `config_key` is kept for the callers that name it and is unused."""
     collapsed = default_collapsed
     suffix = ""
+    suffix_folded_only = False
     title_label = tk.Label(parent, font=bold_font(parent), cursor="hand2")
     title_label.grid(row=0, column=0, columnspan=3, sticky=tk.W)
     body = tk.Frame(parent)
     body.grid(row=1, column=0, columnspan=3, sticky=tk.W)
 
     def apply() -> None:
-        title_label.config(text=f"{'▸' if collapsed else '▾'} {title}{suffix}")
+        title_label.config(text=f"{'▸' if collapsed else '▾'} {title}{suffix if collapsed or not suffix_folded_only else ''}")
         (body.grid_remove if collapsed else body.grid)()
 
-    def set_suffix(text: str) -> None:
-        """Short text after the title that stays visible while the section is folded (for example "- rebuilding...")."""
-        nonlocal suffix
+    def set_suffix(text: str, folded_only: bool = False) -> None:
+        """Short text after the title that stays visible while the section is folded (for example "- rebuilding..."); with `folded_only` it is
+        dropped while the section is open, for a note the open body already says."""
+        nonlocal suffix, suffix_folded_only
         suffix = text
+        suffix_folded_only = folded_only
         apply()
 
     def toggle(_event: tk.Event) -> None:

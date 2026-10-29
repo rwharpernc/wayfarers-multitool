@@ -23,10 +23,6 @@ _CHART_STEPS = "▁▂▃▄▅▆▇█"   # one block per day, taller for more
 _CHART_QUIET = "·"           # a day with nothing delivered
 
 
-def _tons(value: int) -> str:
-    return f"{value:,} t"
-
-
 def _plural(count: int, one: str, many: Optional[str] = None) -> str:
     return one if count == 1 else (many or one + "s")
 
@@ -106,7 +102,13 @@ def next_step(project: Project) -> str:
     if project.to_get <= 0:
         where = "your ship and carrier" if project.has_carrier else "your ship"
         return f"{where.capitalize()} hold everything still needed. Deliver it to the site."
-    return f"Get {_tons(project.to_get)} more" + (" (bought or moved onto your carrier)." if project.has_carrier else ".")
+    # The figure is on the Still to get line right above, so it is not repeated here.
+    return "Buy the rest, or move it onto your carrier." if project.has_carrier else "Buy or mine the rest."
+
+
+def delivered_text(project: Project) -> str:
+    """Tons handed over against tons needed, with the build's percentage (the page has no separate Progress line)."""
+    return f"{project.delivered:,} of {project.required:,} t ({project.progress:.0%})"
 
 
 # --- history ------------------------------------------------------------------------------------------------------

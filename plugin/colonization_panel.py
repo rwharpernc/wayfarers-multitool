@@ -525,7 +525,7 @@ class ColonizationController:
         if not self._cmdr:
             self._set("project", _NO_CMDR_TEXT)
             self._draw_bar(0, False)
-            for name in ("progress", "delivered", "needed", "coverage", "hold", "carrier", "to_get", "trips", "gaps", "next", "more"):
+            for name in ("delivered", "needed", "coverage", "hold", "carrier", "to_get", "trips", "gaps", "next", "more"):
                 self._set(name, "", show=False)
             self._refresh_history_window()
             return
@@ -535,7 +535,7 @@ class ColonizationController:
         if not active:
             self._set("project", "No active construction site. Dock at one to register it.")
             self._draw_bar(0, False)
-            for name in ("progress", "delivered", "needed", "coverage", "hold", "carrier", "to_get", "trips", "gaps", "next", "more"):
+            for name in ("delivered", "needed", "coverage", "hold", "carrier", "to_get", "trips", "gaps", "next", "more"):
                 self._set(name, "", show=False)
         else:
             current = active[0]
@@ -544,14 +544,14 @@ class ColonizationController:
             where = f"{_clip(p.name, _NAME_MAX)}" + (f"\n{_clip(p.system, _NAME_MAX)}" if p.system else "")
             self._set("project", where)
             self._draw_bar(p.progress, p.complete)
-            self._set("progress", f"{p.progress:.0%} complete")
-            self._set("delivered", f"{p.delivered:,} of {p.required:,} t")
+            self._set("delivered", stats.delivered_text(p))
             self._set("needed", f"{p.remaining:,} t")
-            self._set("coverage", stats.coverage_text(p))
+            # Nothing left to deliver: the Covered and Trips left lines would only repeat that, so Next carries it.
+            self._set("coverage", stats.coverage_text(p), show=p.remaining > 0)
             self._set("hold", f"{p.in_hold:,} t in your ship")
             self._set("carrier", f"{p.on_carrier:,} t moved onto your carrier", show=p.has_carrier)
             self._set("to_get", f"{p.to_get:,} t")
-            self._set("trips", stats.trips_text(p))
+            self._set("trips", stats.trips_text(p), show=p.remaining > 0)
             self._set("gaps", ", ".join(f"{_clip(label, 40)} {tons:,}" for label, tons in p.gaps) or "None", show=bool(p.gaps))
             self._set("next", stats.next_step(p))
             self._set("more", f"+{p.more_active} more active {'site' if p.more_active == 1 else 'sites'}", show=p.more_active > 0)
@@ -611,7 +611,6 @@ class ColonizationController:
         self._bar = tk.Canvas(parent, width=_BAR_WIDTH, height=_BAR_HEIGHT, highlightthickness=0, bd=0)
         self._bar.grid(row=row, column=0, columnspan=3, sticky=tk.W, pady=(4, 2))
         row += 1
-        line("progress", "Progress")
         line("delivered", "Delivered")
         line("needed", "Still needed")
         line("coverage", "Covered")

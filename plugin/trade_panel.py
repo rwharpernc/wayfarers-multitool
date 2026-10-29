@@ -666,7 +666,7 @@ class TradePanelController:
             button.pack(side=tk.LEFT, padx=padx)
 
     def _session_blocks(self) -> List[Block]:
-        blocks: List[Block] = [Heading("This session")]
+        blocks: List[Block] = []
         if self._save_message:
             blocks.append(Note(self._save_message, strong=True))
         blocks += ledger_mod.summary_blocks(self._ledger)
@@ -697,13 +697,11 @@ class TradePanelController:
         blocks: List[Block] = [Heading("In your ship"), *self._ship_pairs()]
         limpets = sum(count for name, count in self._cargo.items() if name.lower() == "drones")
         if self._capacity or used:
-            # What is taking up the hold: limpets are cargo too, so they are split from the commodities.
-            parts = [trade_hold.describe(used - limpets, *self._hold_split)]
-            if limpets:
-                parts.append(f"{limpets:,} t limpets")
-            if self._capacity:
-                parts.append(f"{max(0, self._capacity - used):,} t free")
-            blocks.append(Pair("Hold space", ", ".join(parts)))
+            # What is taking up the hold: limpets are cargo too, so they are split from the commodities. Shown only
+            # when there is a split to show; "Ship hold" below carries the total and the free tons.
+            text = trade_hold.space_text(used - limpets, *self._hold_split, limpets)
+            if text:
+                blocks.append(Pair("Hold space", text))
         if not self._capacity and not used:
             return blocks + [Pair("Ship hold", "empty")]
         blocks.append(Pair("Ship hold", f"{used:,} / {self._capacity:,} t ({max(0, self._capacity - used):,} free)"
@@ -722,8 +720,8 @@ class TradePanelController:
         return blocks
 
     @staticmethod
-    def _lookups_off_blocks(title: str) -> List[Block]:
-        return [Heading(title), Note("Spansh lookups are off.", warn=True),
+    def _lookups_off_blocks() -> List[Block]:
+        return [Note("Spansh lookups are off.", warn=True),
                 Note("Turn them on in Settings > WFMT > Trade.")]
 
     def _route_start(self) -> Optional[tuple[str, str]]:
@@ -744,9 +742,9 @@ class TradePanelController:
 
     def _routes_blocks(self, busy: bool) -> List[Block]:
         if not lookups_enabled():
-            return self._lookups_off_blocks("Routes")
+            return self._lookups_off_blocks()
         if busy and self._job is not None:
-            blocks = [Heading("Routes"), Note(f"Asking Spansh for routes... {int(time.monotonic() - self._job.started)} s")]
+            blocks = [Note(f"Asking Spansh for routes... {int(time.monotonic() - self._job.started)} s")]
             if self._job.status:
                 blocks.append(Note(self._job.status))
             return blocks + [Note("This can take a minute or two.")]
@@ -754,8 +752,7 @@ class TradePanelController:
             return self._route_blocks
         start = self._route_start()
         if start is None:
-            return [Heading("Routes"),
-                    Note("Dock at a station once so WFMT knows where to start, then press Find routes.")]
+            return [Note("Dock at a station once so WFMT knows where to start, then press Find routes.")]
         return [Heading("Next route"), Pair("Start", f"{_clip(start[1])} ({_clip(start[0])})"), *self._ship_pairs(),
                 Pair("Cargo", f"{self._capacity or '?'} t"), Pair("Jump range", f"{self._jump_range_ly():g} ly"),
                 Pair("Budget", f"{self._credits:,} cr" if self._credits else "unknown"),
@@ -791,19 +788,18 @@ class TradePanelController:
 
     def _market_blocks(self, busy: bool) -> List[Block]:
         if not lookups_enabled():
-            return self._lookups_off_blocks("Market")
+            return self._lookups_off_blocks()
         if busy and self._job is not None:
-            return [Heading("Market"), Note(f"Asking Spansh... {int(time.monotonic() - self._job.started)} s")]
+            return [Note(f"Asking Spansh... {int(time.monotonic() - self._job.started)} s")]
         if self._sell_error:
-            return [Heading("Market"), Note(self._sell_error, warn=True)]
+            return [Note(self._sell_error, warn=True)]
         if self._picks is not None:
             return self._picks_blocks(self._picks)
         if self._sell and self._sell_for:
             return self._price_result_blocks()
         buying = self._side == trade_prices.BUY
         target = self._search_target()
-        blocks: List[Block] = [Heading("Market search"), *self._ship_pairs(),
-                               Pair("Looking to", "buy" if buying else "sell", bold=True)]
+        blocks: List[Block] = [Heading("Market search"), *self._ship_pairs()]
         if target is None:
             blocks.append(Note("Type the commodity you want to buy above (suggestions appear as you type)." if buying else
                                "Type a commodity above (suggestions appear as you type), or load cargo and it is "
@@ -1058,7 +1054,7 @@ class TradePanelController:
             return
         start = self._route_start()
         if start is None:
-            self._route_blocks = [Heading("Routes"), Note("Dock at a station once so WFMT knows where to start.", warn=True)]
+            self._route_blocks = [Note("Dock at a station once so WFMT knows where to start.", warn=True)]
             self._refresh()
             return
         query = spansh_routes.RouteQuery(
@@ -1281,11 +1277,11 @@ class TradePanelController:
 
     def _finish_routes(self, job: _Job) -> None:
         if job.error:
-            self._route_blocks = [Heading("Routes"), Note(job.error, warn=True)]
+            self._route_blocks = [Note(job.error, warn=True)]
             return
         hops: List[spansh_routes.Hop] = job.result or []
         if not hops:
-            self._route_blocks = [Heading("Routes"), Note("No profitable route found."),
+            self._route_blocks = [Note("No profitable route found."),
                                   Note("Try more hops, a longer range, or a bigger budget.")]
             return
         total = sum(hop.profit for hop in hops)

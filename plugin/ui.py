@@ -419,6 +419,7 @@ def _apply_panel_mode_visibility() -> None:
             frame.grid()
         else:
             frame.grid_remove()
+    session_merits.controller.set_hidden(_panel_mode == "powerplay")      # the Powerplay page shows the session's merits itself
     _sync_mode_holder_height()
 
 

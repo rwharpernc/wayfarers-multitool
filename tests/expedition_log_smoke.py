@@ -111,7 +111,7 @@ run = PA.controller.start_expedition("Core Run")
 pump()
 check(run is not None and run.start_system == "Sol" and run.ships == ["Caspian Explorer 'Far Horizon' WF-01"], f"the expedition starts here in this ship: {run}")
 check(PA.book.running() is run, "and it is the one running")
-check(PA.title_suffix(PA.book).startswith(" - Core Run"), f"the folded title says what is running: {PA.title_suffix(PA.book)}")
+check(PA.title_suffix(PA.book) == " - running", f"the folded title says it is running, without repeating the name: {PA.title_suffix(PA.book)}")
 
 # --- journal events are counted while it runs -----------------------------------------------------------------------------------------
 stamp0 = time.time()
@@ -155,7 +155,7 @@ PA.controller.toggle_pause()
 pump()
 check(run.status == "paused" and PA.book.active() is run and PA.book.running() is None, "PAUSE holds it: still the active expedition, no longer counting")
 check(pause_button.cget("text") == "RESUME", "the button now offers RESUME")
-check("(paused)" in PA.summary_text(PA.book) and "paused" in PA.title_suffix(PA.book), "the row says it is paused")
+check("(paused)" in PA.summary_text(PA.book) and PA.title_suffix(PA.book) == " - paused", "the row says it is paused")
 check(OV._shown_run() is run, "the overlay card keeps showing a paused expedition")
 check(OV.build_card(run, stamp0 + 7_500).badge.startswith("paused"), f"its badge says paused: {OV.build_card(run, stamp0 + 7_500).badge}")
 jumps_before = run.totals.jumps

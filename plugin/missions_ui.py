@@ -477,8 +477,16 @@ def _display_cmdr_header(frame: tk.Frame, count: Optional[int],
     return row
 
 
+def _nav_title(current: str, counts: dict[str, int], total: int, header_shown: bool) -> str:
+    """The category page's title. The count is left off when the header's "Missions: N/20" already says it: the header is
+    shown and this is the only category holding missions (so its count is the total)."""
+    count = counts.get(current, 0)
+    only_page = header_shown and count == total and sum(1 for n in counts.values() if n > 0) == 1
+    return _PAGE_LABELS[current] if only_page else f"{_PAGE_LABELS[current]} ({count})"
+
+
 def _display_category_nav(frame: tk.Frame, current: str, counts: dict[str, int],
-                          row: int, on_prev, on_next) -> int:
+                          row: int, on_prev, on_next, title_text: Optional[str] = None) -> int:
     """◂ Category Name (count) ▸ - click either arrow to page between the
     panel's category pages. The Missions window and Find sources are the
     buttons at the bottom of the panel."""
@@ -490,7 +498,8 @@ def _display_category_nav(frame: tk.Frame, current: str, counts: dict[str, int],
 
     panelkit.nav_arrow(nav, 1, on_next).pack(side=tk.RIGHT)
 
-    title_text = f"{_PAGE_LABELS[current]} ({counts.get(current, 0)})"
+    if title_text is None:
+        title_text = f"{_PAGE_LABELS[current]} ({counts.get(current, 0)})"
     title_label = tk.Label(nav, text=title_text, font=fonts["bold"])
     title_label.pack(side=tk.LEFT, expand=True)
 
@@ -577,7 +586,7 @@ def _display_massacre_data(frame: tk.Frame, data: MassacreData, settings: Displa
         if i > 0:
             row = _separator(frame, row, pady=_CARD_GAP)
         row = _display_row(frame, faction, data.faction_rows[faction], data, settings, row)
-    if settings.totals:
+    if settings.totals and len(data.faction_rows) > 1:
         row = _display_sum(frame, data, settings, row)
     if settings.settlement:
         row = _display_settlements(frame, data, row)
@@ -1051,7 +1060,9 @@ class MissionsUI:
                 self.__ensure_valid_category(counts)
                 row = _display_category_nav(self.__content, self.__current_category,
                                             counts, row,
-                                            self.__prev_category, self.__next_category)
+                                            self.__prev_category, self.__next_category,
+                                            _nav_title(self.__current_category, counts, total,
+                                                       self.__settings.mission_count))
                 self.__render_current_page(self.__content, row)
 
         theme.update(self.__parent)

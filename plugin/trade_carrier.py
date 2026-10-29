@@ -329,8 +329,7 @@ def cargo_blocks(records: Optional[Dict[str, CarrierRecord]], mode: str = AUTO) 
             continue
         used, reserved, free = record.get("cargo", 0), record.get("reserved", 0), record.get("free", 0)
         guess = "~" if record.get("estimate") else ""
-        blocks.append(Pair("Carrier cargo used", f"{guess}{used:,} / {capacity:,} t"))
-        blocks.append(Pair("Carrier cargo free", f"{guess}{free:,} t", bold=True))
+        blocks.append(Pair("Carrier cargo", f"{guess}{used:,} / {capacity:,} t ({guess}{free:,} free)", bold=True))
         blocks += _space_breakdown(record)
         if reserved:
             blocks.append(Pair("Carrier reserved for orders", f"{reserved:,} t"))

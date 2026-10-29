@@ -82,8 +82,7 @@ class NotesController:
         if not notes:
             return f"No notes for {here}.", ""
         newest = notes_data.clip(notes[0].text, _PREVIEW_SHOWN)
-        count = f"{len(notes)} note{'s' if len(notes) != 1 else ''}"
-        return f"{count} for {here}. Newest: {newest}", f"- {len(notes)} here"
+        return f"Newest: {newest}", f"- {len(notes)} here"
 
     def _update_summary(self) -> None:
         if self._summary_var is None:

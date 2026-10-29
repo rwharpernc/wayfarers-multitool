@@ -99,7 +99,7 @@ with mock.patch.object(current_cargo, "held", lambda: {"painite": 50}):
     repo_.update_cargo(40)
     repo_.update_limpets(6)
     texts = draw()
-    check("Last rock: Water 24% (Low), core: Bromellite" in texts, f"the last rock: {texts}")
+    check("Last rock: Water 24% (Low)" in texts, f"the last rock: {texts}")
     check("Core asteroids found: 1 (last: Bromellite)" in texts, f"the core count: {texts}")
     check(any(t.startswith("Limpets launched") and "(6 on board)" in t for t in texts), f"the exact limpet count: {texts}")
     check("Mission needs: Painite 50 of 120 t held (2 missions)" in texts, f"the mission needs: {texts}")

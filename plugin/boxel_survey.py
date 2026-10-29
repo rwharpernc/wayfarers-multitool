@@ -773,7 +773,7 @@ class BoxelSurveyController:
             self._set_status("Nothing to copy yet")
             return
         if panelkit.copy_to_clipboard(self._parent, text):
-            self._set_status(f"Copied: {text}")
+            self._set_status("Copied to clipboard")
 
     def _set_export_status(self, message: str) -> None:
         if self._export_status_var is not None:
@@ -814,7 +814,7 @@ class BoxelSurveyController:
             return
         self._consecutive_skips = 0
         self._set_target(current)
-        self._set_status(f"Survey started at {name}")
+        self._set_status("Survey started")
 
     def _on_use_current(self) -> None:
         if not self._current_system:

@@ -21,6 +21,15 @@ if "config" not in sys.modules:
 from plugin import session_merits as M  # noqa: E402
 
 
+class VisibilityTests(unittest.TestCase):
+    def test_shows_once_there_is_a_merit(self):
+        self.assertTrue(M.line_visible(1, hidden=False))
+        self.assertFalse(M.line_visible(0, hidden=False))
+
+    def test_hidden_on_the_powerplay_page_even_with_merits(self):
+        self.assertFalse(M.line_visible(500, hidden=True))
+
+
 class TextTests(unittest.TestCase):
     def test_merits_with_a_rate(self):
         self.assertEqual(M.summary_text(1234, 2.0), "Merits this session: +1,234 (+617 merits/hr)")

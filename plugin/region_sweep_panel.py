@@ -363,10 +363,7 @@ class RegionSweepController:
         if cube is None:
             self._stats_var.set(f"Cubes: 0/{cubes_total} complete")
             return
-        self._stats_var.set(
-            f"Current cube: {cube.prefix} ({cube.complete_count}/{cube.known_count} known systems) | "
-            f"Cubes: {self._queue.cubes_complete}/{cubes_total} complete"
-        )
+        self._stats_var.set(f"Cubes: {self._queue.cubes_complete}/{cubes_total} complete")
 
     def _refresh_list(self) -> None:
         if self._listbox is None:
@@ -414,7 +411,7 @@ class RegionSweepController:
             self._set_status("Nothing to copy yet")
             return
         if panelkit.copy_to_clipboard(self._parent, text):
-            self._set_status(f"Copied: {text}")
+            self._set_status("Copied to clipboard")
 
     # --- button handlers ---------------------------------------------------
 
@@ -448,7 +445,7 @@ class RegionSweepController:
         self._queue.set_current(cube.sector, cube.cube_id, cube.mass_code)
         self._refresh_list()
         self._refresh_target()
-        self._set_status(f"Current cube: {cube.prefix}")
+        self._set_status("Set as current")
 
     def _on_remove_selected(self) -> None:
         cube = self._selected_cube()

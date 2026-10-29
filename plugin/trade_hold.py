@@ -50,3 +50,14 @@ def describe(cargo_tons: int, mission: int, stolen: int) -> str:
     """'312 t cargo' with, when there is any, '(40 t mission, 12 t stolen)' after it."""
     extras = [f"{amount:,} t {label}" for amount, label in ((mission, "mission"), (stolen, "stolen")) if amount > 0]
     return f"{cargo_tons:,} t cargo" + (f" ({', '.join(extras)})" if extras else "")
+
+
+def space_text(cargo_tons: int, mission: int, stolen: int, limpets: int) -> str:
+    """The "Hold space" line: cargo (with its mission and stolen tons) and limpets. "" when there is no split to show,
+    because the "Ship hold" line already gives the total and the free tons."""
+    if mission <= 0 and stolen <= 0 and limpets <= 0:
+        return ""
+    parts = [describe(cargo_tons, mission, stolen)]
+    if limpets:
+        parts.append(f"{limpets:,} t limpets")
+    return ", ".join(parts)

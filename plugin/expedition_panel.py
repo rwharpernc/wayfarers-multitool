@@ -156,7 +156,7 @@ class ExpeditionController:
             text, suffix = self.summary()
             self._summary_var.set(text)
             if self._section is not None:
-                self._section.set_title_suffix(suffix)   # type: ignore[attr-defined]
+                self._section.set_title_suffix(suffix, folded_only=True)   # type: ignore[attr-defined]
         except tk.TclError:
             pass   # the panel is being torn down
 

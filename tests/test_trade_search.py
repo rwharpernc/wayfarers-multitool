@@ -118,7 +118,7 @@ class OfferRankingTests(unittest.TestCase):
         self.assertIn("Far", text)
         self.assertIn("+50%", text)
         self.assertIsNone(prices.verdict(near, []))
-        self.assertIn("nearby", prices.verdict(galaxy, near))
+        self.assertEqual(prices.verdict(galaxy, near), "Best overall is nearby.")
 
 
 def place(name: str, price: int, quantity: int, kind: str = "Coriolis Starport", ly: float = 10.0,
@@ -260,14 +260,13 @@ class CarrierCargoTests(unittest.TestCase):
         self.assertEqual((record["type"], record["id"]), (FLEET, 111))
         blocks = carrier.cargo_blocks({FLEET: record})
         self.assertEqual(blocks[0], Heading("Fleet carrier: Example Hauler"))
-        self.assertIn(Pair("Carrier cargo used", "4,000 / 18,000 t"), blocks)
-        self.assertIn(Pair("Carrier cargo free", "13,500 t", bold=True), blocks)
+        self.assertIn(Pair("Carrier cargo", "4,000 / 18,000 t (13,500 free)", bold=True), blocks)
         self.assertIn(Pair("Carrier reserved for orders", "500 t"), blocks)
 
     def test_space_breakdown_follows_the_free_line(self) -> None:
         record = carrier.parse_stats(stats_event())
         blocks = carrier.cargo_blocks({FLEET: record})
-        free = blocks.index(Pair("Carrier cargo free", "13,500 t", bold=True))
+        free = blocks.index(Pair("Carrier cargo", "4,000 / 18,000 t (13,500 free)", bold=True))
         self.assertEqual(blocks[free + 1:free + 3],
                          [Pair("Carrier crew services", "6,000 t"), Pair("Carrier ship / module packs", "1,000 t")])
         old = {k: v for k, v in record.items() if k not in ("crew", "packs")}   # saved before these were kept
@@ -590,6 +589,12 @@ class HoldSplitTests(unittest.TestCase):
         self.assertEqual(trade_hold.describe(312, 0, 0), "312 t cargo")
         self.assertEqual(trade_hold.describe(312, 40, 12), "312 t cargo (40 t mission, 12 t stolen)")
         self.assertEqual(trade_hold.describe(1200, 0, 5), "1,200 t cargo (5 t stolen)")
+
+    def test_hold_space_shows_only_when_there_is_a_split(self) -> None:
+        from plugin import trade_hold
+        self.assertEqual(trade_hold.space_text(48, 0, 0, 0), "")
+        self.assertEqual(trade_hold.space_text(32, 16, 0, 0), "32 t cargo (16 t mission)")
+        self.assertEqual(trade_hold.space_text(32, 0, 0, 16), "32 t cargo, 16 t limpets")
 
     def test_cargo_json_is_read_and_a_missing_file_is_not_an_error(self) -> None:
         import json

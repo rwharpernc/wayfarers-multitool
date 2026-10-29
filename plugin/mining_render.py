@@ -166,15 +166,16 @@ def format_run_average(run) -> str:
     return f"Run average: {average:,.0f} t/h over {clock.mined_seconds / 60:,.0f} min"
 
 
-def format_time_to_full(run, tons: int, capacity: Optional[int], label: str = "Hold", live: bool = True) -> str:
+def format_time_to_full(run, tons: int, capacity: Optional[int], label: str = "Hold", live: bool = True,
+                         hold_shown: bool = False) -> str:
     """"Hold full in about 14 min": the room left in the hold (`capacity` less `tons`) over the run's average rate, or over the rate now in the first minute, before there is an
     average. "Hold is full" once it is; nothing ("") when the capacity or a rate is not known, or when nothing is being refined, so a line only shows when it says something. `live` is
-    False for a Rhino that is stowed, whose hold is not filling. The panel, the HUD and the live window all word it this way."""
+    False for a Rhino that is stowed, whose hold is not filling. `hold_shown` is True where the hold line (tons of capacity) is on the same panel, which already says it is full, so "is full" is left off. The panel, the HUD and the live window all word it this way."""
     if not capacity or not live:
         return ""
     free = capacity - tons
     if free <= 0:
-        return f"{label} is full"
+        return "" if hold_shown else f"{label} is full"
     rate = run.clock.average_per_hour(sum(run.refined.values()))
     if rate is None:
         rate = mining_rate.current_rate(run.refined_timestamps)
@@ -428,7 +429,7 @@ def render_space_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelBut
             add_line(content, row, wrap, f"Materials seen: {format_materials_seen(run)}")
             row += 1
         if run.last_rock is not None:
-            add_line(content, row, wrap, mining_alerts.rock_text(run.last_rock))
+            add_line(content, row, wrap, mining_alerts.rock_text(run.last_rock, last_core=run.last_core))
             row += 1
         if run.cores_found:
             add_line(content, row, wrap, f"Core asteroids found: {run.cores_found} (last: {run.last_core})")
@@ -443,13 +444,13 @@ def render_space_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelBut
         row += 1
     if settings.display_session_totals:
         add_line(content, row, wrap,
-                f"Refined: {format_counts(run.refined, with_mine_via=settings.display_prospector_hints)}")
+                f"Refined: {format_counts(run.refined)}")
         row += 1
         add_line(content, row, wrap, format_rate_now(run))
         row += 1
         add_line(content, row, wrap, format_run_average(run))
         row += 1
-        full = format_time_to_full(run, *ship_hold(run.cargo))
+        full = format_time_to_full(run, *ship_hold(run.cargo), hold_shown=settings.display_cargo_bar)
         if full:
             add_line(content, row, wrap, full)
             row += 1
@@ -498,7 +499,8 @@ def render_surface_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelB
                 row += 1
             add_line(content, row, wrap, format_run_average(run))
             row += 1
-            full = format_time_to_full(run, run.cargo, surface_mining.RHINO_CARGO_CAPACITY, "SRV hold", live=is_active)
+            full = format_time_to_full(run, run.cargo, surface_mining.RHINO_CARGO_CAPACITY, "SRV hold", live=is_active,
+                                         hold_shown=settings.display_cargo_bar and is_active)
             if full:
                 add_line(content, row, wrap, full)
                 row += 1
@@ -513,17 +515,19 @@ def render_surface_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelB
                 "No active Rhino deployment. Launch the Rhino to start tracking a new run.")
         row += 1
 
-    if settings.display_prospector_hints:
-        signal = repo.latest_signal()
-        if signal is not None:
-            add_line(content, row, wrap,
-                    f"Last DSS scan: {signal.count} Planetary Mining Location(s) on {signal.body_name}")
-            row += 1
-
     current_system, current_body = repo.current_system, repo.current_body
     matches: list = []
     if current_body:
         matches = src.hotspots.for_body(current_system, current_body)
+
+    if settings.display_prospector_hints:
+        signal = repo.latest_signal()
+        if signal is not None and signal.count != len(matches):       # when the counts agree, "Known hotspots here" says it
+            add_line(content, row, wrap,
+                    f"Last DSS scan: {signal.count} Planetary Mining Location(s) on {signal.body_name}")
+            row += 1
+
+    if current_body:
         if matches:
             add_line(content, row, wrap, f"Known hotspots here ({len(matches)}):\n{format_hotspots(matches)}")
             row += 1

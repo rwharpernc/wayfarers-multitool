@@ -45,6 +45,8 @@ class RockFindingTests(unittest.TestCase):
     def test_the_page_line(self) -> None:
         self.assertEqual(M.rock_text(M.rock_finding(ROCK, "Painite", 30)), "Last rock: Painite 34%, Uraninite 9% (High), target: Painite")
         self.assertEqual(M.rock_text(M.rock_finding(CORE)), "Last rock: Water 24% (Low), core: Bromellite")
+        self.assertEqual(M.rock_text(M.rock_finding(CORE), last_core="Bromellite"), "Last rock: Water 24% (Low)")      # the Core asteroids line names it
+        self.assertEqual(M.rock_text(M.rock_finding(CORE), last_core="Painite"), "Last rock: Water 24% (Low), core: Bromellite")
 
 
 class LimpetsTests(unittest.TestCase):

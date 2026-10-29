@@ -101,6 +101,11 @@ class LineTests(unittest.TestCase):
         self.assertEqual(render.format_time_to_full(run, 200, 200), "Hold is full")
         self.assertEqual(render.format_time_to_full(run, 230, 200), "Hold is full")        # limpets and other cargo can put it over
 
+    def test_a_full_hold_is_left_off_where_the_hold_line_already_shows_it(self) -> None:
+        run = self.mined(self.space, 5)
+        self.assertEqual(render.format_time_to_full(run, 200, 200, hold_shown=True), "")
+        self.assertEqual(render.format_time_to_full(run, 200, 200, "SRV hold", hold_shown=True), "")
+
     def test_a_label_names_the_hold(self) -> None:
         run = self.mined(self.surface, 5)
         self.assertEqual(render.format_time_to_full(run, 30, 72, "SRV hold"), "SRV hold full in about 34 min")       # 42 t over 75 t/h

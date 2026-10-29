@@ -791,10 +791,6 @@ class ScreenshotsController:
         self._crop_thumb.bind("<Button-1>", lambda _e: self._open_preview(self._preview_crop, "Cropped screenshot"))
         self._crop_thumb.grid_remove()
 
-        tk.Label(self._thumbs_frame, text="Click a thumbnail to preview it", font=("TkDefaultFont", 7)).grid(
-            row=1, column=0, columnspan=2, sticky=tk.W, pady=(2, 0),
-        )
-
         tk.Label(self._thumbs_frame, text="Recent — click to preview", font=("TkDefaultFont", 7)).grid(
             row=2, column=0, columnspan=_HISTORY_COLUMNS, sticky=tk.W, pady=(6, 0),
         )

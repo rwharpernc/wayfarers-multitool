@@ -88,6 +88,12 @@ class SystemTests(unittest.TestCase):
         self.assertEqual(tiles["first discoveries here"].value, "1")
         self.assertEqual(tiles["biological signals analyzed"].value, "0/2")
 
+    def test_panel_summary_leaves_out_the_scanned_count(self):
+        from plugin import explore_dashboard
+        text = explore_dashboard.summary_text(build_survey(), 0, "scan")
+        self.assertTrue(text.startswith("Test Sys"))
+        self.assertNotIn("scanned", text)                  # the Exploration Value readout beneath it already says it
+
     def test_an_expedition_adds_a_tile(self):
         run = expedition_log.Run(id="r", name="Trip")
         run.totals.explore_earned = 2_000_000

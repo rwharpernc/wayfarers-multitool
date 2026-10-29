@@ -286,7 +286,7 @@ class ExplorationValueController:
 
     def _set_age(self, system_name: str, age_my: float) -> None:
         if self._age_var is not None:
-            self._age_var.set(f"System age: {system_name} — {format_age(age_my)}")
+            self._age_var.set(f"System age: {format_age(age_my)}")
 
     def _set_region(self, x: float, y: float, z: float) -> None:
         if self._region_var is None:

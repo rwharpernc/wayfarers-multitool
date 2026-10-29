@@ -168,7 +168,7 @@ def verdict(near: List[Offer], galaxy: List[Offer], side: str = SELL) -> Optiona
     best_near, best_galaxy = near[0], galaxy[0]
     extra = _better(side, best_galaxy, best_near)
     if extra <= 0:
-        return f"Best overall is nearby: {best_near.station} ({best_near.system})."
+        return "Best overall is nearby."
     detour = max(0.0, best_galaxy.distance_ly - best_near.distance_ly)
     if side == BUY:
         saved = best_near.price - best_galaxy.price

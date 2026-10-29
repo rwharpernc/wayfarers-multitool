@@ -57,11 +57,11 @@ def extra_text(book_: expedition_log.LogBook) -> str:
 
 
 def title_suffix(book_: expedition_log.LogBook) -> str:
-    """The note after the section's title, which stays visible while the section is folded: what is running, or that nothing is."""
+    """The note after the section's title, which stays visible while the section is folded: whether one is running, paused or not running (the name and figures are in the open section)."""
     run = book_.active()
     if run is None:
         return " - not running" if book_.ready else ""
-    return f" - {expedition_log.clip(run.name, 24)}, " + ("paused, " if run.status == expedition_log.PAUSED else "") + f"{expedition_log.short_credits(run.totals.earned)} earned"
+    return " - paused" if run.status == expedition_log.PAUSED else " - running"
 
 
 class LogController:

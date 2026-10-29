@@ -160,6 +160,20 @@ class ProjectTests(unittest.TestCase):
         self.assertEqual(S.next_step(done), "This build is complete.")
         self.assertEqual(done.progress, 1.0)
 
+    def test_next_step_does_not_repeat_the_still_to_get_figure(self):
+        plain = S.project_for(site(), {}, None, False, 400)
+        self.assertGreater(plain.to_get, 0)
+        self.assertEqual(S.next_step(plain), "Buy or mine the rest.")
+        with_carrier = S.project_for(site(), {}, {}, True, 400)
+        self.assertEqual(S.next_step(with_carrier), "Buy the rest, or move it onto your carrier.")
+        for text in (S.next_step(plain), S.next_step(with_carrier)):
+            self.assertFalse(any(ch.isdigit() for ch in text), text)
+
+    def test_delivered_text_carries_the_percentage(self):
+        project = S.project_for(site(), {}, None, False, 400)
+        self.assertEqual(S.delivered_text(project), f"{project.delivered:,} of {project.required:,} t ({project.progress:.0%})")
+        self.assertTrue(S.delivered_text(project).endswith("%)"))
+
     def test_the_biggest_gaps_are_listed_biggest_first(self):
         project = S.project_for(site(), {}, None, False, 400)
         self.assertEqual(project.gaps, (("Steel", 800), ("Water", 300)))

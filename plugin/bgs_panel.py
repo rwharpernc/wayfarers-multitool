@@ -419,22 +419,18 @@ class BgsController:
 
     def build_panel(self, parent: tk.Frame) -> None:
         self._parent = parent
-        tk.Label(parent, text="BGS", font=panelkit.bold_font(parent)).grid(
-            row=0, column=0, columnspan=3, sticky=tk.W,
-        )
-
         self._current_system_var = tk.StringVar(value=self._current_system_text())
         panelkit.wrap_label(parent, textvariable=self._current_system_var, anchor="w").grid(
-            row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0),
+            row=0, column=0, columnspan=3, sticky=tk.W,
         )
 
         self._tick_status_var = tk.StringVar(value=self._tick_status_text)
         panelkit.wrap_label(parent, textvariable=self._tick_status_var, anchor="w", fg="gray", font=panelkit.view_fonts()["small"]).grid(
-            row=2, column=0, columnspan=3, sticky=tk.W, pady=(2, 0),
+            row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0),
         )
 
         button_row = tk.Frame(parent)
-        button_row.grid(row=3, column=0, columnspan=3, sticky=tk.W, pady=(4, 0))
+        button_row.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(4, 0))
         report_button = tk.Button(button_row, text="REPORT", command=self._on_view_report)
         report_button.grid(row=0, column=0)
         panelkit.add_tooltip(report_button, "View BGS Report - open the BGS report window")

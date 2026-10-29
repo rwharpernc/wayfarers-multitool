@@ -117,6 +117,9 @@ try:
     check(merits is not None and merits.winfo_manager() == "", "merits line is shown before any merit")
     check(merits.grid_info() == {} and game_mode.tracker._label.master is merits.master, "merits line is not in the session strip")
     session_merits._current_session = lambda: {"totals": {"fortify": 100}, "started_at": "2000-01-01T00:00:00Z"}
+    session_merits.controller.set_hidden(True)       # the Powerplay page shows the session's merits itself
+    check(merits.winfo_manager() == "", "merits line is shown on the Powerplay page")
+    session_merits.controller.set_hidden(False)
     session_merits.controller.refresh()
     check(merits.winfo_manager() == "grid" and merits["text"].startswith("Merits this session: +100"), f"merits text: {merits['text']!r}")
     credits_row = [w for w in merits.master.grid_slaves() if w is not merits and w is not label and w is not game_mode.tracker._label and w.grid_info().get("row") != 4]      # row 4 is the overlays line

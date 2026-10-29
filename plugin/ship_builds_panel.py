@@ -33,7 +33,7 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 PANEL_PLACEMENT = "fieldops"
 
-_NO_CMDR_TEXT = "Ship Builds: (waiting for commander login)"
+_NO_CMDR_TEXT = "(waiting for commander login)"
 
 
 class ShipBuildsController:
@@ -79,7 +79,7 @@ class ShipBuildsController:
             self._summary_var.set(_NO_CMDR_TEXT)
             return
         count = len(self._repository.for_cmdr(self._cmdr))
-        self._summary_var.set(f"Ship Builds: {count} saved for {self._cmdr}")
+        self._summary_var.set(f"{count} saved for {self._cmdr}")
 
     # --- main-panel widgets -----------------------------------------------
 

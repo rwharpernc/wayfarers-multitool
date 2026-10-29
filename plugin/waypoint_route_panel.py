@@ -276,7 +276,7 @@ class WaypointRouteController:
             self._set_status("Nothing to copy yet")
             return
         if panelkit.copy_to_clipboard(self._parent, text):
-            self._set_status(f"Copied: {text}")
+            self._set_status("Copied to clipboard")
 
     # --- button handlers ---------------------------------------------------
 
