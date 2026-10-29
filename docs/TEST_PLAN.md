@@ -1,6 +1,6 @@
-# Test plan: 1.2.0
+# Test plan: 1.3.0
 
-What to check in EDMC after the 1.2.0 release (and before any later one), on **Windows** first and then on **Linux**.
+What to check in EDMC after the 1.3.0 release (and before any later one), on **Windows** first and then on **Linux**.
 
 - This is the quick pass over the whole release:
   - the Rare Goods Finder
@@ -11,12 +11,12 @@ What to check in EDMC after the 1.2.0 release (and before any later one), on **W
 - The unit and smoke tests pass, but they cannot show what the game, the overlay and a real clipboard do.
 - The overview is in [CHANGELOG.md](../CHANGELOG.md) and [STATUS.md](STATUS.md). The longer wording for each check is in [TODO.md](TODO.md) (under "Verification in the game").
 
-## Where the testing stands (2026-10-28)
+## Where the testing stands (2026-10-29)
 
 | Platform | Automated tests | Checks in the game |
 |---|---|---|
-| **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is proved only by the in-game pass. | Not yet recorded for 1.2.0. Sections 1 to 6 below are open. |
-| **Linux** | 3,485 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-10-28 before the 1.2.0 release (3,471 on 2026-10-27 before the 1.1.0 release). | Not yet recorded for 1.2.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
+| **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is proved only by the in-game pass. | Not yet recorded for 1.3.0. Sections 1 to 7 below are open. |
+| **Linux** | 3,598 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-10-29 for the 1.3.0 release (3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
 
 - 1.0.0 was released on 2026-10-26 (tag `v1.0.0`). 1.1.0 was released on 2026-10-27 (tag `v1.1.0`). 1.2.0 was released on 2026-10-28 (tag `v1.2.0`). These passes are the checks to run on the released build, and a failure goes to a fix on a short `bugfix/1.2.1` branch.
 - Tick a box in the sections below only when you have seen it pass; nothing here has been ticked from the automated run.
@@ -121,6 +121,16 @@ Do these on **Windows** and again on **Linux**. The longer steps are in [TODO.md
 - [ ] **Where to Buy window and Copy To Acquire.** In the Sites window click a commodity row: the footer says what to do next. **Where to Buy** opens its own window with the site's system and a **Commodity** line naming the row; pick another row or site and it follows; **Find nearest** and **Find all** work as before; it remembers its size and position and closes with the Sites window. **Copy To Acquire** pastes the site and one line per commodity with the tons still to acquire (the ship and carrier already taken off).
 - [ ] **Biology overlay card and the layout editor.** Settings → Overlays → Exobiology → **Test Cards** shows the Biology card with a row for each candidate species and its value and share at the right; on a real body with several candidate species check the same, including `+N more` and a long species name. In Overlay Placement drag a tall box (the Biology card) flush to the top: it lands as a top placement with offset 0.
 - [ ] **Raven Colonial.** **PROJECTS** opens My Projects (reading needs no key). **Create Project on Raven** at a construction site you are docked at: check the project, the link, the primary project and the attached carrier on ravencolonial.com.
+
+## 7. Added in 1.3.0 (2026-10-29)
+
+The longer wording for each is in [TODO.md](TODO.md). Tick a box only when you have seen it pass.
+
+- [ ] **Discord sharing** (needs a webhook in a private test channel of your own): **Settings → WFMT → Discord**, one destination and then two; **Post to Discord** from the BGS Report and the Powerplay Sessions window, posting again to edit, the destination menu, **Copy for Discord**, and the plain **Copy Summary** and **Copy Progress**. The checklist is in [TODO.md](TODO.md) under "Screenshots, settings and general".
+- [ ] **Expedition Log:** the three **Start from my last** buttons (sale, Discovery Data sale, Exobiology Data sale).
+- [ ] **Expeditions are managed in the Expedition window:** the Exploration panel's Expedition section has no START, PAUSE or STOP, and the Expedition window's Plan and Log tabs start, pause and stop them.
+- [ ] **Colonization:** the Sites window's **Show** choice and the overlay follow each other; under **To haul** there is no green, and the rows in your hold are tinted (in each theme) in the window and drawn in the theme's blue on the overlay, with the ✓ kept.
+- [ ] **Exobiology:** the Bio status card is a wide strip with the distance line beside the species and reward; the Organic Scanning section starts folded; sampling a different genus abandons the unfinished one (back to 0 of 3).
 
 ## Linux specifics
 

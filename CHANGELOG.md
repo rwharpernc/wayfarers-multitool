@@ -3,6 +3,46 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## 1.3.0 (2026-10-29)
+
+### Added
+
+- **Sharing to Discord:** the **BGS Report** and the **Powerplay Sessions** window can share a report three ways. The plain **Copy Summary** and **Copy Progress** are unchanged and
+  stay the way to share anywhere else. **Copy for Discord** puts the report on the clipboard with Discord's formatting (bold names, bullets, links that do not unfurl), split
+  into messages under Discord's 2,000-character limit. **Post to Discord** sends it to a webhook you set up. Nothing is ever posted on its own: every post follows a button press.
+  - A new **Settings → WFMT → Discord** tab holds the switch (off by default) and your destinations. A Discord webhook belongs to one channel, so each commander saves a named list
+    of destinations: a webhook link (hidden as you type) and an optional thread id for each, with **Test**, **Remove**, **Add destination** and **Copy their destinations** (to reuse
+    another commander's list). With one destination **Post to Discord** posts straight to it, and with several a small menu asks which one.
+  - The links are saved for each commander, kept across updates and left out of **Back up my data**. They are never written to the log, and are removed from **Copy diagnostics** if
+    one ever appeared.
+  - Posting the same BGS tick or Powerplay session again to the same destination edits the earlier post instead of adding another. Names with `*`, `_` or `@` cannot format a message
+    or ping anyone.
+  - The new guide, [Sharing reports to Discord](docs/guide/discord.md), walks through making the webhook in Discord (with a private test channel), finding a thread id, how commanders
+    and channels fit together, and what every message means.
+- **Expedition Log:** **Start from my last** has three buttons. **sale** is the earlier of your last two sales (what the old button did), **Discovery Data sale** begins just after your
+  last exploration sale, and **Exobiology Data sale** just after your last exobiology sale.
+- **Colonization:** the shopping-list overlay follows the Sites window's **Show** choice (**All**, **To buy**, **To haul**). It is one setting, so choosing it in either place changes the
+  other, and the window now keeps your choice between sessions.
+- **Documentation:** the README is an overview with clear sections, and every feature guide has a How to section and worked examples. A note on reusing WFMT's ideas and code is in the
+  README and `docs/ATTRIBUTIONS.md`.
+
+### Changed
+
+- **Expeditions are managed in one place.** The Exploration panel's Expedition section no longer has **START**, **PAUSE** and **STOP**. Start, pause and stop expeditions in the Expedition
+  window (the **EXPEDITION** button), which now explains this in its Help. The section still shows what is running, with **COPY**, **Copy on arrival** and **EXPEDITION**.
+- **Bio status card:** it is twice as wide (a strip 108 characters wide) and about a quarter shorter, because the distance line now sits beside the species and reward when it fits. The
+  tracked-plant lines are no longer cut off.
+- **Organic Scanning:** the panel section starts folded, like the other sections.
+- **Colonization, To haul:** with the **To haul** filter on, the Sites window no longer tints every row green. The rows in your ship's hold, the ones you are hauling now, get a tint of
+  their own that fits the selected theme. The overlay drops the green too (the **✓** stays) and draws the rows in your hold in the theme's blue.
+
+### Fixed
+
+- **Exobiology:** sampling a different genus part-way through now abandons the unfinished one, as the game does, so going back to it starts at 0 of 3 instead of carrying the old samples
+  forward (a second Tussock sample used to read 2 of 3 after you had finished an Aleoida in between).
+- **Documentation and code comments:** a pass through the guides, the technical documents and the code comments corrected statements that no longer matched the product (the backup result
+  line, a step number in the Linux guide, references to documents and modules that were renamed, and more).
+
 ## 1.2.0 (2026-10-28)
 
 ### Added

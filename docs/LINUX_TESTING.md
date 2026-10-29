@@ -202,7 +202,7 @@ Use them for anything the passes did not reach.
 
 1. Install the plugin: the zip from the [releases page](https://github.com/rwharpernc/wayfarers-multitool/releases/latest), or `npm run deploy` (step 4 below).
    - Restart EDMC.
-   - The line under the mode buttons should read `Plugin: v1.2.0`.
+   - The line under the mode buttons should read `Plugin: v1.3.0`.
    - Work through sections 0 and 1 below first.
 2. To get the checklist and the test suite, fetch the repository and use `master`:
    - `git fetch --all --tags`, then `git switch master`, then `git pull --rebase`.
