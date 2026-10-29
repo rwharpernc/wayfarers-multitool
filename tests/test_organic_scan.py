@@ -340,6 +340,19 @@ class TrackerTests(unittest.TestCase):
         self.assertTrue(organism.complete)
         self.assertEqual(organism.value, data.SPECIES[f"{_BACTERIUM_GENUS}|{_AURASUS}"].value)
 
+    def test_switching_genus_abandons_the_unfinished_one(self) -> None:
+        other_genus, other_species = "$Codex_Ent_Stratum_Genus_Name;", "$Codex_Ent_Stratum_01_Name;"
+        tracker = scan.OrganicTracker()
+        tracker.record_scan(_BACTERIUM_GENUS, _AURASUS, "Bacterium Aurasus", "Log", 10.0, 20.0)
+        for kind in ("Log", "Sample", "Analyse"):
+            tracker.record_scan(other_genus, other_species, "Stratum", kind, 11.0, 21.0)
+        left = next(o for o in tracker.organisms if o.genus_key == _BACTERIUM_GENUS)
+        self.assertEqual((left.stage, left.positions), (0, []))
+        done = next(o for o in tracker.organisms if o.genus_key == other_genus)
+        self.assertTrue(done.complete)
+        tracker.record_scan(_BACTERIUM_GENUS, _AURASUS, "Bacterium Aurasus", "Log", 12.0, 22.0)
+        self.assertEqual(left.stage, 1)
+
     def test_next_sample_distance_ok_none_before_first_sample(self) -> None:
         tracker = scan.OrganicTracker()
         tracker.note_genus_detected(_BACTERIUM_GENUS)

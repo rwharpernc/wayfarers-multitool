@@ -574,7 +574,12 @@ class OrganicTracker:
         """A real ScanOrganic event - confirms the exact species (replacing
         any predicted candidate list with certainty) and advances the scan
         stage."""
+        for other in self._organisms.values():         # sampling a different genus abandons one left part-way: the game makes you start it over
+            if other.genus_key != genus_key and 0 < other.stage < REQUIRED_SAMPLES:
+                other.stage, other.positions, other.last_lat, other.last_lon = 0, [], None, None
         organism = self._organisms.setdefault(genus_key, OrganismProgress(genus_key=genus_key))
+        if scan_type == STAGE_ORDER[0] and 0 < organism.stage < REQUIRED_SAMPLES:     # a new first sample of this genus starts it over too
+            organism.stage, organism.positions, organism.last_lat, organism.last_lon = 0, [], None, None
         organism.species_key = species_key
         organism.species_name = species_name
         composite_key = f"{genus_key}|{species_key}"
