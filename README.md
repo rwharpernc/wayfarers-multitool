@@ -42,7 +42,7 @@ perfect, but it has the bells and whistles I always wanted, and I am sharing it 
 | **What it covers** | Powerplay, exploration and exobiology, mining, trading, missions, on-foot and cargo tracking, colonization, the BGS, sharing reports to Discord and more |
 | **Where it runs** | Inside [EDMC](https://github.com/EDCD/EDMarketConnector), on Windows and Linux |
 | **What you need to know** | Nothing about programming |
-| **Latest release** | **1.3.0**, published 2026-10-29 ([changelog](CHANGELOG.md)) |
+| **Latest release** | **1.3.1**, published 2026-10-29 ([changelog](CHANGELOG.md)) |
 | **Cost and privacy** | Free. Alerts, overlays and online lookups are off until you turn them on, and every online lookup is listed on [one page](docs/guide/internet-and-privacy.md) |
 
 ## Download and install

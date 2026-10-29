@@ -1,3 +1,3 @@
 """WFMT: Wayfarer's Multitool — EDMC plugin."""
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"

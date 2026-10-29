@@ -33,7 +33,7 @@ WFMT is a plugin for [EDMC](https://github.com/EDCD/EDMarketConnector) (Elite Da
 4. Check you now have `plugins/Wayfarers-Multitool/load.py`. If it is `plugins/Wayfarers-Multitool/Wayfarers-Multitool/load.py`, move the inner folder up one level.
 5. Restart EDMC. The **Wayfarer's Multitool (WFMT)** panel appears in the main window. Settings are under **File → Settings → WFMT**.
 
-The first line under the mode buttons says which version is running (**Plugin: v1.3.0**).
+The first line under the mode buttons says which version is running (**Plugin: v1.3.1**).
 
 **After installing:** every on-screen display, every online lookup and every write to another site starts off, so look through **File → Settings → WFMT** ([every tab and what it starts as](guide/getting-started.md#settings)). Consider turning on **Back up automatically** (General → Backup) so your data is copied outside the plugin folder.
 

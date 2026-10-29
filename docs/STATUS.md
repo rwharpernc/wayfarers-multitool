@@ -7,7 +7,9 @@ Read this first when picking the project up on a machine that has not seen the r
 
 ## Release
 
-- **1.3.0** is the version number in `plugin/__init__.py` and `package.json`. It was released on 2026-10-29 (tag `v1.3.0`) from the `release/1.3.0` branch, which was merged into `master` and deleted.
+- **1.3.1** is the version number in `plugin/__init__.py` and `package.json`. It was released on 2026-10-29 (tag `v1.3.1`) from the `bugfix/1.3.1` branch, which was merged into `master` and deleted.
+  - 1.3.1 makes the Region Sweep EDSM skip option work, starts the Colonization Show and List choices at the same place, corrects three Settings texts and brings the documentation in line with the code, with a checker that keeps it so.
+  - 1.3.0 was released on 2026-10-29 (tag `v1.3.0`) from the `release/1.3.0` branch, which was merged into `master` and deleted.
   - 1.3.0 adds sharing to Discord (Copy for Discord and Post to Discord for the BGS report and Powerplay progress, with a named list of webhook destinations for each commander and a dialog to customize how the posts look), the Expedition Log's three Start from my last buttons, a shopping-list overlay that follows the Sites window's Show choice, and a README and guides with how-tos and worked examples. It changes expeditions to be managed only in the Expedition window, makes the Bio status card wider and shorter, folds the Organic Scanning section by default, and drops the green under the To haul filter in favor of a tint for the rows in your hold. It fixes sampling a different genus, which now abandons the unfinished one. The full list is in [CHANGELOG.md](../CHANGELOG.md).
   - 1.2.0 was released on 2026-10-28 (tag `v1.2.0`) from the `release/1.2.0` branch, which was merged into `master` and deleted.
   - 1.2.0 adds the Colonization Archive, the offer to create a Raven Colonial project for a new site, a Where to Buy window of its own, Copy To Acquire, one row per candidate species on the Biology overlay card and a brighter footer message. It fixes Create Project on Raven (its dialog opening out of sight and its status message being overwritten) and the layout editor's snapping of large boxes to the top, bottom and sides.
@@ -15,15 +17,15 @@ Read this first when picking the project up on a machine that has not seen the r
   - The project was renamed Wayfarer's Multitool (WFMT) and its version history restarted at 1.0.0 on 2026-10-21.
   - Everything built up to 2026-10-26 is the first release, published as 1.0.0.
   - The checks to run first are in [TEST_PLAN.md](TEST_PLAN.md), and the open in-game checks are in [TODO.md](TODO.md).
-- The latest release is 1.3.0, published on 2026-10-29 (1.2.0 was published on 2026-10-28, 1.1.0 on 2026-10-27 and 1.0.0 on 2026-10-26), and the repository is public.
+- The latest release is 1.3.1, published on 2026-10-29 (1.3.0 was published the same day, 1.2.0 was published on 2026-10-28, 1.1.0 on 2026-10-27 and 1.0.0 on 2026-10-26), and the repository is public.
   - The in-app updater and the README's "latest release" link read GitHub's public releases API.
 
 ## Branches
 
 There is one long-lived branch, `master`.
 
-- A release is built on a branch named for it (`release/1.3.0` was the last), merged fast-forward into `master` and deleted after it is tagged.
-- For a fix to a released version, cut a short branch from `master` (for example `bugfix/1.3.1`), and merge it back.
+- A release is built on a branch named for it (`release/1.3.0` was the last; 1.3.1 was a fix on `bugfix/1.3.1`), merged fast-forward into `master` and deleted after it is tagged.
+- For a fix to a released version, cut a short branch from `master` (for example `bugfix/1.3.2`), and merge it back.
 
 ## Testing
 
@@ -51,7 +53,7 @@ There is one long-lived branch, `master`.
 
 ### Linux, next pass
 
-- Automated: 3,639 tests pass in the Docker container (12 skipped), run on 2026-10-29 for the 1.3.0 release (3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
+- Automated: 3,656 tests pass in the Docker container (12 skipped), run on 2026-10-29 for the 1.3.1 release (3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
 - Manual: 1.3.0 (and the released 1.2.0, 1.1.0 and 1.0.0) is still to be tested on CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC.
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Report the session type (Wayland or X11) with the results.

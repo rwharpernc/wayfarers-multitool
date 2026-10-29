@@ -3,12 +3,23 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
-## Unreleased
+## 1.3.1 (2026-10-29)
 
 ### Fixed
 
+- **Colonization:** the Sites window's **Show** and the shopping-list overlay card's **List** read the same setting but started at different choices (**All** and **To buy**), so they listed
+  different rows until you picked. Both now start at **To buy**.
+- **Settings text:** the Body info page now mentions the **Mapped value** row, and the EDSM ring reserve lookup says it asks once for each ring until EDMC restarts, not every time you drop into
+  one. The online-lookups list names Canonn alone for the Codex **Not found** tab, and Spansh alone for the Rare Goods Finder.
+
 - **Region Sweep:** the option **Skip systems already visited by anyone (EDSM)** was saved but did nothing. It now checks each candidate target with EDSM, after a jump or **Next >**, and steps
   past systems EDSM already knows (at most 20 in a row). If EDSM cannot be reached nothing is skipped. Each name is asked about once per session and only the system name is sent.
+
+### Changed
+
+- **Documentation:** every guide, specification and status page was checked against the code, about 2,000 claims, and the out-of-date ones were corrected (column and button names, defaults,
+  limits, sample output, what goes online, what a backup leaves out). Every page now opens the same way, with a title and a lead paragraph. A checker (`scripts/check_docs.py`) now runs before
+  every commit and in the test suite, so the documentation cannot drift from the code unnoticed.
 
 ## 1.3.0 (2026-10-29)
 
