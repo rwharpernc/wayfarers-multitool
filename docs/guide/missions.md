@@ -98,7 +98,7 @@ The numbers and names below are made up to show how the screens read. The wordin
 ## Using it
 
 Press **MSN** in the mode bar. At the top a line reads `Missions: 7/20` (how many missions you hold of the game's limit of 20; switch it off with *Show mission count* in Settings). Under it the panel shows one category at a time, with a line like `◀  Combat (3)  ▶`. Click the **◀** or **▶** arrow to
-page between categories; the number is how many missions are in that category. The pages, in order, are:
+page between categories; the number is how many missions are in that category (left off when the count line above is shown and every mission is in that one category, since it would repeat `Missions: N/20`). The pages, in order, are:
 
 **Massacre (Space) · Settlement Raids (Ground) · Combat · Trade & Mining · Passenger · Covert / On-Foot Ops · Other · Community Goals**
 
@@ -106,7 +106,7 @@ page between categories; the number is how many missions are in that category. T
   many kills are still needed across all your missions for the same faction.
   - There is one block per **issuing faction**. The top line is the faction's name (with `⚠ Illegal` when any of its stacked missions is illegal) and its kills as `done/required`. A `~` before the count means an estimate (see below).
   - The second line is a progress bar, the reward (`12.5M (4.0M)`: the total of the stacked missions, and in brackets the part that came from wing missions, which are shared), and `Δ` followed by a number: how many more kills the biggest stack needs than this one (for the biggest stack, the next biggest stack's kills minus its own, so it reads as a negative number such as `Δ-20`: it leads by 20; with only one stack it reads `Δ0`).
-  - A **Sum** line at the end totals the biggest stack with a bar and the total reward (switch it off with *Show totals row*).
+  - A **Sum** line at the end totals the biggest stack with a bar and the total reward (switch it off with *Show totals row*). It is left out when only one faction has a block, because it would repeat that block.
   - Under them, `Settlements:` lists the ground targets (switch it off with *Show target settlement*), and `⚠` notes warn when the missions name several target factions or several target systems, or that `~kills = estimate, not exact`.
   - With no such mission the page says so; if WFMT has no mission data yet it asks you to relog (`Relog (main menu and back) to sync missions.`).
 - Everything else shows **one card per mission**, soonest to expire first. A card has the mission's name (with `⚠ Illegal` or `🤝 Wing` badges), the issuing faction, `Mine via: ...` for a mining mission, its status (`Pending` or `✓ Complete`) and reward, a `Cargo: 120/200 collected, 80 delivered` line for cargo missions, `→ <system> / <station>` (where to go now: the hand-in place once the mission is done) and `Expires: 2d 4h` (`⚠` when under two hours remain). Click a card to open the Missions window on that mission.

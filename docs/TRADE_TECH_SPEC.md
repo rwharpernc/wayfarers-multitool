@@ -93,9 +93,9 @@ with Mining's PRICE button), `mining_price_finder_dialog` (the **Price finder** 
 - `trade_ledger.summary_blocks` (profit, running costs, tons, best sales; `summary_lines` is the
   plain-text twin).
 - The ship hold block: ship and pad size, then "Hold space" (cargo with its mission and stolen tons,
-  limpets and free tons, then `used/capacity (free)`), what the docked market would pay, and up to four
+  and limpets; left out when there is no such split, via `trade_hold.space_text`), then `used/capacity (free)`, what the docked market would pay, and up to four
   cargo lines.
-- The carrier block (`trade_carrier.cargo_blocks`): "Carrier cargo used" and "Carrier cargo free", the
+- The carrier block (`trade_carrier.cargo_blocks`): "Carrier cargo" (`used / capacity (free)`), the
   crew and pack space, "Carrier reserved for orders", then the running-the-carrier rows from
   `trade_carrier_ops.ops_blocks`. `cargo_lines` is the plain-text twin.
 
@@ -386,8 +386,9 @@ copied between machines. `trade_journal_scan.py` makes new journals take effect 
 **Ship hold.** (labeled "Ship hold" on the panel, to keep it apart from the carrier's "Carrier cargo ..."
 lines) `used/capacity (free)` from EDMC's `state["Cargo"]` and `["CargoCapacity"]`.
 
-- Above it, **Hold space** splits the used tons: cargo, limpets (`drones`, which the game counts as
-  cargo) and free.
+- Above it, **Hold space** splits the used tons into cargo and limpets (`drones`, which the game counts
+  as cargo). It is shown only when there are mission or stolen tons or limpets; the free tons are on the
+  Ship hold line.
 - The cargo figure also names the mission tons (inventory entries with a `MissionID`) and stolen
   tons (`Stolen`), which EDMC's merged `state["Cargo"]` cannot give, so they come from the `Cargo`
   event's `Inventory` or, at start-up, `Cargo.json` (`trade_hold.py`; field names checked against a real
@@ -618,7 +619,7 @@ unfiltered search returned fleet carrier markets years old.
   every three stations ("they can move") and excluded from the verdict.
 - `verdict(near, galaxy, side)` says whether the galaxy-wide best beats the best nearby: selling, by how
   many credits and what percentage more; buying, by how many cr/t cheaper, the saving on the tons
-  involved, and how many ly further.
+  involved, and how many ly further. When the best is already nearby it says only "Best overall is nearby."
 - `carrier_note` says when a carrier would pay more (selling) or charge less (buying) than the best
   station.
 

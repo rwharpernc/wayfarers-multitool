@@ -109,7 +109,7 @@ Just play. Press **P.P.** in the mode bar to open the page. Top to bottom it sho
 
 The CP lines list the estimated Control Points by activity, for example Acquisition, Reinforcement and Undermining. Delivery and unattributed merits add merits but no CP (see the table at the end of this page).
 
-Your game mode and credits are on the two lines under the mode buttons, and a line such as `Merits this session: +1,234 (+567 merits/hr)` follows them (the rate appears after about three minutes).
+Your game mode and credits are on the two lines under the mode buttons, and a line such as `Merits this session: +1,234 (+567 merits/hr)` follows them in every other mode (the rate appears after about three minutes). On this page it is left out, because the page's own `Session merits` line shows the same figure.
 
 Three buttons on the bottom row:
 

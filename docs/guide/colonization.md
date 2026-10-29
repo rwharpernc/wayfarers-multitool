@@ -104,21 +104,20 @@ See [The shopping list on the overlay](#the-shopping-list-on-the-overlay).
 | Line | What it says |
 |---|---|
 | Name, system and a bar | The site, and how far its build has come (the bar turns green when the build is complete) |
-| Progress, Delivered, Still needed | The build's percentage (`42% complete`), the tons handed over by everyone against the tons it needs (`1,200 of 8,000 t`), and what is left |
-| Covered | Of the commodities still needed, how many are **fully** covered, **partly** covered and **not yet** covered (`3 fully · 2 partly · 5 not yet (of 10 commodities)`), counting your ship, or your ship and carrier together if you have one. `Nothing left to deliver` when all is delivered |
+| Delivered, Still needed | The tons handed over by everyone against the tons it needs, with the build's percentage (`1,200 of 8,000 t (15%)`), and what is left |
+| Covered | Of the commodities still needed, how many are **fully** covered, **partly** covered and **not yet** covered (`3 fully · 2 partly · 5 not yet (of 10 commodities)`), counting your ship, or your ship and carrier together if you have one. Left out once nothing remains to deliver |
 | On hand | Tons of needed commodities in your ship now (read from `Cargo.json`) |
 | Carrier | (Only with a fleet carrier.) Tons of needed commodities you have moved onto it (`120 t moved onto your carrier`) |
 | Still to get | What is left to buy or mine after your ship (and carrier) |
-| Trips left | **Without a carrier:** the loads of your current ship it takes to finish (`4 loads of 400 t`; one trip buys and delivers). **With a carrier:** `N to buy · N to haul (400 t ship)`. `None` when nothing remains, and `Unknown (ship size not seen yet)` until EDMC has reported your ship's cargo capacity |
+| Trips left | **Without a carrier:** the loads of your current ship it takes to finish (`4 loads of 400 t`; one trip buys and delivers). **With a carrier:** `N to buy · N to haul (400 t ship)`. Left out once nothing remains to deliver. `Unknown (ship size not seen yet)` until EDMC has reported your ship's cargo capacity |
 | Biggest gaps (t) | The four commodities with the most still to get, with their tons. Left out when nothing is left to get |
-| Next | One sentence on what to do now: how many tons to get (and whether bought or moved onto your carrier), that your ship and carrier hold everything so you should deliver it, that everything is delivered and you should dock to finish the build, or that the build is complete |
+| Next | One sentence on what to do now: to buy or mine the rest (with a carrier, buy it or move it onto your carrier; the tons are on the Still to get line), that your ship and carrier hold everything so you should deliver it, that everything is delivered and you should dock to finish the build, or that the build is complete |
 | Others | `+N more active sites` when you have more than the one shown (the line is left out when you have none) |
 
 **Example (made-up numbers).** You are building an outpost with 8,000 t to deliver, 1,200 t of it handed over so far, and you have a fleet carrier. Your ship holds 400 t. The page might read:
 
 ```
-Progress        15% complete
-Delivered       1,200 of 8,000 t
+Delivered       1,200 of 8,000 t (15%)
 Covered         3 fully · 2 partly · 5 not yet (of 10 commodities)
 On hand         180 t
 Carrier         120 t moved onto your carrier

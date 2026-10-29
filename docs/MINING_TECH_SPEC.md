@@ -237,7 +237,7 @@ One `MiningRefined` event is one ton (the hold's `Cargo` count rises by one for 
   is no average yet. `mining_rate.minutes_to_fill` and `full_in_text` hold the arithmetic and the
   wording.
 - It returns nothing when the capacity is not known or nothing is being refined, `Hold is full` once the
-  room is gone, and nothing for a stowed Rhino.
+  room is gone (left off, via `hold_shown`, where the panel's own hold line is on), and nothing for a stowed Rhino.
 - **The station's price against the average.**
   - `mining_panel` passes the journal's `Market` event to `mining_market.on_market`, which reads
     `Market.json` through `trade_market.read_market_file` (waiting out a file that is still the previous

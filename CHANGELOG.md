@@ -9,6 +9,14 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 - **Powerplay panel:** the Session and Cycle lines no longer repeat each other. When this login has earned everything the cycle has (the first session of a cycle), the panel shows only the Cycle pair, marked
   **(all this session)**, and the Session pair comes back as soon as the two differ.
+- **Less repetition on the panels:** lines that said the same thing twice are gone or shortened.
+  - **Powerplay:** the Merits this session line under the mode buttons is left out while the P.P. page is showing, because the page has its own Session line.
+  - **Colony:** the Progress row is folded into Delivered (`5,000 of 6,000 t (83%)`), Next no longer repeats the Still to get figure, and a finished project drops the Covered and Trips rows.
+  - **Trade:** Hold space shows only the cargo split and leaves the free tons to Ship hold; the pages no longer open with a heading that repeats their name; the Market page loses its Looking to line; the nearby verdict is short; Carrier cargo is one line.
+  - **Mining:** the Refined line no longer repeats the Mine via hints, Hold is full is left out while the hold line shows, the Last rock line leaves off a core the Core asteroids line names, and Last DSS scan shows only when it differs from the known hotspots.
+  - **Exploration:** the Dashboard summary drops the scanned count that System bodies shows, System age drops the system name, the Expedition and Expedition Log title suffixes no longer repeat their lines, Notes and Region Sweep drop repeated counts, Copied status lines say Copied to clipboard, and Active scan appears once you sample.
+  - **Missions:** a single category drops its count from the tab title, and the Sum card appears only with two or more factions.
+  - **BGS, Field Ops:** the BGS heading, the Ship Builds prefix, one Screenshots hint and a repeated pillage status are gone.
 
 ## 1.3.1 (2026-10-29)
 

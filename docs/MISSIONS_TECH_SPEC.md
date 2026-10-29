@@ -126,7 +126,7 @@ against your active kill missions using the game's known stacking rules.
   estimate (it appears for any wing or on-foot mission).
 - **Δ (the remaining-kills column).** For a faction's stack, how many more kills it needs to reach the
   tallest stack. For the tallest stack, the gap down to the next-tallest.
-- **Sum row.** Total progress against the tallest stack (your effective kill target when stacking).
+- **Sum row.** Total progress against the tallest stack (your effective kill target when stacking). Shown only with two or more faction rows; with one it would repeat that card.
 - **Reward** is shown as the total, with the share you'd get from wing-shareable missions in brackets.
 - **Warnings** appear when the missions have several target factions or systems, and a standing note
   that wing and on-foot kills are often unreported until the mission completes.

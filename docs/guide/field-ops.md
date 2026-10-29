@@ -74,7 +74,7 @@ Converts Elite's screenshots to PNG automatically, with an optional crop to just
 - A status line. It reads `Waiting for a screenshot…` until one is taken, then the converted file's name (cut to 40 characters). **Click the status line to open the folder** the last screenshot was saved in.
 - The **clock icon** to its right turns the auto-capture timer on and off (see below). It is hidden when the timer cannot work on your system or when you turn the icon off in Settings.
 - **Click to expand** / **Click to collapse** shows or hides the thumbnails. They always start collapsed when EDMC starts.
-- Expanded, you see the newest screenshot as a thumbnail (and, when a crop was made, the cropped copy beside it), then **Recent - click to preview**: the eight screenshots before it, in rows of four. Click any thumbnail to open a larger preview.
+- Expanded, you see the newest screenshot as a thumbnail (and, when a crop was made, the cropped copy beside it), then **Recent - click to preview**: the eight screenshots before it, in rows of four. Click any thumbnail, including the newest, to open a larger preview.
 - The preview window is view-only. It scales the image to fit the window (never larger than the image itself), remembers its size and has an **Open Folder** button for the folder the file was saved in, a **Close** button and a help button.
 
 **What happens to each screenshot.**

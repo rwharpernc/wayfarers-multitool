@@ -77,7 +77,7 @@ Lines come and go with the settings listed at the end of this page. Three switch
 |---|---|
 | *Show the cargo bar* | The hold lines (**Hold** on the Space page; **SRV hold** and **Ship hold** on the Surface page) |
 | *Show session totals* | **Refined**, **Refining now**, **Run average**, **Hold full in** and **What the station pays** (Space page); **Refined**, the rates, **SRV hold full in**, **Transferred to ship** and **Raw materials** (Surface page) |
-| *Show prospector hints* | **Asteroids prospected**, **Materials seen**, **Last rock**, **Core asteroids found**, **Asteroids cracked** and **Limpets launched** (Space page); the **Last DSS scan** line (Surface page); the `Mine via` method hint beside each commodity |
+| *Show prospector hints* | **Asteroids prospected**, **Materials seen**, **Last rock**, **Core asteroids found**, **Asteroids cracked** and **Limpets launched** (Space page); the **Last DSS scan** line (Surface page); the `Mine via` method hint beside each commodity in **Materials seen** |
 
 The HUD overlay follows the same three switches, so turning a line off hides it in both places.
 
@@ -94,12 +94,12 @@ In your ship, from undocking. A run is one trip from `Undocked` to `Docked`: the
 - **Asteroids prospected**, with how many of each content grade (for example `Asteroids prospected: 14 (High x3, Medium x6, Low x5)`), and the **materials seen** in them. A rock prospected again with the same composition is counted once, and the page says how many repeats it ignored (`[2 duplicate(s) ignored]`).
   - Each material in **Materials seen** is listed on its own line with how many rocks held it, the lowest, average and highest percentage seen this run in square brackets, and `Mine via` with the method that usually suits it (core, laser surface or sub-surface deposit; laser surface when no other is known). The method hints are community-sourced.
 - **Last rock**: the latest rock's materials with their percentages and its grade, for example `Last rock: Painite 34%, Platinum 12% (High), target: Painite`.
-  - A **core asteroid** (the game names a core mineral in the prospector's result) adds `core: Painite`, and **Core asteroids found** counts them for the run.
+  - A **core asteroid** (the game names a core mineral in the prospector's result) is counted by **Core asteroids found** (`Core asteroids found: 3 (last: Painite)`), which names the latest core. The **Last rock** line adds `core: Painite` only when its core is not that latest one.
   - `target:` names each target commodity the rock holds at least its percentage of (Settings → WFMT → Mining; several can be set).
 - **Mission needs**: for each commodity your active mining missions still ask for, how many tons you already hold, for example `Mission needs: Painite 50 of 120 t held (2 missions)`. It is worked out the way the Missions window does it and shows even before you start mining. Up to three commodities get a line; more are summed up as `+2 more commodities`. A commodity asked for by several missions says how many (`(2 missions)`).
 - **Asteroids cracked** (core mining).
 - **Limpets launched** by type, with the count still on board. The count is exact once EDMC has told WFMT the cargo. Otherwise it is bought less launched, marked with ~. The HUD overlay's *Limpets remaining* line shows the same number.
-- **Refined**, by commodity (with the mining method that usually suits it, when prospector hints are on). Then:
+- **Refined**, by commodity. (The `Mine via` method hints are on **Materials seen**.) Then:
   - **Refining now** (for example `Refining now: 840 t/h`): the tons refined in the last minute, scaled to an hour, falling to 0 within a minute of a lull.
   - **Run average** (for example `Run average: 720 t/h over 41 min`): the tons refined this run over its mining time, shown once the run has a minute of it.
   - One refined unit in the journal is one ton.
@@ -108,7 +108,7 @@ In your ship, from undocking. A run is one trip from `Undocked` to `Docked`: the
 - **Hold full in** (for example `Hold full in about 14 min`): the room left in your hold over your **Run average**.
   - Before there is an average (the first minute), it uses *Refining now*.
   - It shows with the other refining lines when the ship's capacity is known and something is being refined.
-  - It says `Hold is full` once it is.
+  - It says `Hold is full` once it is, unless the **Hold** line (*Show cargo bar*) is on the page, which already shows the hold at capacity. The same goes for the SRV hold on the Surface page.
   - It is a guide: a laser works in bursts, and the rate moves with the rocks.
   - The HUD overlay and the live window carry it too.
 - **What the station pays**, when you are docked and have opened its commodities market (for example `Painite here: 521,400 cr/t, 8% above the galactic average (482,000)`).
@@ -143,7 +143,7 @@ In the Rhino SRV. A run runs from launching the Rhino to stowing it. The page ke
 - **Refined**, **Refining now** and the **Run average**. They are worded as on the Space page. *Refining now* shows only while the Rhino is out.
 - **SRV hold full in**: the same estimate for the Rhino's 72 t hold, only while it is out.
 - What was **Transferred to ship** and the **Raw materials** picked up.
-- The **Last DSS scan**: how many mining locations the scan found on which body (`Last DSS scan: 4 Planetary Mining Location(s) on <body>`).
+- The **Last DSS scan**: how many mining locations the scan found on which body (`Last DSS scan: 4 Planetary Mining Location(s) on <body>`). It shows only when that count differs from the number of **Known hotspots here**, which says the same thing otherwise.
 - **Known hotspots here (N)**: the ones you have saved on the body you are on, one per line with the material, rigs, signal number, position, the tons-left estimate in square brackets and your note.
 - The **coverage minimap** (if ticked in Settings): ground the Rhino has driven over, with your position, your saved hotspots and the mining locations you marked with **CTR** and **BRD**. In your ship it appears only close to the ground (under about 2 km).
 - **Nearest marked location**: the size of the mining location you marked nearest you, which way its center is and how much of its edge you have driven (see [Marking a mining location](#marking-a-mining-location)).

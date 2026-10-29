@@ -553,7 +553,7 @@ Use them for anything the passes did not reach.
       mode button.
 - [ ] Switch through every mode, including Exploration and Trade: the whole block under the mode buttons stays visible.
 - [ ] After earning a Powerplay merit, a **Merits this session: +N (+N merits/hr)** line appears under the credits line, on
-      every mode; the rate appears after a few minutes. It is absent before the first merit.
+      every mode except P.P., where the page's own lines show it; the rate appears after a few minutes. It is absent before the first merit.
 - [ ] Earn or spend some credits: the second line changes to "+N cr earned" or "-N cr lost", and an hourly rate
       appears after a few minutes.
 - [ ] Log out to the main menu and back in: the credits total carries on (same session).
@@ -585,8 +585,8 @@ Windows was checked as Trade was built. The boxes below are unticked so the list
   - After **Save session** the **Route** tab lists the stations from every part.
   - Also play a short stretch with EDMC closed, then start EDMC: that stretch is added the next time it sees you.
   - With two commanders, switching to the other and back leaves each one's tally as it was.
-- [ ] Session page: the sections read "This session", "In your ship" (Ship hold, and the cargo with an "In hold"
-      column; "Hold space" above it) and, if you have a carrier, "Carrier cargo used / free".
+- [ ] Session page: the sections read "In your ship" (Ship hold, and the cargo with an "In hold"
+      column; "Hold space" above it only with limpets, mission or stolen cargo) and, if you have a carrier, "Carrier cargo".
   - There is no unsold-stock list and no Clear stock button.
   - Buy cargo, then save the session: Trade History's **Stock & carrier** tab shows it under "Bought, not yet sold (journal estimate...)".
 - [ ] Two computers: copy the other computer's newer journal files into this one's journal folder while EDMC is running.
@@ -595,7 +595,7 @@ Windows was checked as Trade was built. The boxes below are unticked so the list
   - Press **Rebuild** on the Session page, type the date and time the session began (UTC), and check the totals against the other computer.
   - A carrier figure with a `~` in front means estimate: open Carrier Management and it goes away.
 - [ ] Carriers (only if you have one): open Carrier Management once.
-  - "Carrier cargo used" and "Carrier cargo free" appear (separate from the "Ship hold" line).
+  - "Carrier cargo" (used / capacity, with the free tons) appears (separate from the "Ship hold" line).
   - Transfer cargo to it: the figure follows.
   - Restart EDMC: it comes back without opening Carrier Management again (this reads the journal folder, so it also checks the Proton journal path).
 - [ ] Settings → Trade lists your commanders with a carrier choice each; choosing **None** hides the carrier.

@@ -147,7 +147,7 @@ Just under the mode buttons, above the page itself, WFMT shows these lines, on e
     - **Lifetime** tab: the game's own career totals, which the game writes at login only.
     - The activities are kept apart and never merged: **Trade** (the profit on market sales: the sale minus what the sold tons cost, which can be negative), **Exploration data** (what you sold), **Exobiology data** (what you sold, with the first-discovery bonus), **Mission rewards** (the credit reward only) and **Bounties and bonds** (vouchers cashed in). Days are UTC, as the journal writes them.
     - Limits: the journal does not say which commodity sold was mined, so Mining has no per-day income here (its lifetime profits are on the **Lifetime** tab); nothing is counted for credits spent. The first time a commander is seen, the ledger is rebuilt once from every journal, and after that it counts as you play without counting anything twice.
-- **Merits this session**: Powerplay merits earned since you logged in, for example `Merits this session: +1,234 (+567 merits/hr)`.
+- **Merits this session**: Powerplay merits earned since you logged in, for example `Merits this session: +1,234 (+567 merits/hr)`. It shows in every mode except Powerplay, whose page has its own session lines.
   - It appears after your first merit of the session, so it stays out of the way if you do not play Powerplay.
   - The rate is the merits divided by the time since you logged in, so it falls while you stop earning.
   - The Powerplay mode's **CP** figures are Control Points, a separate number.

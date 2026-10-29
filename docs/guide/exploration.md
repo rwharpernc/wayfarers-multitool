@@ -383,7 +383,7 @@ like `> Outotz LS-K d [3/12]`: the `>` marks the current cube and `[3/12]` is sy
 5. When every known system in the cube is done, the sweep moves to the next unfinished cube. If you judge a cube not worth the time, select it and press **Mark Empty** (the list shows `[empty]`).
 
 **Working through it:** the **Target**, **< Prev**, **Next >** and **Copy** buttons work as in Sequence, on the
-current cube. **Set Current** makes the selected cube the current one, and **Remove** deletes it from the queue.
+current cube. **Set Current** makes the selected cube the current one (the status line says `Set as current`), and **Remove** deletes it from the queue.
 
 **What "complete" means.** A cube is complete once *every system WFMT knows about in it* is done, or once you mark it **Empty**.
 
@@ -486,7 +486,7 @@ A quiet readout of what you're finding, in the **Dashboard** section of the Expl
 | Line | What it says |
 |---|---|
 | `Last scan: <body> - est. 1,234,567 cr` | The estimated payout for the last body you scanned (stars as well as planets), with the first-discovery multiplier when nobody had found it. `Last scan: (none yet)` until you scan |
-| `System age: <system> - <age>` | The age of the current system, from the star's `Age_MY` in the scan, written in million years (`4,200 My (~4.2 By)` for the oldest) |
+| `System age: <age>` | The age of the current system, from the star's `Age_MY` in the scan, written in million years (`4,200 My (~4.2 By)` for the oldest) |
 | `Region: Inner Orion Spur` | Which of the galaxy's 42 named regions you are in, worked out from your coordinates |
 | `System bodies: 6 scanned of 14 - all found` | How many of the system's bodies you have scanned out of the number the honk found. `all found` appears once the game reports that your FSS has found every body; before a honk it says `(honk to count them)` |
 | `Last data sale: exploration 1,234,567 cr, organic 350,000 cr` | What your last data sales actually paid, to set against the estimate. `Last data sale: (none yet)` until one is read |
@@ -633,8 +633,8 @@ Your own notes on a system or a body: "come back for the rings", "ELW with a moo
 for a commander's own words, so these are kept by WFMT, on your computer, **for the commander who wrote them** (another commander on
 the same install does not see them). Nothing is sent anywhere.
 
-The section says how many notes the system you are in has, and shows the newest, so a note you wrote on an earlier visit is in front of
-you when you arrive. With the section folded, the title says `- 2 here`.
+The section shows the newest note for the system you are in, so a note you wrote on an earlier visit is in front of
+you when you arrive. With the section folded, the title says how many the system has, such as `- 2 here`.
 
 - **Quick note:** type a line in the box and press **ADD** (or Enter). It is saved against the system you are in, and the body too
   when you are near one (the game's `Status.json` names it).
@@ -683,7 +683,7 @@ Whichever you use, the same buttons manage it afterwards, on either tab:
 1. Press **EXPEDITION**. On the **Plan** tab type `Colonia run` in the **Name** box and press **New**.
 2. Type `Sol` in **System** and press **Add stop**. Type `Colonia` and press **Add stop** again. (**Here** fills in the system you are in.)
 3. Press **Start**. The status line says it started and that it is logging in the Expedition Log.
-4. Play. Each time you arrive in Sol or Colonia the stop is ticked off, and every jump adds to the totals. The panel shows `1 of 2 stops` and the next stop.
+4. Play. Each time you arrive in Sol or Colonia the stop is ticked off, and every jump adds to the totals. The panel shows `1 of 2 stops` and the next stop; while the section is folded its title shows `- 1/2` instead.
 5. **Pause** for a break and **Resume** after it. When you are done, press **Stop**. The trip stays in the **Log** tab with what it found and earned.
 
 **Example 2: record a trip with no plan.** You are leaving the Bubble to explore and have no route yet.
@@ -855,7 +855,7 @@ visit; the log records what **happened** on a trip, whether or not you planned a
 
 - While an expedition is running the section shows the expedition's own lines (its name, stops, jumps, light-years and time, the next stop). Under them it shows what the Log adds: the systems, bodies and species, what you have earned and the unsold data (`paused` in front while it is held).
 - A Log run that was started with **Start** and has no planned expedition behind it is shown in the Log's own words: its name and how long, systems, jumps and light-years, bodies and species, earned and unsold.
-- The section's title says what is running even while it is folded.
+- The section's title says whether a run is going (`- running` or `- paused`) even while it is folded; the open section has the name and figures.
 - **Start** (in the Expedition window) begins a new expedition now, from the system you are in and in the ship you are flying, and stops the one that was running.
 - **Pause** becomes **Resume** while paused. **Stop** ends it.
 - The archive is the **Log** tab of the Expedition window (**EXPEDITION**, then the Log tab).
@@ -1043,7 +1043,7 @@ The Exobiology cards (bio status, predicted species, the sample radar and the sa
 
 The overlays draw over the game. The **Exploration Dashboard** is for the times you would rather read than have your screen cluttered.
 
-The **DASHBOARD** button in the Dashboard section of the Exploration panel (which also holds the [Exploration Value](#exploration-value) lines, and a one-line summary of the system beside the button) opens a window with everything WFMT knows about:
+The **DASHBOARD** button in the Dashboard section of the Exploration panel (which also holds the [Exploration Value](#exploration-value) lines, and a one-line summary of the system beside the button: its name, how many bodies are worth mapping and how many have life still to do) opens a window with everything WFMT knows about:
 
 - the system you are in,
 - the body under you,

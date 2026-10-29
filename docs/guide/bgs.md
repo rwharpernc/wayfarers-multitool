@@ -76,7 +76,7 @@ In one tick you complete two missions for Example Union (`+2/-0` and `+1/-0`), s
 
 ## The panel
 
-Press **BGS** in the mode bar to open the page. It has a heading, the system block, a small gray tick line and a **REPORT** button.
+Press **BGS** in the mode bar to open the page. It has the system block, a small gray tick line and a **REPORT** button.
 
 The system block shows **only the system you're in**:
 

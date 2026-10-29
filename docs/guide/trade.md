@@ -39,7 +39,7 @@ More: [Profit](#the-session-page) and [Worked example: profit after costs](#work
 
 1. In **Settings → WFMT → Trade**, set the carrier choice for your commander (**Auto** works if your journal has shown a carrier).
 2. In the game, open **Carrier Management** once so the game writes the carrier's space.
-3. Look at **Carrier cargo used**, **Carrier cargo free** and **Carrier reserved for orders** on the Session page. A `~` before the figure means an estimate: open Carrier Management again to make it exact.
+3. Look at **Carrier cargo** (used out of capacity, with the free tons) and **Carrier reserved for orders** on the Session page. A `~` before the figure means an estimate: open Carrier Management again to make it exact.
 
 More: [Your fleet carrier and squadron carrier](#your-fleet-carrier-and-squadron-carrier).
 
@@ -147,12 +147,12 @@ worked out from that net once you have traded for about three minutes.
 - **Worth at (station)**: what the station you're docked at would pay for the whole hold, once you have opened its commodity market,
 - an **In hold / Sells here** table: what each commodity aboard would sell for there. The four largest loads are listed, with `+N more` after.
 
-**Hold space**, just under the landing pad, splits the hold into cargo, limpets (they take hold space like any cargo) and free space, for example "312 t cargo (40 t mission, 12 t stolen), 16 t limpets, 40 t free". The mission and stolen figures come from the game's cargo list (`Cargo.json`) and appear only when there is some.
+**Hold space**, just under the landing pad, splits the hold into cargo and limpets (they take hold space like any cargo), for example "312 t cargo (40 t mission, 12 t stolen), 16 t limpets". The free tons are on the **Ship hold** line. The line appears only when there are mission or stolen tons or limpets to show. The mission and stolen figures come from the game's cargo list (`Cargo.json`).
 
 **Carrier cargo.** Your carrier's cargo storage, only shown if you have a carrier (see [below](#your-fleet-carrier-and-squadron-carrier)). Each carrier has its own heading, `Fleet carrier: NAME` or `Squadron carrier: NAME`. Until the game has reported its space, a note under the heading says `Open Carrier Management once to read its cargo space.`
 
-- It is shown as **Carrier cargo used**, **Carrier cargo free** and **Carrier reserved for orders**, so it is never mistaken for your ship hold. **Carrier reserved for orders** is left out when it is 0.
-- Under the free line, **Carrier crew services** and **Carrier ship / module packs** show what the rest of the carrier's space is spent on. A line is left out when it is 0.
+- It is shown as **Carrier cargo** (for example `12,400 / 25,000 t (12,600 free)`) and **Carrier reserved for orders**, so it is never mistaken for your ship hold. **Carrier reserved for orders** is left out when it is 0.
+- Under the cargo line, **Carrier crew services** and **Carrier ship / module packs** show what the rest of the carrier's space is spent on. A line is left out when it is 0.
 - Below those, when the journal has told WFMT, come the carrier's tritium, where it is, a planned jump, its balance and the trade orders you have set (the first six, with `+N more carrier orders` after).
 
 **No history here.** The Session page shows the present only. The game's lifetime totals (trading, mining, exobiology, fleet carrier)
@@ -427,9 +427,9 @@ A carrier being decommissioned is flagged.
 **Example.** You load 20,000 t of cargo onto your carrier over an evening.
 
 1. In **Settings → WFMT → Trade**, set your commander's choice to **Fleet** (or leave it on **Auto**).
-2. Dock at your carrier and do your transfers. The Session page's **Carrier cargo used** goes up with each one.
+2. Dock at your carrier and do your transfers. The Session page's **Carrier cargo** goes up with each one.
 3. If the figure shows a `~` or looks wrong after a big unload, open Carrier Management in the game. Within a couple
-   of seconds the page shows the exact **Carrier cargo used**, **Carrier cargo free** and **Carrier reserved for orders**.
+   of seconds the page shows the exact **Carrier cargo** and **Carrier reserved for orders**.
 
 ### How the number stays up to date
 
