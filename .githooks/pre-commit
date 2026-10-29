@@ -1,0 +1,10 @@
+#!/bin/sh
+# Refuses a commit while the documentation disagrees with the code (a screen label, Settings path, file name or code reference
+# that no longer exists, a broken link, a version mismatch). It reads text only and opens no windows. tests/test_docs_current.py runs
+# the same checks in the full suite. See docs/DEVELOPMENT.md, "Keeping the docs current".
+py=$(command -v python3 || command -v python || command -v py)
+[ -n "$py" ] || exit 0
+"$py" scripts/check_docs.py || {
+  echo "pre-commit: the docs are out of date with the code. Fix what is listed above (docs/DEVELOPMENT.md, Keeping the docs current)." >&2
+  exit 1
+}

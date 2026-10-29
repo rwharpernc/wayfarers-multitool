@@ -85,8 +85,9 @@ detects the OS and EDMC's plugins folder (see "Try your changes in EDMC" above).
    - The `.gitattributes` keeps everything LF; leaving `autocrlf` on can fight it.
    - Line endings are LF on both Windows and Linux. `.editorconfig` tells editors to write LF, and `tests/test_line_endings.py` fails if any text file in the working tree has CRLF.
    - If it does, fix the files with `sed -i 's/\r$//' FILE` (Git Bash or Linux), then run `git add -u` to refresh the index.
-3. Set your Git name and email for the repo (`git config user.name` / `user.email`), and turn on the commit-message check with `git config core.hooksPath .githooks`.
-   - The hook checks the message's form:
+3. Set your Git name and email for the repo (`git config user.name` / `user.email`), and turn on the commit checks with `git config core.hooksPath .githooks`.
+   - The `pre-commit` hook runs `scripts/check_docs.py` (see "Keeping the docs current" below) and refuses the commit while the docs disagree with the code.
+   - The `commit-msg` hook checks the message's form:
      - a subject of 72 characters or fewer, starting with a capital and with no trailing period
      - a blank line
      - body lines of 80 or fewer
@@ -139,7 +140,7 @@ detects the OS and EDMC's plugins folder (see "Try your changes in EDMC" above).
   - A page taller than the screen allows (`settings_scroll.height_cap`) gets a scrollbar and the OK button stays visible.
   - Nothing changes for a feature: keep calling `notebook.add(frame, text=...)`.
   - Plain `tk.Frame` rows on a Settings page are recolored to the page color (`ui._match_page_background`), so they don't show as gray bands.
-- Where a new feature's Settings go: `ui._build_settings_tabs` lays the tabs out (General, Powerplay, Missions, Exploration, Mining, Trade, BGS, Colonization, Field Ops, Overlays).
+- Where a new feature's Settings go: `ui._build_settings_tabs` lays the tabs out (General, Powerplay, Missions, Exploration, Mining, Trade, BGS, Colonization, Discord, Field Ops, Overlays; the tabs are shown in alphabetical order).
   - Add the feature to the right group there.
   - Anything it draws on the overlay goes in the Overlays group (a `build_overlay_settings`, or the whole tab if it is an overlay feature), with its place registered in `overlay_placement.SLOTS`.
   - A feature with a `build_settings` that isn't listed still gets a tab, under "Other".
@@ -187,7 +188,7 @@ python tests/import_smoke.py
 
 **Setup**
 
-- **Windows:** install Docker Desktop, start it, and wait until it says the engine is running.
+- **Windows:** install Docker Desktop. If its engine is not running, the script starts it (waiting up to three minutes) and quits it again afterward only when it started it and no other containers are running.
 - **Linux (Arch/CachyOS):** `sudo pacman -S --needed docker`, then `sudo systemctl enable --now docker.socket` and `sudo usermod -aG docker $USER`.
   - Log out and in again so the group applies (without it, run the script as root or use rootless Docker).
   - Nothing else is needed, because Python, Tk and the fonts live in the image.
@@ -215,7 +216,7 @@ The built-in overlay is tested in layers:
 
 **Scripts** in `scripts/`:
 
-- `build.mjs`, `package.mjs` and `env.mjs` build and install the plugin.
+- `build.mjs`, `package.mjs` and `env.mjs` build and install the plugin; `docker-test.mjs` runs the tests in the container (`npm run test:docker`); `check_docs.py` checks the docs against the code.
 - `gen_journal_blueprints.py` and `gen_organic_variants.py` regenerate data tables (source and license: see ATTRIBUTIONS.md and THIRD-PARTY-NOTICES.md).
 - `verify_organic_variants.py` checks the color predictions against your own journals.
 - `analyze_exo_observations.py` checks the species prediction against the finds WFMT recorded (`exo_observations.json`).
@@ -261,6 +262,36 @@ license. WFMT is GPL-3.0, so anything added must be compatible with that. If a l
 notice, add it to [../THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md). Credit for ideas goes in
 [ATTRIBUTIONS.md](ATTRIBUTIONS.md). Please don't copy code from a project that has no license, since
 that means you have no permission to.
+
+## Keeping the docs current
+
+Docs go stale when a screen, setting or file is renamed and the prose is not. `scripts/check_docs.py` catches that mechanically, so it does not depend on someone re-reading everything:
+
+- **links**: every relative link and `#anchor` in the Markdown resolves.
+- **labels**: a bold name used as a reference to the screen (after "click", "tick", "press", before "button" or "tab", or in a controls table) is a string in `plugin/`.
+- **paths**: every "Settings -> WFMT -> tab" path starts with a real Settings tab, read from the code.
+- **files**: every module (`.py`), data file (`.json`) and `wfmt_*` setting key the docs name exists.
+- **comments**: a backticked name in a code comment or docstring is defined somewhere in the code.
+- **headers**: every page opens with a `# Title` on its first line and a lead paragraph, and bold label lines are never stacked (the standard opening is below).
+- **version**: the version is the same in `plugin/__init__.py`, `package.json` and the newest changelog heading, and the example versions in `INSTALL.md`, `LINUX_TESTING.md`, `TECHNICAL.md` and the getting-started and reporting-problems guides are the current one.
+
+Every page opens the same way (the checker enforces the title, the lead and unstacked label lines; the rest is a convention):
+
+1. One `# Title` on the first line (a specification is "<Feature> technical specification").
+2. A lead paragraph straight after it: what the page is and who it is for.
+3. Optional notes as bullets, after the lead (`- **Author:** ...`, `- **Status:** ...`). Bold label lines are never stacked, because Markdown runs them into one paragraph.
+4. A "**On this page:**" list when the page is long.
+5. Then the `##` sections.
+
+Run it with `python scripts/check_docs.py` (add `--only labels` for one check). It reads text only and opens no windows. The pre-commit hook (`.githooks/pre-commit`) runs it before every commit, and `tests/test_docs_current.py` runs it in the suite.
+
+When it reports something, fix the doc or comment. Add a name to `docs/doc_terms.txt` only when it legitimately belongs to something else (the game, Discord, GitHub, EDMC, another project) or is a placeholder, and say why in a comment line.
+
+The checker cannot judge whether a sentence is still true, so when you change behavior:
+
+1. Search the docs for the old name and the feature's name (`grep -rn` over `README.md` and `docs/`), not just the guide you think owns it.
+2. Update the guide, [features.md](guide/features.md), [planned.md](guide/planned.md) (move a built item out), the matching tech spec, [TODO.md](TODO.md), the changelog and [MODULES.md](MODULES.md).
+3. Run `python scripts/check_docs.py` and `npm run test:docker`.
 
 ## Releasing
 

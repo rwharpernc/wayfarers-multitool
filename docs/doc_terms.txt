@@ -1,0 +1,45 @@
+# Names the guides may use that are not strings in the plugin code.
+# scripts/check_docs.py reports any UI label, Settings path, file name or code reference in the docs
+# that it cannot find in the code; add a line here only when the name legitimately belongs to something
+# other than WFMT (the game, Discord, GitHub, EDMC, another project) or is a placeholder. One per line,
+# case and punctuation ignored. Anything else it reports is a stale doc: fix the doc.
+
+# Arrows and notation (a [placeholder] in square brackets is dropped before the check)
+◀ ▶
+Only what sells
+Every days
+same knowledge as Trade
+hold time
+
+# Discord's own screens
+Create Channel
+gear icon
+Create Webhook
+Delete Webhook
+
+# GitHub's own screens
+Submit new issue
+
+# Files and names from the game, EDMC and other projects, or placeholders
+modifications/blueprints.json
+specials.json
+xxx_state.py
+status.json
+monitor.py
+colonization-costs2.json
+backups/pre-restore-<date>.zip
+colonisation_*.json   # old name, game spelling
+systems_1day.json.gz
+systems_1week.json.gz
+systems_neutron.json.gz.part
+
+# Journal, game and library names quoted in code comments
+Mission_Massacre_Conflict_CivilWar
+sub_category
+hud_category
+FlagsHasLatLong
+_classN
+legacy_clear
+_Localised
+cumulative_profit
+theme_use
