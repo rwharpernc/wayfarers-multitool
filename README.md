@@ -179,6 +179,22 @@ If you want to see how WFMT works, build it or change it, start here.
 WFMT stands on a lot of community work. [docs/ATTRIBUTIONS.md](docs/ATTRIBUTIONS.md) has the thanks and acknowledgements, chapter by chapter, and
 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) carries the licenses for any data included.
 
+### Reusing WFMT's ideas and code
+
+Every idea in WFMT came from somewhere. The Elite Dangerous community has built these tools in many forms over many years, and I took some
+inspiration, put my own twist on it, and what you see is the result. I would like to carry that spirit on. If you want to borrow my take on
+something, make it better, or make it more useful for what you are building, go ahead. It is all good. I would appreciate a nod, but I am not
+holding anyone back.
+
+- **Ideas** are yours to take: how a feature works, how it looks, how the data is read. There is nothing to ask for.
+- **Code** is released under the [GNU General Public License v3.0](LICENSE). You may copy, change, improve and share it, in a free tool or a paid one,
+  as long as what you pass on is also under GPL-3.0 with its source available, and the copyright and license notices stay with the code you reuse.
+  That is what the license asks for, and I am not adding anything to it.
+- **A nod** (a line in your README, your credits or a post) is welcome and never required beyond those notices.
+- **Included data** keeps the license of whoever compiled it, listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+
+The longer version is in [docs/ATTRIBUTIONS.md](docs/ATTRIBUTIONS.md#included-data-and-reusing-wfmt).
+
 Built and maintained by R.W. Harper: CMDR Tiber Caelvox. Copyright (c) 2026 R.W. Harper. Released under the
 [GNU General Public License v3.0](LICENSE).
 

@@ -330,9 +330,23 @@ category table) are trimmed copies or conversions of data other projects publish
 asks for a notice, it is in `THIRD-PARTY-NOTICES.md`, which names each source, its license and what was included. Where a project is only an
 idea or a reference, the list above says so, and no code was taken.
 
-WFMT is GPL-3.0, so anyone may reuse it on GPL-3.0 terms. That means passing on the license and keeping the original authors' notices in
-`THIRD-PARTY-NOTICES.md` with whatever you reuse. A nod to WFMT is welcome and not required. If you reuse an included table, it also helps to
-pass on where it came from, so credit reaches the people who compiled it.
+**Reusing WFMT's ideas and code.** Every idea in WFMT came from somewhere, and the same goes for WFMT. I had some inspiration, put my own twist on it, and what you
+see is the result. I would like to carry that spirit on. If you want to borrow my take on something, make it better, or make it more useful for what you are
+building, go ahead. It is all good. I would appreciate a nod, but I am not holding anyone back.
+
+How that fits the license:
+
+- **Ideas** are free to take, with nothing to ask for. This covers how a feature works, how it looks and how the data is read. Several of WFMT's own ideas are
+  the community's, as the entries above say.
+- **Code** is released under the GNU General Public License v3.0 (`LICENSE`), which is what makes the rest of this possible. You may copy, change, improve and
+  share it, including inside a tool you sell. The license asks that what you distribute is also under GPL-3.0 with its source available, and that the copyright
+  and license notices stay with the code you reuse. Those are the license's terms, not extra ones from me.
+- **A nod** to WFMT, such as a line in your README or credits, is welcome and is not required beyond those notices.
+- **Included data tables** keep the license of whoever compiled them. If you reuse one, keep its notice from `THIRD-PARTY-NOTICES.md` with it, and
+  pass on where it came from, so credit reaches the people who compiled it.
+- **Not an official Frontier product.** WFMT is a fan-made tool, and so is anything built from it.
+
+This note is a plain-language summary. The license text in `LICENSE` is what applies.
 
 ## The ground WFMT stands on: EDMC, services and data
 
