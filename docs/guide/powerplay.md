@@ -70,6 +70,12 @@ Resets change the session only. Cycle totals come from your journal and are not 
    `[Nervi](link) - 120 merits (~48 CP) - Exploited`.
 3. To change the layout, edit the **Clipboard** format under **Settings → WFMT → Powerplay**.
 
+**Share to Discord.** Above the tabs in the same window are **Copy for Discord** and **Post to Discord**.
+
+1. **Copy for Discord** puts this session's progress on the clipboard with Discord's formatting (each system links to Inara; the estimated CP is marked `~`), followed by the cycle's total line. Paste it into Discord yourself.
+2. **Post to Discord** sends the same text to the webhook you saved on **Settings → WFMT → Discord**. Press it again later in the same session and the earlier post is edited; a new login is a new post.
+3. The editable clipboard format above applies to **Copy Progress** only. Set up Discord, with examples, in [Sharing reports to Discord](discord.md).
+
 ### Find a rare good to haul
 
 1. Press **RARES**, then set **Show nearest** (type a number and press Enter or **Apply**).

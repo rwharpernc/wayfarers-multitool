@@ -39,6 +39,7 @@ class BackupTests(unittest.TestCase):
         write(self.plugin, "expeditions.json", '{"a": 1}')
         write(self.plugin, "system_history.json", '{"b": 2}')
         write(self.plugin, "rcc_keys.json", '{"key": "secret"}')
+        write(self.plugin, "discord_webhooks.json", '{"url": "https://discord.com/api/webhooks/1/secret"}')
         write(self.plugin, "codex_catalog.json", "{}")
         write(self.plugin, "load.py", "code")                                   # not a data file
         write(self.plugin, "mining_sessions/run1.json", '{"run": 1}')
@@ -58,7 +59,7 @@ class BackupTests(unittest.TestCase):
     def test_keys_caches_and_code_are_left_out(self):
         with ZipFile(self.backup().path) as archive:
             names = set(archive.namelist())
-        for left_out in ("rcc_keys.json", "codex_catalog.json", "load.py"):
+        for left_out in ("rcc_keys.json", "discord_webhooks.json", "codex_catalog.json", "load.py"):
             self.assertNotIn(left_out, names)
 
     def test_the_local_star_index_is_left_out_of_the_backup(self):

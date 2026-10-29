@@ -36,7 +36,7 @@ from theme import theme
 from ttkHyperlinkLabel import HyperlinkLabel
 
 from . import (
-    __version__, autohonk, bgs_panel, boxel_survey, poi_reference_panel, codex_completionist_panel, colonization_panel, discovery,
+    __version__, autohonk, bgs_panel, boxel_survey, discord_settings, poi_reference_panel, codex_completionist_panel, colonization_panel, discovery,
     exploration_value, flight_alerts, interdiction, inventory_panel, landing, materials_panel, mining_panel, missions, missions_overlay,
     notable, notes_panel, expedition_panel, expedition_log_panel, expedition_log_overlay, explore_dashboard, route_planner_panel, landing_finder_panel, surface_compass, organic_scan_panel, exobiology_overlay, overlay, overlay_appearance, overlay_placement, overlay_visibility, shortcuts, catchup_status, panelkit, powerplay, route_overlay, targets_overlay, body_info_overlay, screenshots, ship_builds_panel,
     credits_ledger, game_mode, session_credits, session_merits, settings_scroll, system_names, trade_panel, trade_watch_panel,
@@ -67,6 +67,7 @@ FEATURES = (
     mining_panel,
     trade_panel, trade_watch_panel,
     bgs_panel,
+    discord_settings,
     interdiction, flight_alerts, route_overlay, targets_overlay, body_info_overlay, exobiology_overlay, expedition_log_overlay, missions_overlay, landing,
 )
 
@@ -735,7 +736,7 @@ def _build_settings_tabs(tabs: nb.Notebook, page_bg: str) -> None:
         *settings_of(boxel_survey),
         *settings_of(autohonk),
     ], page_bg)
-    for feature in (mining_panel, trade_panel, bgs_panel, colonization_panel):
+    for feature in (mining_panel, trade_panel, bgs_panel, colonization_panel, discord_settings):
         for build in settings_of(feature):
             settings_scroll.scrolled_page(tabs, build, page_bg)
     _settings_group(tabs, "Field Ops", settings_of(screenshots, inventory_panel, ship_builds_panel), page_bg)

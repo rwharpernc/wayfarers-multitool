@@ -169,6 +169,7 @@ class OverlayProfileTests(unittest.TestCase):
 # Settings that mention "enabled" or "overlay" but are deliberately shared, with the reason. A new such setting fails the
 # test below until it is either swapped per commander (overlay_profile._FIXED) or listed here.
 SHARED_BY_DESIGN = {
+    "wfmt_discord_enabled": "the master switch for posting reports to Discord: a choice about this installation (a webhook is saved for each commander, in discord_webhooks.json)",
     "wfmt_overlay_host": "the overlay's connection: a machine fact",
     "wfmt_overlay_port": "the overlay's connection: a machine fact",
     "wfmt_overlay_backend": "which overlay program draws: a machine fact",

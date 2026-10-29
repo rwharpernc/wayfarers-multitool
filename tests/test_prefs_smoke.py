@@ -25,10 +25,10 @@ class PrefsSmokeTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("SETTINGS BUILT OK", result.stdout)
         self.assertIn("Window", result.stdout)  # the window-behavior tab (auto height fit)
-        # Grouped layout: ten top-level tabs, and the merged Exploration pages are all there.
-        self.assertIn("SETTINGS BUILT OK: 10 top-level tabs", result.stdout)
+        # Grouped layout: eleven top-level tabs, and the merged Exploration pages are all there.
+        self.assertIn("SETTINGS BUILT OK: 11 top-level tabs", result.stdout)
         # Every page is wrapped in a scroller capped in height, so a long page can't push OK off the screen.
-        self.assertIn("PAGES OVER HEIGHT CAP: 0 of 42", result.stdout)
+        self.assertIn("PAGES OVER HEIGHT CAP: 0 of 43", result.stdout)
         for leaf in ("Exploration > POI Reference", "Exploration > Auto-Honk", "Field Ops > Inventory", "Exploration > Expedition",
                      "Exploration > Nearest place to land", "General > Online lookups"):
             self.assertIn(leaf, result.stdout)

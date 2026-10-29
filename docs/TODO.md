@@ -722,6 +722,17 @@ The items below are implemented and covered by unit tests, but have not all been
 
 ### Screenshots, settings and general
 
+- [ ] **Discord sharing (needs a real webhook in a private test channel of your own; Claude never posts to Discord).** Follow [Sharing reports to Discord](guide/discord.md) from a fresh webhook.
+  - **Settings → WFMT → Discord:** tick **Allow Post to Discord**, paste the link, add a nickname, press **Test webhook** (it says `Works: <name>.` and posts nothing), close Settings.
+  - **BGS Report → Discord → Post to Discord:** the post appears in the channel with bold system names and bullets, and the window says `Posted to <nickname>.` Post again: the same message is edited (`Updated your earlier post in ...`).
+  - **Powerplay Sessions → Post to Discord:** the progress post appears with Inara links and the cycle line. Post again in the same session: edited. Log in again (a new session): a new post.
+  - **Copy for Discord** (both windows) puts formatted text on the clipboard; paste it into the channel and check it reads the same. A long report copies as several messages with a blank line between.
+  - **Thread:** save a Thread ID and post: it lands in the thread. A wrong ID says so.
+  - **Failures:** a bad link says `That is not a Discord webhook link`; delete the webhook in Discord and post: `Discord did not accept that webhook link` or `could not find`; turn off the network: `Could not reach Discord`.
+  - **Names:** a faction or system with `*`, `_` or `@everyone` in its name shows as written and pings nobody.
+  - **Privacy:** the link does not appear in the EDMC log, **Copy diagnostics** or a **Back up my data** zip; each commander has their own saved link.
+  - **Plain copy:** **Copy Summary** (BGS) and **Copy Progress** (Powerplay) still paste plain text.
+
 - [ ] **Screenshot preview window.** Take a screenshot with a preview shown, from a very wide source (a triple-screen or ultrawide capture) and a tall one.
   - The window stays on the screen and the picture is whole.
   - **Open Folder** opens the folder.
@@ -807,7 +818,7 @@ Phase 4, ready flags (optional, easiest to drop): **Mark loaded** and **Clear** 
 
 Tests (Docker only): parsing of `commanders`, `ready` and the history (missing, empty, oversized, malformed); the claim split including case differences in names; assign, unassign, link and ready with a fake opener, including the no-key path sending nothing; a window smoke test that the new column and panel stay inside their width caps.
 
-Order: Phase 0 and Phase 1 are one piece of work and safe to release alone. Phases 2 and 3 follow, one commit per phase.
+Order: Phase 0 and Phase 1 are one piece of work and safe to release alone. They are also the first step of stage 2 of the Discord sharing plan (see [DISCORD_SHARING_RESEARCH.md](DISCORD_SHARING_RESEARCH.md), section 10): the **who is hauling what** post reads the data Phase 1 adds, so Phases 0 and 1 are now wanted before the Discord colonization posts. Phases 2 and 3 follow, one commit per phase.
 
 Open questions: whether the overlay dimming is part of Phase 1; whether Phase 4 is in scope; whether shared fleet carriers count toward assignments (SrvSurvey handles the carrier separately through its own supply call).
 

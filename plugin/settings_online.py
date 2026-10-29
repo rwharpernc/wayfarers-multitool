@@ -48,6 +48,7 @@ BUTTON_ONLY: Tuple[Tuple[str, str], ...] = (
     ("Route Planner (Generate route, also opened by the Expedition window's Neutron route button, and the star lookups for the neutron stops ahead that follow), and the Expedition window's Road to Riches and Exomastery", "Spansh"),
     ("Local star index: the Download and build and Update buttons below (nothing is downloaded unless you press one; the N.S. button asks nothing once the index is installed)", "Spansh's download server"),
     ("Route Planner, only with *Mark white dwarfs the route passes* ticked: the names of the route's systems, after the route is plotted", "EDSM"),
+    ("Post to Discord (BGS report, Powerplay progress; you save a webhook link for each commander on the Discord tab, and nothing is posted until you press the button)", "Discord, to your own webhook"),
 )
 
 

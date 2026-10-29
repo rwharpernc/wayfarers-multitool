@@ -91,6 +91,14 @@ bgs_window.show(root, views, F.SYSTEM, ["Sol", F.SYSTEM[::-1]], [], bgs_window.T
 bwin = bgs_window._window
 F.pump(root)
 F.check_views(root, bwin._toplevel, "BGS Report", F.tab_views(bwin._tabs), problems, notes)
+# The Discord menu: Copy for Discord puts the tick's report on the clipboard, and Post to Discord refuses until a webhook is saved (nothing is sent).
+bwin._on_copy_discord()
+copied = root.clipboard_get()
+if not copied.startswith("**WFMT BGS report**") or "Copied for Discord" not in bwin._shell._status.cget("text"):
+    problems.append(f"BGS Report: Copy for Discord did not copy the report ({copied[:60]!r}, status {bwin._shell._status.cget('text')!r})")
+bwin._on_post_discord()
+if "Discord tab" not in bwin._shell._status.cget("text"):
+    problems.append(f"BGS Report: Post to Discord without a webhook said {bwin._shell._status.cget('text')!r}")
 bwin.close()
 
 # --- Powerplay Sessions ----------------------------------------------------------------------------------------------------------------
@@ -122,6 +130,16 @@ pviews = []
 for name, select in F.tab_views(pwin._tabs):
     pviews.append((name, lambda select=select: (select(), F.pump(root))))
 F.check_views(root, pwin._toplevel, "Powerplay Sessions", pviews, problems, notes)
+pwin._on_copy_discord()
+copied = root.clipboard_get()
+if not copied.startswith("**WFMT Powerplay progress**") or "Copied for Discord" not in pwin._shell._status.cget("text"):
+    problems.append(f"Powerplay Sessions: Copy for Discord did not copy the progress ({copied[:60]!r}, status {pwin._shell._status.cget('text')!r})")
+pwin._on_post_discord()
+if "Discord tab" not in pwin._shell._status.cget("text"):
+    problems.append(f"Powerplay Sessions: Post to Discord without a webhook said {pwin._shell._status.cget('text')!r}")
+pwin._copy_progress()
+if "inara.cz" not in root.clipboard_get():
+    problems.append("Powerplay Sessions: the plain Copy Progress no longer copies the Inara lines")
 powerplay_window.close()
 
 root.destroy()

@@ -12,7 +12,7 @@ start-up, before any feature reads a file) moves it into place, keeping the file
 `backups/pre-restore-<date>.zip`. Automatic backups (`run_auto_backup`) go to a folder chosen in Settings and are named
 `WFMT-data-auto-...`, so only they are pruned (`AUTO_KEEP`); a manual backup is never deleted.
 
-Left out on purpose (`LEFT_OUT`): `rcc_keys.json`, because it holds each commander's Raven Colonial key and an archive is
+Left out on purpose (`LEFT_OUT`): `rcc_keys.json` and `discord_webhooks.json`, because they hold each commander's Raven Colonial key and Discord webhook link and an archive is
 meant to be copied around and kept in cloud folders, and `codex_catalog.json`, a cache WFMT downloads again by itself.
 The `star_index` folder (`LEFT_OUT_DIRS`) is left out too: it holds the optional local star index, about 110 MB built from a public download, which Settings can make again.
 The zip also holds `backup-info.json` (WFMT version, when it was made, the files and their sizes; no commander name).
@@ -51,6 +51,7 @@ CFG_AUTO_DAYS = "wfmt_auto_backup_days"
 DEFAULT_AUTO_DAYS = 7
 LEFT_OUT = {
     "rcc_keys.json": "holds Raven Colonial keys",
+    "discord_webhooks.json": "holds Discord webhook links",
     "codex_catalog.json": "a cache WFMT downloads again",
 }
 LEFT_OUT_DIRS = {

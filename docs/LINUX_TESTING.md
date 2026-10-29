@@ -389,6 +389,7 @@ Use them for anything the passes did not reach.
   - Export CSV writes a file.
   - The overlay card shows the running totals.
 - [ ] Body info as symbols and formulas, the Biology card's ranges and percentages, and Settings → Overlays → Appearance → Panel opacity (a lower value makes every card's background fainter, the text stays solid).
+- [ ] Discord sharing: **Copy for Discord** in the BGS Report (**Discord** menu) and the Powerplay Sessions window puts formatted text on the clipboard (the clipboard works under your Wayland and Flatpak setup); **Settings → WFMT → Discord → Test webhook** and **Post to Discord** with a webhook in a private channel work from a Flatpak EDMC (outbound HTTPS to `discord.com`).
 - [ ] Expedition Log's **Start from my last** buttons (**sale**, **Discovery Data sale**, **Exobiology Data sale**: just after that sale, filled in from your journals, then counting live).
 - [ ] Layout editor (Settings → Overlays → Overlay Placement):
   - The picture of the screen shows with a box per display.

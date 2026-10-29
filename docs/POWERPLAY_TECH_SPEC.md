@@ -19,7 +19,7 @@ are estimated, how sessions work, and how the Rare Goods Finder fits in. For how
 
 - Show the merits (and estimated Control Points) you earn for your pledged Power, live, per session and
   per system.
-- Keep a history of sessions and make one easy to copy into Discord or a forum post.
+- Keep a history of sessions and make one easy to copy into Discord or a forum post. Built: plain **Copy Progress** (`powerplay_clipboard.py`, which also builds the per-system rows), and **Copy for Discord** and **Post to Discord** (`powerplay_discord.py`, `discord_share.py`; see [DISCORD_SHARING_RESEARCH.md](DISCORD_SHARING_RESEARCH.md)).
 - Track each commander's activity **per system, per numbered Powerplay cycle and per day**, with each system's
   standing and how it moved, rebuilt from the journals as far back as needed (section 11).
 - Credit income and the game mode (Open / Solo / Private Group) are **not** part of Powerplay. They are

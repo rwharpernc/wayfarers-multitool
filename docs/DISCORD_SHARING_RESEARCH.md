@@ -2,7 +2,7 @@
 
 **Status:** research and plan, written 2026-10-29. **Decisions (2026-10-29):** Discord webhooks are in scope, because posting by webhook is
 now an expected feature for Discord users, and **plain copy and paste stays in scope for everyone else**, so commanders who use other chat
-programs, forums or notes are not left out. Nothing described here is built yet. This page records what other tools do, what Discord allows,
+programs, forums or notes are not left out. **Stage 1 is built** (the shared formatter, webhook client, per-commander store and Settings tab, and the BGS report and Powerplay progress); stages 2 and 3 are not. The sections below were written before the build, so where they differ the code and [the guide](guide/discord.md) are right. This page records what other tools do, what Discord allows,
 what WFMT already has, the options considered and the plan.
 
 **Decisions this changes.** [BGS_TECH_SPEC.md](BGS_TECH_SPEC.md) listed a Discord webhook as a non-goal; that note now points here. An earlier
@@ -131,11 +131,12 @@ Build the shared parts once, then add one report at a time. Each phase is tested
    Discord settings tab with the saved webhook (never logged, never in diagnostics), the internet page entry and the rewritten spec note.
 2. **BGS report and Powerplay progress.** Both already have copy buttons and data, so they prove the core: **Copy for Discord** and **Post to
    Discord** beside the existing buttons, and updating the earlier post for the same tick.
-3. **Exploration and exobiology sales, and expedition announcements.** From the Expedition Log and the Expedition window: a run's totals,
-   and announcements the commander chooses to send (started, stop reached, finished).
+3. **Exploration and exobiology sales, expedition announcements, and colonization and team building.** From the Expedition Log and the
+   Expedition window: a run's totals, and announcements the commander chooses to send (started, stop reached, finished). From the
+   Colonization Sites window: shopping-list, progress, call-for-helpers and completion posts (section 10, whose scope is still to be chosen).
 4. **Carrier movement.** Departure requests, cancellations and arrivals, with the departure time as a Discord timestamp.
 
-## 9. Open questions
+## 9. Open questions (stage 1 and the earlier stages)
 
 1. Should the webhook be saved for each commander or once for the installation? Suggested: for each commander, matching the rest of WFMT,
    with a way to copy it to another commander.
@@ -147,6 +148,58 @@ Build the shared parts once, then add one report at a time. Each phase is tested
 6. Should each report have two buttons (**Copy** and **Copy for Discord**, with **Post to Discord** beside them), or one **Copy** with a
    **Plain / Discord** choice that WFMT remembers? Suggested: two buttons, because the choice is visible and a wrong format is never pasted
    by accident.
+
+## 10. Colonization and team building (added to stage 2, 2026-10-29)
+
+**Status: scope chosen (2026-10-29).** The request was "some support for colonization and team building", without a settled idea of what that is. The first cut of
+stage 2 is **A (shopping list), B (progress update), C (call for helpers) and D (completion post)**, and **E (who is hauling what)** as the team-building post.
+**E depends on co-op building, which WFMT does not have yet**, so the co-op work comes first (see "Order of work" below).
+
+**What exists to build on**
+- The Colonization Sites window (`plugin/colonization_window.py`) already has **Copy To Acquire** (`_on_copy_acquire`: each commodity with the tons still to
+  get, after the ship's cargo and the carrier's tally, biggest first) and the full shopping list copy. Both are plain text for the clipboard.
+- A site (`colonization.Site`) holds its name, system, progress, remaining tons, whether it is complete or failed, when it was first seen and when it
+  finished (so a build time), and the commodity rows (`colonization_view.py`, `view.acquire_lines`, `colonization.shopping_list`).
+- Raven Colonial links already exist: `rcc_client.build_page_url(build_id)` and `system_page_url(system)` open the project or the system in a browser. Someone
+  who gets the link can see the project and join it on Raven.
+- **Co-op building in WFMT is not built.** [TODO.md](TODO.md) ("Multi-commander projects: plan") lists claim, release, join and ready as future phases. Two commanders
+  who each run WFMT with their own Raven key are already credited on the same Raven project; what is missing is seeing and sharing who is doing what.
+
+**Candidate posts, each built from the selected site** (all with **Copy**, **Copy for Discord** and **Post to Discord**, all manual):
+
+| Candidate | What it says | Builds on | Needs |
+|---|---|---|---|
+| **A. Shopping list** | The site and system, then what is left to get, in tons, biggest first, and the trips for the commander's ship | **Copy To Acquire** and `view.acquire_lines` | Nothing new. The smallest piece |
+| **B. Progress update** | The site, percent done, tons still needed, the biggest gaps, trips left, and a Raven link. Posted again later it edits the same message, so the channel keeps one live status post for the site | `Site.progress`, `remaining_total`, `view.commodity_rows`, the edit-earlier-post behavior already built | Nothing new |
+| **C. Call for helpers (the team-building post)** | "Building *Station* in *System*: help wanted." The top commodities with tons, where to deliver (the system and the construction site), the Raven project link so a helper can join, and an optional line of the commander's own to say who to ask | A and B, and `rcc_client.build_page_url` | A **preview dialog** (as for expedition announcements) so the commander edits the wording and chooses whether their commander name and carrier name are included |
+| **D. Completion post** | "*Station* in *System* is complete", with how long it took and the tons delivered (from the history) | `Site.completed_at`, `first_seen`, the delivery record in `colonization_ledger` | Nothing new |
+| **E. Who is hauling what** | Which teammate has claimed which commodity | Raven's `commanders` data | **Not possible yet.** It needs the co-op phases in TODO.md. Listed so the Discord layer is ready to carry it when they exist |
+
+**Where the buttons go:** beside **Copy To Acquire** in the Colonization Sites window, in a **Share** menu (the header bar there is also full at narrow
+widths, as the Powerplay window showed), with **Call for helpers** opening its preview dialog.
+
+**Privacy.** These posts say where a colony is being built and may name the carrier. All are manual. The call for helpers is the one most likely to be
+read by strangers, so its preview shows exactly what will be sent, and the commander name and carrier name are off unless ticked.
+
+**Order of work (stage 2)**
+1. **Co-op reading first.** Phase 0 (check Raven's `commanders`, `ready` and delivery-history shapes against a live project with two or more linked commanders; this needs the
+   commander's own Raven key and such a project, so it is the commander's test) and Phase 1 (read and display: a **Claimed** column in the Colonization Sites window, a
+   split of each commodity into mine, taken by others and unclaimed, and who delivered what) from [TODO.md](TODO.md), "Multi-commander projects: plan". Read-only, one worker
+   thread, nothing about other commanders saved to disk.
+2. **Posts A to D** with the **Share** menu and the preview dialog (shared with expedition announcements).
+3. **Post E** (who is hauling what) once Phase 1 gives the data: each teammate and the commodities they have taken, with the unclaimed ones listed so helpers can see what is open. It
+   names other commanders, so its preview shows the names and they can be removed before it is sent.
+4. Raven writes (claim, release, join, leave: Phases 2 and 3 of that plan) stay separate and later; Discord only reads and shares.
+
+**Questions settled:** the first cut is A to D plus E (above), and the first question below is answered.
+
+**Questions that remain**
+1. ~~Which of A to D belong in the first cut of stage 2?~~ All four. (A and B are almost free; C needs the preview dialog that expedition announcements need anyway, so
+   building C with the expedition announcements shares that dialog.)
+2. Should the call for helpers include the Raven project link? It only exists when the commander has made a Raven project for the site. Without one, the post
+   can still list the needs and the system.
+3. Should the progress post (B) be one message that is edited as the build advances, or a new post each time? Edit-in-place keeps the channel quiet.
+4. What does "team building" mean to you beyond a call for helpers: recruiting, coordinating who hauls what (needs the co-op phases), or something else?
 
 ## Sources
 

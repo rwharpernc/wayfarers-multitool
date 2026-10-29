@@ -60,6 +60,7 @@ The table says exactly when.
 | Trade: Best picks; Missions: Source commodities | Spansh | **Off** until you turn Trade lookups on in Settings, and then only when you press **Best picks** or **Find sources**. About four requests (five with carriers) per commodity, one after another with a short pause; sends the commodity name, the system you search around and your landing pad size |
 | Trade lookups (best routes; where to buy or sell a commodity) | Spansh | **Off** until you turn them on in Settings. See below for how often |
 | BGS tick detection | A community tick-time service (`tick.infomancer.uk`) | **On** by default. About every 60 seconds while **Detect BGS ticks** is ticked, even if the BGS section itself is switched off. Can be turned off in Settings → WFMT → BGS. The service has no HTTPS, so this one request is **unencrypted**; it asks only for the time of the last tick and sends nothing about you but WFMT's name and version |
+| Post to Discord (the BGS Report's **Discord** menu and the Powerplay Sessions window's button) and **Test webhook** (Settings → WFMT → Discord) | Discord, to the webhook you saved (`discord.com`) | **Off** until you tick *Allow Post to Discord* and save a link for the commander. Only when you press **Post to Discord** (the report text, as a post that mentions no one, and a later press edits or removes that post) or **Test webhook** (a read that posts nothing). The link is a secret kept on this computer, never logged and left out of backups. **Copy for Discord** and the plain copy buttons send nothing. See [Sharing reports to Discord](discord.md) |
 | Automatic updates (Settings → WFMT → General → Updates) | GitHub (`api.github.com`, then the download address of the release's `.zip`) | **Off** by default. With the tick on, one check each time EDMC starts: a plain GET of the latest release's details, then, only if it is newer than the version you run (and not a draft or pre-release), one GET of its `Wayfarers-Multitool.zip`. The only thing sent is WFMT's User-Agent (name, version and project address). Nothing about you. A failed check is tried again at the next start |
 
 **Where each service is reached.** The addresses WFMT's own requests go to, so you can allow or block them in a firewall:
@@ -72,6 +73,7 @@ The table says exactly when.
 | edastro | `edastro.com` | POI Reference: GEC |
 | Raven Colonial | `ravencolonial100-awcbdvabgze4c5cq.canadacentral-01.azurewebsites.net`, Raven Colonial's API server; the pages WFMT opens in your browser are on `ravencolonial.com` | Everything under Colonization that talks to Raven |
 | Tick service | `tick.infomancer.uk` (plain HTTP) | BGS tick detection |
+| Discord | `discord.com` (the webhook address you save; Discord's older `discordapp.com` form works too) | Post to Discord and Test webhook |
 | GitHub | `api.github.com` and the release download address | Automatic updates |
 
 Links that open a web page (Inara, Canonn, edastro.com, Raven Colonial, Coriolis, EDSY or GitHub pages) open it in **your browser**, only when you click them; that is your

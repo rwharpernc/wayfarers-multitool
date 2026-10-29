@@ -78,6 +78,7 @@ _OWN_DATA_FILES: set = {
     "colonization_sites.json",  # Colonization construction sites (colonization_data.py)
     "colonization_carrier.json",  # Colonization's tons transferred to the fleet carrier (colonization_carrier.py)
     "rcc_keys.json",  # each commander's Raven Colonial key (rcc_keys.py)
+    "discord_webhooks.json",  # each commander's Discord webhook (discord_webhooks.py)
     "surface_marks.json",  # the commander's surface marks and compass target (surface_marks.py)
     "notes.json",  # the commander's notes on systems and bodies (notes_data.py)
     "materials.json",  # the commander's engineering materials (materials.py)

@@ -42,6 +42,7 @@ PER_COMMANDER = {
     "colonization_sites.json": "keyed by commander (colonization_data.py)",
     "colonization_carrier.json": "one record per commander (commander_data.py, colonization_carrier.py)",
     "rcc_keys.json": "one key per commander (commander_data.py, rcc_keys.py)",
+    "discord_webhooks.json": "one webhook per commander (commander_data.py, discord_webhooks.py)",
     "surface_marks.json": "one list and one target per commander (commander_data.py, surface_marks.MarkBook)",
     "notes.json": "one list per commander (commander_data.py, notes_data.NoteBook)",
     "materials.json": "one set of counts per commander (commander_data.py, materials.MaterialBook)",

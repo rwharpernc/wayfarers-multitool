@@ -82,6 +82,12 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertNotIn("bob", text)
         self.assertEqual(r"<commander> / <commander> in ~\x and ~/y", text)
 
+    def test_a_discord_webhook_link_is_redacted(self) -> None:
+        link = "https://discord.com/api/webhooks/1234567890/abcDEF-_secret"
+        text = issue_report.redact(f"posted to {link}?wait=true failed; also https://discordapp.com/api/v10/webhooks/5/tok", [], home="~")
+        self.assertEqual("posted to <webhook> failed; also <webhook>", text)
+        self.assertNotIn("secret", text)
+
     def test_blank_names_redact_nothing(self) -> None:
         self.assertEqual("abc", issue_report.redact("abc", ["", "  "], home="~"))
 

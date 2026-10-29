@@ -15,7 +15,9 @@ from config import appname, config
 from . import panelkit, store
 from .formulas import ACTIVITIES, ACTIVITY_LABELS, NO_CP_ACTIVITIES, merits_to_cp
 from .powerplay import PowerplayTracker, clipboard_template, ratio_for
-from .powerplay_clipboard import format_system_line
+from . import discord_share, powerplay_discord
+from .powerplay_clipboard import format_system_line, progress_rows
+from .powerplay_systems_tab import cycle_summary
 from .session import (
     SessionManager,
     duration_hours,
@@ -31,7 +33,7 @@ from .uikit import dialogs
 from .uikit import palette as P
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
-from .uikit.widgets import NoteLabel, ScrollFrame, Tabs, field_grid, section_header
+from .uikit.widgets import FlatButton, NoteLabel, ScrollFrame, Tabs, field_grid, section_header
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -119,6 +121,11 @@ class SessionWindow:
         self._copy_button = self._shell.add_action("Copy Progress", self._copy_progress)
         self._shell.add_action("Reset Current System", self._reset_current_system)
         self._shell.add_action("Reset Session", self._reset_session)
+
+        share = tk.Frame(self._shell.body, bg=P.BG)      # a row of its own: the header bar has no room for more buttons at a narrow width
+        share.pack(fill="x", pady=(0, P.PAD_SM))
+        FlatButton(share, "Post to Discord", self._on_post_discord).pack(side="right")
+        FlatButton(share, "Copy for Discord", self._on_copy_discord).pack(side="right", padx=(0, 6))
 
         self._tabs = tabs = Tabs(self._shell.body)
         tabs.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
@@ -216,30 +223,37 @@ class SessionWindow:
         """Copies one formatted line per system in the By System table to
         the clipboard, using the user's configured template (Settings ->
         Powerplay -> Clipboard)."""
-        session = self._sessions.current
-        systems = visited_systems(session)
-        if self._current_system and self._current_system not in systems:
-            systems = [self._current_system] + systems
-        elif self._current_system in systems:
-            systems = [self._current_system] + [s for s in systems if s != self._current_system]
-
         template = clipboard_template()
-        lines = []
-        for name in systems:
-            merits = system_merit_total(session, name)
-            cp = sum(
-                merits_to_cp(system_totals(session, name).get(activity, 0), ratio_for(activity))
-                for activity in ACTIVITIES
-                if activity not in NO_CP_ACTIVITIES
-            )
-            state = self._pp.system_state if name == self._current_system and self._pp.system_state else "—"
-            lines.append(format_system_line(template, system=name, merits=f"{merits:,}", cp=f"{cp:,.1f}", state=state))
+        lines = [format_system_line(template, system=row.system, merits=f"{row.merits:,}", cp=f"{row.cp:,.1f}", state=row.state)
+                 for row in progress_rows(self._sessions.current, self._current_system, self._pp.system_state, ratio_for)]
 
         panelkit.copy_to_clipboard(self._toplevel, "\n".join(lines))
 
         original_text = self._copy_button.cget("text")
         self._copy_button.configure(text="Copied!")
         self._copy_button.after(1500, lambda: self._copy_button.configure(text=original_text))
+
+    def _discord_messages(self) -> List[str]:
+        """This session's progress as Discord messages (see powerplay_discord.py), with the cycle's totals when the cycles are known."""
+        views = self._systems.views() if self._systems is not None else []
+        rows = progress_rows(self._sessions.current, self._current_system, self._pp.system_state, ratio_for)
+        return powerplay_discord.progress_messages(rows, self._sessions.current.get("power") or "", cycle_summary(views[0]) if views else "")
+
+    def _on_copy_discord(self) -> None:
+        messages = self._discord_messages()
+        if not messages:
+            self._shell.set_status("No merits earned this session yet.")
+        elif discord_share.copy_for_discord(self._toplevel, messages):
+            self._shell.set_status("Copied for Discord" + (f" ({len(messages)} messages: paste each one on its own)." if len(messages) > 1 else "."), ok=True)
+
+    def _on_post_discord(self) -> None:
+        messages = self._discord_messages()
+        if not messages:
+            self._shell.set_status("No merits earned this session yet.")
+            return
+        self._shell.set_status("Posting to Discord...")
+        discord_share.post_async(self._toplevel, messages, powerplay_discord.report_key(self._sessions.current),
+                                 lambda text, ok: self.alive and self._shell.set_status(text, ok=ok))
 
     def close(self) -> None:
         if self._flush_job is not None:

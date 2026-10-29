@@ -1,12 +1,18 @@
 """Clipboard copy formatting for the Powerplay Sessions window's "Copy
 Progress" button.
 
-Kept as pure functions (no Tk imports) so they're trivially testable.
+Kept as pure functions (no Tk imports) so they're trivially testable. `progress_rows` is the data both Copy Progress and the Discord
+copy and post (powerplay_discord.py) are built from.
 """
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Any, Callable, Dict, List
 from urllib.parse import quote
+
+from .formulas import ACTIVITIES, NO_CP_ACTIVITIES, merits_to_cp
+from .session import system_merit_total, system_totals, visited_systems
 
 DEFAULT_TEMPLATE = "[{system}]({system_url}) - {merits} merits (~{cp} CP) - {state}"
 
@@ -19,6 +25,34 @@ def inara_system_url(system: str) -> str:
     system's page (Inara resolves the search itself; there's no public API
     for the numeric system ID Inara's own URLs otherwise use)."""
     return f"https://inara.cz/elite/starsystem/?search={quote(system)}"
+
+
+@dataclass(frozen=True)
+class ProgressRow:
+    """One system's row of the session's progress: the merits earned there, the estimated Control Points (from the editable ratios) and the
+    system's Powerplay state ("—" when it is not known, which is for every system but the one you are in)."""
+
+    system: str
+    merits: int
+    cp: float
+    state: str
+
+
+def progress_rows(session: Dict[str, Any], current_system: str, current_state: str, ratio_for: Callable[[str], float]) -> List[ProgressRow]:
+    """A row for each system with merit activity this session, the system you are in first (even before it has earned anything), then the rest
+    most recently active first. `current_state` is the state of the system you are in; `ratio_for(activity)` is the merits needed for one CP."""
+    systems = visited_systems(session)
+    if current_system and current_system not in systems:
+        systems = [current_system] + systems
+    elif current_system in systems:
+        systems = [current_system] + [name for name in systems if name != current_system]
+    rows = []
+    for name in systems:
+        cp = sum(merits_to_cp(system_totals(session, name).get(activity, 0), ratio_for(activity))
+                 for activity in ACTIVITIES if activity not in NO_CP_ACTIVITIES)
+        state = current_state if name == current_system and current_state else "—"
+        rows.append(ProgressRow(name, system_merit_total(session, name), cp, state))
+    return rows
 
 
 def format_system_line(

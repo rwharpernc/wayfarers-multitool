@@ -30,7 +30,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 from config import appname, config
 
-from . import bgs_format, panelkit
+from . import bgs_discord, bgs_format, discord_share, panelkit
 from .bgs_ledger import RECENT_SYSTEMS, FactionTrack, PeriodView
 from .bgs_tracker import FactionActivity
 from .uikit import palette as P
@@ -209,6 +209,7 @@ class BgsWindow:
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._toplevel = self._shell.window
         self._copy_button = self._shell.add_action("Copy Summary", self._on_copy)
+        self._shell.add_menu("Discord", [("Copy for Discord", self._on_copy_discord), ("Post to Discord", self._on_post_discord)])
 
         picker = tk.Frame(self._shell.body, bg=P.BG)
         picker.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, P.PAD_SM))
@@ -350,6 +351,28 @@ class BgsWindow:
             original = self._copy_button.cget("text")
             self._copy_button.configure(text="Copied!")
             self._copy_button.after(1500, lambda: self._copy_button.configure(text=original))
+
+    def _discord_messages(self) -> List[str]:
+        """The tick shown in the window, as Discord messages (see bgs_discord.py)."""
+        view = self._labels.get(self._period_var.get())
+        return bgs_discord.report_messages(view, self._current_system, self._pinned) if view is not None else []
+
+    def _on_copy_discord(self) -> None:
+        messages = self._discord_messages()
+        if not messages:
+            self._shell.set_status("There is no tick to copy yet.")
+        elif discord_share.copy_for_discord(self._toplevel, messages):
+            self._shell.set_status("Copied for Discord" + (f" ({len(messages)} messages: paste each one on its own)." if len(messages) > 1 else "."), ok=True)
+
+    def _on_post_discord(self) -> None:
+        view = self._labels.get(self._period_var.get())
+        messages = self._discord_messages()
+        if view is None or not messages:
+            self._shell.set_status("There is no tick to post yet.")
+            return
+        self._shell.set_status("Posting to Discord...")
+        discord_share.post_async(self._toplevel, messages, bgs_discord.report_key(view),
+                                 lambda text, ok: self.alive and self._shell.set_status(text, ok=ok))
 
     def close(self) -> None:
         self._shell.close()

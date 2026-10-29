@@ -60,6 +60,7 @@ know of, how it looks on screen, and what to do. Where a figure is an estimate, 
 | **Field Ops** | [Field Ops](field-ops.md): screenshots, inventory, engineering materials, blueprints, a wishlist, ship and Odyssey upgrade planners, where the engineers are, material traders, ship builds |
 | **Colonization** | [Colonization](colonization.md): your current project, your history, the sites window, where to buy |
 | **BGS** | [BGS](bgs.md): factions, states and your effect on them |
+| *Sharing* | [Sharing reports to Discord](discord.md): copy for Discord, post to a webhook, and plain copy for anywhere else, with the Discord-side setup step by step |
 | *Always on* | [Landing Assist, Interdiction Warning, Flight Alerts (carrier countdown, fuel and mining alerts) and the Route overlay](always-on.md) |
 
 ## When something's wrong

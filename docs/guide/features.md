@@ -31,6 +31,7 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 | Plan engineering upgrades | **BLUEPRINTS** in Field Ops | [Engineering](field-ops.md#engineering-blueprints-and-a-wishlist) |
 | See what my colony site still needs | **COL** mode; **DASHBOARD** | [The Colonization Sites window](colonization.md#the-colonization-sites-window) |
 | See how my actions affect the BGS | **BGS** mode; **REPORT** | [BGS](bgs.md) |
+| Share my BGS report or Powerplay progress in Discord (or anywhere else) | **Copy for Discord** and **Post to Discord** in the BGS Report and Powerplay Sessions windows; plain **Copy Summary** and **Copy Progress** for other places | [Sharing reports to Discord](discord.md) |
 | Use a key combination or a chat command for an action | Settings → WFMT → General → Shortcuts, or `!wf` commands in Elite's chat | [Shortcuts](shortcuts.md) |
 | Find the best system to buy a whole shopping list in | **Find all**, then read **Best single systems** in the Colonization Sites window | [Best single systems](colonization.md#best-single-systems) |
 | Show a card or alert on my game screen | **Settings → WFMT → Overlays** | [Setting up the overlay](../OVERLAY_SETUP.md) |
@@ -212,6 +213,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 |---|---|---|---|
 | Faction states | The factions in this system and what your activity does to each since the last tick | Just play | [The panel](bgs.md#the-panel), [What it counts](bgs.md#what-it-counts) |
 | BGS Report | A tab per system you acted in, per tick, with an archive | **REPORT**; the drop-down picks an earlier tick | [The BGS Report window](bgs.md#the-bgs-report-window) |
+| Share a tick to Discord | The tick as Discord messages, copied to paste or posted to your webhook | **REPORT**, then the **Discord** menu | [Sharing reports to Discord](discord.md) |
 | Tick detection | Optional detection of the server tick from a community service | **Settings → WFMT → BGS** | [Tick detection](bgs.md#tick-detection-and-the-internet) |
 
 ### Always on, in any mode ([guide](always-on.md))

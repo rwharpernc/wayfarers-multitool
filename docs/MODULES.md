@@ -100,7 +100,8 @@ Spec: [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md)
 | `feature_dispatch.py` | Hands each journal event to every feature in turn without letting one feature's failure stop the others |
 | `powerplay.py` | Powerplay mode: pledged Power, merits, the current system's Powerplay context and activity classification |
 | `powerplay_backfill.py` | Rebuilds the per-system ledger, and the megaship scans, from journal files for cycles played while EDMC was closed |
-| `powerplay_clipboard.py` | Formats the Sessions window's "Copy Progress" text |
+| `powerplay_clipboard.py` | Formats the Sessions window's "Copy Progress" text, and builds the per-system progress rows (`progress_rows`) that Copy Progress and the Discord copy and post share |
+| `powerplay_discord.py` | Powerplay progress as Discord messages: a linked line for each system with merits and estimated CP, and the cycle's total |
 | `powerplay_control_lookup.py` | Spansh lookup of which Power controls a system |
 | `megaship_scans.py` | Megaship scans for the Powerplay cycle: reads the journal (`DataScanned` uplink, `SupercruiseDestinationDrop`, the FSS megaship list, `PowerplayMerits`) to say which megaship was scanned, where, and what it earned; no Tk |
 | `powerplay_ledger.py` | The per-commander, per-system, per-cycle ledger of what you did and how each system moved, and the megaships scanned each cycle (`live_view()` feeds the panel's cycle tally) |
@@ -403,6 +404,7 @@ Spec: [BGS_TECH_SPEC.md](BGS_TECH_SPEC.md)
 
 | Module | What it is |
 |---|---|
+| `bgs_discord.py` | The BGS report's selected tick as Discord messages: a block for each system, split under Discord's message limit |
 | `bgs_format.py` | Text formatting shared by the BGS panel and report |
 | `bgs_journal.py` | Rebuilds the current tick's totals from journal files |
 | `bgs_ledger.py` | The per-tick ledger (live events and replay share one path), and the rebuild of a period that just closed from the journals (`repair_record`, `merge_records`) |
@@ -411,6 +413,16 @@ Spec: [BGS_TECH_SPEC.md](BGS_TECH_SPEC.md)
 | `bgs_tick_client.py` | The community galaxy-tick time API client |
 | `bgs_tracker.py` | Pure parsing of BGS-relevant journal events |
 | `bgs_window.py` | The BGS Report window |
+
+## Discord sharing
+
+| Module | What it is |
+|---|---|
+| `discord_client.py` | Posts, edits, deletes and checks through a Discord webhook: validates the link, sends no mentions, retries once on a pause, and words its errors without the link |
+| `discord_format.py` | Pure Discord text helpers: escaping names, links, code blocks, time tags and splitting a report into messages under 2,000 characters |
+| `discord_settings.py` | The Discord Settings tab (switch, webhook link, nickname, thread id, Test webhook) and the commander the reports are shared for |
+| `discord_share.py` | What the report windows call: copy for Discord, post on a background thread, and edit an earlier post of the same report |
+| `discord_webhooks.py` | Each commander's saved webhook (`discord_webhooks.json`, a secret left out of backups) and the master switch |
 
 ## Always on: Landing Assist and Interdiction Warning
 

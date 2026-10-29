@@ -111,8 +111,13 @@ def wfmt_log_lines(text: str, plugin_dir: str = "", limit: int = MAX_LOG_LINES) 
     return kept[-limit:]
 
 
+_WEBHOOK_LINK = re.compile(r"https?://[\w.-]*discord(?:app)?\.com/api/[\w/.-]*webhooks/[\w/.?=&%-]*", re.IGNORECASE)
+
+
 def redact(text: str, names: Iterable[str], home: str = "") -> str:
-    """`text` with each commander name replaced by `<commander>` (any case) and the home folder by `~`."""
+    """`text` with each commander name replaced by `<commander>` (any case), the home folder by `~` and any Discord webhook link by `<webhook>`
+    (WFMT never logs one, so this is only a safeguard: a webhook link lets anyone post to that channel)."""
+    text = _WEBHOOK_LINK.sub("<webhook>", text)
     home = home or os.path.expanduser("~")
     if home and home != "~":
         for form in {home, home.replace("\\", "/"), home.replace("/", "\\")}:

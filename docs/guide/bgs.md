@@ -44,7 +44,14 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 **Copy the whole ledger to share**
 
 1. Press **REPORT**, then **Copy Summary**.
-2. Paste it into a note or chat. It holds every tick and system, whatever tabs are shown.
+2. Paste it into a note or chat. It holds every tick and system, whatever tabs are shown. It is plain text with no Discord marks, so it reads cleanly anywhere.
+
+**Share the tick to Discord**
+
+1. Press **REPORT** and pick the tick in the **TICK** drop-down.
+2. Open the **Discord** menu in the window's header. **Copy for Discord** puts the tick on the clipboard with Discord's formatting to paste yourself, and **Post to Discord** sends it to the webhook you saved.
+3. Post the same tick again later and WFMT edits the earlier post instead of adding another.
+4. A new Discord webhook takes a minute to set up: the full walk-through, with examples, is in [Sharing reports to Discord](discord.md).
 
 **Worked example: supporting a faction by selling exploration data**
 
@@ -115,6 +122,7 @@ Click **REPORT** (view BGS report) on the BGS page.
 - Each tab has a **FACTIONS** table and a **WHAT YOU DID** table.
 - A **help** button in the header explains the tabs and every column.
 - **Copy Summary** copies every tick and system as plain text, ignoring the tab limit (the button changes to a confirmation for a moment). Paste it into a note or chat.
+- The **Discord** menu has **Copy for Discord** and **Post to Discord** for the tick shown. They share that one tick (a report for every tick would not fit a Discord message), split into several messages when it is long. See [Sharing reports to Discord](discord.md).
 - The window stays open and updates as you play, and it remembers its size and position. It needs to be at least 1000 pixels wide so the columns fit.
 
 **FACTIONS** has the columns **Faction** (★ before the controller), **State** (`Boom`, or `None → Boom` when it changed since before the tick), **Influence (change)** (`45.2% (+1.3)`), and **Pending**, **Recovering** and **Active** (the state names the game lists for that faction). A faction you acted on but have no faction list for is shown by name only.

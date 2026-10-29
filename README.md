@@ -79,6 +79,8 @@ WFMT is one panel with eight **modes**, and you click a button to switch between
 | **Colonization** (**COL**) | Your current build, history, an archive of finished sites, and every site's shopping list | [Colonization](docs/guide/colonization.md) |
 | **BGS** (**BGS**) | Faction states and what your activity does to them | [BGS](docs/guide/bgs.md) |
 
+**Sharing reports.** The BGS report and Powerplay progress can be copied as plain text for anywhere, copied with Discord formatting, or posted to a Discord webhook you set up. Step by step, with the Discord side explained: [Sharing reports to Discord](docs/guide/discord.md).
+
 **Looking for something specific?** [Features at a glance](docs/guide/features.md) lists every feature with the buttons to press, and starts with an
 "I want to..." table that points to the right guide.
 
