@@ -179,6 +179,7 @@ The Rare Goods lookup has unit tests (`tests/test_rare_goods.py`).
 - Deliveries and unattributed merits don't produce Control Points.
 - The Rare Goods list is a snapshot; a new rare good needs the list updated.
 - A megaship scanned without dropping out of supercruise at it first is not named by the journal, so it is not counted (section 11.2f).
+- No daily, weekly or per-delivery merit cap has been found, so WFMT shows none. The evidence and the open items are in [POWERPLAY_MERIT_RESEARCH.md](POWERPLAY_MERIT_RESEARCH.md).
 
 - The Systems tab (section 11) only knows what the commander's own client has seen: a system's standing
   updates when they jump in or log in there. Cycles from before the feature was installed are rebuilt from the
