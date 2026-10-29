@@ -40,7 +40,7 @@ Helps you find and identify exobiology life on a planet's surface.
 3. When you start sampling, it tracks your progress (Log, Sample, Analyse) and tells you when you have walked far enough from the last sample for the next one
    to count.
 
-**What the section shows.** It is always visible in Exploration mode (it has no fold), under the title **Organic Scanning**:
+**What the section shows.** It is in Exploration mode, folded when EDMC starts like the other sections (click **Organic Scanning** to open it; it stays open for the session), and holds:
 
 - **`Predicted species: (land on a body with biological signals)`** until you are on a body that has them. When you are, and the body has been scanned, it reads `Predicted species (<body>):` and one line for each genus: `Tussock: Tussock pennatis (~1,000,000 cr)` when only one species fits, or `Bacterium: Bacterium aurasus, Bacterium nebulus` when several do, or `<genus>: unknown` when the body's conditions match none of the rules. Until the body's scan arrives it says `waiting on body scan data...`.
 - **`Active scan: (none yet)`** until you sample. Then one line for each organism in progress: `Tussock pennatis: Sample (2/3)`, with `(~1,000,000 cr)` once it is analyzed and ` - next sample ready` or ` - move further away` while you walk between samples. The stage names are Log, Sample and Analyse, and the count is out of three.

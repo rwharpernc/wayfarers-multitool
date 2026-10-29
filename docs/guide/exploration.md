@@ -7,7 +7,7 @@ alphabetical order of their names (in every mode the sections are alphabetical, 
   has scanned). A short status line under it reports Discovery Alerts and the last N.S. or W.D. answer.
 - **The sections** are Boxel Survey, Codex Completionist, Compass, Dashboard, Expedition, Nearest place to land, Notes, Organic Scanning, POI Reference and Route Planner.
 - **Folding.** Every section with a ▸ / ▾ in its title starts folded: click the title to open it. A section you open stays open until EDMC restarts, and
-  every section is folded again at each start, so the panel is the same short height every time. Organic Scanning has no fold and is always shown.
+  every section is folded again at each start, so the panel is the same short height every time.
 - **Long values never widen EDMC's window.** Names, notes and results in this panel wrap or are cut to a fixed length, so a long system name cannot make the main window wider.
 
 **Where the settings are.** Everything is under **Settings → WFMT**:
@@ -396,7 +396,7 @@ Helps you find and identify exobiology life on a planet's surface: which species
 Sample and Analyse progress, and when you have walked far enough for the next sample. It also has four overlay cards for the body you are on (bio status,
 predicted species, a sample radar and a popup after each sample), leads you back to plants you identified, and shows the first footfall bonus.
 
-The section is always shown (it has no fold) and has two text readouts, `Predicted species` and `Active scan`, and a **REVIEW** button for the prediction review window. All of it is in its own guide: **[Exobiology](exobiology.md)**. You can switch the panel's section off under **Settings → WFMT → Exploration → Organic Scanning**
+The section starts folded (click its title to open it) and has two text readouts, `Predicted species` and `Active scan`, and a **REVIEW** button for the prediction review window. All of it is in its own guide: **[Exobiology](exobiology.md)**. You can switch the panel's section off under **Settings → WFMT → Exploration → Organic Scanning**
 (**Show predicted species and scan progress**); it uses only your own journal and makes no internet connection.
 
 ## Codex Completionist

@@ -619,21 +619,19 @@ class OrganicScanController:
     def build_panel(self, parent: tk.Frame) -> None:
         self._parent = parent
         parent.after(500, self._poll_catchup)
-        tk.Label(parent, text="Organic Scanning", font=panelkit.bold_font(parent)).grid(
-            row=0, column=0, columnspan=3, sticky=tk.W,
-        )
+        body = panelkit.collapsible_section(parent, "Organic Scanning", "wfmt_organic_scanning_collapsed")
 
         self._predictions_var = tk.StringVar(value=_NO_BODY_TEXT if enabled() else _DISABLED_TEXT)
         self._active_var = tk.StringVar(value=_NO_ACTIVE_TEXT if enabled() else "")
 
-        panelkit.wrap_label(parent, textvariable=self._predictions_var, anchor="w").grid(
-            row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0),
+        panelkit.wrap_label(body, textvariable=self._predictions_var, anchor="w").grid(
+            row=0, column=0, columnspan=3, sticky=tk.W, pady=(2, 0),
         )
-        panelkit.wrap_label(parent, textvariable=self._active_var, anchor="w").grid(
-            row=2, column=0, columnspan=3, sticky=tk.W,
+        panelkit.wrap_label(body, textvariable=self._active_var, anchor="w").grid(
+            row=1, column=0, columnspan=3, sticky=tk.W,
         )
-        review = tk.Button(parent, text="REVIEW", command=self._open_review)
-        review.grid(row=3, column=0, sticky=tk.W, pady=(4, 0))
+        review = tk.Button(body, text="REVIEW", command=self._open_review)
+        review.grid(row=2, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.add_tooltip(review, "Open the Prediction review window: how the species prediction did against what you found, and a way to review each find")
 
     def _open_review(self) -> None:
