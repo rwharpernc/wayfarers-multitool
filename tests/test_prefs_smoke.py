@@ -29,7 +29,7 @@ class PrefsSmokeTests(unittest.TestCase):
         self.assertIn("SETTINGS BUILT OK: 11 top-level tabs", result.stdout)
         # Every page is wrapped in a scroller capped in height, so a long page can't push OK off the screen.
         self.assertIn("PAGES OVER HEIGHT CAP: 0 of 43", result.stdout)
-        for leaf in ("Exploration > POI Reference", "Exploration > Auto-Honk", "Field Ops > Inventory", "Exploration > Expedition",
+        for leaf in ("Exploration > POI Reference", "Exploration > Auto-Honk", "Operations > Inventory", "Exploration > Expedition",
                      "Exploration > Nearest place to land", "General > Online lookups"):
             self.assertIn(leaf, result.stdout)
         # Every overlay setting and toggle is under one Overlays tab, a subtab per feature that draws on the overlay.

@@ -61,7 +61,7 @@ FEATURES = (
     autohonk, discovery, boxel_survey, codex_completionist_panel, surface_compass, explore_dashboard,
     expedition_panel, expedition_log_panel, exploration_value, landing_finder_panel,
     notes_panel, organic_scan_panel, poi_reference_panel, route_planner_panel, notable,
-    # Field Ops: Inventory, Materials, Screenshots, Ship Builds.
+    # Operations: Inventory, Materials, Screenshots, Ship Builds.
     inventory_panel, materials_panel, screenshots, ship_builds_panel,
     colonization_panel,
     mining_panel,
@@ -91,22 +91,22 @@ _DEFAULT_FIT_HEIGHT = True
 PANEL_MODES: Tuple[Tuple[str, str], ...] = (
     ("powerplay", "Powerplay"),
     ("bgs", "BGS"),
-    ("exploration", "Exploration"),
+    ("exploration", "Explore"),
     ("mining", "Mining"),
     ("trade", "Trade"),
     ("missions", "Missions"),
-    ("fieldops", "Field Ops"),
+    ("fieldops", "Operations"),
     ("colonization", "Colony"),
 )
 # The mode-select buttons carry the PANEL_MODES labels as written; each tooltip (_MODE_TOOLTIPS) adds a one-line description.
 _MODE_TOOLTIPS = {
     "powerplay": "Powerplay - merits and Control Points you earn for your Power, and the rare goods finder",
     "bgs": "BGS - faction states in the Background Simulation, and what your own activity does to them",
-    "exploration": "Exploration - auto-honk, first-discovery alerts, boxel survey, scan values, exobiology help and Codex tally",
+    "exploration": "Explore - auto-honk, first-discovery alerts, boxel survey, scan values, exobiology help and Codex tally",
     "mining": "Mining - space and surface (SRV) mining, and your own catalogue of mining hotspots",
     "trade": "Trade - what you bought and sold this session, the value of your hold, and Spansh route and price lookups",
     "missions": "Missions - every mission you have in one view, with kill-progress bars for massacres",
-    "fieldops": "Field Ops - screenshots, backpack/locker/cargo and saved ship builds",
+    "fieldops": "Operations - screenshots, backpack/locker/cargo and saved ship builds",
     "colonization": "Colony - the project you are building now (progress, what is left, trips); history is in the HISTORY window",
 }
 _DEFAULT_PANEL_MODE = PANEL_MODES[0][0]
@@ -571,10 +571,10 @@ class _SectionStack(nb.Frame):
 # no hunting for it. Page paths are "Tab" or "Group > Tab", as the tab bars show them; a path that does not exist is skipped, so a renamed tab never breaks a page.
 CROSS_LINKS: Dict[str, Tuple[str, ...]] = {
     "Colonization": ("Overlays > Colonization",), "Overlays > Colonization": ("Colonization",),
-    "Field Ops > Inventory": ("Overlays > Inventory",), "Overlays > Inventory": ("Field Ops > Inventory",),
+    "Operations > Inventory": ("Overlays > Inventory",), "Overlays > Inventory": ("Operations > Inventory",),
     "Mining": ("Overlays > Mining", "Overlays > Surface Compass"), "Overlays > Mining": ("Mining",), "Overlays > Surface Compass": ("Mining",),
     "Missions": ("Overlays > Missions",), "Overlays > Missions": ("Missions",),
-    "Field Ops > Screenshots": ("Overlays > Screenshots",), "Overlays > Screenshots": ("Field Ops > Screenshots",),
+    "Operations > Screenshots": ("Overlays > Screenshots",), "Overlays > Screenshots": ("Operations > Screenshots",),
     "Exploration > Organic Scanning": ("Overlays > Exobiology",), "Overlays > Exobiology": ("Exploration > Organic Scanning",),
     "Exploration > Expedition": ("Overlays > Expedition Log", "Overlays > Route"), "Overlays > Expedition Log": ("Exploration > Expedition",),
 }
@@ -736,7 +736,7 @@ def _build_settings_tabs(tabs: nb.Notebook, page_bg: str) -> None:
     for feature in (mining_panel, trade_panel, bgs_panel, colonization_panel, discord_settings):
         for build in settings_of(feature):
             settings_scroll.scrolled_page(tabs, build, page_bg)
-    _settings_group(tabs, "Field Ops", settings_of(screenshots, inventory_panel, ship_builds_panel), page_bg)
+    _settings_group(tabs, "Operations", settings_of(screenshots, inventory_panel, ship_builds_panel), page_bg)
     # Every overlay setting and toggle lives together: the shared connection, appearance and placement first, then one tab per
     # feature that draws on the overlay. (Interdiction, Landing, Discovery and Notable Bodies are overlay features
     # through and through, so their whole tab is here; the others keep their non-overlay settings in their own tab.)
