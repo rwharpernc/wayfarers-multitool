@@ -336,6 +336,37 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(powerplay._megaship_line(ledger.live_view()), "Cycle 103 megaships: 1")
 
 
+class TallyLineTests(unittest.TestCase):
+    """The main panel's Session and Cycle lines: one combined pair when they would read the same."""
+
+    @staticmethod
+    def view(totals, number=103):
+        return types.SimpleNamespace(merit_totals=lambda: totals, number=number)
+
+    def test_same_figures_give_one_combined_pair(self):
+        totals = {powerplay.ACQUISITION: 1200}
+        cp = powerplay._cp_bits(powerplay._cp_by_activity(totals))
+        lines = powerplay._tally_lines(1200, cp, self.view(totals))
+        self.assertEqual(lines[:2], (None, None))
+        self.assertEqual(lines[2], "Session and Cycle 103 merits: 1,200")
+        self.assertTrue(lines[3].startswith("Session and Cycle 103 CP: "))
+
+    def test_a_session_smaller_than_the_cycle_keeps_both_pairs(self):
+        totals = {powerplay.ACQUISITION: 3000}
+        cp = powerplay._cp_bits(powerplay._cp_by_activity({powerplay.ACQUISITION: 1200}))
+        lines = powerplay._tally_lines(1200, cp, self.view(totals))
+        self.assertEqual(lines[0], "Session merits: 1,200")
+        self.assertEqual(lines[2], "Cycle 103 merits: 3,000")
+        self.assertTrue(lines[1].startswith("Session CP: ") and lines[3].startswith("Cycle 103 CP: "))
+
+    def test_nothing_earned_yet_is_one_pair_with_a_dash(self):
+        lines = powerplay._tally_lines(0, "", self.view({}))
+        self.assertEqual(lines, (None, None, "Session and Cycle 103 merits: 0", "Session and Cycle 103 CP: —"))
+
+    def test_cycle_lines_are_unchanged(self):
+        self.assertEqual(powerplay._cycle_lines(self.view({powerplay.ACQUISITION: 1200})), ("Cycle 103 merits: 1,200", "Cycle 103 CP: " + powerplay._cp_bits(powerplay._cp_by_activity({powerplay.ACQUISITION: 1200}))))
+
+
 class TabTests(unittest.TestCase):
     def views(self):
         ledger = L.PowerplayLedger()

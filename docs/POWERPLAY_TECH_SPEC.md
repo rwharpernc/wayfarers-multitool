@@ -217,7 +217,7 @@ Cycles are numbered: **cycle 101 began 2026-10-01 07:00 UTC** and the number cou
 
 The main panel's **Cycle N merits / Cycle N CP** lines read the live cycle straight from this ledger
 (`PowerplayLedger.live_view().merit_totals()`, formatted by `_cycle_lines` in `powerplay.py`), using the same CP ratios as the
-session lines.
+session lines. `_tally_lines` joins the Session and Cycle pairs into one, headed "Session and Cycle N", when the session has earned everything the cycle has, so the panel does not show the same figures twice.
 The session tallies in section 6 are untouched and remain per game login; the ledger is per **cycle**, so
 they can differ (a session can straddle a cycle boundary). Reset Session / Reset Current System act on
 sessions only.

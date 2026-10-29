@@ -538,6 +538,9 @@ def _full_cp_bits(totals: Dict[str, int]) -> str:
     )
 
 
+_SESSION_CYCLE_RULE_ROW = 8   # the grid row of the rule between the Session and Cycle groups on the panel
+
+
 def _here_lines(session: dict, current_system: Optional[str]) -> tuple:
     if not current_system:
         return "Here: awaiting system data…", ""
@@ -546,14 +549,29 @@ def _here_lines(session: dict, current_system: Optional[str]) -> tuple:
     return f"Here: {merits:,} merits", f"CP: {cp_bits}"
 
 
-def _cycle_lines(view) -> tuple:
-    """The main panel's cumulative tally for the Powerplay cycle in progress (all systems,
-    from the per-commander ledger, so it spans game sessions and includes the journal scan)."""
+def _cycle_tally(view) -> tuple:
+    """(label, merits, CP text) for the Powerplay cycle in progress (all systems, from the per-commander
+    ledger, so it spans game sessions and includes the journal scan)."""
     totals = view.merit_totals()
     number = view.number
     label = f"Cycle {number}" if number is not None else "Cycle"
-    cp_bits = _cp_bits(_cp_by_activity(totals)) or "—"
-    return f"{label} merits: {sum(totals.values()):,}", f"{label} CP: {cp_bits}"
+    return label, sum(totals.values()), _cp_bits(_cp_by_activity(totals)) or "—"
+
+
+def _cycle_lines(view) -> tuple:
+    label, merits, cp_bits = _cycle_tally(view)
+    return f"{label} merits: {merits:,}", f"{label} CP: {cp_bits}"
+
+
+def _tally_lines(session_merits: int, session_cp: str, view) -> tuple:
+    """The main panel's Session and Cycle tallies as (session merits, session CP, cycle merits, cycle CP) texts.
+    When the session has earned everything the cycle has (the first session of a cycle), the two would read
+    the same, so the session pair is None and the cycle pair is headed "Session and Cycle N"."""
+    label, merits, cycle_cp = _cycle_tally(view)
+    session_cp = session_cp or "—"
+    if session_merits == merits and session_cp == cycle_cp:
+        return None, None, f"Session and {label} merits: {merits:,}", f"Session and {label} CP: {cycle_cp}"
+    return f"Session merits: {session_merits:,}", f"Session CP: {session_cp}", f"{label} merits: {merits:,}", f"{label} CP: {cycle_cp}"
 
 
 def _megaship_line(view) -> str:
@@ -1088,7 +1106,7 @@ class PowerplayController:
         self._cp_label = panelkit.wrap_label(parent, text="Session CP: —", font=fonts["small"])
         self._cp_label.grid(row=7, column=0, sticky=tk.W)
 
-        panelkit.add_separator(parent, 8)
+        panelkit.add_separator(parent, _SESSION_CYCLE_RULE_ROW)
 
         self._cycle_merits_label = panelkit.wrap_label(parent, text="Cycle merits: 0", font=fonts["bold"])
         self._cycle_merits_label.grid(row=9, column=0, sticky=tk.W)
@@ -1144,6 +1162,20 @@ class PowerplayController:
             rare_goods.clean_government(place.get("SystemGovernment"), place.get("SystemGovernment_Localised")),
         )
 
+    def _set_session_tally(self, merits_text: Optional[str], cp_text: Optional[str]) -> None:
+        """Show the Session pair of lines, or take it off the panel when the Cycle pair already says the same."""
+        for label, text in ((self._merits_label, merits_text), (self._cp_label, cp_text)):
+            if label is None:
+                continue
+            if text is None:
+                label.grid_remove()
+            else:
+                label["text"] = text
+                label.grid()
+        if self._merits_label is not None:             # the rule between the Session and Cycle groups goes with the Session pair
+            for rule in self._merits_label.master.grid_slaves(row=_SESSION_CYCLE_RULE_ROW):
+                (rule.grid_remove if merits_text is None else rule.grid)()
+
     def _set_status(self, message: str) -> None:
         if self._status_label is not None:
             self._status_label["text"] = message
@@ -1170,12 +1202,10 @@ class PowerplayController:
         merits = total_merits(session)
         cp_by_activity = _cp_by_activity(session.get("totals", {}))
 
-        self._merits_label["text"] = f"Session merits: {merits:,}"
-        if self._cp_label is not None:
-            self._cp_label["text"] = f"Session CP: {_cp_bits(cp_by_activity)}"
-
         if self._cycle_merits_label is not None and self._cycle_cp_label is not None:
-            cycle_merits_text, cycle_cp_text = _cycle_lines(self.ledger.live_view())
+            session_merits_text, session_cp_text, cycle_merits_text, cycle_cp_text = _tally_lines(
+                merits, _cp_bits(cp_by_activity), self.ledger.live_view())
+            self._set_session_tally(session_merits_text, session_cp_text)
             self._cycle_merits_label["text"] = cycle_merits_text
             self._cycle_cp_label["text"] = cycle_cp_text
             if self._cycle_megaships_label is not None:
