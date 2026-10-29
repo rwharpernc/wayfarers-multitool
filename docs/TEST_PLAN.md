@@ -80,7 +80,7 @@ What to check in EDMC after the 1.3.1 release (and before any later one), on **W
 - [ ] The Expedition window's **Neutron route** switches to the Route tab.
   - **Road to Riches** and **Exomastery** open their dialog and **Plot** works.
   - **Start expedition** in the Route Planner window makes an expedition from a plotted route (named `Neutron Highway from <start> to <destination>`) and starts it and its Expedition Log run. The status line turns green and the button reads **Started ✓** for a few seconds.
-  - **Review** switches to the Plan tab on it.
+  - **Review expedition** switches to the Plan tab on it.
   - Pause, Resume and Stop on either side agree.
 - [ ] The overlays show and hide from the panel's overlay line; each mode's panel lays out cleanly and does not widen the EDMC window; the Expedition row still shows the next stop, its distance and note.
 

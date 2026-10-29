@@ -140,7 +140,7 @@ detects the OS and EDMC's plugins folder (see "Try your changes in EDMC" above).
   - A page taller than the screen allows (`settings_scroll.height_cap`) gets a scrollbar and the OK button stays visible.
   - Nothing changes for a feature: keep calling `notebook.add(frame, text=...)`.
   - Plain `tk.Frame` rows on a Settings page are recolored to the page color (`ui._match_page_background`), so they don't show as gray bands.
-- Where a new feature's Settings go: `ui._build_settings_tabs` lays the tabs out (General, Powerplay, Missions, Exploration, Mining, Trade, BGS, Colonization, Discord, Field Ops, Overlays; the tabs are shown in alphabetical order).
+- Where a new feature's Settings go: `ui._build_settings_tabs` lays the tabs out (General, Powerplay, Missions, Exploration, Mining, Trade, BGS, Colonization, Discord, Operations, Overlays; the tabs are shown in alphabetical order).
   - Add the feature to the right group there.
   - Anything it draws on the overlay goes in the Overlays group (a `build_overlay_settings`, or the whole tab if it is an overlay feature), with its place registered in `overlay_placement.SLOTS`.
   - A feature with a `build_settings` that isn't listed still gets a tab, under "Other".

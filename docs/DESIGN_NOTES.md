@@ -263,7 +263,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 - *Cost:*
   - The section's folded state is the Expedition section's (the Log row's saved folded state is no longer read).
   - Start, Pause and Stop live in the Expedition window (the Plan and Log tabs), so there is one place to manage an expedition. With a planned expedition they act on it through the link, and with none they start a Log run only.
-- **Start expedition** does not switch tabs. It is pressed on the Route tab of an open window, so it stays there and reports in the status line, and **Review** is the way to the Plan tab.
+- **Start expedition** does not switch tabs. It is pressed on the Route tab of an open window, so it stays there and reports in the status line, and **Review expedition** is the way to the Plan tab.
 
 **One linked start for an expedition**
 
@@ -278,7 +278,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
   - The Log run is on by default and a Setting turns it off (Settings > WFMT > Exploration > Expedition), for a commander who wants the planner alone.
 - How the Route Planner uses it:
   - **Start expedition** does the whole thing in one press and reports it in the status line instead of asking.
-  - **Review** opens the Expedition window on the same expedition for a look at the order first.
+  - **Review expedition** opens the Expedition window on the same expedition for a look at the order first.
   - A second press for the same plot picks the expedition made the first time rather than making "(2)".
   - An expedition made from a route is a snapshot of the stops and notes at that moment, so plotting again or clearing the route never changes one that is running.
   - The one word for ending is **Stop**, as in the Log.

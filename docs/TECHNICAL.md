@@ -187,17 +187,17 @@ Larger features add `start(plugin_dir)` and `stop()` for loading and flushing st
 
 **Button names and tooltips**
 
-- The EDMC window is small and shared, so main-panel buttons keep their labels short (the table is in the user guide's "Button names"), and `panelkit.add_tooltip` gives the name and a one-line description on hover.
+- Every button, on the main panel and in the pop-out windows, has a tooltip: `panelkit.add_tooltip` gives the name and a one-line description on hover ("Name - what it does"). A window button passes it as `tip=` to `FlatButton`, `shell.add_action` or `shell.add_menu`; the tip may be a function, read each time it opens, for a button whose caption changes with its state. The user guide's "Button names" lists the panel's buttons.
 - The tooltip is a borderless `Toplevel`, so it can't affect the main window's size.
 - The mode buttons carry the `PANEL_MODES` labels as written; their tooltips (`ui._MODE_TOOLTIPS`) give the name and a one-line description.
-- EDMC sizes its window to the widest row across all plugins, and the mode row is WFMT's widest.
+- EDMC sizes its window to the widest row across all plugins, and the mode row is WFMT's widest. Panel buttons carry their full names, and a row that could pass that width wraps (`panelkit.flow_buttons`), so the window does not grow.
   - So it is held at the size measured from a throwaway row of full-label buttons (`ui._mode_row_full_label_size`), which the buttons now match.
   - Without that, shortening the labels again would make EDMC open far narrower.
   - Don't implement this with a thin spacer widget in the same grid cell: it draws a line across the buttons.
 
 **Settings layout**
 
-- `ui._build_settings_tabs` builds eleven top-level Settings tabs, sorted alphabetically by label (`_sort_tabs`): BGS, Colonization, Discord, Exploration, Field Ops, General (Window, Updates, Backup, Help, Online lookups, Shortcuts), Mining, Missions, Overlays, Powerplay and Trade.
+- `ui._build_settings_tabs` builds eleven top-level Settings tabs, sorted alphabetically by label (`_sort_tabs`): BGS, Colonization, Discord, Exploration, Operations, General (Window, Updates, Backup, Help, Online lookups, Shortcuts), Mining, Missions, Overlays, Powerplay and Trade.
 - A group is a plain tab holding its own `nb.Notebook` (`_settings_group`).
 - Everything is placed with `grid`.
 - Features not listed fall into "Other" rather than losing their tab.
@@ -207,7 +207,7 @@ The **Overlays** group holds every overlay setting and toggle:
 
 - Overlay Connection, Appearance, Overlay Placement and Hide overlays, then one tab per feature that draws on the overlay (Colonization, Discovery, Inventory, Interdiction Warning, Flight Alerts, Route, System targets, Body info, Exobiology, Expedition Log, Missions, Landing, Surface Compass, Mining, Notable Bodies, Screenshots).
 - Interdiction, Landing, Discovery and Notable Bodies are overlay features through and through, so their whole `build_settings` is listed there.
-- Colonization, Inventory, Mining and Screenshots keep their other settings in their own tabs (Colonization, Field Ops, Mining) and expose a second builder, `build_overlay_settings`, for the Overlays group.
+- Colonization, Inventory, Mining and Screenshots keep their other settings in their own tabs (Colonization, Operations, Mining) and expose a second builder, `build_overlay_settings`, for the Overlays group.
   - It shares the controller's variables so `save_settings` is unchanged (it skips a variable whose tab was not built).
 
 In Exploration, POI Reference (GEC and Canonn) and Codex share one "POI Reference" page:
@@ -1344,7 +1344,7 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
   - The period that just closed is rebuilt from the journals too (`bgs_ledger.repair_record`, up to 14 days back) and filed over the live record, because play made with EDMC closed is not in it.
 - See the [BGS spec](BGS_TECH_SPEC.md).
 
-### Field Ops (`screenshots*.py`, `screenshot_*.py`, `inventory*.py`, `ship_builds*.py`) and Colonization (`colonization*.py`)
+### Operations (`screenshots*.py`, `screenshot_*.py`, `inventory*.py`, `ship_builds*.py`) and Colonization (`colonization*.py`)
 
 - Screenshots convert the game's raw file into a renamed PNG on the `Screenshot` event, with a crop chosen by which HUD panel had focus.
 - Inventory works out which vehicle you are in (ship, on foot or SRV) purely from `Embark`, `Disembark`, `LaunchSRV` and `DockSRV`, because EDMC only tracks on-foot versus not.

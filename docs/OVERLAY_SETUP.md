@@ -203,7 +203,7 @@ Four ticks, all off: *Enable the Bio status card (progress, current species, dis
 
 ### Inventory
 
-*Show pillage notifications on the in-game overlay* (off); *Show these inventory bars on the overlay*: **Backpack**, **Ship Locker**, **Carrier Locker**, **Cargo** (each off; the Carrier Locker and Cargo bars draw only when they would also show on the main panel); **Test pickup**. What the pickup message says, the sound and the categories are on Settings → WFMT → Field Ops → Inventory.
+*Show pillage notifications on the in-game overlay* (off); *Show these inventory bars on the overlay*: **Backpack**, **Ship Locker**, **Carrier Locker**, **Cargo** (each off; the Carrier Locker and Cargo bars draw only when they would also show on the main panel); **Test pickup**. What the pickup message says, the sound and the categories are on Settings → WFMT → Operations → Inventory.
 
 ### Landing
 
@@ -247,7 +247,7 @@ If several bodies match at once the cards take turns. See [Notable Bodies](guide
 
 ### Screenshots
 
-*Show a notification on the in-game overlay when a screenshot is saved* (off); **Test Overlay**. Whether screenshots are converted at all, and where they go, is on Settings → WFMT → Field Ops → Screenshots (which also has *Include WFMT's built-in overlay in the converted screenshot*).
+*Show a notification on the in-game overlay when a screenshot is saved* (off); **Test Overlay**. Whether screenshots are converted at all, and where they go, is on Settings → WFMT → Operations → Screenshots (which also has *Include WFMT's built-in overlay in the converted screenshot*).
 
 ### Surface Compass
 
@@ -420,7 +420,7 @@ Elite in **borderless or windowed** mode (a fullscreen game cannot be drawn over
 - Elite's own screenshot key (F10) never includes an overlay.
 - **Windows' capture tools** (the Snipping Tool, Win+Shift+S, Print Screen and the Game Bar) take the focus while you pick what to capture. WFMT recognizes them, so the overlay stays up and is in the picture.
 - For any **other tool** that takes the focus, tick **Keep showing when Elite is not the window in front** in the same box; the overlay then stays up whenever Elite is running.
-- To have the cards in a screenshot Elite itself takes, tick **Include WFMT's built-in overlay in the converted screenshot** under **Settings → WFMT → Field Ops → Screenshots**: the converted copy then has
+- To have the cards in a screenshot Elite itself takes, tick **Include WFMT's built-in overlay in the converted screenshot** under **Settings → WFMT → Operations → Screenshots**: the converted copy then has
   the cards that were on screen when you pressed the key drawn onto it.
 
 **Limits**
@@ -461,7 +461,7 @@ Two things to know when you use display capture:
 - The built-in overlay shows only while Elite is the window you are in (see [The built-in overlay](#the-built-in-overlay-windows)). If you click over to your streaming program, the overlay hides and the capture loses it. Tick **Keep showing when Elite is not the window in front** in the same box to keep it up whenever Elite is running.
 - Elite must run borderless or windowed.
 
-If your capture method does not include the overlay, Elite's screenshot feature is a separate route: tick **Include WFMT's built-in overlay in the converted screenshot** under **Settings -> WFMT -> Field Ops -> Screenshots** (Windows, built-in overlay only).
+If your capture method does not include the overlay, Elite's screenshot feature is a separate route: tick **Include WFMT's built-in overlay in the converted screenshot** under **Settings -> WFMT -> Operations -> Screenshots** (Windows, built-in overlay only).
 
 ## Hiding the overlays for a while
 

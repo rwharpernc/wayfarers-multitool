@@ -127,8 +127,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 ### The mode buttons
 
 WFMT has one panel with eight modes. You switch between them with the button row at the top of the panel:
-**Powerplay** (Powerplay), **BGS**, **Exploration** (Exploration), **Mining** (Mining), **Trade** (Trade), **Missions** (Missions),
-**Field Ops** (Field Ops) and **Colony** (Colonization).
+**Powerplay**, **BGS**, **Explore**, **Mining**, **Trade**, **Missions**, **Operations** and **Colony** (Colonization).
 
 **Every mode keeps working in the background** while you look at a different one. Nothing pauses. If you're
 mining and flip to Trade to check a price, your mining stats keep counting.
@@ -302,10 +301,10 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 | **Colonization** | The Raven Colonial group: *Allow WFMT to write to Raven Colonial (master switch)* (off), *Report my construction progress and deliveries to Raven Colonial* (off), *Also report cargo I move to and from my fleet carrier* (off), your *Raven Colonial key* (hidden as you type) with **Test key**, and a link to the page where the key is made. The two reporting ticks stay grayed out until the master switch is on | [Colonization](colonization.md#sharing-your-progress-with-raven-colonial) |
 | **Discord** | *Allow Post to Discord* (off); your **Destinations** (each a *Name*, a *Webhook link* hidden as you type, and an optional *Thread ID*), saved for the commander you are playing, with **Test**, **Remove**, **Add destination** and **Copy their destinations**, and **Customize posts…** (how the posts look) | [Sharing reports to Discord](discord.md) |
 | **Exploration** | A row of inner tabs, below | [Exploration](exploration.md) |
-| **Field Ops** | A row of inner tabs, below | [Field Ops](field-ops.md) |
 | **General** | A row of inner tabs, below | this page |
 | **Mining** | Display switches, the three opt-in lookups, *Enable body lookup*, *Show coverage minimap*, *Archive completed mining runs*, the stop radius, the refill time, *Target commodities* with its percentage, *Too close to place another rig*, the saved Known Surface Hotspots list and the Surface Live simulation | [Mining settings](mining.md#settings) |
 | **Missions** | Six display switches, all on by default: *Show kill progress*, *Show remaining-kills column*, *Show totals row*, *Show mission count*, *Show target settlement (ground missions)*, *Show commodities needed (trade and mining)* | [Missions settings](missions.md#settings) |
+| **Operations** | A row of inner tabs, below | [Operations](operations.md) |
 | **Overlays** | A row of inner tabs, below | [Overlay setup](../OVERLAY_SETUP.md) |
 | **Powerplay** | *CP Ratios* (merits for 1 Control Point: Acquisition 4.0, Reinforcement 2.5, Undermining 4.2); *Clipboard* (the format of **Copy Progress**); *Journal scan* (*Cycles to scan*, 1 to 12, 4 by default) | [Powerplay settings](powerplay.md#settings) |
 | **Trade** | *Enable Spansh trade lookups* (off) and the search numbers under it; *Only stations with a large landing pad* (off); *Include fleet carriers in prices and routes* (on); *Include ground facilities in prices and routes* (on); *Routes may use systems that need a permit* (off); *Count fines and bounties I pay as a running cost*; *Ship size (landing pad)*: From my ship, Small, Medium or Large; the carrier choice (Auto, Fleet, Squadron, Both or None) | [Trade settings](trade.md#trade-settings) |
@@ -319,7 +318,7 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 | **Online lookups** | A read-out (not controls) of every switch that lets WFMT ask another service: On or Off, what it does, who it asks and which tab changes it; the lookups that need no switch and run only when you press a button; and the **Local star index** group below it |
 | **Shortcuts** | One row per action (Mark the center, Mark the border, Rig placed, Radar range, Open the Live window, Hide or show overlays): the last key of Ctrl+Alt+Shift plus a key (C, B, R, Z, L and O to start; any letter, digit, F1 to F12, or Off), with a warning if two actions share a key or Elite already uses the combination; *Chat commands* (labelled `Chat commands (type  !wf <word>  in Elite's chat)`) (off); *Play a sound when a shortcut worked* (on). The key choices work on Windows only. See [Shortcuts](shortcuts.md) |
 | **Updates** | *Automatically download and install updates* (off); the **Release notes** link. See [Updating](#updating) |
-| **Window** | *Resize the EDMC window's height to fit WFMT automatically* (on); *Suggest system names from Spansh while typing* (off); *Mode buttons on the main panel*: a tick for each of Powerplay, BGS, Exploration, Mining, Trade, Missions, Field Ops and Colony (all ticked; unticking every one shows them all); *Text size in WFMT's windows* (points larger than normal, -2 to 6; 0); *Color theme of WFMT's windows* (Navy, Cyan, Amber or Green; Navy) |
+| **Window** | *Resize the EDMC window's height to fit WFMT automatically* (on); *Suggest system names from Spansh while typing* (off); *Mode buttons on the main panel*: a tick for each of Powerplay, BGS, Exploration, Mining, Trade, Missions, Operations and Colony (all ticked; unticking every one shows them all); *Text size in WFMT's windows* (points larger than normal, -2 to 6; 0); *Color theme of WFMT's windows* (Navy, Cyan, Amber or Green; Navy) |
 
 **The Local star index group** (bottom of Online lookups) is optional; WFMT works fully without it.
 
@@ -345,12 +344,12 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 | **Region Sweep** | *Auto-copy next target to clipboard on jump* (on); *Skip systems already visited this session* (on); *Skip systems already visited by anyone (EDSM)* (off); *Require a full FSS scan (not just arrival) to mark a system complete* (off); *Auto-discover more nearby cubes (EDSM) when the queue is running low* (off) |
 | **Waypoint Route** | *Auto-copy next waypoint to clipboard on jump* (on) |
 
-**Field Ops** (inner tabs: Inventory, Screenshots, Ship Builds)
+**Operations** (inner tabs: Inventory, Screenshots, Ship Builds)
 
 | Inner tab | Controls and their starting values |
 |---|---|
-| **Inventory** | The *Pillage message* format (placeholders `{item}` and `{total}`); *Play a sound on pickup* (off; grayed out where no sound can play); *Announce pickups for* each category; the per-loadout backpack capacity overrides. See [Inventory](field-ops.md#inventory) |
-| **Screenshots** | *Delete original file after conversion* (off); *Include WFMT's built-in overlay in the converted screenshot* (off; Windows, built-in overlay); *Group converted files into a per-system subfolder* (off); *Show the auto-capture timer icon on the main window* (on); *Filename Mask* (a preset list); *Auto-capture poll interval (seconds)*; *Use high-resolution capture on the auto-timer (Solo play only)* (off); *Automatically capture a screenshot when scanning a Thargoid signal* (on). See [Screenshots](field-ops.md#screenshots) |
+| **Inventory** | The *Pillage message* format (placeholders `{item}` and `{total}`); *Play a sound on pickup* (off; grayed out where no sound can play); *Announce pickups for* each category; the per-loadout backpack capacity overrides. See [Inventory](operations.md#inventory) |
+| **Screenshots** | *Delete original file after conversion* (off); *Include WFMT's built-in overlay in the converted screenshot* (off; Windows, built-in overlay); *Group converted files into a per-system subfolder* (off); *Show the auto-capture timer icon on the main window* (on); *Filename Mask* (a preset list); *Auto-capture poll interval (seconds)*; *Use high-resolution capture on the auto-timer (Solo play only)* (off); *Automatically capture a screenshot when scanning a Thargoid signal* (on). See [Screenshots](operations.md#screenshots) |
 | **Ship Builds** | An explanation only: the builds are kept by link in the Ship Builds window (**SHIPS**) |
 
 **Overlays** (inner tabs: Overlay Connection, Appearance and Overlay Placement first, then in order Body info, Colonization, Discovery, Exobiology, Expedition Log, Flight Alerts, Hide overlays, Interdiction Warning, Inventory, Landing, Mining, Missions, Notable Bodies, Route, Screenshots, Surface Compass, System targets). Every option, with its starting value, is in [Setting up the overlay](../OVERLAY_SETUP.md#every-overlays-tab-in-detail).
@@ -411,11 +410,11 @@ Switch to the mode first, then use the button listed here.
 | Watch list | Trade | **WATCH** button in the Watch list section |
 | Missions window (tabs: Active, By place) | Missions | **Missions window** button at the very bottom of the panel, or click a mission's card |
 | Source commodities | Missions | **Find sources** button at the very bottom of the panel (or **Sources** in the Missions window) |
-| Inventory | Field Ops | Click one of the **inventory bars** (there is no button) |
-| Materials | Field Ops | **MATERIALS** button in the Materials section |
-| Engineering (blueprints, wishlist, ship and Odyssey upgrade planners, engineers) | Field Ops | **BLUEPRINTS** button in the Materials section |
-| Material trader | Field Ops | **Find a trader** button in the Materials window |
-| Ship Builds | Field Ops | **SHIPS** button |
+| Inventory | Operations | Click one of the **inventory bars** (there is no button) |
+| Materials | Operations | **MATERIALS** button in the Materials section |
+| Engineering (blueprints, wishlist, ship and Odyssey upgrade planners, engineers) | Operations | **BLUEPRINTS** button in the Materials section |
+| Material trader | Operations | **Find a trader** button in the Materials window |
+| Ship Builds | Operations | **SHIPS** button |
 | Colonization Sites | Colonization | **DASHBOARD** button |
 | Colonization History (tabs: Overview, By day, Commodities, Sites) | Colonization | **HISTORY** button |
 | My Projects (your projects on Raven Colonial) | Colonization | **PROJECTS** button, or **Raven Colonial → My Projects** in the Colonization Sites window |
@@ -438,17 +437,17 @@ Notes:
 ## Button names
 
 The mode buttons and the buttons in the Exploration and Mining rows carry their whole names. **Hover over any button for
-a moment and a tooltip shows its full name and what it does.** The table below lists them with what each one does and where it is.
+a moment and a tooltip shows its full name and what it does.** The same goes for the buttons in WFMT's windows. The table below lists them with what each one does and where it is.
 
 | Button | Full name | Where |
 |---|---|---|
 | **Powerplay** | Powerplay | Mode buttons (top of the panel) |
 | **BGS** | BGS | Mode buttons |
-| **Exploration** | Exploration | Mode buttons |
+| **Explore** | Exploration | Mode buttons |
 | **Mining** | Mining | Mode buttons |
 | **Trade** | Trade | Mode buttons |
 | **Missions** | Missions | Mode buttons |
-| **Field Ops** | Field Ops | Mode buttons |
+| **Operations** | Operations | Mode buttons |
 | **Colony** | Colonization | Mode buttons |
 | **REPORT** | Powerplay Sessions window | Powerplay |
 | **RARES** | Rares (rare goods finder) | Powerplay |
@@ -480,15 +479,15 @@ a moment and a tooltip shows its full name and what it does.** The table below l
 | **MARK** | Save where you are as a mark for the Surface Compass | Exploration (Compass section) |
 | **TARGET** | Aim the compass at the next target: the nearest hotspot, each mark on this body, then none | Exploration (Compass section) |
 | **MARKS** | Open the Marks window | Exploration (Compass section) |
-| **MATERIALS** | Open the Materials window | Field Ops (Materials section) |
-| **BLUEPRINTS** | Open the Engineering window (blueprints, wishlist, ship and Odyssey upgrade planners, engineers) | Field Ops (Materials section) |
+| **MATERIALS** | Open the Materials window | Operations (Materials section) |
+| **BLUEPRINTS** | Open the Engineering window (blueprints, wishlist, ship and Odyssey upgrade planners, engineers) | Operations (Materials section) |
 | **HOTSPOTS** | Find nearby hotspots | Mining |
-| **+H.S.** | Save hotspot here | Mining (the live window's header) |
+| **Add hotspot** | Save hotspot here | Mining (the live window's header) |
 | **PRICES** | Find best price | Mining |
 | **RESERVES** | Check ring reserve level | Mining |
-| **I/E** | Import/export hotspots | Mining (the live window's header) |
-| **CTR** | Mark the center of a surface mining location | Mining (the live window's header) |
-| **BRD** | Mark the border of a surface mining location | Mining (the live window's header) |
+| **Import/export** | Import/export hotspots | Mining (the live window's header) |
+| **Mark center** | Mark the center of a surface mining location | Mining (the live window's header) |
+| **Mark border** | Mark the border of a surface mining location | Mining (the live window's header) |
 | **LIVE** | Open the live window for the Mining page you are on (a radar and the controls on Surface, the live numbers on Space) | Mining |
 | **BOOK** | Space Mining Book (Space page) or Surface Mining Book (Surface page) | Mining |
 | **DASHBOARD** | Open Mining History (the Mining mode's own button) | Mining |
@@ -509,7 +508,7 @@ a moment and a tooltip shows its full name and what it does.** The table below l
 | **◀** / **▶** | Previous / next page | Mining, Trade, Missions |
 | **Missions window** | Open the window listing every active mission, with progress and pinning | Missions (bottom of every page) |
 | **Find sources** | Where to buy the cargo your Collect and Mining missions need, and where to pick up a Delivery mission's cargo (needs Trade lookups on) | Missions (bottom of every page) |
-| **SHIPS** | Manage ship builds | Field Ops |
+| **SHIPS** | Manage ship builds | Operations |
 | **DASHBOARD** | Colonization sites (the Colonization mode's own button) | Colonization |
 | **OVERLAY** | Force the colonization shopping list onto the overlay (lit while on), press again to let go | Colonization |
 | **PROJECTS** | Open My Projects, every active project you have on Raven Colonial | Colonization |

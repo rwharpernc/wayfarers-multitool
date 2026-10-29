@@ -30,7 +30,7 @@ Built: the BGS report and Powerplay progress can be copied for Discord or posted
 - **More Ship planner links.** The Ship planner reads Coriolis and EDSY links that carry a whole build. Other link forms need the sites' own identifier tables, so they are being looked at.
 - **Subtracting stored modules from a Ship planner plan.** The planner now shows which modules you have in storage but does not yet take their engineering off the plan.
 
-## Field Ops
+## Operations
 
 - **A stat preview in the Odyssey upgrade planner.** The stat tables are not available as open data, so they are being gathered and checked in the game first.
 

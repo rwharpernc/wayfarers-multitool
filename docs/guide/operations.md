@@ -1,6 +1,6 @@
-# Field Ops
+# Operations
 
-Field Ops holds the on-foot and housekeeping tools: screenshots, your inventory, your engineering materials (with the blueprints, wishlist, ship planner and engineers) and saved ship builds.
+Operations holds the on-foot and housekeeping tools: screenshots, your inventory, your engineering materials (with the blueprints, wishlist, ship planner and engineers) and saved ship builds.
 (Colonization has its own mode, with its own page: [Colonization](colonization.md).)
 
 **Where this comes from:**
@@ -26,15 +26,15 @@ The most common tasks, step by step. Each one links to the section with the full
 
 **Set up screenshots** (details: [Screenshots](#screenshots))
 
-1. Open **Settings → WFMT → Field Ops → Screenshots**.
+1. Open **Settings → WFMT → Operations → Screenshots**.
 2. Check **Screenshot Directory** is the folder where the game saves its screenshots (use **Browse…** if not).
 3. Choose a **Converted Directory** for the PNG copies, and pick a **Filename Mask** from the drop-down.
 4. Optionally tick **Delete original file after conversion**.
-5. Take a screenshot in the game. The status line on the Field Ops panel shows the converted file's name.
+5. Take a screenshot in the game. The status line on the Operations panel shows the converted file's name.
 
 **See your backpack and cargo** (details: [Inventory](#inventory))
 
-1. Switch to Field Ops mode. The Inventory bars show the Backpack, the Ship Locker and, while you are in a ship or SRV, the Cargo.
+1. Switch to Operations mode. The Inventory bars show the Backpack, the Ship Locker and, while you are in a ship or SRV, the Cargo.
 2. Click any bar to open the Inventory window.
 3. Pick the **Backpack**, **Ship Locker** or **Cargo** tab. Type in **Filter** to narrow every tab at once.
 
@@ -54,7 +54,7 @@ The most common tasks, step by step. Each one links to the section with the full
 **Save a ship build** (details: [Ship Builds](#ship-builds))
 
 1. Design the build on Coriolis, EDSY or Spansh and copy its address from your browser.
-2. Press **SHIPS** in the **Ship Builds** row, then **Add**.
+2. Press **SHIPS** in the **Ship Builds** row, then **Add build**.
 3. Fill in **Name**, **Ship**, **Site** and **Link**, then press **Save**.
 
 **Plan a whole ship's engineering** (details: the Ship planner in [Engineering](#engineering-blueprints-and-a-wishlist))
@@ -69,7 +69,7 @@ Converts Elite's screenshots to PNG automatically, with an optional crop to just
 
 **How to use it:** nothing to do. Take a screenshot in the game as usual and WFMT converts it when the game's journal reports it.
 
-**On the panel** (Field Ops mode, **Field Ops**):
+**On the panel** (Operations mode, **Operations**):
 
 - A status line. It reads `Waiting for a screenshot…` until one is taken, then the converted file's name (cut to 40 characters). **Click the status line to open the folder** the last screenshot was saved in.
 - The **clock icon** to its right turns the auto-capture timer on and off (see below). It is hidden when the timer cannot work on your system or when you turn the icon off in Settings.
@@ -95,7 +95,7 @@ The status line also reports problems: `Screenshot not found - check Screenshot 
 - It can only press the key on systems that support it (Windows, and Linux under X11 or XWayland with `xdotool`).
 - **Thargoid scans.** When you collect a Thargoid signal's data, WFMT presses the key once for you (if *Automatically capture a screenshot when scanning a Thargoid signal* is on) and crops the copy to the bottom-left quarter of the screen, where the scan result appears. The same crop is used for the next screenshot you take while the game's Thargoid encounter music is playing.
 
-**Settings → WFMT → Field Ops → Screenshots:**
+**Settings → WFMT → Operations → Screenshots:**
 
 - **Screenshot Directory**: where the game saves its screenshots. **Browse…** picks a folder.
 - **Converted Directory**: where the PNG copies go. **Browse…** picks a folder.
@@ -113,14 +113,14 @@ The status line also reports problems: `Screenshot not found - check Screenshot 
 
 **Worked example: a photo set of one system.** You want every screenshot from a system in its own folder, with the file named by system and body.
 
-1. Open **Settings → WFMT → Field Ops → Screenshots**.
+1. Open **Settings → WFMT → Operations → Screenshots**.
 2. Tick **Group converted files into a per-system subfolder**.
 3. Leave **Filename Mask** on `SYSTEM(BODY)_NNNNN.png`.
 4. Take a screenshot at a planet. WFMT converts it and the status line shows the new file name (cut to 40 characters). Click the status line to open the folder it was saved in.
 
 **Worked example: auto-capture while you scan.** You are mapping a system and want a screenshot every few seconds.
 
-1. With Elite in front, click the clock icon on the Field Ops panel. The status line says `Auto-capture enabled`.
+1. With Elite in front, click the clock icon on the Operations panel. The status line says `Auto-capture enabled`.
 2. WFMT presses F10 once per poll interval (1 second unless you changed **Auto-capture poll interval (seconds)**).
 3. If you alt-tab away, the status line says `Auto-capture paused (Elite not focused)` and no key is pressed.
 4. Click the icon again for `Auto-capture disabled`. The timer also stops by itself if the game shuts down or you die.
@@ -151,7 +151,7 @@ Tabs: **Backpack**, **Ship Locker**, **Carrier Locker** (only once a carrier is 
 first three lists **Resource**, **Category** and **Held**; the Cargo tab lists **Commodity** and **Tons** for the
 hold you are using (ship or SRV).
 
-- The **Filter** box at the top filters every tab at once. **Clear** empties it.
+- The **Filter** box at the top filters every tab at once. **Clear filter** empties it.
 - **Refresh** redraws the window.
 - The subtitle shows your current suit (`Suit: ...`).
 - The Cargo tab opens with a bar and `tons / capacity` (or `capacity unknown`), then the commodities, most tons first. On foot it says `Cargo - not applicable on foot`.
@@ -180,9 +180,9 @@ hold you are using (ship or SRV).
 
 **Finding a single item.** You remember picking up a data item but not where it is.
 
-1. Click any bar on the Field Ops panel to open the Inventory window.
+1. Click any bar on the Operations panel to open the Inventory window.
 2. Type part of its name in **Filter**. Every tab is filtered at once, so you see it on the **Backpack** or **Ship Locker** tab, with its **Category** and how many you hold.
-3. Press **Clear** to see everything again.
+3. Press **Clear filter** to see everything again.
 
 **Checking your hold before a haul.** You are in your ship and want to know how many tons are free.
 
@@ -191,22 +191,22 @@ hold you are using (ship or SRV).
 
 **Correcting a backpack limit.** The Backpack bar shows a limit that differs from the number you see in the game, because the built-in table cannot see engineering grade.
 
-1. Open **Settings → WFMT → Field Ops → Inventory**.
+1. Open **Settings → WFMT → Operations → Inventory**.
 2. Find your suit loadout under *Suit Backpack Capacity* and type the number the game shows. If the tab says `No suits recorded yet for this commander`, wear a suit in the game, then reopen Settings.
 
 ### Settings
 
-The Field Ops tab (**Settings → WFMT → Field Ops → Inventory**) holds the pillage message, the sound, which categories are announced and the suit backpack capacities. The overlay switches are on **Settings → WFMT → Overlays → Inventory**.
+The Operations tab (**Settings → WFMT → Operations → Inventory**) holds the pillage message, the sound, which categories are announced and the suit backpack capacities. The overlay switches are on **Settings → WFMT → Overlays → Inventory**.
 
 | Setting | Where | Default |
 |---|---|---|
 | Show pillage notifications on the in-game overlay | Overlays → Inventory | Off |
-| Pillage message (placeholders `{item}`, `{total}`) | Field Ops → Inventory | `[{item}] pillaged! New Inventory Total: {total}` |
-| Play a sound on pickup | Field Ops → Inventory | Off |
+| Pillage message (placeholders `{item}`, `{total}`) | Operations → Inventory | `[{item}] pillaged! New Inventory Total: {total}` |
+| Play a sound on pickup | Operations → Inventory | Off |
 | Show these inventory bars on the overlay (one tick per bar) | Overlays → Inventory | All off |
 | Where it sits on screen | Overlays → Overlay Placement | Top right area |
-| Announce pickups for (Assets, Goods, Data) | Field Ops → Inventory | All three |
-| Suit Backpack Capacity (per suit loadout) | Field Ops → Inventory | The built-in table. One row per suit loadout WFMT has seen for the commander, pre-filled with the unengineered default; change the number to what you see in the game. Until a suit has been seen the tab says `No suits recorded yet for this commander` - wear a suit in the game, then reopen Settings |
+| Announce pickups for (Assets, Goods, Data) | Operations → Inventory | All three |
+| Suit Backpack Capacity (per suit loadout) | Operations → Inventory | The built-in table. One row per suit loadout WFMT has seen for the commander, pre-filled with the unengineered default; change the number to what you see in the game. Until a suit has been seen the tab says `No suits recorded yet for this commander` - wear a suit in the game, then reopen Settings |
 | Test pickup (button) | Overlays → Inventory | Sends a sample pickup to the overlay and says whether the overlay could be reached, even while notifications are off |
 
 Unticking a category in *Announce pickups for* only mutes its notifications. It is still counted.
@@ -232,7 +232,7 @@ Before the game has told WFMT anything the row says `Log in to see your material
 **MATERIALS** opens the window, and **BLUEPRINTS** (under it) opens the Engineering window.
 
 **To use it:**
-1. Switch to Field Ops mode and open the **Materials** row if it is folded. Log in to the game once, so WFMT has the full list.
+1. Switch to Operations mode and open the **Materials** row if it is folded. Log in to the game once, so WFMT has the full list.
 2. Read the row: pieces held of each type, the last change, and anything at the limit.
 3. Press **MATERIALS** to search, filter and sort. To find where to swap materials, press **Find a trader** inside that window (see below).
 4. To plan crafts, press **BLUEPRINTS** (see [Engineering](#engineering-blueprints-and-a-wishlist)).
@@ -321,7 +321,7 @@ Remember that two crafts is your estimate: the game rolls each result, so the re
 
 1. In **EDSY** or **Coriolis**, design the ship with its engineering and export it as **SLEF** (the Ship Loadout Exchange Format). Other ways in:
    - Paste one `Loadout` line from your journal to plan your current ship.
-   - Paste an **import link** (`https://coriolis.io/import?data=...` or `https://edsy.org/#/I=...`), such as one copied with the **Coriolis link** or **EDSY link** buttons below, or made by EDMC's own shipyard links.
+   - Paste an **import link** (`https://coriolis.io/import?data=...` or `https://edsy.org/#/I=...`), such as one copied with the **Copy Coriolis link** or **Copy EDSY link** buttons below, or made by EDMC's own shipyard links.
    - The address a site shows for a build you designed there (EDSY's `#/L=...`, Coriolis's `/outfit/...`) holds that site's own code, which WFMT cannot read, and short links would need a request to another website. For those, use **Export**, SLEF, instead.
 2. In the Engineering window open the **Ship planner** tab and press **Paste from clipboard**, or paste into the box and press **Read loadout**. If the text holds several ships, pick one in the **Ship** box.
 3. The table has the columns **Slot**, **Module**, **Engineering**, **Level**, **Experimental** and **Counted?** (and **In storage**, below), one row per engineered module. Select a row for the detail. **Clear** empties the box and the table.
@@ -347,7 +347,7 @@ Remember that two crafts is your estimate: the game rolls each result, so the re
 
 **This build on a site.** With a ship read and chosen:
 
-- **Coriolis link** and **EDSY link** copy a link that opens that build on the site.
+- **Copy Coriolis link** and **Copy EDSY link** copy a link that opens that build on the site.
 - **Open in Coriolis** and **Open in EDSY** open it in your browser.
 - The link carries the whole loadout (ship, name, modules and engineering) in the address, so the site needs nothing else. When you open or share it, that site and anyone you send it to can see the build.
 - Coriolis refuses a link of 2,083 characters or more, so for a very large engineered build WFMT says so instead of opening it, and the EDSY link is the one to use.
@@ -430,7 +430,7 @@ doesn't design ships itself. This just helps you find a build again later.
 
 1. Design your build on whichever site you like.
 2. Click **SHIPS** (manage ship builds) in the **Ship Builds** row of the WFMT panel. The row is collapsible, and its text shows how many builds you have.
-3. Click **Add** (the highlighted button).
+3. Click **Add build** (the highlighted button).
 4. Fill in the **Add Ship Build** form. **Name**, **Ship**, **Site** and **Link** are required. **Ship** starts as the ship you are flying; **Role** is what the build is for, such as "PvE Exploration"; **Notes** is free text.
 5. Pick the **Site** (**Coriolis**, **EDSY (E:D Shipyard)**, **Spansh** or **Other**; you can also type another name) and paste the build's web address, which must start with `http://` or `https://`, into **Link**.
 6. Click **Save** (or **Cancel**).
@@ -442,10 +442,10 @@ browser's address bar.
 
 1. Press **SHIPS** in the **Ship Builds** row. The **Builds** tab lists your builds with their **Name**, **Ship**, **Role**, **Site** and **Updated**.
 2. Select `Krait Phantom explorer`, then press **Open Link** to open it in your browser, or **Copy Link** to copy the address.
-3. If the site's address changed, press **Edit**, paste the new link and save.
+3. If the site's address changed, press **Edit build**, paste the new link and save.
 
 **To use it later:** the **Builds** tab lists your builds with the columns **Name**, **Ship**, **Role**, **Site** and **Updated**. Select one and use **Open Link** to open it in your browser, or **Copy Link** to copy
-the address. **Edit** and **Delete** work on the selected build in the same way.
+the address. **Edit build** and **Delete build** work on the selected build in the same way.
 
 ### Stored modules
 

@@ -35,13 +35,13 @@ Work that is under way, being researched, or waiting on a decision. Items are li
 
 - Built:
   - The Route Planner window's **Start expedition** makes an expedition from the route, starts it and starts a linked Expedition Log run (a setting).
-  - **Review** opens the Expedition window on it.
+  - **Review expedition** opens the Expedition window on it.
   - Pause, Resume and Stop agree between the planner and the Log.
   - **Road to Riches** and **Exomastery** can start the plan at once.
   - The Expedition window, the Route Planner and the Expedition Log are the Plan, Route and Log tabs of one window (`expedition_hub.py`), and the panel's two rows are one Expedition section.
 - Settled: **Start expedition** does not switch tabs.
   - It is pressed on the Route tab of the open window.
-  - The status line says what happened, and **Review** goes to the Plan tab.
+  - The status line says what happened, and **Review expedition** goes to the Plan tab.
 - Decided 2026-10-23: reopening a stopped expedition (the Route tab's Start, or the Log's Resume) picks the clock up from the time it stopped at, so the time stopped is not counted. To try: stop an expedition, wait a minute, start it again, and check the clock carries on from where it stopped.
 
 ### Next area of work: Mining, including surface mining
@@ -78,7 +78,7 @@ Work that is under way, being researched, or waiting on a decision. Items are li
 
 ### Shortcuts: built, to try in the game
 
-- Settings → General → Shortcuts has six actions: CTR, BRD, Rig placed, radar range, the Live window and hide overlays.
+- Settings → General → Shortcuts has six actions: Mark the center, Mark the border, Rig placed, radar range, the Live window and hide overlays.
   - Each has a Windows key combination (Ctrl+Alt+Shift plus one key, checked against Elite's own controls).
   - Each has a chat command (`!wf center` and so on, Windows and Linux; see [Shortcuts](guide/shortcuts.md)).
 - Still to decide or check:
@@ -121,7 +121,7 @@ The items below are implemented and covered by unit tests, but have not all been
 - [ ] **Start expedition and Review.** Plot a route in the Route Planner window and press **Start expedition**.
   - The status line names the expedition and its stop count.
   - The Expedition section, the Dashboard and the Expedition Log card show it running.
-  - **Review** opens the Expedition window with that expedition selected (also when another expedition is running or the window is already open).
+  - **Review expedition** opens the Expedition window with that expedition selected (also when another expedition is running or the window is already open).
   - Press it again on the same route: no duplicate.
   - Pause and Resume from the Expedition window, then from the Log tab. Check both agree and the time excludes the pause.
   - Stop from either side.
@@ -148,7 +148,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - On the Route tab plot a route and press **Start expedition**.
     - The Plan tab has the new expedition.
     - The status line says so in green and the button reads **Started ✓** for a few seconds (then **Start expedition** again). A press that starts nothing, such as with no route, shows neither.
-    - **Review** switches to the Plan tab on it.
+    - **Review expedition** switches to the Plan tab on it.
   - **Neutron route** on the Plan tab switches to the Route tab.
   - Close the window with a route plotted and open it again: the route is still there.
   - Check each tab's buttons (Start, Pause, Stop, Help) and that nothing is cut off at the smallest size.
@@ -341,7 +341,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check its body list has a **From your journals** group of bodies with mining locations and tons refined (compare a body or two with what you remember).
   - Then Linux.
 - [ ] **Surface Live radar: drive rings, stops, target line, Save map.** *Windows: tried on the simulation only.*
-  - On a body with a marked location (CTR, then BRD) and several saved deposits, open **LIVE**.
+  - On a body with a marked location (Mark center, then Mark border) and several saved deposits, open **LIVE**.
   - Check the orange dashed rings are drawn as described. The 2 km reach behind them is a community figure that will not be measured (see STATUS.md).
   - Check that the first ring starts at the center and the last sits on the border, and that before a border is marked they reach as far as you have driven.
   - Check that violet circles sit round the best stops (the radius is Settings → Mining).
@@ -350,7 +350,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that **Save map** writes a PNG that opens, reads well and holds no commander name.
 - [ ] **Shortcuts.** *Windows: the key combinations were registered and fired with simulated key presses; nothing was tried in the game.*
   - Settings → General → Shortcuts: pick keys, press OK, then in the game press each combination (Ctrl+Alt+Shift plus the key) with Elite in front.
-    - **CTR** and **BRD** mark and say so in the Live window's status line.
+    - **Mark center** and **Mark border** mark and say so in the Live window's status line.
     - The radar range steps.
     - The Live window opens.
     - The overlays hide and show.
@@ -359,7 +359,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that a combination another program holds is reported after OK.
   - Tick **Chat commands**, type `!wf zoom` and `!wf overlays` in a chat channel with nobody else in it, and check they run within a second or two. This also confirms the journal's `SendText` line carries the text in a `Message` field.
   - Linux steps are in `docs/LINUX_TESTING.md` section 7l.
-- [ ] **Rig placed and the rig bands.** Measure the game's rig gap: stand at one rig, CTR, drive until the game lets you place the next, BRD. Enter it in Settings → Mining (*Too close to place another rig*).
+- [ ] **Rig placed and the rig bands.** Measure the game's rig gap: stand at one rig, press Mark center, drive until the game lets you place the next, press Mark border. Enter it in Settings → Mining (*Too close to place another rig*).
   - In the Rhino press **Rig placed** (or Ctrl+Alt+Shift+R, or type `!wf rig`) each time you put a rig down.
   - A band of that radius should appear round it, filled while you are inside and an outline once you are clear.
   - The lines on the right should say how far the nearest rig is.
@@ -377,7 +377,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check the size and opacity settings, that it does not cost frames in the game, and where it sits against your other cards.
 - [ ] **Surface mining on a body you never scanned, and Get body info.** Land on a body with no `Scan` event in your journals and launch the Rhino.
   - The ground trail should start on the Live radar.
-  - **CTR** and **BRD** should mark (the body's name and size come from `Status.json`).
+  - **Mark center** and **Mark border** should mark (the body's name and size come from `Status.json`).
   - Tick *Enable body lookup* (Settings → Mining), open **BOOK** and press **Get body info**.
     - The system's landable bodies appear in the list with their kinds, sizes and mining-location counts. The counts come from Spansh and need a jump or login since EDMC started.
     - The status line says how many were added.
@@ -390,7 +390,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that *Near* and *Within* change the answer.
   - Check that **Copy report** pastes a numbered list.
 - [ ] **Surface Live simulation.** Settings → Mining → Simulation → **Surface Live (pretend Rhino)**.
-  - The radar, its range buttons, **CTR**, **BRD**, **+H.S.** and **Save map** work on the pretend ground.
+  - The radar, its range buttons, **Mark center**, **Mark border**, **Add hotspot** and **Save map** work on the pretend ground.
   - Nothing you press changes your own deposits or marks.
   - The window closes with its close button while Settings is still open.
 - [ ] **Surface Mining Book: refilling marks, stops, you are here.** In the Rhino on a body with several saved deposits (some with rigs and positions):
@@ -626,7 +626,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Restart EDMC after a session with storage changes and check the list catches up from the journals.
   - Check a second commander sees none of it, the filter box, and the tab at its minimum width.
   - Then Linux.
-- [ ] **Ship planner links.** Paste a Coriolis link made with **Coriolis link** and an EDSY link made with **EDSY link** into the Ship planner.
+- [ ] **Ship planner links.** Paste a Coriolis link made with **Copy Coriolis link** and an EDSY link made with **Copy EDSY link** into the Ship planner.
   - Check the same build is read.
   - Press **Open in Coriolis** and **Open in EDSY** and check each site shows the ship with its modules and engineering. EDSY has not been tried with a link WFMT made.
   - Try a very large engineered build for the Coriolis length message.

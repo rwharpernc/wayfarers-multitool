@@ -157,7 +157,7 @@ it less of a guessing game. The Mining Book, the Live radar and the market resea
     empty).
   - Its Rhino stops (deposits grouped around the one with the most rigs, the best three circled).
   - Its pick of the deposit you are standing at.
-  - The **CTR** and **BRD** marks of a mining location's center and border.
+  - The **Mark center** and **Mark border** marks of a mining location's center and border.
   - The Surface Live radar's drive rings (circles to drive round a marked location).
   - Its line to the nearest deposit of the material you are after.
   - The saved map picture of a location with its legend.
@@ -376,7 +376,7 @@ source's license asks for a notice, it is in `THIRD-PARTY-NOTICES.md`.
 
 - Micro-resource and commodity names come from **[EDCD/FDevIDs](https://github.com/EDCD/FDevIDs)**.
 - The landing-pad size of each ship (Trade mode) comes from **[EDCD/coriolis-data](https://github.com/EDCD/coriolis-data)**.
-- Engineering material names, types and grades (Field Ops → Materials) come from FDevIDs' `material.csv` too.
+- Engineering material names, types and grades (Operations → Materials) come from FDevIDs' `material.csv` too.
 
 ## How the data is gathered and verified
 

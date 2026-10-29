@@ -28,7 +28,7 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 | Find the best trade route or the best price | **Find routes**; the Market page | [Routes](trade.md#routes), [Market](trade.md#market) |
 | See every mission and pin some | **Missions** mode; **Missions window** | [The Missions window](missions.md#the-missions-window) |
 | Find where to buy mission cargo | **Find sources** | [Source commodities](missions.md#source-commodities) |
-| Plan engineering upgrades | **BLUEPRINTS** in Field Ops | [Engineering](field-ops.md#engineering-blueprints-and-a-wishlist) |
+| Plan engineering upgrades | **BLUEPRINTS** in Operations | [Engineering](operations.md#engineering-blueprints-and-a-wishlist) |
 | See what my colony site still needs | **Colony** mode; **DASHBOARD** | [The Colonization Sites window](colonization.md#the-colonization-sites-window) |
 | See how my actions affect the BGS | **BGS** mode; **REPORT** | [BGS](bgs.md) |
 | Share my BGS report or Powerplay progress in Discord (or anywhere else) | **Copy for Discord** and **Post to Discord** in the BGS Report and Powerplay Sessions windows; plain **Copy Summary** and **Copy Progress** for other places | [Sharing reports to Discord](discord.md) |
@@ -93,7 +93,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 **Controls:**
 
 - The Exploration panel has a section per feature, in alphabetical order (click a title to fold it): Auto-Honk with Discovery Alerts, Boxel Survey, Codex Completionist, Compass, Dashboard, Expedition, Nearest place to land, Notes, Organic Scanning, POI Reference and Route Planner.
-- Buttons: **Auto-Honk**, **Discovery Alerts**, **Neutron Star**, **White Dwarf**, **Random** (with the Boxel Survey's **Sequence**, **Region Sweep** and **Waypoints**), **FIND POI**, **UPDATE POI**, **MY CODEX**, **ADD NOTE**, **NOTES**, **EXPEDITION**, **COPY**, **PLOT**, **CLEAR ROUTE**, **REVIEW**, **DASHBOARD**, **MARK**, **TARGET**, **MARKS**.
+- Buttons: **Auto-Honk**, **Discovery Alerts**, **Neutron Star**, **White Dwarf**, **Random** (with the Boxel Survey's **Sequence**, **Region Sweep** and **Waypoints**), **FIND POI**, **UPDATE POI**, **MY CODEX**, **ADD NOTE**, **NOTES**, **EXPEDITION**, **COPY SYSTEM**, **COPY NEXT**, **PLOT**, **CLEAR ROUTE**, **REVIEW**, **DASHBOARD**, **MARK**, **TARGET**, **MARKS**.
 - Overlay cards are switched on under **Settings → WFMT → Overlays**.
 
 | Feature | What it does | How to use it | Deep dive |
@@ -111,7 +111,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Notes | Your own notes on a system or body, shown when you arrive | Type a line and **ADD NOTE**; **NOTES** opens a searchable window | [Notes](exploration.md#notes) |
 | Expedition planner | Named trips of stops ticked off as you arrive; Spansh's Road to Riches and Exomastery planners make one in a button press | **EXPEDITION**; **COPY NEXT** the next stop; in the window **Start**, **From plotted route**, **Import CSV**, **Road to Riches**, **Exomastery**, **Neutron route** | [Expedition](exploration.md#expedition) |
 | Expedition Log | An archive of your exploration expeditions with what each found and earned, and a card that keeps the running one in view | The Expedition window (**EXPEDITION**): **Start**, **Pause**/**Resume**, **Stop**; the archive is its Log tab; the card is under Settings → WFMT → Overlays → Expedition Log | [Expedition Log](exploration.md#expedition-log) |
-| Route Planner | A neutron route for your ship from Spansh's exact plotter, from your ship's own numbers; followed as you jump | **PLOT**; type the destination, **Generate route**, **Copy next system**, **Start expedition**, **Review**, **Clear route**; on the panel, **CLEAR ROUTE** and the *Copy the next system to the clipboard automatically* tick | [Route Planner](exploration.md#route-planner) |
+| Route Planner | A neutron route for your ship from Spansh's exact plotter, from your ship's own numbers; followed as you jump | **PLOT**; type the destination, **Generate route**, **Copy next system**, **Start expedition**, **Review expedition**, **Clear route**; on the panel, **CLEAR ROUTE** and the *Copy the next system to the clipboard automatically* tick | [Route Planner](exploration.md#route-planner) |
 | Carrier Route | A route for your fleet or squadron carrier from Spansh's fleet carrier router, filled in from the journal | **Carrier route** in the Route Planner window; type the destination, **Generate route**, **Copy next system**, **Mark next as reached** | [Carrier route](exploration.md#carrier-route) |
 | Exploration Dashboard | One window of everything known about the system, the body under you, its biology and your exploration | **DASHBOARD**; tabs Overview, Orbit, Surface, Exploration; header buttons switch overlays on and off | [Exploration Dashboard](exploration.md#exploration-dashboard) |
 | Nearest place to land | The nearest station that can take your ship and has what you need, and fleet carriers open to all | **FIND** in its section | [Nearest place to land](exploration.md#nearest-place-to-land) |
@@ -124,7 +124,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 - **◀ ▶** switch between the Space Mining and Surface Mining pages.
 - **BOOK** opens the Space Mining Book on the Space page and the Surface Mining Book on the Surface page.
 - **DASHBOARD** opens Mining History.
-- **LIVE** opens the second-screen live window (**CTR**, **BRD**, **+H.S.** and **I/E** are in it).
+- **LIVE** opens the second-screen live window (**Mark center**, **Mark border**, **Add hotspot** and **Import/export** are in it).
 - **HOTSPOTS**, **PRICES** and **RESERVES** are the lookups.
 - Settings are under **Settings → WFMT → Mining**.
 
@@ -135,9 +135,9 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Space Mining Book | Every ring your journals show hotspots for or that you mined at: hotspots by mineral, class, reserve level, tons mined and when, your note and a favorite; fills itself from your journals | **BOOK** on the Space page; **Find**, **Favorites only**, **Add ring**, **This system**, **Copy system**, **Save note**, **Favorite** | [The Space Mining Book](mining.md#the-space-mining-book) |
 | Surface Mining Book | Your catalog of Rhino deposits: tons mined, tons left (an estimate), dated Depleted marks, Rhino stops, market research, what pays (your commodities ranked by the best price Spansh shows), sharing one deposit as a line; plus the bodies your journals show mining on | **BOOK** on the Surface page; **Add hotspot**, **Mark depleted**, **Market research**, **What pays**, **Share line**, **Paste spot**, **This system** | [The Surface Mining Book](mining.md#the-surface-mining-book) |
 | Mining History | Every mining run in your journals added up: tons, tons per hour, commodities, rings, prospecting quality, limpets and what the sales paid, including runs made with EDMC closed | **DASHBOARD**; sortable tabs | [Mining History](mining.md#mining-history) |
-| Live window | A window for a second screen: on the Surface page a radar centered on the Rhino (range rings, ground driven, marked locations, saved deposits, the nearest one) with the panel's lines and the CTR, BRD, +H.S. and I/E controls; on the Space page the live numbers | **LIVE**; the buttons under the radar set its reach | [The live window](mining.md#the-live-window) |
-| Mark a mining location | The center and border of a surface mining signal, drawn on the minimap with its radius and how much of its edge you have driven | **CTR** at the middle, **BRD** at the edge, both in the live window | [Marking a mining location](mining.md#marking-a-mining-location) |
-| Save and share hotspots | Save the spot you stand at, import or export your list | **+H.S.** saves; **I/E** imports or exports (both in the live window) | [The buttons](mining.md#the-buttons) |
+| Live window | A window for a second screen: on the Surface page a radar centered on the Rhino (range rings, ground driven, marked locations, saved deposits, the nearest one) with the panel's lines and the Mark center, Mark border, Add hotspot and Import/export controls; on the Space page the live numbers | **LIVE**; the buttons under the radar set its reach | [The live window](mining.md#the-live-window) |
+| Mark a mining location | The center and border of a surface mining signal, drawn on the minimap with its radius and how much of its edge you have driven | **Mark center** at the middle, **Mark border** at the edge, both in the live window | [Marking a mining location](mining.md#marking-a-mining-location) |
+| Save and share hotspots | Save the spot you stand at, import or export your list | **Add hotspot** saves; **Import/export** imports or exports (both in the live window) | [The buttons](mining.md#the-buttons) |
 | Mining alerts | A card for a core asteroid or a rock rich in your target commodity; warnings for low limpets and a nearly full hold while you mine | **Settings → WFMT → Mining** for the target commodity; **Settings → WFMT → Overlays → Flight Alerts** to switch them on | [Flight Alerts](always-on.md#flight-alerts) |
 | Mining overlay and archive | Live stats on your game screen; an optional JSON file per completed run | **Settings → WFMT → Overlays → Mining**; *Archive completed mining runs* | [Settings](mining.md#settings) |
 | Mining radar over the game | The Surface Live radar drawn on your game screen while the Rhino is out (WFMT's built-in overlay, Windows) | **Settings → WFMT → Overlays → Mining**: *Show the Mining radar over the game*, its size and opacity, **Test radar** | [The radar over the game](mining.md#the-radar-over-the-game) |
@@ -176,18 +176,18 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Source commodities | Where to buy the cargo your Collect and Mining missions need, and where to pick up a Delivery | **Find sources** | [Source commodities](missions.md#source-commodities) |
 | Community Goals | The goals you are in and what they paid | The Community Goals page | [Using it](missions.md#using-it) |
 
-### Field Ops ([guide](field-ops.md))
+### Operations ([guide](operations.md))
 
 **Controls:** **MATERIALS**, **BLUEPRINTS**, **SHIPS**, and the **inventory bars** (click one to open Inventory).
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
-| Screenshots | Converts Elite's screenshots to PNG, with an optional crop to the HUD; an optional auto-capture timer and Thargoid-scan capture press the screenshot key for you | Nothing to do; **Click to expand** shows thumbnails; the clock icon starts the timer | [Screenshots](field-ops.md#screenshots) |
-| Inventory | Your backpack, locker and cargo as bars, and the Carrier Locker, with a pick-up sound | Click an inventory bar | [Inventory](field-ops.md#inventory) |
-| Materials | The Raw, Manufactured and Encoded materials you hold, their grade and limit | **MATERIALS** | [Materials](field-ops.md#materials) |
-| Engineering | About 1,180 blueprints against what you hold, a wishlist and shopping list, a ship planner (which also shows the engineered modules you already have in storage), an Odyssey upgrade planner and an Engineers tab | **BLUEPRINTS** | [Engineering](field-ops.md#engineering-blueprints-and-a-wishlist) |
-| Material trader finder | The closest Raw, Manufactured or Encoded trader, with distance and pad filters | **Find a trader** in the Materials window | [Materials](field-ops.md#materials) |
-| Ship Builds | Builds from Coriolis, EDSY or Spansh, kept by link | **SHIPS** | [Ship Builds](field-ops.md#ship-builds) |
+| Screenshots | Converts Elite's screenshots to PNG, with an optional crop to the HUD; an optional auto-capture timer and Thargoid-scan capture press the screenshot key for you | Nothing to do; **Click to expand** shows thumbnails; the clock icon starts the timer | [Screenshots](operations.md#screenshots) |
+| Inventory | Your backpack, locker and cargo as bars, and the Carrier Locker, with a pick-up sound | Click an inventory bar | [Inventory](operations.md#inventory) |
+| Materials | The Raw, Manufactured and Encoded materials you hold, their grade and limit | **MATERIALS** | [Materials](operations.md#materials) |
+| Engineering | About 1,180 blueprints against what you hold, a wishlist and shopping list, a ship planner (which also shows the engineered modules you already have in storage), an Odyssey upgrade planner and an Engineers tab | **BLUEPRINTS** | [Engineering](operations.md#engineering-blueprints-and-a-wishlist) |
+| Material trader finder | The closest Raw, Manufactured or Encoded trader, with distance and pad filters | **Find a trader** in the Materials window | [Materials](operations.md#materials) |
+| Ship Builds | Builds from Coriolis, EDSY or Spansh, kept by link | **SHIPS** | [Ship Builds](operations.md#ship-builds) |
 
 ### Colonization ([guide](colonization.md))
 

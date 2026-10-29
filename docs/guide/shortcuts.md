@@ -4,8 +4,8 @@ Start an action without the mouse, while you are in the game: a **keyboard short
 
 | Action | Keys (Windows) | Chat command | What it does |
 |---|---|---|---|
-| Mark the center (CTR) | Ctrl+Alt+Shift+**C** | `!wf center` | Marks the center of the mining location you are at, as **CTR** does in the Surface Live window ([marking a location](mining.md#marking-a-mining-location)). |
-| Mark the border (BRD) | Ctrl+Alt+Shift+**B** | `!wf border` | Marks the border of the nearest marked location, as **BRD** does. |
+| Mark the center | Ctrl+Alt+Shift+**C** | `!wf center` | Marks the center of the mining location you are at, as **Mark center** does in the Surface Live window ([marking a location](mining.md#marking-a-mining-location)). |
+| Mark the border | Ctrl+Alt+Shift+**B** | `!wf border` | Marks the border of the nearest marked location, as **Mark border** does. |
 | Radar range | Ctrl+Alt+Shift+**Z** | `!wf zoom` | Steps the Live radar's reach through 50 m, 250 m, 500 m, 1 km and 2 km and back. |
 | Open the Live window | Ctrl+Alt+Shift+**L** | `!wf live` | Opens the Surface Mining Live window, or raises it if it is open. |
 | Hide or show overlays | Ctrl+Alt+Shift+**O** | `!wf overlays` | Hides every WFMT overlay, or shows them again ([hiding the overlays](../OVERLAY_SETUP.md#hiding-the-overlays-for-a-while)). |
@@ -58,4 +58,4 @@ The game writes what you send to its journal, WFMT reads it there, and the actio
 
 ## What is not a shortcut
 
-Saving a deposit (**+H.S.**) and **Save map** open a window you fill in or a file dialog, which does not suit a key pressed in the game, so they stay buttons in the Surface Live window.
+Saving a deposit (**Add hotspot**) and **Save map** open a window you fill in or a file dialog, which does not suit a key pressed in the game, so they stay buttons in the Surface Live window.

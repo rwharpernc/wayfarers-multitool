@@ -333,7 +333,7 @@ Depletion bookkeeping lives on the hotspot too (`depleted_at`, `regrown_at`, `to
 - A Depleted mark with no date is dated on first sight.
 
 ### 6.2 Import and export
-WFMT exports and re-imports its own file format, with a merge or replace choice (the **I/E** button, and the buttons
+WFMT exports and re-imports its own file format, with a merge or replace choice (the **Import/export** button, and the buttons
 in Settings).
 
 ### 6.3 The Surface Mining Book
@@ -463,9 +463,9 @@ the last one), and the map paints a **2,000 m** disc at each.
 **Marked mining locations.** The journal gives neither the position nor the size of a mining location, so
 the commander marks them:
 
-- **CTR** stores the live position as a site's center (within **100 m** of an existing center it moves
+- **Mark center** stores the live position as a site's center (within **100 m** of an existing center it moves
   that center).
-- **BRD** stores the border on the nearest site, and the radius is the distance between the two.
+- **Mark border** stores the border on the nearest site, and the radius is the distance between the two.
 - Up to 12 sites are kept per body, in the coverage file (per commander).
 - The minimap draws a cross and a circle for each, and the page reports how much of the border circle
   (72 sample points) lies within 2,000 m of a recorded point.
@@ -496,10 +496,10 @@ the two cannot disagree.
   position and body size are known, at most once a second, with a translucent background (`wfmt_mining_radar_enabled`,
   `wfmt_mining_radar_size` 240 to 560, default 340; `wfmt_mining_radar_opacity` 30 to 100, default 70). The slot is
   Overlay Placement's `mining_radar`.
-- **Shortcuts.** CTR, BRD, Rig placed, the radar range and opening the window are shortcut actions
+- **Shortcuts.** Mark center, Mark border, Rig placed, the radar range and opening the window are shortcut actions
   (`shortcut_actions.py`, `shortcuts.py`; see the [Shortcuts guide](guide/shortcuts.md)).
 - **Simulation** (`mining_simulation.py`): Settings → Mining → Simulation opens Surface Live on made-up data. It builds
-  its own repositories, never given a plugin folder or a commander, so none can write a file; the window has no I/E.
+  its own repositories, never given a plugin folder or a commander, so none can write a file; the window has no Import/export.
 
 ### 7.4 The waypoint arrow (the Surface Compass)
 The arrow is part of the **Surface Compass** (`surface_compass.py`; see [TECHNICAL.md](TECHNICAL.md) and

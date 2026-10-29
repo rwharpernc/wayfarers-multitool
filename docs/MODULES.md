@@ -41,7 +41,7 @@ Spec: [TECHNICAL.md](TECHNICAL.md) sections 3 to 5 and 10
 | `route_planner_panel.py` | The Route Planner's owner: the Route Planner section of the Exploration panel (the PLOT button, the auto-copy tickbox and the next-jump line), the Loadout, arrival (with the system address) and Status.json (cargo) feeds, arrivals along the route, copying the next system to the clipboard, making an expedition from the route, and redrawing the Route overlay |
 | `route_secondary.py` | The Route Planner's check for a neutron star that is probably a secondary star: the name rule over a system's stars (`neutron_is_secondary`), and `SecondaryChecker`, which asks Spansh for the stars of the next neutron stops in the background and hands back the answers |
 | `route_planner_state.py` | The Route Planner's plotted route kept in `route_planner_route.json` (`commander_data.py`, one route per commander) so it survives a restart: the route as plain data, read back with every damaged route dropped, and `RouteStore` |
-| `route_planner_window.py` | The Route Planner window: the ship block (name, drive, booster, optimal mass, supercharge, cargo), source and destination, the four options and the algorithm, the exact-plotter call on a worker thread with a progress bar, the table of every jump, the copy buttons, **Start expedition** (makes an expedition from the route, starts it and its Expedition Log run) and **Review** (opens the Expedition window on it), and the status line that says what was sent to the Route overlay and copied |
+| `route_planner_window.py` | The Route Planner window: the ship block (name, drive, booster, optimal mass, supercharge, cargo), source and destination, the four options and the algorithm, the exact-plotter call on a worker thread with a progress bar, the table of every jump, the copy buttons, **Start expedition** (makes an expedition from the route, starts it and its Expedition Log run) and **Review expedition** (opens the Expedition window on it), and the status line that says what was sent to the Route overlay and copied |
 | `explore_dashboard.py` | The Exploration Dashboard's owner: the folding Dashboard section of the Exploration panel (the DASHBOARD button and the Exploration Value lines), the snapshot of the survey, exobiology view, Status.json, expedition and route it hands the window, the refresh on journal events and Status.json, and the two overlay switches (`GROUPS`: the id prefixes of the exploration and exobiology cards) |
 | `explore_dashboard_data.py` | What the dashboard shows, as plain rows and fields (no Tk): system tiles and fields, the bodies table and one body's details, the worth-mapping, life and found-by-others lists, the genus table with odds, rewards and distances, the tracked plants with distance and direction, the expedition fields, and `perspective` (orbit or ground from Status.json) |
 | `explore_dashboard_window.py` | The Exploration Dashboard window on the shared window kit: Overview, Orbit, Surface and Exploration tabs, the header buttons that hide and show the overlay groups, and the switch to Surface on landing and back to Orbit on lift-off |
@@ -65,7 +65,7 @@ Spec: [TECHNICAL.md](TECHNICAL.md) sections 3 to 5 and 10
 | `overlay_processes.py` | Counts the EDMCModernOverlay windows running (a launcher and its child are one window; psutil, `/proc` or PowerShell) so Check connection and Copy diagnostics can say when a second one is drawing every card twice; report only, WFMT never starts or stops the overlay |
 | `overlay_visibility.py` | Hide every WFMT overlay for a while: the line in the WFMT panel (click to hide or show) and the Overlays → Hide overlays Settings tab (a button); the switch itself is `overlay.set_all_hidden`, and the keyboard shortcut and chat command are in `shortcuts.py` |
 | `elite_keybinds.py` | Reads the keyboard bindings out of Elite's binds file (key and modifiers for each control) and says which match a combination, so a WFMT shortcut can be checked against the game's own controls (pure parsing; `autohonk.py` finds the file) |
-| `shortcut_actions.py` | The shortcut list and its pure logic: the six actions (CTR, BRD, Rig placed, radar range, Live window, hide overlays), the Ctrl+Alt+Shift key choices, the Windows key codes, the `!wf` chat parser, the freshness check for a journal line and the clash text |
+| `shortcut_actions.py` | The shortcut list and its pure logic: the six actions (Mark center, Mark border, Rig placed, radar range, Live window, hide overlays), the Ctrl+Alt+Shift key choices, the Windows key codes, the `!wf` chat parser, the freshness check for a journal line and the clash text |
 | `shortcuts.py` | The shortcuts' runtime and Settings page (General → Shortcuts): the Windows global key combinations on their own thread, the chat commands read from the journal's `SendText` event, running each action on the Tk thread and the optional sound |
 | `overlay_placement.py` | Global overlay placement: reads the real window size, mode and display scaling from EDMCModernOverlay's log (falling back to Elite's `DisplaySettings.xml` and Windows' scaling, then to the window size alone from the overlay's log when that file cannot be read), keeps every display's saved spot, places a card from the size it is drawn at (`client_for_measured`), and the Overlay Placement Settings tab with its preview and the drag-and-drop layout editor |
 | `overlay_grid.py` | The drag-and-drop layout editor on the Overlay Placement tab: a to-scale picture of the screen with a grid and a box for every display; dropping a box writes the spot and offset (snapping flush to an edge or the center line, and to the grid); the conversions between a dropped box and a placement are pure |
@@ -159,7 +159,7 @@ Spec: [ORGANIC_SCANNING_TECH_SPEC.md](ORGANIC_SCANNING_TECH_SPEC.md), [SCREENSHO
 | `blueprints_window.py` | The Engineering window: browse and search blueprints, see one craft's ingredients against what you hold and where each is found, add to the wishlist, the wishlist with a combined shopping list and who can do each entry, and an Engineers tab (standing, what they offer, where they are, what unlocking takes, with the details of the one you select, and a Bubble / Colonia / Both filter) and the Ship planner and Upgrade planner tabs |
 | `material_traders.py` | Finding a material trader: the closest Raw, Manufactured or Encoded traders to a system from Spansh's station search, with the pad filter, a two-minute cache and the place described; the search is passed in, so it is tested offline; no Tk |
 | `materials.py` | The commander's Raw, Manufactured and Encoded materials, kept per commander in `materials.json`: the login list, every event that changes a count, the grade limits (300 to 100), EDMC's totals for a mid-session start, and unknown materials; no Tk |
-| `materials_panel.py` | The Materials row in Field Ops mode: pieces held of each type, the last change, what is at the limit, and the button that opens the window |
+| `materials_panel.py` | The Materials row in Operations mode: pieces held of each type, the last change, what is at the limit, and the button that opens the window |
 | `material_trader_window.py` | The Material trader window: pick a type, distance and pad, search from your system or another, see what you hold of that type by grade, and the closest traders from Spansh; the lookup runs on a worker thread |
 | `materials_window.py` | The Materials window: search, type and grade filters, "only at the limit", and a sortable table of held, limit and room |
 | `expedition.py` | Expedition planner, the pure part: named expeditions of ordered stops with notes, one active at a time, stops ticked off from arrivals with jump and distance totals, per-stop survey counts (bodies scanned, first discoveries, mapped) from the scan events, nearest-neighbor ordering, CSV and text export, kept per commander in `expeditions.json`; no Tk |
@@ -234,7 +234,7 @@ Spec: [MINING_TECH_SPEC.md](MINING_TECH_SPEC.md)
 | `mining_ground.py` | Ground type of a body and your own base rates of deposits on it |
 | `mining_history.py` | The commander's mining runs, read from their journals in the background and saved per commander (`mining_history.json`); the newest journal is read afresh and never saved; no Tk |
 | `mining_history_data.py` | The Mining History window's tiles, fields and tables, worked out from the saved runs; no Tk |
-| `mining_live_window.py` | The Mining live window (the LIVE button on each Mining page): on the Surface page a radar centered on the Rhino, the panel's lines and the CTR, BRD, +H.S. and I/E controls; on the Space page the panel's lines and the lookups; drawn by the same code as the panel, no overlay needed |
+| `mining_live_window.py` | The Mining live window (the LIVE button on each Mining page): on the Surface page a radar centered on the Rhino, the panel's lines and the Mark center, Mark border, Add hotspot and Import/export controls; on the Space page the panel's lines and the lookups; drawn by the same code as the panel, no overlay needed |
 | `mining_history_window.py` | The Mining History window (the DASHBOARD button in Mining mode) |
 | `mining_market.py` | The open station market set against the galactic average: a line for each commodity the run refined that the station buys; no network |
 | `mining_hotspot_dialog.py` | The shared Add/Edit Hotspot form (on `uikit/form.py`), with `build_hotspot`, which turns the typed text into a hotspot and writes the material in the one spelling |
@@ -374,7 +374,7 @@ Guide: [Colonization](guide/colonization.md)
 | `colonization_view.py` | What the Colonization Sites window shows for a site: the commodity rows after the filters, and the totals (still to get, on the carrier, in the ship, buy and haul trips); pure, no Tk |
 | `colonization_window.py` | The Colonization Sites window: sites on the left; the picked site's progress, totals, filters and sortable commodity table, and the Where to buy search, on the right |
 
-## Field Ops: screenshots, inventory, ship builds
+## Operations: screenshots, inventory, ship builds
 
 Spec: [SCREENSHOTS_AND_INPUT_TECH_SPEC.md](SCREENSHOTS_AND_INPUT_TECH_SPEC.md), [TECHNICAL.md](TECHNICAL.md) section 12
 
@@ -384,7 +384,7 @@ Spec: [SCREENSHOTS_AND_INPUT_TECH_SPEC.md](SCREENSHOTS_AND_INPUT_TECH_SPEC.md), 
 | `inventory_cargo.py` | Ship and SRV cargo-hold tracking |
 | `inventory_names.py` | Microresource ID to display name |
 | `inventory_names_fdevids.py` | The microresource names, imported from a public list |
-| `inventory_panel.py` | The Inventory section of Field Ops (bars and overlay) |
+| `inventory_panel.py` | The Inventory section of Operations (bars and overlay) |
 | `inventory_sound.py` | The optional pickup sound |
 | `inventory_suit.py` | Current suit and backpack capacity |
 | `inventory_window.py` | The tabbed inventory window |
@@ -392,10 +392,10 @@ Spec: [SCREENSHOTS_AND_INPUT_TECH_SPEC.md](SCREENSHOTS_AND_INPUT_TECH_SPEC.md), 
 | `screenshot_convert.py` | Converts screenshots to renamed PNGs and thumbnails |
 | `screenshot_gui_focus.py` | GUI-focus detection and per-panel crop rectangles |
 | `screenshot_naming.py` | Output file names for captured screenshots |
-| `screenshots.py` | The Screenshots section of Field Ops: capture, conversion, thumbnails, overlay message |
+| `screenshots.py` | The Screenshots section of Operations: capture, conversion, thumbnails, overlay message |
 | `ship_builds_data.py` | Per-commander catalog of ship-build links |
 | `ship_builds_dialog.py` | The Add/Edit Ship Build form (on `uikit/form.py`), with `build_ship` |
-| `ship_builds_panel.py` | The Ship Builds section of Field Ops |
+| `ship_builds_panel.py` | The Ship Builds section of Operations |
 | `ship_builds_window.py` | The Ship Builds window: a Builds tab and a Stored modules tab |
 | `ship_modules_tab.py` | The Stored modules tab of the Ship Builds window: filter box, freshness line and table |
 
@@ -480,5 +480,6 @@ Spec: [WINDOW_FRAMEWORK_SPEC.md](WINDOW_FRAMEWORK_SPEC.md). Pure tkinter; nothin
 | `uikit/palette.py` | Color and font tokens for WFMT's own window look, and its four themes (Navy, Cyan, Amber, Green) with `apply` |
 | `uikit/shell.py` | The window shell: header, body, status footer, saved geometry; and `TabShell`, the same shell for a window that lives in a tab of another window |
 | `uikit/style.py` | Fonts and per-window skinning |
+| `uikit/tooltip.py` | `add_tooltip`: the hover tooltip every button uses, on the main panel and in the windows (`panelkit` re-exports it); Tk only |
 | `uikit/table.py` | `DataTable`, the replacement for `ttk.Treeview` |
 | `uikit/widgets.py` | Reusable widgets (buttons, combobox, scrollbar, progress bar, tabs) |

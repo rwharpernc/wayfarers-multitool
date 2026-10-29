@@ -86,7 +86,7 @@ Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 und
   - With the network off, a lookup fails with a clear message. After several failures the message says Spansh is being left alone for a few minutes.
 - **Ship links.** Ship planner:
   - Paste a Coriolis or EDSY import link and read it.
-  - **Coriolis link** and **EDSY link** copy a link (paste it into a text editor to check it is one long address).
+  - **Copy Coriolis link** and **Copy EDSY link** copy a link (paste it into a text editor to check it is one long address).
   - **Open in Coriolis** and **Open in EDSY** open your browser.
   - From a Flatpak EDMC, opening a browser also goes through the sandbox: say if nothing opens, and the same for Report an issue under Settings → General → Help.
 - **Stored modules.** Open Module Storage at a station in the game, then Ship Builds → **Stored modules**.
@@ -95,7 +95,7 @@ Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 und
   - Restart EDMC and check it catches up from the journals (the journal folder is in the Proton prefix: section 0).
 - **Start expedition and Review.** Plot a route, press **Start expedition**.
   - The expedition starts together with its Expedition Log run.
-  - **Review** opens the Expedition window on it.
+  - **Review expedition** opens the Expedition window on it.
   - Pause and Resume from either side agree, and a restart while paused keeps both paused.
   - The plan dialog's **Start it now** tick starts a Road to Riches or Exomastery plan.
 - **One Expedition window.** **EXPEDITION** and **PLOT** on the panel open the same window with Plan, Route and Log tabs.
@@ -173,7 +173,7 @@ Use them for anything the passes did not reach.
 - Settings → General → **Help** (Report an issue, Copy diagnostics).
 - The Engineering window's **Engineers** tab (places, unlock steps, the Bubble / Colonia filter) and **Ship planner** tab.
 - BGS rebuilding a period that closed while EDMC was not running, and finished Colonization builds losing the "Construction Site:" prefix.
-- **Materials, Engineering and the Material trader** (Field Ops mode) and **the Expedition planner** (Exploration mode): the checklists are in section 5 below.
+- **Materials, Engineering and the Material trader** (Operations mode) and **the Expedition planner** (Exploration mode): the checklists are in section 5 below.
 
 **Settings pages**
 
@@ -190,7 +190,7 @@ Use them for anything the passes did not reach.
   - In Colonization, a long site, project, system or commodity name (such as `Orbital Construction Site: ...`) is shown in full and wraps at the window's width instead of ending in `...`.
   - In Expedition, Materials, Notes and the Trade watch list, lines use the whole width of the window when it is wide, and a narrow window is still never widened.
 - **Panel width:**
-  - With Expedition (Exploration mode) and Materials (Field Ops mode) open, the main EDMC window must not grow wider.
+  - With Expedition (Exploration mode) and Materials (Operations mode) open, the main EDMC window must not grow wider.
   - In Expedition, **Copy on arrival** sits on its own line under **COPY NEXT** and **EXPEDITION**.
   - In Materials, **BLUEPRINTS** sits under **MATERIALS**, not beside it.
   - With a large font the Trade page and the Trade History window should not widen the EDMC window either.
@@ -290,7 +290,7 @@ Use them for anything the passes did not reach.
   - **MARKS** opens the window (edit, **Here**, Delete twice).
   - With the compass enabled the arrow follows the target as you move and turn, and clears when you lift off.
   - Check the Mining settings tab has no waypoint tick.
-- [ ] Materials (Field Ops mode, **Materials** section):
+- [ ] Materials (Operations mode, **Materials** section):
   - Log in and the row shows the pieces of each type.
   - Collect or discard a material and "Last: ..." follows.
   - A material at its limit is named.
@@ -305,7 +305,7 @@ Use them for anything the passes did not reach.
   - **Here** refills the system, and a typed system works.
   - Double-click copies the system name.
   - With no network the status says Spansh could not be reached and **Find** works again afterwards.
-- [ ] Engineering (Field Ops, **BLUEPRINTS** on the Materials section):
+- [ ] Engineering (Operations, **BLUEPRINTS** on the Materials section):
   - The window opens with **Blueprints** and **Wishlist** tabs.
   - Search (it waits a moment after typing) and the Module drop-down narrow the list.
   - Picking a row shows its ingredients, what you hold and where each is found.
@@ -426,7 +426,7 @@ Use them for anything the passes did not reach.
 
 ## 6. Other features
 
-- [ ] The Inventory pickup **sound** plays (Field Ops → Inventory settings).
+- [ ] The Inventory pickup **sound** plays (Operations → Inventory settings).
 - [ ] Codex **MY CODEX** opens, and its **Backfill Journals** action finds your journals.
 - [ ] Codex details window: the Entry and Times found headings sort both ways, the **Not found** tab fills in
       (needs network the first time), and double-clicking an entry opens its Canonn search in your browser.
@@ -463,7 +463,7 @@ Use them for anything the passes did not reach.
   - With the Route overlay on, the route shows on its card in place of the game's route.
   - The window's status line says the route was sent to the Route overlay and which system is on the clipboard, and says it again at every system you reach.
   - **Start expedition** makes an expedition from the route, starts it and starts its Expedition Log run.
-  - **Review** opens the Expedition window with that expedition selected.
+  - **Review expedition** opens the Expedition window with that expedition selected.
   - The Expedition window's **Neutron route** button opens this window.
 - [ ] **Route overlay**: the card reads *You are navigating to:*, the destination, *You will be there in N jumps.*, a rule, the systems still to visit (no numbers), a rule, and *N LY left to jump.*
   - Each system shows its star in green (scoopable), yellow (not scoopable), blue (neutron star) or red (white dwarf).
@@ -536,12 +536,12 @@ Use them for anything the passes did not reach.
 
 ## 6b. Fixed in the platform audit - please confirm
 
-- [ ] Settings → Exploration → Auto-Honk, Field Ops → Screenshots and Field Ops → Inventory each show a **Works on:** line, green when
+- [ ] Settings → Exploration → Auto-Honk, Operations → Screenshots and Operations → Inventory each show a **Works on:** line, green when
       it can work here and orange (with the reason) when it can't. Try it with and without `xdotool`.
 - [ ] Take a normal screenshot and an Alt+F10 hi-res one: both are found, converted and named, and the
       hi-res one is treated as hi-res (the journal path is Windows-style, `\ED_Pictures\...`).
 - [ ] Open every modal dialog without it erroring or staying behind the main window: Mining → Add/Edit
-      Hotspot, Find Hotspots, Find Best Price, Check Ring Reserve, Import/Export Hotspots, and Field Ops →
+      Hotspot, Find Hotspots, Find Best Price, Check Ring Reserve, Import/Export Hotspots, and Operations →
       Add/Edit Ship Build. Each should stay on top and block the window behind it.
 
 ## 6c. Game mode and credits lines (under the mode buttons)
@@ -694,7 +694,7 @@ Written and tried on Linux (Flatpak EDMC, Proton game, EDMCModernOverlay). The c
       transfer twice. A commander set to None in the Trade settings gets no FC column.
 - [ ] **Window follows the commander**: with the window open, log in as another commander; its sites change.
 - [ ] **Start-up commander**: start EDMC with the game closed.
-  - The Field Ops panels (Colonization, Codex, Ship Builds, Trade) show the last commander instead of "waiting for commander login".
+  - The Operations panels (Colonization, Codex, Ship Builds, Trade) show the last commander instead of "waiting for commander login".
   - The EDMC log has "No game running at start-up; restored commander ..." (about four seconds after start).
   - Then log in as someone else: everything switches.
 - [ ] **Overlay card** (Settings → Overlays → Colonization: tick the overlay option; **Test Overlay** draws a sample): the table shows
@@ -875,7 +875,7 @@ The Surface Live radar has not been looked at on Linux. The simulation shows it 
   - Note whether the labels look right (the radar uses Pillow's built-in font).
 - [ ] The five range buttons under the radar resize the view, and the choice is kept. Resizing the window resizes the radar and never widens it past the window.
 - [ ] The lines on the right update about once a second (refined counts, cargo, nearest marked location, nearest deposit) without flicker, and wrap inside the window.
-- [ ] **CTR** and **BRD** add or finish a marked location on the pretend ground; **+H.S.** opens the add-hotspot window filled with the pretend position and a saved deposit shows up on the radar. There is no **I/E**.
+- [ ] **Mark center** and **Mark border** add or finish a marked location on the pretend ground; **Add hotspot** opens the add-hotspot window filled with the pretend position and a saved deposit shows up on the radar. There is no **Import/export**.
 - [ ] The radar also shows:
   - orange dashed **drive rings** round the first marked location (2 km, then 4.5 km on the border)
   - two violet **Stop** circles
@@ -941,7 +941,7 @@ Keyboard shortcuts are Windows only; the chat commands are the same on both syst
   - With the box unticked it says to turn the setting on and asks nothing.
 - [ ] After **Get body info** in a system, restart EDMC (or jump away and come back): the Book's body list shows the same bodies again with no new request, and a body your journals give later replaces its remembered entry.
 - [ ] FSS-scan a body that has mining locations: its count appears in the Book's list without a detailed scan, and a later detailed scan changes it only if the numbers differ.
-- [ ] Landed on a body with no `Scan` event in your journals, launch the Rhino: the green ground trail starts on the Live radar and **CTR** says "Center marked" (the body's size comes from `Status.json`).
+- [ ] Landed on a body with no `Scan` event in your journals, launch the Rhino: the green ground trail starts on the Live radar and **Mark center** says "Center marked" (the body's size comes from `Status.json`).
 
 ## 7o. The Mining radar over the game (Windows only: on Linux, check that it does nothing and says so)
 

@@ -3,7 +3,7 @@
 Two WFMT features press keys in the game for you: **Auto-Honk** and **timed or automatic screenshot
 capture**. This document explains exactly what they do and don't do, how Screenshots converts and crops
 pictures, and how it all differs on Linux. For how to use them, see the
-[README](guide/field-ops.md). For how the code is organized in general, see
+[README](guide/operations.md). For how the code is organized in general, see
 [TECHNICAL.md](TECHNICAL.md).
 
 - **Author:** R.W. Harper (CMDR Tiber Caelvox)
@@ -130,11 +130,11 @@ On Linux, Elite runs under Steam Proton or Wine, so the game's "Windows" folders
 unknown ship signature (`MaterialCollected`), WFMT presses the screenshot key once and crops the result.
 The game's `Music` event for the Thargoid encounter tracks also marks the next capture for the same crop.
 This is the only input WFMT sends without you turning something on first. To stop it, turn off
-*Thargoid capture* in **Settings → WFMT → Field Ops → Screenshots**.
+*Thargoid capture* in **Settings → WFMT → Operations → Screenshots**.
 
 ## 7. Settings
 
-**File → Settings → WFMT → Field Ops → Screenshots** (keys start `wfmt_screenshot_`): source and output folders,
+**File → Settings → WFMT → Operations → Screenshots** (keys start `wfmt_screenshot_`): source and output folders,
 delete originals, group by system, the file-name mask, the timer icon, hi-res on timer, Thargoid capture,
 and the poll interval. The overlay notification is set on **Settings → WFMT → Overlays → Screenshots**. **Settings → WFMT → Exploration → Auto-Honk** (keys start `wfmt_autohonk_`):
 enabled, fire button, hold time, focus the game and skip repeats; the Linux prefix override is stored as `wfmt_elite_prefix`.

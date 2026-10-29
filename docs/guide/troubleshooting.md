@@ -100,7 +100,7 @@ back. Things to try if a figure is still off:
 They belong to one commander each, so a commander you have not used before starts empty (see
 [Commanders and your data](getting-started.md#commanders-and-your-data)).
 
-- **Mining hotspots:** to copy them from one commander to another, use **I/E** in Mining: export as the first commander, then
+- **Mining hotspots:** to copy them from one commander to another, use **Import/export** in Mining: export as the first commander, then
   import as the second.
 - **The Codex tally** is built from each commander's own journals the first time they log in; the panel says so
   while it reads (the section title shows "rebuilding..." even when folded) and the summary fills in when it finishes (a
@@ -138,7 +138,7 @@ The planner only counts what WFMT's blueprint table covers, and it says why in t
 
 **Add plan to wishlist** can refuse with a message: no commander yet (log in first), more than 100 blueprints on the list, or more than 99 crafts of one. Nothing
 is added when it refuses; remove some entries and try again. If **Paste from clipboard** reports no text, paste into the box by hand and press **Read loadout**.
-See [Ship planner](field-ops.md#engineering-blueprints-and-a-wishlist).
+See [Ship planner](operations.md#engineering-blueprints-and-a-wishlist).
 
 ### The Route Planner will not plot, or the route looks wrong
 
@@ -531,7 +531,7 @@ Each mode guide ends with "What the game does and doesn't tell us, and how to wo
 - [Mining](mining.md#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
 - [Trade](trade.md#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
 - [Missions](missions.md#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
-- [Field Ops](field-ops.md#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
+- [Operations](operations.md#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
 - [Colonization](colonization.md#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
 - [BGS](bgs.md#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
 - [Landing and Interdiction](always-on.md#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)

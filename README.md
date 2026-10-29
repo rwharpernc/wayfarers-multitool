@@ -70,12 +70,12 @@ WFMT is one panel with eight **modes**, and you click a button to switch between
 | Mode (button) | What it is for | Detailed guide |
 |---|---|---|
 | **Powerplay** | Merits and Control Points for your Power; a rare goods finder; share your progress to Discord | [Powerplay](docs/guide/powerplay.md) |
-| **Exploration** | Auto-honk, discovery alerts, boxel survey, scan values, Codex tally, notes, expeditions, route planners, a dashboard, a surface compass | [Exploration](docs/guide/exploration.md) |
-| **Exobiology** (in **Exploration**) | Species prediction, sample tracking, a sample radar, and overlay cards for the body you are on | [Exobiology](docs/guide/exobiology.md) |
+| **Explore** | Auto-honk, discovery alerts, boxel survey, scan values, Codex tally, notes, expeditions, route planners, a dashboard, a surface compass | [Exploration](docs/guide/exploration.md) |
+| **Exobiology** (in **Explore**) | Species prediction, sample tracking, a sample radar, and overlay cards for the body you are on | [Exobiology](docs/guide/exobiology.md) |
 | **Mining** | Space and surface mining runs, a book of rings and deposits, Mining History, mining alerts | [Mining](docs/guide/mining.md) |
 | **Trade** | Profit after fuel and repairs, fleet carrier cargo, saved sessions, best routes and prices, a watch list | [Trade](docs/guide/trade.md) |
 | **Missions** | Every mission in one view, progress bars, a Missions window, where to buy the cargo | [Missions](docs/guide/missions.md) |
-| **Field Ops** | Screenshots, backpack and cargo, materials, a blueprint browser, material traders, ship builds | [Field Ops](docs/guide/field-ops.md) |
+| **Operations** | Screenshots, backpack and cargo, materials, a blueprint browser, material traders, ship builds | [Operations](docs/guide/operations.md) |
 | **Colonization** | Your current build, history, an archive of finished sites, and every site's shopping list | [Colonization](docs/guide/colonization.md) |
 | **BGS** (**BGS**) | Faction states and what your activity does to them; share a tick's report to Discord | [BGS](docs/guide/bgs.md) |
 

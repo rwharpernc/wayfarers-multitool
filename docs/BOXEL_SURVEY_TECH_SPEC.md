@@ -97,7 +97,7 @@ skip-check worker thread).
 
 Boxel Survey is one panel with a button-row toggle (`_SUBMODE_SEQUENCE` / `_SUBMODE_REGION_SWEEP` /
 `_SUBMODE_WAYPOINTS`, persisted as `wfmt_boxel_submode`), same button-row-plus-`grid_remove` pattern
-`ui.py` itself uses for the Powerplay/Exploration/Mining/... mode row.
+`ui.py` itself uses for the Powerplay/Explore/Mining/... mode row.
 
 - All three sub-controllers receive every journal event unconditionally (`boxel_survey.py`'s
   `handle_event`).

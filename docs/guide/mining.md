@@ -48,7 +48,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 **Log a surface deposit.** Details: [Adding or editing a hotspot](#adding-or-editing-a-hotspot).
 
-1. Stand at the deposit in the Rhino and press **+H.S.** in the **LIVE** window (or **Add hotspot** in the Surface Mining Book).
+1. Stand at the deposit in the Rhino and press **Add hotspot** in the **LIVE** window (the Surface Mining Book has one too).
 2. Check the **Contains**, **Rigs**, **Amount** and **Density** fields, and save.
 
 **Use Mining History.** Details: [Mining History](#mining-history).
@@ -145,11 +145,11 @@ In the Rhino SRV. A run runs from launching the Rhino to stowing it. The page ke
 - What was **Transferred to ship** and the **Raw materials** picked up.
 - The **Last DSS scan**: how many mining locations the scan found on which body (`Last DSS scan: 4 Planetary Mining Location(s) on <body>`). It shows only when that count differs from the number of **Known hotspots here**, which says the same thing otherwise.
 - **Known hotspots here (N)**: the ones you have saved on the body you are on, one per line with the material, rigs, signal number, position, the tons-left estimate in square brackets and your note.
-- The **coverage minimap** (if ticked in Settings): ground the Rhino has driven over, with your position, your saved hotspots and the mining locations you marked with **CTR** and **BRD**. In your ship it appears only close to the ground (under about 2 km).
+- The **coverage minimap** (if ticked in Settings): ground the Rhino has driven over, with your position, your saved hotspots and the mining locations you marked with **Mark center** and **Mark border**. In your ship it appears only close to the ground (under about 2 km).
 - **Nearest marked location**: the size of the mining location you marked nearest you, which way its center is and how much of its edge you have driven (see [Marking a mining location](#marking-a-mining-location)).
 - **Nearest saved deposit**: the closest deposit you saved, its material, how far and which way, with your rig-gap verdict when one is set.
 - **Rigs noted**: how many rigs you noted with **Rig placed** and how far the nearest is (see [Rig bands](#rig-bands)). Nothing until you note one.
-- A line saying what **CTR** or **BRD** last did, or why it could not (`WFMT cannot read your position: be on or just above the ground.`).
+- A line saying what **Mark center** or **Mark border** last did, or why it could not (`WFMT cannot read your position: be on or just above the ground.`).
 
 **Worked example: a Rhino run.** You launch the Rhino on a body with a mining signal and drive between deposits. The page might show:
 
@@ -250,7 +250,7 @@ The table gives each ring with its **Body**, **Reserve level**, **Ring type** an
 **On the surface:**
 
 1. Launch the Rhino and mine. The Surface Mining page fills in live stats.
-2. Found a good deposit? Press **+H.S.** in the **LIVE** window to save the spot.
+2. Found a good deposit? Press **Add hotspot** in the **LIVE** window to save the spot.
 3. Open **BOOK** on the Surface Mining page to see everything you've saved, including tons mined and an estimate of tons left; **Mark depleted** when one runs out.
 4. Next time you're in the system, the Surface Mining Book lists the bodies you've scanned and your hotspots there, and its **From your journals** group lists other bodies your journals show mining on.
 
@@ -388,14 +388,14 @@ The controls that act on the ground are in the header:
 
 | Button | What it does |
 |---|---|
-| **CTR** | Marks the center of the mining location you are at ([how](#marking-a-mining-location)). |
-| **BRD** | Marks its border, which gives the radius. |
-| **+H.S.** | Saves the deposit where you stand as a hotspot. |
+| **Mark center** | Marks the center of the mining location you are at ([how](#marking-a-mining-location)). |
+| **Mark border** | Marks its border, which gives the radius. |
+| **Add hotspot** | Saves the deposit where you stand as a hotspot (the same form as in the Surface Mining Book). |
 | **Rig placed** | Notes the Rhino's position as a mining rig you have just placed (Ctrl+Alt+Shift+R, or `!wf rig` in Elite's chat, does the same without the window). The journal never says where a rig went, so this is how WFMT learns it. |
 | **Clear rigs** | Forgets the rigs now. They are also forgotten when you launch or stow the Rhino, it is destroyed, or you change body; nothing about them is saved. |
 | **Save map** | Saves a picture of the location (the ground driven, the border, the drive rings, the stops and the deposits, with a title and a legend) to a PNG file you choose, to post or keep. It holds no commander name or date. |
 | **Help** | Explains every mark on the radar. |
-| **I/E** | Imports or exports your saved hotspots. |
+| **Import/export** | Imports or exports your saved hotspots. |
 
 The radar draws when you are on or just above the ground and a body's size is known; otherwise it says so. The ground "driven" is where the Rhino has been, not what was scanned, as on the minimap.
 
@@ -407,8 +407,8 @@ Three of the controls, the radar range and the window itself have shortcuts, so 
 
 | Action | Default key (Windows) | Chat command |
 |---|---|---|
-| Mark the center (**CTR**) | Ctrl+Alt+Shift+C | `!wf center` |
-| Mark the border (**BRD**) | Ctrl+Alt+Shift+B | `!wf border` |
+| Mark the center (**Mark center**) | Ctrl+Alt+Shift+C | `!wf center` |
+| Mark the border (**Mark border**) | Ctrl+Alt+Shift+B | `!wf border` |
 | **Rig placed** | Ctrl+Alt+Shift+R | `!wf rig` |
 | Radar range (steps 50 m, 250 m, 500 m, 1 km, 2 km, then back to 50 m) | Ctrl+Alt+Shift+Z | `!wf zoom` |
 | Open the Live window | Ctrl+Alt+Shift+L | `!wf live` |
@@ -430,7 +430,7 @@ With one screen you cannot keep the Live window beside the game. **Settings → 
 
 The game does not publish how close two mining rigs may be, so WFMT uses the figure you measured: *Too close to place another rig* in Settings → WFMT → Mining.
 
-To measure it: stand at one rig, press CTR, drive until the game lets you place the next, press BRD, and enter that distance.
+To measure it: stand at one rig, press Mark center, drive until the game lets you place the next, press Mark border, and enter that distance.
 
 With it set:
 
@@ -443,10 +443,10 @@ With it set:
 
 ### Space Mining Live
 
-- It shows the same lines as the Space Mining page in a larger window, with **H.S.**, **PRICE** and **RES** in the header when you have switched those lookups on in Settings.
+- It shows the same lines as the Space Mining page in a larger window, with **Hotspots**, **Prices** and **Reserves** in the header when you have switched those lookups on in Settings.
 - It has no radar: the journal does not say where a ring's hotspots are, so there is nothing to place on one.
 
-The panel keeps **BOOK**, **DASHBOARD**, **LIVE** and the lookups. **CTR**, **BRD**, **+H.S.** and **I/E** are in the live window only.
+The panel keeps **BOOK**, **DASHBOARD**, **LIVE** and the lookups. **Mark center**, **Mark border**, **Add hotspot** and **Import/export** are in the live window only.
 
 ### Trying the live window without the game
 
@@ -460,7 +460,7 @@ The panel keeps **BOOK**, **DASHBOARD**, **LIVE** and the lookups. **CTR**, **BR
 
 The sizes follow real work, so at the default 2 km range you see an arc of the ring and the nearest deposit.
 
-Use it to see that the radar, its range buttons, the lines on the right and **CTR**, **BRD** and **+H.S.** work on your computer. The window says *(simulation)* in its title and *SIMULATION* in its subtitle, and has no **I/E**.
+Use it to see that the radar, its range buttons, the lines on the right and **Mark center**, **Mark border** and **Add hotspot** work on your computer. The window says *(simulation)* in its title and *SIMULATION* in its subtitle, and has no **Import/export**.
 
 Nothing it shows is real and nothing you press in it is saved.
 
@@ -471,10 +471,10 @@ Nothing it shows is real and nothing you press in it is saved.
 
 A surface mining signal is a circle of ground with the deposits scattered inside it, and a few just outside its edge. The journal says a body has mining locations but not where they are or how big, so you mark them yourself:
 
-1. Open **LIVE**. Land and drive to the **middle** of the signal and press **CTR** (in the live window's header).
+1. Open **LIVE**. Land and drive to the **middle** of the signal and press **Mark center** (in the live window's header).
    - Pressing it again within 100 m of the same center moves it.
    - Pressing it anywhere else starts another location (up to 12 per body; past that the oldest is dropped).
-2. Drive to the **edge** of the signal and press **BRD** (also in the live window). The radius is the distance from the center, shown on the page (`Border marked: the signal is 1.50 km in radius`). **BRD** works on the marked center nearest you. If you are within 100 m of that center, it tells you how close you are and asks you to drive to the edge first. With no center marked on the body it asks you to press **CTR** first. Pressing **BRD** again somewhere else resets the border.
+2. Drive to the **edge** of the signal and press **Mark border** (also in the live window). The radius is the distance from the center, shown on the page (`Border marked: the signal is 1.50 km in radius`). **Mark border** works on the marked center nearest you. If you are within 100 m of that center, it tells you how close you are and asks you to drive to the edge first. With no center marked on the body it asks you to press **Mark center** first. Pressing **Mark border** again somewhere else resets the border.
 3. The minimap draws a cross at the center and the circle through the border.
 
 **Nearest marked location** on the page gives:
@@ -487,11 +487,11 @@ Drive around the edge, with your scanner overlapping it a little, to bring it to
 
 **Worked example.** You land near a surface mining signal and want to map it.
 
-1. Press **LIVE** and drive to the middle of the signal. Press **CTR**. The minimap draws a cross at the center.
-2. Drive out to the edge of the signal and press **BRD**. The page says, for example, `Border marked: the signal is 1.50 km in radius`.
+1. Press **LIVE** and drive to the middle of the signal. Press **Mark center**. The minimap draws a cross at the center.
+2. Drive out to the edge of the signal and press **Mark border**. The page says, for example, `Border marked: the signal is 1.50 km in radius`.
 3. Drive around the edge. **Nearest marked location** shows the radius, which way and how far the center is, and `edge driven 64%`. Keep driving, with the scanner overlapping the ground you have already covered, until it reads 100%.
 4. Later, the line says `you are inside it, 410 m from the edge` or `you are outside it by 150 m`, so you always know where you stand.
-5. If you pressed **BRD** too close to the center (within 100 m), the page asks you to drive to the edge first. Nothing is changed.
+5. If you pressed **Mark border** too close to the center (within 100 m), the page asks you to drive to the edge first. Nothing is changed.
 
 ### Am I inside it, and is there room for another rig?
 
@@ -501,7 +501,7 @@ The game does not publish how close two rigs may be, so WFMT has no number of it
 
 - Set **Too close to place another rig** (Settings → WFMT → Mining, 0 to 2000 m, off at 0).
 - The line then also says whether that deposit is closer than your distance ("too close to place another rig") or farther ("far enough").
-- To find your number, stand at one rig and press **CTR**, drive until the game lets you place the next, press **BRD**, and read the distance.
+- To find your number, stand at one rig and press **Mark center**, drive until the game lets you place the next, press **Mark border**, and read the distance.
 - This compares against deposits you saved, not rigs you placed: the journal does not report where a rig is.
 
 ### What is kept
@@ -594,7 +594,7 @@ You can:
 
 ### Adding or editing a hotspot
 
-**Add hotspot** (and **+H.S.** in the Live window, and **Add** in Settings) opens one form; **Edit** opens the same form filled in. It starts with your system, body and position when you are on the ground. The fields:
+**Add hotspot** (in the Surface Mining Book and in the Live window, and **Add** in Settings) opens one form; **Edit** opens the same form filled in. It starts with your system, body and position when you are on the ground. The fields:
 
 | Field | What to enter |
 |---|---|
@@ -610,12 +610,12 @@ You can:
 
 **Worked example.** You find a deposit while driving the Rhino and want to save it.
 
-1. Stop at the deposit and press **+H.S.** in the **LIVE** window. The form opens with your system, body and position filled in.
+1. Stop at the deposit and press **Add hotspot** in the **LIVE** window. The form opens with your system, body and position filled in.
 2. Type `Painite` in **Contains** and set **Rigs** to the number the deposit takes, for example 4.
 3. Set **Amount** and **Density** to what the scanner showed, and type a **Signal number** if you know which mining location it is in.
 4. Save the form. The deposit appears in the Surface Mining Book and on the radar. If you save again at the same spot (within 100 m) with a corrected material, the existing hotspot is updated instead of a second one being added.
 
-An edit keeps the tons mined and the kind of ground that WFMT recorded. A form with something missing or wrong shows a one-line error and keeps the window open. Saving a new hotspot with a position from **Add hotspot** or **+H.S.**, within 100 m of one you already have on the same body, updates that one (keeping its position, folder, notes and tons mined unless you supply new ones) instead of adding a second. This lets you correct a material by saving again at the same spot. **Add** in Settings always adds.
+An edit keeps the tons mined and the kind of ground that WFMT recorded. A form with something missing or wrong shows a one-line error and keeps the window open. Saving a new hotspot with a position from **Add hotspot**, within 100 m of one you already have on the same body, updates that one (keeping its position, folder, notes and tons mined unless you supply new ones) instead of adding a second. This lets you correct a material by saving again at the same spot. **Add** in Settings always adds.
 
 ### Depleted marks
 
@@ -677,7 +677,7 @@ What is remembered:
 - What it found is remembered for each commander (the newest 60 systems, in `mining_body_cache.json`), so coming back to the system or restarting EDMC brings the bodies back without another request.
 - The bodies the System targets cards already know for a system (saved between sessions, and rebuilt from your journals) are added to the list on arrival as well.
 - The mining-location count of a body also fills in by itself when you FSS-scan it (the game writes it without flying there), and a detailed surface scan replaces that.
-- A body's size is also read from `Status.json` whenever you are near the ground, so the radar, **CTR** and **BRD** work on a body that was never scanned without this.
+- A body's size is also read from `Status.json` whenever you are near the ground, so the radar, **Mark center** and **Mark border** work on a body that was never scanned without this.
 
 ### What pays
 
@@ -735,7 +735,7 @@ With the Rhino on the body, the deposit within 175 m of it is marked `you are he
 **Your hotspots, tons mined, depleted marks and the ground your Rhino has driven over belong to the commander you are playing.**
 
 - Switching commander switches the Surface Mining Book and the coverage map. One commander never sees or changes another's.
-- To give a hotspot list to another commander, use **I/E** (in the live window) to export it as the first commander and import it as the second.
+- To give a hotspot list to another commander, use **Import/export** (in the live window) to export it as the first commander and import it as the second.
 
 For a scanned body it also shows what *you've* found so far on that kind of body. That starts empty and fills in as you save hotspots. It describes your own finds, not what a body actually holds.
 
@@ -779,10 +779,10 @@ WFMT, like every third-party tool, only knows what Elite Dangerous writes to its
 | An exact count of limpets aboard | The exact count comes from EDMC's cargo once it has told WFMT; until then "on board" is an estimate (bought less launched, marked `~`). The low-limpet alert applies only when a prospector or collector limpet controller is in your last loadout or limpets have been seen aboard, and never while a Rhino is out. | Check your cargo for the real number. |
 | Every commodity's best mining method | The method hints are community-sourced and need occasional updating. | If a hint looks wrong, trust the game and open an issue. |
 | Where a ring's hotspots are, or whether two minerals share one | A DSS scan gives each mineral's hotspot **count** only. | The Space Mining Book lists counts. Fly the ring and note what you find in **Your note**. |
-| Where a surface mining location is and how big it is | The journal says a body has mining locations, not where or how large. | Mark the center and border yourself with **CTR** and **BRD** ([marking a location](#marking-a-mining-location)). |
+| Where a surface mining location is and how big it is | The journal says a body has mining locations, not where or how large. | Mark the center and border yourself with **Mark center** and **Mark border** ([marking a location](#marking-a-mining-location)). |
 | Where a mining rig went, and how close two rigs may be | The journal does not say where you put a rig, and the game does not publish a minimum gap. | Press **Rig placed** after each rig and enter the gap you measured in Settings. |
 | How far the Rhino's scanner reaches | No figure from Frontier. WFMT uses 2 km, a community estimate, for the driven-ground map, the edge percentage and the drive rings. | Treat those as guides. |
-| Ring reserve and hotspot lookups to always answer | They only know what players have uploaded to EDSM or Spansh. | No answer can mean nobody has recorded it. Scan the ring yourself, then save the hotspot with **+H.S.** |
+| Ring reserve and hotspot lookups to always answer | They only know what players have uploaded to EDSM or Spansh. | No answer can mean nobody has recorded it. Scan the ring yourself, then save the hotspot with **Add hotspot** |
 
 ## Settings
 
@@ -808,7 +808,7 @@ The in-game Mining displays are set on **Settings → WFMT → Overlays → Mini
 - *Stop radius in the Surface Mining Book (m)*: how close deposits must be to the lead deposit to share a stop (500 to 2500 m in steps of 250, default 1250).
 - **Simulation: Surface Live (pretend Rhino)**: opens the Live window on made-up data (see [Trying the live window without the game](#trying-the-live-window-without-the-game)).
 
-**Known Surface Hotspots.** At the bottom of the same page is a list of every hotspot you have saved, grouped by folder (`Unfiled` last), one line each with the system, body, material, rigs, signal number and tons-left estimate. Select a line and use **Add**, **Edit**, **Delete** (a folder heading cannot be edited or deleted), **Import...** and **Export...**. These open the same form and the same import and export as the Surface Mining Book and the Live window's **I/E** button. **Import...** reads a hotspot file exported by WFMT and asks whether to merge with your list (Yes) or replace it (No). **Export...** writes your saved hotspots to a JSON file you choose. A list belongs to the commander you are playing, and an export holds only that commander's list.
+**Known Surface Hotspots.** At the bottom of the same page is a list of every hotspot you have saved, grouped by folder (`Unfiled` last), one line each with the system, body, material, rigs, signal number and tons-left estimate. Select a line and use **Add**, **Edit**, **Delete** (a folder heading cannot be edited or deleted), **Import...** and **Export...**. These open the same form and the same import and export as the Surface Mining Book and the Live window's **Import/export** button. **Import...** reads a hotspot file exported by WFMT and asks whether to merge with your list (Yes) or replace it (No). **Export...** writes your saved hotspots to a JSON file you choose. A list belongs to the commander you are playing, and an export holds only that commander's list.
 
 **Settings → WFMT → Overlays → Mining**
 

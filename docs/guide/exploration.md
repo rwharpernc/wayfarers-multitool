@@ -1,6 +1,6 @@
 # Exploration
 
-Exploration mode is one scrolling panel (press **Exploration** in the mode row to show it). It has a row of buttons at the top, then several sections stacked top to bottom in
+Exploration mode is one scrolling panel (press **Explore** in the mode row to show it). It has a row of buttons at the top, then several sections stacked top to bottom in
 alphabetical order of their names (in every mode the sections are alphabetical, so one can be found without scanning).
 
 - **The top row** holds **Auto-Honk** (Auto-Honk), **Discovery Alerts** (Discovery Alerts), **Neutron Star** and **White Dwarf** (nearest neutron star and white dwarf) and **Random** (a system nobody
@@ -724,8 +724,8 @@ How the tabs work together:
 
 - **EXPEDITION** and **PLOT** on the panel each open this same window (on the Plan and Route tabs).
 - The tabs switch from one to the next.
-- **Neutron route** and **Review** switch to the tab they need, so a trip is planned, plotted and recorded in one place.
-- **Start expedition** is pressed on the Route tab, so it stays there. The status line says what happened, and **Review** takes you to the Plan tab.
+- **Neutron route** and **Review expedition** switch to the tab they need, so a trip is planned, plotted and recorded in one place.
+- **Start expedition** is pressed on the Route tab, so it stays there. The status line says what happened, and **Review expedition** takes you to the Plan tab.
 - A tab is built the first time it is shown.
 - The window remembers its size and position.
 
@@ -759,7 +759,7 @@ Once you have honked, it also knows how many bodies the system has, so a stop re
   | **Found here** | What you did at the stop, such as `5 of 12 scanned · 2 first · 1 mapped` |
   | **From you (ly)** | The straight-line distance from where you are now, or `-` when the stop has no position yet |
 
-- **The editor** under the table has **System** (with suggestions as you type, and **Here** to fill in the system you are in), **Body (optional)** and **Note (optional)** boxes and the buttons **Add stop**, **Save changes**, **Mark visited**, **Up**, **Down** and **Remove**. **Mark visited** on a ticked stop takes the tick away again.
+- **The editor** under the table has **System** (with suggestions as you type, and **Here** to fill in the system you are in), **Body (optional)** and **Note (optional)** boxes and the buttons **Add stop**, **Save changes**, **Mark visited**, **Move up**, **Move down** and **Remove**. **Mark visited** on a ticked stop takes the tick away again.
 - **Make an expedition with Spansh** has **Road to Riches**, **Exomastery** and **Neutron route**.
 - **The tools row** has **From plotted route**, **Import CSV**, **Locate and reorder (EDSM)**, **Copy list**, **Export CSV** and **Copy next**.
 - **The status line** at the foot says what the last button did, including why it refused.
@@ -778,14 +778,14 @@ Once you have honked, it also knows how many bodies the system has, so a stop re
    - A system EDSM does not know, because nobody has charted it or because of a typo, is kept as you typed it, and the status line says so.
    - Untick the box to stay offline.
    - If you have no expedition yet, the first stop makes one called "My expedition" (or the name you typed in the Name box), so you can start straight away.
-   - Select a stop to change it (**Save changes**), move it (**Up**, **Down**), tick it off yourself (**Mark visited**) or **Remove** it (asks twice).
+   - Select a stop to change it (**Save changes**), move it (**Move up**, **Move down**), tick it off yourself (**Mark visited**) or **Remove** it (asks twice).
 3. **Or add many at once.** These also make an expedition if you have none.
    - **From plotted route** adds the systems of the route you plotted in the game. The one you are in is left out, and they come with their positions.
    - **Import CSV** reads a file with the columns system, body and note (a one-column list of systems works too).
 4. **Make an expedition with Spansh.** **Road to Riches** and **Exomastery** (a row above the other tools) ask [Spansh](https://spansh.co.uk/)'s route planners for places worth visiting and turn the answer into a new expedition.
    - **Road to Riches** picks the bodies worth the most credits to scan, near a route, in a good order. Tick *Count what mapping pays as well as the first scan* to include mapping.
    - **Exomastery** (Spansh's Expressway to Exomastery) picks planets with the most valuable biological signals.
-   - **Neutron route** opens the [Route Planner](#route-planner), which plots a neutron route for your ship (nothing to type about the ship) and can turn it into an expedition with **Start expedition** or **Review**.
+   - **Neutron route** opens the [Route Planner](#route-planner), which plots a neutron route for your ship (nothing to type about the ship) and can turn it into an expedition with **Start expedition** or **Review expedition**.
    - A small window asks for:
 
      | Box | What it means | Starts at |
@@ -1206,7 +1206,7 @@ Spansh counts a supercharge at any system with a neutron star, even when that st
 - The stops are the neutron stars, the marked white dwarfs, the refuel stops and the destination, in route order, each with what to do there. A neutron star the route marks as possibly a secondary star carries that warning in its note.
 - The expedition is named *Neutron Highway from <start> to <destination>*.
 - Pressing the button again for the same route does not make a second expedition. It says the first is running (or paused).
-- **Review** opens the Expedition window on that expedition to check the order before you start it, and makes it (not started) if there is none yet.
+- **Review expedition** opens the Expedition window on that expedition to check the order before you start it, and makes it (not started) if there is none yet.
 - An expedition made from a route is a snapshot. Plotting another route, or **Clear route**, does not change an expedition that is running or paused.
 
 ### Limits
