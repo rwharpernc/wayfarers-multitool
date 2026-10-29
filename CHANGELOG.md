@@ -7,8 +7,8 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Changed
 
-- **Powerplay panel:** the Session and Cycle lines no longer repeat each other. When this login has earned everything the cycle has (the first session of a cycle), the panel shows one pair headed
-  **Session and Cycle N**, and the Session pair comes back as soon as the two differ.
+- **Powerplay panel:** the Session and Cycle lines no longer repeat each other. When this login has earned everything the cycle has (the first session of a cycle), the panel shows only the Cycle pair, marked
+  **(all this session)**, and the Session pair comes back as soon as the two differ.
 
 ## 1.3.1 (2026-10-29)
 

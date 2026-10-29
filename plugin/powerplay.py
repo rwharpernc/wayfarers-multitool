@@ -566,11 +566,11 @@ def _cycle_lines(view) -> tuple:
 def _tally_lines(session_merits: int, session_cp: str, view) -> tuple:
     """The main panel's Session and Cycle tallies as (session merits, session CP, cycle merits, cycle CP) texts.
     When the session has earned everything the cycle has (the first session of a cycle), the two would read
-    the same, so the session pair is None and the cycle pair is headed "Session and Cycle N"."""
+    the same, so the session pair is None and the cycle merits line says all of it came from this session."""
     label, merits, cycle_cp = _cycle_tally(view)
     session_cp = session_cp or "—"
     if session_merits == merits and session_cp == cycle_cp:
-        return None, None, f"Session and {label} merits: {merits:,}", f"Session and {label} CP: {cycle_cp}"
+        return None, None, f"{label} merits: {merits:,} (all this session)", f"{label} CP: {cycle_cp}"
     return f"Session merits: {session_merits:,}", f"Session CP: {session_cp}", f"{label} merits: {merits:,}", f"{label} CP: {cycle_cp}"
 
 

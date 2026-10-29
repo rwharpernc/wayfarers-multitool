@@ -28,7 +28,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 ### See your merits for this session and this cycle
 
 1. Press **P.P.** in the mode bar.
-2. Read `Session merits` and `Session CP` for this login, and `Cycle N merits` and `Cycle N CP` for the whole cycle (one `Session and Cycle N` pair when they are the same).
+2. Read `Session merits` and `Session CP` for this login, and `Cycle N merits` and `Cycle N CP` for the whole cycle (just the Cycle pair, marked `(all this session)`, when they are the same).
 3. Read `Here: N merits` for what you have earned in the system you are in.
 
 **Example.** You hand in merits in Nervi, then jump to another system and do more. The panel shows `Here:` for the new
@@ -102,7 +102,7 @@ Just play. Press **P.P.** in the mode bar to open the page. Top to bottom it sho
 - the current system in bold, as `<system> — <state> (<controller>)` (for example `Nervi — Exploited (Zachary Hudson)`); the part in brackets is the controlling Power, `contested` when several Powers are in the system, or `uncontested`; with no Powerplay data the state reads `no PP data`,
 - `Here: N merits` and a `CP:` line, what you've earned in that system this session,
 - `Session merits` and `Session CP`, the running totals for this login,
-- `Cycle N merits` and `Cycle N CP`, running totals for the **whole Powerplay cycle** so far, across every system. When this login has earned everything the cycle has (the first session of a cycle) the two would read the same, so the panel shows one pair, headed `Session and Cycle N merits` and `Session and Cycle N CP`, until the cycle has something your login does not. These carry over
+- `Cycle N merits` and `Cycle N CP`, running totals for the **whole Powerplay cycle** so far, across every system. When this login has earned everything the cycle has (the first session of a cycle) the two would read the same, so the panel shows just the Cycle pair, with `(all this session)` after the merits, until the cycle has something your login does not. These carry over
   between game sessions and reset when the cycle ends (Thursday 07:00 UTC); the Cycles tab shows the same numbers per cycle,
 - `Cycle N megaships: 5 (2,340 merits)`,
 - the last merit event (`No merit events yet this session.` until one arrives).
