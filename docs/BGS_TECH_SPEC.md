@@ -41,7 +41,7 @@ BGS (Powerplay and Colonization are out of scope, handled elsewhere or not at al
 
 ## 2. Non-goals
 
-- No Discord webhook (deliberately out of scope).
+- Discord webhook: out of scope for the original BGS feature. Since 2026-10-29 posting by webhook is in scope as a shared feature across WFMT (see [DISCORD_SHARING_RESEARCH.md](DISCORD_SHARING_RESEARCH.md)); it is not built yet.
 - No combat-zone participation as its own signal, no Thargoid-war state tracking (section 5).
 
 ## 3. Architecture
@@ -224,4 +224,4 @@ with `%Y-%m-%dT%H:%M:%S.%fZ`.
 - Combat-zone (ground & space) participation as its own signal (only the resulting bounty/combat-bond
   *redemption* is tracked, not CZ presence/wins directly).
 - Thargoid war states.
-- Discord webhook export (deliberately out of scope, not a gap to fill later).
+- Discord webhook export: not built yet. Planned as a shared Discord feature (see [DISCORD_SHARING_RESEARCH.md](DISCORD_SHARING_RESEARCH.md)).
