@@ -323,6 +323,12 @@ class WideCardLayout(CardLayout):
                 if dots_w + name_w + COLUMN_GAP + note_w <= inner:
                     texts.append((note, note_role, x + inner - note_w, y + look.line_px(base) - look.line_px("normal"), size))
                     header.pop(0)
+                    if header:                           # the next header line (the distance) sits beside it when the wider strip has room, saving a row
+                        extra, extra_role = header[0]
+                        extra_w = look.extent(extra)
+                        if dots_w + name_w + COLUMN_GAP + extra_w + COLUMN_GAP + note_w <= inner:
+                            texts.append((extra, extra_role, x + inner - note_w - COLUMN_GAP - extra_w, y + look.line_px(base) - look.line_px("normal"), size))
+                            header.pop(0)
             y += look.line_px(base) + 4
         for text, role in header:
             for line in self.wrap(text, look, inner):

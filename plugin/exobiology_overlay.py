@@ -46,7 +46,7 @@ OVERLAY_TTL = 4
 POPUP_SECONDS = 10.0
 NAME_CHARS = 24
 TITLE_CHARS = 44                   # "Bio signals " and the body's name; a body outside the current system is named in full
-STATUS_CHARS = 54                  # the Bio status card is one wide strip
+STATUS_CHARS = 108                 # the Bio status card is one wide strip, wide enough for the distance line and every tracked plant in full
 GROUPS = {"status": ("wfmt_exo_status", "wfmt_exo_status_"), "list": ("wfmt_exo_pred", "wfmt_exo_pred_"),
           "radar": ("wfmt_exo_radar", "wfmt_exo_radar_"), "popup": ("wfmt_exo_popup", "wfmt_exo_popup_")}
 LAYOUT_STATUS = WideCardLayout(GROUPS["status"][1], x=650, y=100, width_chars=STATUS_CHARS, sample_lines=4)       # short and wide, to sit above the game's compass
