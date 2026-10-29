@@ -181,18 +181,18 @@ Larger features add `start(plugin_dir)` and `stop()` for loading and flushing st
 
 - `ui._stack_features` gives each feature its own frame and inserts a separator between consecutive ones. Features never pick their own grid rows, which removes the possibility of row collisions.
 - A small `_SIDE_BY_SIDE_PAIRS` table puts two narrow features (Auto-Honk and Discovery Alerts) in one row to save vertical space.
-- That one row also carries the N.S. and W.D. buttons (built by `discovery.py`) and Boxel Survey's RND button (`boxel_survey.build_random_button`, called from `ui.py` with `discovery.controller.button_row`, so it stays usable while Boxel Survey is collapsed).
+- That one row also carries the Neutron Star and White Dwarf buttons (built by `discovery.py`) and Boxel Survey's Random button (`boxel_survey.build_random_button`, called from `ui.py` with `discovery.controller.button_row`, so it stays usable while Boxel Survey is collapsed).
 - Every button there is packed with the same 6px gap as the mode buttons.
-- The N.S./W.D. result line and RND's status line sit below the row.
+- The Neutron Star / White Dwarf result line and Random's status line sit below the row.
 
-**Short button names and tooltips**
+**Button names and tooltips**
 
-- The EDMC window is small and shared, so main-panel buttons use abbreviations (the table is in the user guide's "Button names"), and `panelkit.add_tooltip` shows the full name on hover.
+- The EDMC window is small and shared, so main-panel buttons keep their labels short (the table is in the user guide's "Button names"), and `panelkit.add_tooltip` gives the name and a one-line description on hover.
 - The tooltip is a borderless `Toplevel`, so it can't affect the main window's size.
-- The mode buttons use `ui._MODE_BUTTON_TEXT`; their tooltips (`ui._MODE_TOOLTIPS`) give the full name and a one-line description, and `PANEL_MODES` keeps the full labels for the "coming soon" placeholder.
+- The mode buttons carry the `PANEL_MODES` labels as written; their tooltips (`ui._MODE_TOOLTIPS`) give the name and a one-line description.
 - EDMC sizes its window to the widest row across all plugins, and the mode row is WFMT's widest.
-  - So it is held at the size measured from a throwaway row of full-label buttons (`ui._mode_row_full_label_size`), with the short buttons centered inside it.
-  - Without that the shortened labels would make EDMC open far narrower.
+  - So it is held at the size measured from a throwaway row of full-label buttons (`ui._mode_row_full_label_size`), which the buttons now match.
+  - Without that, shortening the labels again would make EDMC open far narrower.
   - Don't implement this with a thin spacer widget in the same grid cell: it draws a line across the buttons.
 
 **Settings layout**
@@ -295,6 +295,7 @@ How that plays out:
   - `panelkit.fit_entry(entry, max_px)` lowers the character count until the box asks for no more than the cap.
   - `panelkit.fit_button_row(buttons, max_px)` lowers the buttons' inner padding and then the font (never below 7 pt) until the row fits.
   - The Notes and Surface Compass quick-add rows use both, capped at 190 px.
+  - `panelkit.flow_buttons(container, buttons)` wraps a row of buttons onto a second line when the next one would pass the width EDMC's window is already held at (the mode-button row, set once by `panelkit.set_row_cap`; the pure `flow_positions` decides where). The Mining button bar, Region Sweep's Discover row and the Waypoints list row use it, so full-length labels cannot widen the window.
 - **Trade pages** measure their number columns with the real font; when the figures would leave the title column under 110 px (a wide font)
   the cells drop to the small font, and the title column never goes under 60 px (the title wraps instead of widening the window).
 - **Windows with tables** (the Trade History window) size their minimum width from the widest table (`_fit_width`), capped at the screen
@@ -970,7 +971,7 @@ journal cannot say. They never overrule the journal, and none is needed for the 
 | Service | Used for | Trigger |
 |---|---|---|
 | EDSM | Nearby systems, "does EDSM know this system", bodies, ring reserves | Buttons; some opt-in automatic checks |
-| Spansh | Mining price finder and Market research, hotspot and boxel lookups, expedition planners (Road to Riches, Exomastery), ELW rarity, rare-goods origin Power, nearest neutron star / white dwarf (N.S./W.D.), Trade routes and best-price searches | Buttons; opt-in; the Rares window looks up on open |
+| Spansh | Mining price finder and Market research, hotspot and boxel lookups, expedition planners (Road to Riches, Exomastery), ELW rarity, rare-goods origin Power, nearest neutron star and white dwarf (the Neutron Star and White Dwarf buttons), Trade routes and best-price searches | Buttons; opt-in; the Rares window looks up on open |
 | edastro.com (GEC) | Nearest exploration POI: the whole list (`/gec/json/all`, ~2 MB, 652 entries) is downloaded and the nearest worked out locally | Button only; kept in memory for 6 hours |
 | Canonn sheets | Thargoid and Guardian site lists | Button; downloaded once per session |
 | tick.infomancer.uk | BGS tick time | 60-second poll; can be turned off |
@@ -1042,7 +1043,7 @@ Querying and building:
 Where it lives and how it is used:
 
 - The folder is global rather than per commander (it holds facts about stars), is protected from the updater (`update._OWN_DIRS`) and left out of Back up my data (`data_backup.LEFT_OUT_DIRS`).
-- N.S. uses the index when it is installed and enabled and falls back to the Spansh search when it is missing, damaged, of another format version or has nothing within 5,000 ly. W.D. always asks Spansh.
+- Neutron Star uses the index when it is installed and enabled and falls back to the Spansh search when it is missing, damaged, of another format version or has nothing within 5,000 ly. White Dwarf always asks Spansh.
 
 **Update** is a top-up when it can be (`star_index_download.choose_update`, `star_index_job._topup`, `star_index_build.build(topup_from=...)`):
 
@@ -1100,12 +1101,12 @@ Where it lives and how it is used:
   - Not saved; only the market opened this session is known.
 - Earth-like-world rarity is remembered per system for the session, and EDSM upload status per
   system for 10 minutes, so re-selecting the same target costs no extra calls.
-- The Boxel Survey keeps a local log of systems you've visited, so the RND (Random) button never spends an
+- The Boxel Survey keeps a local log of systems you've visited, so the Random button never spends an
   EDSM call on a system it already knows you've been to. Region Sweep's "require a full FSS scan" uses the journal's
   `FSSAllBodiesFound` and makes no call.
 
 **Hard limits on how much one click can do.**
-- A skip-check run (Sequence mode) makes at most 20 EDSM lookups. RND makes one Spansh search (kept in memory for 10 minutes and 5 ly, so repeat clicks make none) and at most 6 EDSM bodies lookups per click. Sequence's automatic "nearest real system" suggestion happens only in
+- A skip-check run (Sequence mode) makes at most 20 EDSM lookups. Random makes one Spansh search (kept in memory for 10 minutes and 5 ly, so repeat clicks make none) and at most 6 EDSM bodies lookups per click. Sequence's automatic "nearest real system" suggestion happens only in
   response to your own clicks, at most once per 3 **Next** clicks in a row with no jump.
 - EDSM nearby-system queries use a 100 ly cube, half the documented 200 ly maximum.
 - Reordering a Waypoint Route uses one bulk coordinate request for the whole list, not one per system.
@@ -1170,7 +1171,7 @@ Spatial adjacency therefore comes from a real source:
 
 - EDSM's `cube-systems` query, centered on the journal's `StarPos`, supplies nearby real systems.
 - Region Sweep never invents a "next cube" itself; it only tracks completion for cubes it was given by a typed seed, EDSM or Spansh.
-- **RND** (Random) asks Spansh for the real systems nearest you, keeps those with no scan data, and confirms one with EDSM.
+- **Random** asks Spansh for the real systems nearest you, keeps those with no scan data, and confirms one with EDSM.
   - It checks a local per-commander visited-systems log first, because a visit without a scan leaves no trace in either service, so a system you already visited could otherwise come back as "new".
 
 Details and open questions are in the [Boxel Survey spec](BOXEL_SURVEY_TECH_SPEC.md).
@@ -1234,7 +1235,7 @@ Uses fields the journal already carries.
 
 ### Nearest neutron star / white dwarf (`neutron_finder.py`, buttons in `discovery.py`)
 
-The **N.S.** and **W.D.** buttons ask Spansh's `bodies/search` for the nearest system whose *primary* star is a neutron star or a white dwarf.
+The **Neutron Star** and **White Dwarf** buttons ask Spansh's `bodies/search` for the nearest system whose *primary* star is a neutron star or a white dwarf.
 
 - The filters are `subtype` (`Neutron Star`, or the 14 `White Dwarf (xx) Star` classes, which Spansh lists separately) and `is_main_star: true`, sorted by distance.
 - The origin is given as `reference_coords` taken from the journal `StarPos`, so it works from a system Spansh has never seen.
@@ -1416,7 +1417,7 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
 
 **The Colonization mode**
 
-- It is `PANEL_PLACEMENT = "colonization"`, the COL button; the mode key is `colonization`.
+- It is `PANEL_PLACEMENT = "colonization"`, the Colony button; the mode key is `colonization`.
 - It shows a page built by `colonization_panel.build_panel`: the current project and the commander's history, filled by `_refresh_summary` from the saved sites, the ship's hold and capacity, the carrier record and the delivery ledger.
 - The figures and wording live in `colonization_stats.py` (pure; `project_for`, `history_for`, `coverage_text`, `trips_text`, `next_step`).
   - It branches on whether the commander has a fleet carrier: no carrier means no carrier row and one trips figure of whole-ship loads; with a carrier it shows trips to buy and to haul.
@@ -1440,7 +1441,7 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 
 **The ship's hold**
 
-- The In Cargo figures (Sites window, COL page and overlay card) read the hold from the game's `Cargo.json` beside the journals (`journal_files.read_cargo_file`), because the journal's `Cargo` event carries only a count and EDMC's cargo state was seen not to follow a purchase.
+- The In Cargo figures (Sites window, Colony page and overlay card) read the hold from the game's `Cargo.json` beside the journals (`journal_files.read_cargo_file`), because the journal's `Cargo` event carries only a count and EDMC's cargo state was seen not to follow a purchase.
 - The file is ignored when it is missing, unreadable or describes another vessel (the SRV); `state["Cargo"]` is then used.
 - After any event that can change the hold (`Cargo`, `MarketBuy`, `MarketSell`, `CargoTransfer`, `CollectCargo`, `EjectCargo`, `MiningRefined`, the limpet events and `Loadout`) the hold is read again 1.5 s later, in case the game had not finished writing the file.
 
@@ -1490,7 +1491,7 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 4. The `Music` event's track is `FleetCarrier_Managment` (Carrier Management; both opening and closing are announced).
 5. Optionally (`wfmt_colonization_overlay_right_panel`) `GuiFocus` 1 anywhere.
 
-A manual `forced` flag (the COL page OVERLAY button) overrides all of it and the enabled setting.
+A manual `forced` flag (the Colony page OVERLAY button) overrides all of it and the enabled setting.
 
 Settings keys: `wfmt_colonization_overlay_enabled` and `wfmt_colonization_overlay_row_limit` (0 shows every row, at most 60). The position is set on Overlay Placement; the older `_x` and `_y` keys are read only as a starting point.
 

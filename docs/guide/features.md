@@ -8,10 +8,10 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 
 | I want to… | Use | Where |
 |---|---|---|
-| Track my Powerplay merits and Control Points | The **P.P.** panel, **REPORT** for the Sessions window | [Powerplay](powerplay.md#using-it) |
+| Track my Powerplay merits and Control Points | The **Powerplay** panel, **REPORT** for the Sessions window | [Powerplay](powerplay.md#using-it) |
 | Find a rare good near me, and see where it's illegal | **RARES** in Powerplay mode | [Rare Goods Finder](powerplay.md#rare-goods-finder) |
-| Fire the Discovery Scanner on every jump | **A.H.** (Auto-Honk) | [Auto-Honk](exploration.md#auto-honk) |
-| Be told about an unscanned system or a first discovery | **D.A.** (Discovery Alerts) | [Discovery Alerts](exploration.md#discovery-alerts) |
+| Fire the Discovery Scanner on every jump | **Auto-Honk** (Auto-Honk) | [Auto-Honk](exploration.md#auto-honk) |
+| Be told about an unscanned system or a first discovery | **Discovery Alerts** (Discovery Alerts) | [Discovery Alerts](exploration.md#discovery-alerts) |
 | Plot a neutron route for my ship | **PLOT** in Exploration mode (the Route Planner) | [Route Planner](exploration.md#route-planner) |
 | Plot a route for my fleet carrier | **Carrier route** in the Route Planner window | [Carrier route](exploration.md#carrier-route) |
 | Plan a trip and tick off stops as I arrive | **EXPEDITION** in Exploration mode | [Expedition](exploration.md#expedition) |
@@ -19,17 +19,17 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 | Find exobiology and sample it | The Organic Scanning panel and the Exobiology overlay cards | [Exobiology](exobiology.md) |
 | Point an arrow at a spot on a planet | **MARK**, **TARGET** and **MARKS** (the Compass) | [Compass](exploration.md#compass) |
 | Find somewhere to land in deep space | **FIND** in Nearest place to land | [Nearest place to land](exploration.md#nearest-place-to-land) |
-| Keep my own notes on a system or body | The Notes section: type a line, **ADD**; **NOTES** to browse | [Notes](exploration.md#notes) |
-| See my mining run, and my rings | **MIN** mode; **BOOK** on the Space page | [Mining](mining.md#what-each-page-shows), [Space Mining Book](mining.md#the-space-mining-book) |
+| Keep my own notes on a system or body | The Notes section: type a line, **ADD NOTE**; **NOTES** to browse | [Notes](exploration.md#notes) |
+| See my mining run, and my rings | **Mining** mode; **BOOK** on the Space page | [Mining](mining.md#what-each-page-shows), [Space Mining Book](mining.md#the-space-mining-book) |
 | Keep a catalog of Rhino deposits | **BOOK** on the Surface page | [Surface Mining Book](mining.md#the-surface-mining-book) |
 | See everything I have ever mined | **DASHBOARD** in Mining mode | [Mining History](mining.md#mining-history) |
 | Be alerted to a core asteroid, low limpets or a full hold | Flight Alerts (Settings → WFMT → Overlays → Flight Alerts) | [Flight Alerts](always-on.md#flight-alerts) |
-| Know my trading profit | **TRD** mode, the Session page | [The Session page](trade.md#the-session-page) |
+| Know my trading profit | **Trade** mode, the Session page | [The Session page](trade.md#the-session-page) |
 | Find the best trade route or the best price | **Find routes**; the Market page | [Routes](trade.md#routes), [Market](trade.md#market) |
-| See every mission and pin some | **MSN** mode; **Missions window** | [The Missions window](missions.md#the-missions-window) |
+| See every mission and pin some | **Missions** mode; **Missions window** | [The Missions window](missions.md#the-missions-window) |
 | Find where to buy mission cargo | **Find sources** | [Source commodities](missions.md#source-commodities) |
 | Plan engineering upgrades | **BLUEPRINTS** in Field Ops | [Engineering](field-ops.md#engineering-blueprints-and-a-wishlist) |
-| See what my colony site still needs | **COL** mode; **DASHBOARD** | [The Colonization Sites window](colonization.md#the-colonization-sites-window) |
+| See what my colony site still needs | **Colony** mode; **DASHBOARD** | [The Colonization Sites window](colonization.md#the-colonization-sites-window) |
 | See how my actions affect the BGS | **BGS** mode; **REPORT** | [BGS](bgs.md) |
 | Share my BGS report or Powerplay progress in Discord (or anywhere else) | **Copy for Discord** and **Post to Discord** in the BGS Report and Powerplay Sessions windows; plain **Copy Summary** and **Copy Progress** for other places | [Sharing reports to Discord](discord.md) |
 | Use a key combination or a chat command for an action | Settings → WFMT → General → Shortcuts, or `!wf` commands in Elite's chat | [Shortcuts](shortcuts.md) |
@@ -37,7 +37,7 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 | Show a card or alert on my game screen | **Settings → WFMT → Overlays** | [Setting up the overlay](../OVERLAY_SETUP.md) |
 | Move a card on my game screen, or change its colors, size or font | **Settings → WFMT → Overlays → Overlay Placement** (drag the boxes) and **Appearance** | [Moving things around](../OVERLAY_SETUP.md#moving-things-around), [Fonts](../OVERLAY_SETUP.md#fonts) |
 | Hide every overlay for a screenshot | Click the **Overlays shown** line under the mode buttons, or the shortcut or chat command | [Hiding the overlays](../OVERLAY_SETUP.md#hiding-the-overlays-for-a-while) |
-| Find the nearest neutron star or white dwarf | **N.S.** and **W.D.** in Exploration mode; the optional Local star index makes **N.S.** answer without a request | [N.S. and W.D.](exploration.md#ns-and-wd-buttons), [The local star index](exploration.md#the-local-star-index) |
+| Find the nearest neutron star or white dwarf | **Neutron Star** and **White Dwarf** in Exploration mode; the optional Local star index makes **Neutron Star** answer without a request | [Neutron Star and White Dwarf](exploration.md#neutron-star-and-white-dwarf-buttons), [The local star index](exploration.md#the-local-star-index) |
 | See what I earned today, by day and over my career | Click the **Credits this session** line (the Credits Ledger) | [The lines under the mode buttons](getting-started.md#the-lines-under-the-mode-buttons) |
 | Back up my data, restore it or move it to another computer | **Settings → WFMT → General → Backup** | [Backing up your data](getting-started.md#backing-up-your-data) |
 | Keep WFMT up to date | **Settings → WFMT → General → Updates**, or extract the new ZIP over the old folder | [Updating](getting-started.md#updating) |
@@ -67,7 +67,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Back up my data | One zip of everything WFMT has recorded about your play, with a restore (applied at the next start) and an optional automatic backup | **Settings → WFMT → General → Backup**: **Back up my data**, **Restore my data...**, *Back up automatically* | [Backing up your data](getting-started.md#backing-up-your-data) |
 | Automatic updates | Checks GitHub once each time EDMC starts, downloads a newer release and waits for you to restart EDMC; a **Release notes** link | **Settings → WFMT → General → Updates** (off by default) | [Updating](getting-started.md#updating) |
 | Report an issue and Copy diagnostics | Opens a GitHub bug report with your versions filled in; copies the newest WFMT log lines (with your commander name and home folder removed) for you to paste into it | **Settings → WFMT → General → Help** | [Reporting a problem](reporting-problems.md) |
-| Local star index (optional) | A file of neutron stars built from Spansh's public dump so **N.S.** answers without a request; **Update** fetches only what changed | **Settings → WFMT → General → Online lookups**: **Download and build**, **Update**, **Cancel**, **Delete** | [The local star index](exploration.md#the-local-star-index) |
+| Local star index (optional) | A file of neutron stars built from Spansh's public dump so **Neutron Star** answers without a request; **Update** fetches only what changed | **Settings → WFMT → General → Online lookups**: **Download and build**, **Update**, **Cancel**, **Delete** | [The local star index](exploration.md#the-local-star-index) |
 | Help in each window | Most pop-out windows have a **Help** button that explains their columns and buttons | **Help** in the window's header | [Pop-out windows](getting-started.md#pop-out-windows) |
 | Shortcuts | Six actions as Windows key combinations and as `!wf` chat commands (Windows and Linux) | **Settings → WFMT → General → Shortcuts** | [Shortcuts](shortcuts.md) |
 | On-screen overlays | Alerts, cards and diagrams on your game screen: WFMT's built-in overlay on Windows, or EDMCModernOverlay (Windows and Linux), with a drag-and-drop placement editor, color schemes, text size, panel opacity, fonts and a switch to hide them all | **Settings → WFMT → Overlays**; the **Overlays shown** line on the panel hides them | [Overlay setup](../OVERLAY_SETUP.md) |
@@ -93,23 +93,23 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 **Controls:**
 
 - The Exploration panel has a section per feature, in alphabetical order (click a title to fold it): Auto-Honk with Discovery Alerts, Boxel Survey, Codex Completionist, Compass, Dashboard, Expedition, Nearest place to land, Notes, Organic Scanning, POI Reference and Route Planner.
-- Buttons: **A.H.**, **D.A.**, **N.S.**, **W.D.**, **RND** (with the Boxel Survey's **Sequence**, **Region Sweep** and **Waypoints**), **FIND**, **UPDATE**, **MY CODEX**, **ADD**, **NOTES**, **EXPEDITION**, **COPY**, **PLOT**, **CLEAR ROUTE**, **REVIEW**, **DASHBOARD**, **MARK**, **TARGET**, **MARKS**.
+- Buttons: **Auto-Honk**, **Discovery Alerts**, **Neutron Star**, **White Dwarf**, **Random** (with the Boxel Survey's **Sequence**, **Region Sweep** and **Waypoints**), **FIND POI**, **UPDATE POI**, **MY CODEX**, **ADD NOTE**, **NOTES**, **EXPEDITION**, **COPY**, **PLOT**, **CLEAR ROUTE**, **REVIEW**, **DASHBOARD**, **MARK**, **TARGET**, **MARKS**.
 - Overlay cards are switched on under **Settings → WFMT → Overlays**.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
-| Auto-Honk | Fires your Discovery Scanner on every jump | Toggle **A.H.** (off by default); needs your scanner key bound; Linux needs `xdotool` | [Auto-Honk](exploration.md#auto-honk) |
-| Discovery Alerts | A banner for an unscanned system or a first scan or map | Toggle **D.A.** (or *Enable Discovery Alerts* under Settings → WFMT → Overlays → Discovery) | [Discovery Alerts](exploration.md#discovery-alerts) |
-| Nearest neutron star and white dwarf | The nearest system whose main star is a neutron star or a white dwarf, from Spansh, copied for the galaxy map; **N.S.** can answer from the optional Local star index | **N.S.** and **W.D.** beside the Discovery Alerts toggle | [N.S. and W.D.](exploration.md#ns-and-wd-buttons), [The local star index](exploration.md#the-local-star-index) |
+| Auto-Honk | Fires your Discovery Scanner on every jump | Toggle **Auto-Honk** (off by default); needs your scanner key bound; Linux needs `xdotool` | [Auto-Honk](exploration.md#auto-honk) |
+| Discovery Alerts | A banner for an unscanned system or a first scan or map | Toggle **Discovery Alerts** (or *Enable Discovery Alerts* under Settings → WFMT → Overlays → Discovery) | [Discovery Alerts](exploration.md#discovery-alerts) |
+| Nearest neutron star and white dwarf | The nearest system whose main star is a neutron star or a white dwarf, from Spansh, copied for the galaxy map; **Neutron Star** can answer from the optional Local star index | **Neutron Star** and **White Dwarf** beside the Discovery Alerts toggle | [Neutron Star and White Dwarf](exploration.md#neutron-star-and-white-dwarf-buttons), [The local star index](exploration.md#the-local-star-index) |
 | Notable Bodies | A banner when a body you scan is worth a second look | **Settings → WFMT → Overlays → Notable Bodies** | [Notable Bodies](exploration.md#notable-bodies) |
-| Boxel Survey | Explore by procedural system name: Sequence, Region Sweep and Waypoints | The Boxel Survey section: **Sequence**, **Region Sweep** or **Waypoints**, then **Set** or **Add**, **< Prev**, **Next >** and **Copy**; **RND** finds an undiscovered system and copies it | [Boxel Survey](exploration.md#boxel-survey) |
+| Boxel Survey | Explore by procedural system name: Sequence, Region Sweep and Waypoints | The Boxel Survey section: **Sequence**, **Region Sweep** or **Waypoints**, then **Set** or **Add**, **< Prev**, **Next >** and **Copy**; **Random** finds an undiscovered system and copies it | [Boxel Survey](exploration.md#boxel-survey) |
 | Exploration Value | Estimated payout for the last body, scan progress, the system's age and region, and what your data sales paid | Unfold the Dashboard section; the switch is *Show estimated scan value, system age, and current region* (on by default) | [Exploration Value](exploration.md#exploration-value) |
 | Organic Scanning and Exobiology cards | Find and identify life on a planet: bio status, predicted species and what they pay, a sample radar, and a popup after each sample; leads you back to a plant | The Organic Scanning panel (**REVIEW** for the prediction review, which can be switched off in Settings → WFMT → Exploration → Organic Scanning); cards under **Settings → WFMT → Overlays → Exobiology** | [Exobiology](exobiology.md) |
 | System targets and Body info | Two cards: what is left to map and analyze in the system, and the body under you | **Settings → WFMT → Overlays → System targets / Body info** | [System targets and Body info](exploration.md#system-targets-and-body-info) |
 | Codex Completionist | A lifetime tally of your Codex finds, what is missing and where to look | **MY CODEX** | [Codex Completionist](exploration.md#codex-completionist) |
-| POI Reference | The nearest point of interest from edastro's catalog and Canonn's Thargoid and Guardian lists | **FIND** copies the nearer system; **UPDATE** refreshes Canonn's lists | [POI Reference](exploration.md#poi-reference) |
-| Notes | Your own notes on a system or body, shown when you arrive | Type a line and **ADD**; **NOTES** opens a searchable window | [Notes](exploration.md#notes) |
-| Expedition planner | Named trips of stops ticked off as you arrive; Spansh's Road to Riches and Exomastery planners make one in a button press | **EXPEDITION**; **COPY** the next stop; in the window **Start**, **From plotted route**, **Import CSV**, **Road to Riches**, **Exomastery**, **Neutron route** | [Expedition](exploration.md#expedition) |
+| POI Reference | The nearest point of interest from edastro's catalog and Canonn's Thargoid and Guardian lists | **FIND POI** copies the nearer system; **UPDATE POI** refreshes Canonn's lists | [POI Reference](exploration.md#poi-reference) |
+| Notes | Your own notes on a system or body, shown when you arrive | Type a line and **ADD NOTE**; **NOTES** opens a searchable window | [Notes](exploration.md#notes) |
+| Expedition planner | Named trips of stops ticked off as you arrive; Spansh's Road to Riches and Exomastery planners make one in a button press | **EXPEDITION**; **COPY NEXT** the next stop; in the window **Start**, **From plotted route**, **Import CSV**, **Road to Riches**, **Exomastery**, **Neutron route** | [Expedition](exploration.md#expedition) |
 | Expedition Log | An archive of your exploration expeditions with what each found and earned, and a card that keeps the running one in view | The Expedition window (**EXPEDITION**): **Start**, **Pause**/**Resume**, **Stop**; the archive is its Log tab; the card is under Settings → WFMT → Overlays → Expedition Log | [Expedition Log](exploration.md#expedition-log) |
 | Route Planner | A neutron route for your ship from Spansh's exact plotter, from your ship's own numbers; followed as you jump | **PLOT**; type the destination, **Generate route**, **Copy next system**, **Start expedition**, **Review**, **Clear route**; on the panel, **CLEAR ROUTE** and the *Copy the next system to the clipboard automatically* tick | [Route Planner](exploration.md#route-planner) |
 | Carrier Route | A route for your fleet or squadron carrier from Spansh's fleet carrier router, filled in from the journal | **Carrier route** in the Route Planner window; type the destination, **Generate route**, **Copy next system**, **Mark next as reached** | [Carrier route](exploration.md#carrier-route) |
@@ -125,7 +125,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 - **BOOK** opens the Space Mining Book on the Space page and the Surface Mining Book on the Surface page.
 - **DASHBOARD** opens Mining History.
 - **LIVE** opens the second-screen live window (**CTR**, **BRD**, **+H.S.** and **I/E** are in it).
-- **H.S.**, **PRICE** and **RES** are the lookups.
+- **HOTSPOTS**, **PRICES** and **RESERVES** are the lookups.
 - Settings are under **Settings → WFMT → Mining**.
 
 | Feature | What it does | How to use it | Deep dive |
@@ -141,7 +141,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Mining alerts | A card for a core asteroid or a rock rich in your target commodity; warnings for low limpets and a nearly full hold while you mine | **Settings → WFMT → Mining** for the target commodity; **Settings → WFMT → Overlays → Flight Alerts** to switch them on | [Flight Alerts](always-on.md#flight-alerts) |
 | Mining overlay and archive | Live stats on your game screen; an optional JSON file per completed run | **Settings → WFMT → Overlays → Mining**; *Archive completed mining runs* | [Settings](mining.md#settings) |
 | Mining radar over the game | The Surface Live radar drawn on your game screen while the Rhino is out (WFMT's built-in overlay, Windows) | **Settings → WFMT → Overlays → Mining**: *Show the Mining radar over the game*, its size and opacity, **Test radar** | [The radar over the game](mining.md#the-radar-over-the-game) |
-| Opt-in lookups | Nearby hotspots and best price (Spansh), ring reserve level (EDSM) | Tick them in Settings, then **H.S.**, **PRICE**, **RES** | [The buttons](mining.md#the-buttons) |
+| Opt-in lookups | Nearby hotspots and best price (Spansh), ring reserve level (EDSM) | Tick them in Settings, then **HOTSPOTS**, **PRICES**, **RESERVES** | [The buttons](mining.md#the-buttons) |
 
 ### Trade ([guide](trade.md))
 
@@ -191,11 +191,11 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 ### Colonization ([guide](colonization.md))
 
-**Controls:** the **COL** page with **DASHBOARD** (the Sites window), **OVERLAY** (the shopping list on your screen), **PROJECTS** (My Projects on Raven Colonial) and **HISTORY**; and in the Sites window **Copy Shopping List**, **Copy To Acquire**, **Where to Buy** (its own window, with **Find nearest** and **Find all**), **Rescan Carrier**, the **Raven Colonial** menu and the **Manage Sites** menu.
+**Controls:** the **Colony** page with **DASHBOARD** (the Sites window), **OVERLAY** (the shopping list on your screen), **PROJECTS** (My Projects on Raven Colonial) and **HISTORY**; and in the Sites window **Copy Shopping List**, **Copy To Acquire**, **Where to Buy** (its own window, with **Find nearest** and **Find all**), **Rescan Carrier**, the **Raven Colonial** menu and the **Manage Sites** menu.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
-| The COL page | Your current project and your history | **COL** | [The COL page](colonization.md#the-col-page) |
+| The Colony page | Your current project and your history | **Colony** | [The Colony page](colonization.md#the-colony-page) |
 | Site tracking | What each construction site still needs, after counting the cargo in your ship | Dock at a depot once; nothing is typed | [Tracking a site](colonization.md#tracking-a-site) |
 | Colonization Sites window | Every site's shopping list, progress and totals, and the carrier's part | **DASHBOARD**; **Rescan Carrier** if a load did not register | [The Sites window](colonization.md#the-colonization-sites-window) |
 | Where to buy | The closest places to buy a commodity, or a whole list, with a suggested route and, for a list, the best single systems that stock most or all of it | Click a commodity row, press **Where to Buy**, then **Find nearest** or **Find all** (**Stop** while it runs) | [Where to buy](colonization.md#where-to-buy), [Best single systems](colonization.md#best-single-systems) |

@@ -143,7 +143,7 @@ These are not bugs, but they surprise people. Each is explained where it belongs
   - See [Mining](mining.md#the-surface-mining-book).
 - **Mining: the target commodity must be spelled as the game spells it** (for example Painite). The limpet count is exact only once EDMC has told WFMT your cargo; until then the page shows an estimate, marked with a `~`. See [Mining](mining.md#what-each-page-shows).
 - **Sounds with a Flatpak EDMC on Linux.** The Inventory and Flight Alerts sound ticks look for `canberra-gtk-play` or `paplay` inside the Flatpak, not on your system, so they can be grayed out there. See [Windows and Linux](platforms.md).
-- **The Local star index covers neutron stars only,** and only a system's main star. **W.D.** always asks Spansh. See [Settings](getting-started.md#settings).
+- **The Local star index covers neutron stars only,** and only a system's main star. **White Dwarf** always asks Spansh. See [Settings](getting-started.md#settings).
 - **Hide overlays is not remembered and never automatic.** The overlays are shown again whenever EDMC starts, and WFMT does not hide them in the galaxy map. See [Overlay setup](../OVERLAY_SETUP.md#hiding-the-overlays-for-a-while).
 - **Linux is checked a little behind Windows.** See [Windows and Linux](platforms.md).
 

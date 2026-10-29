@@ -25,24 +25,24 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | What is left to map and sample in a system | **Enable the System targets card** | Settings → WFMT → Overlays → System targets |
 | A card describing the body you target or are near | **Enable the Body info card** | Settings → WFMT → Overlays → Body info |
 | Sampling progress, predicted species, the sample radar, the sample popup | The tick for each of the four Exobiology cards | Settings → WFMT → Overlays → Exobiology |
-| Discovery alerts | **Enable Discovery Alerts**, or the **D.A.** button | Settings → WFMT → Overlays → Discovery |
+| Discovery alerts | **Enable Discovery Alerts**, or the **Discovery Alerts** button | Settings → WFMT → Overlays → Discovery |
 | Notable find banners | **Enable Notable Bodies alerts**, then pick the rules you want | Settings → WFMT → Overlays → Notable Bodies |
 | The arrow to a mark or hotspot on a planet | **Enable Surface Compass** | Settings → WFMT → Overlays → Surface Compass |
 | Inventory pickups and bars | **Show pillage notifications on the in-game overlay** for pickups, and one tick per bar (Backpack, Ship Locker, Carrier Locker, Cargo) for the bars | Settings → WFMT → Overlays → Inventory |
 | Mining stats on the game screen | **Enable HUD Overlay** | Settings → WFMT → Overlays → Mining |
 | The Mining radar (the Surface Live radar) over the game | **Show the Mining radar over the game while the Rhino is out**, and WFMT's built-in overlay chosen (Windows) | Settings → WFMT → Overlays → Mining and Overlay Connection |
 | "Screenshot saved" message on the game screen | **Show a notification on the in-game overlay when a screenshot is saved** | Settings → WFMT → Overlays → Screenshots |
-| The Colonization shopping list appears by itself at markets | **Also show the shopping list automatically**. Otherwise only the **OVERLAY** button on the COL page shows it | Settings → WFMT → Overlays → Colonization |
-| Auto-Honk | **Enable Auto-Honk** or the **A.H.** button | Settings → WFMT → Exploration → Auto-Honk |
+| The Colonization shopping list appears by itself at markets | **Also show the shopping list automatically**. Otherwise only the **OVERLAY** button on the Colony page shows it | Settings → WFMT → Overlays → Colonization |
+| Auto-Honk | **Enable Auto-Honk** or the **Auto-Honk** button | Settings → WFMT → Exploration → Auto-Honk |
 | **Find sources** (Missions) and **Best picks** (Trade) | **Enable Spansh trade lookups**; Find sources asks to turn it on when you press it | Settings → WFMT → Trade |
 | Routes and Market on the Trade page | **Enable Spansh trade lookups** ([details](#the-lookup-buttons-are-grayed-out-or-there-is-no-commodity-box)) | Settings → WFMT → Trade |
-| The **H.S.**, **PRICE** or **RES** buttons in Mining | **Enable Spansh nearby hotspot finder**, **Enable Spansh best price finder**, **Enable EDSM ring reserve lookup** (each separately) | Settings → WFMT → Mining |
+| The **HOTSPOTS**, **PRICES** or **RESERVES** buttons in Mining | **Enable Spansh nearby hotspot finder**, **Enable Spansh best price finder**, **Enable EDSM ring reserve lookup** (each separately) | Settings → WFMT → Mining |
 | ELW rarity or EDSM upload status in Exploration | The two options under Exploration Value | Settings → WFMT → Exploration → Exploration Value |
 | Fleet carriers missing from "where to buy" results | **Include fleet carriers** in the Where to Buy window | Where to Buy window (the **Where to Buy** button in the Colonization Sites window) |
 | Raven Colonial not updating | The master switch and the two options under it ([steps](#raven-colonial-doesnt-update-as-i-deliver)) | Settings → WFMT → Colonization → Raven Colonial |
 | Something else is wrong | **Report an issue**, then **Copy diagnostics** to paste the log lines into it ([how](reporting-problems.md)) | Settings → WFMT → General → Help |
 | WFMT never updates itself | **Automatically download and install updates** (see also [the update did not take](#the-update-did-not-take)) | Settings → WFMT → General → Updates |
-| **N.S.** asks Spansh every time | Install the optional Local star index, and leave **Use the local index for N.S. when it is installed** ticked | Settings → WFMT → General → Online lookups |
+| **Neutron Star** asks Spansh every time | Install the optional Local star index, and leave **Use the local index for Neutron Star when it is installed** ticked | Settings → WFMT → General → Online lookups |
 | Chat commands such as `!wf overlays` do nothing | **Chat commands** | Settings → WFMT → General → Shortcuts |
 | Prices and routes near you are for the wrong ship size | **Ship size (landing pad)** | Settings → WFMT → Trade |
 
@@ -177,9 +177,9 @@ On **Settings → WFMT → General → Online lookups**, the Local star index li
 
 - **Not enough room:** the first download needs about 173 MB and building needs about 300 MB more while it works. Free some space and press **Download and build** again; a download that was cut off carries on from where it stopped.
 - **Spansh is not answering:** see the next entry.
-- **The installed index is damaged or was made by another version of WFMT:** the line says so and the **N.S.** button asks Spansh instead. Press **Delete**, then **Download and build**.
+- **The installed index is damaged or was made by another version of WFMT:** the line says so and the **Neutron Star** button asks Spansh instead. Press **Delete**, then **Download and build**.
 - **Update downloads nothing:** that is correct if Spansh's file has not changed since your index was built; the line says "The index is already up to date".
-- The index is optional. **N.S.** works without it by asking Spansh, and **W.D.** always does.
+- The index is optional. **Neutron Star** works without it by asking Spansh, and **White Dwarf** always does.
 
 ### "Spansh has not been answering, so WFMT is not asking it for another N minute(s)"
 
@@ -342,7 +342,7 @@ It needs **Enable Spansh trade lookups** (Settings → WFMT → Trade); the wind
 
 ## Colonization
 
-### The COL page says "No active construction site"
+### The Colony page says "No active construction site"
 
 Dock at the construction depot, or open its market, **once**. The game writes the site's needs only then.
 

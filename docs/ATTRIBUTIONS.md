@@ -71,7 +71,7 @@ WFMT's versions are its own code, shaped by what these tools showed was worth do
   - The optional **Known** section (the life and points of interest other commanders found in a system) reads
     [Spansh](https://spansh.co.uk/)'s public system record, only when you tick the setting; the visit history is built from your own journals
     (`system_history.py`).
-- **RND (a nearby system with no scans):** [Spansh](https://spansh.co.uk/)'s systems search, sorted by distance from your position, for the
+- **Random (a nearby system with no scans):** [Spansh](https://spansh.co.uk/)'s systems search, sorted by distance from your position, for the
   real systems around you, and [EDSM](https://www.edsm.net/)'s bodies list to confirm one. Both are called only when you press the button.
 
 ### What a system is worth
@@ -104,8 +104,8 @@ WFMT's versions are its own code, shaped by what these tools showed was worth do
   - [EDEB](https://forums.frontier.co.uk/threads/edeb-elite-dangerous-exploration-buddy.615445/), whose exact-plotter dialog showed what a ship
     has to tell Spansh, is credited for the idea and for the layout of the Route Planner's ship block; none of its code was seen.
 - **The neutron route** is [Spansh](https://spansh.co.uk/)'s Route Planner, called when you press **Plot**.
-- **Nearest neutron star and white dwarf lookups:** [Spansh](https://spansh.co.uk/) answers the N.S. and W.D. buttons. The optional local
-  index for N.S. is built from Spansh's published neutron-star data dump (`systems_neutron.json.gz`, from its dumps page), which the player
+- **Nearest neutron star and white dwarf lookups:** [Spansh](https://spansh.co.uk/) answers the Neutron Star and White Dwarf buttons. The optional local
+  index for Neutron Star is built from Spansh's published neutron-star data dump (`systems_neutron.json.gz`, from its dumps page), which the player
   downloads when they ask.
 - **System-name suggestions** (the optional list of matching systems while you type): [Spansh](https://spansh.co.uk/)'s system-name search,
   only when you tick the setting.

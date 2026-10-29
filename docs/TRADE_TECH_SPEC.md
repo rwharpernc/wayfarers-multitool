@@ -1,6 +1,6 @@
 # Trade mode specification
 
-How Trade mode (the **TRD** button) works, what each module owns, which journal events and web services it
+How Trade mode (the **Trade** button) works, what each module owns, which journal events and web services it
 reads, and what has and hasn't been verified. For what it does for the user, see the
 [README](guide/trade.md). For the plugin-wide rules it follows (feature contract, main-window sizing,
 threading, persistence), see [TECHNICAL.md](TECHNICAL.md).
@@ -83,7 +83,7 @@ All in `plugin/`. Pure modules have no Tk and no EDMC-only imports, so they are 
 | `trade_watch_window.py` | UI | The Watch list window (uikit) |
 
 Reused from elsewhere: `mining_spansh_client.search_best_price_stations` (the station price search, shared
-with Mining's PRICE button), `mining_price_finder_dialog` (the **Price finder** button), `inventory_names`
+with Mining's PRICES button), `mining_price_finder_dialog` (the **Price finder** button), `inventory_names`
 (display-name fallback), `panelkit` (wrapping labels, tooltips, the page arrows, clipboard).
 
 ## 3. The three pages

@@ -127,8 +127,8 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 ### The mode buttons
 
 WFMT has one panel with eight modes. You switch between them with the button row at the top of the panel:
-**P.P.** (Powerplay), **BGS**, **EXP** (Exploration), **MIN** (Mining), **TRD** (Trade), **MSN** (Missions),
-**OPS** (Field Ops) and **COL** (Colonization).
+**Powerplay** (Powerplay), **BGS**, **Exploration** (Exploration), **Mining** (Mining), **Trade** (Trade), **Missions** (Missions),
+**Field Ops** (Field Ops) and **Colony** (Colonization).
 
 **Every mode keeps working in the background** while you look at a different one. Nothing pauses. If you're
 mining and flip to Trade to check a price, your mining stats keep counting.
@@ -323,11 +323,11 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 
 **The Local star index group** (bottom of Online lookups) is optional; WFMT works fully without it.
 
-- It lets **N.S.** (nearest neutron star) answer from a file on this computer instead of asking Spansh each time. The line above its buttons says what is installed (for example how many neutron stars, its size and the date it was built from), or `Not installed. The N.S. button asks Spansh.`, and shows the progress of a running job.
+- It lets **Neutron Star** (nearest neutron star) answer from a file on this computer instead of asking Spansh each time. The line above its buttons says what is installed (for example how many neutron stars, its size and the date it was built from), or `Not installed. The Neutron Star button asks Spansh.`, and shows the progress of a running job.
 - **Download and build** (available when nothing usable is installed): fetches one public file from Spansh's download server (about 173 MB) and builds the index from it, about 110 MB on disk. It needs about 300 MB of free space while it builds and deletes the download afterwards. A cancelled or interrupted download carries on from where it stopped.
 - **Update** (available when an index is installed): fetches only what changed, Spansh's 1-day (about 3 MB) or 1-week (about 19 MB) file of changed systems, when your index is recent enough, and the whole file again only when it is not (or after 20 updates). Pressing it again the same day downloads nothing.
 - **Cancel** (while a job runs) stops it. **Delete** (when there is an index file, usable or not) removes it.
-- *Use the local index for N.S. when it is installed* (on) decides whether the button uses the index. **W.D.** always asks Spansh. The index lists systems whose main star is a neutron star; a neutron star that is a secondary star is not in it. A damaged index, or one made by another version of WFMT, is ignored and the button asks Spansh (the line tells you to delete it or press **Download and build**).
+- *Use the local index for Neutron Star when it is installed* (on) decides whether the button uses the index. **White Dwarf** always asks Spansh. The index lists systems whose main star is a neutron star; a neutron star that is a secondary star is not in it. A damaged index, or one made by another version of WFMT, is ignored and the button asks Spansh (the line tells you to delete it or press **Download and build**).
 - The index is the same for every commander and is not part of the data backup. It is kept in the `star_index` folder in the plugin folder, which updates leave alone.
 - Nothing is downloaded unless you press a button.
 
@@ -336,7 +336,7 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 | Inner tab | Controls and their starting values |
 |---|---|
 | **Auto-Honk** | *Enable Auto-Honk* (off); *Fire button* Primary or Secondary (Secondary); *Hold (sec)* (10); *Focus game window first* (on); *Skip systems already visited* (on); on Linux, *Elite Wine/Proton prefix* (blank means auto-detect Steam); **Rescan** and **Test Honk Now**, which work even while Auto-Honk is off. See [Auto-Honk](exploration.md#auto-honk) |
-| **Boxel Survey** | *Auto-copy next target to clipboard on jump* (on); *Skip systems already visited this session* (on); *Skip systems already visited by anyone (EDSM)* (off); *Skip systems already fully scanned in EDSM* (off); *Confirm off-sequence arrivals against EDSM* (off); **Export Survey Log**; and for the RND button, **Clear Visited Systems Log** and *Systems to request from Spansh* (10 to 100, 25 by default) |
+| **Boxel Survey** | *Auto-copy next target to clipboard on jump* (on); *Skip systems already visited this session* (on); *Skip systems already visited by anyone (EDSM)* (off); *Skip systems already fully scanned in EDSM* (off); *Confirm off-sequence arrivals against EDSM* (off); **Export Survey Log**; and for the Random button, **Clear Visited Systems Log** and *Systems to request from Spansh* (10 to 100, 25 by default) |
 | **Expedition** | *Copy the next stop's system name to the clipboard every time I arrive anywhere* (off; the same switch as **Copy on arrival** on the panel); *Start the Expedition Log when I start an expedition* (on) |
 | **Exploration Value** | *Show estimated scan value, system age, and current region* (on); *Show ELW rarity comparison when you scan an Earthlike World (Spansh)* (off); *Show EDSM upload status when you select a system on the galaxy map (EDSM)* (off) |
 | **Nearest place to land** | *Allow this lookup: pressing Find sends Spansh my position, the pad size and my choices, nothing else* (off; the same switch as the tick in the window) |
@@ -437,40 +437,40 @@ Notes:
 
 ## Button names
 
-The EDMC main window is small, so WFMT's buttons use short names. **Hover over any button for a moment and a tooltip
-shows its full name.** Buttons inside pop-out windows and Settings keep their full names.
+The mode buttons and the buttons in the Exploration and Mining rows carry their whole names. **Hover over any button for
+a moment and a tooltip shows its full name and what it does.** The table below lists them with what each one does and where it is.
 
 | Button | Full name | Where |
 |---|---|---|
-| **P.P.** | Powerplay | Mode buttons (top of the panel) |
+| **Powerplay** | Powerplay | Mode buttons (top of the panel) |
 | **BGS** | BGS | Mode buttons |
-| **EXP** | Exploration | Mode buttons |
-| **MIN** | Mining | Mode buttons |
-| **TRD** | Trade | Mode buttons |
-| **MSN** | Missions | Mode buttons |
-| **OPS** | Field Ops | Mode buttons |
-| **COL** | Colonization | Mode buttons |
+| **Exploration** | Exploration | Mode buttons |
+| **Mining** | Mining | Mode buttons |
+| **Trade** | Trade | Mode buttons |
+| **Missions** | Missions | Mode buttons |
+| **Field Ops** | Field Ops | Mode buttons |
+| **Colony** | Colonization | Mode buttons |
 | **REPORT** | Powerplay Sessions window | Powerplay |
 | **RARES** | Rares (rare goods finder) | Powerplay |
 | **RESCAN** | Rescan | Powerplay |
 | **REPORT** | View BGS report | BGS |
-| **A.H.** | Auto-Honk | Exploration |
-| **D.A.** | Discovery Alerts | Exploration |
-| **N.S.** | Nearest neutron star (primary star), from the Spansh search or the optional local star index | Exploration |
-| **W.D.** | Nearest white dwarf (primary star) | Exploration |
-| **RND** | Random (a real system nearby with no scans on Spansh or EDSM) | Exploration (Boxel Survey section) |
+| **Auto-Honk** | Auto-Honk | Exploration |
+| **Discovery Alerts** | Discovery Alerts | Exploration |
+| **Neutron Star** | Nearest neutron star (primary star), from the Spansh search or the optional local star index | Exploration |
+| **White Dwarf** | Nearest white dwarf (primary star) | Exploration |
+| **Random** | Random (a real system nearby with no scans on Spansh or EDSM) | Exploration (Boxel Survey section) |
 | **Sequence** / **Region Sweep** / **Waypoints** | Choose which Boxel Survey sub-mode the section shows | Exploration (Boxel Survey section) |
 | **< Prev** / **Next >** / **Copy** | Step to the previous or next target in the sub-mode, or copy the current target's system name to the clipboard | Exploration (Boxel Survey section) |
 | **Use Current** / **Set** | Fill the box with the system you are in / start the survey from the name in the box | Exploration (Boxel Survey section, Sequence) |
 | **Find Nearby (EDSM)** | Ask EDSM for the nearest real procedurally named system outside the current cube and put it in the Seed box (press **Set** to move the survey there) | Exploration (Boxel Survey section, Sequence) |
-| **FIND** | Find nearest POI (GEC and Canonn) | Exploration |
-| **UPDATE** | Refresh POI data (Canonn) | Exploration |
+| **FIND POI** | Find nearest POI (GEC and Canonn) | Exploration |
+| **UPDATE POI** | Refresh POI data (Canonn) | Exploration |
 | **MY CODEX** | My Codex window: overview, found and not found, with a Backfill Journals button (Codex Completionist) | Exploration |
-| **ADD** | Save the line you typed as a note about the system you are in | Exploration (Notes section) |
+| **ADD NOTE** | Save the line you typed as a note about the system you are in | Exploration (Notes section) |
 | **NOTES** | Open the Notes window | Exploration (Notes section) |
 | **EXPEDITION** | Open the Expedition window (tabs Plan, Route and Log), where expeditions are started, paused and stopped | Exploration (Expedition section) |
 | **Copy on arrival** (tick) | Copy the next stop's system name to the clipboard every time you arrive anywhere | Exploration (Expedition section) |
-| **COPY** | Copy the next expedition stop's system name to the clipboard, to paste into the galaxy map | Exploration (Expedition section) |
+| **COPY NEXT** | Copy the next expedition stop's system name to the clipboard, to paste into the galaxy map | Exploration (Expedition section) |
 | **FIND** | Open the Nearest place to land window | Exploration (Nearest place to land section) |
 | **PLOT** | Open the Route Planner, which plots a neutron-star route for your ship with Spansh | Exploration (Route Planner section) |
 | **CLEAR ROUTE** | Forget the Route Planner's route and the route the Route overlay is following from the game, so the overlay closes | Exploration (Route Planner section) |
@@ -482,10 +482,10 @@ shows its full name.** Buttons inside pop-out windows and Settings keep their fu
 | **MARKS** | Open the Marks window | Exploration (Compass section) |
 | **MATERIALS** | Open the Materials window | Field Ops (Materials section) |
 | **BLUEPRINTS** | Open the Engineering window (blueprints, wishlist, ship and Odyssey upgrade planners, engineers) | Field Ops (Materials section) |
-| **H.S.** | Find nearby hotspots | Mining |
+| **HOTSPOTS** | Find nearby hotspots | Mining |
 | **+H.S.** | Save hotspot here | Mining (the live window's header) |
-| **PRICE** | Find best price | Mining |
-| **RES** | Check ring reserve level | Mining |
+| **PRICES** | Find best price | Mining |
+| **RESERVES** | Check ring reserve level | Mining |
 | **I/E** | Import/export hotspots | Mining (the live window's header) |
 | **CTR** | Mark the center of a surface mining location | Mining (the live window's header) |
 | **BRD** | Mark the border of a surface mining location | Mining (the live window's header) |
@@ -503,7 +503,7 @@ shows its full name.** Buttons inside pop-out windows and Settings keep their fu
 | **Sell** / **Buy** | Choose whether the search is for selling or buying | Trade (Market page) |
 | **Near me** / **Galaxy** | Best place to sell or buy, near you / anywhere | Trade (Market page) |
 | **Best picks** | Closest, best local, cheapest or highest anywhere, and a price within 10% of the best, for the commodity in the box | Trade (Market page) |
-| **Price finder** | The Mining PRICE finder, for any commodity | Trade (Market page) |
+| **Price finder** | The finder behind Mining's **PRICES** button, for any commodity | Trade (Market page) |
 | **REFRESH** | Ask Spansh for the best buy and sell price of each watched commodity near you (needs Trade lookups on) | Trade (Watch list section) |
 | **WATCH** | Open the Watch list window | Trade (Watch list section) |
 | **◀** / **▶** | Previous / next page | Mining, Trade, Missions |

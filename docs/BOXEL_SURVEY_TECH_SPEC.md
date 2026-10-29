@@ -49,7 +49,7 @@ survey_log.py             Notable-finds log (Earthlike/water/ammonia/terraformab
                           system and rolled up by boxel. Pure, unit-tested (tests/test_survey_log.py).
 survey_catchup.py         Replays recent journals into the survey log for scans made while EDMC was
                           closed (§4.4.1). Unit-tested (tests/test_survey_catchup.py).
-undiscovered_nearby.py    The RND button's Spansh lookup, list filtering and in-memory cache (§4.4.1).
+undiscovered_nearby.py    The Random button's Spansh lookup, list filtering and in-memory cache (§4.4.1).
 edsm_client.py            Shared EDSM API client (also used by Mining mode) — nearby_systems
                           (cube-systems), system_known (Tier 2), system_fully_scanned (Tier 3),
                           system_bodies, systems_coords. Never raises; every failure degrades to an
@@ -217,12 +217,12 @@ exist near the commander's actual position instead: its public
 - Filter to procedural-shaped names in a different `cube_id` than the current seed.
 - Offer the nearest match.
 
-### 4.4.1 The "Random" button (RND)
+### 4.4.1 The "Random" button
 
-Labeled **RND** (tooltip "Random"). It sits outside the Boxel Survey panel and never touches
+Labeled **Random** (tooltip "Random - find an undiscovered system near you ..."). It sits outside the Boxel Survey panel and never touches
 `BoxelWalker`.
 
-- `ui.py` adds it to the Exploration button row (A.H., D.A., N.S., W.D., RND) via
+- `ui.py` adds it to the Exploration button row (Auto-Honk, Discovery Alerts, Neutron Star, White Dwarf, Random) via
   `build_random_button()`, with its gray status line below that row.
 - It is visible even when Boxel Survey is collapsed and independent of which of the three sub-modes is
   selected.
@@ -250,7 +250,7 @@ Caching and failures:
 - The name goes to the clipboard; nothing is set as a seed or target.
 
 Every offered name is a system a service lists, so the string-guessing limits of §4.2/4.3 do not apply
-to RND. The limit that remains is the meaning of "undiscovered": Spansh's `body_count` is empty when
+to Random. The limit that remains is the meaning of "undiscovered": Spansh's `body_count` is empty when
 no scan was submitted, which is not proof that nobody visited.
 
 Names are not made by offsetting the trailing numbers of a nearby boxel's names and keeping those EDSM

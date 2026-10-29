@@ -63,10 +63,10 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 2. Make sure *Mining alerts* is ticked, then set the limpet number and the hold percentage.
 3. For rich-rock cards, type your commodities in **Settings → WFMT → Mining → Target commodities** ([how](#target-commodities)).
 
-**Find a hotspot.** Details: [H.S.: Find Nearby Hotspots](#hs-find-nearby-hotspots).
+**Find a hotspot.** Details: [HOTSPOTS: Find Nearby Hotspots](#hotspots-find-nearby-hotspots).
 
 1. Tick *Enable Spansh nearby hotspot finder* in **Settings → WFMT → Mining**.
-2. On the Space Mining page press **H.S.**, pick a **Material** and a **Where** distance, and press **Search**.
+2. On the Space Mining page press **HOTSPOTS**, pick a **Material** and a **Where** distance, and press **Search**.
 3. Select a row and press **Copy system** to paste the system into the galaxy map.
 
 ## What each page shows
@@ -175,13 +175,13 @@ Settings. Hover for the full name.
 | **BOOK** | Opens the book for the page you are on: the **Space Mining Book** (your rings) on the Space Mining page, the **Surface Mining Book** (Rhino deposits) on the Surface Mining page. | Always |
 | **DASHBOARD** (Mining History) | Opens every mining run found in your journals, added up (see below). | Always |
 | **LIVE** | Opens the live window for the page you are on: a radar and the controls on the Surface page, the live numbers on the Space page. Meant for a second screen ([the live window](#the-live-window)). | Always |
-| **H.S.** (find nearby hotspots) | Opens the Find Nearby Hotspots window (see below). | Space Mining page, once *Enable Spansh nearby hotspot finder* is ticked |
-| **PRICE** (find best price) | Opens the Find Best Price window (see below). | Once *Enable Spansh best price finder* is ticked (the same switch also turns on Market research and What pays in the Surface Mining Book) |
-| **RES** (check ring reserve level) | Opens the Check Ring Reserve Level window (see below). | Space Mining page, once *Enable EDSM ring reserve lookup* is ticked |
+| **HOTSPOTS** (find nearby hotspots) | Opens the Find Nearby Hotspots window (see below). | Space Mining page, once *Enable Spansh nearby hotspot finder* is ticked |
+| **PRICES** (find best price) | Opens the Find Best Price window (see below). | Once *Enable Spansh best price finder* is ticked (the same switch also turns on Market research and What pays in the Surface Mining Book) |
+| **RESERVES** (check ring reserve level) | Opens the Check Ring Reserve Level window (see below). | Space Mining page, once *Enable EDSM ring reserve lookup* is ticked |
 
 The three online lookups are **off until you turn them on in Settings**. See [what goes on the internet](internet-and-privacy.md).
 
-### H.S.: Find Nearby Hotspots
+### HOTSPOTS: Find Nearby Hotspots
 
 1. In **Material**, pick or type a mineral (the list holds the materials known to work; a name not in it is still accepted).
 2. In **Where**, choose how far to look: within 25, 50, 100 (the default), 250, 500 or 1,000 ly.
@@ -194,13 +194,13 @@ Only the system name and the material are sent. A search that finds nothing tell
 
 **Worked example.** You want Painite and you are in the system you will start from.
 
-1. Tick *Enable Spansh nearby hotspot finder* in **Settings → WFMT → Mining**, then press **H.S.** on the Space Mining page.
+1. Tick *Enable Spansh nearby hotspot finder* in **Settings → WFMT → Mining**, then press **HOTSPOTS** on the Space Mining page.
 2. Type or pick `Painite` in **Material**.
 3. Leave **Where** on 100 ly, and leave **Search from** as it is (press **Here** if you changed it).
 4. Press **Search**. The table lists the rings Spansh confirms have Painite hotspots, nearest first, with **Hotspots** (how many Painite hotspots the ring has), **Distance (ly)**, **Arrival (ls)** and **Reserve level**.
 5. Click a heading (for example **Distance (ly)**) to sort, select one and press **Copy system**, then paste it into the galaxy map. If nothing came back, set **Where** to 250 ly and search again.
 
-### PRICE: Find Best Price
+### PRICES: Find Best Price
 
 1. Type a commodity in **Commodity**. Suggestions follow what you type, with what this run refined listed first. Press Down on an empty box to see the list.
 2. Choose **I am selling** (the default) or **I am buying**.
@@ -216,13 +216,13 @@ The table lists up to 25 stations Spansh shows paying the most (or selling cheap
 
 **Worked example.** You have 120 t of Painite in your hold and want to know where to sell it.
 
-1. Tick *Enable Spansh best price finder* in **Settings → WFMT → Mining**, then press **PRICE**.
+1. Tick *Enable Spansh best price finder* in **Settings → WFMT → Mining**, then press **PRICES**.
 2. Type `Painite` in **Commodity** (this run's refined commodities are listed first). **I am selling** is already chosen.
 3. Leave **Where** on 50 ly. **Minimum demand (t)** starts at the tons in your hold if EDMC knows them, so stations that want only a few tons are not shown.
 4. Press **Search**. Read **Price (cr)**, **Demand**, **Pad** and **Arrival (ls)**, and click a heading to sort. A station whose **Pad** is `?` or too small for your ship needs checking before you fly there.
 5. Select the row you want and press **Copy system** to paste it into the galaxy map.
 
-### RES: Check Ring Reserve Level
+### RESERVES: Check Ring Reserve Level
 
 1. Type a system in **System** (it starts as the one you are in).
 2. In **Body or ring**, type a body or ring name if you want one. It starts as the ring you are at, if WFMT has tracked one. Empty lists every ringed body in the system.
@@ -232,7 +232,7 @@ The table gives each ring with its **Body**, **Reserve level**, **Ring type** an
 
 **Worked example.** You are about to jump to a ringed planet in another system and want to know whether its ring is worth the trip.
 
-1. Tick *Enable EDSM ring reserve lookup* in **Settings → WFMT → Mining**, then press **RES**.
+1. Tick *Enable EDSM ring reserve lookup* in **Settings → WFMT → Mining**, then press **RESERVES**.
 2. Type the system name in **System**. Leave **Body or ring** empty to list every ringed body in the system.
 3. Press **Search**. Each row gives the **Reserve level**, the **Ring type** and a **Laser mining** note. A ring that is not Metallic is flagged in amber.
 4. If the status line says EDSM has no ringed body on file, nobody has recorded it. Scan the ring yourself when you arrive.
@@ -793,9 +793,9 @@ The in-game Mining displays are set on **Settings → WFMT → Overlays → Mini
 **Checkboxes.** The first three are on by default. The rest are off.
 
 - *Show session totals*, *Show the cargo bar* and *Show prospector hints* (on by default). See [What each page shows](#what-each-page-shows) for the lines each one controls.
-- *Enable Spansh nearby hotspot finder* (Space Mining page): shows **H.S.**
-- *Enable Spansh best price finder and Market research in the Surface Mining Book*: shows **PRICE** and turns on **Market research** and **What pays**.
-- *Enable EDSM ring reserve lookup* (Space Mining page): shows **RES** and looks up each ring you drop into automatically.
+- *Enable Spansh nearby hotspot finder* (Space Mining page): shows **HOTSPOTS**
+- *Enable Spansh best price finder and Market research in the Surface Mining Book*: shows **PRICES** and turns on **Market research** and **What pays**.
+- *Enable EDSM ring reserve lookup* (Space Mining page): shows **RESERVES** and looks up each ring you drop into automatically.
 - *Enable body lookup*: turns on **Get body info** in the Surface Mining Book (asks edsm.net and spansh.co.uk for the bodies of your system, sending only its name or id).
 - *Show coverage minimap* (Surface Mining page): a small map of ground the Rhino has driven over on the current body, redrawn once a second while the Rhino is deployed.
 - *Archive completed mining runs*: writes a JSON file per run to `mining_sessions/`. A trip with nothing in it writes nothing.

@@ -30,11 +30,11 @@ The most common tasks, step by step. Each one links to the section with the full
 2. Check **Screenshot Directory** is the folder where the game saves its screenshots (use **Browse…** if not).
 3. Choose a **Converted Directory** for the PNG copies, and pick a **Filename Mask** from the drop-down.
 4. Optionally tick **Delete original file after conversion**.
-5. Take a screenshot in the game. The status line on the Field Ops panel (**OPS**) shows the converted file's name.
+5. Take a screenshot in the game. The status line on the Field Ops panel shows the converted file's name.
 
 **See your backpack and cargo** (details: [Inventory](#inventory))
 
-1. Switch to Field Ops mode (**OPS**). The Inventory bars show the Backpack, the Ship Locker and, while you are in a ship or SRV, the Cargo.
+1. Switch to Field Ops mode. The Inventory bars show the Backpack, the Ship Locker and, while you are in a ship or SRV, the Cargo.
 2. Click any bar to open the Inventory window.
 3. Pick the **Backpack**, **Ship Locker** or **Cargo** tab. Type in **Filter** to narrow every tab at once.
 
@@ -69,7 +69,7 @@ Converts Elite's screenshots to PNG automatically, with an optional crop to just
 
 **How to use it:** nothing to do. Take a screenshot in the game as usual and WFMT converts it when the game's journal reports it.
 
-**On the panel** (Field Ops mode, **OPS**):
+**On the panel** (Field Ops mode, **Field Ops**):
 
 - A status line. It reads `Waiting for a screenshot…` until one is taken, then the converted file's name (cut to 40 characters). **Click the status line to open the folder** the last screenshot was saved in.
 - The **clock icon** to its right turns the auto-capture timer on and off (see below). It is hidden when the timer cannot work on your system or when you turn the icon off in Settings.
@@ -232,7 +232,7 @@ Before the game has told WFMT anything the row says `Log in to see your material
 **MATERIALS** opens the window, and **BLUEPRINTS** (under it) opens the Engineering window.
 
 **To use it:**
-1. Switch to Field Ops mode (**OPS**) and open the **Materials** row if it is folded. Log in to the game once, so WFMT has the full list.
+1. Switch to Field Ops mode and open the **Materials** row if it is folded. Log in to the game once, so WFMT has the full list.
 2. Read the row: pieces held of each type, the last change, and anything at the limit.
 3. Press **MATERIALS** to search, filter and sort. To find where to swap materials, press **Find a trader** inside that window (see below).
 4. To plan crafts, press **BLUEPRINTS** (see [Engineering](#engineering-blueprints-and-a-wishlist)).

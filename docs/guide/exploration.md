@@ -1,10 +1,10 @@
 # Exploration
 
-Exploration mode is one scrolling panel (press **EXP** in the mode row to show it). It has a row of buttons at the top, then several sections stacked top to bottom in
+Exploration mode is one scrolling panel (press **Exploration** in the mode row to show it). It has a row of buttons at the top, then several sections stacked top to bottom in
 alphabetical order of their names (in every mode the sections are alphabetical, so one can be found without scanning).
 
-- **The top row** holds **A.H.** (Auto-Honk), **D.A.** (Discovery Alerts), **N.S.** and **W.D.** (nearest neutron star and white dwarf) and **RND** (a system nobody
-  has scanned). A short status line under it reports Discovery Alerts and the last N.S. or W.D. answer.
+- **The top row** holds **Auto-Honk** (Auto-Honk), **Discovery Alerts** (Discovery Alerts), **Neutron Star** and **White Dwarf** (nearest neutron star and white dwarf) and **Random** (a system nobody
+  has scanned). A short status line under it reports Discovery Alerts and the last Neutron Star or White Dwarf answer.
 - **The sections** are Boxel Survey, Codex Completionist, Compass, Dashboard, Expedition, Nearest place to land, Notes, Organic Scanning, POI Reference and Route Planner.
 - **Folding.** Every section with a ▸ / ▾ in its title starts folded: click the title to open it. A section you open stays open until EDMC restarts, and
   every section is folded again at each start, so the panel is the same short height every time.
@@ -96,7 +96,7 @@ Short step lists for the things players ask for most. Each links to the section 
 
 **Write a note** ([details](#notes))
 
-1. Open the **Notes** section, type a line in the box and press **ADD**.
+1. Open the **Notes** section, type a line in the box and press **ADD NOTE**.
 2. Press **NOTES** to search, change or delete notes.
 
 **Find somewhere to land** ([details](#nearest-place-to-land))
@@ -107,7 +107,7 @@ Short step lists for the things players ask for most. Each links to the section 
 
 **Find a point of interest** ([details](#poi-reference))
 
-1. Press **FIND** in the POI Reference section.
+1. Press **FIND POI** in the POI Reference section.
 2. Paste the system name that is now on your clipboard into the galaxy map.
 
 ## Auto-Honk
@@ -116,7 +116,7 @@ Fires your Discovery Scanner automatically every time you jump into a system, so
 
 **How to use it:**
 
-1. Turn it on with its toggle button (**A.H.**, which is highlighted while it is on) or the **Enable Auto-Honk** box in Settings. It is **off by default**.
+1. Turn it on with its toggle button (**Auto-Honk**, which is highlighted while it is on) or the **Enable Auto-Honk** box in Settings. It is **off by default**.
 2. Open **Settings → WFMT → Exploration → Auto-Honk** and set:
    - **Fire button**: **Primary** or **Secondary** (the default is Secondary). This is the Elite control WFMT looks up in your key bindings, so pick the one your Discovery Scanner is on.
    - **Hold (sec)**: how long the key is held down. The default is 10. The Discovery Scanner charges while the button is held and fires only when it is full, so a quick tap does nothing; the charge time depends on your scanner and its engineering. A value under 1 second is saved as 1 second.
@@ -154,7 +154,7 @@ first to scan or map a body.
 
 **How to use it:**
 
-1. Click its toggle button (**D.A.**) or tick **Enable Discovery Alerts** in **Settings → WFMT → Overlays → Discovery**. It is **off by default**.
+1. Click its toggle button (**Discovery Alerts**) or tick **Enable Discovery Alerts** in **Settings → WFMT → Overlays → Discovery**. It is **off by default**.
 2. Make sure an overlay is running. The connection details are on the **Overlay Connection** tab under Settings → WFMT → Overlays.
 3. Press **Test Discovery** on the Discovery page to send both banners (it works even while the feature is off and says whether an overlay could be reached), and use **Settings → WFMT → Overlays → Overlay Placement** to move them. By default they sit at the top center.
 
@@ -169,34 +169,34 @@ The status line under the buttons on the panel says the same in text (`New syste
 
 **What it does not do.** It stays silent for a system or body that was already discovered, since that is the usual case. The first-to-map banner needs the body's own scan to have been seen earlier in the system, because the mapping event does not say whether the body had been mapped before; a body whose scan WFMT did not see (for example because EDMC was closed) is not announced.
 
-### N.S. and W.D. buttons
+### Neutron Star and White Dwarf buttons
 
-Next to the toggle, these find the nearest system whose *primary* star is a **neutron star (N.S.)** or a **white
-dwarf (W.D.)**, measured from where you are now. They show the system name and distance, and copy the name to your
+Next to the toggle, these find the nearest system whose *primary* star is a **neutron star (Neutron Star)** or a **white
+dwarf (White Dwarf)**, measured from where you are now. They show the system name and distance, and copy the name to your
 clipboard so you can paste it into the galaxy map.
 
 They are manual only: they contact Spansh when you click and never on their own. Jump or reload first so WFMT knows
 your position.
 
-**What you see.** After the click the line under the buttons reads `N.S.: searching...` and both buttons are grayed until the answer arrives. The answer reads like
-`N.S.: Sample Sector AB-C d1-2 - 84.3 ly, Spansh (copied)`: the system, how far it is, which source answered (**Spansh** or **local index**, see below) and `(copied)` once the full name is on your clipboard. A name longer than the panel allows is cut with an ellipsis on the panel only; the copy is always the whole name. The system you are in is never offered as the answer.
+**What you see.** After the click the line under the buttons reads `Neutron Star: searching...` and both buttons are grayed until the answer arrives. The answer reads like
+`Neutron Star: Sample Sector AB-C d1-2 - 84.3 ly, Spansh (copied)`: the system, how far it is, which source answered (**Spansh** or **local index**, see below) and `(copied)` once the full name is on your clipboard. A name longer than the panel allows is cut with an ellipsis on the panel only; the copy is always the whole name. The system you are in is never offered as the answer.
 
 - `position unknown - jump or reload first` means WFMT has not yet seen a jump or login that gave it your coordinates.
 - `lookup failed - see EDMarketConnector.log` means Spansh could not be reached or answered something WFMT could not read.
-- Only the **primary** (main) star of a system counts, and **W.D.** accepts a white dwarf of any class.
+- Only the **primary** (main) star of a system counts, and **White Dwarf** accepts a white dwarf of any class.
 
 ### The local star index
 
-**N.S. can answer from a file on your computer.** This is an optional enhancement.
+**Neutron Star can answer from a file on your computer.** This is an optional enhancement.
 
 - WFMT works fully without it, and nothing is downloaded unless you press a button.
-- It speeds up and takes load off the features that look for neutron stars (today the **N.S.** button) by answering from a local file instead of a request.
+- It speeds up and takes load off the features that look for neutron stars (today the **Neutron Star** button) by answering from a local file instead of a request.
 
 **Setting it up.** In **Settings → WFMT → General → Online lookups**, the **Local star index** group has **Download and build**.
 
 1. It downloads one public file from Spansh's download server (about 173 MB, once).
 2. It builds an index of the neutron stars from it. The index is about 110 MB on disk. Building needs about 300 MB more free space for a few minutes, and the downloaded file is deleted afterward.
-3. From then on **N.S.** looks in that index instead of asking Spansh. The result line says which answered: *local index* or *Spansh*.
+3. From then on **Neutron Star** looks in that index instead of asking Spansh. The result line says which answered: *local index* or *Spansh*.
 
 The download starts only when you press the button. WFMT never fetches it by itself.
 
@@ -208,20 +208,20 @@ The download starts only when you press the button. WFMT never fetches it by its
   - Pressing it twice in a day downloads nothing the second time.
 - **Cancel** stops a download or a build.
 - **Delete** removes the index.
-- The tick **Use the local index for N.S. when it is installed** is on by default and can be turned off at any time. With it off, or with no index, **N.S.** asks Spansh as before.
+- The tick **Use the local index for Neutron Star when it is installed** is on by default and can be turned off at any time. With it off, or with no index, **Neutron Star** asks Spansh as before.
 
 What the index does and does not cover:
 
-- **Neutron stars only.** **W.D.** has no local index and always asks Spansh.
+- **Neutron stars only.** **White Dwarf** has no local index and always asks Spansh.
 - **Main stars only.** The file lists a system's main star, so a neutron star that is a secondary star of its system is
-  not in the index, the same as in the Spansh search N.S. otherwise makes.
+  not in the index, the same as in the Spansh search Neutron Star otherwise makes.
 - **As old as the file.** The index holds what Spansh's file held on the date shown in the status line (Spansh updates the file
   regularly); a system added since then is not in it until you press **Update**. Positions are kept to 1/32
   light year, the precision of the data.
-- **Within 5,000 light years.** If the index has no neutron star that near, N.S. asks Spansh.
+- **Within 5,000 light years.** If the index has no neutron star that near, Neutron Star asks Spansh.
 - **No region name.** The local answer gives the system and the distance only.
 - **If the file cannot be used.** An index that is cut short, damaged or made by another version of WFMT is ignored, the
-  status line says so, and N.S. asks Spansh until you download it again.
+  status line says so, and Neutron Star asks Spansh until you download it again.
 - **Disk and folder.** The index is kept in the plugin folder (`star_index`), which must be writable. The updater leaves
   it alone, and it is not part of **Back up my data**; it is the same for every commander and holds nothing about your
   play.
@@ -437,16 +437,16 @@ squadron staging system.
 3. Use **Move Up** and **Move Down** if you want a different order.
 4. Press **Copy**, paste the target into the galaxy map and jump. With *Auto-copy next waypoint to clipboard on jump* on, the next waypoint is copied when you arrive.
 
-### RND: find something nobody has discovered
+### Random: find something nobody has discovered
 
 **Example.** You are exploring and want a system that has no scans on record.
 
-1. Press **RND** on the button row (the Boxel Survey section can stay folded).
+1. Press **Random** on the button row (the Boxel Survey section can stay folded).
 2. Read the status line, for example `Copied: <name> (31 ly away, no scans on Spansh or EDSM)`.
 3. Open the galaxy map, paste the name and plot the jump.
-4. If you want a different one, press **RND** again. Within 5 light-years of the first search it picks another from the same list and only the EDSM check takes time.
+4. If you want a different one, press **Random** again. Within 5 light-years of the first search it picks another from the same list and only the EDSM check takes time.
 
-**RND** sits on the Exploration button row, next to A.H., D.A., N.S. and W.D., so it is visible even while the
+**Random** sits on the Exploration button row, next to Auto-Honk, Discovery Alerts, Neutron Star and White Dwarf, so it is visible even while the
 Boxel Survey section is folded, and works whichever sub-mode is selected. It does not touch your Sequence target.
 
 When you press it, WFMT:
@@ -469,12 +469,12 @@ data. Anything you find by scanning is yours to claim.
 The visited-systems log records every system you arrive at, whichever sub-mode is selected. Clear it under
 **Settings → WFMT → Exploration → Boxel Survey → Clear Visited Systems Log**.
 
-WFMT keeps the Spansh list in memory for 10 minutes. Pressing RND again within 5 light-years of where it was fetched
+WFMT keeps the Spansh list in memory for 10 minutes. Pressing Random again within 5 light-years of where it was fetched
 skips the Spansh search and picks a different system from that list, so only the EDSM check takes time. Systems
 already offered, or found scanned on EDSM, are not offered again. Nothing is saved to disk; restarting EDMC clears it.
 
 The same Settings page has **Systems to request from Spansh** (10 to 100, default 25). Spansh's search takes several
-seconds whatever the size, and a larger request takes longer; raise it only if RND often says it found no unscanned
+seconds whatever the size, and a larger request takes longer; raise it only if Random often says it found no unscanned
 system near you.
 
 More detail: [Boxel Survey specification](../BOXEL_SURVEY_TECH_SPEC.md).
@@ -588,9 +588,9 @@ Codex Completionist has no specification page of its own. The code is `codex_com
 
 *(Starts minimized.)*
 
-One section for finding somewhere worth visiting near you, from two catalogs. Click **FIND** and WFMT looks in both at
+One section for finding somewhere worth visiting near you, from two catalogs. Click **FIND POI** and WFMT looks in both at
 once, shows the nearest result from each on its own line, and copies the system name of the **nearer** of the two to
-your clipboard so you can paste it into the galaxy map. It only looks something up when you ask. **UPDATE** downloads
+your clipboard so you can paste it into the galaxy map. It only looks something up when you ask. **UPDATE POI** downloads
 Canonn's lists again and then searches.
 
 It needs to know where you are, so jump (or log in) first. If EDMC started after you were already in the game, it reads
@@ -602,15 +602,15 @@ your position from the current journal.
 - **the system to look for in the galaxy map**,
 - how far away it is, its region and rating,
 - a link to its page (the system's Inara search when edastro gives none),
-- a **COPY** button for the system name, which is useful when the Canonn result was the nearer one.
+- a **COPY SYSTEM** button for the system name, which is useful when the Canonn result was the nearer one.
 
-**The first FIND of a session downloads edastro's whole list** (about 2 MB, 650 points of interest) and works out the nearest one itself. Later presses use that list for six hours without another download.
+**The first FIND POI of a session downloads edastro's whole list** (about 2 MB, 650 points of interest) and works out the nearest one itself. Later presses use that list for six hours without another download.
 
 **Canonn.** The nearest of Canonn's Thargoid and Guardian sites.
 
 - The first click downloads the lists, which are then kept for the rest of your session.
-- A **COPY** button under the result puts that result's system name on your clipboard (FIND copies only the nearer of
-  the two sources, so use COPY when you want Canonn's).
+- A **COPY SYSTEM** button under the result puts that result's system name on your clipboard (FIND POI copies only the nearer of
+  the two sources, so use COPY SYSTEM when you want Canonn's).
 - A **View site details** link beside it opens that site's page in your browser. Canonn's list gives no page for some
   sites; for those the link opens the system's Inara search instead.
 - Choose which kinds of site to include in **Settings → WFMT → Exploration → POI Reference**.
@@ -619,11 +619,11 @@ your position from the current journal.
 
 **Example: finding a Guardian site.**
 
-1. Jump or log in so WFMT knows your position, then open the **POI Reference** section and press **FIND**.
+1. Jump or log in so WFMT knows your position, then open the **POI Reference** section and press **FIND POI**.
 2. Two result lines appear, one for **GEC (edastro.com)** and one for **Canonn**, each with its nearest result. The name of the nearer system is already on your clipboard.
-3. Paste it into the galaxy map and plot the jump. If you wanted the other source's result instead, press that line's **COPY** button.
+3. Paste it into the galaxy map and plot the jump. If you wanted the other source's result instead, press that line's **COPY SYSTEM** button.
 4. Press **View site details** on the Canonn line to read about the site in your browser.
-5. Press **UPDATE** if you want Canonn's lists downloaded again before searching.
+5. Press **UPDATE POI** if you want Canonn's lists downloaded again before searching.
 
 ## Notes
 
@@ -636,7 +636,7 @@ the same install does not see them). Nothing is sent anywhere.
 The section shows the newest note for the system you are in, so a note you wrote on an earlier visit is in front of
 you when you arrive. With the section folded, the title says how many the system has, such as `- 2 here`.
 
-- **Quick note:** type a line in the box and press **ADD** (or Enter). It is saved against the system you are in, and the body too
+- **Quick note:** type a line in the box and press **ADD NOTE** (or Enter). It is saved against the system you are in, and the body too
   when you are near one (the game's `Status.json` names it).
 - **NOTES** opens the Notes window: a **Search** box (every word you type must appear in the system, body or note), a list of every
   note, newest change first, and an editor underneath. The list's columns are **System**, **Body**, **Note** (the start of it) and **Changed (UTC)**. Select a note to change it, press **New note** (in the header) to write another. **Here**
@@ -647,7 +647,7 @@ you when you arrive. With the section folded, the title says how many the system
 
 **Example: leave yourself a reminder.** You find an Earth-like world with a moon and want to come back.
 
-1. Open the **Notes** section, type `ELW with a moon, scan the other side` in the box and press **ADD** (or Enter). The note is saved against the system you are in, and the body too when the game names one near you.
+1. Open the **Notes** section, type `ELW with a moon, scan the other side` in the box and press **ADD NOTE** (or Enter). The note is saved against the system you are in, and the body too when the game names one near you.
 2. Fold the section. Its title now reads `- 1 here`.
 3. Later, when you arrive in that system, the section shows the note again. To change it, press **NOTES**, select it in the list, edit it and press **Save**.
 4. To find it from anywhere, press **NOTES** and type a word from the system, body or note into **Search**.
@@ -661,7 +661,7 @@ off as you arrive and keeps the totals; you can keep several expeditions and run
 
 ### Starting and managing an expedition
 
-**Everything is done in the Expedition window.** Press **EXPEDITION** in the panel's Expedition section to open it. The panel only shows what is running (and has **COPY** and **Copy on arrival**); it has no Start, Pause or Stop.
+**Everything is done in the Expedition window.** Press **EXPEDITION** in the panel's Expedition section to open it. The panel only shows what is running (and has **COPY NEXT** and **Copy on arrival**); it has no Start, Pause or Stop.
 
 There are two ways to start, and you pick one by the tab you are on:
 
@@ -710,7 +710,7 @@ Whichever you use, the same buttons manage it afterwards, on either tab:
 
 Buttons:
 
-- **COPY** puts the next stop's system name on the clipboard to paste into the galaxy map.
+- **COPY NEXT** puts the next stop's system name on the clipboard to paste into the galaxy map.
 - **Copy on arrival** does it for you every time you arrive anywhere. It is off until ticked. The same switch is in Settings → WFMT → Exploration → Expedition.
 - **EXPEDITION** opens the window.
 
@@ -1368,15 +1368,15 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 | The Route Planner's fuel figures to include a white dwarf boost | Spansh's plotter knows only neutron stars. | White dwarfs are marked as extra boosts only when you tick the EDSM option; the jump counts do not include them. |
 | Boxel Survey to know where a system is | It works with **names**, not coordinates. It counts through the trailing number to make the next name and does not know whether that system exists. | The galaxy map is the judge. Press **Next >** to skip a name that won't plot. |
 | The game to tell WFMT a candidate failed to plot | Nothing is written to the journal when the galaxy map can't find a name. | After 3 skips WFMT asks EDSM for a real nearby system. Press **Set** to move there. |
-| Whether anyone has flown to an RND system | RND offers real systems with no scans on Spansh or EDSM. A visit without a scan leaves no trace in either. | Treat a result as a strong lead; the first scan you upload settles it. |
+| Whether anyone has flown to an Random system | Random offers real systems with no scans on Spansh or EDSM. A visit without a scan leaves no trace in either. | Treat a result as a strong lead; the first scan you upload settles it. |
 | A cube's real system count | WFMT only knows what EDSM, Spansh and your own visits revealed, so "complete" means every system **known** is done, or you marked it **Empty**. | Use **Mark Empty** when you have judged a cube done. |
 | The color of a gas giant | The game never records it. The Green gas giant rule uses the Codex or matches the surface temperature of a confirmed green one. | Treat it as a lead and check the body in the system map. |
 | Notable Bodies to be certain | A match comes from scan data, using its default limits. | Check the body before you plan around it. |
 | Organic Scanning to name the species | Until a sample names it, the result is a **list of candidates** worked out from the planet's conditions. The main star is assumed to be the illuminating one, which can be wrong near a secondary star. A species with no usable rules can't be predicted, and new species need a WFMT update. | Take a first sample, which replaces the list with the exact species. The in-game exobiology tools are the final word. |
-| Systems visited with EDMC closed to be known | The journals record every jump, so each start reads the last 14 days of journals for your arrivals and adds them to the visited list that **Skip systems already visited** and **RND** use. | Nothing needed for the last 14 days. Older jumps made with EDMC closed are not found. |
+| Systems visited with EDMC closed to be known | The journals record every jump, so each start reads the last 14 days of journals for your arrivals and adds them to the visited list that **Skip systems already visited** and **Random** use. | Nothing needed for the last 14 days. Older jumps made with EDMC closed are not found. |
 | Bodies-scanned count to be right after a restart | The honk (`FSSDiscoveryScan`) gives the body count and each scan counts one. If EDMC started after the honk, WFMT replays the current journal file for them. | If it still says to honk, honk again. A system's scans made in another journal file are not included. |
 | The sale line to include sales before the current journal file | It is read from the current journal file when EDMC starts, then kept up to date live. | It resets to "none yet" when you restart EDMC after a new game session. |
 | Codex Completionist to cover everything | Canonn's catalog has no geological or anomaly entries, so those never appear under **Not found**. The tally is per commander. | Use the game's Codex for those. Press **Refresh Catalog** if the saved copy is old. |
-| POI lists to be current | They are snapshots from Canonn and edastro, and are fetched only when you ask. | Press **FIND** or **UPDATE** to refresh. |
+| POI lists to be current | They are snapshots from Canonn and edastro, and are fetched only when you ask. | Press **FIND POI** or **UPDATE POI** to refresh. |
 | edastro's own "nearest" lookup to work | It does not use your position: a check on 2026-10-10 got "The Solar System" for every coordinate and name tried. WFMT downloads the full list and finds the nearest itself. | None needed. If FIND says the lookup failed, edastro's list could not be downloaded; try again later. |
 

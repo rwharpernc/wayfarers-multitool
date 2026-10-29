@@ -322,7 +322,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 - **Lesson:** check a rule against the source of the thing that enforces it, and write down what was checked.
   - A cheap clear (nothing sent when nothing is drawn) also removes the log noise at its source.
 
-### 3.11 RND: real systems, not guessed names
+### 3.11 Random: real systems, not guessed names
 
 - **The problem:** a name made by shifting both numbers of a nearby real name does not plot on the galaxy map.
   - In a procedural name `<sector> <LL-L> <mass><N1>-<N2>`, N1 is part of the boxel's identity and N2 is the index inside it.
@@ -351,14 +351,14 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 
 ### 3.13 POI Reference and the section order
 
-- **Decision:** GEC Nearby POI and Canonn Nearby POI are one section, POI Reference, with one FIND.
+- **Decision:** GEC Nearby POI and Canonn Nearby POI are one section, POI Reference, with one FIND POI.
   - The controllers are separate modules (`gec_poi_panel.py`, `canonn_poi_panel.py`) because the sources differ. One downloads a single list and caches it for six hours; the other uses two Google-hosted sheets cached for the session, with different settings.
   - `poi_reference_panel.py` owns the buttons and the frame.
   - A small `Collector` waits for both lookups and names the nearer system. It has no Tk so a test can drive it.
 - **Why the clipboard takes the nearer one:** with two sources, copying whichever result arrived last would not be the best answer.
 - **Section order:** sections within a mode are alphabetical by their visible name, so a section can be found without scanning.
   - The order is the order of `FEATURES`, and `tests/test_panel_order.py` fails if a new section is placed out of order.
-  - One consequence: RND is added to the Auto-Honk row before Boxel Survey's panel exists (Boxel Survey sorts after it), so the button creates its own status variable rather than relying on build order.
+  - One consequence: Random is added to the Auto-Honk row before Boxel Survey's panel exists (Boxel Survey sorts after it), so the button creates its own status variable rather than relying on build order.
 
 ### 3.14 Cards that leave in one step
 

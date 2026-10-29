@@ -15,10 +15,10 @@ Work that is under way, being researched, or waiting on a decision. Items are li
 
 - Built: the Online lookups page has a Local star index group.
   - It downloads Spansh's `systems_neutron.json.gz` when the player asks.
-  - It builds a local index (about 110 MB) and uses it for N.S., falling back to the Spansh search.
+  - It builds a local index (about 110 MB) and uses it for Neutron Star, falling back to the Spansh search.
   - Update now fetches the small 1-day or 1-week file and merges it in (the full file only when the index is more than a week behind, after 20 updates, or when the base file is more than 60 days old).
 - Still open:
-  - Out of scope: a white dwarf local index. W.D. keeps asking Spansh, which publishes no white dwarf dump (checked 2026-10-23) and offers only the whole galaxy, far too large to download.
+  - Out of scope: a white dwarf local index. White Dwarf keeps asking Spansh, which publishes no white dwarf dump (checked 2026-10-23) and offers only the whole galaxy, far too large to download.
   - Keeping the secondary-star check's per-system lookups, since the dumps list only a system's main star.
 
 ### Ship Builds and Coriolis / EDSY: first step built, next steps open
@@ -136,7 +136,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - **Pause** in the window becomes **Resume** and the section's lines gain `(paused)`. **Stop** ends it. The section itself has no START, PAUSE or STOP.
   - Start a planned expedition (Plan tab, **Start**): the section shows its stops, jumps, light-years, time and next stop and, under them, the systems, bodies, species and credits, with the name and jumps said once.
   - Fold the section: the title says what is running.
-  - **COPY** and **Copy on arrival** work as before.
+  - **COPY NEXT** and **Copy on arrival** work as before.
   - The section must not widen EDMC's window.
 - [ ] **One Expedition window with Plan, Route and Log tabs.**
   - Press **EXPEDITION** and **PLOT** on the panel in turn.
@@ -161,7 +161,7 @@ The items below are implemented and covered by unit tests, but have not all been
     - Check the **Road to Riches** and **Exomastery** buttons: press Plot and compare the new expedition's stops and notes with spansh.co.uk/riches and /exobiology. Both endpoints were checked with live requests.
     - Create an expedition and add stops manually, from a plotted route and from a CSV file.
     - Press Start. Jump to a stop and confirm that it is ticked, the jump is counted and the next stop's distance is shown.
-    - Verify COPY and Copy on arrival pasting into the galaxy map.
+    - Verify COPY NEXT and Copy on arrival pasting into the galaxy map.
     - Verify **Locate and reorder (EDSM)** against EDSM.
     - Check that the row does not widen the EDMC window.
 - [ ] **Expedition survey tracking.** Start an Expedition with two or three stops.
@@ -219,7 +219,7 @@ The items below are implemented and covered by unit tests, but have not all been
     - Unticking it removes them.
   - Block the network to EDSM and check the status line says white dwarfs are not marked.
   - Fit no fuel scoop (or use a ship without one). Check the ship block says NONE FITTED and a route with refuel stops warns.
-  - Check the Canonn and GEC **COPY** buttons and links (the fallback to Inara when no URL is given).
+  - Check the Canonn and GEC **COPY SYSTEM** buttons and links (the fallback to Inara when no URL is given).
   - Then Linux.
 - [ ] **Ship known after an EDMC restart.** With the game running and logged in, restart EDMC without relogging.
   - The Route Planner window's ship block should show your ship at once.
@@ -508,19 +508,19 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that **Cancel** stops it (a cancelled download resumes the next press).
   - Check the free-space message with little disk left.
   - Check the finished status (systems, size, date).
-  - Press **N.S.**: the status line reads `... local index` and the result matches Spansh's own search for the same position.
-  - Untick *Use the local index* and N.S. asks Spansh again.
+  - Press **Neutron Star**: the status line reads `... local index` and the result matches Spansh's own search for the same position.
+  - Untick *Use the local index* and Neutron Star asks Spansh again.
   - **Delete** removes it.
   - Restart EDMC and the index is still there.
   - After a WFMT update it is still there, and Back up my data leaves it out.
-  - Check the N.S. line fits the panel's wrap width.
+  - Check the Neutron Star line fits the panel's wrap width.
   - Then **Update** the next day or later:
     - The status line reads `Updated from Spansh's 1-day file (about 3 MB)` with a count of systems changed.
     - The line under Installed says `up to date as of` today's date and `1 update since`.
     - Pressing **Update** again at once says it is already up to date without downloading.
     - After a week or more without updating, **Update** uses the 1-week file (about 19 MB).
     - More than a week behind, it downloads the full 173 MB file again.
-    - N.S. still answers the same as Spansh's own search after an update.
+    - Neutron Star still answers the same as Spansh's own search after an update.
   - Then Linux:
     - The plugin folder of a Flatpak EDMC is writable and has room (about 300 MB free while building).
     - Check the real build time on the real 173 MB file and on an update.
@@ -546,7 +546,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check it with the built-in overlay and with EDMCModernOverlay.
   - Check that leaving the window open does not slow the game or EDMC.
   - Then Linux.
-- [ ] **RND.** Press **RND** a few times near a procedurally named system.
+- [ ] **Random.** Press **Random** a few times near a procedurally named system.
   - Check that each name plots on the galaxy map.
   - Check that the status line gives a distance and says whether EDSM confirmed it.
   - Check that a second press within 5 ly is much quicker (the Spansh list is cached for 10 minutes) and offers a different system.
@@ -705,7 +705,7 @@ The items below are implemented and covered by unit tests, but have not all been
 - [ ] **BGS** after a tick passes while EDMC is closed: the period that closed should contain the play made in the meantime. Also verify that a finished Colonization build is displayed without the "Construction Site:" prefix.
 - [ ] Colonization window: **Find all** against Spansh, **Only what [station] sells** with a real `Market.json`, and copying a system by clicking a result row.
 - [ ] **Colonization: hold, Acquire and best single systems** (Windows, then Linux; steps in [LINUX_TESTING.md](LINUX_TESTING.md)).
-  - Buy a tracked commodity at a market: the **In Cargo** figures in the Sites window, on the COL page and on the overlay card follow the hold within a couple of seconds (WFMT reads the game's `Cargo.json`).
+  - Buy a tracked commodity at a market: the **In Cargo** figures in the Sites window, on the Colony page and on the overlay card follow the hold within a couple of seconds (WFMT reads the game's `Cargo.json`).
   - **Acquire** falls as you load the ship or the carrier and reaches 0 once the whole amount is acquired, wherever it is stored; **Haul Trips** still counts everything the site needs.
   - The overlay card shows the same Acquire and no To buy column. With the card's *List* set to **To buy** (the default), the covered commodities are left out and the footer still counts them; **To haul** keeps the ones covered but not yet aboard in full, for when everything is on the carrier.
   - **A lagging Frontier copy does not undo a transfer** (EDMC signed in to Frontier): unload cargo at your carrier, then open Carrier Management. The FC column keeps the unloaded stock and **Copy diagnostics** shows an `ignored` line from `Carrier cargo from Frontier`. After 15 minutes without a transfer, a changed Frontier figure replaces the tally and an unchanged one stays ignored. The rules and log lines are in [the Colonization guide](guide/colonization.md).

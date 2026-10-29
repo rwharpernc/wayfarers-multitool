@@ -16,7 +16,7 @@ Short steps for the common jobs. Each one points at the section with the full de
 
 ### See every active mission in one view
 
-1. Press **Missions window** at the bottom of the MSN panel (or click any mission's card).
+1. Press **Missions window** at the bottom of the Missions panel (or click any mission's card).
 2. Stay on the **Active** tab for one row per mission, ready ones first and then the soonest to expire. Use the **By place** tab to see the same missions grouped by the system you must go to.
 3. Click a row to read its faction, where to go, cargo, exact reward and expiry in the detail strip.
 
@@ -24,7 +24,7 @@ More: [The Missions window](#the-missions-window).
 
 ### Read the progress bars
 
-1. Open the **Progress** column in the Missions window, or page the MSN panel to **Massacre (Space)** or **Settlement Raids (Ground)** for the kill bars.
+1. Open the **Progress** column in the Missions window, or page the Missions panel to **Massacre (Space)** or **Settlement Raids (Ground)** for the kill bars.
 2. Read the text first: `20/60` is cargo handed in, `36/36 loaded` is cargo picked up but not yet handed in, `~18/40 kills` is a kill estimate and `36/60 held` is cargo in your hold for a source and return mission.
 3. Read the color of the row: green is ready to hand in, red is under an hour left, amber is under six hours, lime is half or more done and blue is started but under half.
 4. Treat a `~` as "at least this many". The game's own mission screen is the final word.
@@ -33,7 +33,7 @@ More: [Progress](#progress) and [What the game does and doesn't tell us](#what-t
 
 ### Open the Missions window
 
-1. Press **MSN** in the mode bar.
+1. Press **Missions** in the mode bar.
 2. Press **Missions window** at the bottom of the panel, or click a mission's card to open the window on that mission.
 3. Close it when you are done. It remembers its size and position, and while it is open it keeps counting down and updating as you accept and hand in missions.
 
@@ -42,7 +42,7 @@ More: [The Missions window](#the-missions-window).
 ### Find where to buy the cargo for a mission
 
 1. Turn on **Enable Spansh trade lookups** in Settings → WFMT → Trade (it is off by default). If you skip this, the window asks when you press **Find sources**.
-2. Press **Find sources** at the bottom of the MSN panel, or **Sources** in the Missions window.
+2. Press **Find sources** at the bottom of the Missions panel, or **Sources** in the Missions window.
 3. Choose **From where I am** or **From the turn-in system**, then press **Find sources** in the new window.
 4. Wait for the rows to fill in (`Asking Spansh... 2 of 5 done`), pick a row and press **Copy system** to paste the name into the galaxy map.
 
@@ -51,7 +51,7 @@ More: [Source commodities](#source-commodities) and [Finding sources](#finding-s
 ### Track kill missions
 
 1. Accept your massacre or settlement-raid missions as usual.
-2. Page the MSN panel to **Massacre (Space)** (or **Settlement Raids (Ground)**). There is one block per issuing faction with the kills as `done/required`.
+2. Page the Missions panel to **Massacre (Space)** (or **Settlement Raids (Ground)**). There is one block per issuing faction with the kills as `done/required`.
 3. Fly and fight. The `~` before a count means an estimate, because wing and on-foot kills are often missing from the journal until the mission completes.
 4. When the kills are done the mission turns ready (green, with a tick) and shows where to hand it in.
 5. Pin a mission (the **Pin / Unpin** button in the Missions window) if you want it listed first on the overlay card.
@@ -97,7 +97,7 @@ The numbers and names below are made up to show how the screens read. The wordin
 
 ## Using it
 
-Press **MSN** in the mode bar. At the top a line reads `Missions: 7/20` (how many missions you hold of the game's limit of 20; switch it off with *Show mission count* in Settings). Under it the panel shows one category at a time, with a line like `◀  Combat (3)  ▶`. Click the **◀** or **▶** arrow to
+Press **Missions** in the mode bar. At the top a line reads `Missions: 7/20` (how many missions you hold of the game's limit of 20; switch it off with *Show mission count* in Settings). Under it the panel shows one category at a time, with a line like `◀  Combat (3)  ▶`. Click the **◀** or **▶** arrow to
 page between categories; the number is how many missions are in that category (left off when the count line above is shown and every mission is in that one category, since it would repeat `Missions: N/20`). The pages, in order, are:
 
 **Massacre (Space) · Settlement Raids (Ground) · Combat · Trade & Mining · Passenger · Covert / On-Foot Ops · Other · Community Goals**

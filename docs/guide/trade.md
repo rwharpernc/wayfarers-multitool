@@ -366,7 +366,7 @@ The same four picks for a mission's cargo are in the Missions mode ([Source comm
 
 ### Price finder
 
-Opens the finder that Mining's **PRICE** button also uses ([Find Best Price](mining.md#price-find-best-price)), for any commodity, to buy or sell, with its own **Where** distance
+Opens the finder that Mining's **PRICES** button also uses ([Find Best Price](mining.md#prices-find-best-price)), for any commodity, to buy or sell, with its own **Where** distance
 drop-down. The button is grayed out until Trade's Spansh lookups are on. Its suggestions list what you carry and what this station buys first, then every commodity. The finder always leaves fleet carriers out and asks only for markets updated in the last 30 days, whatever the Trade settings say.
 
 **Prices are only as fresh as the last player who docked there.** Markets older than 30 days are ignored. Check the

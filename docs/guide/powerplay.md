@@ -27,7 +27,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 ### See your merits for this session and this cycle
 
-1. Press **P.P.** in the mode bar.
+1. Press **Powerplay** in the mode bar.
 2. Read `Session merits` and `Session CP` for this login, and `Cycle N merits` and `Cycle N CP` for the whole cycle (just the Cycle pair, marked `(all this session)`, when they are the same).
 3. Read `Here: N merits` for what you have earned in the system you are in.
 
@@ -37,7 +37,7 @@ earlier game sessions.
 
 ### See which systems earned you the most
 
-1. Press **P.P.**, then **REPORT**.
+1. Press **Powerplay**, then **REPORT**.
 2. On the **Current session** tab, read **By System**: the **Merits**, **Est. CP** and **Activity breakdown** columns
    list each system you worked this login.
 3. For a whole cycle, open the **Systems** tab, or the **Cycles** tab for one row per cycle.
@@ -96,7 +96,7 @@ Delivery and Unattributed merits add merits but no CP.
 
 ## Using it
 
-Just play. Press **P.P.** in the mode bar to open the page. Top to bottom it shows:
+Just play. Press **Powerplay** in the mode bar to open the page. Top to bottom it shows:
 
 - a status line (`Awaiting PowerPlay activity…` until the game reports your pledge, then `Pledged to <Power>`, `Left PowerPlay`, `Defected to <Power>` or `CMDR <name>: not a PP Pledge`),
 - the current system in bold, as `<system> — <state> (<controller>)` (for example `Nervi — Exploited (Zachary Hudson)`); the part in brackets is the controlling Power, `contested` when several Powers are in the system, or `uncontested`; with no Powerplay data the state reads `no PP data`,

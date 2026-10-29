@@ -7,6 +7,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Changed
 
+- **Panel buttons:** the mode buttons and the other abbreviated buttons now carry their full names: Powerplay, Exploration, Mining, Trade, Missions, Field Ops and Colony; Auto-Honk, Discovery Alerts, Neutron Star, White Dwarf and Random; HOTSPOTS, PRICES and RESERVES on Mining; COPY SYSTEM, COPY NEXT, ADD NOTE, FIND POI and UPDATE POI. The window does not grow, because it was already as wide as the full mode names. Every button on the panels now has a tooltip, including the Trade page buttons and the Boxel Survey, Region Sweep and Waypoint buttons. A row of buttons that would be wider than the window (the Mining bar, Region Sweep's Discover buttons and the Waypoints list buttons) now wraps onto a second line.
 - **Powerplay panel:** the Session and Cycle lines no longer repeat each other. When this login has earned everything the cycle has (the first session of a cycle), the panel shows only the Cycle pair, marked
   **(all this session)**, and the Session pair comes back as soon as the two differ.
 - **Less repetition on the panels:** lines that said the same thing twice are gone or shortened.

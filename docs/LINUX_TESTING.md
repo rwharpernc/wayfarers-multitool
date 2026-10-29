@@ -33,7 +33,7 @@ For anyone testing WFMT on Linux with Elite Dangerous under Steam Proton (or Win
   - the Exploration Dashboard
   - the data backup with restore and automatic backup
   - compact data files
-  - the RND rebuild
+  - the Random rebuild
   - POI Reference
   - the MY CODEX window
   - alphabetical sections in every mode
@@ -81,8 +81,8 @@ Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 und
   - Esc and Close work, and resizing re-fits the picture.
   - **Open Folder** opens your file manager. From a Flatpak this goes through the sandbox: say if nothing opens.
 - **Spansh requests.**
-  - RND, N.S. and W.D., Nearest place to land, Where to buy, the Mining price finder, and typing in a system-name box (with the Settings → WFMT → Window suggestion option on) all still answer.
-  - Press RND several times quickly: the requests are spaced, not sent together.
+  - Random, Neutron Star and White Dwarf, Nearest place to land, Where to buy, the Mining price finder, and typing in a system-name box (with the Settings → WFMT → Window suggestion option on) all still answer.
+  - Press Random several times quickly: the requests are spaced, not sent together.
   - With the network off, a lookup fails with a clear message. After several failures the message says Spansh is being left alone for a few minutes.
 - **Ship links.** Ship planner:
   - Paste a Coriolis or EDSY import link and read it.
@@ -100,7 +100,7 @@ Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 und
   - The plan dialog's **Start it now** tick starts a Road to Riches or Exomastery plan.
 - **One Expedition window.** **EXPEDITION** and **PLOT** on the panel open the same window with Plan, Route and Log tabs.
   - It is never opened twice.
-  - The panel has one Expedition section (the Log's figures, COPY and EXPEDITION, with no START, PAUSE or STOP) and no Expedition Log section.
+  - The panel has one Expedition section (the Log's figures, COPY NEXT and EXPEDITION, with no START, PAUSE or STOP) and no Expedition Log section.
   - The tabs' buttons and tables fit at its smallest size and at the full screen width.
   - Report whether the window takes the focus when it opens (it should not steal it from the game).
 - **Mining.**
@@ -120,7 +120,7 @@ Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 und
   - **Download and build** downloads about 173 MB into the Flatpak's data folder and builds an index of about 110 MB (about 300 MB free is needed while it builds).
     - Progress shows, and **Cancel** works.
     - The finished status shows the systems, size and date.
-    - **N.S.** then answers from the local index (the status line says so).
+    - **Neutron Star** then answers from the local index (the status line says so).
     - Report the real build time.
   - **Update** on a later day downloads only a small file (about 3 MB for a day) and the status line says so.
     - Pressing it again at once says the index is up to date.
@@ -191,7 +191,7 @@ Use them for anything the passes did not reach.
   - In Expedition, Materials, Notes and the Trade watch list, lines use the whole width of the window when it is wide, and a narrow window is still never widened.
 - **Panel width:**
   - With Expedition (Exploration mode) and Materials (Field Ops mode) open, the main EDMC window must not grow wider.
-  - In Expedition, **Copy on arrival** sits on its own line under **COPY** and **EXPEDITION**.
+  - In Expedition, **Copy on arrival** sits on its own line under **COPY NEXT** and **EXPEDITION**.
   - In Materials, **BLUEPRINTS** sits under **MATERIALS**, not beside it.
   - With a large font the Trade page and the Trade History window should not widen the EDMC window either.
 - **History heading and Busiest site:**
@@ -332,7 +332,7 @@ Use them for anything the passes did not reach.
   - **Road to Riches** and **Exomastery** (Spansh): press **Plot**, wait, check the new expedition's stops, notes and order against Spansh's own page.
   - **Neutron route** opens the Route Planner.
   - **Start** (in the Expedition window), then jump to a stop: the section ticks it, counts the jump and shows the next stop with its distance.
-  - **COPY** and **Copy on arrival** put the next stop's name on the clipboard (check it pastes into the galaxy map's search box).
+  - **COPY NEXT** and **Copy on arrival** put the next stop's name on the clipboard (check it pastes into the galaxy map's search box).
   - **Locate and reorder (EDSM)** orders the unvisited stops.
   - **Export CSV** saves a file and **Import CSV** reads it back.
   - **Reset** and **Delete** ask twice.
@@ -430,14 +430,14 @@ Use them for anything the passes did not reach.
 - [ ] Codex **MY CODEX** opens, and its **Backfill Journals** action finds your journals.
 - [ ] Codex details window: the Entry and Times found headings sort both ways, the **Not found** tab fills in
       (needs network the first time), and double-clicking an entry opens its Canonn search in your browser.
-- [ ] COL mode → **DASHBOARD** (colonization sites): after docking at a construction depot, the site appears with its
+- [ ] Colony mode → **DASHBOARD** (colonization sites): after docking at a construction depot, the site appears with its
       outstanding commodities, In Cargo matches your hold, and **Copy Shopping List** pastes elsewhere.
 - [ ] Mining: journal backfill works, and in an SRV the surface bearing arrow and coverage map work.
-- [ ] Copy buttons (Powerplay, BGS, Boxel **RND**): pasting into another app works. **RND** names are real systems that plot on the galaxy map, and a second press nearby is quicker.
+- [ ] Copy buttons (Powerplay, BGS, Boxel **Random**): pasting into another app works. **Random** names are real systems that plot on the galaxy map, and a second press nearby is quicker.
 - [ ] Network lookups (EDSM, Spansh, Canonn, GEC) return results.
-- [ ] Exploration **N.S.** and **W.D.** buttons: after a jump, each shows a system and distance and copies the
+- [ ] Exploration **Neutron Star** and **White Dwarf** buttons: after a jump, each shows a system and distance and copies the
       name to the clipboard (paste it elsewhere to check).
-- [ ] Hovering a short-named button (for example **A.H.**, **RND**, **REPORT**, **P.P.**) shows its full name in a
+- [ ] Hovering a button (for example **Auto-Honk**, **Random**, **REPORT**, **Powerplay**) shows its name and what it does in a
       tooltip that disappears when you move away, and the GEC, Canonn and Codex sections start minimized.
 - [ ] Powerplay → **RARES** (rares) opens the Rare Goods Finder: after a jump or login it lists the nearest
       rare goods, the Controlling Power column fills in from Spansh, and double-click opens Inara in
@@ -445,12 +445,12 @@ Use them for anything the passes did not reach.
 - [ ] Restart EDMC: per-commander data (BGS, Boxel, Codex) is still there.
 
 - [ ] **Mining History**: **DASHBOARD** in Mining mode reads your journals (check it finds the journal folder), fills the Overview and the three tables, and a run made with EDMC closed appears after a restart.
-- [ ] **RND**: press **RND** twice near a procedurally named system.
+- [ ] **Random**: press **Random** twice near a procedurally named system.
   - The name plots on the galaxy map.
   - The status line gives a distance and says whether EDSM confirmed it.
   - The second press nearby is much quicker.
   - Settings -> Exploration -> Boxel Survey -> **Systems to request from Spansh** takes a number from 10 to 100.
-- [ ] **POI Reference**: one section with **FIND** and **UPDATE**. FIND shows a GEC line and a Canonn line, and a paste into the galaxy map gives the nearer system.
+- [ ] **POI Reference**: one section with **FIND POI** and **UPDATE POI**. FIND POI shows a GEC line and a Canonn line, and a paste into the galaxy map gives the nearer system.
 - [ ] **MY CODEX**: the Codex Completionist section has one button. The window opens on **Overview**; **Not found** has a **Where to look** column; **Backfill Journals** reads your journals.
 - [ ] **Panel order and width**: in every mode the sections are alphabetical, and switching modes or opening the Route Planner and Dashboard never widens EDMC's window (if it does, send the "The WFMT panel widened" line from EDMC's log).
 - [ ] **Overlay exit**: when a card goes away its panel goes with its text, in one step (no empty shell left for a few seconds).
@@ -470,7 +470,7 @@ Use them for anything the passes did not reach.
   - At the last system it says the route has ended and is being reset for ten seconds, then closes.
 - [ ] **Folding sections**: the Dashboard and Route Planner sections start folded and open on a click of their title.
   - The Dashboard section holds the Exploration Value lines under its DASHBOARD button.
-  - POI Reference has **UPDATE** and a **COPY** button and a details link under both the Canonn and the GEC result.
+  - POI Reference has **UPDATE POI** and a **COPY SYSTEM** button and a details link under both the Canonn and the GEC result.
 - [ ] **Exploration Dashboard**: **DASHBOARD** on the Exploration panel opens the window (check it opens whole on your screen and the tabs wrap).
   - It follows the system after a honk and scans, switches to Surface on landing and back to Orbit on lift-off.
   - The header buttons **Exploration overlays** and **Exobiology overlays** hide and show those cards with EDMCModernOverlay (a hidden card must clear at once, and come back when shown) without changing Settings.
@@ -553,7 +553,7 @@ Use them for anything the passes did not reach.
       mode button.
 - [ ] Switch through every mode, including Exploration and Trade: the whole block under the mode buttons stays visible.
 - [ ] After earning a Powerplay merit, a **Merits this session: +N (+N merits/hr)** line appears under the credits line, on
-      every mode except P.P., where the page's own lines show it; the rate appears after a few minutes. It is absent before the first merit.
+      every mode except Powerplay, where the page's own lines show it; the rate appears after a few minutes. It is absent before the first merit.
 - [ ] Earn or spend some credits: the second line changes to "+N cr earned" or "-N cr lost", and an hourly rate
       appears after a few minutes.
 - [ ] Log out to the main menu and back in: the credits total carries on (same session).
@@ -565,7 +565,7 @@ Use them for anything the passes did not reach.
 
 Windows was checked as Trade was built. The boxes below are unticked so the list can be run again. Settings → WFMT → Trade first: tick **Enable Spansh trade lookups**.
 
-- [ ] The **TRD** button appears with the others, and the **◀** / **▶** buttons at the top of the Trade panel are
+- [ ] The **Trade** button appears with the others, and the **◀** / **▶** buttons at the top of the Trade panel are
       large and show their arrow glyphs (not empty boxes). The same buttons on Mining and Missions look right.
 - [ ] **Session**: after docking, the ship and its pad size show; the hold line shows used, capacity and free
       tons. Buy and sell something: the profit lines appear. Refuel and repair: a **Net profit** headline appears
@@ -709,7 +709,7 @@ Written and tried on Linux (Flatpak EDMC, Proton game, EDMCModernOverlay). The c
   - The EDMC debug log lines "Colonization overlay ..." say what was decided and why.
 - [ ] Rows left at the default list every commodity not yet covered; the card fits on screen from the default position (20, 300).
 - [ ] **List (overlay card):** with **To buy** (the default) a commodity the hold plus the carrier cover is left out and the footer still counts it; **All** brings the covered rows back; **To haul** lists only the covered rows not yet aboard in full (put everything on the carrier and check that the card still lists them, and that a row drops off once its whole need is in the hold).
-- [ ] **The hold follows a purchase:** buy a tracked commodity at a market. The In Cargo figures (Sites window, COL page and card) change within a couple of seconds. WFMT reads `Cargo.json` beside the journals, so check the journal folder is found on Linux/Proton; if the file cannot be read, EDMC's cargo state is used.
+- [ ] **The hold follows a purchase:** buy a tracked commodity at a market. The In Cargo figures (Sites window, Colony page and card) change within a couple of seconds. WFMT reads `Cargo.json` beside the journals, so check the journal folder is found on Linux/Proton; if the file cannot be read, EDMC's cargo state is used.
 - [ ] Windows paths: `Status.json` reports the same `GuiFocus` values (5 in the services screens, 1 for the right-hand panel).
 
 ## 7e. Colonization Sites window: sites list, totals, Where to buy (Windows-tested only: check on Linux)
@@ -737,7 +737,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
 - [ ] With no network, the panel says the search failed and the button comes back.
 - [ ] **Find all**: lists a heading per commodity still to buy with up to 5 stations under each; the
       button reads **Stop** while it runs and stopping keeps what was found; the window stays responsive.
-- [ ] **My Projects (needs the internet):** press **PROJECTS** on the COL page (or **My Projects** in the **Raven Colonial** menu).
+- [ ] **My Projects (needs the internet):** press **PROJECTS** on the Colony page (or **My Projects** in the **Raven Colonial** menu).
   - A window lists your Raven Colonial projects with building, progress and tons still needed; the subtitle adds up the counted ones.
   - Double-clicking a row changes whether it counts, and the subtitle says there are unsaved changes.
   - **More** has Copy Shopping List, the two Open items, Set as My Primary and Save Counted List; the last two ask first and refuse while the master switch is off.
@@ -824,8 +824,8 @@ Written on Windows against a 3840 x 2160 screen in EDMCModernOverlay's fill mode
 
 ## 7h. Colonization mode (Windows-tested only: check on Linux)
 
-- [ ] The button row has a **COL** button (eight buttons); the panel is not noticeably wider than the other modes'.
-- [ ] COL shows **Current project** for your newest active site and a **History** block; DASHBOARD opens the sites window, and
+- [ ] The button row has a **Colony** button (eight buttons); the panel is not noticeably wider than the other modes'.
+- [ ] Colony shows **Current project** for your newest active site and a **History** block; DASHBOARD opens the sites window, and
       OVERLAY toggles the overlay card (lit while on).
 - [ ] Without a fleet carrier there is no Carrier row, Trips left reads like "3 loads of 400 t", and the sites window has a single
       Trips column. With one, Carrier is shown and Trips left reads "N to buy · N to haul".

@@ -69,14 +69,14 @@ WFMT is one panel with eight **modes**, and you click a button to switch between
 
 | Mode (button) | What it is for | Detailed guide |
 |---|---|---|
-| **Powerplay** (**P.P.**) | Merits and Control Points for your Power; a rare goods finder; share your progress to Discord | [Powerplay](docs/guide/powerplay.md) |
-| **Exploration** (**EXP**) | Auto-honk, discovery alerts, boxel survey, scan values, Codex tally, notes, expeditions, route planners, a dashboard, a surface compass | [Exploration](docs/guide/exploration.md) |
-| **Exobiology** (in **EXP**) | Species prediction, sample tracking, a sample radar, and overlay cards for the body you are on | [Exobiology](docs/guide/exobiology.md) |
-| **Mining** (**MIN**) | Space and surface mining runs, a book of rings and deposits, Mining History, mining alerts | [Mining](docs/guide/mining.md) |
-| **Trade** (**TRD**) | Profit after fuel and repairs, fleet carrier cargo, saved sessions, best routes and prices, a watch list | [Trade](docs/guide/trade.md) |
-| **Missions** (**MSN**) | Every mission in one view, progress bars, a Missions window, where to buy the cargo | [Missions](docs/guide/missions.md) |
-| **Field Ops** (**OPS**) | Screenshots, backpack and cargo, materials, a blueprint browser, material traders, ship builds | [Field Ops](docs/guide/field-ops.md) |
-| **Colonization** (**COL**) | Your current build, history, an archive of finished sites, and every site's shopping list | [Colonization](docs/guide/colonization.md) |
+| **Powerplay** | Merits and Control Points for your Power; a rare goods finder; share your progress to Discord | [Powerplay](docs/guide/powerplay.md) |
+| **Exploration** | Auto-honk, discovery alerts, boxel survey, scan values, Codex tally, notes, expeditions, route planners, a dashboard, a surface compass | [Exploration](docs/guide/exploration.md) |
+| **Exobiology** (in **Exploration**) | Species prediction, sample tracking, a sample radar, and overlay cards for the body you are on | [Exobiology](docs/guide/exobiology.md) |
+| **Mining** | Space and surface mining runs, a book of rings and deposits, Mining History, mining alerts | [Mining](docs/guide/mining.md) |
+| **Trade** | Profit after fuel and repairs, fleet carrier cargo, saved sessions, best routes and prices, a watch list | [Trade](docs/guide/trade.md) |
+| **Missions** | Every mission in one view, progress bars, a Missions window, where to buy the cargo | [Missions](docs/guide/missions.md) |
+| **Field Ops** | Screenshots, backpack and cargo, materials, a blueprint browser, material traders, ship builds | [Field Ops](docs/guide/field-ops.md) |
+| **Colonization** | Your current build, history, an archive of finished sites, and every site's shopping list | [Colonization](docs/guide/colonization.md) |
 | **BGS** (**BGS**) | Faction states and what your activity does to them; share a tick's report to Discord | [BGS](docs/guide/bgs.md) |
 
 **Sharing reports.** The BGS report and Powerplay progress can be shared three ways: copied as plain text for anywhere, copied with Discord formatting, or posted to a Discord webhook.
@@ -92,7 +92,7 @@ Step by step, with the Discord side explained (making the webhook, thread ids, n
 **Looking for something specific?** [Features at a glance](docs/guide/features.md) lists every feature with the buttons to press, and starts with an
 "I want to..." table that points to the right guide.
 
-**Colonization is a work in progress.** It is the newest part of the game and WFMT is still growing into it. Working today: the COL page, the Sites
+**Colonization is a work in progress.** It is the newest part of the game and WFMT is still growing into it. Working today: the Colony page, the Sites
 window, My Projects (your projects on Raven Colonial), starting a Raven project for a site, Where to buy (with the best single systems for a whole list)
 and the shopping-list overlay. Planned: co-op building and colony tracking.
 
@@ -108,7 +108,7 @@ The modes differ, but the habits carry over. Learn these once and they work ever
 | To do this | Do this |
 |---|---|
 | Switch modes | Click a **mode button** at the top. The panel remembers where you were |
-| Learn what a button does | **Hover** over it for its full name ([button names](docs/guide/getting-started.md#button-names)) |
+| Learn what a button does | **Hover** over it for its name and what it does ([button names](docs/guide/getting-started.md#button-names)) |
 | Move around a mode | **◀ ▶** page between a mode's pages. **Click a section's title** to fold or unfold it |
 | Open a pop-out window | Press its panel button. Windows remember their size and place, and close with **Esc** ([the list](docs/guide/getting-started.md#opening-the-pop-out-windows)) |
 | Search the galaxy map | Use a **copy button** to put a system name on the clipboard. System-name boxes suggest as you type |
