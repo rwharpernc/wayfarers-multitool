@@ -146,6 +146,32 @@ class OrderAndAvailabilityTests(unittest.TestCase):
         covered = card.build_card(site(), {"water": 50}, {}, show_fc=False, grouped=True, market_keys=frozenset({"steel"}))
         self.assertEqual(self.colors(covered)["Water ✓"], look.color("ok"))        # covered: keeps its green
 
+    def test_the_haul_stage_has_no_green_and_draws_what_is_in_the_hold_in_the_info_color(self) -> None:
+        look = card.LEGACY
+        # Water is half in the hold and half on the carrier; Steel is all on the carrier. Both are covered, so both are listed under To haul.
+        hauling = card.build_card(site(), {"water": 20}, {"water": 30, "steel": 400}, show_fc=True, show=card.view.SHOW_HAUL)
+        self.assertEqual(hauling.stage, card.view.SHOW_HAUL)
+        colors = self.colors(hauling)
+        self.assertEqual(colors["Water ✓"], look.color("info"))       # in the hold: the hauling color, and the check mark stays
+        self.assertEqual(colors["Steel ✓"], look.color("text"))       # covered but not in the hold: plain, not green
+        self.assertNotIn(look.color("ok"), [c for name, c in colors.items() if name.endswith("✓")])
+        # The same rows outside the haul stage keep their green.
+        everything = card.build_card(site(), {"water": 20}, {"water": 30, "steel": 400}, show_fc=True)
+        self.assertEqual(self.colors(everything)["Water ✓"], look.color("ok"))
+
+    def test_row_role(self) -> None:
+        covered = card.Row("Steel", 100, 0, 100)
+        in_hold = card.Row("Steel", 100, 40, 60)
+        surplus_in_hold = card.Row("Steel", 100, 130, 0)
+        surplus_on_carrier = card.Row("Steel", 100, 0, 150)
+        short = card.Row("Steel", 100, 10, 0)
+        unavailable = card.Row("Steel", 100, 0, 0, available=False)
+        for stage in (card.view.SHOW_ALL, card.view.SHOW_BUY):
+            self.assertEqual([card.row_role(r, stage) for r in (covered, in_hold, surplus_in_hold, surplus_on_carrier, short, unavailable)],
+                             ["ok", "ok", "warn", "warn", "text", "faint"])
+        self.assertEqual([card.row_role(r, card.view.SHOW_HAUL) for r in (covered, in_hold, surplus_in_hold, surplus_on_carrier)],
+                         ["text", "info", "info", "warn"])
+
     def test_a_commodity_sits_in_from_its_category_heading_and_the_name_column_fits_the_note(self) -> None:
         built = card.build_card(site(), {}, {}, show_fc=False, grouped=True, market_keys=frozenset({"steel"}))
         client = FakeClient()

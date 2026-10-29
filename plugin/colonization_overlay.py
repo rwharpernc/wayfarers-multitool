@@ -217,6 +217,7 @@ class Card:
     show_fc: bool
     buy_trips: int = 0   # trips to gather what is still to get, after the ship and the carrier (0 once it is all stocked)
     grouped: bool = False    # rows sit under a heading line for each market category (away from a construction site)
+    stage: str = view.SHOW_ALL    # which stage of the work the card lists (view.SHOW_*): under SHOW_HAUL there is no green, see `row_role`
 
     def footer_text(self) -> str:
         """The last line. With a fleet carrier building has two legs, so it gives both (the same words as the COL page and the
@@ -266,7 +267,17 @@ def build_card(site: Optional[Site], hold: Mapping[str, int], on_carrier: Mappin
     # (the same sum as the sites window's "trips to buy").
     to_get = sum(max(0, r.remaining - hold.get(r.key, 0) - on_carrier.get(r.key, 0)) for r in needed)
     buy_trips = math.ceil(to_get / capacity) if known and to_get > 0 else 0
-    return Card(_clip(site.display_name(), TITLE_CHARS), rows, max(0, len(listed) - limit), to_get, trips, show_fc, buy_trips, grouped)
+    return Card(_clip(site.display_name(), TITLE_CHARS), rows, max(0, len(listed) - limit), to_get, trips, show_fc, buy_trips, grouped, stage)
+
+
+def row_role(row: Row, stage: str) -> str:
+    """The color role a commodity row is drawn in. Normally amber (warn) when the hold plus the fleet carrier are more than the need, green (ok) when they cover it,
+    plain (text) while it is still short, and dimmed (faint) when the market here does not sell it. Under the To haul stage every listed row is covered, so green would
+    color them all and say nothing: it is left off (the check mark stays), and the rows in the ship's hold, the ones being hauled now, are drawn in the info role, the
+    blue of the theme, as the Sites window tints them. A row that is more than covered but not in the hold keeps its amber."""
+    if stage == view.SHOW_HAUL:
+        return "info" if row.ship > 0 else "warn" if row.surplus else "text"
+    return "warn" if row.surplus else "ok" if row.covered else "text" if row.available else "faint"
 
 
 def _name_text(row: Row) -> str:
@@ -332,9 +343,8 @@ def render(client: overlay.OverlayClient, card: Card, x: int, y: int, previous_s
         if card.grouped and row.category != category:
             category = row.category
             slots.append([(0, category.upper(), look.color("title"), x)])
-        # Covered rows keep their green or amber; otherwise a commodity the market here does not sell is dimmed.
-        color = (look.color("warn") if row.surplus else look.color("ok") if row.covered
-                  else look.color("text") if row.available else look.color("faint"))
+        # Covered rows keep their green or amber (no green under To haul: see row_role); otherwise a commodity the market here does not sell is dimmed.
+        color = look.color(row_role(row, card.stage))
         cells = [(0, _name_text(row), color, x + (int(round(INDENT_CHARS * char)) if card.grouped else 0))]
         for column, ((head, attr), edge) in enumerate(zip(_columns(card), edges), start=1):
             value = getattr(row, attr)

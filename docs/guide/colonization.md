@@ -758,6 +758,7 @@ It draws a table, with the site name as its title and the columns **Commodity**,
 - **Cargo** is what is in your ship's hold right now, so you can see what you just bought. A **✓** after the name means
   your hold **plus** what is on your fleet carrier already covers it (the row turns green, the same rule as the
   window's green rows); the row turns amber if together they are **more** than the site needs.
+- **With *List* set to *To haul*** every row is already covered, so there is **no green**: the **✓** stays, and the rows that are **in your ship's hold** (the ones you are hauling now) are drawn in the overlay's blue instead, as the Sites window tints them. A row you have more than enough of but that is not in your hold stays amber.
 
 **Example card (made-up).** Docked at a construction site, the card might show:
 
