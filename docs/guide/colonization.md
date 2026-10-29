@@ -295,6 +295,7 @@ you have moved onto your fleet carrier (the FC column):
 - **Green:** the two together cover what the site still needs, exactly or with room to spare. Nothing more to buy.
 - **Orange:** together they are **more** than the site still needs.
 - **No tint:** you are still short. This is the normal look while you work on it.
+- **Under the To haul filter** the colors change, because every row listed there is already covered and green would tint them all. There is **no green**, and the rows **in your ship's hold** (the ones you are hauling now) get a tint of their own: a blue-violet that fits the selected theme (Navy, Cyan, Amber or Green) and keeps the text readable. A row you have more than enough of, but that is not in your hold, keeps its orange.
 
 The carrier figure is what WFMT saw you transfer (see the FC column notes), so it can drift from the carrier's real cargo.
 

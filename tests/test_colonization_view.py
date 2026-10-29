@@ -39,6 +39,32 @@ class AcquireListTests(unittest.TestCase):
         self.assertEqual(lines, ["Depot One (Sol) - still to acquire:", "Nothing: everything still needed is already in the ship or on the carrier."])
 
 
+def tint_row(remaining, in_cargo=0, on_carrier=0, available=True):
+    return view.CommodityRow("steel", "Steel", remaining, 0, remaining, in_cargo, max(0, remaining - in_cargo - on_carrier), on_carrier, available=available)
+
+
+class RowTintTests(unittest.TestCase):
+    def test_outside_the_haul_filter_the_rows_keep_their_state_tints(self):
+        for show in (view.SHOW_ALL, view.SHOW_BUY):
+            self.assertEqual(view.row_tag(tint_row(100, on_carrier=100), show), view.STATE_ENOUGH)
+            self.assertEqual(view.row_tag(tint_row(100, in_cargo=60, on_carrier=60), show), view.STATE_OVER)
+            self.assertIsNone(view.row_tag(tint_row(100, in_cargo=10), show))
+            self.assertEqual(view.row_tag(tint_row(100, available=False), show), view.TAG_UNAVAILABLE)
+
+    def test_the_haul_filter_has_no_green(self):
+        covered = [tint_row(100, on_carrier=100), tint_row(100, in_cargo=40, on_carrier=60), tint_row(100, in_cargo=100)]
+        self.assertNotIn(view.STATE_ENOUGH, {view.row_tag(row, view.SHOW_HAUL) for row in covered})
+        self.assertIsNone(view.row_tag(tint_row(100, on_carrier=100), view.SHOW_HAUL))
+
+    def test_the_haul_filter_tints_what_is_in_the_hold(self):
+        self.assertEqual(view.row_tag(tint_row(100, in_cargo=40, on_carrier=60), view.SHOW_HAUL), view.TAG_HAULING)
+        self.assertEqual(view.row_tag(tint_row(100, in_cargo=100), view.SHOW_HAUL), view.TAG_HAULING)
+        self.assertEqual(view.row_tag(tint_row(100, in_cargo=130), view.SHOW_HAUL), view.TAG_HAULING)      # over-covered but in the hold: still being hauled
+
+    def test_an_over_covered_row_not_in_the_hold_keeps_its_orange(self):
+        self.assertEqual(view.row_tag(tint_row(100, on_carrier=150), view.SHOW_HAUL), view.STATE_OVER)
+
+
 class GroupingAndAvailabilityTests(unittest.TestCase):
     def test_rows_group_under_market_categories_alphabetically(self):
         groups = view.group_rows(view.commodity_rows(site(), {}))

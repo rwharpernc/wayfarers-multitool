@@ -16,11 +16,11 @@ TEXT = MUTED = FAINT = ""                                          # text
 ACCENT = ACCENT_HI = ACCENT_INK = ""                               # primary action: fill, hover fill, text on it
 INFO = OK = WARN = DANGER = ""                                     # status
 TITLE = HEADING = STATUS = ""                                      # window title, section labels and table headings, footer message (bright, and unlike the accent, the headings and the text)
-ROW_OK = ROW_OVER = ""                                             # table row tints for "done" and "over"; dark enough for TEXT to stay readable
+ROW_OK = ROW_OVER = ROW_HAUL = ""                                   # table row tints for "done", "over" and "being hauled"; dark enough for TEXT to stay readable
 MAP_BG = MAP_GRID = MAP_COVERAGE = MAP_HOTSPOT = MAP_DEPLETED = ""
 
 TOKENS = ("BG", "PANE", "CARD", "BUTTON", "HOVER", "SELECT", "LINE", "STRIPE", "TEXT", "MUTED", "FAINT", "ACCENT", "ACCENT_HI", "ACCENT_INK",
-          "INFO", "OK", "WARN", "DANGER", "TITLE", "HEADING", "STATUS", "ROW_OK", "ROW_OVER",
+          "INFO", "OK", "WARN", "DANGER", "TITLE", "HEADING", "STATUS", "ROW_OK", "ROW_OVER", "ROW_HAUL",
           "MAP_BG", "MAP_GRID", "MAP_COVERAGE", "MAP_HOTSPOT", "MAP_DEPLETED")
 
 
@@ -42,7 +42,7 @@ def _from_variables(v: dict) -> dict:
         "ACCENT": primary, "ACCENT_HI": _mix(primary, "#ffffff", 0.3), "ACCENT_INK": v["deep"],
         "INFO": v["violet"], "OK": v["green"], "WARN": v["amber"], "DANGER": v["red"],
         "TITLE": v["amber"], "HEADING": _mix(primary, "#ffffff", 0.12), "STATUS": v["status"],
-        "ROW_OK": v["green-dim"], "ROW_OVER": v["amber-dim"],
+        "ROW_OK": v["green-dim"], "ROW_OVER": v["amber-dim"], "ROW_HAUL": _mix(v["violet"], v["panel"], 0.62),
         "MAP_BG": v["deep"], "MAP_GRID": v["amber-dim"], "MAP_COVERAGE": v["green-dim"], "MAP_HOTSPOT": v["text"], "MAP_DEPLETED": v["dim"],
     }
 
@@ -69,7 +69,7 @@ THEMES: dict = {
         "ACCENT": "#f0a23b", "ACCENT_HI": "#ffb957", "ACCENT_INK": "#1a1306",
         "INFO": "#4aa8ff", "OK": "#52d6a0", "WARN": "#f2c94c", "DANGER": "#ff7a7a",
         "TITLE": "#ffc15e", "HEADING": "#5fd3f3", "STATUS": "#ffe27a",
-        "ROW_OK": "#1d5a45", "ROW_OVER": "#6e4414",
+        "ROW_OK": "#1d5a45", "ROW_OVER": "#6e4414", "ROW_HAUL": "#244c77",
         "MAP_BG": "#0b1424", "MAP_GRID": "#2b2a1c", "MAP_COVERAGE": "#2e5c3a", "MAP_HOTSPOT": "#eee8be", "MAP_DEPLETED": "#969696",
     },
     # The three themes of EDDDT (its mfd.css), as the same tokens.

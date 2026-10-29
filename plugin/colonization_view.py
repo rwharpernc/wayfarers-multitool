@@ -23,6 +23,20 @@ SHOW_HAUL = "haul"
 SHOW_CHOICES = ((SHOW_ALL, "All"), (SHOW_BUY, "To buy"), (SHOW_HAUL, "To haul"))
 
 
+def row_tag(row: "CommodityRow", show: str) -> Optional[str]:
+    """The tint tag for a commodity row in the Sites window's table. Normally the row's state: green (STATE_ENOUGH) when the ship plus the carrier cover it, orange
+    (STATE_OVER) when that is more than needed, none while it is still short (grayed out when the docked market does not sell it). Under the To haul filter every listed
+    row is covered, so green would tint them all and say nothing: it is left off, and the rows in the ship's hold, the ones being hauled now, get their own tint
+    (TAG_HAULING). A row that is only over-covered keeps its orange."""
+    if show == SHOW_HAUL:
+        if row.in_cargo > 0:
+            return TAG_HAULING
+        return STATE_OVER if row.state == STATE_OVER else None
+    if row.state == STATE_SHORT:
+        return TAG_UNAVAILABLE if not row.available else None
+    return row.state
+
+
 def shown(show: str, remaining: int, in_hold: int, on_carrier: int) -> bool:
     """Whether a commodity the site still needs `remaining` tons of is listed under `show`, given the tons in the ship's hold and on
     the fleet carrier."""
@@ -37,6 +51,10 @@ def shown(show: str, remaining: int, in_hold: int, on_carrier: int) -> bool:
 STATE_SHORT = "short"      # still working on it
 STATE_ENOUGH = "enough"    # the ship plus the fleet carrier covers what the site still needs, exactly or with room
 STATE_OVER = "over"        # the ship plus the fleet carrier is more than the site still needs
+
+
+TAG_UNAVAILABLE = "unavailable"   # the table's row tag for a commodity the docked market does not sell
+TAG_HAULING = "hauling"           # the table's row tag for a commodity that is in the ship's hold, under the To haul filter
 
 
 @dataclass(frozen=True)

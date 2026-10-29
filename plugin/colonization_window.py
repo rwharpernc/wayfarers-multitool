@@ -268,8 +268,10 @@ class ColonizationWindow:
             _TRIP_COLUMNS if self._with_fc else _TRIP_COLUMN_ONLY)
         table = DataTable(self._table_host, columns, sortable=False, on_header=self._on_sort,
                           on_select=self._on_pick_commodity, empty_text="Nothing left to deliver here.")
-        # Whole-row tints: green when the ship plus the fleet carrier covers the need, orange when it is more than needed.
-        table.tag_configure("unavailable", foreground=P.FAINT)    # the docked market does not sell it
+        # Whole-row tints: green when the ship plus the fleet carrier covers the need, orange when it is more than needed. Under the To haul filter there is no green
+        # (every row would have it): the rows in the ship's hold are tinted instead, in a color of their own (view.row_tag).
+        table.tag_configure(view.TAG_UNAVAILABLE, foreground=P.FAINT)    # the docked market does not sell it
+        table.tag_configure(view.TAG_HAULING, foreground=P.TEXT, background=P.ROW_HAUL)
         table.tag_configure(view.STATE_ENOUGH, foreground=P.TEXT, background=P.ROW_OK)
         table.tag_configure(view.STATE_OVER, foreground=P.TEXT, background=P.ROW_OVER)
         table.pack(fill="both", expand=True)
@@ -356,6 +358,10 @@ class ColonizationWindow:
             self._site_table.select(str(self._selected))
         self._refresh_detail()
 
+    def _show_key(self) -> str:
+        """The Show dropdown as its key (view.SHOW_ALL, SHOW_BUY or SHOW_HAUL)."""
+        return next((key for key, text in _SHOW_LABELS.items() if text == self._show.get()), view.SHOW_ALL)
+
     def _on_show_changed(self) -> None:
         """The Show dropdown changed: keep it, so the shopping-list overlay card lists the same rows, and redraw both."""
         key = next((k for k, text in _SHOW_LABELS.items() if text == self._show.get()), view.SHOW_ALL)
@@ -437,7 +443,7 @@ class ColonizationWindow:
                 if wants_fc:
                     values += (view.format_trips(row.buy_trips),)
                 values += (view.format_trips(row.haul_trips),)
-                tag = ("unavailable" if not row.available else None) if row.state == view.STATE_SHORT else row.state
+                tag = view.row_tag(row, self._show_key())
                 iid = f"{site.market_id}:{row.key}"
                 self._row_label[iid] = row.label
                 self._commodity_table.insert(iid, values, tag=tag, parent=parent)
@@ -478,7 +484,7 @@ class ColonizationWindow:
         """The commodity rows after every filter, as the table shows them."""
         _station, only = self._station_filter()
         market = self._market()
-        show = next((key for key, text in _SHOW_LABELS.items() if text == self._show.get()), view.SHOW_ALL)
+        show = self._show_key()
         return view.commodity_rows(site, self._cargo, on_carrier, False, self._filter_text.get(),
                                    capacity, only_keys=only, market_keys=market[1] if market else None, show=show)
 

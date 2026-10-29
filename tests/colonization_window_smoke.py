@@ -144,6 +144,13 @@ check(window._selected == 1, "clicking the first site should select it again")
 window._show.set("To buy")
 window._refresh_detail()
 check(len(window._commodity_table) == 2, "To buy should drop Water")
+# The To haul filter has no green: the table has a tint of its own for the rows in the ship's hold, and no row gets the green tag under it.
+check(window._commodity_table._tag_backgrounds.get("hauling") == W.P.ROW_HAUL, "the hauling tint is the palette's ROW_HAUL")
+window._show.set("To haul")
+window._refresh_detail()
+check(all(row.tag != "enough" for row in window._commodity_table._rows.values()), "no row is green under To haul")
+window._show.set("To buy")
+window._refresh_detail()
 # The Show choice is the overlay card's setting too: choosing it saves it and redraws the card.
 redraws = []
 W.show_listener = lambda: redraws.append(1)
