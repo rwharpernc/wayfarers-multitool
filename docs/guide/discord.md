@@ -8,7 +8,7 @@ WFMT can share its reports three ways, so you can use whichever fits the place y
 | **Copy for Discord** | Puts the report on the clipboard with Discord's formatting (bold names, links, bullet lists). You paste it into Discord yourself | No | No |
 | **Post to Discord** | Sends the report to a Discord channel through a webhook you set up. One press, one post | Yes | Only the report text, to your own webhook, when you press it |
 
-Nothing is ever posted on its own. Every post follows a button press.
+Nothing is ever posted on its own. Every post follows a button press. You can also change how the Discord posts look: see [Customize how your posts look](#customize-how-your-posts-look).
 
 **On this page:** [What you can share](#what-you-can-share) · [Quick start](#quick-start) · [Set up Discord](#set-up-discord-make-a-webhook) · [Set up WFMT](#set-up-wfmt) · [Webhooks, commanders and channels](#webhooks-commanders-and-channels) · [Common questions](#common-questions) · [Customize how your posts look](#customize-how-your-posts-look) · [Examples](#examples) · [Sharing somewhere that is not Discord](#sharing-somewhere-that-is-not-discord) · [What is sent, and who can see it](#what-is-sent-and-who-can-see-it) · [Changing or removing a destination](#changing-or-removing-a-destination) · [When something goes wrong](#when-something-goes-wrong)
 
@@ -16,8 +16,8 @@ Nothing is ever posted on its own. Every post follows a button press.
 
 | Report | Where | The buttons |
 |---|---|---|
-| **BGS report**: the tick shown in the window, a block for each system with the factions, their states and influence, and what you did | BGS mode, **REPORT** window | **Copy Summary**, and the **Discord** menu in the window's header: **Copy for Discord** and **Post to Discord** |
-| **Powerplay progress**: this session's merits and estimated Control Points for each system, and the cycle's total | Powerplay mode, **REPORT** (the Powerplay Sessions window) | **Copy Progress**, and **Copy for Discord** and **Post to Discord** in a row above the tabs |
+| **BGS report**: the tick shown in the window, a block for each system with the factions, their states and influence, and what you did | BGS mode, **REPORT** window | **Copy Summary**, and the **Discord** menu in the window's header: **Copy for Discord**, **Post to Discord** and **Customize post…** |
+| **Powerplay progress**: this session's merits and estimated Control Points for each system, and the cycle's total | Powerplay mode, **REPORT** (the Powerplay Sessions window) | **Copy Progress**, and **Copy for Discord**, **Post to Discord** and **Customize…** in a row above the tabs |
 
 Coming later, as separate builds: expedition sales and announcements, colonization and team building (shopping lists, progress, a call for helpers), and carrier movement. They are planned in
 [the Discord sharing research](../DISCORD_SHARING_RESEARCH.md) and are not in WFMT yet.
@@ -128,8 +128,8 @@ Discord** tab. A **Report** box at the top switches between the BGS report and P
 
 **Templates.** Pick one in the **Template** box and it becomes the one that report's posts use at once.
 - **Standard** is the layout the posts have always had. **Compact**, **Detailed** and **Plain** are the other built-in presets. The presets cannot be changed or deleted.
-- Change the checkboxes, then **Save as…** to keep your version under a name of your own. **Save** replaces one of your own templates, **Rename…** and **Delete** act on them. You can keep
-  30 for each report.
+- Change the checkboxes, then **Save as…** to keep your version under a name of your own (up to 40 characters, and not one of the preset names). **Save** replaces one of your own
+  templates, **Rename…** and **Delete** act on them, and **Delete** asks first. You can keep 30 for each report.
 - Changing a checkbox only changes the **preview** until you save. Posts keep using the template shown in the box, and the note under the buttons says when your changes are not saved yet.
 - Templates are kept for the whole installation (not for each commander), are included in **Back up my data**, and are kept across updates. They are only looks, so there is nothing secret in them.
 
@@ -184,7 +184,7 @@ switched off, so nothing can ping anyone. Long posts are still split under Disco
 3. Press **Done**, and **Post to Discord** now posts that layout.
 
 **Example: only the systems you worked, without the heading.**
-1. In the dialog, tick **Only systems where you acted** and untick **Heading with the tick time**. The preview loses the title and the systems you passed through.
+1. In the dialog, choose **Only systems where you acted** under **Systems** and untick **Heading with the tick time**. The preview loses the title and the systems you passed through.
 2. Press **Save as…** and name it `My systems`. It is now the template for BGS posts, and you can pick **Standard** again from the box any time.
 
 **Example: Powerplay progress with the activity breakdown but no cycle line.**
@@ -275,7 +275,7 @@ request. If the thread is archived, Discord reopens it for the post.
 The plain copy buttons are for everywhere else, and they are unchanged: **Copy Summary** on the BGS report and **Copy Progress** on the Powerplay
 Sessions window. They copy plain text with no Discord marks, so a forum post, an email, a note or another chat program shows it cleanly.
 
-**Example: a forum post.** Open **REPORT**, press **Copy Summary**, and paste into the post. You get lines such as `Nervi:` then
+**Example: a forum post.** In BGS mode open **REPORT**, press **Copy Summary**, and paste into the post. You get lines such as `Nervi:` then
 `  * Nervi Brotherhood — Boom, 45.2% (+1.3)`. **Copy Progress** gives one line for each system (by default
 `[Nervi](https://inara.cz/...) - 120 merits (~48.0 CP) - Exploited`, which several forums and chat programs turn into a link). Its layout is
 editable under **Settings → WFMT → Powerplay → Clipboard**.
@@ -284,6 +284,7 @@ editable under **Settings → WFMT → Powerplay → Clipboard**.
 
 - **Only when you press Post to Discord**, WFMT sends the report text to the webhook address you saved, which is on `discord.com`. Nothing is sent on its own,
   and **Copy for Discord**, **Test** (which reads, and posts nothing) and the plain copy buttons send no report.
+- **The Customize dialog sends nothing.** It only reads your data to draw the preview and saves your templates on this computer.
 - **What the post holds:** the report text only. It has no commander name, but it does show the systems, factions and numbers you chose to share, and anyone who
   can read the channel can read it.
 - **Nobody is pinged.** WFMT sends every post with mentions switched off, and puts an invisible space after any `@` in a name, so a faction called
