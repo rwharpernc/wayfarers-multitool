@@ -185,7 +185,7 @@ def build_settings(notebook: nb.Notebook) -> None:
         text=("A card on your in-game overlay, through the overlay (WFMT's built-in one on Windows, or EDMCModernOverlay: a separate, optional helper WFMT does not install or launch; its connection "
               "settings are on the Overlay Connection tab), that keeps the running expedition's totals in view: exploration (systems, jumps, light-years, bodies "
               "scanned, first discoveries, mapped, and what you have earned from selling data) and exobiology (samples, species, first footfalls and what you have "
-              "earned). You start, pause and stop one with the buttons in the Exploration panel's Expedition section, and name and edit them in the Log tab of the Expedition window. Everything comes from your journal; nothing is "
+              "earned). You start, pause and stop one in the Expedition window (the EXPEDITION button in the Exploration panel's Expedition section), and name and edit them in its Log tab. Everything comes from your journal; nothing is "
               "sent anywhere."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))

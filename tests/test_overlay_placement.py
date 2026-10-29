@@ -447,8 +447,8 @@ class DefaultSpotTests(unittest.TestCase):
     """The default spots, at the slots' nominal (worst-case) sizes, on a 16:9 screen of 1920 x 1080 or larger. The displays are sized in
     pixels, so on a smaller screen they take up more of it and can overlap; Overlay Placement is where to move them then."""
 
-    # Pairs that overlap by design: the Bio radar and Sample popup are for a planet's surface and the Colonization list for a construction depot, and the Interdiction warning is for supercruise, so those are never up together. The Mining radar is for driving the Rhino and shares the Bio radar's spot, as both are for a planet's surface.
-    KNOWN: set = {frozenset(pair) for pair in (("colonization", "bio_radar"), ("colonization", "bio_popup"), ("interdiction", "bio_status"), ("interdiction", "expedition_log"),
+    # Pairs that overlap by design: the Bio radar and Sample popup are for a planet's surface and the Colonization list for a construction depot, and the Interdiction warning is for supercruise, so those are never up together. The Bio status strip (108 characters wide) reaches over the top of the Expedition Log card for the few lines they share, and each shows only in its own situation. The Mining radar is for driving the Rhino and shares the Bio radar's spot, as both are for a planet's surface.
+    KNOWN: set = {frozenset(pair) for pair in (("colonization", "bio_radar"), ("colonization", "bio_popup"), ("interdiction", "bio_status"), ("interdiction", "expedition_log"), ("bio_status", "expedition_log"),
                                                                                                               ("colonization", "mining_radar"), ("bio_radar", "mining_radar"), ("bio_popup", "mining_radar"))}
 
     @staticmethod
