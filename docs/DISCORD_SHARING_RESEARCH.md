@@ -135,6 +135,7 @@ Build the shared parts once, then add one report at a time. Each phase is tested
    Expedition window: a run's totals, and announcements the commander chooses to send (started, stop reached, finished). From the
    Colonization Sites window: shopping-list, progress, call-for-helpers and completion posts (section 10, whose scope is still to be chosen).
 4. **Carrier movement.** Departure requests, cancellations and arrivals, with the departure time as a Discord timestamp.
+5. **Customizing posts.** A dialog with presets, section toggles, a preview and saved templates (section 11), after the posts above exist to customize.
 
 ## 9. Open questions (stage 1 and the earlier stages)
 
@@ -200,6 +201,64 @@ read by strangers, so its preview shows exactly what will be sent, and the comma
    can still list the needs and the system.
 3. Should the progress post (B) be one message that is edited as the build advances, or a new post each time? Edit-in-place keeps the channel quiet.
 4. What does "team building" mean to you beyond a call for helpers: recruiting, coordinating who hauls what (needs the co-op phases), or something else?
+
+## 11. Customizing posts: a dialog, presets and saved templates (brainstormed 2026-10-29)
+
+**Status: brainstormed and scoped, not built.** Today each report has one fixed layout (`bgs_discord.py`, `powerplay_discord.py`). The only customization anywhere is Powerplay's
+plain-text **Copy Progress** template under Settings. The idea is a separate dialog for customizing how a Discord (or other) post is formatted, with templates the commander can
+save and choose between.
+
+**Decisions**
+- **The first build is toggles, not typed templates.** Presets plus section toggles for each report, a live preview, saved named templates, and a choice of which template each report
+  uses. Typed header, row and footer templates with placeholders come later.
+- **Embeds come later.** They can only be posted, never pasted by hand, and Discord's embed size limits have not been verified, so the first build keeps markdown messages and Copy for
+  Discord keeps matching Post to Discord.
+- **A per-destination "Post as" name was declined** (the webhook's own name is set in Discord; see [the guide](guide/discord.md#common-questions)).
+
+**What the dialog does (first build)**
+1. **Presets:** **Compact** (one line per system), **Standard** (today's layout), **Detailed** and **Plain** (no Discord marks). They are read-only starting points.
+2. **Section toggles for each report.**
+   - *BGS report:* heading and tick time, the star on pinned systems, the controlling faction in bold, state changes, influence and its change, pending, recovering and active states,
+     your "You:" activity lines, and only the systems you worked or every system.
+   - *Powerplay progress:* Inara links, estimated CP, the system's state, the cycle's total line, and a merits-only mode.
+3. **Preview:** the post rendered approximately as Discord shows it, from the commander's real current data, with a counter such as "1,420 of 2,000 characters, 1 message". Because the escaping
+   and the 2,000-character splitting stay automatic, no toggle can produce a post that pings someone or is too long to send.
+4. **Saved named templates:** Save, Save as, Duplicate, Rename and Delete (the presets cannot be deleted), and a default template for each report.
+5. **Where it lives:** a **Customize...** button in the BGS Report and Powerplay Sessions windows, and **Templates...** on the Discord Settings tab: one dialog with a tab for each report.
+
+```
+Customize Discord post          [BGS Report v] [Powerplay]
+Template [Standard v] [Save as...] [Delete]
+Sections  [x] Heading  [x] Pinned star  [x] States  [ ] Pending/Recovering  [x] You: lines
+Time      (x) UTC text  ( ) Discord time tag
+-------------------------------- Preview (1,420 / 2,000 characters, 1 message) ----
+ **WFMT BGS report** ...
+                                                                       [Done]
+```
+
+**Later**
+- **A template for each destination** (for example `Squadron BGS` uses Detailed and `Friends` uses Compact), and **Send test** to a destination chosen in the dialog.
+- **Typed templates:** header, row and footer templates with placeholders such as `{system}`, `{faction}`, `{influence}`, `{delta}`, `{merits}`, `{cp}` and `{state}`. Values are escaped
+  automatically, so a name can never add formatting or a ping whatever the template says.
+- **Import and Export** of a template as a block of text (as the Mining share line does) so squadron-mates can swap looks.
+- **Embeds** (a colored side bar, a title, fields, a footer and a timestamp) as an option for Post to Discord only, once Discord's size limits are checked.
+- **Other service formats** (Slack and Matrix webhooks use different markup) as new destination types with their own renderer, and a plain style for anywhere else.
+- **A Discord time tag** (`<t:...>`, which shows each reader's own time) in place of UTC text, and a **Short** mode that keeps the top N systems so a report fits in one message.
+- **A deliberate role ping** only as a high-risk, opt-in setting for each destination with a confirmation, because every post is sent with mentions switched off today.
+
+**How it would be built**
+- **A template is data, not code:** a name, the report it is for, the layout (a preset name or the section toggles) and the options. The pure renderers (`bgs_discord.py`,
+  `powerplay_discord.py`) take a template and produce the messages; Standard reproduces today's output exactly, with a test.
+- **Plain and Discord share the choices:** Copy for Discord and Post to Discord always render the same template. The plain **Copy Summary** and **Copy Progress** stay as they are.
+- **Storage:** templates are not secrets, so they could be shared by every commander on the installation and included in **Back up my data**. Only which template a commander uses for each
+  report would be saved for each commander. This is still to confirm.
+- **Tests:** a renderer test for every preset and toggle (including that the output is identical to today's for Standard), the 2,000-character split with every toggle on, escaping with hostile
+  names, saving, renaming, deleting and choosing templates, and a smoke test of the dialog.
+
+**Questions that remain**
+1. Should saved templates be shared by all commanders, or kept for each commander like the destinations? (Suggested: shared, with the choice for each commander.)
+2. Do Import and Export of a template belong in the first build or the second? (Suggested: the second.)
+3. Should the dialog open on real data or sample data when the commander has no current tick or session? (Suggested: sample data, labeled as an example.)
 
 ## Sources
 

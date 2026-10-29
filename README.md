@@ -39,7 +39,7 @@ perfect, but it has the bells and whistles I always wanted, and I am sharing it 
 | | |
 |---|---|
 | **What it is** | A free add-on for **Elite Dangerous**, open to anyone |
-| **What it covers** | Powerplay, exploration and exobiology, mining, trading, missions, on-foot and cargo tracking, colonization, the BGS and more |
+| **What it covers** | Powerplay, exploration and exobiology, mining, trading, missions, on-foot and cargo tracking, colonization, the BGS, sharing reports to Discord and more |
 | **Where it runs** | Inside [EDMC](https://github.com/EDCD/EDMarketConnector), on Windows and Linux |
 | **What you need to know** | Nothing about programming |
 | **Latest release** | **1.3.0**, published 2026-10-29 ([changelog](CHANGELOG.md)) |
@@ -69,7 +69,7 @@ WFMT is one panel with eight **modes**, and you click a button to switch between
 
 | Mode (button) | What it is for | Detailed guide |
 |---|---|---|
-| **Powerplay** (**P.P.**) | Merits and Control Points for your Power; a rare goods finder | [Powerplay](docs/guide/powerplay.md) |
+| **Powerplay** (**P.P.**) | Merits and Control Points for your Power; a rare goods finder; share your progress to Discord | [Powerplay](docs/guide/powerplay.md) |
 | **Exploration** (**EXP**) | Auto-honk, discovery alerts, boxel survey, scan values, Codex tally, notes, expeditions, route planners, a dashboard, a surface compass | [Exploration](docs/guide/exploration.md) |
 | **Exobiology** (in **EXP**) | Species prediction, sample tracking, a sample radar, and overlay cards for the body you are on | [Exobiology](docs/guide/exobiology.md) |
 | **Mining** (**MIN**) | Space and surface mining runs, a book of rings and deposits, Mining History, mining alerts | [Mining](docs/guide/mining.md) |
@@ -77,9 +77,16 @@ WFMT is one panel with eight **modes**, and you click a button to switch between
 | **Missions** (**MSN**) | Every mission in one view, progress bars, a Missions window, where to buy the cargo | [Missions](docs/guide/missions.md) |
 | **Field Ops** (**OPS**) | Screenshots, backpack and cargo, materials, a blueprint browser, material traders, ship builds | [Field Ops](docs/guide/field-ops.md) |
 | **Colonization** (**COL**) | Your current build, history, an archive of finished sites, and every site's shopping list | [Colonization](docs/guide/colonization.md) |
-| **BGS** (**BGS**) | Faction states and what your activity does to them | [BGS](docs/guide/bgs.md) |
+| **BGS** (**BGS**) | Faction states and what your activity does to them; share a tick's report to Discord | [BGS](docs/guide/bgs.md) |
 
-**Sharing reports.** The BGS report and Powerplay progress can be copied as plain text for anywhere, copied with Discord formatting, or posted to a Discord webhook you set up. Step by step, with the Discord side explained: [Sharing reports to Discord](docs/guide/discord.md).
+**Sharing reports.** The BGS report and Powerplay progress can be shared three ways: copied as plain text for anywhere, copied with Discord formatting, or posted to a Discord webhook.
+
+- **Nothing is posted on its own.** Every post follows a button press, and the switch is off until you turn it on.
+- **Several channels or servers.** A webhook belongs to one channel, so each commander saves a named list of destinations, and **Post to Discord** asks which one when there are several. Commanders can copy each other's lists.
+- **Posts from anywhere.** You do not need to be in the channel, or have Discord open, to post to it. Posting the same report again edits the earlier post.
+- **Your links stay private.** They are saved on your computer for each commander, left out of backups and never logged.
+
+Step by step, with the Discord side explained (making the webhook, thread ids, naming the posts, common questions): [Sharing reports to Discord](docs/guide/discord.md).
 
 **Looking for something specific?** [Features at a glance](docs/guide/features.md) lists every feature with the buttons to press, and starts with an
 "I want to..." table that points to the right guide.

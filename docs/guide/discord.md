@@ -10,7 +10,7 @@ WFMT can share its reports three ways, so you can use whichever fits the place y
 
 Nothing is ever posted on its own. Every post follows a button press.
 
-**On this page:** [What you can share](#what-you-can-share) · [Quick start](#quick-start) · [Set up Discord](#set-up-discord-make-a-webhook) · [Set up WFMT](#set-up-wfmt) · [Webhooks, commanders and channels](#webhooks-commanders-and-channels) · [Examples](#examples) · [Sharing somewhere that is not Discord](#sharing-somewhere-that-is-not-discord) · [What is sent, and who can see it](#what-is-sent-and-who-can-see-it) · [Changing or removing a destination](#changing-or-removing-a-destination) · [When something goes wrong](#when-something-goes-wrong)
+**On this page:** [What you can share](#what-you-can-share) · [Quick start](#quick-start) · [Set up Discord](#set-up-discord-make-a-webhook) · [Set up WFMT](#set-up-wfmt) · [Webhooks, commanders and channels](#webhooks-commanders-and-channels) · [Common questions](#common-questions) · [Examples](#examples) · [Sharing somewhere that is not Discord](#sharing-somewhere-that-is-not-discord) · [What is sent, and who can see it](#what-is-sent-and-who-can-see-it) · [Changing or removing a destination](#changing-or-removing-a-destination) · [When something goes wrong](#when-something-goes-wrong)
 
 ## What you can share
 
@@ -94,6 +94,29 @@ particular server, and its link can post to that channel (or to a thread inside 
 - **Editing instead of duplicating.** Posting the same report again to the same destination edits the earlier post. A different destination gets its own post. WFMT
   remembers these posts for each commander until EDMC restarts.
 - **The switch is shared.** **Allow Post to Discord** covers every commander.
+
+## Common questions
+
+**Do I have to be in the channel to post to it? What if I am on a different server?**
+No. A post goes to the channel the webhook belongs to, wherever you are in Discord. WFMT sends it straight to Discord over the internet using the webhook link, so your Discord
+account, the Discord app and whichever channel or server you are looking at have no part in it. You can be on another server, in a direct message, or have Discord closed, and the
+post still lands in that channel. The link names one channel on one server, and anyone who holds it can post there without being a member. To post somewhere else, add another
+destination with a webhook made in that channel (see [Webhooks, commanders and channels](#webhooks-commanders-and-channels)).
+
+**What can stop a post from arriving?** The webhook or its channel being deleted, or the webhook link being replaced. WFMT then says `Discord did not accept that webhook link` or
+`Discord could not find that webhook` (see [When something goes wrong](#when-something-goes-wrong)). Because the link is all it takes to post, keep it private. If it leaks, delete
+the webhook in Discord.
+
+**Whose name do the posts show? Why is it not my commander name or my server nickname?**
+A webhook is not your account, so its posts appear under the **webhook's own name and picture**, never your server nickname. WFMT does not send a name of its own and the post
+carries no commander name, so what you see is the name the webhook was given.
+
+- **To change the name or picture:** open the channel's settings (the gear icon), choose **Integrations**, then **Webhooks**, open the webhook, change **Name** (for example to your
+  commander name) and the picture if you like, and press **Save Changes**. You can do this at any time, with no need to make a new webhook. New posts use the new name straight away,
+  and older posts keep the name they were posted under.
+- **One name for each webhook.** Everyone who posts through the same webhook shows the same name. If two commanders should appear under their own names, make a second webhook in the
+  channel, name it for the second commander, and save it as that commander's destination.
+- **Names Discord refuses.** Discord does not allow some names for webhooks. If it rejects the one you choose, it says so when you save, and you can pick another.
 
 ## Examples
 
