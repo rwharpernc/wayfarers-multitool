@@ -8,9 +8,9 @@ tracks faction states, and the effect of your own missions, bounties, trade, exp
 
 There is nothing to set up: it records wherever you act. BGS is on by default (**Settings → WFMT → BGS**); with it turned off the panel says `BGS tracking is disabled — see Settings.`
 
-**On this page:** [The panel](#the-panel) · [What it counts](#what-it-counts) ·
+**On this page:** [How to](#how-to) · [The panel](#the-panel) · [What it counts](#what-it-counts) ·
 [The BGS Report window](#the-bgs-report-window) · [Resets and history](#resets-and-history) ·
-[Tick detection](#tick-detection-and-the-internet) · [Settings](#settings)
+[Tick detection](#tick-detection-and-the-internet) · [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) · [Settings](#settings)
 
 **Where this comes from:**
 
@@ -19,6 +19,53 @@ There is nothing to set up: it records wherever you act. BGS is on by default (*
 - The one outside source is a community tick-time service, used to learn when the tick happens.
 
 See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
+
+## How to
+
+**See a system's faction states**
+
+1. Jump into the system (or log in there). The game only gives WFMT the faction list at that moment.
+2. Press **BGS** in the mode bar.
+3. Read one line per faction: state and influence, controller first. See [The panel](#the-panel).
+4. To see the pending, recovering and active states, press **REPORT** and open the system's tab. See [The BGS Report window](#the-bgs-report-window).
+
+**See what your activity did for a faction**
+
+1. Do the work in the system (missions, bounties, trade, exploration data, and so on). See [What it counts](#what-it-counts).
+2. Open the BGS page and look for the `↳` line under the faction.
+3. For the full breakdown, press **REPORT** and read the **WHAT YOU DID** table on the system's tab.
+
+**Read the ledger for an earlier tick**
+
+1. Press **REPORT** on the BGS page.
+2. Open the **TICK** drop-down and pick the period (`<start> → <end>`). The archive keeps 7 days by default. See [Resets and history](#resets-and-history).
+3. Pick a system tab. If it is not there, type its name in **SHOW A SYSTEM** and press **Add system**. See [Which systems get a tab?](#which-systems-get-a-tab).
+
+**Copy the whole ledger to share**
+
+1. Press **REPORT**, then **Copy Summary**.
+2. Paste it into a note or chat. It holds every tick and system, whatever tabs are shown.
+
+**Worked example: supporting a faction by selling exploration data**
+
+You dock at a station whose controlling faction is Example Union, and sell 1,200,000 cr of exploration data. WFMT credits the sale to the station's controlling faction. On the BGS page, under Example Union in that system, a `↳` line reads `1,200,000 cr exploration data`. In the report's **WHAT YOU DID** table the same figure is in the **Exploration (cr)** column of its row. If WFMT has not seen you dock there (or log in at it), it does not know the station's faction and cannot credit the sale.
+
+**Worked example: reading a state on the page**
+
+The page shows:
+
+```text
+Example System — 2 faction(s):
+★ Example Union — Boom, 45.0% (+5.0)
+   Example Cartel — None → War, 30.0% (-2.0)
+Nothing done here yet this tick.
+```
+
+Example Union controls the system (★), is in Boom, and holds 45.0% influence, up 5.0 points from before the tick. Example Cartel changed from no state to War since before the tick and lost 2.0 points. The last line means you have not acted in this system this tick. These figures are as of your last arrival, so to refresh them jump out and back in.
+
+**Worked example: a day of activity in the ledger**
+
+In one tick you complete two missions for Example Union (`+2/-0` and `+1/-0`), sell 400,000 cr of trade goods for a profit, and abandon one mission from Example Cartel. The page shows under Example Union a `↳` line such as `2 mission(s) done, INF +3/-0; +120,000 cr trade` (trade is your net profit, with a sign). Under Example Cartel it shows `1 mission(s) abandoned (INF down)`. In the report, Example Union's row has Missions `2`, INF pips `+3/-0` and a signed Trade figure, and Example Cartel's row has `1` under **Abandoned**. At the next tick the totals reset and this tick moves into the **TICK** drop-down.
 
 ## The panel
 

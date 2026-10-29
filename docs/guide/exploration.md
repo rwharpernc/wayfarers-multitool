@@ -35,7 +35,7 @@ alphabetical order of their names (in every mode the sections are alphabetical, 
 
 See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
-**On this page:** [Auto-Honk](#auto-honk) · [Discovery Alerts](#discovery-alerts) ·
+**On this page:** [How to: the common tasks](#how-to-the-common-tasks) · [Auto-Honk](#auto-honk) · [Discovery Alerts](#discovery-alerts) ·
 [Notable Bodies](#notable-bodies) · [Boxel Survey](#boxel-survey) · [Exploration Value](#exploration-value) ·
 [Organic Scanning](#organic-scanning) ([Exobiology guide](exobiology.md)) · [Codex Completionist](#codex-completionist) ·
 [POI Reference](#poi-reference) · [Notes](#notes) · [Expedition](#expedition) · [Expedition Log](#expedition-log) · [System targets and Body info](#system-targets-and-body-info) · [Exploration Dashboard](#exploration-dashboard) · [Route Planner](#route-planner) ([Carrier route](#carrier-route)) · [Nearest place to land](#nearest-place-to-land) · [Compass](#compass) ·
@@ -43,6 +43,72 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 Anything that draws on your game screen needs an overlay. See [Getting started](getting-started.md#what-you-need)
 and [Setting up the overlay](../OVERLAY_SETUP.md).
+
+## How to: the common tasks
+
+Short step lists for the things players ask for most. Each links to the section with the full detail and a worked example.
+
+**Set up auto-honk** ([details](#auto-honk))
+
+1. Open **Settings → WFMT → Exploration → Auto-Honk**.
+2. Tick **Enable Auto-Honk**, and set **Fire button** to the one your Discovery Scanner is on.
+3. Press **Test Honk Now** and read the result beside the button.
+4. Jump into a system. The scanner fires once on arrival.
+
+**Use the Boxel Survey** ([details](#boxel-survey))
+
+1. Open the **Boxel Survey** section and choose **Sequence**.
+2. Type a procedural system name into **Seed system** (or press **Use Current**) and press **Set**.
+3. Press **Copy**, paste the target into the galaxy map and jump.
+4. On arrival WFMT marks the system visited and moves to the next name. Press **Next >** to skip a name the galaxy map cannot find.
+
+**Read the System targets card** ([details](#system-targets-and-body-info))
+
+1. Tick **Enable the System targets card** under **Settings → WFMT → Overlays → System targets** and press **Test Card**.
+2. Honk and scan in a system. The card lists **To map**, **Life**, **Known** and **Done**.
+3. Map a body or analyze its last organism and it leaves the list.
+
+**Use the Codex Completionist** ([details](#codex-completionist))
+
+1. Open the **Codex Completionist** section and press **MY CODEX**.
+2. On the **Overview** tab read **Closest to complete** to see which types are quickest to finish.
+3. On the **Not found** tab read **Where to look** to choose a planet.
+4. Press **Backfill Journals** once to bring in older finds.
+
+**Use the Route Planner** ([details](#route-planner))
+
+1. Press **PLOT** in the Route Planner section.
+2. Type the destination and press **Generate route**.
+3. Open the galaxy map and paste the system that is on your clipboard. Repeat after every jump.
+
+**Use the surface compass** ([details](#compass))
+
+1. Land (or get out of your ship) on a planet.
+2. Type a name in the Compass box and press **MARK** to save the spot.
+3. Press **TARGET** until it says `Now aiming at ...` and your mark.
+4. Tick **Enable Surface Compass** under **Settings → WFMT → Overlays → Surface Compass** to see the arrow on your screen.
+
+**Use the Dashboard** ([details](#exploration-dashboard))
+
+1. Press **DASHBOARD** in the Dashboard section.
+2. Read the tab that opens (**Orbit** in space, **Surface** when landed), or pick **Overview** or **Exploration**.
+3. Click a heading on the **Orbit** tab to sort the bodies, and click a row for that body in full.
+
+**Write a note** ([details](#notes))
+
+1. Open the **Notes** section, type a line in the box and press **ADD**.
+2. Press **NOTES** to search, change or delete notes.
+
+**Find somewhere to land** ([details](#nearest-place-to-land))
+
+1. Press **FIND** in the Nearest place to land section.
+2. Tick what you need, tick **Allow this lookup**, and press **Find**.
+3. Double-click a row to copy its system name.
+
+**Find a point of interest** ([details](#poi-reference))
+
+1. Press **FIND** in the POI Reference section.
+2. Paste the system name that is now on your clipboard into the galaxy map.
 
 ## Auto-Honk
 
@@ -58,6 +124,13 @@ Fires your Discovery Scanner automatically every time you jump into a system, so
    - **Skip systems already visited** (on by default): see below.
 3. Read the status line under the options. It says which key WFMT will press (`Status: Will press <key> when you jump into a system.`, in green) or why it cannot (in amber). Press **Rescan** after you change your bindings in the game, or after you change the fire button here, to read them again.
 4. Press **Test Honk Now** to press the key at once and check it works without waiting for a real jump. The result appears beside the button (`Last test (Test): sent`, or the reason it failed, such as `Elite Dangerous window not found`). **Rescan** and **Test Honk Now** work even while Auto-Honk is off.
+
+**Example: setting it up.** Your Discovery Scanner is on the keyboard key `U`, bound as the secondary fire.
+
+1. Open **Settings → WFMT → Exploration → Auto-Honk**, tick **Enable Auto-Honk** and leave **Fire button** on **Secondary**.
+2. Press **Rescan**. The status line turns green and reads `Status: Will press U when you jump into a system.`
+3. Press **Test Honk Now** with the game running. Beside the button you see `Last test (Test): sent`.
+4. Jump to the next system. WFMT presses `U` once for the arrival. If you jump away and straight back, it does not honk that system a second time in the same session.
 
 **When it fires.** On every jump into a system (`FSDJump`) and every fleet carrier jump (`CarrierJump`) while Auto-Honk is on. It does nothing at any other time, and it presses the key once for each arrival.
 
@@ -246,6 +319,14 @@ Current** and **Set**, a **Find Nearby (EDSM)** button, a line of survey counts 
 4. When you arrive at the target, WFMT marks it visited and moves to the next candidate. With *Auto-copy next
    target to clipboard on jump* on (the default), it also copies that next name for you.
 
+**Example: working through one boxel.** You are in `Outotz LS-K d8-0` and want to survey the systems around it in order.
+
+1. Open the **Boxel Survey** section, choose **Sequence**, press **Use Current** and then **Set**. The gray hint says the name looks like a boxel name, and **Target** shows the seed.
+2. Press **Copy**, open the galaxy map, paste the name and plot the jump.
+3. Jump. On arrival WFMT marks the system visited, moves **Target** to the next candidate and, with the default *Auto-copy next target to clipboard on jump*, copies that name too.
+4. Paste it into the galaxy map and repeat. If the map cannot find a name, press **Next >** to skip it.
+5. The line under the buttons keeps your tally of what you found, in the form `Surveyed: N systems | ELW | WW | AW | terraformable | bio`.
+
 **If a candidate doesn't exist:** the galaxy map won't find it. Press **Next >** to skip it. (**< Prev** steps
 back; at the very start it says "Already at the start of the sequence".) After **3** manual **Next >** presses in a
 row without a confirmed jump, WFMT asks EDSM for the nearest real procedurally named system outside the current
@@ -293,6 +374,14 @@ like `> Outotz LS-K d [3/12]`: the `>` marks the current cube and `[3/12]` is sy
    knows. It needs your position.
 3. Select a cube and press **Discover Known Systems (Spansh)** to fill in the systems Spansh knows for that cube.
 
+**Example: clearing a small region.** You are in `Outotz LS-K d8-0`.
+
+1. Choose **Region Sweep**, press **Use Current** under *Add cube — seed system*, then **Add**. The list shows the cube with `>` marking it as current.
+2. Press **Discover Nearby Cubes (EDSM)**. More cubes join the list, each with the systems EDSM knows.
+3. Select a cube and press **Discover Known Systems (Spansh)** to fill in more of its systems.
+4. Press **Copy**, paste the **Target** into the galaxy map and jump. The count for that cube moves up, for example `> Outotz LS-K d [3/12]`.
+5. When every known system in the cube is done, the sweep moves to the next unfinished cube. If you judge a cube not worth the time, select it and press **Mark Empty** (the list shows `[empty]`).
+
 **Working through it:** the **Target**, **< Prev**, **Next >** and **Copy** buttons work as in Sequence, on the
 current cube. **Set Current** makes the selected cube the current one, and **Remove** deletes it from the queue.
 
@@ -334,7 +423,21 @@ squadron staging system.
    one when you arrive. That tick is in the Waypoint Route section at the foot of **Settings → WFMT → Exploration → Boxel Survey**.
 5. The waypoints are saved for each commander, so the list and the current target are still there after a restart.
 
+**Example: a squadron staging route.** Four systems to visit, in a sensible order.
+
+1. Choose **Waypoints**. Type the first system name under *Add waypoint* and press **Add**; repeat for the other three. (Or put one name per row in the first column of a CSV file and press **Import CSV…**.)
+2. Jump once so WFMT knows your position, then press **Reorder (Nearest-Neighbor, EDSM)**. The list is rebuilt starting from where you are and always going to the nearest unvisited waypoint next.
+3. Use **Move Up** and **Move Down** if you want a different order.
+4. Press **Copy**, paste the target into the galaxy map and jump. With *Auto-copy next waypoint to clipboard on jump* on, the next waypoint is copied when you arrive.
+
 ### RND: find something nobody has discovered
+
+**Example.** You are exploring and want a system that has no scans on record.
+
+1. Press **RND** on the button row (the Boxel Survey section can stay folded).
+2. Read the status line, for example `Copied: <name> (31 ly away, no scans on Spansh or EDSM)`.
+3. Open the galaxy map, paste the name and plot the jump.
+4. If you want a different one, press **RND** again. Within 5 light-years of the first search it picks another from the same list and only the EDSM check takes time.
 
 **RND** sits on the Exploration button row, next to A.H., D.A., N.S. and W.D., so it is visible even while the
 Boxel Survey section is folded, and works whichever sub-mode is selected. It does not touch your Sequence target.
@@ -462,6 +565,15 @@ more than 14 days old, and **Refresh Catalog** fetches it again on demand. It is
 after the first download it opens instantly and works offline. If the download fails, the tab says so, and shows
 the saved copy if there is one.
 
+**Example: choosing what to hunt for.** You have found 95 of 1,070 catalogued entries and want the quickest category to finish.
+
+1. Press **MY CODEX** and stay on the **Overview** tab.
+2. Under **Closest to complete**, read the first row. Types are listed with the fewest entries left first, and the columns show **Found**, **Of**, **Left** and **Done**.
+3. Switch to the **Not found** tab and look for entries of that type. Click the **Where to look** heading to sort if you like.
+4. Read the hint for an entry such as `Bacterium Aurasus - Teal`. It gives the body type, atmosphere, gravity and temperature the species needs, and what decides the color (`Teal: orbiting a class M star`). Use it to choose a planet; it says where the entry can appear, not where one is.
+5. Select the row and press **Open Reference** to search canonn.science for the entry in your browser.
+6. If the numbers look low, press **Backfill Journals** once. It is safe to press again.
+
 Codex Completionist has no specification page of its own. The code is `codex_completionist.py`,
 `codex_completionist_window.py`, `codex_hints.py`, `codex_catalog.py` and `codex_backfill.py` in the plugin folder.
 
@@ -498,6 +610,14 @@ your position from the current journal.
 - By default it skips sites you've already logged in Codex Completionist, so it points you somewhere new. You can
   turn that off in the same place.
 
+**Example: finding a Guardian site.**
+
+1. Jump or log in so WFMT knows your position, then open the **POI Reference** section and press **FIND**.
+2. Two result lines appear, one for **GEC (edastro.com)** and one for **Canonn**, each with its nearest result. The name of the nearer system is already on your clipboard.
+3. Paste it into the galaxy map and plot the jump. If you wanted the other source's result instead, press that line's **COPY** button.
+4. Press **View site details** on the Canonn line to read about the site in your browser.
+5. Press **UPDATE** if you want Canonn's lists downloaded again before searching.
+
 ## Notes
 
 *(Starts minimized.)*
@@ -518,12 +638,60 @@ you when you arrive. With the section folded, the title says `- 2 here`.
 - A note can be up to 2,000 characters, a system or body name up to 100, and you can keep 2,000 notes. Past a limit WFMT tells you
   rather than cutting the note short.
 
+**Example: leave yourself a reminder.** You find an Earth-like world with a moon and want to come back.
+
+1. Open the **Notes** section, type `ELW with a moon, scan the other side` in the box and press **ADD** (or Enter). The note is saved against the system you are in, and the body too when the game names one near you.
+2. Fold the section. Its title now reads `- 1 here`.
+3. Later, when you arrive in that system, the section shows the note again. To change it, press **NOTES**, select it in the list, edit it and press **Save**.
+4. To find it from anywhere, press **NOTES** and type a word from the system, body or note into **Search**.
+
 Notes are matched to a system by its name (ignoring capitals and spaces at the ends), so a note about `Sol` shows when you are in Sol.
 
 ## Expedition
 
 A planner for a trip. An **expedition** is a named list of **stops** (systems, each with an optional body and note). Start it and WFMT ticks stops
 off as you arrive and keeps the totals; you can keep several expeditions and run one at a time. Starting an expedition also starts a run in the [Expedition Log](#expedition-log), and the two start, pause and stop together.
+
+### Starting and managing an expedition
+
+**Everything is done in the Expedition window.** Press **EXPEDITION** in the panel's Expedition section to open it. The panel only shows what is running (and has **COPY** and **Copy on arrival**); it has no Start, Pause or Stop.
+
+There are two ways to start, and you pick one by the tab you are on:
+
+| You want | Go to | Press | What happens |
+|---|---|---|---|
+| A trip with stops, ticked off as you arrive | **Plan** tab | **Start** | The expedition starts, and a run starts in the Log with the same name (unless switched off in Settings) |
+| To record a trip without planning stops | **Log** tab | **Start** | A run starts from the system you are in, in the ship you are flying. There are no stops to tick off |
+| To count a trip you are already on | **Log** tab | **Start from my last** and **sale**, **Discovery Data sale** or **Exobiology Data sale** | The expedition begins just after that sale and fills itself in from your journals |
+
+Whichever you use, the same buttons manage it afterwards, on either tab:
+
+- **Pause** holds it: nothing is counted and the clock stops. The button reads **Resume** while it is held.
+- **Stop** ends it. The expedition and its Log run stop together, because they are linked.
+- Starting another one sets the running one aside, so only one runs at a time.
+- The panel's Expedition section, the Dashboard and the overlay card always show the one that is running.
+
+**Example 1: plan a trip from Sol to Colonia.**
+
+1. Press **EXPEDITION**. On the **Plan** tab type `Colonia run` in the **Name** box and press **New**.
+2. Type `Sol` in **System** and press **Add stop**. Type `Colonia` and press **Add stop** again. (**Here** fills in the system you are in.)
+3. Press **Start**. The status line says it started and that it is logging in the Expedition Log.
+4. Play. Each time you arrive in Sol or Colonia the stop is ticked off, and every jump adds to the totals. The panel shows `1 of 2 stops` and the next stop.
+5. **Pause** for a break and **Resume** after it. When you are done, press **Stop**. The trip stays in the **Log** tab with what it found and earned.
+
+**Example 2: record a trip with no plan.** You are leaving the Bubble to explore and have no route yet.
+
+1. Open **EXPEDITION** and switch to the **Log** tab.
+2. Type a name such as `Bubble to the Rim` in **New expedition name** (or leave it empty) and press **Start**.
+3. Explore. The Log counts systems, jumps, light-years, bodies, mapping, species and credits from your journal. The panel and the overlay card show the running totals.
+4. Press **Stop** when you finish.
+
+**Example 3: you are already out there.** You have been exploring for two days and have not sold anything since leaving.
+
+1. Open **EXPEDITION** and switch to the **Log** tab.
+2. Press **Start from my last** and **sale**. It begins just after your last sale, so everything you are still holding counts.
+3. To count only the exobiology you have gathered, press **Exobiology Data sale** instead (or **Discovery Data sale** for exploration data alone).
+4. It then carries on counting live. Press **Stop** when you sell up and finish.
 
 **The Expedition row** (a collapsible section in Exploration mode) shows the one running:
 
@@ -809,6 +977,15 @@ The card is drawn in lists under the heading, each headed with its count: **To m
   - It uses your own commander's journals, the ones your visit history says hold your visits.
 - **Rows shown** (3 to 16, 6 to start) caps the list, and the rest are counted (`+ 3 more`). You can switch the life list off.
 
+**Example: working a new system with System targets.**
+
+1. Under **Settings → WFMT → Overlays → System targets**, tick **Enable the System targets card** and press **Test Card** once to place it.
+2. Jump into a system and honk. The heading shows the system name with a progress bar and a count such as `4 of 8 scanned`.
+3. As you scan bodies, the ones worth at least 100,000 credits appear under **To map (n)**, most valuable first, each with a short name (`A 1`), a tag (`ELW`, `WW`, `HMC` and so on) and a value such as `1.2M`.
+4. Bodies with life you have not finished appear under **Life (n)** as `1/3 life`.
+5. Map a body and it leaves **To map**. Analyze the last organism of a body and it leaves **Life**. The finished ones are listed under **Done (n)**, so after a break you can see where you left off.
+6. When the list is empty it says `Nothing over 100k to map yet`, or `Nothing over 100k left to map or sample` once the game reports every body found.
+
 **Body info** (Settings → WFMT → Overlays → Body info) describes one body. It shows:
 
 - its name and class,
@@ -892,6 +1069,14 @@ is left alone until the next change.
   - The expedition: time, systems, jumps, distance, bodies, first discoveries, maps, landings, Codex entries, samples and species, earned and unsold.
   - The route: fuel, range, jumps left, the next supercharge.
 
+**Example: a landing.** You drop to a planet's surface.
+
+1. Press **DASHBOARD**. The window opens on the tab that suits where you are.
+2. When you land it switches to **Surface** by itself. There you see the body's conditions and materials, each genus with what it could be and its pay, and progress such as `Collecting: 1/3`.
+3. It also shows how far you are from your last sample and how far you must be for the next one.
+4. When you lift off it switches back to **Orbit**, where you can click the **Scan value** heading to sort the system's bodies by value and click a row to see that body in full.
+5. If you picked a tab yourself, the window leaves it alone until the next change.
+
 **Route Planner.** The window's header also has a **Route Planner** button, which opens the [plotter](#route-planner).
 
 **Switching overlays off and on.** The two buttons at the top right of the window, **Exploration overlays** and **Exobiology overlays**, hide and show those cards without touching Settings. Each says what pressing it will do: `Exploration overlays: ON - hide`, or (in the warning color) `Exploration overlays: OFF - show`.
@@ -956,6 +1141,16 @@ The **PLOT** button in the Route Planner section of the Exploration panel (click
   - When a route is ready the window says so, that it was sent to the Route overlay (when that overlay is switched on), and which system is on the clipboard.
   - At every system you reach it says which system is next and that it is on the clipboard.
   - At the end it says the route is finished and will reset.
+
+**Example: a long trip to Colonia.** You are flying a ship with a Guardian FSD booster.
+
+1. Press **PLOT** (the window shows your ship, drive and booster as read from the journal).
+2. Leave the source as the system you are in, type `Colonia` as the destination and press **Generate route**. Leave **Use supercharge** on. Tick **Use FSD injections** only if you carry the materials and want them used.
+3. Wait for the bar and timer. A long route can take a minute or two.
+4. The table lists every jump with **Distance (ly)**, **Left (ly)**, **Fuel (t)** and **At this system** (supercharge at a neutron star, refuel, use an injection).
+5. The first system is already on your clipboard. Open the galaxy map, paste it into the search and set it as your destination.
+6. After each jump the next system is copied. Paste it again. Systems you have reached turn green.
+7. To keep the trip in one place, press **Start expedition**. The status line reads like `Started 'Neutron Highway from Sol to Colonia': 12 stops. Logging in Expedition Log.`
 
 ### White dwarfs
 
@@ -1071,6 +1266,14 @@ The panel section has a line saying where you are and which pad your ship needs 
 5. Tick **Allow this lookup: pressing Find sends Spansh my position, the pad size and these choices, nothing else**. It is off until you tick it, and it is the same switch as **Settings → WFMT → Exploration → Nearest place to land**. Nothing is sent before it is ticked.
 6. Press **Find**. The window asks Spansh and fills two tables. An answer is remembered for two minutes, so pressing Find again with the same choices costs no new request.
 
+**Example: low on fuel in deep space.**
+
+1. Press **FIND**. **From** shows your system and coordinates.
+2. Leave **Refuel** and **Repair** ticked, and leave **Landing pad** on **My ship's pad** so a large ship is not sent to a small outpost.
+3. Tick **Allow this lookup**, then press **Find**.
+4. Read the **Stations** table for the nearest place with a suitable pad (the **Pads** and **Has** columns say what it offers), and the carrier table for carriers open to all. Check a carrier's **Last reported** age before relying on it.
+5. Double-click the row you want. Its system name is copied; paste it into the galaxy map.
+
 **The tables.** Up to eight places are listed in each, nearest first.
 
 | Table | Columns |
@@ -1109,6 +1312,13 @@ What it can point at:
 - **MARKS** opens the Marks window.
 
 When the target is a mark on another body than the one you are on, the line says so (`Mark Ship is on <body>, not here.`) instead of pointing.
+
+**Example: finding your way back to a spot.** You land by a crashed ship and want to return to it after exploring.
+
+1. Standing at the spot, type `Wreck` in the Compass box and press **MARK**. The box clears and the mark is saved with the body and your latitude and longitude.
+2. Go exploring. Press **TARGET** until the line reads `Now aiming at ...` with `Wreck`.
+3. The line shows the distance and direction, for example `↗ Wreck - 340m NE`. With **Enable Surface Compass** ticked, the arrow on your screen turns as you turn, and straight up means straight ahead.
+4. To check or edit the mark, press **MARKS**, select it and use **Save** or **Delete**. In that window, **Nearest hotspot** and **Nothing** change what the compass points at.
 
 **The Marks window.** Its table lists every mark with the columns **Name**, **Body**, **Latitude**, **Longitude** and **From here** (the distance from you now, when the mark is on your body). Under the heading **The compass points at:** (with what it is now aiming at) are three buttons: **Nearest hotspot**, **Selected mark** and **Nothing**. Below the table is the editor:
 

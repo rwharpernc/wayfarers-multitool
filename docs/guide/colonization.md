@@ -24,10 +24,78 @@ page is about your own deliveries, ship and carrier, and details may change.
 
 See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
-**On this page:** [The COL page](#the-col-page) · [Tracking a site](#tracking-a-site) ·
+**On this page:** [How to](#how-to) · [The COL page](#the-col-page) · [Tracking a site](#tracking-a-site) ·
 [The Colonization Sites window](#the-colonization-sites-window) · [Where to buy](#where-to-buy) · [My Projects](#my-projects) · [Planned builds](#planned-builds) ·
 [The shopping list on the overlay](#the-shopping-list-on-the-overlay) ·
 [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
+
+## How to
+
+Short task lists. Each one links to the section with the detail. The numbers in the worked examples throughout this guide are made up to show the shape of what you see; yours will differ.
+
+**See your current build.**
+
+1. Press **COL** in EDMC.
+2. Read **Current project**: the progress line, **Still to get**, **Trips left** and **Next**.
+3. If you have more than one active site, the **Others** line says so. Press **DASHBOARD** to pick a different one.
+
+See [The COL page](#the-col-page).
+
+**Track a new construction site.**
+
+1. Dock at the construction depot, or open its market, once.
+2. Press **COL**. The site is under **Current project**, or press **DASHBOARD** to see it in the list.
+
+See [Starting to track a site](#starting-to-track-a-site).
+
+**Build a shopping list.**
+
+1. Press **DASHBOARD** and click the site on the left.
+2. Use **Show** (**To buy**) and the **Filter** box to narrow the table to what you are working on.
+3. Press **Copy Shopping List** (top right) and paste it into a note or chat.
+
+See [The Colonization Sites window](#the-colonization-sites-window) and [Buttons](#buttons).
+
+**Use Where to buy.**
+
+1. In the Sites window, click a commodity row.
+2. Press **Where to Buy** in the window header.
+3. Check **Around**, **Within**, **Sort** and **Landing pad**, then press **Find nearest** for that commodity, or **Find all** for the whole list.
+4. Click a result row to copy its system name, then paste it into the galaxy map's search.
+
+See [Where to buy](#where-to-buy).
+
+**Copy a To Acquire list for someone who asks what you still need.**
+
+1. Press **DASHBOARD** and click the site.
+2. If a transfer to your carrier did not register, press **Rescan Carrier** first.
+3. Press **Copy To Acquire** and paste the result.
+
+See [Buttons](#buttons).
+
+**Start a Raven Colonial project for a new site.**
+
+1. Tick the master switch in **Settings → WFMT → Colonization → Raven Colonial** and save your Raven key there (get it at ravencolonial.com/user).
+2. Dock at the new site. On the COL page press **CREATE ON RAVEN**, or in the Sites window pick the site and choose **Raven Colonial → Create Project on Raven…**.
+3. In the dialog choose the plan entry (or **None**), the Location, Building and Layout, then press **Create**.
+
+See [Starting a project on Raven Colonial](#starting-a-project-on-raven-colonial).
+
+**Archive a finished site.**
+
+1. Press **DASHBOARD**.
+2. Choose **Manage Sites → Archive Finished**.
+3. To look at it later, choose **Manage Sites → Show Archive**. Select the site and press **Restore** to bring it back.
+
+See [The archive](#the-archive).
+
+**Use the shopping list on the overlay.**
+
+1. Make sure an overlay is running ([Setting up the overlay](../OVERLAY_SETUP.md)).
+2. Press **OVERLAY** on the COL page. It lights while the card is on.
+3. Press it again to turn the card off. It stays as you left it after a restart.
+
+See [The shopping list on the overlay](#the-shopping-list-on-the-overlay).
 
 ## The COL page
 
@@ -45,6 +113,19 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 | Biggest gaps (t) | The four commodities with the most still to get, with their tons. Left out when nothing is left to get |
 | Next | One sentence on what to do now: how many tons to get (and whether bought or moved onto your carrier), that your ship and carrier hold everything so you should deliver it, that everything is delivered and you should dock to finish the build, or that the build is complete |
 | Others | `+N more active sites` when you have more than the one shown (the line is left out when you have none) |
+
+**Example (made-up numbers).** You are building an outpost with 8,000 t to deliver, 1,200 t of it handed over so far, and you have a fleet carrier. Your ship holds 400 t. The page might read:
+
+```
+Progress        15% complete
+Delivered       1,200 of 8,000 t
+Covered         3 fully · 2 partly · 5 not yet (of 10 commodities)
+On hand         180 t
+Carrier         120 t moved onto your carrier
+Trips left      9 to buy · 14 to haul (400 t ship)
+```
+
+Read it as: ten commodities are still outstanding, three need nothing more, and you should expect about nine buying loads and fourteen hauling loads to finish. The **Next** line then tells you in one sentence what to do now.
 
 **An offer to start a Raven project.** When a construction site appears for the first time and [Raven Colonial](https://ravencolonial.com) has no project for it, a line above **Current project** says `Raven Colonial has no project for <site>.` with two buttons. **CREATE ON RAVEN** opens the Colonization Sites window on that site and its [Create dialog](#starting-a-project-on-raven-colonial); **NOT NOW** hides the line. It is made once per site and goes away once a project exists. It needs the master switch and progress sharing on, and your Raven key saved, because WFMT only looks at Raven for a site when it is allowed to share.
 
@@ -73,6 +154,8 @@ The Overview says:
 | Claims | How many systems you have claimed (`ColonisationSystemClaim`), how many of those you released, and how many colonization beacons you deployed. Counts only: the game does not say when a claim ends, so WFMT does not list which systems are still yours |
 | Average build | Days from the first time WFMT saw a site to the day the depot reported it complete, over the sites for which both are known |
 | Counted since | The first delivery WFMT has counted |
+
+**Example: finding your busiest week.** Press **HISTORY**, open **Overview**, and read **Recently** (for example `3,200 t in 7 days, 9,800 t in 30 days`) and **Best day**. Switch to **By day** to see which days made up that week, to **Commodities** to see what you moved most of, and to **Sites** to see which depot took the most. The numbers there are examples of the layout only.
 
 **How far back the history goes.**
 
@@ -105,6 +188,8 @@ construction depot or open its market, and a `ColonisationContribution` event ea
 2. The **COL** page shows that site under **Current project** (see below). It is your most recently updated active
    site, with a line `+N more active sites` if you have others. With none it says `No active construction site. Dock at one to register it.`, and before WFMT knows the commander, `Waiting for commander login`.
 3. Press **DASHBOARD** to open the **Colonization Sites** window.
+
+**Example.** You fly to a new Orbital Construction Site and dock. You do nothing else. Press **COL**: the site is now under **Current project**, with the name the game gave the depot's market. Press **DASHBOARD** and it is in the list on the left, with its tons in **Left** and a percentage in **Status**. Had you only flown past it without docking or opening its market, it would not appear.
 
 ### Who is playing
 
@@ -171,6 +256,13 @@ Building a colony has two legs, and the window counts them apart.
 - Click a column heading to sort by it, and again to reverse. The default is alphabetical, so rows stay put while numbers change.
 - The status line at the bottom of the window says how many commodities are still needed, how many your ship (and carrier) cover, and the trips: `Your 400 t ship needs 21 trips to buy what is missing and 33 to haul it all to the site.` Its text changes to `The filters hide every commodity this site still needs.` when the filters hide every row.
 
+**Example: shopping at a station.** You are docked at a market and have opened its commodity screen once. You want only what this station can sell you for the site.
+
+1. In the Sites window click the site, then set **Show** to **To buy**.
+2. Tick **Only what [station] sells** (the box names your station).
+3. The table now lists only commodities that are still short and for sale here. Buy them, then watch the **In Cargo** and **Acquire** columns change as you load up. A row drops out of **To buy** once it is covered.
+4. Type `steel` in **Filter** to look at just that commodity.
+
 ### The table columns
 
 | Column | Meaning |
@@ -186,6 +278,14 @@ Building a colony has two legs, and the window counts them apart.
 
 The trip columns use at most two decimals (`4`, `1.5`, `1.25`, `0.33`), never round a small remainder down to 0, and show a dash
 until EDMC has given your ship's capacity.
+
+**Example row (made-up numbers).** Steel, with a fleet carrier and a 400 t ship:
+
+| Required | Delivered | Acquire | In Cargo | FC | Buy Trips | Haul Trips |
+|---|---|---|---|---|---|---|
+| 1,000 | 200 | 300 | 100 | 400 | 0.75 | 2 |
+
+The site still needs 800 t (1,000 less 200). You hold 100 t and have moved 400 t onto the carrier, so 300 t is left to acquire. At 400 t a load that is 0.75 of a buying trip, and 2 loads to carry all 800 t to the site. The row has no tint because you are still short.
 
 ### Row colors
 
@@ -320,6 +420,12 @@ little cargo, wait 15 minutes and open Carrier Management again.
 old, so WFMT took Frontier's figure as the real hold. If a load of yours is missing from it, Frontier's copy was only partly updated.
 Press **Rescan Carrier**, and tell us if it happens often, with the log lines.
 
+**Example (a worked sequence).** Following the steel row above, where **Acquire** was 300 t:
+
+1. You buy 300 t of steel. **Acquire** falls to 0 as you load, and the row turns green because your ship and carrier together now cover the 800 t the site still needs.
+2. Had you bought 350 t instead, together they would be more than the site needs and the row would turn orange. Nothing is wrong; you simply hold extra.
+3. You carry the stock to the site and deliver it. The row leaves the table once the site has it all.
+
 ### The commodity table: grouped, like the overlay
 
 For anyone who does not use the overlay, the commodity table is the shopping list, with the same order and the same graying as the overlay:
@@ -347,6 +453,14 @@ It asks [Spansh](https://spansh.co.uk) (a community-run map of the game), so it 
 
 - Nothing is fetched until you press the button.
 - Only the commodity name and the system you search around are sent.
+
+**Example: finding Steel for a site (made-up).** The site is in a system you are not in.
+
+1. Click the **Steel** row in the Sites window, then press **Where to Buy**. The note reads `Ready to search for Steel. Press Find nearest.`
+2. Leave **Around** as the site's system (or press **Here** to measure from where you are), keep **Within** at 50 ly, and choose **Landing pad: Large only** if you fly a large ship.
+3. Press **Find nearest**. The table lists stations with Distance, Arrival, Price and Supply.
+4. Click the first row you like. The note says the system name was copied; paste it into the galaxy map's search.
+5. If nothing came back, raise **Within** or set **Landing pad** to **Any size**, and search again.
 
 ### The options
 
@@ -382,6 +496,13 @@ search system is not: it starts as the site's system again.
 
 - That request goes first. A commodity that one of those stations can supply in full is not searched on its own (its answer comes from that station's market), so a list that one station can fill takes a single request.
 - After the searches, if the route still leaves two or more commodities uncovered, one more request asks for stations that have all of those in stock. The whole market it returns also fills in any other commodity on your list those stations sell.
+
+**Example: planning the whole list (made-up).** You have 12 commodities left to buy.
+
+1. In the Sites window set **Show** to **To buy**, so covered rows are left out.
+2. In Where to Buy set **Within** to 100 ly and press **Find all**. The note shows how far it has got; press **Stop** if you want to stop early and keep what it found.
+3. Read **Best single systems** first. If system 1 shows `18,000 of 20,000 t` with a **Short** list under it, you can park the carrier there and buy most of the list in its stations, then cover the short items from the suggested route.
+4. Press **Copy Route** to paste the plan into a note.
 
 ### Best single systems
 
@@ -434,7 +555,9 @@ The results table has the columns **Station**, **System**, **Type**, **Planetary
 - If Spansh is busy or unreachable, the panel says the search failed; try again shortly. Nothing else in WFMT is affected.
 - The search looks for stock that is **for sale**. It does not know what a station's market will have tomorrow.
 
-**Buttons.** The header of the window, top right. All of them act on the site picked on the left:
+### Buttons
+
+The header of the window, top right. All of them act on the site picked on the left:
 
 - **Copy Shopping List** (the highlighted button) copies that site's list to the clipboard: a first line with the site and system, then lines like `1,200 t  Steel`, biggest first. What is in your ship and on your fleet carrier is already taken off.
 - **Copy To Acquire** copies a short list for someone who asks what you still need, for example part way through loading your carrier: a first line with the site and system, then one line per commodity such as `Steel: 200 t`, biggest first. Only commodities with something left to acquire are listed; what is in your ship and on your fleet carrier is already taken off. It uses the figures the window shows, so a transfer WFMT missed can be fixed first with **Rescan Carrier**.
@@ -447,6 +570,16 @@ The results table has the columns **Station**, **System**, **Type**, **Planetary
   [Sharing your progress with Raven Colonial](#sharing-your-progress-with-raven-colonial).
 - **Manage Sites** (a menu): **Archive Finished** moves every complete or failed site into the [Archive](#the-archive); **Show Archive** opens it. **Remove Site** stops tracking the selected site, and **Remove Finished** deletes every complete or failed site and says how many it removed. Neither removal asks first. Removing a site only forgets WFMT's tracking of it: docking at the depot again registers it afresh.
 
+**Example: copying lists.** For a site that still needs 1,200 t of Steel and 800 t of Titanium, with nothing yet aboard, **Copy Shopping List** puts this on the clipboard (the site and system are made up):
+
+```
+Example Outpost, Example System
+1,200 t  Steel
+800 t  Titanium
+```
+
+**Copy To Acquire** gives the same commodities as `Steel: 1,200 t` and `Titanium: 800 t` under the site line. Once you have moved 500 t of Steel onto your carrier, both lists show `700 t` for Steel.
+
 ### The archive
 
 Finished sites stay in the Sites window until you remove or archive them; WFMT never clears them by itself. The **Archive** keeps them for reference without crowding the list of sites you still work on.
@@ -455,6 +588,8 @@ Finished sites stay in the Sites window until you remove or archive them; WFMT n
 - **Show Archive** opens a window listing them, newest finish first: the site, its system, how it ended, when WFMT first saw it and when it finished, how long it took, and the tons it needed. Select one to see each commodity it needed and what was delivered. Delivered counts everyone's deliveries, as the depot reports them.
 - **Restore** puts the selected site back in the Sites window. **Copy Summary** copies its facts as text. **Manage → Remove Permanently** forgets it after asking; the delivery history keeps your own totals but not the site's list of commodities.
 - Archived sites still count in the [History](#history) figures, and they are in the same data file as the other sites, so **Back up my data** includes them. If a depot reports an archived site as under construction again, it returns to the Sites window.
+
+**Example: tidying up after a build.** Two of your six sites show `complete` and one shows `failed`. Choose **Manage Sites → Archive Finished**. The three leave the list, and the subtitle's count of active sites is unchanged. Choose **Manage Sites → Show Archive** to see them, newest finish first, with how long each took. Select one and press **Copy Summary** to paste its facts, or **Restore** to put it back. Your History totals still include them.
 
 ## My Projects
 
@@ -472,6 +607,8 @@ The Colonization Sites window only knows sites you have docked at. **My Projects
 - **The two writes** need your Raven Colonial key and the master switch (see [Sharing your progress with Raven Colonial](#sharing-your-progress-with-raven-colonial)). Nothing is saved until you press the button.
 - It does not change WFMT's own tracking. A project you have never docked at is listed from Raven's figures alone, so its commodity list is Raven's, not your journal's.
 
+**Example: choosing what to work on (made-up).** You open My Projects and the line under the title reads `CMDR Example - 6 projects · 5 counted need 41,000 t · 105 trips in your ship`. You select the project marked **Here**, press **More → Copy Shopping List**, and have its needs biggest first. Another project is finished, so you double-click its row to stop counting it, and the line changes to say `unsaved changes to the counted list`. Nothing reaches Raven Colonial until you choose **More → Save Counted List…** and confirm.
+
 ## Planned builds
 
 The journal only reports a construction site once you have docked at it, so a build you have only **planned** never appears in WFMT.
@@ -482,6 +619,8 @@ Press **Planned Builds** (in the **Raven Colonial** menu, top right of the Colon
 - The top of the window names the system's **architect** (the commander who planned it there) and whether Raven Colonial has it **open** or **locked**, as Raven Colonial reports them.
 - A site you have docked at and WFMT tracks is marked **yes** under *In WFMT*.
 - The window opens for the selected site's system, and shows the new system if you open it again from another site. With no system known yet for the site, dock at it once.
+
+**Example (made-up).** You plan three outposts in one system and have docked at only one. Open **Raven Colonial → Planned Builds** from the Sites window. The table lists all three: the one you are building shows **Building** with **yes** under *In WFMT*, the other two show **Planned** with **no**. Click a planned row to see its five biggest commodities in the footer, and read `planned builds need N t` under the title to know the total still to come.
 
 ### Full cost
 
@@ -572,6 +711,13 @@ When you dock at a construction ship or site that Raven Colonial has no project 
 - **What is sent:** your key, the site's market id, system name, address and position, the commodities still needed with the depot figures, and what you typed in the dialog. No journal data beyond that.
 - **Limits:** a system that is locked to another architect may refuse a project (the dialog warns when Raven reports it as locked). WFMT's own tracking never changes.
 
+**Example: first project in a new system (made-up).** The COL page shows `Raven Colonial has no project for Example Outpost.`
+
+1. Check that **Allow WFMT to write to Raven Colonial** is ticked and your key is set in Settings.
+2. Press **CREATE ON RAVEN**. The Sites window opens on that site with the Create dialog.
+3. Pick the matching **Plan entry** (its Location, Building and Layout fill in), or leave **None** and choose them yourself.
+4. Press **Create**. The status line says what worked. From then on your deliveries are shared as they happen.
+
 **Mark Plan Entry Demolished…** sets the selected site's entry in Raven's plan to *demolished* after you confirm. It changes Raven's record only, not the game. It needs the master switch and your key like the other writes, and says so when Raven's plan has no entry for the site.
 
 ### Reporting a finished build to Raven Colonial
@@ -588,6 +734,8 @@ Select a site your journal has reported **complete** and press **Report Complete
 - **Limits:** Raven Colonial must already have a project for the site, found from its plan or by the site's market id. If it has none
   (for example it is still only planned there), WFMT says so and sends nothing; **Create Project on Raven** can make one. Reporting does not copy anything back: WFMT's own tracking
   stays as it is.
+
+**Example (made-up).** You finish delivering and dock at the depot, and the game reports the site complete. Select it in the Sites window and choose **Raven Colonial → Report Complete to Raven**. Confirm `Tell Raven Colonial that Example Outpost in Example System is complete?` and the project is marked complete there. Nothing was sent before you confirmed.
 
 ## The shopping list on the overlay
 
@@ -609,6 +757,18 @@ It draws a table, with the site name as its title and the columns **Commodity**,
 - **Cargo** is what is in your ship's hold right now, so you can see what you just bought. A **✓** after the name means
   your hold **plus** what is on your fleet carrier already covers it (the row turns green, the same rule as the
   window's green rows); the row turns amber if together they are **more** than the site needs.
+
+**Example card (made-up).** Docked at a construction site, the card might show:
+
+```
+Example Outpost
+Commodity        Required  Acquire  FC   Cargo
+Aluminium           900      300    400   100
+Steel ✓           1,000        0    800   200
+► 32,769 remaining  ► 21 to buy  ► 33 to haul
+```
+
+Steel carries a check mark because the hold plus the carrier cover it, so its row is green. Aluminium is still short, so it has no tint. Set **List** to **To buy** and the Steel row disappears, leaving only what you still have to get.
 
 ### Order
 

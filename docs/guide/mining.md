@@ -9,7 +9,7 @@ Mining mode tracks two kinds of mining, keeps a book for each, and adds up every
 Use the **◀** and **▶** buttons at the top of the panel to switch between the two pages. Each page shows live stats
 for your current run, and its **BOOK** button opens the book for that page.
 
-**On this page:** [What each page shows](#what-each-page-shows) · [The buttons](#the-buttons) · [A typical run](#a-typical-run) · [Mining History](#mining-history) · [The live window](#the-live-window) · [The Space Mining Book](#the-space-mining-book) · [The Surface Mining Book](#the-surface-mining-book) · [Mining alerts](#mining-alerts) · [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) · [Settings](#settings)
+**On this page:** [How to](#how-to) · [What each page shows](#what-each-page-shows) · [The buttons](#the-buttons) · [A typical run](#a-typical-run) · [Mining History](#mining-history) · [The live window](#the-live-window) · [Marking a mining location](#marking-a-mining-location) · [The Space Mining Book](#the-space-mining-book) · [The Surface Mining Book](#the-surface-mining-book) · [Mining alerts](#mining-alerts) · [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) · [Settings](#settings)
 
 **Where this comes from:**
 
@@ -19,6 +19,55 @@ for your current run, and its **BOOK** button opens the book for that page.
 - Ring reserve and hotspot lookups use what players have uploaded to EDSM and Spansh.
 
 See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
+
+## How to
+
+**Start a Space Mining run.** Details: [Space Mining](#space-mining).
+
+1. Use the **◀** and **▶** buttons at the top of the panel until the Space Mining page shows.
+2. Undock. The page changes from `No active mining run. Undock to start tracking a new run.` to the live numbers of a new run.
+3. Fly to the ring and start mining. The **Hold**, **Asteroids prospected** and **Refined** lines fill in as you work.
+
+**Start a Surface Mining run.** Details: [Surface Mining](#surface-mining).
+
+1. Switch to the Surface Mining page with **◀** or **▶**.
+2. Launch the Rhino. The page changes from `No active Rhino deployment. Launch the Rhino to start tracking a new run.` to the live numbers.
+3. Stow the Rhino to end the run. The numbers stay on the page, marked `Rhino stowed (last deployment)`, until the next launch.
+
+**Read the radar.** Details: [Surface Mining Live](#surface-mining-live).
+
+1. On the Surface Mining page, press **LIVE**.
+2. Land, or drive, so you are on or just above the ground. Until then the window says `The radar draws when you are on or just above the ground.`
+3. Pick a reach with the **Radar reaches** buttons (50 m to 2 km) and press **Help** in the window's header to see what each mark means.
+
+**Log a ring.** Details: [The Space Mining Book](#the-space-mining-book).
+
+1. Press **BOOK** on the Space Mining page. Rings you DSS-scanned or mined at are added by themselves.
+2. For a ring the journals have not shown, press **Add ring** and fill in the form.
+3. Select a ring, type in **Your note**, press **Save note**, and use **Favorite** to star it.
+
+**Log a surface deposit.** Details: [Adding or editing a hotspot](#adding-or-editing-a-hotspot).
+
+1. Stand at the deposit in the Rhino and press **+H.S.** in the **LIVE** window (or **Add hotspot** in the Surface Mining Book).
+2. Check the **Contains**, **Rigs**, **Amount** and **Density** fields, and save.
+
+**Use Mining History.** Details: [Mining History](#mining-history).
+
+1. Press **DASHBOARD** on the page you are on (rings on the Space page, the Rhino on the Surface page).
+2. Read the **Overview** tab first, then open **Rings**, **Commodities** or **Runs** and click a heading to sort.
+3. Press **Refresh** to read the newest journal now.
+
+**Set mining alerts.** Details: [Mining alerts](#mining-alerts).
+
+1. Open **Settings → WFMT → Overlays → Flight Alerts** and tick *Enable Flight Alerts*.
+2. Make sure *Mining alerts* is ticked, then set the limpet number and the hold percentage.
+3. For rich-rock cards, type your commodities in **Settings → WFMT → Mining → Target commodities** ([how](#target-commodities)).
+
+**Find a hotspot.** Details: [H.S.: Find Nearby Hotspots](#hs-find-nearby-hotspots).
+
+1. Tick *Enable Spansh nearby hotspot finder* in **Settings → WFMT → Mining**.
+2. On the Space Mining page press **H.S.**, pick a **Material** and a **Where** distance, and press **Search**.
+3. Select a row and press **Copy system** to paste the system into the galaxy map.
 
 ## What each page shows
 
@@ -71,6 +120,21 @@ In your ship, from undocking. A run is one trip from `Undocked` to `Docked`: the
   - The lines go when you undock.
 - A **Paused** note (`Paused (in supercruise)`) while you are in supercruise. It changes nothing: the run keeps its numbers and carries on when you drop out.
 
+**Worked example: reading a Space run.** You undock from a station in a 200 t ship and mine a ring for about 40 minutes. Part way through, the page might read:
+
+```
+Hold: 64 of 200 t
+Asteroids prospected: 14 (High x3, Medium x6, Low x5)
+Last rock: Painite 34%, Platinum 12% (High), target: Painite
+Refining now: 840 t/h
+Run average: 720 t/h over 41 min
+Hold full in about 14 min
+```
+
+- The hold has 136 t of room. The 14 minutes is that room divided by the run average, so treat it as a guide.
+- The last rock held Painite above the share you set for it, so the page names it as a target. A card for it also shows on the overlay if Flight Alerts is on.
+- Dock and open the commodities market, and **What the station pays** compares the station's price for what you refined with the galactic average, so you can choose between selling here and flying on.
+
 ### Surface Mining
 
 In the Rhino SRV. A run runs from launching the Rhino to stowing it. The page keeps the last run's numbers (`Rhino stowed (last deployment)`) until the next launch, but the hold lines and *Refining now* show only while the Rhino is out.
@@ -86,6 +150,18 @@ In the Rhino SRV. A run runs from launching the Rhino to stowing it. The page ke
 - **Nearest saved deposit**: the closest deposit you saved, its material, how far and which way, with your rig-gap verdict when one is set.
 - **Rigs noted**: how many rigs you noted with **Rig placed** and how far the nearest is (see [Rig bands](#rig-bands)). Nothing until you note one.
 - A line saying what **CTR** or **BRD** last did, or why it could not (`WFMT cannot read your position: be on or just above the ground.`).
+
+**Worked example: a Rhino run.** You launch the Rhino on a body with a mining signal and drive between deposits. The page might show:
+
+```
+SRV hold: 40 of 72 t
+Ship hold: 64 of 200 t
+Last DSS scan: 4 Planetary Mining Location(s) on <body>
+```
+
+- The SRV hold line tells you how full the Rhino is, and **SRV hold full in** estimates the time left before it is.
+- The ship hold line is the last `Cargo` figure, because WFMT does not read the ship's hold while the Rhino is out.
+- Stow the Rhino and the page keeps these numbers as `Rhino stowed (last deployment)` until you launch again.
 
 Both pages carry the buttons below, and the Surface Mining Book and the coverage map are per commander.
 
@@ -116,6 +192,14 @@ The table lists up to 25 rings Spansh confirms have a hotspot for that material,
 
 Only the system name and the material are sent. A search that finds nothing tells you to try a longer distance or to check the spelling.
 
+**Worked example.** You want Painite and you are in the system you will start from.
+
+1. Tick *Enable Spansh nearby hotspot finder* in **Settings → WFMT → Mining**, then press **H.S.** on the Space Mining page.
+2. Type or pick `Painite` in **Material**.
+3. Leave **Where** on 100 ly, and leave **Search from** as it is (press **Here** if you changed it).
+4. Press **Search**. The table lists the rings Spansh confirms have Painite hotspots, nearest first, with **Hotspots** (how many Painite hotspots the ring has), **Distance (ly)**, **Arrival (ls)** and **Reserve level**.
+5. Click a heading (for example **Distance (ly)**) to sort, select one and press **Copy system**, then paste it into the galaxy map. If nothing came back, set **Where** to 250 ly and search again.
+
 ### PRICE: Find Best Price
 
 1. Type a commodity in **Commodity**. Suggestions follow what you type, with what this run refined listed first. Press Down on an empty box to see the list.
@@ -130,6 +214,14 @@ The table lists up to 25 stations Spansh shows paying the most (or selling cheap
 - Fleet carriers are left out, and only markets updated in the last 30 days are asked for.
 - The pad size and a market's exact age are not filtered. The largest pad is in the table, and a station you cannot land at can still be listed.
 
+**Worked example.** You have 120 t of Painite in your hold and want to know where to sell it.
+
+1. Tick *Enable Spansh best price finder* in **Settings → WFMT → Mining**, then press **PRICE**.
+2. Type `Painite` in **Commodity** (this run's refined commodities are listed first). **I am selling** is already chosen.
+3. Leave **Where** on 50 ly. **Minimum demand (t)** starts at the tons in your hold if EDMC knows them, so stations that want only a few tons are not shown.
+4. Press **Search**. Read **Price (cr)**, **Demand**, **Pad** and **Arrival (ls)**, and click a heading to sort. A station whose **Pad** is `?` or too small for your ship needs checking before you fly there.
+5. Select the row you want and press **Copy system** to paste it into the galaxy map.
+
 ### RES: Check Ring Reserve Level
 
 1. Type a system in **System** (it starts as the one you are in).
@@ -137,6 +229,13 @@ The table lists up to 25 stations Spansh shows paying the most (or selling cheap
 3. Press **Search**. **Here** fills in the system you are in.
 
 The table gives each ring with its **Body**, **Reserve level**, **Ring type** and a **Laser mining** note, and flags rings that are not Metallic in amber. Select a row and use **Copy ring** or **Copy system**, or double-click a row to copy its system. It uses EDSM and sends only the system name. When EDSM has no ringed body on file for the system (or none with the name you typed) the status line says so.
+
+**Worked example.** You are about to jump to a ringed planet in another system and want to know whether its ring is worth the trip.
+
+1. Tick *Enable EDSM ring reserve lookup* in **Settings → WFMT → Mining**, then press **RES**.
+2. Type the system name in **System**. Leave **Body or ring** empty to list every ringed body in the system.
+3. Press **Search**. Each row gives the **Reserve level**, the **Ring type** and a **Laser mining** note. A ring that is not Metallic is flagged in amber.
+4. If the status line says EDSM has no ringed body on file, nobody has recorded it. Scan the ring yourself when you arrive.
 
 **Automatic lookup.** Once on, the EDSM ring reserve lookup also contacts edsm.net **automatically every time you drop into a ring**, as well as when you search by hand.
 
@@ -183,6 +282,13 @@ Click a heading on the last three tabs to sort. The columns:
 | **Runs** | Started (UTC), Where, Mining time, Refined (t), t / hour, Prospected, High, Limpets P / C (prospector and collector), Earned, After limpets |
 
 The window's header has **Refresh**, **Rebuild from journals** and **Help** (it explains *Mining time*, *Earned* and *After limpets*). The line under the title says which commander it is and how many runs there are since when. If a commander is not known yet, the status line asks you to log in or play first.
+
+**Worked example: reading the Earned figure.** You mine 100 t of Painite on Monday and dock without selling. On Tuesday you fly to a station that pays more and sell 100 t there.
+
+1. Open **DASHBOARD** and go to the **Runs** tab. Monday's run is listed with 100 in **Refined (t)** and `-` in **After limpets**, because nothing has been sold yet.
+2. After the sale, press **Refresh**. The sale is taken off the waiting list, oldest run first, so Monday's run now shows what the 100 t paid.
+3. Open the **Overview** tab. The **Sales** block shows the limpets' cost, the credits left after them and how many tons are still waiting to be sold (none, in this case).
+4. Treat the figure as takings, not profit: fuel, repairs and ammunition are not taken off.
 
 ### Surface Mining History
 
@@ -379,6 +485,14 @@ A surface mining signal is a circle of ground with the deposits scattered inside
 
 Drive around the edge, with your scanner overlapping it a little, to bring it to 100%.
 
+**Worked example.** You land near a surface mining signal and want to map it.
+
+1. Press **LIVE** and drive to the middle of the signal. Press **CTR**. The minimap draws a cross at the center.
+2. Drive out to the edge of the signal and press **BRD**. The page says, for example, `Border marked: the signal is 1.50 km in radius`.
+3. Drive around the edge. **Nearest marked location** shows the radius, which way and how far the center is, and `edge driven 64%`. Keep driving, with the scanner overlapping the ground you have already covered, until it reads 100%.
+4. Later, the line says `you are inside it, 410 m from the edge` or `you are outside it by 150 m`, so you always know where you stand.
+5. If you pressed **BRD** too close to the center (within 100 m), the page asks you to drive to the edge first. Nothing is changed.
+
 ### Am I inside it, and is there room for another rig?
 
 Once the border is marked, the **Nearest marked location** line says `you are inside it, 410 m from the edge` or `you are outside it by 150 m`. The page also gives the **nearest saved deposit** (its material, how far and which way).
@@ -422,6 +536,13 @@ What you can do:
 - **Help** explains where the rings come from and what **Remove** does.
 
 If the list is still long, it draws the first 150 rings (favorites first, then the most tons mined) so the window opens and closes quickly. The subtitle says when more match, and **Find** reaches them.
+
+**Worked example.** You want to remember a ring you heard about, and mark a good one you mined.
+
+1. Press **BOOK** on the Space Mining page and press **Add ring**.
+2. Enter the ring's name as the game names it, the system, hotspots written as `Painite 3, Platinum 2`, a class (for example Metallic) and a reserve level (for example Pristine), then save. The ring shows `Added by hand`.
+3. Select a ring you mined, type `Best Painite, drop in at the north edge` in **Your note**, press **Save note**, then press **Favorite**. The ring moves to the top and its panel shows `Mined: 620 t in 3 runs, last 2026-10-12`.
+4. Next time you are in that system, press **This system** to list the rings you have there.
 
 ### Reading your journals
 
@@ -487,6 +608,13 @@ You can:
 | **Folder** | A name to file it under. Type a name that does not exist yet to make the folder. |
 | **Notes** | Free text. |
 
+**Worked example.** You find a deposit while driving the Rhino and want to save it.
+
+1. Stop at the deposit and press **+H.S.** in the **LIVE** window. The form opens with your system, body and position filled in.
+2. Type `Painite` in **Contains** and set **Rigs** to the number the deposit takes, for example 4.
+3. Set **Amount** and **Density** to what the scanner showed, and type a **Signal number** if you know which mining location it is in.
+4. Save the form. The deposit appears in the Surface Mining Book and on the radar. If you save again at the same spot (within 100 m) with a corrected material, the existing hotspot is updated instead of a second one being added.
+
 An edit keeps the tons mined and the kind of ground that WFMT recorded. A form with something missing or wrong shows a one-line error and keeps the window open. Saving a new hotspot with a position from **Add hotspot** or **+H.S.**, within 100 m of one you already have on the same body, updates that one (keeping its position, folder, notes and tons mined unless you supply new ones) instead of adding a second. This lets you correct a material by saving again at the same spot. **Add** in Settings always adds.
 
 ### Depleted marks
@@ -497,6 +625,13 @@ A hotspot marked depleted is dated, and its card says how long ago.
 - If you have seen a refill time, set it in **Settings → WFMT → Mining → Assume a depleted deposit has refilled after (days)** (0 = unknown, up to 90 days). With a time set, the mark comes off that long after it was set, and the hotspot has no Amount until you read it again.
 - If you then press **Mark depleted** on it and have not refined anything there since, WFMT takes that as a look at a deposit that is still empty. It keeps the first date and looks again 7 days later (`Still depleted at 15 d; look again in 7 d`).
 - Tons refined since make it a fresh depletion.
+
+**Worked example.** You have mined a deposit empty.
+
+1. Stand at it. The Book marks it `you are here` and selects it, so open **BOOK** and press **Mark depleted**.
+2. The card shows the date and how long ago. The mark stays until you change it, unless you set a refill time in **Settings → WFMT → Mining**.
+3. Come back after a few days, read the Amount again, and press **Edit** to set the new reading if it has refilled.
+4. If you press **Mark depleted** again and have refined nothing there since, WFMT keeps the first date and looks again 7 days later.
 
 ### Stops
 
@@ -584,6 +719,13 @@ The **What pays** button ranks the commodities you could mine by the best price 
 - A line that was cut short or changed is refused, and so is a deposit within 100 m of one you already have on that body.
 - A hotspot with no position cannot be shared.
 
+**Worked example.** A friend wants the Painite deposit you found.
+
+1. In your Surface Mining Book, select the hotspot and press **Share line**. The line (`WFMT-SPOT1:...`) is on your clipboard.
+2. Paste it into Discord.
+3. Your friend copies the line, opens their Surface Mining Book and presses **Paste spot**. WFMT checks it and asks before adding it to their commander.
+4. If the line was cut short, or they already have a deposit within 100 m on that body, it is refused.
+
 ### You are here
 
 With the Rhino on the body, the deposit within 175 m of it is marked `you are here` and selected, so **Mark depleted** is one click. It is worked out when the Book is opened or refreshed, not while you drive.
@@ -613,6 +755,13 @@ Mining alerts are cards on the Flight Alerts overlay, so they need an overlay ru
 - The low-limpet card applies only when a prospector or collector limpet controller is in your last loadout or limpets have been seen aboard, and never while a Rhino is out.
 - The hold figure comes from `Status.json` about once a second when you are in the ship, and from the `Cargo` event otherwise.
 - *Play a sound when an alert starts* on the same page plays a sound for a new alert.
+
+**Worked example.** You want a warning before your hold fills and when limpets run low.
+
+1. Open **Settings → WFMT → Overlays → Flight Alerts**, tick *Enable Flight Alerts* and keep *Mining alerts* ticked.
+2. Leave the hold percentage at 95 and the limpet number at 5, or change them.
+3. Mine with a 200 t hold. When you reach 190 t, a `Hold nearly full` card reading `190 of 200 t` appears in amber. When you are down to 3 limpets, a `Low on limpets` card reading `3 aboard` appears.
+4. If you also set Painite as a target, a prospected rock with enough of it raises a green `Rich rock: Painite` card for 30 seconds.
 
 ## What the game does and doesn't tell us, and how to work around it
 
@@ -687,5 +836,11 @@ What it does:
 - A rich-rock card is not raised for a rock with less than a quarter of itself left.
 - A rock prospected again with the same composition does not raise a second card or sound.
 - Each target a rock holds enough of raises its own card once.
+
+**Worked example.** You type `Painite 30, Platinum 25, Void Opals` in *Target commodities* with the percentage box left at 20.
+
+- A rock with Painite 34% and Platinum 12% is marked `target: Painite`: Painite is over its 30, Platinum is under its 25.
+- A rock with Void Opals 22% counts as a target, because a name with no number uses the 20 beside the box.
+- The radar and What pays use the first one, Painite.
 
 More detail: [Mining specification](../MINING_TECH_SPEC.md).

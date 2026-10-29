@@ -12,12 +12,56 @@ Field Ops holds the on-foot and housekeeping tools: screenshots, your inventory,
 
 **On this page:**
 
+- [How to](#how-to)
 - [Screenshots](#screenshots)
 - [Inventory](#inventory)
 - [Materials](#materials)
 - [Engineering](#engineering-blueprints-and-a-wishlist) (including the [Ship planner](#engineering-blueprints-and-a-wishlist))
 - [Ship Builds](#ship-builds)
 - [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
+
+## How to
+
+The most common tasks, step by step. Each one links to the section with the full detail.
+
+**Set up screenshots** (details: [Screenshots](#screenshots))
+
+1. Open **Settings → WFMT → Field Ops → Screenshots**.
+2. Check **Screenshot Directory** is the folder where the game saves its screenshots (use **Browse…** if not).
+3. Choose a **Converted Directory** for the PNG copies, and pick a **Filename Mask** from the drop-down.
+4. Optionally tick **Delete original file after conversion**.
+5. Take a screenshot in the game. The status line on the Field Ops panel (**OPS**) shows the converted file's name.
+
+**See your backpack and cargo** (details: [Inventory](#inventory))
+
+1. Switch to Field Ops mode (**OPS**). The Inventory bars show the Backpack, the Ship Locker and, while you are in a ship or SRV, the Cargo.
+2. Click any bar to open the Inventory window.
+3. Pick the **Backpack**, **Ship Locker** or **Cargo** tab. Type in **Filter** to narrow every tab at once.
+
+**Check materials for a blueprint** (details: [Engineering](#engineering-blueprints-and-a-wishlist))
+
+1. Press **BLUEPRINTS** on the Materials row to open the Engineering window.
+2. On the **Blueprints** tab, type the module or effect in **Search** and pick the blueprint. Its ingredients show what one craft takes and how many you hold.
+3. Set **Crafts**, then press **Add to wishlist**.
+4. Open the **Wishlist** tab to see whether it **can be made now** and what you are **short** of.
+
+**Find a material trader** (details: [Materials](#materials))
+
+1. Press **MATERIALS**, then **Find a trader** in the Materials window.
+2. Pick the **Type**, **Within** distance and **Pad** size, and check **Search from**.
+3. Press **Find**. The **Material trader** window lists the closest stations first.
+
+**Save a ship build** (details: [Ship Builds](#ship-builds))
+
+1. Design the build on Coriolis, EDSY or Spansh and copy its address from your browser.
+2. Press **SHIPS** in the **Ship Builds** row, then **Add**.
+3. Fill in **Name**, **Ship**, **Site** and **Link**, then press **Save**.
+
+**Plan a whole ship's engineering** (details: the Ship planner in [Engineering](#engineering-blueprints-and-a-wishlist))
+
+1. Export the build from EDSY or Coriolis as SLEF and copy it.
+2. In the Engineering window open **Ship planner** and press **Paste from clipboard**.
+3. Set **Rolls per grade**, then press **Add plan to wishlist**.
 
 ## Screenshots
 
@@ -66,6 +110,20 @@ The status line also reports problems: `Screenshot not found - check Screenshot 
 - **Use high-resolution capture on the auto-timer (Solo play only)** (off by default). The timer then holds Left Alt with F10, which the game honors in Solo only.
 - **Automatically capture a screenshot when scanning a Thargoid signal** (on by default).
 - The optional **Show a notification on the in-game overlay when a screenshot is saved** is set on **Settings → WFMT → Overlays → Screenshots** (off by default; needs an overlay; has a **Test Overlay** button).
+
+**Worked example: a photo set of one system.** You want every screenshot from a system in its own folder, with the file named by system and body.
+
+1. Open **Settings → WFMT → Field Ops → Screenshots**.
+2. Tick **Group converted files into a per-system subfolder**.
+3. Leave **Filename Mask** on `SYSTEM(BODY)_NNNNN.png`.
+4. Take a screenshot at a planet. WFMT converts it and the status line shows the new file name (cut to 40 characters). Click the status line to open the folder it was saved in.
+
+**Worked example: auto-capture while you scan.** You are mapping a system and want a screenshot every few seconds.
+
+1. With Elite in front, click the clock icon on the Field Ops panel. The status line says `Auto-capture enabled`.
+2. WFMT presses F10 once per poll interval (1 second unless you changed **Auto-capture poll interval (seconds)**).
+3. If you alt-tab away, the status line says `Auto-capture paused (Elite not focused)` and no key is pressed.
+4. Click the icon again for `Auto-capture disabled`. The timer also stops by itself if the game shuts down or you die.
 
 *On Linux, the auto-timer needs `xdotool`, and a Flatpak EDMC needs the screenshots permission. See
 [WFMT on Linux](linux.md). On Windows, OneDrive-redirected folders are handled automatically.*
@@ -117,6 +175,24 @@ hold you are using (ship or SRV).
 | Maverick (unmodded / extra capacity) | 60 / 120 | 40 / 80 | 20 / 40 |
 | Artemis | 40 / 80 | 20 / 40 | 10 / 20 |
 | Dominator | 20 / 40 | 10 / 20 | 10 / 20 |
+
+### Worked examples
+
+**Finding a single item.** You remember picking up a data item but not where it is.
+
+1. Click any bar on the Field Ops panel to open the Inventory window.
+2. Type part of its name in **Filter**. Every tab is filtered at once, so you see it on the **Backpack** or **Ship Locker** tab, with its **Category** and how many you hold.
+3. Press **Clear** to see everything again.
+
+**Checking your hold before a haul.** You are in your ship and want to know how many tons are free.
+
+1. Click the **Cargo** bar, or open the Inventory window and pick the **Cargo** tab.
+2. The tab opens with a bar and `tons / capacity`, then the commodities with the most tons first. On foot it says `Cargo - not applicable on foot`.
+
+**Correcting a backpack limit.** The Backpack bar shows a limit that differs from the number you see in the game, because the built-in table cannot see engineering grade.
+
+1. Open **Settings → WFMT → Field Ops → Inventory**.
+2. Find your suit loadout under *Suit Backpack Capacity* and type the number the game shows. If the tab says `No suits recorded yet for this commander`, wear a suit in the game, then reopen Settings.
 
 ### Settings (Settings → WFMT → Field Ops → Inventory)
 
@@ -185,6 +261,15 @@ The results:
 
 Pressing **Find** is the only thing that goes online: it sends Spansh the system name and the type. The same search within two minutes is answered from memory.
 
+**Worked example: swapping away surplus Raw materials.** Your Materials row says `At the limit: ...` and lists several Raw materials.
+
+1. Press **MATERIALS**, then **Find a trader**. **Type** starts as the type with the most materials at the limit, here Raw.
+2. Leave **Within** at 100 ly. If your ship needs it, set **Pad** to **Large only**.
+3. Check **Search from** (it starts as your current system) and press **Find**.
+4. In the **Material trader** window, read the closest station first: its **Where** column says whether it is in space or on a surface, with the distance from the arrival star. Above the list, the grades you hold of that type show what is worth swapping.
+5. Double-click the row to copy the system name, then paste it into the galaxy map.
+6. Check the rate at the trader itself: WFMT does not show rates.
+
 ## Engineering: blueprints and a wishlist
 
 **BLUEPRINTS** on the Materials row opens the Engineering window. It has five tabs: Blueprints, Wishlist, Ship planner, Upgrade planner and Engineers. **Refresh counts** (top right) re-reads what you hold, which the Have and Short figures use.
@@ -195,6 +280,25 @@ Pressing **Find** is the only thing that goes online: it sends Spansh the system
 3. Press **Add to wishlist**. Repeat for everything you plan to build.
 4. Open the **Wishlist** tab: it says which entries can be made now, what you are short of, and the shopping list for all of it.
 5. Open the **Engineers** tab to see who you have unlocked and what unlocking the others takes. **Put their unlock on the wishlist** adds it.
+
+**Worked example: planning two crafts.** You want to know whether you can build a blueprint twice.
+
+1. Press **BLUEPRINTS** and stay on the **Blueprints** tab. Type the module name in **Search**; every word you type must match.
+2. Pick the blueprint. Under it you see who offers it, its effects and what **one craft** takes: each ingredient with how many you need, how many you hold and where it is found.
+3. Set **Crafts** to 2 and press **Add to wishlist**.
+4. Open the **Wishlist** tab. The entry says whether it **can be made now** and how many pieces it is **short**. The shopping list below lists each ingredient's need, have and short, with what is short at the top, and where it is found.
+5. On the Materials row the wishlist line reads like `Wishlist: 3 blueprints, 2 can be made, 14 pieces short`.
+
+Remember that two crafts is your estimate: the game rolls each result, so the real number can differ. Change it with **Set crafts**.
+
+**Worked example: a whole build from EDSY.** You designed an engineered ship on EDSY.
+
+1. In EDSY, export the build as SLEF and copy it.
+2. In the Engineering window open **Ship planner** and press **Paste from clipboard**. If the text holds several ships, pick one in the **Ship** box.
+3. Read the table: one row per engineered module. A pre-engineered module takes nothing, and anything the table does not cover says **not counted**.
+4. Tick **Subtract what my current ship already has** if the build is for the ship you are flying. Modules already done say **already done**.
+5. Set **Rolls per grade** (for example 3) and read the summary line for the totals.
+6. Press **Add plan to wishlist**, then use the **Wishlist** tab for what you can make now and the shopping list.
 
 **Blueprints.** Every engineering blueprint in the table (about 1,180: ship modules, Guardian items, Technology Broker unlocks, engineer unlocks, synthesis recipes, and Odyssey suit and weapon upgrades).
 
@@ -331,6 +435,12 @@ doesn't design ships itself. This just helps you find a build again later.
 
 **Example:** name `Krait Phantom explorer`, role `Exploration`, site `Coriolis`, and paste the link from your
 browser's address bar.
+
+**Worked example: finding a build again.** Months later you want your exploration build.
+
+1. Press **SHIPS** in the **Ship Builds** row. The **Builds** tab lists your builds with their **Name**, **Ship**, **Role**, **Site** and **Updated**.
+2. Select `Krait Phantom explorer`, then press **Open Link** to open it in your browser, or **Copy Link** to copy the address.
+3. If the site's address changed, press **Edit**, paste the new link and save.
 
 **To use it later:** the **Builds** tab lists your builds with the columns **Name**, **Ship**, **Role**, **Site** and **Updated**. Select one and use **Open Link** to open it in your browser, or **Copy Link** to copy
 the address. **Edit** and **Delete** work on the selected build in the same way.

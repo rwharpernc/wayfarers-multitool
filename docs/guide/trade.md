@@ -17,11 +17,55 @@ Each page is laid out in sections (orange headings with a rule between them), wi
 whose numbers line up in columns. Long station names wrap instead of being cut off. A page's buttons are at the top,
 under the page arrows.
 
-**On this page:** [How a trading session works](#how-a-trading-session-works) ·
+**On this page:** [How to](#how-to) · [How a trading session works](#how-a-trading-session-works) ·
 [The Session page](#the-session-page) · [Trade History](#trade-history-saving-sessions) · [Routes](#routes) ·
 [Market](#market) · [Watch list](#watch-list) · [Fleet and squadron carriers](#your-fleet-carrier-and-squadron-carrier) ·
 [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) ·
 [Using Trade on two computers](#using-trade-on-two-computers) · [Settings](#trade-settings)
+
+## How to
+
+Quick steps for the most common jobs. Each links to the section with the detail. The numbers in the examples are made up.
+
+**See your profit after fuel and repairs**
+
+1. Trade as you normally do. WFMT counts every purchase, sale and running cost it sees in the journal.
+2. Open the **Session** page (use the **◀** and **▶** buttons until the title reads `Session (1/3)`).
+3. Read **Net profit**: trade profit less fuel, repairs, advanced maintenance, rearm and limpets. The costs are listed under it.
+
+More: [Profit](#the-session-page) and [Worked example: profit after costs](#worked-example-profit-after-costs).
+
+**Track a fleet carrier's cargo**
+
+1. In **Settings → WFMT → Trade**, set the carrier choice for your commander (**Auto** works if your journal has shown a carrier).
+2. In the game, open **Carrier Management** once so the game writes the carrier's space.
+3. Look at **Carrier cargo used**, **Carrier cargo free** and **Carrier reserved for orders** on the Session page. A `~` before the figure means an estimate: open Carrier Management again to make it exact.
+
+More: [Your fleet carrier and squadron carrier](#your-fleet-carrier-and-squadron-carrier).
+
+**Save and review a session**
+
+1. On the Session page press **Save session**. The message `Saved to Trade History.` appears.
+2. When the job is done, press **Reset** to start the next one.
+3. Press **History**, choose the session in the **SESSION** drop-down, and open the tabs (**Overview**, **Commodities**, **Stations**, and so on).
+
+More: [Trade History](#trade-history-saving-sessions) and [Worked example: review a saved session](#worked-example-review-a-saved-session).
+
+**Find the best route or price**
+
+1. Tick **Enable Spansh trade lookups** in **Settings → WFMT → Trade**.
+2. For a route, go to the **Routes** page and press **Find routes** (or **Round trip** for a back-and-forth pair).
+3. For a price, go to the **Market** page, choose **Sell** or **Buy**, pick a commodity, then press **Near me**, **Galaxy** or **Best picks**.
+
+More: [Routes](#routes) and [Market](#market).
+
+**Use the watch list**
+
+1. Open the **Watch list** row in Trade mode and press **WATCH**.
+2. Click **Add a commodity**, type a name, pick it from the suggestions, and press **Add**.
+3. Press **REFRESH** to ask Spansh for prices, or open station markets in the game to record them.
+
+More: [Watch list](#watch-list).
 
 **Where this comes from:**
 
@@ -90,6 +134,13 @@ What is not counted as a cost:
 
 A cost only counts once WFMT has seen it.
 
+#### Worked example: profit after costs
+
+You sell 100 t of Gold for 1,200,000 cr that cost you 900,000 cr to buy, then pay 18,000 cr for fuel and 12,000 cr
+for repairs. These figures are examples. The Session page shows trade profit of 300,000 cr, the fuel and repairs
+lines, and the headline **Net profit** of 270,000 cr (300,000 less 30,000). The credits per hour figure is
+worked out from that net once you have traded for about three minutes.
+
 **In your ship.** Your **Ship** and the **Landing pad** it needs (for example "Type-9 Heavy" and "Large"; `Unknown` when WFMT cannot tell, in which case no pad filter is applied), then:
 
 - **Ship hold**: how many tons are used, the capacity and how much is free (`Ship hold: empty` with nothing aboard),
@@ -139,6 +190,16 @@ the others are one drop-down choice away (or **All commanders**). The tabs:
 Buttons in the window's header: **Help** explains the figures. **Copy summary** puts a plain-text report on the clipboard, **Export log (CSV)** saves the full trade log
 to a file you choose, and **Delete session** removes a saved session (it asks first). With no saved sessions the window tells you to press **Save session** on the Trade > Session page.
 
+### Worked example: review a saved session
+
+You spent the evening hauling Tritium and finished at the carrier.
+
+1. On **Session**, press **Save session**. The message at the top says `Saved to Trade History.`
+2. Press **Reset** so tomorrow starts clean.
+3. Press **History**. The newest session is selected in the **SESSION** drop-down.
+4. On **Overview**, check Net profit and net per hour. On **Commodities**, look at Profit/t for each load. On **Route**, see the stations in the order you flew them.
+5. Press **Copy summary** to paste a plain-text report, or **Export log (CSV)** to save the full trade log.
+
 **Good to know:**
 
 - The balance change is your real credits difference, so it also includes anything else you earned.
@@ -171,6 +232,18 @@ the page shows its reason.
 a fleet carrier (your own, say) the round trip starts from that carrier's market, and the result names where it started. Spansh must
 have a recent market for the carrier, so open its commodity market once so it is reported; if it has none the page says so.
 
+### Worked example: find a route
+
+You are docked at a station and want a profitable run.
+
+1. Tick **Enable Spansh trade lookups** in **Settings → WFMT → Trade** if you have not.
+2. Go to the **Routes** page. The page lists what it will use: start, ship, cargo, jump range and budget. Check them.
+3. Press **Hops** until it reads `Hops: 3`, then press **Find routes**.
+4. Wait while the page says whether the search is in Spansh's queue or being calculated. Press **Cancel** to stop.
+5. Read **Total profit** and **Est. profit / hour**, then each numbered hop. Press **Copy next system** and paste it into the galaxy map.
+
+If the first destination is Example System, that is the name now on your clipboard.
+
 ### Hops
 
 The **Hops** button shows the current length (for example `Hops: 3`). Each press cycles it through 2, 3, 4 and 5. It
@@ -201,6 +274,10 @@ How it works, in plain terms:
 It uses the same filters as Find routes (price age, ground facilities, fleet carriers, your ship's pad size,
 distance from the star), plus the **least supply** and **least demand** settings (200 t each by default), so thin
 markets are left out. It takes about 20 seconds and makes one to three Spansh requests (100 stations each).
+
+**Example.** You want a pair of stations to shuttle between. Dock at your start station, go to **Routes** and press
+**Round trip**. After about 20 seconds you see the top three pairs, each with what to carry out and what to bring
+back. Every leg makes a profit, so you never fly empty.
 
 ### Reading the result
 
@@ -280,6 +357,11 @@ The **Best picks** button answers "where should I buy (or sell) this?" with four
 
 It asks Spansh about four times (five with carriers), one after another, so it takes a few seconds. The numbers are the same as the other results: cr/t, total for the amount, and distance.
 
+**Example.** You need 64 t of Tritium and have 64 t of free hold space. Choose **Buy**, type `Tritium` in the Commodity box
+(pick it from the suggestions) and press **Best picks**. After a few seconds you see **Closest**, **Best local**,
+**Cheapest anywhere** and **Recommended**. If **Recommended** is within 10% of the galaxy's best price and much
+nearer, that is usually the one to fly to.
+
 The same four picks for a mission's cargo are in the Missions mode ([Source commodities](missions.md#source-commodities)).
 
 ### Price finder
@@ -313,6 +395,14 @@ row in Trade mode, under the page (it starts folded; click its heading to open o
 - **Spansh's five best stations for each side** are kept, not just the best one, and listed under the commodity you pick, with their stock or
   demand and their distance in light years, so you have others to go to when one runs short.
 
+**Example.** You want to keep an eye on Gold and Palladium.
+
+1. Open the **Watch list** row and press **WATCH**.
+2. Click **Add a commodity**, type `Gold`, pick it and press **Add**. Do the same for `Palladium`.
+3. Press **Refresh from Spansh** in the window. The status line says when it is done.
+4. Close the window. The row now shows lines such as `Gold: buy 9,100 / sell 11,200` (example prices).
+5. Open the window again and select Gold to see where each price was seen, its stock or demand, the distance and the age.
+
 **A price is only true when it was seen.** A market you opened last week may have changed, and Spansh's data is only as fresh as the last
 player who docked there (this refresh ignores markets older than 7 days). Check the age, and the market when you arrive.
 
@@ -333,6 +423,13 @@ Nothing is shown for a carrier you haven't chosen. For each one, the Session pag
 - one line per order you have set (**Carrier selling Gold** 300 t @ 12,000 cr, **Carrier buying Tritium**).
 
 A carrier being decommissioned is flagged.
+
+**Example.** You load 20,000 t of cargo onto your carrier over an evening.
+
+1. In **Settings → WFMT → Trade**, set your commander's choice to **Fleet** (or leave it on **Auto**).
+2. Dock at your carrier and do your transfers. The Session page's **Carrier cargo used** goes up with each one.
+3. If the figure shows a `~` or looks wrong after a big unload, open Carrier Management in the game. Within a couple
+   of seconds the page shows the exact **Carrier cargo used**, **Carrier cargo free** and **Carrier reserved for orders**.
 
 ### How the number stays up to date
 

@@ -10,6 +10,91 @@ One view of every mission on your board, sorted by type, plus Community Goals an
 
 Where WFMT has to work something out, it marks it (a `~`). See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
+## How to
+
+Short steps for the common jobs. Each one points at the section with the full detail.
+
+### See every active mission in one view
+
+1. Press **Missions window** at the bottom of the MSN panel (or click any mission's card).
+2. Stay on the **Active** tab for one row per mission, ready ones first and then the soonest to expire. Use the **By place** tab to see the same missions grouped by the system you must go to.
+3. Click a row to read its faction, where to go, cargo, exact reward and expiry in the detail strip.
+
+More: [The Missions window](#the-missions-window).
+
+### Read the progress bars
+
+1. Open the **Progress** column in the Missions window, or page the MSN panel to **Massacre (Space)** or **Settlement Raids (Ground)** for the kill bars.
+2. Read the text first: `20/60` is cargo handed in, `36/36 loaded` is cargo picked up but not yet handed in, `~18/40 kills` is a kill estimate and `36/60 held` is cargo in your hold for a source and return mission.
+3. Read the color of the row: green is ready to hand in, red is under an hour left, amber is under six hours, lime is half or more done and blue is started but under half.
+4. Treat a `~` as "at least this many". The game's own mission screen is the final word.
+
+More: [Progress](#progress) and [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it).
+
+### Open the Missions window
+
+1. Press **MSN** in the mode bar.
+2. Press **Missions window** at the bottom of the panel, or click a mission's card to open the window on that mission.
+3. Close it when you are done. It remembers its size and position, and while it is open it keeps counting down and updating as you accept and hand in missions.
+
+More: [The Missions window](#the-missions-window).
+
+### Find where to buy the cargo for a mission
+
+1. Turn on **Enable Spansh trade lookups** in Settings → WFMT → Trade (it is off by default). If you skip this, the window asks when you press **Find sources**.
+2. Press **Find sources** at the bottom of the MSN panel, or **Sources** in the Missions window.
+3. Choose **From where I am** or **From the turn-in system**, then press **Find sources** in the new window.
+4. Wait for the rows to fill in (`Asking Spansh... 2 of 5 done`), pick a row and press **Copy system** to paste the name into the galaxy map.
+
+More: [Source commodities](#source-commodities) and [Finding sources](#finding-sources).
+
+### Track kill missions
+
+1. Accept your massacre or settlement-raid missions as usual.
+2. Page the MSN panel to **Massacre (Space)** (or **Settlement Raids (Ground)**). There is one block per issuing faction with the kills as `done/required`.
+3. Fly and fight. The `~` before a count means an estimate, because wing and on-foot kills are often missing from the journal until the mission completes.
+4. When the kills are done the mission turns ready (green, with a tick) and shows where to hand it in.
+5. Pin a mission (the **Pin / Unpin** button in the Missions window) if you want it listed first on the overlay card.
+
+More: [Using it](#using-it), [Pinned missions](#pinned-missions) and [Missions on the overlay](#missions-on-the-overlay).
+
+### Worked examples
+
+The numbers and names below are made up to show how the screens read. The wording is what WFMT shows.
+
+**A cargo delivery mission, from accept to turn-in.** You accept a mission to collect 60 Gold and bring it back.
+
+1. The mission appears on the **Trade & Mining** page. At the top, **Commodities needed:** reads `Gold (1 mission)  x60`.
+2. Open the Missions window. The Progress column starts at `0/60 held` (or nothing, if you hold none), because the game writes nothing about a source and return mission until you hand cargo in.
+3. Press **Find sources**, choose where to measure from, and buy at the station you pick. As the Gold arrives in your hold the row follows: `36/60 held`, then `60/60 held`. If you already carried Gold, that counts too, and Gold in a fleet carrier does not.
+4. Fly to the place in the **Go to** column. The row's `→` line on the panel card shows the same place.
+5. Hand the cargo in. The game now reports the count, and the row reads by the game's own figure, for example `20/60` after a partial hand-in. When the whole mission is done the row turns green and shows the hand-in place, which may be a different station from the one you accepted at. Hand in there.
+6. The mission leaves the list when the game reports it completed, and a pin on it is removed with it.
+
+**A kill-mission stack.** You hold five massacre missions from three stations. Three are for Faction A (20, 20 and 10 kills) and two are for Faction B (15 and 15 kills).
+
+1. Page to **Massacre (Space)**. There are two blocks, not five counters. Faction A reads `0/50` and Faction B reads `0/30`.
+2. Under each block's bar the reward shows the total of the stacked missions. Faction B's block shows `Δ20`: the biggest stack (Faction A) needs 20 more kills than this one. Faction A's `Δ` compares it with the next biggest stack (Faction B) and reads `Δ-20`: it leads by 20.
+3. After 18 kills against Faction A, its block reads `~18/50`, because some of those kills may have come from a wing-mate. The **Sum** line at the end totals the biggest stack (Faction A, 50 kills) with a bar and the total reward.
+4. Kill with a wing-mate, then check the game's own mission screen if the count looks low. The `~` means "at least this many".
+5. Once the kills for a mission are done, the game redirects you and WFMT marks it ready, with the place to hand it in.
+
+**A Where to buy lookup.** You hold missions for 60 Gold and 40 Palladium and you are docked in the system where you will hand in the Palladium.
+
+1. Press **Find sources**. The Source commodities window lists the commodities with the **Need** summed over all your missions: Gold 60 and Palladium 40.
+2. Leave **From where I am** selected, then press **Find sources**. The status reads `Asking Spansh... 1 of 2 done`, then `2 of 2 done`.
+3. Each commodity gets its picks: closest, best local, cheapest anywhere and recommended. Read the **Largest pad** column before you go. `Large`, `Medium` or `Small` says whether your ship fits, and `?` means Spansh gave no pad data.
+4. Select the Gold row you prefer and press **Copy system**. Paste the name into the galaxy map to plot the route.
+5. To compare against your delivery point instead, choose **From the turn-in system**. That clears the results, so press **Find sources** again.
+
+**A mission that expired.** You accepted a delivery mission with 2 days to run and then stopped playing for a week.
+
+1. While the mission was running its card read `Expires: 2d 4h`, then `Expires: 1h 30m` with a `⚠` once it dropped under two hours, and the overlay card showed it red under an hour and amber under six hours.
+2. When the time ran out, the card and the overlay show `Expired` (overlay: `expired`) while the game has not yet reported anything.
+3. The game writes nothing when a mission simply runs out, so the row can stay on your board until your next login. The game then sends its own list of active missions and WFMT drops the dead one.
+4. If you want the board correct sooner, log in again (main menu and back). If the game did write a failed or abandoned event, the mission goes at once.
+5. A pin on it goes too, and cargo already handed in earlier is not counted anywhere else.
+
 ## Using it
 
 Press **MSN** in the mode bar. At the top a line reads `Missions: 7/20` (how many missions you hold of the game's limit of 20; switch it off with *Show mission count* in Settings). Under it the panel shows one category at a time, with a line like `◀  Combat (3)  ▶`. Click the **◀** or **▶** arrow to
@@ -20,7 +105,7 @@ page between categories; the number is how many missions are in that category. T
 - **Massacre** and **Settlement Raids** missions show grouped **kill-progress bars**, so you can see at a glance how
   many kills are still needed across all your missions for the same faction.
   - There is one block per **issuing faction**. The top line is the faction's name (with `⚠ Illegal` when any of its stacked missions is illegal) and its kills as `done/required`. A `~` before the count means an estimate (see below).
-  - The second line is a progress bar, the reward (`12.5M (4.0M)`: the total of the stacked missions, and in brackets the part that came from wing missions, which are shared), and `Δ` followed by a number: how many more kills the biggest stack needs than this one (for the biggest stack, how many more than the next one).
+  - The second line is a progress bar, the reward (`12.5M (4.0M)`: the total of the stacked missions, and in brackets the part that came from wing missions, which are shared), and `Δ` followed by a number: how many more kills the biggest stack needs than this one (for the biggest stack, the next biggest stack's kills minus its own, so it reads as a negative number such as `Δ-20`: it leads by 20; with only one stack it reads `Δ0`).
   - A **Sum** line at the end totals the biggest stack with a bar and the total reward (switch it off with *Show totals row*).
   - Under them, `Settlements:` lists the ground targets (switch it off with *Show target settlement*), and `⚠` notes warn when the missions name several target factions or several target systems, or that `~kills = estimate, not exact`.
   - With no such mission the page says so; if WFMT has no mission data yet it asks you to relog (`Relog (main menu and back) to sync missions.`).

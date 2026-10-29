@@ -12,9 +12,115 @@ bonus.
 - What the game does not say is predicted, and marked as a prediction. That means which species a planet hosts before you sample, and the color variant before the first sample (where the game's rules for it are known).
 - Nothing here contacts the internet.
 
-**On this page:** [The pieces](#the-pieces) · [Organic Scanning panel](#organic-scanning-panel) · [The overlay cards](#the-overlay-cards) ·
+**On this page:** [How to](#how-to) · [Worked examples](#worked-examples) · [The pieces](#the-pieces) · [Organic Scanning panel](#organic-scanning-panel) · [The overlay cards](#the-overlay-cards) ·
 [Finding your way back to a plant](#finding-your-way-back-to-a-plant) · [First footfall](#first-footfall) · [When the cards reset](#when-the-cards-reset) ·
-[Setting up](#setting-up) · [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
+[Setting up](#setting-up) · [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) · [What WFMT keeps to improve the prediction](#what-wfmt-keeps-to-improve-the-prediction)
+
+## How to
+
+Short task lists for the common jobs. Each one points to the section with the details, and the [worked examples](#worked-examples) after them show what you will see.
+
+### Switch the panel and the cards on
+
+1. The **Organic Scanning** panel is on by default. If it is missing from Exploration mode, open **Settings → WFMT → Exploration → Organic Scanning** and tick **Show predicted species and scan progress**.
+2. In EDMC's main window the **Organic Scanning** section starts folded. Click **Organic Scanning** to open it; it stays open for the rest of the session.
+3. Set up an overlay ([WFMT's built-in one on Windows, or EDMCModernOverlay](../OVERLAY_SETUP.md)).
+4. Open **Settings → WFMT → Overlays → Exobiology** and tick the cards you want: Bio status, Biology, Bio radar and Sample popup. All four are off at first.
+5. Press **Test Cards**. It draws a made-up body on all four cards, even if they are off, and says whether an overlay could be reached.
+
+### Place the cards
+
+1. Open **Settings → WFMT → Overlays → Overlay Placement**.
+2. Drag each card where you want it in the layout editor. Bio status is a wide, short strip that starts at the top center, so it can sit above the game's compass.
+3. Adjust the radar under **Settings → WFMT → Overlays → Exobiology** if you want it larger or easier to read (**Radar size**, **Circle fill**, **Circle outline**).
+
+More in [Setting up](#setting-up).
+
+### Sample a plant from start to finish
+
+1. Fly to a planet with biological signals and map it with the Detailed Surface Scanner. The mapping scan names the genera.
+2. Land, or fly low. Read the `Predicted species` lines in the panel, or the Biology card, to see what each genus could be and pay.
+3. Take the first scan with the Genetic Sampler. That is the **Log**. The Bio status card now shows the species with the first of its three circles filled.
+4. Walk away from the plant. Watch the distance line on Bio status (`Move 122 m further: 78 m of 200 m`) until it reads `Clear`.
+5. Take the second scan (**Sample**) on another plant of the same species. Then walk away again and take the third (**Analyse**).
+6. After the third scan the genus is marked `Done`, and the Sample popup shows the species and what it pays.
+
+### Find your way back to a plant
+
+1. Scan the plant with the Composition Scanner. WFMT records where you were standing.
+2. Open the Bio radar and Bio status. Each tracked plant has a line with its distance and direction (`Tussock: ~210 m, 30° right`).
+3. Turn until the little pointer beside the plant points straight up, and walk that way.
+4. Stop at the plant's ring and look around inside it. The `~` means the marker is only as exact as the distance you scanned from.
+5. Sample the plant. That makes its spot exact.
+
+More in [Finding your way back to a plant](#finding-your-way-back-to-a-plant).
+
+### Review the predictions
+
+1. Sample species as you play. Each sample that names a species adds a line to the record.
+2. Open Exploration mode and press **REVIEW** on the Organic Scanning panel.
+3. On **Finds**, use the **Show** box (for example *Not on the predicted list*) and select a find to see the body's conditions and the species that were listed.
+4. Pick a **Review**, type a **Note** and press **Save review**.
+5. Use **Copy report** to copy everything as text.
+
+More in [The Prediction review window](#the-prediction-review-window).
+
+## Worked examples
+
+The numbers below are made up for illustration. The wording on the cards is what WFMT writes.
+
+### Example 1: three samples of one genus
+
+You land on a mapped body with four biological signals, and you have not touched it before. A Tussock is the first thing you reach.
+
+1. **Before the first sample.** Bio status reads `0 of 4 analyzed` with an empty progress bar, and lists each genus with the distance it needs, for example `Tussock    200 m apart`. Its foot says `Use the Composition Scanner on a plant to begin`. The Biology card shows each genus with its candidate species and the range it could pay.
+2. **First scan (Log).** The status card now shows the species in large type (`Tussock pennatis - Lime`) with one circle of three filled, and what it pays at the right of that row. Under it: `Samples must be 200 m apart`, because you have not moved from the first sample yet. The progress bar has moved a third of a genus. On the Bio radar a circle appears around where you stand, red because you are inside it. The Organic Scanning panel says `Tussock pennatis: Log (1/3)`.
+3. **Walk away.** The distance line counts up: `Move 122 m further: 78 m of 200 m`. In the panel the line ends `- move further away`. The radar circle stays put while you move across the plot.
+4. **Clear.** At 200 m the line reads `Clear: 210 m from the last sample, 200 m needed`, the radar circle turns green, and the panel adds `- next sample ready`.
+5. **Second scan (Sample).** Two circles are filled. The Sample popup shows the species, its **Estimated value**, the **Colony range** (200 m) and `Sampled` at the foot, for ten seconds. The distance line starts over from the new spot.
+6. **Third scan (Analyse).** All three circles are filled. The popup says `Analyzed`, the panel shows the payout, Bio status reads `1 of 4 analyzed`, and the genus is `Done` on the cards. The Biology footer keeps the body's total.
+
+### Example 2: a first footfall
+
+You are the first commander on a body that has life.
+
+1. In the system scan the body shows `First footfall` on **Body info**, and **System targets** marks it `0/3 life FF`.
+2. Before you sample, the Bio status foot reads `First footfall: every reward here is five times as much`.
+3. Once a genus is open, its reward carries the marker, for example `1.0M - 5.3M CR  ·  FF 5x`, and the figures are already multiplied by five.
+4. On the Biology card the footer shows the range with the bonus on its own line, for example `Rewards: 7.6M - 11.9M CR` and `First footfall (5x): 38.2M - 59.6M CR`.
+5. The Sample popup shows the value with `(FF bonus)`.
+6. When you have analyzed everything, Bio status says `All samples analyzed: first footfall paid five times`.
+
+If you leave and a later scan says the body has been footfalled, the bonus is still yours: the flag is kept once seen. Check the in-game body information if it matters.
+
+### Example 3: switching genus part-way
+
+You have a Bacterium at `Sample (2/3)`, and you see a Frutexa close by and sample it.
+
+1. The Frutexa becomes the active genus on Bio status, with its first circle filled.
+2. The unfinished Bacterium is abandoned, because the game makes you start a genus over once you sample a different one before finishing. WFMT does the same: its count goes back to zero.
+3. When you return to the Bacterium, the first scan is a new Log, shown as `Log (1/3)`, and the distance is measured from the new sample. It does not continue from `2/3`.
+4. A genus you have already analyzed is not affected. It stays `Done`.
+
+If you meant to finish the Bacterium, finish it before you sample anything else. What abandons it is sampling a different genus.
+
+### Example 4: finding a plant you identified
+
+You scanned a Tussock with the Composition Scanner from your SRV, then drove off to sample a Bacterium.
+
+1. Bio status carries a line for the Tussock at the right, such as `Tussock: ~210 m, 30° right`. The `~` is there because an SRV scan can be about 150 m off.
+2. The Bio radar shows a ring with the letter for Tussock and a line from you toward it, and lists `Tussock 210 m` under the plot with a little pointer showing which way it lies.
+3. Drive toward it. The line may change to `ahead` as you line up. When you reach the ring, the plant is inside it.
+4. Take the Log. The marker is dropped, because you are within its reach, and the plant's position is now exact.
+5. A second Tussock you identified earlier becomes the next marker. If there is none, the line disappears.
+
+### Example 5: after you sell the data
+
+You finish a body, fly out and sell your exobiology data.
+
+1. Leaving the planet clears the cards. What you sampled is kept for the body, and comes back if you return.
+2. If an expedition is running, the [Expedition Log](exploration.md#expedition-log) counts the sale: it keeps a tally of what exobiology earned and an estimate of what is still unsold.
+3. To count a trip from this point, start an expedition from your last **Exobiology Data sale** in the Expedition window (see [Starting and managing an expedition](exploration.md#starting-and-managing-an-expedition)). It begins just after that sale and fills itself in from your journals.
 
 ## The pieces
 
@@ -77,11 +183,11 @@ Top center. It is a short, wide strip, so it can sit above the game's compass.
 - While you are sampling a genus it shows:
   - the species and color variant in large type, with three circles (filled as you take each sample),
   - what the species pays, at the right end of that row (**five times as much on a first footfall**, marked `FF 5x`),
-  - how far you are from the last sample against the distance the genus needs (`Move 122 m further: 78 m of 200 m`, or `Clear: 210 m from the last sample, 200 m needed` once you can take the next).
+  - how far you are from the last sample against the distance the genus needs (`Move 122 m further: 78 m of 200 m`, or `Clear: 210 m from the last sample, 200 m needed` once you can take the next). The strip is wide enough (108 characters) that this line joins the species row, beside the reward, when it fits; otherwise it sits on a row of its own.
 - With nothing in progress it lists each genus with the distance it needs between samples, and `Done` once analyzed.
 - A plant you have identified with the Composition Scanner is named at the foot until you sample it.
 - On a body you have not mapped it says `Map this body with the surface scanner to learn what lives here`, with the number of signals.
-- While you are sampling and have not taken a first sample yet, the line under the reward reads `Samples must be 200 m apart`.
+- While you are sampling and have not taken a first sample yet, the distance line reads `Samples must be 200 m apart`.
 - With nothing in progress, the foot of the card reads `Use the Composition Scanner on a plant to begin`, `First footfall: every reward here is five times as much` on an untouched body, or `All samples analyzed` when you are done.
 
 ### Biology

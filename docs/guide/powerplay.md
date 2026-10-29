@@ -9,7 +9,7 @@ on the panel, and in the Sessions window per session, per system, per Powerplay 
 Everything is kept **separately for each commander**. A commander pledged to another Power, or to none, has their
 own numbers.
 
-**On this page:** [Using it](#using-it) · [The Sessions window](#the-sessions-window) · [Cycles](#cycles) ·
+**On this page:** [How to](#how-to) · [Using it](#using-it) · [The Sessions window](#the-sessions-window) · [Cycles](#cycles) ·
 [The Systems tab](#the-systems-tab) · [Catching up from your journals](#catching-up-from-your-journals) ·
 [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) · [Rare Goods Finder](#rare-goods-finder) · [Settings](#settings)
 
@@ -22,6 +22,71 @@ own numbers.
 - Spansh supplies the Rare Goods Power column.
 
 See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
+
+## How to
+
+### See your merits for this session and this cycle
+
+1. Press **P.P.** in the mode bar.
+2. Read `Session merits` and `Session CP` for this login, and `Cycle N merits` and `Cycle N CP` for the whole cycle.
+3. Read `Here: N merits` for what you have earned in the system you are in.
+
+**Example.** You hand in merits in Nervi, then jump to another system and do more. The panel shows `Here:` for the new
+system only, `Session merits` for both together, and the `Cycle` lines for everything since Thursday 07:00 UTC, including
+earlier game sessions.
+
+### See which systems earned you the most
+
+1. Press **P.P.**, then **SES**.
+2. On the **Current session** tab, read **By System**: the **Merits**, **Est. CP** and **Activity breakdown** columns
+   list each system you worked this login.
+3. For a whole cycle, open the **Systems** tab, or the **Cycles** tab for one row per cycle.
+
+### Check a system you are defending
+
+1. Open **SES**, then the **Systems** tab.
+2. Find the system's tab (your last 6 systems get one). If it is missing, type its name in **SHOW A SYSTEM** and press
+   **Add system**.
+3. Compare **Baseline** and **Latest** in the **STANDING** table. The **Change** column shows whether it is gaining or
+   losing ground.
+4. Click **☆ Pin** to keep the tab in every cycle.
+
+**Example.** You pledge to defend a system and want to see whether it is holding. Add it with **SHOW A SYSTEM**, pin it,
+and jump in again whenever you want a fresh reading: the figures only update when you jump into or log in at the system.
+
+### Fix a session count that looks wrong
+
+1. If you only want to remove a mistaken count, open **SES** and press **Reset Current System** (this system) or
+   **Reset Session** (everything this login). Both ask first and cannot be undone.
+2. If merits were missed after restarting EDMC, press **RESCAN** on the Powerplay panel instead. It re-reads the current
+   journal from scratch.
+
+Resets change the session only. Cycle totals come from your journal and are not affected.
+
+### Share your progress
+
+1. Open **SES** and press **Copy Progress**. The button changes to a confirmation for a moment.
+2. Paste into Discord or a forum post. With the default format each system is one line, for example
+   `[Nervi](link) - 120 merits (~48 CP) - Exploited`.
+3. To change the layout, edit the **Clipboard** format under **Settings → WFMT → Powerplay**.
+
+### Find a rare good to haul
+
+1. Press **RARES**, then set **Show nearest** (type a number and press Enter or **Apply**).
+2. Tick **Large pads only** if you fly a large ship, and **Only my Power** to keep rares from systems your Power controls.
+3. Select a row, then press **Copy system** and paste the name into the galaxy map's search.
+
+**Example.** You fly a large ship and are pledged. Tick both boxes and leave **Show nearest** at 10: you get the ten
+nearest rares that sell at a large-pad station in a system your Power controls, because the filters apply before the
+number shown.
+
+### Work out Control Points from merits
+
+CP is an estimate: merits divided by the ratio for the activity (defaults: Acquisition 4.0, Reinforcement 2.5,
+Undermining 4.2).
+
+**Example.** 500 Reinforcement merits are about 200 CP (500 / 2.5). 400 Acquisition merits are about 100 CP (400 / 4.0).
+Delivery and Unattributed merits add merits but no CP.
 
 ## Using it
 

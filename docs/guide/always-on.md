@@ -14,6 +14,97 @@ See [Getting started](getting-started.md#what-you-need) and [Setting up the over
 - Flight Alerts reads `CarrierJumpRequest`, `Loadout`, `FSDTarget` and the fuel in `Status.json`.
 - Nothing is looked up online. See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
+**On this page:** [How to](#how-to) · [Landing Assist](#landing-assist) · [Interdiction Warning](#interdiction-warning) · [Flight Alerts](#flight-alerts) · [Route overlay](#route-overlay) · [Overlay connection](#overlay-connection) · [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
+
+## How to
+
+All four tools start **off**. Before you turn any of them on, make sure an overlay is running and reachable.
+
+### Check the overlay first
+
+1. Open **Settings → WFMT → Overlays → Overlay Connection**.
+2. Choose which overlay draws: WFMT's own built-in overlay (Windows) or EDMCModernOverlay.
+3. Press **Check connection**. It tells you whether the overlay is reachable. See [Overlay connection](#overlay-connection).
+
+### Turn on Landing Assist, place it and test it
+
+1. Open **Settings → WFMT → Overlays → Landing** and tick **Enable Landing**.
+2. Choose where it shows: **Show in EDMC app** and/or **Show on Overlay**. The diagram on the game screen needs **Show on Overlay**.
+3. Press **Test Overlay** to check the diagram shows.
+4. To move it, open **Overlay Placement** (same place) and adjust "Landing assist". The default is the bottom left.
+
+Detail: [Landing Assist](#landing-assist).
+
+### Turn on Interdiction Warning, place it and test it
+
+1. Open **Settings → WFMT → Overlays → Interdiction Warning** and tick **Enable Interdiction Warning**.
+2. Press **Test Warning**. It works even while the feature is off, and reports whether an overlay could be reached.
+3. To move it, open **Overlay Placement** and adjust "Interdiction warning". The default is the top center.
+
+Detail: [Interdiction Warning](#interdiction-warning).
+
+### Turn on Flight Alerts, place it and test it
+
+1. Open **Settings → WFMT → Overlays → Flight Alerts** and tick **Enable Flight Alerts**.
+2. Leave **Fleet carrier jump countdown**, **Fuel warnings** and **Mining alerts** ticked, or untick the ones you do not want. Adjust the percentages to suit your ship.
+3. Optionally tick **Play a sound when an alert starts**.
+4. Press **Test Card**. It works even while the feature is off.
+5. To move it, open **Overlay Placement** and adjust "Flight alerts (carrier jump, fuel)". By default it is on the right, below the Inventory display.
+
+Detail: [Flight Alerts](#flight-alerts).
+
+### Turn on the Route overlay, place it and test it
+
+1. Open **Settings → WFMT → Overlays → Route** and tick **Enable the Route overlay**.
+2. Set **Systems listed** (3 to 20, 8 to start).
+3. Optionally tick **Mark the systems ahead that EDSM does not know yet**.
+4. Press **Test Card** to see a made-up route. It works even while the feature is off.
+5. To move it, open **Overlay Placement** and adjust "Route and ship status". The default is the top left.
+
+Detail: [Route overlay](#route-overlay).
+
+### Worked example: docking at a station with Landing Assist
+
+You have **Enable Landing** and **Show on Overlay** ticked, and you fly toward a Coriolis.
+
+1. You ask the station for docking permission. The card shows **Docking Requested** and the station name, for example `Jameson Memorial`.
+2. The station grants it. The status becomes **Docking Approved** and the card adds the pad, `Pad 24`, with the starport diagram and your pad marked on it. In the EDMC panel (with **Show in EDMC app** ticked) the line reads `Docking Approved — Jameson Memorial — Pad 24`.
+3. You fly in and land. The card stays for about ten seconds, then clears.
+4. Had the station refused, the status would be **Docking Denied** with the reason in words, such as *All pads occupied*.
+
+The diagram marks which pad is yours but not which way it faces; the journal gives only the pad number. Line up using the pad numbers in the game.
+
+### Worked example: being interdicted
+
+You have **Enable Interdiction Warning** ticked, and you are in supercruise.
+
+1. An interdictor targets you. The moment the game's interdiction flag flips, a card headed **INTERDICTION WARNING** appears with `Interdictor: CMDR Name (Commander)`. The name reads `Unknown` until the game gives it.
+2. You fight it out and the interdictor is beaten off. The game writes `EscapeInterdiction`, and the card adds **Escaped** in green for about eight seconds, then clears.
+3. If you had been pulled out of supercruise the card would add **Pulled from supercruise** in red, and if you had submitted, **Submitted to interdiction** in amber.
+
+Treat the card as a prompt. The in-game screen is the final word.
+
+### Worked example: a Flight Alert firing
+
+You have **Enable Flight Alerts** ticked with the fuel warnings at their defaults (25 and 50 percent), and you are plotting a long trip.
+
+1. You plot to a neutron star and the tank is at 38 percent. The card shows `No scoop at next star`, `(neutron star)` and `Fuel 38% (12.2 t)`. That is the warning the game does not give you.
+2. Later the tank drops to 22 percent. The card shows `Low fuel` with `Tank 22% (7.0 t)` under it.
+3. Separately, you schedule a fleet carrier jump. The card counts down, for example `Carrier jump in 14:32`, turns red for the last minute, and says `Carrier departing now` at the departure time.
+
+Fuel warnings show only while you are flying your main ship, not docked, landed or scooping.
+
+### Worked example: plotting a route and seeing the Route overlay
+
+You have **Enable the Route overlay** ticked and **Systems listed** at 8.
+
+1. In the [Route Planner](exploration.md#route-planner) you plot a trip to Colonia, or you plot it on the game's galaxy map.
+2. The card appears: `You are navigating to:`, `Colonia`, `You will be there in 12 jumps.`, then the next systems, each with its star on the right, and the light years left at the bottom.
+3. You jump to the first system. It is taken off the list, the jump count goes down by one, and the light years left are worked out again from where you are.
+4. At the last system the card says `Route ended.`, `You have arrived at Colonia.` and `The route is being reset.` for ten seconds, then closes.
+
+A green star can be scooped, a yellow one cannot, a blue one is a neutron star and a red one is a white dwarf.
+
 ## Landing Assist
 
 Shows which landing pad you've been assigned while docking, in the EDMC panel and/or as a diagram on your game
