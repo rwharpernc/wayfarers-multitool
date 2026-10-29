@@ -72,7 +72,8 @@ Before the log lines are copied, WFMT:
 
 - replaces your **commander name** with `<commander>`, in any capitals. It knows the commander EDMC currently has and the one in your
   newest journal;
-- replaces your **home folder** (for example `C:\Users\you` or `/home/you`) with `~`.
+- replaces your **home folder** (for example `C:\Users\you` or `/home/you`) with `~`;
+- replaces any **Discord webhook link** with `<webhook>` (WFMT never logs one; this is only a safeguard).
 
 The version lines never hold a commander name, a system name or a file path. The address that **Report an issue** opens carries only the
 title, the versions and the OS line, nothing from your play.

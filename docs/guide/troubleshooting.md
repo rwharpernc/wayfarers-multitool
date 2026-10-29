@@ -38,7 +38,7 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | Routes and Market on the Trade page | **Enable Spansh trade lookups** ([details](#the-lookup-buttons-are-grayed-out-or-there-is-no-commodity-box)) | Settings → WFMT → Trade |
 | The **H.S.**, **PRICE** or **RES** buttons in Mining | **Enable Spansh nearby hotspot finder**, **Enable Spansh best price finder**, **Enable EDSM ring reserve lookup** (each separately) | Settings → WFMT → Mining |
 | ELW rarity or EDSM upload status in Exploration | The two options under Exploration Value | Settings → WFMT → Exploration → Exploration Value |
-| Fleet carriers missing from "where to buy" results | **Include fleet carriers** in the Colonization sites window | Colonization sites window |
+| Fleet carriers missing from "where to buy" results | **Include fleet carriers** in the Where to Buy window | Where to Buy window (the **Where to Buy** button in the Colonization Sites window) |
 | Raven Colonial not updating | The master switch and the two options under it ([steps](#raven-colonial-doesnt-update-as-i-deliver)) | Settings → WFMT → Colonization → Raven Colonial |
 | Something else is wrong | **Report an issue**, then **Copy diagnostics** to paste the log lines into it ([how](reporting-problems.md)) | Settings → WFMT → General → Help |
 | WFMT never updates itself | **Automatically download and install updates** (see also [the update did not take](#the-update-did-not-take)) | Settings → WFMT → General → Updates |
@@ -66,7 +66,7 @@ Check that the folder is named exactly `Wayfarers-Multitool` and sits directly i
 
 ### A name in the panel ends in "..."
 
-The panel wraps a long name onto the next line rather than cutting it, and only shortens one that is very long (past about 64 characters for a station, system or site name, 40 for a commodity or material).
+The panel wraps a long name onto the next line rather than cutting it, and only shortens one that is very long (past about 64 characters for a station, system, site or Trade commodity name, 40 for a commodity in the Colonization panel's lines).
 
 A wrapped line uses the width EDMC's window already has; widening the window gives it more room.
 
@@ -178,7 +178,7 @@ On **Settings → WFMT → General → Online lookups**, the Local star index li
 - **Not enough room:** the first download needs about 173 MB and building needs about 300 MB more while it works. Free some space and press **Download and build** again; a download that was cut off carries on from where it stopped.
 - **Spansh is not answering:** see the next entry.
 - **The installed index is damaged or was made by another version of WFMT:** the line says so and the **N.S.** button asks Spansh instead. Press **Delete**, then **Download and build**.
-- **Update downloads nothing:** that is correct if you already updated today, or if Spansh's file has not changed since the date of your index.
+- **Update downloads nothing:** that is correct if Spansh's file has not changed since your index was built; the line says "The index is already up to date".
 - The index is optional. **N.S.** works without it by asking Spansh, and **W.D.** always does.
 
 ### "Spansh has not been answering, so WFMT is not asking it for another N minute(s)"

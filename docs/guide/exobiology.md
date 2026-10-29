@@ -74,7 +74,7 @@ The numbers below are made up for illustration. The wording on the cards is what
 You land on a mapped body with four biological signals, and you have not touched it before. A Tussock is the first thing you reach.
 
 1. **Before the first sample.** Bio status reads `0 of 4 analyzed` with an empty progress bar, and lists each genus with the distance it needs, for example `Tussock    200 m apart`. Its foot says `Use the Composition Scanner on a plant to begin`. The Biology card shows each genus with its candidate species and the range it could pay.
-2. **First scan (Log).** The status card now shows the species in large type (`Tussock pennatis - Lime`) with one circle of three filled, and what it pays at the right of that row. Under it: `Samples must be 200 m apart`, because you have not moved from the first sample yet. The progress bar has moved a third of a genus. On the Bio radar a circle appears around where you stand, red because you are inside it. The Organic Scanning panel says `Tussock pennatis: Log (1/3)`.
+2. **First scan (Log).** The status card now shows the species in large type (`Tussock pennatis - Lime`) with one circle of three filled, and what it pays at the right of that row. Under it: `Move 200 m further: 0 m of 200 m`, because you have not moved from the first sample yet. The progress bar has moved a third of a genus. On the Bio radar a circle appears around where you stand, red because you are inside it. The Organic Scanning panel says `Tussock pennatis: Log (1/3)`.
 3. **Walk away.** The distance line counts up: `Move 122 m further: 78 m of 200 m`. In the panel the line ends `- move further away`. The radar circle stays put while you move across the plot.
 4. **Clear.** At 200 m the line reads `Clear: 210 m from the last sample, 200 m needed`, the radar circle turns green, and the panel adds `- next sample ready`.
 5. **Second scan (Sample).** Two circles are filled. The Sample popup shows the species, its **Estimated value**, the **Colony range** (200 m) and `Sampled` at the foot, for ten seconds. The distance line starts over from the new spot.
@@ -109,7 +109,7 @@ If you meant to finish the Bacterium, finish it before you sample anything else.
 You scanned a Tussock with the Composition Scanner from your SRV, then drove off to sample a Bacterium.
 
 1. Bio status carries a line for the Tussock at the right, such as `Tussock: ~210 m, 30° right`. The `~` is there because an SRV scan can be about 150 m off.
-2. The Bio radar shows a ring with the letter for Tussock and a line from you toward it, and lists `Tussock 210 m` under the plot with a little pointer showing which way it lies.
+2. The Bio radar shows a ring with the letter for Tussock and a line from you toward it, and lists `Tussock ~210 m` under the plot with a little pointer showing which way it lies.
 3. Drive toward it. The line may change to `ahead` as you line up. When you reach the ring, the plant is inside it.
 4. Take the Log. The marker is dropped, because you are within its reach, and the plant's position is now exact.
 5. A second Tussock you identified earlier becomes the next marker. If there is none, the line disappears.
@@ -187,7 +187,7 @@ Top center. It is a short, wide strip, so it can sit above the game's compass.
 - With nothing in progress it lists each genus with the distance it needs between samples, and `Done` once analyzed.
 - A plant you have identified with the Composition Scanner is named at the foot until you sample it.
 - On a body you have not mapped it says `Map this body with the surface scanner to learn what lives here`, with the number of signals.
-- While you are sampling and have not taken a first sample yet, the distance line reads `Samples must be 200 m apart`.
+- While you are sampling but WFMT has no position for you or for the last sample (for example a Log recorded without a position), the distance line reads `Samples must be 200 m apart` instead.
 - With nothing in progress, the foot of the card reads `Use the Composition Scanner on a plant to begin`, `First footfall: every reward here is five times as much` on an untouched body, or `All samples analyzed` when you are done.
 
 ### Biology

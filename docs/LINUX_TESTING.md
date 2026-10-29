@@ -12,7 +12,7 @@ For anyone testing WFMT on Linux with Elite Dangerous under Steam Proton (or Win
 
 - Real reports are valuable.
 - Note your distro, desktop (GNOME, KDE, Sway...), session type (X11 or Wayland), and whether you run EDMC natively or as a Flatpak.
-- Where a step fails, copy the relevant lines from EDMC's log (`~/.local/share/EDMarketConnector/EDMarketConnector.log`) into your report.
+- Where a step fails, copy the relevant lines from EDMC's log (`~/.local/share/EDMarketConnector/logs/EDMarketConnector-debug.log`) into your report.
 
 **Already seen working** (KDE Wayland, Flatpak EDMC):
 
@@ -117,7 +117,7 @@ Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 und
   - The target box in Settings → WFMT → Mining takes several names with their own percentages, and its type-ahead works after a comma.
   - Opening Mining History once re-reads old runs in the background.
 - **Local star index** (Settings → WFMT → General → Online lookups → Local star index).
-  - **Download and build** downloads about 173 MB into the Flatpak's data folder and builds an index of about 100 MB (about 300 MB free is needed while it builds).
+  - **Download and build** downloads about 173 MB into the Flatpak's data folder and builds an index of about 110 MB (about 300 MB free is needed while it builds).
     - Progress shows, and **Cancel** works.
     - The finished status shows the systems, size and date.
     - **N.S.** then answers from the local index (the status line says so).
@@ -873,7 +873,7 @@ The Surface Live radar has not been looked at on Linux. The simulation shows it 
   - five placed deposits with their first letters (one depleted, a hollow ring; a sixth, saved without a position, is listed in the lines on the right and not on the radar)
   - a line to the nearest deposit with a distance
   - Note whether the labels look right (the radar uses Pillow's built-in font).
-- [ ] The four range buttons under the radar resize the view, and the choice is kept. Resizing the window resizes the radar and never widens it past the window.
+- [ ] The five range buttons under the radar resize the view, and the choice is kept. Resizing the window resizes the radar and never widens it past the window.
 - [ ] The lines on the right update about once a second (refined counts, cargo, nearest marked location, nearest deposit) without flicker, and wrap inside the window.
 - [ ] **CTR** and **BRD** add or finish a marked location on the pretend ground; **+H.S.** opens the add-hotspot window filled with the pretend position and a saved deposit shows up on the radar. There is no **I/E**.
 - [ ] The radar also shows:

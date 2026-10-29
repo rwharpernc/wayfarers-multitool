@@ -1,5 +1,7 @@
 # WFMT on Linux
 
+What to expect from WFMT on Linux: how Linux support is handled, what has been tested, and how the pieces differ from Windows.
+
 ## Linux support
 
 Linux support is a commitment. WFMT's author uses both Linux (CachyOS) and Windows and spends about equal time on each. Most people who use the plugin are on Windows, so new features are proven on Windows first and Linux follows slightly behind.

@@ -11,7 +11,7 @@ What is ever sent (each only when the commander has turned it on, see rcc_sync.p
 snapshot, a delivery, a carrier cargo change, a commander link, and `complete_project` (an empty POST to
 `/api/project/<build id>/complete`). Writes carry the commander's Raven key in the `rcc-key` header when one is saved.
 
-Pure parsing plus one network call (`fetch_sites`) whose opener is passed in, so the shaping and the error handling are tested
+Pure parsing plus one network call (`fetch_system`) whose opener is passed in, so the shaping and the error handling are tested
 without a connection. The request carries WFMT's User-Agent (http_identity), has a timeout, reads a bounded amount, and an answer
 is remembered for a minute so pressing the button again does not ask again.
 """

@@ -80,7 +80,7 @@ Converts Elite's screenshots to PNG automatically, with an optional crop to just
 **What happens to each screenshot.**
 
 1. The game saves its own image file in its screenshots folder and writes a `Screenshot` entry to the journal.
-2. WFMT finds the file, converts it to PNG in the **Converted Directory**, and names it from the **Filename Mask** (the system, the body or station, your commander name, a five-digit number or the date and time).
+2. WFMT finds the file, converts it to PNG in the **Converted Directory**, and names it from the **Filename Mask** (the system, the body or station, your commander name, a five-digit number or the date and time in UTC).
 3. If **Delete original file after conversion** is ticked, the game's original is deleted after a 60 second grace period so that other tools can see it first.
 4. If the panel that was open when you pressed the key has a crop rectangle, a cropped copy is made as well: the target panel, the comms panel, the role panel or the left-hand (systems) panel. A high-resolution screenshot is never cropped. The rectangles are fixed measurements for a 1920 by 1080 screen, scaled to the screenshot's size and centered on wider screens.
 5. The status line, the thumbnails and (if you turned it on) the on-screen **Screenshot saved** message update.
@@ -106,7 +106,7 @@ The status line also reports problems: `Screenshot not found - check Screenshot 
 - **Group converted files into a per-system subfolder** (off by default).
 - **Show the auto-capture timer icon on the main window** (on by default).
 - **Filename Mask**: a drop-down of presets, from `SYSTEM(BODY)_NNNNN.png` (the default) through `SYSTEM(CMDR)_DATE.png`, `BODY(CMDR)_NNNNN.png`, `SYSTEM BODY (CMDR) NNNNN.png` to `DATE_SYSTEM_BODY_CMDR.png`. `NNNNN` is a running five-digit number, `DATE` the date and time.
-- **Auto-capture poll interval (seconds)** (1; the minimum is 0.2).
+- **Auto-capture poll interval (seconds)** (1; the minimum is 0.2). This, the timer icon option, the high-resolution option and the Thargoid option below appear only where WFMT can press the screenshot key (Windows, or Linux with `xdotool`).
 - **Use high-resolution capture on the auto-timer (Solo play only)** (off by default). The timer then holds Left Alt with F10, which the game honors in Solo only.
 - **Automatically capture a screenshot when scanning a Thargoid signal** (on by default).
 - The optional **Show a notification on the in-game overlay when a screenshot is saved** is set on **Settings → WFMT → Overlays → Screenshots** (off by default; needs an overlay; has a **Test Overlay** button).
@@ -194,21 +194,23 @@ hold you are using (ship or SRV).
 1. Open **Settings → WFMT → Field Ops → Inventory**.
 2. Find your suit loadout under *Suit Backpack Capacity* and type the number the game shows. If the tab says `No suits recorded yet for this commander`, wear a suit in the game, then reopen Settings.
 
-### Settings (Settings → WFMT → Field Ops → Inventory)
+### Settings
 
-| Setting | Default |
-|---|---|
-| Show pillage notifications on the in-game overlay | Off |
-| Pillage message (placeholders `{item}`, `{total}`) | `[{item}] pillaged! New Inventory Total: {total}` |
-| Play a sound on pickup | Off |
-| Show these inventory bars on the overlay (one tick per bar) | All off |
-| Where it sits on screen | Top right area (set on Settings → WFMT → Overlays → Overlay Placement) |
-| Announce pickups for (Assets, Goods, Data) | All three |
-| Suit Backpack Capacity (per suit loadout) | The built-in table. One row per suit loadout WFMT has seen for the commander, pre-filled with the unengineered default; change the number to what you see in the game. Until a suit has been seen the tab says `No suits recorded yet for this commander` - wear a suit in the game, then reopen Settings |
-| Test pickup (button, on the Overlays tab) | Sends a sample pickup to the overlay and says whether the overlay could be reached, even while notifications are off |
+The Field Ops tab (**Settings → WFMT → Field Ops → Inventory**) holds the pillage message, the sound, which categories are announced and the suit backpack capacities. The overlay switches are on **Settings → WFMT → Overlays → Inventory**.
+
+| Setting | Where | Default |
+|---|---|---|
+| Show pillage notifications on the in-game overlay | Overlays → Inventory | Off |
+| Pillage message (placeholders `{item}`, `{total}`) | Field Ops → Inventory | `[{item}] pillaged! New Inventory Total: {total}` |
+| Play a sound on pickup | Field Ops → Inventory | Off |
+| Show these inventory bars on the overlay (one tick per bar) | Overlays → Inventory | All off |
+| Where it sits on screen | Overlays → Overlay Placement | Top right area |
+| Announce pickups for (Assets, Goods, Data) | Field Ops → Inventory | All three |
+| Suit Backpack Capacity (per suit loadout) | Field Ops → Inventory | The built-in table. One row per suit loadout WFMT has seen for the commander, pre-filled with the unengineered default; change the number to what you see in the game. Until a suit has been seen the tab says `No suits recorded yet for this commander` - wear a suit in the game, then reopen Settings |
+| Test pickup (button) | Overlays → Inventory | Sends a sample pickup to the overlay and says whether the overlay could be reached, even while notifications are off |
 
 Unticking a category in *Announce pickups for* only mutes its notifications. It is still counted.
-The overlay settings are on **Settings → WFMT → Overlays → Inventory** and need an overlay running; see
+The overlay settings need an overlay running; see
 [Setting up the overlay](../OVERLAY_SETUP.md).
 
 On Linux, the pickup sound needs `canberra-gtk-play` or `paplay`; see [Windows and Linux](platforms.md).
@@ -430,7 +432,7 @@ doesn't design ships itself. This just helps you find a build again later.
 2. Click **SHIPS** (manage ship builds) in the **Ship Builds** row of the WFMT panel. The row is collapsible, and its text shows how many builds you have.
 3. Click **Add** (the highlighted button).
 4. Fill in the **Add Ship Build** form. **Name**, **Ship**, **Site** and **Link** are required. **Ship** starts as the ship you are flying; **Role** is what the build is for, such as "PvE Exploration"; **Notes** is free text.
-5. Pick the **Site** (**Coriolis**, **EDSY (E:D Shipyard)**, **Spansh** or **Other**) and paste the build's web address, which must start with `http://` or `https://`, into **Link**.
+5. Pick the **Site** (**Coriolis**, **EDSY (E:D Shipyard)**, **Spansh** or **Other**; you can also type another name) and paste the build's web address, which must start with `http://` or `https://`, into **Link**.
 6. Click **Save** (or **Cancel**).
 
 **Example:** name `Krait Phantom explorer`, role `Exploration`, site `Coriolis`, and paste the link from your

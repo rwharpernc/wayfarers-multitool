@@ -6,7 +6,7 @@ The plot is centered on you and turned so that straight ahead is up (it uses the
 radar reads. The ship and the SRV are marked where they touched down or were left, with their distance and bearing beneath. The scale adapts so every
 circle fits inside the panel, and the overlay cannot clip a shape, so a circle that would not fit is left out rather than drawn across the screen.
 
-`radar_plan` returns what to draw as plain tuples; `RadarLayout.render` sends it. The geometry (`offset_m`) is the flat-earth approximation that is accurate
+`build_plan` returns what to draw as a `Plan` of plain tuples; `RadarLayout.render` sends it. The geometry (`offset_m`) is the flat-earth approximation that is accurate
 over the few hundred meters a sampling walk covers.
 """
 

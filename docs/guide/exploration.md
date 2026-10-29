@@ -478,7 +478,7 @@ A quiet readout of what you're finding, in the **Dashboard** section of the Expl
 
 | Line | What it says |
 |---|---|
-| `Last scan: <body> - est. 1.2M` | The estimated payout for the last body you scanned (stars as well as planets), with the first-discovery multiplier when nobody had found it. `Last scan: (none yet)` until you scan |
+| `Last scan: <body> - est. 1,234,567 cr` | The estimated payout for the last body you scanned (stars as well as planets), with the first-discovery multiplier when nobody had found it. `Last scan: (none yet)` until you scan |
 | `System age: <system> - <age>` | The age of the current system, from the star's `Age_MY` in the scan, written in million years (`4,200 My (~4.2 By)` for the oldest) |
 | `Region: Inner Orion Spur` | Which of the galaxy's 42 named regions you are in, worked out from your coordinates |
 | `System bodies: 6 scanned of 14 - all found` | How many of the system's bodies you have scanned out of the number the honk found. `all found` appears once the game reports that your FSS has found every body; before a honk it says `(honk to count them)` |
@@ -1045,8 +1045,8 @@ The **DASHBOARD** button in the Dashboard section of the Exploration panel (whic
 
 It only reads what the other features already hold (the system survey, Organic Scanning, the Expedition Log, the Route). It costs nothing to leave open, and sends nothing anywhere.
 
-It opens on the tab that suits where you are, and switches by itself when you land (to **Surface**) and when you lift off (back to **Orbit**); a tab you picked yourself
-is left alone until the next change.
+It opens on the tab that suits where you are, and switches by itself when you land (to **Surface**) and when you lift off (back to **Orbit**). It only does that while you
+are on **Orbit** or **Surface**: if you picked **Overview** or **Exploration** yourself, it stays there.
 
 **The tabs:**
 
@@ -1075,7 +1075,7 @@ is left alone until the next change.
 2. When you land it switches to **Surface** by itself. There you see the body's conditions and materials, each genus with what it could be and its pay, and progress such as `Collecting: 1/3`.
 3. It also shows how far you are from your last sample and how far you must be for the next one.
 4. When you lift off it switches back to **Orbit**, where you can click the **Scan value** heading to sort the system's bodies by value and click a row to see that body in full.
-5. If you picked a tab yourself, the window leaves it alone until the next change.
+5. If you picked **Overview** or **Exploration** yourself, the window leaves it alone.
 
 **Route Planner.** The window's header also has a **Route Planner** button, which opens the [plotter](#route-planner).
 

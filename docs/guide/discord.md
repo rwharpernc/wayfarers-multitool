@@ -70,7 +70,7 @@ Keep the link to yourself. **Whoever has it can post to that channel**, so do no
    - **Webhook link:** paste the link from Discord. The box hides what you type, like a password.
    - **Thread ID (optional):** paste a thread's number to post into that thread.
 4. Press **Test**. WFMT asks Discord whether the link works and posts nothing. You should see `Works: WFMT.` (the webhook's own name).
-5. To post to more than one channel or server, press **Add destination** and fill in another. **Remove** deletes one.
+5. To post to more than one channel or server, press **Add destination** and fill in another (up to 10). **Remove** deletes one.
 6. Close Settings with **OK** to save.
 
 Destinations are saved **for the commander you are playing**, on this computer only. WFMT learns who that is from the game's journal, so log in first. If you type them
@@ -206,12 +206,12 @@ In the channel the post reads like this (names here are made up):
 
 ```
 WFMT BGS report
-Current tick - since 2026-10-29 09:00 UTC
+Current tick — since 2026-10-29 09:00 UTC
 Nervi
-- Nervi Brotherhood (bold: it controls the system) - Boom, 45.2% (+1.3)
+- Nervi Brotherhood (bold: it controls the system) — Boom, 45.2% (+1.3)
   - Pending: Famine
   - You: 2 mission(s) done, INF +4/-0; 1,500,000 cr exploration data
-- Allied Forces - War, 30.0%
+- Allied Forces — War, 30.0%
 ```
 
 (Discord shows the headings and the controlling faction in bold, and the lists as bullets.) The report holds only the tick you are looking at, with
@@ -228,12 +228,12 @@ restart EDMC; after a restart, posting the same tick again adds a new message.
 3. The post has this session's merits for each system, with the estimated Control Points marked `~` because they are estimates, then the cycle's total line:
 
 ```
-WFMT Powerplay progress - Aisling Duval
+WFMT Powerplay progress — Aisling Duval
 This session. CP is an estimate (~).
-- Nervi - 120 merits (~48.0 CP) - Exploited
-- Sol - 1,234 merits (~493.6 CP)
+- Nervi — 120 merits (~48.0 CP) — Exploited
+- Sol — 1,234 merits (~493.6 CP)
 Cycle
-CYCLE 12 TOTAL - 3,400 merits - est. 1,360.0 CP - 5 systems worked
+CYCLE 12 TOTAL — 3,400 merits · est. 1,360.0 CP · 5 systems worked   (Acquisition 2,000 · Reinforcement 1,400)
 ```
 
 Each system name links to its Inara page without a preview card. Post again later in the same session and WFMT edits the post; a new login is a

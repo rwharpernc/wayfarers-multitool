@@ -1,11 +1,11 @@
-# Technical Specification — Mining
-
-**Author:** R.W. Harper (CMDR Tiber Caelvox)
+# Mining technical specification
 
 The standing reference for Mining mode: what it tracks, the rules and numbers behind its estimates, the
 files it keeps, and the outside lookups it can make. For how to use it, see the
 [README](guide/mining.md). For how the code is organized in general, see
 [TECHNICAL.md](TECHNICAL.md).
+
+- **Author:** R.W. Harper (CMDR Tiber Caelvox)
 
 **Design principle.**
 
@@ -75,6 +75,7 @@ mining_body_lookup.py, mining_body_cache.py   Get body info (EDSM and Spansh) an
 mining_session_archive.py Optional JSON archive of finished runs.
 mining_journal_backfill.py Replays today's journal on a mid-session EDMC start.
 mining_location.py       The commander's current system.
+mining_names.py          One spelling for a commodity or mineral name.   mining_bodies_data.py: the bodies the Rhino mined on, read from the journals.
 mining_*_dialog.py       The Add/Edit Hotspot form and the three lookup dialogs.
 mining_spansh_client.py  The Spansh lookups (hotspots, best price). edsm_client.py: ring reserves.
 ```
@@ -364,7 +365,7 @@ selected.
 - There is no commodity-to-planet-type table, by decision: the game publishes none and community testing
   treats planet class as a screening hint.
 - `mining_spansh_client.search_system_stations` makes one `/api/stations/search` request with a distance
-  of 0 from the system (checked live on Sol: 44 stations, each with its whole `market` and
+  of at most 0.01 ly from the system (checked live on Sol: 44 stations, each with its whole `market` and
   `market_updated_at`), keeps those in the system with a market that are not fleet carriers, and sends
   only the system name.
 - `match` lists the buyers (demand and sell price above zero) per commodity, best price first.
@@ -520,6 +521,9 @@ All are **off until switched on** in the Mining Settings tab. See
 | Find Nearby Hotspots (rings with a confirmed hotspot for a commodity, nearest first) | Spansh | Button |
 | Find Best Price (best-price stations for a commodity) | Spansh | Button |
 | Check Ring Reserve Level | EDSM | Button; and automatically on dropping into a ring, if enabled |
+| Market research (Surface Mining Book) | Spansh | Button; shares the Find Best Price switch |
+| What pays (Surface Mining Book) | Spansh | Button; shares the Find Best Price switch |
+| Get body info (Surface Mining Book) | EDSM, and Spansh when the system's id is known | Button; its own switch (`wfmt_mining_edsm_body_lookup_enabled`) |
 
 The automatic ring check runs only when enabled, never while replaying the journal at start-up, and the
 answer is remembered for the session for each ring. A non-Metallic ring shows a laser-mining caution.
@@ -579,7 +583,11 @@ All are listed in the updater's protected set so an update never overwrites them
 
 `tests/test_mining_deposit.py`, `test_mining_hotspots.py`, `test_mining_ground.py`,
 `test_mining_ledger_data.py`, `test_mining_body_survey.py` and `test_mining_coverage.py` cover the pure
-logic. `test_mining_rates.py`, `test_mining_targets.py`, `test_mining_hold.py` and `test_mining_alerts.py` cover the rate, the run average and its wording, the target text and the live hold. The bearing maths, the panel, overlays and map are exercised by hand in EDMC.
+logic. `test_mining_rates.py`, `test_mining_targets.py`, `test_mining_hold.py` and `test_mining_alerts.py` cover the rate, the run average and its wording, the target text and the live hold.
+`test_mining_history.py`, `test_mining_net.py`, `test_mining_rings.py`, `test_mining_stops.py`, `test_mining_depletion.py`, `test_mining_share.py`, `test_mining_market.py`,
+`test_mining_market_research.py`, `test_mining_what_pays.py`, `test_mining_missions.py`, `test_mining_body_lookup.py`, `test_mining_radar_extras.py` and `test_mining_simulation.py` cover the
+history and its sales, the books' data, the lookups' plans and the simulation. The `*_smoke.py` tests (for example `test_mining_page_smoke.py` and `test_mining_live_window_smoke.py`) build the
+panel and the windows. The overlays and the look of the map are still checked by hand in EDMC.
 
 ## 13. Known gaps
 

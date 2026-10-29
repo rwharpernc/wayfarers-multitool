@@ -122,10 +122,10 @@ Delivered       1,200 of 8,000 t
 Covered         3 fully · 2 partly · 5 not yet (of 10 commodities)
 On hand         180 t
 Carrier         120 t moved onto your carrier
-Trips left      9 to buy · 14 to haul (400 t ship)
+Trips left      9 to buy · 17 to haul (400 t ship)
 ```
 
-Read it as: ten commodities are still outstanding, three need nothing more, and you should expect about nine buying loads and fourteen hauling loads to finish. The **Next** line then tells you in one sentence what to do now.
+Read it as: ten commodities are still outstanding, three need nothing more, and you should expect about nine buying loads and seventeen hauling loads to finish. The **Next** line then tells you in one sentence what to do now.
 
 **An offer to start a Raven project.** When a construction site appears for the first time and [Raven Colonial](https://ravencolonial.com) has no project for it, a line above **Current project** says `Raven Colonial has no project for <site>.` with two buttons. **CREATE ON RAVEN** opens the Colonization Sites window on that site and its [Create dialog](#starting-a-project-on-raven-colonial); **NOT NOW** hides the line. It is made once per site and goes away once a project exists. It needs the master switch and progress sharing on, and your Raven key saved, because WFMT only looks at Raven for a site when it is allowed to share.
 
@@ -133,7 +133,7 @@ Read it as: ten commodities are still outstanding, three need nothing more, and 
 
 ### History
 
-History is yours alone (everything is per commander) and is kept off the page. Press **HISTORY** to open the Colonization History window, named for the commander it is for. It has four tabs:
+History is yours alone (everything is per commander) and is kept off the page. Press **HISTORY** to open the Colonization History window, which names the commander it is for under its title. It has four tabs:
 
 - **Overview**
 - **By day**: tons delivered on each day (UTC), newest first. Only days with a delivery are listed
@@ -155,7 +155,7 @@ The Overview says:
 | Average build | Days from the first time WFMT saw a site to the day the depot reported it complete, over the sites for which both are known |
 | Counted since | The first delivery WFMT has counted |
 
-**Example: finding your busiest week.** Press **HISTORY**, open **Overview**, and read **Recently** (for example `3,200 t in 7 days, 9,800 t in 30 days`) and **Best day**. Switch to **By day** to see which days made up that week, to **Commodities** to see what you moved most of, and to **Sites** to see which depot took the most. The numbers there are examples of the layout only.
+**Example: finding your busiest week.** Press **HISTORY**, open **Overview**, and read **Recently** (for example `3,200 t this week · 9,800 t this month`) and **Best day**. Switch to **By day** to see which days made up that week, to **Commodities** to see what you moved most of, and to **Sites** to see which depot took the most. The numbers there are examples of the layout only.
 
 **How far back the history goes.**
 
@@ -433,7 +433,7 @@ For anyone who does not use the overlay, the commodity table is the shopping lis
 
 - **Group by category** (a checkbox above the table, on by default, remembered) puts the commodities under a heading for each market
   category (Chemicals, Foods, Industrial Materials, Machinery, Metals and so on).
-  - Each heading shows the tons it still needs, and the commodities are alphabetical under it.
+  - Each heading shows the tons still to get under it (the sum of their Acquire figures), and the commodities are alphabetical under it.
   - Click a heading to fold or open its group.
   - Untick the box, or click any column heading to sort by it (or the commodity column a second time for reverse order), and you get a plain sorted list instead.
 - **Grayed out when the market does not sell it.** While you are docked at a commodity market WFMT has seen, a commodity that market does
@@ -458,7 +458,7 @@ It asks [Spansh](https://spansh.co.uk) (a community-run map of the game), so it 
 **Example: finding Steel for a site (made-up).** The site is in a system you are not in.
 
 1. Click the **Steel** row in the Sites window, then press **Where to Buy**. The note reads `Ready to search for Steel. Press Find nearest.`
-2. Leave **Around** as the site's system (or press **Here** to measure from where you are), keep **Within** at 50 ly, and choose **Landing pad: Large only** if you fly a large ship.
+2. Leave **Around** as the site's system (or press **Here** to measure from where you are), keep **Within** at 50 ly, and choose **Large only** under **Landing pad** if you fly a large ship.
 3. Press **Find nearest**. The table lists stations with Distance, Arrival, Price and Supply.
 4. Click the first row you like. The note says the system name was copied; paste it into the galaxy map's search.
 5. If nothing came back, raise **Within** or set **Landing pad** to **Any size**, and search again.
@@ -560,8 +560,8 @@ The results table has the columns **Station**, **System**, **Type**, **Planetary
 
 The header of the window, top right. All of them act on the site picked on the left:
 
-- **Copy Shopping List** (the highlighted button) copies that site's list to the clipboard: a first line with the site and system, then lines like `1,200 t  Steel`, biggest first. What is in your ship and on your fleet carrier is already taken off.
-- **Copy To Acquire** copies a short list for someone who asks what you still need, for example part way through loading your carrier: a first line with the site and system, then one line per commodity such as `Steel: 200 t`, biggest first. Only commodities with something left to acquire are listed; what is in your ship and on your fleet carrier is already taken off. It uses the figures the window shows, so a transfer WFMT missed can be fixed first with **Rescan Carrier**.
+- **Copy Shopping List** (the highlighted button) copies that site's list to the clipboard: a first line such as `Example Outpost (Example System) - still to get:`, then lines like `1,200 t  Steel`, biggest first. What is in your ship and on your fleet carrier is already taken off.
+- **Copy To Acquire** copies a short list for someone who asks what you still need, for example part way through loading your carrier: a first line such as `Example Outpost (Example System) - still to acquire:`, then one line per commodity such as `Steel: 200 t`, biggest first. Only commodities with something left to acquire are listed; what is in your ship and on your fleet carrier is already taken off. It uses the figures the window shows, so a transfer WFMT missed can be fixed first with **Rescan Carrier**.
   The amounts are the **t still to get** figures, so what is on your ship and on your carrier is taken off. If nothing is needed it says
   so.
 - **Rescan Carrier** rebuilds the fleet carrier tally from your journals; see [Rescan Carrier](#rescan-carrier-when-a-load-did-not-register).
@@ -574,12 +574,12 @@ The header of the window, top right. All of them act on the site picked on the l
 **Example: copying lists.** For a site that still needs 1,200 t of Steel and 800 t of Titanium, with nothing yet aboard, **Copy Shopping List** puts this on the clipboard (the site and system are made up):
 
 ```
-Example Outpost, Example System
+Example Outpost (Example System) - still to get:
 1,200 t  Steel
 800 t  Titanium
 ```
 
-**Copy To Acquire** gives the same commodities as `Steel: 1,200 t` and `Titanium: 800 t` under the site line. Once you have moved 500 t of Steel onto your carrier, both lists show `700 t` for Steel.
+**Copy To Acquire** gives the same commodities as `Steel: 1,200 t` and `Titanium: 800 t` under its own first line (`... - still to acquire:`). Once you have moved 500 t of Steel onto your carrier, both lists show `700 t` for Steel.
 
 ### The archive
 
@@ -661,7 +661,7 @@ Optional and **off by default**.
 
 | Setting | What WFMT sends, and when |
 |---|---|
-| **Allow WFMT to write to Raven Colonial** (master switch) | Nothing by itself. Off by default. The three options below only work while it is ticked, and are grayed out while it is not. |
+| **Allow WFMT to write to Raven Colonial** (master switch) | Nothing by itself. Off by default. The two tick boxes below only work while it is ticked, and are grayed out while it is not. |
 | **Report my construction progress and deliveries to Raven Colonial** | Needs the key below; with none, nothing is looked up or sent. When the depot's figures change (the game's `ColonisationConstructionDepot` event): the depot's numbers and how much of each commodity is still needed, which is what moves *Remaining* on Raven Colonial. When you deliver cargo (`ColonisationContribution`): the commodities and tons, which credits your commander name in Raven's history. Once per project, it also links your commander to the project. |
 | **Also report cargo I move to and from my fleet carrier** | When you transfer cargo at your own fleet carrier: the tons moved, to the carrier as plus and back to the ship as minus. It adds to Raven's carrier record; it never replaces it, because WFMT's own tally is only what it saw you move. Needs the key below. |
 | **Raven Colonial key** | Needed for every write: progress, deliveries, carrier cargo, **Create Project on Raven**, **Report Complete to Raven**, **Mark Plan Entry Demolished**, and **Set as My Primary** and **Save Counted List** in My Projects. With no key WFMT sends nothing (Raven's published API description does not say which writes work without one, so none is tried). Saved per commander on your computer, shown masked, and sent only to Raven Colonial. |
@@ -729,7 +729,7 @@ Select a site your journal has reported **complete** and press **Report Complete
 - Then it marks that project complete there.
 - It never does this by itself. It asks you to confirm each time (`Tell Raven Colonial that <site> in <system> is complete?`). Before the site is complete in your journal it says there is nothing to report.
 
-- It needs your **Raven Colonial key**. The first time, WFMT asks you to paste it; it is saved for that commander only (in
+- It needs the master switch and your **Raven Colonial key**. The first time, WFMT asks you to paste it; it is saved for that commander only (in
   `rcc_keys.json`, in the plugin folder, which updates leave alone) once Raven Colonial has accepted it, and masked as you type.
 - **What is sent:** your key and the one project's id, nothing else. No deliveries, cargo or journal data.
 - **Limits:** Raven Colonial must already have a project for the site, found from its plan or by the site's market id. If it has none
@@ -827,7 +827,7 @@ A last line gives the tons remaining (still to get, as in the Acquire column) an
   - Where the card sits: Settings → WFMT → Overlays → Overlay Placement. The default is the left edge, vertically centered, on any screen shape.
   - **Rows:** how many commodities to list (1 to 60; any more are summarized as `+N more`). The default, 0, lists them all.
   - **List** (**All**, **To buy** or **To haul**, the same choices as the window's **Show**) picks which rows the card lists. It is the same setting as the **Show** dropdown in the Sites window, so choosing one changes the other. **To buy** (the starting choice) leaves out the rows that already show a **✓**, so the card lists only what you still have to get; **To haul** lists the rows that are covered but not yet aboard your ship in full, for when everything is on the carrier. The last line still counts every commodity the site needs, and when no row is listed the card shows just that line. A choice made with the older *Hide commodities already covered* tick box carries over.
-  - **Test Overlay** shows a sample card for about 8 seconds, even while the option is off, and says `Sent - check your overlay.` or that it could not reach the overlay.
+  - **Test Overlay** shows a sample card for about 8 seconds, even while the option is off, and says `Sent — check your overlay.` or that it could not reach the overlay.
 - It is cleared when EDMC closes. If the overlay program isn't running, nothing is drawn and nothing breaks.
 
 ## What the game does and doesn't tell us, and how to work around it

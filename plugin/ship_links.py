@@ -10,7 +10,7 @@ Both sites accept the journal's `Loadout` object inside a link, so the link need
 Links that hold a build's own encoding instead of a loadout (EDSY `#/L=`, Coriolis `/outfit/<ship>?code=`) cannot be read without the sites' identifier tables, and short links need a request to a third-party
 service, so both are refused with a message that says which it is. Coriolis refuses a link of 2083 characters or more, so `too_long` tells the caller to warn before a link is copied or opened.
 
-`parse_error_text` is shown to the commander in the Ship planner's status line.
+The message of a `LinkError` is shown to the commander in the Ship planner's status line.
 """
 from __future__ import annotations
 

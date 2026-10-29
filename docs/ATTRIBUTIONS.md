@@ -302,8 +302,8 @@ on Linux, and the design of where things go owes a lot to the tools that came be
   overlay windows; no code was taken from it, and
   [EDMCModernOverlay](https://github.com/SweetJonnySauce/EDMCModernOverlay) remains the overlay for Linux and for other plugins.
 - **Hiding the overlays for a while:** that the overlays can be switched off at a keystroke without leaving the game follows
-  [SrvSurvey](https://github.com/njthomson/SrvSurvey)'s overlay toggle. WFMT's is its own code (a switch in the overlay connection plus a
-  Windows hotkey); no code was taken from SrvSurvey.
+  [SrvSurvey](https://github.com/njthomson/SrvSurvey)'s overlay toggle. WFMT's is its own code (a line in the WFMT panel, a **Hide / show now** button, a Windows
+  hotkey and a chat command); no code was taken from SrvSurvey.
 - **The drag-and-drop layout editor on Overlay Placement:** a grid for placing overlay displays is a feature common to overlay layout tools;
   WFMT's editor (a to-scale picture of the screen with a box per display that snaps to edges and a grid) is its own design and code.
 - **The color themes of the windows:** Cyan, Amber and Green follow the three themes of EDDDT, the maintainer's own companion app, and use its stylesheet's colors; Navy is WFMT's own. The code that applies a theme is WFMT's own.
@@ -361,7 +361,7 @@ WFMT talks to a small number of community services:
 
 - [EDSM](https://www.edsm.net/), [Spansh](https://spansh.co.uk/), [edastro.com](https://edastro.com/) (GEC), Canonn's published site lists
   and codex catalog, [Raven Colonial](https://ravencolonial.com/) (Colonization, opt-in or on a button press), `tick.infomancer.uk` (BGS
-  tick, optional) and GitHub Releases (self-update, opt-in).
+  tick, optional), GitHub Releases (self-update, opt-in) and Discord (only your own webhook, when you press a Post button).
 - [Inara](https://inara.cz/), [Coriolis](https://coriolis.io/) and [EDSY](https://edsy.org/) are linked to only.
 - Every network call goes to a documented API or a published data file, never to another site's HTML, and most are opt-in or
   user-triggered.

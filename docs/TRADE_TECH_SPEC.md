@@ -178,6 +178,8 @@ Journal events and EDMC state read by `trade_panel.handle_event` (every handler 
 |---|---|
 | `MarketBuy`, `MarketSell` | Ledger; the stock book; learning commodity display names (`Type_Localised`) |
 | `RefuelAll`, `RefuelPartial`, `Repair`, `RepairAll`, `BuyAmmo`, `RestockVehicle`, `BuyDrones`, `SellDrones` | Running costs in the ledger |
+| `PayFines`, `PayBounties`, `PayLegacyFines` | The *fines* running cost, only when the Trade setting is ticked |
+| `FSDJump` | Jumps and light years for a saved session (`trade_ledger.note_jump`) |
 | `Market` (then the `Market.json` file in the journal folder) | The docked market: cargo valuation, "what this station buys" suggestions |
 | `Docked`, `Undocked`, `Location` | Route start station (kept per commander, `trade_route_start.py`); which carrier you are docked at |
 | `Loadout` (`Ship`, `MaxJumpRange`) | Your ship and its pad size; jump range for routes |
@@ -595,7 +597,7 @@ the results, since they belong to one side, and results are keyed by `(commodity
 carry of it, else a full hold (`CargoCapacity`, or 100 if unknown). Buying: only the typed commodity; tons =
 your *free hold space* (`CargoCapacity` less what is aboard), or a full hold's worth if the hold is already full.
 
-**Scopes.** Near me = `search_best_price_stations(system, name, "Sell", radius_ly)` with the Settings radius
+**Scopes.** Near me = `search_best_price_stations(system, name, "Sell" or "Buy" by side, radius_ly)` with the Settings radius
 (default 100 ly). Galaxy = the same call with `max_distance_ly=None`, which omits the distance filter (Spansh
 accepts that). Results use only markets updated in the last 30 days (`_MARKET_DAYS_OLD_DEFAULT`), because an
 unfiltered search returned fleet carrier markets years old.
@@ -694,8 +696,12 @@ Follows TECHNICAL.md section 11 ("Keeping API traffic low").
   Unlike other features there is no generation counter: a result is consumed by the one waiting job and
   `Cancel` sets its `threading.Event`. Results reach Tk only through `_poll_job` (an `after(500)` poller), never
   from the worker.
-- **Route polling:** one request every 5 s, at most 240 s, so at most about 48 polls plus the submit. A failure
-  isn't retried. Request timeout 20 s.
+- **Route polling:** one request every 5 s, at most 240 s, so at most about 48 polls plus the submit. Request timeout 20 s.
+- **Courtesy layer.** Every Spansh request (routes, round trip, prices, Best picks, the watch refresh) goes through
+  `spansh_courtesy`: at most 2 in flight and 0.25 s between starts; a 429, 502, 503 or 504 answer is retried up to 3
+  times (waits of 2, 6 and 15 s, or the `Retry-After` header up to 60 s); a timed-out POST is not retried, since it may
+  have been accepted; and after 5 failed requests in a row WFMT refuses to call Spansh for 300 s and the page shows
+  why (`SpanshBusy`).
 - **Round trip:** one to three station-search requests (100 stations each, nearest first, stops at the first short
   page), about 20 s, request timeout 30 s, identified as `trade-roundtrip`.
 - **Price search:** a press of Near me or Galaxy makes **two requests**, one for stations and one for
@@ -708,8 +714,8 @@ Follows TECHNICAL.md section 11 ("Keeping API traffic low").
     station type missing from `STATION_TYPES` would not be returned.
   - The weighting is 75% stations to 25% carriers, both in what is fetched and what is shown (three
     stations to one carrier per search).
-- **Identification:** every request sends `http_identity.user_agent("trade-routes")` (routes) or the mining
-  finder's agent (prices).
+- **Identification:** every request sends `http_identity.user_agent("trade-routes")` (routes),
+  `user_agent("trade-roundtrip")` (round trip) or the mining finder's agent (prices).
 - **Failure is quiet:** a failed or cancelled lookup shows a short message in the panel and logs the reason;
   it never interrupts journal handling.
 
@@ -775,7 +781,7 @@ the refresh uses the "Near me" radius held to 5 to 5,000 ly (`trade_watch_panel.
   subprocess, skipped without a display): no label asks for more than the width available, unchanged
   blocks aren't redrawn, and a table's number columns end at the same place.
 
-They run without EDMC or a display. The Settings tab is built by `tests/test_prefs_smoke.py` (ten
+They run without EDMC or a display. The Settings tab is built by `tests/test_prefs_smoke.py` (eleven
 top-level tabs).
 
 The History window is also drawn in a real Tk window by `tests/trade_history_window_smoke.py` (run by
@@ -800,7 +806,7 @@ a real Tk window with EDMC and Spansh stubbed; that is not part of the suite.
 - A **squadron carrier's** `CarrierStats` is assumed to match a fleet carrier's with
   `CarrierType: "SquadronCarrier"`. No real one was available.
 - Ship pad sizes come from a bundled table and a partly hand-written journal-name map; a ship that doesn't match
-  shows "pad size unknown" and isn't filtered.
+  shows "Landing pad: Unknown" and isn't filtered.
 
 **Known gaps:**
 

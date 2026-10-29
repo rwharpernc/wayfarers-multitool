@@ -65,7 +65,7 @@ The numbers and names below are made up to show how the screens read. The wordin
 **A cargo delivery mission, from accept to turn-in.** You accept a mission to collect 60 Gold and bring it back.
 
 1. The mission appears on the **Trade & Mining** page. At the top, **Commodities needed:** reads `Gold (1 mission)  x60`.
-2. Open the Missions window. The Progress column starts at `0/60 held` (or nothing, if you hold none), because the game writes nothing about a source and return mission until you hand cargo in.
+2. Open the Missions window. The Progress column starts at `0/60 held` if you hold no Gold, because the game writes nothing about a source and return mission until you hand cargo in.
 3. Press **Find sources**, choose where to measure from, and buy at the station you pick. As the Gold arrives in your hold the row follows: `36/60 held`, then `60/60 held`. If you already carried Gold, that counts too, and Gold in a fleet carrier does not.
 4. Fly to the place in the **Go to** column. The row's `→` line on the panel card shows the same place.
 5. Hand the cargo in. The game now reports the count, and the row reads by the game's own figure, for example `20/60` after a partial hand-in. When the whole mission is done the row turns green and shows the hand-in place, which may be a different station from the one you accepted at. Hand in there.

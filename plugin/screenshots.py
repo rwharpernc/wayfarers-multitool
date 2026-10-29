@@ -902,7 +902,7 @@ class ScreenshotsController:
 
     def _preview_bounds(self) -> Tuple[int, int]:
         """(max_width, max_height) for the preview popup: `_PREVIEW_MAX_WIDTH`/
-        `_HEIGHT`, further capped to `_PREVIEW_SCREEN_FRACTION` of the
+        `_PREVIEW_MAX_HEIGHT`, further capped to `_PREVIEW_SCREEN_FRACTION` of the
         actual screen so a maximized preview still leaves room for its own
         title bar and button row on a smaller or non-widescreen monitor."""
         if self._parent is None:

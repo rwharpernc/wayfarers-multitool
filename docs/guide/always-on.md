@@ -133,7 +133,7 @@ diagram appears as soon as the overlay is up.
 
 - In the EDMC panel it is one line, such as `Docking Approved — Jameson Memorial — Pad 24`, with the diagram under it. The line wraps rather than widening the window.
 - On the game screen it is a card with the same text and the diagram.
-- **The diagram** is a plan of the station's pads with yours marked. There are two layouts: the **starport** layout (Coriolis, Orbis, Ocellus, asteroid bases and planetary ports) and the **fleet carrier** layout, used for fleet carriers, squadron carriers and colonization ships. Outposts and other facilities have no diagram, so you get the pad number and the text only.
+- **The diagram** is a plan of the station's pads with yours marked. There are two layouts: the **starport** layout (Coriolis, Orbis, Ocellus, asteroid bases and planetary ports) and the **fleet carrier** layout, used for fleet carriers, squadron carriers, colonization ships and dockable megaships. Outposts and other facilities have no diagram, so you get the pad number and the text only.
 - A carrier is told from a station by its type in the journal; a four-character name is taken to be a squadron carrier.
 - After you touch down the card stays for about ten seconds and then clears. A new jump, a supercruise entry or a stale request clears a request that never finished.
 
@@ -247,7 +247,7 @@ Sample System 9       WHITE DWARF
 
 1. Open **Settings → WFMT → Overlays → Route**.
 2. Tick **Enable the Route overlay**. It is **off by default**. **Systems listed** (3 to 20, 8 to start) is how many of the next systems the card lists.
-3. Optionally tick **Mark the systems ahead that EDSM does not know yet** (**off by default**; it asks EDSM, see below).
+3. Optionally tick **Mark the systems ahead that EDSM does not know yet** (**off by default**; it asks EDSM, see below). It is the only part of this page that goes online: it sends EDSM the names of the next systems on your route and nothing about you.
    - With it ticked, a system on the list that EDSM has no record of gets a **\*** after its name.
    - A system EDSM does not know has not been uploaded by anyone who shares with EDSM, so it may be a first discovery.
    - If EDSM cannot be reached, nothing is marked and it tries again after a few minutes; a failed check never marks a system as unknown.

@@ -51,7 +51,7 @@ know of, how it looks on screen, and what to do. Where a figure is an estimate, 
 | Mode | Guide |
 |---|---|
 | **Powerplay** | [Powerplay](powerplay.md): merits, cycles, sessions, megaships, the Rare Goods Finder |
-| **Exploration** | [Exploration](exploration.md): Auto-Honk, alerts, Boxel Survey, Codex, Notes, Expedition planner, Expedition Log, System targets and Body info, Exploration Dashboard, Route Planner and Carrier Route, Nearest place to land, Compass |
+| **Exploration** | [Exploration](exploration.md): Auto-Honk, alerts, Boxel Survey, Exploration Value, Codex, POI Reference, Notes, Expedition planner, Expedition Log, System targets and Body info, Exploration Dashboard, Route Planner and Carrier Route, Nearest place to land, Compass |
 | **Exobiology** | [Exobiology](exobiology.md): the Organic Scanning panel, the four overlay cards (status, predicted species, sample radar, popup), finding your way back to a plant, first footfall |
 | **Shortcuts** | [Shortcuts](shortcuts.md): keyboard shortcuts (Windows) and chat commands (Windows and Linux) for CTR, BRD, the radar range, the Live window and hiding the overlays |
 | **Mining** | [Mining](mining.md): space and surface mining, the Space Mining Book and the Surface Mining Book, Mining History, mining alerts |

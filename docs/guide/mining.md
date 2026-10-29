@@ -25,7 +25,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 **Start a Space Mining run.** Details: [Space Mining](#space-mining).
 
 1. Use the **◀** and **▶** buttons at the top of the panel until the Space Mining page shows.
-2. Undock. The page changes from `No active mining run. Undock to start tracking a new run.` to the live numbers of a new run.
+2. Undock. A new run begins. The page keeps saying `No active mining run. Undock to start tracking a new run.` until the run has something to show (tons in the hold, a prospected rock, a launched limpet or a refined ton), then the live numbers of the run appear.
 3. Fly to the ring and start mining. The **Hold**, **Asteroids prospected** and **Refined** lines fill in as you work.
 
 **Start a Surface Mining run.** Details: [Surface Mining](#surface-mining).
@@ -90,9 +90,9 @@ In your ship, from undocking. A run is one trip from `Undocked` to `Docked`: the
 - **Hold**, for example `Hold: 64 of 200 t`.
   - The tons your ship carries, read live from `Status.json` (the `Cargo` event is used until it has said), and its capacity from your last loadout.
   - The same line is on the HUD overlay.
-  - The ring you are at is shown with its reserve level, once *Enable EDSM ring reserve lookup* is ticked and EDSM knows it, for example `Ring: Example 2 A Ring (Metallic) - Reserve: Pristine`. A ring that is not Metallic is shown in amber with a reminder that laser mining pays best on Metallic rings. Nothing is shown while the answer is unknown, rather than a stale or guessed one.
+  - The ring you are at is shown with its reserve level, once *Enable EDSM ring reserve lookup* is ticked and EDSM knows it, for example `Ring: Example 2 A Ring (Metallic) - Reserve: Pristine`. A ring that is not Metallic is shown in red with a reminder that laser mining pays best on Metallic rings. Nothing is shown while the answer is unknown, rather than a stale or guessed one.
 - **Asteroids prospected**, with how many of each content grade (for example `Asteroids prospected: 14 (High x3, Medium x6, Low x5)`), and the **materials seen** in them. A rock prospected again with the same composition is counted once, and the page says how many repeats it ignored (`[2 duplicate(s) ignored]`).
-  - Each material in **Materials seen** is listed on its own line with how many rocks held it, the lowest, average and highest percentage seen this run in square brackets, and, when the method is known, `Mine via` with the method that usually suits it (core, laser surface or sub-surface deposit). The method hints are community-sourced.
+  - Each material in **Materials seen** is listed on its own line with how many rocks held it, the lowest, average and highest percentage seen this run in square brackets, and `Mine via` with the method that usually suits it (core, laser surface or sub-surface deposit; laser surface when no other is known). The method hints are community-sourced.
 - **Last rock**: the latest rock's materials with their percentages and its grade, for example `Last rock: Painite 34%, Platinum 12% (High), target: Painite`.
   - A **core asteroid** (the game names a core mineral in the prospector's result) adds `core: Painite`, and **Core asteroids found** counts them for the run.
   - `target:` names each target commodity the rock holds at least its percentage of (Settings → WFMT → Mining; several can be set).
@@ -139,7 +139,7 @@ Hold full in about 14 min
 
 In the Rhino SRV. A run runs from launching the Rhino to stowing it. The page keeps the last run's numbers (`Rhino stowed (last deployment)`) until the next launch, but the hold lines and *Refining now* show only while the Rhino is out.
 
-- Whether the Rhino is deployed or stowed, its hold (`SRV hold: 40 of 72 t`) and your ship's (`Ship hold: 64 of 200 t`, from the last `Cargo` event while the Rhino is out).
+- While the Rhino is out, its hold (`SRV hold: 40 of 72 t`) and your ship's (`Ship hold: 64 of 200 t`, from the last `Cargo` event). Both lines go once the Rhino is stowed.
 - **Refined**, **Refining now** and the **Run average**. They are worded as on the Space page. *Refining now* shows only while the Rhino is out.
 - **SRV hold full in**: the same estimate for the Rhino's 72 t hold, only while it is out.
 - What was **Transferred to ship** and the **Raw materials** picked up.
@@ -176,7 +176,7 @@ Settings. Hover for the full name.
 | **DASHBOARD** (Mining History) | Opens every mining run found in your journals, added up (see below). | Always |
 | **LIVE** | Opens the live window for the page you are on: a radar and the controls on the Surface page, the live numbers on the Space page. Meant for a second screen ([the live window](#the-live-window)). | Always |
 | **H.S.** (find nearby hotspots) | Opens the Find Nearby Hotspots window (see below). | Space Mining page, once *Enable Spansh nearby hotspot finder* is ticked |
-| **PRICE** (find best price) | Opens the Find Best Price window (see below). | Once *Enable Spansh best price finder* is ticked (the same switch also turns on Market research in the Surface Mining Book) |
+| **PRICE** (find best price) | Opens the Find Best Price window (see below). | Once *Enable Spansh best price finder* is ticked (the same switch also turns on Market research and What pays in the Surface Mining Book) |
 | **RES** (check ring reserve level) | Opens the Check Ring Reserve Level window (see below). | Space Mining page, once *Enable EDSM ring reserve lookup* is ticked |
 
 The three online lookups are **off until you turn them on in Settings**. See [what goes on the internet](internet-and-privacy.md).
@@ -237,7 +237,7 @@ The table gives each ring with its **Body**, **Reserve level**, **Ring type** an
 3. Press **Search**. Each row gives the **Reserve level**, the **Ring type** and a **Laser mining** note. A ring that is not Metallic is flagged in amber.
 4. If the status line says EDSM has no ringed body on file, nobody has recorded it. Scan the ring yourself when you arrive.
 
-**Automatic lookup.** Once on, the EDSM ring reserve lookup also contacts edsm.net **automatically every time you drop into a ring**, as well as when you search by hand.
+**Automatic lookup.** Once on, the EDSM ring reserve lookup also contacts edsm.net **automatically when you drop into a ring** (once for each ring until EDMC restarts; the answer is kept meanwhile), as well as when you search by hand.
 
 ## A typical run
 
@@ -341,7 +341,7 @@ Commodity names are suggested as you type in the Find Best Price window, the Add
 
 ### Reading the journals
 
-- The first time it opens, WFMT reads every finished journal once, in the background. The header and status bar show how far it has got. Years of journals take a minute.
+- The first time WFMT runs with a known commander, it reads every finished journal once, in the background (not only when the window opens). The window's header and status bar show how far it has got. Years of journals take a minute.
 - It keeps the runs in `mining_history.json` beside the plugin, one record per commander. A later start reads only the journals written since.
 - The newest journal, which may be growing, is read again about every 15 seconds while the window is open, so a run in progress is included and nothing is counted twice.
 - **Refresh** reads now.
@@ -399,7 +399,7 @@ The controls that act on the ground are in the header:
 
 The radar draws when you are on or just above the ground and a body's size is known; otherwise it says so. The ground "driven" is where the Rhino has been, not what was scanned, as on the minimap.
 
-The window's subtitle names the body and system you are on. **Save map** needs the same two things; without them its status line says `The map needs your position and the body's size: land, or launch the Rhino, first.` The file name offered is the body's name followed by `map.png`.
+The window's subtitle names the body and system you are on. **Save map** needs the same two things; without them its status line says `The map needs your position and the body's size: land, or launch the Rhino, first.` The file name offered is the body's name, a space and `map.png`. The picture is centered on the marked location nearest you (on the Rhino when none is marked).
 
 ### Keyboard shortcuts and chat commands
 
@@ -631,7 +631,7 @@ A hotspot marked depleted is dated, and its card says how long ago.
 1. Stand at it. The Book marks it `you are here` and selects it, so open **BOOK** and press **Mark depleted**.
 2. The card shows the date and how long ago. The mark stays until you change it, unless you set a refill time in **Settings → WFMT → Mining**.
 3. Come back after a few days, read the Amount again, and press **Edit** to set the new reading if it has refilled.
-4. If you press **Mark depleted** again and have refined nothing there since, WFMT keeps the first date and looks again 7 days later.
+4. If a refill time you set has taken the mark off and you press **Mark depleted** again having refined nothing there since, WFMT keeps the first date and looks again 7 days later.
 
 ### Stops
 
@@ -701,7 +701,7 @@ The **What pays** button ranks the commodities you could mine by the best price 
 **The table.**
 
 - It fills in as the answers arrive and is ordered best price first when it finishes.
-- Columns: the station, system, distance, demand, arrival distance, landing pads and *why it is listed*.
+- Columns: the commodity, its best price, the station, system, distance, demand, arrival distance, landing pads and *why it is listed*.
 - Click a heading to sort. **Copy report** copies the ranking. **Help** explains the columns.
 - A commodity no station pays for shows *No station found*.
 

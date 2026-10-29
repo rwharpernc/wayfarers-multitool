@@ -174,7 +174,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
     - The files it replaces are zipped first, so it can be undone.
     - A zip that holds anything but WFMT's data files is refused whole, never partly applied.
   - Automatic backups use their own name and keep ten, so pruning cannot reach a backup made by hand.
-  - One automatic backup is also made just before an update, because the updater's own backups leave data out on purpose.
+  - When automatic backup is switched on, one is also made just before an update, because the updater's own backups leave data out on purpose.
   - It is off by default.
 - **Not done:** restoring in place, and restoring one commander at a time (a data file holds every commander, so the file is the unit).
 - **Where to look:** `data_backup.py`, [getting-started.md](guide/getting-started.md#backing-up-your-data), `tests/test_data_backup.py`.
@@ -219,7 +219,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 
 - The request has the shape Spansh's exact plotter takes.
 - The drive table is a table of published drive data, used as game facts (source and license: see docs/ATTRIBUTIONS.md and THIRD-PARTY-NOTICES.md).
-  - It is flagged for checking in `data_verification` (V-0351 to V-0353).
+  - It is on the data verification list (V-0351 to V-0353): V-0351 (the 6x supercharge of the Mk II overcharge drive) is verified against the journals, V-0352 and V-0353 still need checking.
   - A drive missing from it is reported, not guessed.
 - Also built:
   - The next system copied to the clipboard after **every** jump, one setting shared by the panel and the window.
@@ -233,7 +233,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 **Entry point and white dwarfs**
 
 - The Expedition window's **Neutron route** button opens the Route Planner.
-- A white dwarf also boosts the drive (1.5x, against 4x for a neutron star).
+- A white dwarf also boosts the drive (1.5x, against 4x for a neutron star, on a standard drive; 3x against 6x on the Mk II overcharge drive).
   - Neither Spansh plotter's request nor its answer knows about them (the pages' scripts mention white dwarfs only as star type names).
   - So the Route Planner cannot ask Spansh to plan through them.
 - What it offers is an option, named *Mark white dwarfs the route passes*, that asks EDSM for the main star of each system on the finished route and *marks* the white dwarfs.
@@ -500,7 +500,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 - **Why POSTs are not retried on a timeout:** a submitted job may have been accepted.
 - **Cost:** a long polling loop (route jobs poll every 5 seconds) is unchanged. The star lookups for the next dozen neutron stops take a few seconds instead of arriving at once.
 - The page `docs/SPANSH_USAGE.md` records every endpoint, so that the use can be read and checked.
-- Where Spansh publishes a data dump that covers a need (the neutron-star list), reading a local copy is preferred to asking, and that is planned as an option (see [TODO.md](TODO.md)).
+- Where Spansh publishes a data dump that covers a need (the neutron-star list), reading a local copy is preferred to asking, and WFMT offers that as an option for the neutron-star list (the local star index, described in [SPANSH_USAGE.md](SPANSH_USAGE.md); what is left is in [TODO.md](TODO.md)).
 
 ### 3.24 What "Acquire" means in Colonization (formerly "Remaining")
 

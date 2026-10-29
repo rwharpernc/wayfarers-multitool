@@ -1,7 +1,7 @@
 """
 Sharing a commander's colonization progress with Raven Colonial, as its own documentation recommends for a tool that reads the journal.
 
-Everything here is opt-in (two Settings checkboxes, both off) and only sends live journal events, never old ones caught up at
+Everything here is opt-in (a master switch and two Settings checkboxes, all off) and only sends live journal events, never old ones caught up at
 start-up. What goes out, and when:
 
 - **Depot snapshot** - on a `ColonisationConstructionDepot` event, `PATCH /api/project/<build id>` with the event, the commodities

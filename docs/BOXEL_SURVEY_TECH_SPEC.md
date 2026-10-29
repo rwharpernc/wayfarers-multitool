@@ -1,11 +1,11 @@
-# Technical Specification — Boxel Survey
-
-**Author:** R.W. Harper (CMDR Tiber Caelvox)
-**Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
+# Boxel Survey technical specification
 
 The standing reference for Boxel Survey across all three sub-modes (Sequence, Region Sweep, Waypoint
 Route): what's true about the system right now, why, and what's still unknown. Release history is in
 `CHANGELOG.md`.
+
+- **Author:** R.W. Harper (CMDR Tiber Caelvox)
+- **Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 **Design principle.**
 
@@ -47,6 +47,9 @@ visited_systems.py        The per-commander log of every system arrived at, plus
                           catch-up for jumps made while EDMC was closed (§4.4.1, §8).
 survey_log.py             Notable-finds log (Earthlike/water/ammonia/terraformable/bio), keyed by
                           system and rolled up by boxel. Pure, unit-tested (tests/test_survey_log.py).
+survey_catchup.py         Replays recent journals into the survey log for scans made while EDMC was
+                          closed (§4.4.1). Unit-tested (tests/test_survey_catchup.py).
+undiscovered_nearby.py    The RND button's Spansh lookup, list filtering and in-memory cache (§4.4.1).
 edsm_client.py            Shared EDSM API client (also used by Mining mode) — nearby_systems
                           (cube-systems), system_known (Tier 2), system_fully_scanned (Tier 3),
                           system_bodies, systems_coords. Never raises; every failure degrades to an

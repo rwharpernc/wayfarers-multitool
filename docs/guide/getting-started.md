@@ -185,7 +185,7 @@ WFMT also keeps the panel's **width** to the width of the mode-button row, so sw
 - Mining hotspots and the ground your Rhino has driven.
 - The Boxel Survey position and finds, the Codex tally.
 - Colonization sites, Ship Builds, Organic Scanning and Powerplay history.
-- The Credits Ledger and the credits line, expeditions and the Expedition Log, notes, the Surface Compass marks, the engineering materials, blueprint wishlist and engineers, stored modules, pinned missions and the Raven Colonial key.
+- The Credits Ledger and the credits line, expeditions and the Expedition Log, notes, the Surface Compass marks, the engineering materials, blueprint wishlist and engineers, stored modules, pinned missions, the Raven Colonial key and the Discord destinations.
 - Each commander's overlay choices (which cards are on, where they sit, how they look).
 
 Names are matched ignoring case, so `EXAMPLE` in the journal and `Example` in EDMC are the same commander.
@@ -212,7 +212,7 @@ About the backup:
 
 - **Every commander is in it.** Most files hold a separate section for each commander on the install, so the zip does too.
 - **Left out on purpose:**
-  - The Raven Colonial keys (`rcc_keys.json`), because a backup is meant to be copied around.
+  - The Raven Colonial keys (`rcc_keys.json`) and the Discord webhook links (`discord_webhooks.json`), because a backup is meant to be copied around.
   - The downloaded Codex catalog, which WFMT fetches again.
   - The optional local star index (`star_index` folder, about 110 MB, built from a public download and made again from Settings).
   - Your Settings and your overlay positions held in EDMC's own configuration are not files in the plugin folder, so they are not in it either. `overlay_settings.json` (each commander's overlay choices) is.
@@ -290,7 +290,7 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 
 - **Press OK** (at the foot of EDMC's Settings window) to keep what you changed. A few controls act at once and need no OK: the **Test** buttons, **Check connection**, the Local star index buttons and its tick, **Add font file...**, **Rescan** and **Test Honk Now** in Auto-Honk, and the restore buttons.
 - **The tabs are in alphabetical order**, at the top level and inside every row of inner tabs (the Overlays row starts with its three shared tabs). Each row opens on its first tab. A long tab scrolls, and the mouse wheel works over it.
-- **Where a setting is kept.** Settings are saved in EDMC's own settings for this computer, so a tick on one machine does not carry to another. The exceptions are the overlay choices (which cards are on, where they sit, how they look), which are kept for the commander who is playing ([Overlay setup](../OVERLAY_SETUP.md#moving-things-around)), and your Raven Colonial key, which is kept for each commander.
+- **Where a setting is kept.** Settings are saved in EDMC's own settings for this computer, so a tick on one machine does not carry to another. The exceptions are the overlay choices (which cards are on, where they sit, how they look), which are kept for the commander who is playing ([Overlay setup](../OVERLAY_SETUP.md#moving-things-around)), and your Raven Colonial key and Discord destinations, which are kept for each commander.
 - **Restarts.** Almost every change applies when you press OK. An EDMCModernOverlay font, an update and a data restore wait for the next EDMC start, as their tabs say.
 - **Off to start with.** Every on-screen display, every write to another site and every online lookup that has a switch starts off, with one exception: BGS tick detection starts on. The Rare Goods Finder and the Codex "Not found" tab have no switch and ask their service when you open them ([what goes on the internet](internet-and-privacy.md)). [Troubleshooting](troubleshooting.md#nothing-happens-settings-that-start-off) lists the switches with the tick that turns each on.
 
@@ -300,7 +300,7 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 |---|---|---|
 | **BGS** | *Show BGS faction states and activity* (on); *Detect BGS ticks (polls tick.infomancer.uk every 60s)* (on); *Keep previous ticks for [n] days* (1 to 90, 7 by default) | [BGS settings](bgs.md#settings) |
 | **Colonization** | The Raven Colonial group: *Allow WFMT to write to Raven Colonial (master switch)* (off), *Report my construction progress and deliveries to Raven Colonial* (off), *Also report cargo I move to and from my fleet carrier* (off), your *Raven Colonial key* (hidden as you type) with **Test key**, and a link to the page where the key is made. The two reporting ticks stay grayed out until the master switch is on | [Colonization](colonization.md#sharing-your-progress-with-raven-colonial) |
-| **Discord** | *Allow Post to Discord* (off); your **Destinations** (each a *Name*, a *Webhook link* hidden as you type, and an optional *Thread ID*), saved for the commander you are playing, with **Test**, **Remove**, **Add destination** and **Copy their destinations**, and **Customize posts…** (how the posts look); See [Sharing reports to Discord](discord.md) | [Sharing reports to Discord](discord.md) |
+| **Discord** | *Allow Post to Discord* (off); your **Destinations** (each a *Name*, a *Webhook link* hidden as you type, and an optional *Thread ID*), saved for the commander you are playing, with **Test**, **Remove**, **Add destination** and **Copy their destinations**, and **Customize posts…** (how the posts look) | [Sharing reports to Discord](discord.md) |
 | **Exploration** | A row of inner tabs, below | [Exploration](exploration.md) |
 | **Field Ops** | A row of inner tabs, below | [Field Ops](field-ops.md) |
 | **General** | A row of inner tabs, below | this page |
@@ -361,7 +361,7 @@ Every box that takes a system name suggests systems as you type, from the second
 
 - **What it suggests:** the systems you have been in this session first, then ones WFMT already holds (expedition stops, notes).
 - **Keys:** **Down** and **Up** move through the list, **Enter** or a click takes the highlighted one, and **Escape** closes it. **Enter** with nothing highlighted does what the box always did (add the stop, run the search).
-- **Systems you have never been to:** tick **Suggest system names from Spansh while typing** under Settings → WFMT → General → Window. It is off until you tick it, and then the letters you have typed so far go to Spansh ([what goes on the internet](internet-and-privacy.md)).
+- **Systems you have never been to:** tick **Suggest system names from Spansh while typing** under Settings → WFMT → General → Window. It is off until you tick it, and then the letters you have typed so far (from the third) go to Spansh ([what goes on the internet](internet-and-privacy.md)).
 
 ### What you can and can't switch off
 
@@ -384,7 +384,7 @@ EDMC theme.
 Every pop-out window has the same layout:
 
 - **Header:** the window's title with a one-line subtitle under it, and its buttons on the right. A button with a small arrow (such as **Raven Colonial** or **Manage Sites** in the Colonization Sites window) opens a menu of related actions.
-- **Help:** most windows (not the Exploration Dashboard, Inventory, Missions, Ship Builds or Colonization Sites windows) have a **Help** button at the right of the header. It opens a small window of short entries that explain the columns, the colors and the buttons, so the explanation is not a paragraph in the window itself. Press **Help** again and the same window comes forward.
+- **Help:** most windows (not the Exploration Dashboard, Inventory, Missions, Ship Builds, Colonization Sites, Where to Buy, Nearest place to land, Prediction review, Source commodities or Surface Mining Book windows) have a **Help** button at the right of the header. It opens a small window of short entries that explain the columns, the colors and the buttons, so the explanation is not a paragraph in the window itself. Press **Help** again and the same window comes forward.
 - **Body:** tables you can sort by clicking a heading where the window says so. Windows that are tabs of another window (the Expedition window's Plan, Route and Log tabs) share its header.
 - **Status line:** the line at the foot of the window gives the result of what you pressed (a copy, a search, a refusal) and wraps rather than cutting off.
 - **Size and place:** remembered for next time; a window opens at least as big as its minimum so nothing is clipped.
@@ -465,7 +465,7 @@ shows its full name.** Buttons inside pop-out windows and Settings keep their fu
 | **Find Nearby (EDSM)** | Ask EDSM for the nearest real procedurally named system outside the current cube and put it in the Seed box (press **Set** to move the survey there) | Exploration (Boxel Survey section, Sequence) |
 | **FIND** | Find nearest POI (GEC and Canonn) | Exploration |
 | **UPDATE** | Refresh POI data (Canonn) | Exploration |
-| **MY CODEX** | My Codex window: overview, found, not found and backfill (Codex Completionist) | Exploration |
+| **MY CODEX** | My Codex window: overview, found and not found, with a Backfill Journals button (Codex Completionist) | Exploration |
 | **ADD** | Save the line you typed as a note about the system you are in | Exploration (Notes section) |
 | **NOTES** | Open the Notes window | Exploration (Notes section) |
 | **EXPEDITION** | Open the Expedition window (tabs Plan, Route and Log), where expeditions are started, paused and stopped | Exploration (Expedition section) |
@@ -514,6 +514,7 @@ shows its full name.** Buttons inside pop-out windows and Settings keep their fu
 | **OVERLAY** | Force the colonization shopping list onto the overlay (lit while on), press again to let go | Colonization |
 | **PROJECTS** | Open My Projects, every active project you have on Raven Colonial | Colonization |
 | **HISTORY** | Open Colonization History, what you have delivered over time | Colonization |
+| **CREATE ON RAVEN** / **NOT NOW** | Shown only when Raven Colonial has no project for a new construction site: open the Create dialog for it / hide the offer | Colonization |
 
 ---
 

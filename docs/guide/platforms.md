@@ -26,7 +26,7 @@ The Settings tabs for Auto-Honk, the screenshot auto-timer and the sound options
 | **Auto-Honk** (presses your Discovery Scanner key for you) | Yes | Yes, needs **`xdotool`**. X11 or XWayland windows only, not a native Wayland window |
 | **Screenshot auto-timer** and **Thargoid-scan capture** (press the screenshot key for you) | Yes | Yes, needs **`xdotool`** |
 | Screenshot conversion and renaming | Yes | Yes (Elite's `Pictures` folder inside the Proton/Wine folder) |
-| **Sounds**: the Inventory pickup sound, the Flight Alerts sound and the Shortcuts confirmation sound | Yes (system beep) | Yes, needs `canberra-gtk-play` or `paplay` where EDMC runs (inside a Flatpak, that means inside the Flatpak); without one the sound ticks are grayed out |
+| **Sounds**: the Inventory pickup sound, the Flight Alerts sound and the Shortcuts confirmation sound | Yes (system beep) | Yes, needs `canberra-gtk-play` or `paplay` where EDMC runs (inside a Flatpak, that means inside the Flatpak); without one the Inventory and Flight Alerts sound ticks are grayed out and the Shortcuts sound stays silent |
 | On-screen overlay features | WFMT's built-in overlay (nothing to install), or EDMCModernOverlay | **EDMCModernOverlay is required** (the built-in overlay is Windows only for now; a Linux version is being researched) |
 | The Mining radar over the game (a picture on the overlay) | Yes, with WFMT's built-in overlay | No (EDMCModernOverlay cannot draw a picture; use the Surface Live window) |
 | Keyboard shortcuts (CTR, BRD, radar range, Live window, hide overlays) | Yes (Ctrl+Alt+Shift plus a key) | No (use the chat commands, which work on both) |

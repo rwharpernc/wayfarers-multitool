@@ -70,16 +70,16 @@ every window a consistent feel and works the same on Linux. The cost is that it 
 theme choice. The palette is token-based: there are four themes (Navy, the default, and Cyan, Amber and Green after EDDDT), chosen under
 Settings → General → Window or in a window's bottom line, and applied to open windows at once.
 
-## 5. The Mining Book layout
+## 5. The Surface Mining Book layout
 
-Three resizable panes with saved geometry:
+The Surface Mining Book has three resizable panes with saved geometry:
 
 1. **Bodies:** the current system's scanned landable bodies plus every saved hotspot, grouped in a
    `FoldList`, with a material filter and a rig-count filter. It opens on the body you're at.
 2. **Hotspots:** the selected body's hotspots grouped by location, with rigs, mined tons and the tons-left
    range, plus what *you've* found so far on that kind of ground.
 3. **Detail and map:** a card for the selected hotspot (material, density and amount, estimate, notes,
-   with Mark depleted, Copy coordinates, Edit and Delete) and a map of coverage and hotspots.
+   with Mark depleted, Copy coords, Share line, Edit and Delete) and a map of coverage and hotspots.
 
 See [MINING_TECH_SPEC.md](MINING_TECH_SPEC.md) for the data behind it.
 

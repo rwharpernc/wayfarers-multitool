@@ -1,10 +1,10 @@
-# Technical Specification — Missions
-
-**Author:** R.W. Harper (CMDR Tiber Caelvox)
+# Missions technical specification
 
 The standing reference for Missions mode: what it reads, the rules it applies, and what its numbers can
 and can't tell you. For how to use it, see the [README](guide/missions.md). For how the code is
 organized in general, see [TECHNICAL.md](TECHNICAL.md).
+
+- **Author:** R.W. Harper (CMDR Tiber Caelvox)
 
 **Design principle.**
 
@@ -82,9 +82,9 @@ learned to read. `mission_types.classify()` buckets a `MissionAccepted` event li
 1. **Massacre-shaped** (see below) → *Massacre (Space)* or *Settlement Raids (Ground)*.
 2. Name contains a combat hint (`assassinate`, `disable`, `skimmer`, `conflict`, `piracy`, `scout`,
    `thargoid` and similar) → **Combat**.
-3. Name contains a trade hint (`delivery`, `courier`, `collect`, `mining`, `salvage`, `smuggle`) →
+3. Name contains a trade hint (`delivery`, `courier`, `collect`, `mining`, `salvage`, `communitygoal`, `smuggle`) →
    **Trade & Mining**.
-4. Name contains a passenger hint (`passenger`, `sightseeing`, `vip`, `bulk`, `evacuation`) →
+4. Name contains a passenger hint (`passenger`, `sightseeing`, `vip`, `bulk`, `evacuation`, `polprisoner`) →
    **Passenger**.
 5. Name contains a covert hint (`hack`, `heist`, `sabotage`, `download`, `upload` and similar), or the
    mission is on foot → **Covert / On-Foot Ops**.
@@ -98,7 +98,7 @@ learned to read. `mission_types.classify()` buckets a `MissionAccepted` event li
 - **Mining missions** need `mining` in the name. This is deliberately narrower than "has a Commodity
   field": Collect and Delivery missions also carry one, but you buy or collect that cargo, so showing a
   mining hint on them would be wrong.
-- **Colonization missions** (`colonization` in the name) are excluded from every page.
+- **Colonization missions** (`colonization` or `colonisation` in the name) are excluded from every page. (game spelling)
 
 New or odd mission names fall into **Other**, which is the safe default. The name hints are community
 knowledge and may need extending when Frontier adds mission types.

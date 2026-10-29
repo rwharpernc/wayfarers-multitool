@@ -428,7 +428,7 @@ class ShiftedClient:
 
 @dataclass(frozen=True)
 class Slot:
-    """One display that can be placed. `key` names it in settings; `legacy_keys` are the old x/y settings (if any) read
+    """One display that can be placed. `key` names it in settings; `legacy_x`/`legacy_y` are the old x/y settings (if any) read
     once so that a position somebody chose by hand is not lost; `size` is the block (in pixels) used to preview it."""
     key: str
     label: str

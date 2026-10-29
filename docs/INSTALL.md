@@ -75,7 +75,7 @@ Everything WFMT saves about your play is a plain file in the `Wayfarers-Multitoo
 |---|---|---|
 | The program | `load.py`, the other `.py` files, `fonts`, `icons`, `LICENSE`, `THIRD-PARTY-NOTICES.md` | Replaced by an update |
 | Your data | The `.json` files WFMT writes as you play (trade, mining, missions, ledgers, notes, expeditions, surveys, ship builds, `overlay_settings.json` for each commander's overlay choices and so on; not `colonization_costs.json` and `rare_goods.json`, which ship with the program), and `mining_sessions` if you archive runs | Kept by updates; included in **Back up my data**. One section per commander |
-| Raven Colonial keys | `rcc_keys.json` | Kept by updates; **left out** of backups on purpose |
+| Raven Colonial keys and Discord webhook links | `rcc_keys.json` and `discord_webhooks.json` | Kept by updates; **left out** of backups on purpose |
 | Local star index | `star_index` folder (about 110 MB, optional) | Kept by updates; not in backups; made again from Settings |
 | Downloaded Codex catalog | `codex_catalog.json` | Kept by updates; not in backups; downloaded again by WFMT |
 | Update files | `updates` (the downloaded ZIP) and `backups` (the program files an update replaced, and `pre-restore-<date>.zip` files from restores) | Safe to delete once you no longer need them |

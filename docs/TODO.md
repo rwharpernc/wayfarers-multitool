@@ -15,8 +15,8 @@ Work that is under way, being researched, or waiting on a decision. Items are li
 
 - Built: the Online lookups page has a Local star index group.
   - It downloads Spansh's `systems_neutron.json.gz` when the player asks.
-  - It builds a local index (about 100 MB) and uses it for N.S., falling back to the Spansh search.
-  - Update now fetches the small 1-day or 1-week file and merges it in (the full file only when the index is more than a week behind).
+  - It builds a local index (about 110 MB) and uses it for N.S., falling back to the Spansh search.
+  - Update now fetches the small 1-day or 1-week file and merges it in (the full file only when the index is more than a week behind, after 20 updates, or when the base file is more than 60 days old).
 - Still open:
   - Out of scope: a white dwarf local index. W.D. keeps asking Spansh, which publishes no white dwarf dump (checked 2026-10-23) and offers only the whole galaxy, far too large to download.
   - Keeping the secondary-star check's per-system lookups, since the dumps list only a system's main star.
@@ -397,7 +397,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check the **Stops** lines above the hotspots, the dashed rings on the map at 1x/2x/4x and the `stop N` tags. Changing Settings → Mining → Stop radius changes them.
   - Standing within 175 m of a deposit selects it and marks `you are here`, and Mark depleted there is one click.
   - Mark a deposit depleted. Check the card says `Depleted N d ago. When it refills is unknown` and that the mark stays.
-  - Set Settings → Mining → refill days to 14, edit `depleted_at` in `mining_hotspots.json` to 15 days ago, reopen the Book. Check the mark is gone and the card says `Assumed refilled`.
+  - Set Settings → Mining → *Assume a depleted deposit has refilled after (days)* to 14, edit `depleted_at` in `mining_hotspots.json` to 15 days ago, reopen the Book. Check the mark is gone and the card says `Assumed refilled`.
   - Press Mark depleted again with no mining and check `Still depleted at ...; look again in 7 d`.
   - Check the dialog's Edit keeps these dates.
 - [ ] **Surface Mining Book: Market research.** Tick *Enable Spansh best price finder*, open the Book on a system where you have saved hotspots, press **Market research**.
@@ -769,7 +769,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check Down, Enter and Escape.
   - Check Enter with nothing highlighted still acting.
   - Check the list matching the EDMC theme in the main panel boxes.
-  - Then enable Settings → Window → Suggest system names from Spansh and type `outot`.
+  - Then enable Settings → WFMT → General → Window → *Suggest system names from Spansh while typing* and type `outot`.
 - [ ] **Notes.** Verify quick add, the window, **Here**, deletion with confirmation, and the count shown when jumping into a system that has notes. Verify that the EDMC window does not become wider.
 - [ ] **Help tab** (Settings → General → Help).
   - Verify that **Report an issue** opens the prefilled form (this requires the issue template on GitHub).

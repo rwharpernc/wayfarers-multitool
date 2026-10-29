@@ -16,7 +16,7 @@ on-screen extras.
 | **Landing Assist** | The pad you've been assigned, with a diagram of the station or carrier |
 | **Interdiction Warning** | An alert the moment an interdiction starts |
 | **Flight Alerts** | A small card with the fleet carrier jump countdown, the low-fuel and unscoopable-star warnings and the mining alerts (a core asteroid, a rich rock, low limpets, a nearly full hold) |
-| **Route** | A card with your fuel and jump range, the jumps left, the next supercharge and the plotted route (neutron stars and white dwarfs picked out); a route plotted in the Route Planner takes its place |
+| **Route** | A card with where you are navigating to, the jumps left, the systems still to visit (neutron stars, white dwarfs and scoopable stars picked out) and the light years left; a route plotted in the Route Planner takes its place. Fuel and jump range are on the Exploration Dashboard, not on this card |
 | **Expedition Log** | The running expedition's exploration and exobiology totals and what it has earned |
 | **Bio status**, **Biology**, **Bio radar**, **Sample popup** | The Exobiology cards: sampling progress and distance, predicted species and what they pay, a plot of your samples and their circles, and a popup after each sample |
 | **System targets** | A list of scanned bodies worth mapping and bodies with life not yet analyzed, with the scan progress |

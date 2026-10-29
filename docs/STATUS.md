@@ -37,7 +37,7 @@ There is one long-lived branch, `master`.
   - the Where to Buy window, the Biology card's new rows (through Test Cards) and the layout editor's top-edge snap work on Windows; Copy To Acquire was deployed and looked right
   - still to try in the game: the Biology rows on a real body with several candidate species; the offer on the COL page when a new site has no Raven project (needs sharing on and a saved key); the 30-second hold of a button's message
 - Bugs found are fixed on `master` or a short bug fix branch.
-- Not yet recorded for the released 1.3.0 (2026-10-29) and 1.2.0 (2026-10-28), and still open for 1.1.0 (2026-10-27) and 1.0.0 (2026-10-26): the in-game pass in [TEST_PLAN.md](TEST_PLAN.md), sections 1 to 6. Sections 5 (2026-10-23) and 6 (Colonization, 2026-10-26) are the newest:
+- Not yet recorded for the released 1.3.0 (2026-10-29) and 1.2.0 (2026-10-28), and still open for 1.1.0 (2026-10-27) and 1.0.0 (2026-10-26): the in-game pass in [TEST_PLAN.md](TEST_PLAN.md), sections 1 to 6 (section 7 is new in 1.3.0). Sections 5 (2026-10-23) and 6 (Colonization, 2026-10-26) are the newest of those:
   - every overlay is off after the first start, for every commander, with one log line
   - a stopped expedition carries on from where it stopped, and Rescan leaves out paused and stopped time
   - Overlay Placement names where the screen size came from, and reads the real hardware size when the game's files are not found

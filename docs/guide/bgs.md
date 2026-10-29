@@ -1,10 +1,10 @@
 # BGS
 
-**Work in progress.** BGS tracking is still being built, and I'd really appreciate your feedback. If something
-looks wrong, or you have a suggestion, please [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
-
 The **Background Simulation (BGS)** is the game's behind-the-scenes model of factions and their influence. BGS mode
 tracks faction states, and the effect of your own missions, bounties, trade, exploration and crimes on them.
+
+**Work in progress.** BGS tracking is still being built, and I'd really appreciate your feedback. If something
+looks wrong, or you have a suggestion, please [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 There is nothing to set up: it records wherever you act. BGS is on by default (**Settings → WFMT → BGS**); with it turned off the panel says `BGS tracking is disabled — see Settings.`
 

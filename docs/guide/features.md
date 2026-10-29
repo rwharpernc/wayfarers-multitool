@@ -182,7 +182,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
-| Screenshots | Converts Elite's screenshots to PNG, with an optional crop to the HUD | Nothing to do; **Click to expand** shows thumbnails | [Screenshots](field-ops.md#screenshots) |
+| Screenshots | Converts Elite's screenshots to PNG, with an optional crop to the HUD; an optional auto-capture timer and Thargoid-scan capture press the screenshot key for you | Nothing to do; **Click to expand** shows thumbnails; the clock icon starts the timer | [Screenshots](field-ops.md#screenshots) |
 | Inventory | Your backpack, locker and cargo as bars, and the Carrier Locker, with a pick-up sound | Click an inventory bar | [Inventory](field-ops.md#inventory) |
 | Materials | The Raw, Manufactured and Encoded materials you hold, their grade and limit | **MATERIALS** | [Materials](field-ops.md#materials) |
 | Engineering | About 1,180 blueprints against what you hold, a wishlist and shopping list, a ship planner (which also shows the engineered modules you already have in storage), an Odyssey upgrade planner and an Engineers tab | **BLUEPRINTS** | [Engineering](field-ops.md#engineering-blueprints-and-a-wishlist) |

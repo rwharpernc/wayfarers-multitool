@@ -135,7 +135,7 @@ Each is a small standalone script under `scripts/`, run by hand and kept out of 
 4. **Other desktops.** E6 and E7 with testers; record per-compositor results in the matrix below and in the Linux guide's known limits.
 5. **Build.** A Linux window class with the same members as `OverlayWindow`, selected in `overlay_native.supported()` and `overlay_window` (one platform helper, no OS checks elsewhere), with the Windows-only settings text and the "not found" notice updated. Reuse the scene, raster, placement and tests.
 6. **Test.** Pure parts (geometry math, environment detection, hint selection) get unit tests; window behavior is checked by the E-scripts and recorded in [LINUX_TESTING.md](LINUX_TESTING.md).
-7. **Document.** Update [OVERLAY_SETUP.md](OVERLAY_SETUP.md), [platforms](guide/platforms.md), the README and [NATIVE_OVERLAY_SPEC.md](NATIVE_OVERLAY_SPEC.md), which currently says Linux is not planned.
+7. **Document.** Update [OVERLAY_SETUP.md](OVERLAY_SETUP.md), [platforms](guide/platforms.md), the README and [NATIVE_OVERLAY_SPEC.md](NATIVE_OVERLAY_SPEC.md), which now says Linux is being researched and not built.
 
 **Done when:** on KDE Plasma (Wayland) with Elite borderless, the cards show with smooth edges, clicks and keys reach the game, the overlay hides when Elite is not in front, it follows the window, and closing EDMC removes it. Other desktops are listed with what was and was not checked.
 

@@ -1,12 +1,12 @@
-# Technical Specification — Powerplay
-
-**Author:** R.W. Harper (CMDR Tiber Caelvox)
-**Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
+# Powerplay technical specification
 
 The standing reference for Powerplay mode: how merits are attributed to an activity, how Control Points
 are estimated, how sessions work, and how the Rare Goods Finder fits in. For how to use it, see the
 [README](guide/powerplay.md). For how the code is organized in general, see
 [TECHNICAL.md](TECHNICAL.md).
+
+- **Author:** R.W. Harper (CMDR Tiber Caelvox)
+- **Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 **Design principle.**
 

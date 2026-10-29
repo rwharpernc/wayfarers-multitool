@@ -71,7 +71,7 @@ plugin/           everything that ships; becomes the Wayfarers-Multitool folder
   <feature>*.py   one or more modules per feature (every module is listed in MODULES.md)
 tests/            unittest suites for the pure-logic modules
 .github/          ISSUE_TEMPLATE/bug_report.yml, the form the Report an issue button opens (not shipped in the zip)
-.githooks/        commit-msg, which enforces the commit message form (enable with core.hooksPath)
+.githooks/        commit-msg (enforces the commit message form) and pre-commit (runs scripts/check_docs.py); enable with core.hooksPath
 docker/           Dockerfile and run-tests.sh for the headless test run (`npm run test:docker`, via scripts/docker-test.mjs)
 scripts/          dev only, none of it ships:
   build.mjs, package.mjs, env.mjs     build, zip and install the plugin (env.mjs finds EDMC's plugins folder)
@@ -80,6 +80,8 @@ scripts/          dev only, none of it ships:
   verify_organic_variants.py          checks the color predictions against your own journals
   analyze_exo_observations.py         checks the species prediction against the recorded finds
   native_overlay_test.py              draws real overlay cards over Elite to look at (Windows only)
+  check_docs.py                       checks the docs against the code (links, screen labels, Settings paths, file names, code references, version)
+  docker-test.mjs                     runs the tests in the container (`npm run test:docker`)
 docs/             this file, the development guide, the feature specs, the overlay guide, acknowledgements
 ```
 
@@ -99,7 +101,7 @@ installed copy, not just the repo.
 
 To try a build in EDMC, copy `dist/Wayfarers-Multitool` into EDMC's plugins folder as a *merge*, never
 delete-then-copy, because a live plugin folder holds per-commander data files that are not in the
-build (section 8). EDMC must be restarted to load the new code. See [DEVELOPMENT.md](DEVELOPMENT.md).
+build (section 8). `npm run deploy` does that merge for the current OS. EDMC must be restarted to load the new code. See [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## 3. Startup and event flow
 
@@ -195,11 +197,11 @@ Larger features add `start(plugin_dir)` and `stop()` for loading and flushing st
 
 **Settings layout**
 
-- `ui._build_settings_tabs` builds ten top-level Settings tabs: General (Window, Updates, Backup, Help, Online lookups, Shortcuts), Powerplay, Missions, Exploration, Mining, Trade, BGS, Colonization, Field Ops and Overlays.
+- `ui._build_settings_tabs` builds eleven top-level Settings tabs, sorted alphabetically by label (`_sort_tabs`): BGS, Colonization, Discord, Exploration, Field Ops, General (Window, Updates, Backup, Help, Online lookups, Shortcuts), Mining, Missions, Overlays, Powerplay and Trade.
 - A group is a plain tab holding its own `nb.Notebook` (`_settings_group`).
 - Everything is placed with `grid`.
 - Features not listed fall into "Other" rather than losing their tab.
-- A group page adds about 53px for its tab strip, and the tallest page (about 690px) sets the Settings window height.
+- Every page is wrapped by `settings_scroll.scrolled_page`, which caps its visible height (between 260 and 640 px, from the screen height less 530 px for the window chrome) and adds a scrollbar past it, so a long page cannot push EDMC's Settings window, and its OK button, off the screen.
 
 The **Overlays** group holds every overlay setting and toggle:
 
@@ -282,7 +284,7 @@ How that plays out:
   - A label that has not been shown yet is re-wrapped when it is mapped.
   - When the panel widens by 40 px or more, `panelkit._note_growth` writes the widest widgets to EDMC's log.
   - A long name wraps instead of stretching the window. The top-level frame's `<Configure>` event calls `panelkit.on_frame_configure` to update all of them.
-  - A section that must not be the widest row in a narrow window (Expedition, Materials, Notes, the Trade watch list) passes `min_wrap=200`: it wraps at 200 px in a narrow window and at the full width of a wide one, so a long name is shown in full instead of being cut short.
+  - A section that must not be the widest row in a narrow window (Expedition, Expedition Log, Materials, Nearest place to land, Notes, the Trade watch list) passes `min_wrap=200`: it wraps at 200 px in a narrow window and at the full width of a wide one, so a long name is shown in full instead of being cut short.
 - **Character limits are safety caps, not the way text is fitted.** A name is shortened with an
   ellipsis only past a generous cap (64 characters for a station, system or site name, 40 for a
   commodity or material), so the wrapping label, not a short clip, decides how much shows.
@@ -314,11 +316,11 @@ one:
 - **Themes.** `uikit/palette.py` holds the colors as module attributes (`P.BG`, `P.TEXT`, ...) and four themes in `THEMES`: Navy (the default) and Cyan, Amber and Green, built by `_from_variables` from EDDDT's `mfd.css` colors (its own color becomes `ACCENT`; `TITLE` is its amber). `palette.apply(name)` sets the attributes and returns {old color: new color}. `style.set_theme` applies it, re-skins and recolors every window `skin()` has seen (`_recolor`: color options, canvas items, text tags, and the color strings a kit widget keeps), and calls the theme listeners (`DataTable` remaps its tag colors). The theme is saved as `wfmt_window_theme` by `ui.restore_text_size`. Read palette colors when a widget is built, never at import time or as a default argument (use `None` and `x or P.TOKEN`); a table that maps a role to a color stores the token name and calls `getattr(P, name)` when it draws.
 - **Text size.** `uikit/style.py` keeps one setting (`set_text_delta`, -2 to +6 points, saved as `wfmt_window_text_delta` by `ui.restore_text_size`). `style.font` resizes its cached fonts in place (`scaled=False` gives a font that ignores the setting: the stat tiles and the status chips use it), `skin()` gives plain widgets the same body font, and `DataTable` listens (`add_text_listener`) to measure its columns again. The A- and A+ labels sit in the shells' footers (`_make_text_size_buttons`).
 - **Table columns.** `DataTable._sync_widths` sizes a column that does not stretch to its content (the declared width is only the least an empty table gives it) and shares spare width in proportion to that.
-- **Shell.** `ui.shell.WindowShell` gives a Toplevel a header (title, subtitle, action buttons), a body, a wrapping status footer, a minimum size and saved geometry.
+- **Shell.** `uikit.shell.WindowShell` gives a Toplevel a header (title, subtitle, action buttons), a body, a wrapping status footer, a minimum size and saved geometry.
   - It never touches EDMC config: the window passes `load_geometry`/`save_geometry` callables.
   - Windows are built hidden and shown once, after their content is laid out (`_present`), so they never flash at a default size.
   - Windows keep the module-level `show`/`refresh`/`close` singleton convention.
-- **Skinning.** `ui.style.skin(window)` colors the classic widgets created inside a Toplevel via
+- **Skinning.** `uikit.style.skin(window)` colors the classic widgets created inside a Toplevel via
   Tk's option database, scoped by the window's own *name* (option patterns match names, not full
   paths). Call it right after creating the Toplevel, before adding widgets. Explicit `fg=`/`bg=`
   still win, which is how status colors work. Don't also call `theme.update()` on these windows.
@@ -327,8 +329,8 @@ one:
   headings, and `visible_rows` (fit to content up to N rows). A bare `tk.Canvas` requests 7 cm of
   height, which silently props up whatever contains it: give canvases an explicit height.
 - **Display scaling.** Default and minimum window sizes are written in 96-dpi pixels and multiplied
-  by `ui.style.dpi_factor` inside `WindowShell`; keep new layouts expressed that way.
-- **Width discipline.** Displayed text goes through `ui.widgets.clip` / per-column `max_chars`. A `DataTable` column marked `stretch` is instead clipped to the width it gets (with an ellipsis, up to 300 characters), so its text never widens the table.
+  by `uikit.style.dpi_factor` inside `WindowShell`; keep new layouts expressed that way.
+- **Width discipline.** Displayed text goes through `uikit.widgets.clip` / per-column `max_chars`. A `DataTable` column marked `stretch` is instead clipped to the width it gets (with an ellipsis, up to 300 characters), so its text never widens the table.
 
 ## 6. Pure logic versus UI
 
@@ -555,7 +557,7 @@ Fields the game documents poorly are handled conservatively.
 - Marks and the choice are per commander in `surface_marks.json` (`commander_data.py`; 500 marks, names 60 characters, body names 100).
 - The overlay card (an arrow vector, a backing panel and one line of text, group `wfmt_compass`, placement slot `surface_compass`) is drawn on every `Status.json` update while enabled and cleared once when there is no reading.
 - A defensive reader (`migrate_old_waypoint_settings`, recorded by `wfmt_compass_migrated_v1`) copies the settings of a Mining waypoint overlay (enabled flag, placement, hidden flag), if it finds them, to the compass's own keys, once.
-- The panel row's summary label wraps at 200 px and the quick-name box is fixed at 26 characters, so nothing the commander or the game supplies can widen EDMC's window.
+- The panel row's summary label wraps at 200 px and the quick-name box starts at 26 characters and is lowered until it asks for no more than 190 px (`panelkit.fit_entry`), so nothing the commander or the game supplies can widen EDMC's window.
 
 **Materials and Engineering** (`materials.py`, `materials_panel.py`, `materials_window.py`, `blueprints*.py`, `engineers.py`, `material_traders.py`)
 
@@ -846,7 +848,7 @@ Placement is therefore relative to the screen and aware of display size:
 Every overlay draws with one `Look` (`overlay_appearance.current_look()`, read from `wfmt_overlay_scheme` and `wfmt_overlay_text_size`; padding and line spacing are fixed). A `Look` holds:
 
 - A `Palette` of color roles (border, fill, title, header, text, muted, ok, warn, info, danger, three accents, four chart series).
-- A text level (-1..1 as offered, which steps each display's text token along small / normal / large / huge and stops at the ends).
+- A text level (0 or 1 as offered, Default or Larger, which steps each display's text token along small / normal / large / huge and stops at the ends).
 - Extra padding and line height.
 
 **Sizing cards from estimates**
@@ -912,7 +914,7 @@ Design and status are in [NATIVE_OVERLAY_SPEC.md](NATIVE_OVERLAY_SPEC.md). In sh
 
 - `_send` records the last payload per id (`_last`, with the time) and, while hidden, sends nothing.
 - Hiding sends a clear for every id drawn so far, and showing resends what had not run out with its remaining ttl.
-- The keyboard shortcut and the `!wf overlays` chat command are in `shortcuts.py` (below); the panel line and the Settings button work everywhere.
+- The keyboard shortcut and the `!wf overlays` chat command are in `shortcuts.py`; the panel line and the Settings button work everywhere.
 
 **Duplicate EDMCModernOverlay windows** (`overlay_processes.py`): counts `overlay_client` processes (psutil, `/proc`, or PowerShell), treating a launcher and its child as one window, so Check connection and Copy diagnostics can warn.
 
@@ -1225,7 +1227,7 @@ Uses fields the journal already carries.
 - `(BodyID, rule)` pairs alert once.
 - One card per body, with the first rule's label as the title and `+N` for more. A body matching several rules gets one card.
 - Cards show for 6 s; three can wait and the rest are only counted ("(N more)").
-- Title and name are capped (28 and 24 characters) because the card's centring maths estimates text width from character count.
+- Title and name are capped (60 and 56 characters, 70 for a name with the "(N more)" count) so a runaway value cannot make the card unreasonably wide; the card widens to fit what is shown.
 - Rule choices are saved as a JSON dict in `wfmt_notable_rules`; a rule missing from it uses its default, so a later release can add rules without a migration.
 - There are 15 rules, 7 on by default.
 - The feature has no panel widget, only a Settings page (Overlays → Notable Bodies).
@@ -1690,7 +1692,7 @@ Design decisions:
   - The dashboard's groups are `explore_dashboard.GROUPS`; `tests/test_overlay_group_hide.py` fails if a prefix there stops matching a real card.
 - **Data backup.** *(Why the restore is staged and what is left out: [DESIGN_NOTES.md](DESIGN_NOTES.md#34-back-up-my-data-restore-and-automatic-backup).)*
   - `data_backup.py` is the other direction: it zips `_OWN_DATA_FILES` plus the `mining_sessions` folder into `WFMT-data-<date>-<time>.zip` in a folder the user picks (Settings → General → Backup).
-  - It writes under a temporary name and renames it when complete, refuses a destination inside the plugin folder, and leaves out `LEFT_OUT` (`rcc_keys.json`, the secret; `codex_catalog.json`, a cache).
+  - It writes under a temporary name and renames it when complete, refuses a destination inside the plugin folder, and leaves out `LEFT_OUT` (`rcc_keys.json` and `discord_webhooks.json`, which hold secrets; `codex_catalog.json`, a cache) and `LEFT_OUT_DIRS` (`star_index`).
   - A new data file added to `_OWN_DATA_FILES` is therefore backed up automatically; add it to `LEFT_OUT` only if it holds a secret or can be fetched again.
   - `backup-info.json` lists the folder `mining_sessions/` as one entry, because those file names carry a commander name.
 - **Restore.** A running WFMT holds its data in memory and rewrites the files, so a restore cannot overwrite them live.
@@ -1714,10 +1716,10 @@ Design decisions:
 ## 14. Testing
 
 ```bash
-python -m unittest discover -s tests
+npm run test:docker
 ```
 
-Suites cover the pure-logic modules:
+This runs `python -m unittest discover -s tests` and then `tests/import_smoke.py` inside a Linux container on a virtual display, so no window opens on the desktop (see [DEVELOPMENT.md](DEVELOPMENT.md)). Suites cover the pure-logic modules:
 
 - procedural name parsing and sequence walking (with real boxel data used to cross-validate)
 - region-sweep queues, waypoint routing, survey log
@@ -1876,7 +1878,7 @@ isolated in `platform_support.py` (plus the Windows branches in `autohonk.py` an
 | Is a companion app running | `tasklist` | `pgrep -f` |
 | Notification sound | `winsound.MessageBeep` | `canberra-gtk-play`, else `paplay` with the freedesktop theme file |
 | Overlay | The built-in overlay or EDMCModernOverlay (a choice under Overlay Connection) | EDMCModernOverlay; same TCP protocol (the built-in overlay is Windows only) |
-| Modal dialogs | `grab_set` works at once | `ui.style.grab_when_visible`: X11 refuses a grab until the window is mapped, so it retries briefly |
+| Modal dialogs | `grab_set` works at once | `uikit.style.grab_when_visible`: X11 refuses a grab until the window is mapped, so it retries briefly |
 | Plain `tk.Listbox` colors | `SystemWindow` / `SystemWindowText` | `white` / `black` (those names are Windows-only Tk colors) |
 | Open a link in the browser (Report an issue, the Raven and Inara links) | `webbrowser.open` | `webbrowser.open` (the desktop's default browser, through `xdg-open` or similar; not yet checked from a Flatpak EDMC) |
 | The OS line of a bug report | `platform_support.describe_system()`: Windows release and build | The same function: distro (`PRETTY_NAME`), `XDG_SESSION_TYPE`, and `Flatpak` when it is one |
@@ -1946,7 +1948,7 @@ see irrelevant advice.
 **Settings labeling**
 
 - Any feature that depends on the operating system shows a **Works on:** line in its Settings tab, colored green when this machine can run it and orange when it cannot (and why).
-- The features are Auto-Honk, the Screenshots auto-timer and Thargoid capture, the Inventory pickup sound, and the Overlay Connection tab.
+- The features are Auto-Honk, the Screenshots auto-timer and Thargoid capture, and the Inventory pickup sound. The Overlay Connection tab has no such line; its text says which overlay runs where.
 - The BGS tab shows the Linux journal folder hint.
 - Wording lives in one place, `platform_support.py`, and is unit-tested.
 
@@ -1994,7 +1996,7 @@ The parts that depend on the platform:
 
 ### 18.3 Cross-platform review of the modules
 
-The modules in `plugin/` and `plugin/uikit/` (about 345 files, about 92,500 lines) are held to the rules below, which keep
+The modules in `plugin/` and `plugin/uikit/` (about 365 files, about 97,000 lines) are held to the rules below, which keep
 them free of Windows-only and Linux-only assumptions outside the `platform_support` branches. The checks are:
 
 1. **A scan of every module** (AST and text) for platform signals: Win32 and `ctypes` use, `subprocess`, `winsound`, `os.startfile`, `sys.platform` branches, `.exe`/PowerShell/`xdotool` strings, Windows-only Tk color names, Windows paths and environment variables, `open()` without an explicit encoding, `strftime` directives that differ by platform, and file-name case.
@@ -2004,7 +2006,7 @@ them free of Windows-only and Linux-only assumptions outside the `platform_suppo
    - Relative imports match the real file names exactly (a case mismatch passes on Windows and fails on Linux), and no two
      tracked paths differ only by case.
    - No `threading.Thread` target touches a Tk widget directly.
-   - Every modal dialog uses `ui.style.grab_when_visible` rather than `grab_set()`, which X11 can refuse before the window is mapped.
+   - Every modal dialog uses `uikit.style.grab_when_visible` rather than `grab_set()`, which X11 can refuse before the window is mapped.
    - Every mouse-wheel binding handles both Windows deltas and X11 `Button-4/5`.
    - All generated file names avoid characters Windows rejects.
 3. **Rules that follow from platform differences:**

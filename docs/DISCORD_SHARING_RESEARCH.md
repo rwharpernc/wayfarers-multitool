@@ -1,9 +1,10 @@
 # Sharing reports to Discord: research
 
-**Status:** research and plan, written 2026-10-29. **Decisions (2026-10-29):** Discord webhooks are in scope, because posting by webhook is
-now an expected feature for Discord users, and **plain copy and paste stays in scope for everyone else**, so commanders who use other chat
-programs, forums or notes are not left out. **Stage 1 is built** (the shared formatter, webhook client, per-commander store and Settings tab, and the BGS report and Powerplay progress); stages 2 and 3 are not. The sections below were written before the build, so where they differ the code and [the guide](guide/discord.md) are right. One change was made after stage 1 first shipped: a webhook belongs to one channel, so each commander now saves a named **list of destinations** (not one webhook), **Post to Discord** asks which one when there are several, the same report keeps a separate earlier post for each destination, and Settings can copy another commander's list. This page records what other tools do, what Discord allows,
-what WFMT already has, the options considered and the plan.
+Research and plan for sharing WFMT's reports to Discord: what other tools do, what Discord allows, what WFMT already has, the options considered and the plan.
+
+- **Status:** research and plan, written 2026-10-29. Stage 1 is built (the shared formatter, webhook client, per-commander store and Settings tab, and the BGS report and Powerplay progress); stages 2 and 3 are not. The sections below were written before the build, so where they differ the code and [the guide](guide/discord.md) are right.
+- **Decisions (2026-10-29):** Discord webhooks are in scope, because posting by webhook is now an expected feature for Discord users, and **plain copy and paste stays in scope for everyone else**, so commanders who use other chat programs, forums or notes are not left out.
+- **Changed after stage 1 first shipped:** a webhook belongs to one channel, so each commander now saves a named **list of destinations** (not one webhook), **Post to Discord** asks which one when there are several, the same report keeps a separate earlier post for each destination, and Settings can copy another commander's list.
 
 **Decisions this changes.** [BGS_TECH_SPEC.md](BGS_TECH_SPEC.md) listed a Discord webhook as a non-goal; that note now points here. An earlier
 review declined *automatic* carrier-jump posts to Discord for privacy reasons; that still stands (section 6: nothing is posted without a
@@ -29,7 +30,7 @@ There are three ways out, and every report offers all three:
 
 ## 2. What WFMT has today
 
-All of this is copy to the clipboard. Nothing is sent anywhere.
+When this research began, all of this was copy to the clipboard and nothing was sent anywhere. The BGS and Powerplay copy buttons below are unchanged; **Copy for Discord** and **Post to Discord** now sit beside them (stage 1).
 
 | Report | What exists | Where |
 |---|---|---|
@@ -139,6 +140,8 @@ Build the shared parts once, then add one report at a time. Each phase is tested
 
 ## 9. Open questions (stage 1 and the earlier stages)
 
+The stage 1 build settled questions 1, 2, 3 and 6: the list of destinations is saved for each commander with a way to copy another commander's list, **Back up my data** leaves the links out, each destination is its own webhook (there are no per-report checkboxes), and each report has separate buttons. Questions 4 and 5 are for the later stages.
+
 1. Should the webhook be saved for each commander or once for the installation? Suggested: for each commander, matching the rest of WFMT,
    with a way to copy it to another commander.
 2. Should **Back up my data** include the webhook URL? Suggested: no, since it is a secret.
@@ -220,11 +223,13 @@ save and choose between.
 2. **Section toggles for each report.**
    - *BGS report:* heading and tick time, the star on pinned systems, the controlling faction in bold, state changes, influence and its change, pending, recovering and active states,
      your "You:" activity lines, and only the systems you worked or every system.
-   - *Powerplay progress:* Inara links, estimated CP, the system's state, the cycle's total line, and a merits-only mode.
+   - *Powerplay progress:* the heading, your Power in it, Inara links, estimated CP, the system's state, merits by activity, the cycle's total line, and plain text.
 3. **Preview:** the post rendered approximately as Discord shows it, from the commander's real current data, with a counter such as "1,420 of 2,000 characters, 1 message". Because the escaping
    and the 2,000-character splitting stay automatic, no toggle can produce a post that pings someone or is too long to send.
-4. **Saved named templates:** Save, Save as, Duplicate, Rename and Delete (the presets cannot be deleted), and a default template for each report.
-5. **Where it lives:** a **Customize...** button in the BGS Report and Powerplay Sessions windows, and **Templates...** on the Discord Settings tab: one dialog with a tab for each report.
+4. **Saved named templates:** Save, Save as, Rename and Delete (the presets cannot be changed or deleted), and a chosen template for each report. Duplicate was not built: Save as does the same.
+5. **Where it lives:** **Customize post…** in the BGS Report's **Discord** menu, a **Customize…** button in the Powerplay Sessions window, and **Customize posts…** on the Discord Settings tab: one dialog with a **Report** box that switches between the two reports.
+
+A sketch from the brainstorm (the built dialog differs: it has no Time choice, which is in the Later list):
 
 ```
 Customize Discord post          [BGS Report v] [Powerplay]
@@ -256,9 +261,9 @@ Time      (x) UTC text  ( ) Discord time tag
   names, saving, renaming, deleting and choosing templates, and a smoke test of the dialog.
 
 **Questions that remain**
-1. Should saved templates be shared by all commanders, or kept for each commander like the destinations? (Suggested: shared, with the choice for each commander.)
+1. ~~Should saved templates be shared by all commanders, or kept for each commander like the destinations?~~ Built: shared by every commander, and the chosen template is for the installation.
 2. Do Import and Export of a template belong in the first build or the second? (Suggested: the second.)
-3. Should the dialog open on real data or sample data when the commander has no current tick or session? (Suggested: sample data, labeled as an example.)
+3. ~~Should the dialog open on real data or sample data when the commander has no current tick or session?~~ Built: it uses the real data when there is some, and made-up example data, labeled as such, when there is not.
 
 ## Sources
 

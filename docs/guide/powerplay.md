@@ -1,10 +1,10 @@
 # Powerplay
 
-**Work in progress.** Powerplay is still being built, and I'd really appreciate your feedback. If something looks
-wrong, or you have a suggestion, please [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
-
 Powerplay mode tracks the **merits** and **Control Points (CP)** you earn for your pledged Power. You see them live
 on the panel, and in the Sessions window per session, per system, per Powerplay cycle and per day.
+
+**Work in progress.** Powerplay is still being built, and I'd really appreciate your feedback. If something looks
+wrong, or you have a suggestion, please [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 Everything is kept **separately for each commander**. A commander pledged to another Power, or to none, has their
 own numbers.

@@ -11,8 +11,19 @@ If one of these matters to you, tell me (see [Getting help](../../README.md#gett
   - **Create Project on Raven** starts a project for a site you are docked at, and **My Projects** lists every active project you have there.
   - Not done: reading Raven's progress automatically instead of on a button press, assigning commodities to commanders on a project, showing other linked carriers' cargo, and a guided tool that fills in a system's whole plan on Raven.
 - **Team projects:** several commanders on one project, with a "what the team still needs" line. Everything today is per commander and would stay that way until you choose to share.
-- **Co-op building and colony tracking:** not available yet.
+- **Co-op building and colony tracking:** not available yet. Reading who on a team has taken which commodity (and, later, claiming and releasing them) comes first, and the planned Discord post of who is hauling what waits for it.
 - *Being researched, may not happen:* tons per hour and credits earned per delivery. The journal does not say how long you spent hauling, and I have not been able to confirm that the credits a depot lists are what is actually paid.
+
+## Sharing to Discord
+
+Built: the BGS report and Powerplay progress can be copied for Discord or posted to a webhook, with a named list of destinations for each commander and a dialog to customize how the posts look ([Sharing reports to Discord](discord.md)). Every post is a button press, and that stays: nothing will be posted on its own.
+
+- **More reports to share:** an expedition's earnings from selling exploration and exobiology data, and expedition announcements (started, next stop, stop reached, finished), each with a preview you can edit before it goes.
+- **Colonization and team building:** a shopping list, a progress update, a call for helpers and a completion post for a site, and who is hauling what once co-op building exists.
+- **Carrier movement:** a planned jump, a cancellation and an arrival, with the departure shown in each reader's own time.
+- **More ways to shape a post:** your own header, row and footer wording with placeholders, a different template for each destination, importing and exporting a template so a squadron can share a look, a one-message short mode, and colored cards (embeds).
+- **Other chat programs:** webhooks for services other than Discord, as further destinations.
+- The thinking behind these is in [the Discord sharing research](../DISCORD_SHARING_RESEARCH.md).
 
 ## Exploration
 
@@ -49,7 +60,8 @@ If one of these matters to you, tell me (see [Getting help](../../README.md#gett
 
 - **A built-in overlay for Linux.** Windows has one that needs nothing else installed; on Linux EDMCModernOverlay is still required. A Linux version is being researched (the window handling differs between X11 and Wayland), and nothing is built yet.
 - **Screens smaller than 1920 x 1080** are not laid out for. The displays are sized in pixels, so on a smaller screen some can overlap until you
-  move them on Overlay Placement. The default spots do not overlap on 1920 x 1080 or larger, ultrawide screens included.
+  move them on Overlay Placement. On 1920 x 1080 or larger, ultrawide screens included, the default spots do not overlap, except for cards that are never up together
+  and the wide Bio status strip, which reaches over the top of the Expedition Log card by a few lines.
 
 ## Everywhere
 
