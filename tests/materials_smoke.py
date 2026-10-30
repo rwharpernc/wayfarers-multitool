@@ -273,7 +273,7 @@ check(dict(rows)["Eleanor Bresa"][2] >= 5 and "Desy" in dict(rows)["Eleanor Bres
       f"a Colonia engineer offers upgrades, has a place, and shows what unlocks them: {dict(rows)['Eleanor Bresa']}")
 check("Baltanos" in names and "Yi Shen" in names, "the other Colonia engineers are listed even before the game names them")
 check(len(names) >= 38, f"every engineer in the location table is listed: {len(names)}")
-check("10 x Faction Associates (have 0)" in dict(rows)["Yi Shen"][4], f"Yi Shen's items are counted: {dict(rows)['Yi Shen'][4]!r}")
+check(dict(rows)["Yi Shen"][4].startswith("First ") and "Colonia" in dict(rows)["Yi Shen"][4], f"Yi Shen's next step is another engineer's: {dict(rows)['Yi Shen'][4]!r}")
 check(dict(rows)["Yi Shen"][1] == "not known yet", f"and an unknown standing says so: {dict(rows)['Yi Shen'][1]!r}")
 bwin._engineer_table.select("Baltanos", notify=True)
 check("Deriso" in bwin._engineer_note.cget("text") and "Friendly reputation" in bwin._engineer_note.cget("text") and "On-foot" in bwin._engineer_note.cget("text"),
@@ -290,7 +290,8 @@ wish.clear()
 bwin._picked_engineer = None                      # nothing selected for the check below
 check(blueprints_window.who_can(suit, eng) == "No engineer unlocked yet", f"an on-foot entry nobody unlocked offers: {blueprints_window.who_can(suit, eng)!r}")
 check(dict(rows)["Felicity Farseer"][4] == "-", "an unlocked engineer needs nothing")
-check("x Gold" in dict(rows)["Lei Cheung"][4] and "not counted" in dict(rows)["Lei Cheung"][4], f"a commodity unlock is shown, not counted: {dict(rows)['Lei Cheung'][4]!r}")
+check("x Bromellite" in dict(rows)["Bill Turner"][4] and "not counted" in dict(rows)["Bill Turner"][4], f"a commodity unlock is shown, not counted: {dict(rows)['Bill Turner'][4]!r}")
+check(dict(rows)["Lei Cheung"][4].startswith("First The Dweller") and "Gold" not in dict(rows)["Lei Cheung"][4], f"another engineer comes first and the items wait: {dict(rows)['Lei Cheung'][4]!r}")
 check(len(bwin._engineer_table) == len(rows), "the table lists every row")
 check(bwin._region.get() == "Both", f"both regions are shown to begin with: {bwin._region.get()!r}")
 bwin._engineer_table.select("Baltanos", notify=True)

@@ -121,6 +121,22 @@ def order(path: Path) -> List[Path]:
     return result
 
 
+def next_action(path: Path) -> Optional[Tuple[Path, Step]]:
+    """What to do next towards unlocking `path.name`: the engineer to deal with and the step. It is the first step not done on the way,
+    taking the engineers to deal with first in order. A find step counts only when nothing else is left, since for most engineers it reads
+    "Common knowledge" and says nothing to do."""
+    stops = order(path)
+    for stop in stops:
+        for step in stop.steps:
+            if not step.done and step.kind != FIND:
+                return stop, step
+    for stop in stops:
+        for step in stop.steps:
+            if not step.done:
+                return stop, step
+    return None
+
+
 def render(path: Path) -> str:
     """The path as lines of text: a heading per engineer in the order to deal with them, then their numbered steps with `[done]` on those done."""
     lines: List[str] = []
