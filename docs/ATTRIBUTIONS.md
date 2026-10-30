@@ -22,6 +22,7 @@ Notices that a license requires are in `THIRD-PARTY-NOTICES.md`.
 - [The ground WFMT stands on: EDMC, services and data](#the-ground-wfmt-stands-on-edmc-services-and-data)
 - [How the data is gathered and verified](#how-the-data-is-gathered-and-verified)
 - [The people behind the tools](#the-people-behind-the-tools)
+- [AI assistance](#ai-assistance)
 
 ## How this page works
 
@@ -411,6 +412,11 @@ supported:
 - [EDEB](https://forums.frontier.co.uk/threads/edeb-elite-dangerous-exploration-buddy.615445/)
 - [OD Explorer](https://github.com/WarmedxMints/OD-Explorer)
 - [OD Elite Tracker](https://github.com/WarmedxMints/ODEliteTracker)
+
+## AI assistance
+
+**Design and coding by R.W. Harper**, with **code review and documentation** (including this page) **by Claude** (Anthropic). Disclosed for
+transparency; authorship is unchanged.
 
 *Elite Dangerous* and related marks are trademarks of Frontier Developments plc. WFMT is a fan-made tool, not official Frontier software, and
 is not affiliated with the EDMC team or any project above.
