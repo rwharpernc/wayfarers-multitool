@@ -132,6 +132,12 @@ These are not bugs, but they surprise people. Each is explained where it belongs
   System targets ranks by the mapped value by default (the scan value if you choose it in Settings), and both
   appear on Body info and in the Expedition Log. See [Exploration](exploration.md).
 - **Plants, samples and the SRV have positions only while EDMC is running**, because the journal does not record them.
+- **The Powerplay overlay card has limits.** See [the overlay card](powerplay.md#the-overlay-card).
+  - What merits count as (Acquisition, Reinforcement or Undermining) is a guess from the system's state and holder. A sale of goods that earns merits, such as Soontill Relics, does not announce itself in the journal, so it is filed as Acquisition; the merit totals are right either way.
+  - Control Points are estimates from the merits-per-CP ratios in Settings.
+  - The look-ahead is off until you tick it, and it only knows what Spansh knows: a system Spansh has no Powerplay data for reads **No Powerplay Detected in system** even if the game would show one. A destination's control progress is shown only for the first ten minutes after it was fetched.
+  - After starting EDMC in the middle of a game the card stays blank until your first jump, because it has not yet seen where you arrived.
+  - The card is wider than its slot on Overlay Placement suggests (about 460 px at the default text size), so at its default spot it can overlap the Discovery banner. Move it there if it does.
 - **The Rare Goods Finder's Legality and Arrival columns come from community data** that has not been checked in the game.
   - A rare is marked *Legal* when the table lists no restriction, which is not a promise. Check the station's Prohibited list before carrying a restricted rare.
   - Treat the Arrival distance (a station's distance from its star) as approximate.
