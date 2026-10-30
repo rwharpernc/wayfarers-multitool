@@ -132,5 +132,29 @@ class OrderTests(unittest.TestCase):
         self.assertIn("takes 3 engineers", EP.render(EP.build("Tiana Fortune")))
 
 
+class NextActionTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+
+    def test_the_next_action_is_the_first_engineer_on_the_way(self):
+        owner, step = EP.next_action(EP.build("Tiana Fortune"))
+        self.assertEqual(owner.name, "Liz Ryder")
+        self.assertEqual(step.kind, EP.INVITE)
+
+    def test_a_find_that_says_nothing_to_do_is_skipped(self):
+        owner, step = EP.next_action(EP.build("Eleanor Bresa"))
+        self.assertEqual((owner.name, step.kind), ("Eleanor Bresa", EP.INVITE))
+
+    def test_it_moves_on_as_engineers_are_unlocked_and_steps_done(self):
+        book = book_with(self.tmp.name, ("Liz Ryder", "Unlocked"), ("Hera Tani", "Invited"))
+        owner, step = EP.next_action(EP.build("Tiana Fortune", book))
+        self.assertEqual((owner.name, step.kind), ("Hera Tani", EP.UNLOCK))
+
+    def test_an_unlocked_engineer_has_none(self):
+        book = book_with(self.tmp.name, ("Lei Cheung", "Unlocked"))
+        self.assertIsNone(EP.next_action(EP.build("Lei Cheung", book)))
+
+
 if __name__ == "__main__":
     unittest.main()

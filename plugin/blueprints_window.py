@@ -79,7 +79,7 @@ _ENGINEER_COLUMNS = (
     Column("standing", "You are", 130, max_chars=30),
     Column("offers", "Offers", 60, anchor="e"),
     Column("where", "Where", 250, max_chars=60),
-    Column("unlock", "To unlock", 340, stretch=True, max_chars=170),
+    Column("unlock", "Next step", 340, stretch=True, max_chars=170),
 )
 _SHOPPING_COLUMNS = (
     Column("ingredient", "Ingredient", 230, stretch=True, max_chars=44),
@@ -475,14 +475,7 @@ class BlueprintsWindow:
             if standing is not None and standing.unlocked:
                 text = "-"
             elif info is not None:
-                steps = []
-                if info.invite and not (standing is not None and standing.progress == engineers.INVITED):
-                    steps.append(f"Invite: {info.invite}")
-                if info.unlock:
-                    steps.append(f"Unlock: {info.unlock}")
-                if items:
-                    steps.append(f"Items: {items}")
-                text = clip(" ".join(steps), 170) if steps else "-"
+                text = self._next_step_text(name, items)
             elif unlock is not None:
                 text = clip(items, 170)
             else:
@@ -492,6 +485,20 @@ class BlueprintsWindow:
                 offers.get(key, 0) or "-", info.place() if info is not None else "-", text)))
         rows.sort(key=lambda r: (not r[0], r[1].casefold()))
         return [(name, values) for _unlocked, name, values in rows]
+
+    def _next_step_text(self, name: str, items: str) -> str:
+        """The next thing to do towards unlocking one engineer: a step on their own path, or the engineer to deal with first and their step.
+        The unlock items are added only when the step is the engineer's own, since they belong to that engineer."""
+        path = engineer_path.build(name, self._engineers)
+        action = engineer_path.next_action(path) if path is not None else None
+        if action is None:
+            return clip(items, 170) if items else "-"
+        owner, step = action
+        own = engineers.name_key(owner.name) == engineers.name_key(name)
+        text = step.text if own else f"First {owner.name}: {step.text}"
+        if own and items:
+            text += f" Items: {items}"
+        return clip(text, 170)
 
     def _in_region(self, name: str) -> bool:
         """Does the Show choice include this engineer? "Both" includes everyone, including a name the location table lacks; Bubble and
