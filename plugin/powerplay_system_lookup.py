@@ -6,7 +6,7 @@ One request per destination, through spansh_courtesy.py (paced, retried when Spa
 It asks only when the Powerplay card's *Look up the system I am jumping to* tick is on (the caller checks), and sends only the system's id (the journal's SystemAddress).
 
 An answer is one of: found (a `Standing`), none (Spansh knows the system and has no Powerplay state for it, or does not know the system), or failed (the network or Spansh
-did not answer). Found and none are kept for `TTL_S` (the standing changes with the weekly cycle); a failure is kept for `RETRY_S` so a dead network is not asked again on every
+did not answer). Found and none are kept for `TTL_S` (the standing changes with the weekly cycle), but a found standing's control progress, which moves as players earn merits, is given out only for `PROGRESS_FRESH_S`; a failure is kept for `RETRY_S` so a dead network is not asked again on every
 jump of a chain, and the next jump after that asks again.
 """
 
@@ -18,7 +18,7 @@ import threading
 import time
 import urllib.error
 import urllib.request
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Callable, Dict, Optional, Tuple
 
 from . import http_identity, spansh_courtesy
@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 SYSTEM_URL = "https://spansh.co.uk/api/system/{id64}"
 REQUEST_TIMEOUT_S = 8
 TTL_S = 3600.0
+PROGRESS_FRESH_S = 600.0      # the control progress moves as players earn merits, so it is shown only while an answer is this young; state and holder hold for the week
 RETRY_S = 120.0
 
 FOUND, NONE, FAILED, PENDING, UNKNOWN = "found", "none", "failed", "pending", "unknown"
@@ -88,6 +89,8 @@ def peek(id64: int, now: Optional[float] = None) -> Tuple[str, Optional[Standing
     status, standing, stored = entry
     if now - stored > (RETRY_S if status == FAILED else TTL_S):
         return UNKNOWN, None
+    if standing is not None and standing.progress is not None and now - stored > PROGRESS_FRESH_S:
+        standing = replace(standing, progress=None)         # too old to quote: the state and holder are still right, the percentage has moved
     return status, standing
 
 
@@ -117,6 +120,26 @@ def request(id64: int, on_done: Optional[Callable[[], None]] = None, fetch: Call
 
     threading.Thread(target=worker, name="WFMT-powerplay-lookup", daemon=True).start()
     return True
+
+
+def standing_from_journal(entry: Any) -> Optional[Standing]:
+    """The standing an arrival event (FSDJump, CarrierJump, Location) carries, or None when it names no Powerplay state."""
+    if not isinstance(entry, dict) or not entry.get("PowerplayState"):
+        return None
+    powers = entry.get("Powers")
+    progress = entry.get("PowerplayStateControlProgress")
+    return Standing(
+        state=str(entry["PowerplayState"]), controller=str(entry.get("ControllingPower") or ""),
+        powers=tuple(str(p) for p in powers) if isinstance(powers, list) else (),
+        progress=float(progress) if isinstance(progress, (int, float)) else None,
+    )
+
+
+def store(id64: int, standing: Standing, now: Optional[float] = None) -> None:
+    """Keeps a standing the journal has just given for a system you arrived in, so a later jump to it needs no request. Only a found standing is stored: a journal entry that
+    names no state is not proof the system has none, so it is left to Spansh to say."""
+    with _lock:
+        _cache[id64] = (FOUND, standing, time.monotonic() if now is None else now)
 
 
 def clear() -> None:

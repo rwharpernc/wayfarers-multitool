@@ -7,7 +7,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Added
 
-- **Powerplay overlay:** a small card on the game screen (Settings → Overlays → Powerplay, off until ticked) that shows while you are in a system with Powerplay data: your Power, rank, total merits and the cycle's merits, the system's state and holder, what merits earned there now count as (Acquisition, Reinforcement or Undermining), and the merits and estimated Control Points earned there this session, by type. It has a Test Card button and its own Overlay Placement slot. In a system without Powerplay data it says **No Powerplay Detected in system**. An opt-in tick, **Look up the system I am jumping to** (asks Spansh), turns the card to the destination as soon as a hyperspace jump starts.
+- **Powerplay overlay:** a small card on the game screen (Settings → Overlays → Powerplay, off until ticked) that shows while you are in a system with Powerplay data: your Power, rank, total merits and the cycle's merits, the system's state and holder, what merits earned there now count as (Acquisition, Reinforcement or Undermining), and the merits and estimated Control Points earned there this session, by type. It has a Test Card button and its own Overlay Placement slot. In a system without Powerplay data it says **No Powerplay Detected in system**. An opt-in tick, **Look up the system I am jumping to** (asks Spansh), turns the card to the destination as soon as a hyperspace jump starts; systems you arrive in are remembered from the journal, so a loop route asks Spansh only on its first lap. A destination's control progress is shown only while the figure is under ten minutes old.
 
 ## 1.3.2 (2026-10-29)
 

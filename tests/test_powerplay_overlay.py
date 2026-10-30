@@ -195,6 +195,33 @@ class LookaheadTests(unittest.TestCase):
         self.assertIsNone(self.c._destination())
 
 
+class ArrivalSeedsCacheTests(unittest.TestCase):
+    ARRIVAL = {"event": "FSDJump", "StarSystem": "Nervi", "SystemAddress": 42, "PowerplayState": "Exploited", "ControllingPower": "Zachary Hudson",
+               "Powers": ["Zachary Hudson", "Li Yong-Rui"], "PowerplayStateControlProgress": 0.25}
+
+    def setUp(self):
+        L.clear()
+        self.addCleanup(L.clear)
+
+    def test_an_arrival_with_a_state_is_remembered(self):
+        powerplay.PowerplayController()._track_jump(self.ARRIVAL)
+        self.assertEqual(L.peek(42), (L.FOUND, L.Standing("Exploited", "Zachary Hudson", ("Zachary Hudson", "Li Yong-Rui"), 0.25)))
+
+    def test_a_remembered_system_is_not_asked_about_on_the_next_lap(self):
+        c = powerplay.PowerplayController()
+        c._track_jump(self.ARRIVAL)
+        with mock.patch.object(L, "_fetch", lambda id64: self.fail("asked Spansh")):
+            self.assertFalse(L.request(42))
+
+    def test_an_arrival_without_a_state_stores_nothing(self):
+        powerplay.PowerplayController()._track_jump({"event": "FSDJump", "StarSystem": "Sol", "SystemAddress": 43})
+        self.assertEqual(L.peek(43)[0], L.UNKNOWN)
+
+    def test_other_events_store_nothing(self):
+        powerplay.PowerplayController()._track_jump(dict(self.ARRIVAL, event="Docked"))
+        self.assertEqual(L.peek(42)[0], L.UNKNOWN)
+
+
 class SpanshLookupTests(unittest.TestCase):
     def setUp(self):
         L.clear()
@@ -227,6 +254,17 @@ class SpanshLookupTests(unittest.TestCase):
         self.assertEqual(L.peek(1, L.TTL_S + 1)[0], L.UNKNOWN)
         self.assertEqual(L.peek(2, L.RETRY_S - 1)[0], L.FAILED)
         self.assertEqual(L.peek(2, L.RETRY_S + 1)[0], L.UNKNOWN)
+
+    def test_control_progress_is_given_out_only_while_fresh(self):
+        L._cache[5] = (L.FOUND, L.Standing("Stronghold", "Jerome Archer", (), 0.66), 0.0)
+        self.assertEqual(L.peek(5, L.PROGRESS_FRESH_S - 1)[1].progress, 0.66)
+        old = L.peek(5, L.PROGRESS_FRESH_S + 1)
+        self.assertEqual((old[0], old[1].state, old[1].controller, old[1].progress), (L.FOUND, "Stronghold", "Jerome Archer", None))
+        self.assertEqual(L._cache[5][1].progress, 0.66)             # the stored answer is untouched; only what is given out is trimmed
+
+    def test_a_standing_with_no_progress_is_unchanged_when_old(self):
+        L._cache[6] = (L.FOUND, L.Standing("Exploited"), 0.0)
+        self.assertEqual(L.peek(6, L.TTL_S - 1)[1], L.Standing("Exploited"))
 
     def test_a_crashing_fetch_is_a_failure(self):
         done = threading.Event()

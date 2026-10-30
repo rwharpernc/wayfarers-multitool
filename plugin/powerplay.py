@@ -1220,6 +1220,12 @@ class PowerplayController:
             self._next_jump = None
         if event in ("FSDJump", "CarrierJump", "Location"):
             self._arrived_at = str(entry.get("StarSystem") or "") or None
+            id64, standing = entry.get("SystemAddress"), None
+            if isinstance(id64, int):
+                from . import powerplay_system_lookup
+                standing = powerplay_system_lookup.standing_from_journal(entry)
+                if standing is not None:        # the journal's own word on this system saves asking Spansh about it on a later lap
+                    powerplay_system_lookup.store(id64, standing)
 
     def _destination(self) -> Optional[Tuple[str, int]]:
         if self._next_jump is None:
