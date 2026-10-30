@@ -28,7 +28,7 @@ class PrefsSmokeTests(unittest.TestCase):
         # Grouped layout: eleven top-level tabs, and the merged Exploration pages are all there.
         self.assertIn("SETTINGS BUILT OK: 11 top-level tabs", result.stdout)
         # Every page is wrapped in a scroller capped in height, so a long page can't push OK off the screen.
-        self.assertIn("PAGES OVER HEIGHT CAP: 0 of 43", result.stdout)
+        self.assertIn("PAGES OVER HEIGHT CAP: 0 of 44", result.stdout)
         for leaf in ("Exploration > POI Reference", "Exploration > Auto-Honk", "Operations > Inventory", "Exploration > Expedition",
                      "Exploration > Nearest place to land", "General > Online lookups"):
             self.assertIn(leaf, result.stdout)
@@ -38,7 +38,7 @@ class PrefsSmokeTests(unittest.TestCase):
                      "Overlays > Landing", "Overlays > Mining", "Overlays > Notable Bodies", "Overlays > Screenshots", "Overlays > Missions"):
             self.assertIn(leaf, result.stdout)
         self.assertIn("OVERLAY APPEARANCE SAVED: 1 of 1", result.stdout)
-        self.assertIn("OVERLAY PLACEMENTS SAVED: 20 of 20", result.stdout)     # saving works across the split tabs
+        self.assertIn("OVERLAY PLACEMENTS SAVED: 21 of 21", result.stdout)     # saving works across the split tabs
         for gone in ("General > Overlay", "Always On"):
             self.assertNotIn(gone, result.stdout)
 

@@ -27,7 +27,7 @@ from config import appname, config
 from . import (
     __version__, autohonk, data_backup, discord_settings, explore_dashboard, legacy_names, route_planner_panel, bgs_panel, feature_dispatch, boxel_survey, poi_reference_panel, codex_completionist_panel, colonization_history_window, exobiology_overlay, expedition_log_overlay, expedition_log_panel, landing_finder_panel, colonization_overlay, colonization_panel, credits_ledger, discovery,
     exploration_value, flight_alerts, game_mode, interdiction, inventory_panel, ledger_window, landing, materials_panel, mining_overlay, mining_panel, notes_panel, expedition_panel, surface_compass,
-    missions, missions_overlay, notable, organic_scan_panel, overlay, overlay_native, overlay_placement, overlay_profile, overlay_visibility, platform_support, shortcuts, powerplay, system_names, powerplay_window, rare_goods_window, restore, route_overlay, screenshots, session_credits, ship_current, session_merits, ship_builds_panel, system_survey, targets_overlay, body_info_overlay, trade_panel, trade_watch_panel, ui,
+    missions, missions_overlay, notable, organic_scan_panel, overlay, overlay_native, overlay_placement, overlay_profile, overlay_visibility, platform_support, shortcuts, powerplay, powerplay_overlay, system_names, powerplay_window, rare_goods_window, restore, route_overlay, screenshots, session_credits, ship_current, session_merits, ship_builds_panel, system_survey, targets_overlay, body_info_overlay, trade_panel, trade_watch_panel, ui,
 )
 from .update import UpdateManager, check_applied_update
 
@@ -51,7 +51,7 @@ if not logger.hasHandlers():
 # each one only ever reads `entry`/`state`, never mutates them.
 _FEATURES = (
     powerplay, missions, missions_overlay, autohonk, interdiction, flight_alerts, landing, discovery, notable, boxel_survey, exploration_value,
-    organic_scan_panel, codex_completionist_panel, poi_reference_panel, notes_panel, expedition_panel, expedition_log_panel, landing_finder_panel, route_overlay, system_survey, targets_overlay, body_info_overlay, exobiology_overlay, expedition_log_overlay, surface_compass, ship_builds_panel, colonization_panel, screenshots,
+    organic_scan_panel, codex_completionist_panel, poi_reference_panel, notes_panel, expedition_panel, expedition_log_panel, landing_finder_panel, route_overlay, system_survey, targets_overlay, body_info_overlay, exobiology_overlay, expedition_log_overlay, powerplay_overlay, surface_compass, ship_builds_panel, colonization_panel, screenshots,
     inventory_panel, materials_panel, mining_panel, trade_panel, trade_watch_panel, bgs_panel, game_mode, session_credits, session_merits, credits_ledger, explore_dashboard, route_planner_panel,
     shortcuts, discord_settings,
 )
@@ -86,6 +86,7 @@ _OVERLAY_ENABLE_KEYS = (
     "wfmt_colonization_overlay_forced",
     "wfmt_missions_overlay_enabled",
     "wfmt_expedition_log_overlay",
+    "wfmt_powerplay_overlay",
     "wfmt_flight_enabled",
     "wfmt_route_enabled",
     "wfmt_targets_enabled",
@@ -167,6 +168,7 @@ def plugin_start3(plugin_dir: str) -> str:
     expedition_log_panel.start(plugin_dir)
     landing_finder_panel.start(plugin_dir)
     expedition_log_overlay.start(plugin_dir)
+    powerplay_overlay.start(plugin_dir)
     shortcuts.start(plugin_dir)
     overlay_native.start()
     surface_compass.start(plugin_dir)
@@ -177,6 +179,7 @@ def plugin_start3(plugin_dir: str) -> str:
     body_info_overlay.set_overlay_client(_overlay)
     exobiology_overlay.set_overlay_client(_overlay)
     expedition_log_overlay.set_overlay_client(_overlay)
+    powerplay_overlay.set_overlay_client(_overlay)
     missions_overlay.set_overlay_client(_overlay)
     surface_compass.set_overlay_client(_overlay)
     landing.set_overlay_client(_overlay)
@@ -203,6 +206,7 @@ def plugin_start3(plugin_dir: str) -> str:
         (body_info_overlay.GROUP_NAME, body_info_overlay.GROUP_PREFIX),
         *exobiology_overlay.GROUPS.values(),
         (expedition_log_overlay.GROUP_NAME, expedition_log_overlay.GROUP_PREFIX),
+        (powerplay_overlay.GROUP_NAME, powerplay_overlay.GROUP_PREFIX),
         (missions_overlay.GROUP_NAME, missions_overlay.GROUP_PREFIX),
         (surface_compass.GROUP_NAME, surface_compass.GROUP_PREFIX),
         (mining_overlay.GROUP_NAME, mining_overlay.GROUP_PREFIX),
@@ -278,6 +282,7 @@ def plugin_stop() -> None:
     expedition_log_panel.stop()
     landing_finder_panel.stop()
     expedition_log_overlay.stop()
+    powerplay_overlay.stop()
     shortcuts.stop()
     overlay_native.stop()
     trade_watch_panel.stop()

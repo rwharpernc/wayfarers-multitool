@@ -169,6 +169,7 @@ The Rare Goods lookup has unit tests (`tests/test_rare_goods.py`).
   (`DeliveryClassificationTests`: the `PowerplayDeliver` windows and the legacy signals).
 - The merit-to-CP conversion, session handling (continuing or starting a session, the resets, saving
   and reloading) and the clipboard line are covered by `tests/test_powerplay_session.py`.
+- The overlay card's contents are covered by `tests/test_powerplay_overlay.py`.
 - The panel and windows are exercised by hand in EDMC.
 
 ## 10. Known gaps

@@ -109,6 +109,7 @@ Spec: [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md)
 | `powerplay_state.py` | JSON persistence for that ledger |
 | `powerplay_systems_tab.py` | The Systems tab of the Powerplay Sessions window |
 | `powerplay_window.py` | The Powerplay Sessions window (current session, systems, cycles, daily, megaships, history) |
+| `powerplay_overlay.py` | The Powerplay overlay card: your Power, rank, merits and the cycle's merits, the system's state and holder, what merits earned here count as, and the merits and estimated Control Points earned here this session by type; shown only in a system with a Powerplay state; the pure `build_card`, the controller's `overlay_info`, Settings → Overlays → Powerplay, one Overlay Placement slot |
 | `rare_goods.py` | Finds the nearest rare commodities to the current system (data in `rare_goods.json`) |
 | `rare_goods_window.py` | The Rare Goods Finder window |
 | `session.py` | Merit tallies for the current game login |

@@ -18,6 +18,7 @@ on-screen extras.
 | **Flight Alerts** | A small card with the fleet carrier jump countdown, the low-fuel and unscoopable-star warnings and the mining alerts (a core asteroid, a rich rock, low limpets, a nearly full hold) |
 | **Route** | A card with where you are navigating to, the jumps left, the systems still to visit (neutron stars, white dwarfs and scoopable stars picked out) and the light years left; a route plotted in the Route Planner takes its place. Fuel and jump range are on the Exploration Dashboard, not on this card |
 | **Expedition Log** | The running expedition's exploration and exobiology totals and what it has earned |
+| **Powerplay** | Your Power, rank and merits, the system's Powerplay state and holder, what merits earned here count as, and the merits and estimated Control Points earned here this session |
 | **Bio status**, **Biology**, **Bio radar**, **Sample popup** | The Exobiology cards: sampling progress and distance, predicted species and what they pay, a plot of your samples and their circles, and a popup after each sample |
 | **System targets** | A list of scanned bodies worth mapping and bodies with life not yet analyzed, with the scan progress |
 | **Body info** | A card describing the body you have targeted or are close to |
@@ -99,6 +100,7 @@ makes sense, a test button:
 | **Discovery** | New system and body discovery alerts | **Test Discovery** |
 | **Exobiology** | Four switches, one for each Exobiology card, and the radar's size and circles | **Test Cards** |
 | **Expedition Log** | The card of the running expedition's totals | **Test Card** |
+| **Powerplay** | The card of your Powerplay standing in the system you are in | **Test Card** |
 | **Flight Alerts** | The carrier jump countdown, fuel warnings and mining alerts card | **Test Card** |
 | **Hide overlays** | A button to hide or show every overlay (its keyboard shortcut and chat command are under General → Shortcuts; the Exploration Dashboard's two header buttons hide only the exploration cards, or only the exobiology cards, and never change these settings) | **Hide / show now** |
 | **Interdiction Warning** | The warning when you are interdicted | **Test Warning** |
@@ -124,7 +126,7 @@ see the message on your screen, you're set.
 
 ## Every Overlays tab in detail
 
-Open **File → Settings → WFMT → Overlays**. The row of tabs starts with **Overlay Connection**, **Appearance** and **Overlay Placement**, then runs in alphabetical order: Body info, Colonization, Discovery, Exobiology, Expedition Log, Flight Alerts, Hide overlays, Interdiction Warning, Inventory, Landing, Mining, Missions, Notable Bodies, Route, Screenshots, Surface Compass, System targets. Press **OK** to keep a change.
+Open **File → Settings → WFMT → Overlays**. The row of tabs starts with **Overlay Connection**, **Appearance** and **Overlay Placement**, then runs in alphabetical order: Body info, Colonization, Discovery, Exobiology, Expedition Log, Flight Alerts, Hide overlays, Interdiction Warning, Inventory, Landing, Mining, Missions, Notable Bodies, Powerplay, Route, Screenshots, Surface Compass, System targets. Press **OK** to keep a change.
 
 Things true of every feature tab:
 
@@ -161,7 +163,7 @@ Things true of every feature tab:
 | Control | Starts as | What it does |
 |---|---|---|
 | Layout editor (the to-scale picture) | | Drag a box to place a display; **Picture size** (Default, Large, Extra large) enlarges the picture and is remembered; *Snap to the grid and to edges* with a grid of 20, 40, 60 or 120 pixels |
-| The table: **Display**, **Spot**, **Offset X**, **Offset Y**, **Show** | Each display's default spot, all shown | One row per display (20 in all): Colonization shopping list, Discovery alerts, Notable find card, Flight alerts, Route and ship status, System targets, Body info, Biology, Bio status, Bio radar, Sample popup, Expedition Log, Missions list, Interdiction warning, Landing assist, Inventory pickups and bars, Mining stats, Mining radar, Surface compass and Screenshot messages. *Spot* is one of nine places or **Exact position**; the offsets are screen pixels in from the edge, or the overlay's own x and y for Exact position. Unticking *Show* hides that display whatever its own settings say |
+| The table: **Display**, **Spot**, **Offset X**, **Offset Y**, **Show** | Each display's default spot, all shown | One row per display (21 in all): Colonization shopping list, Discovery alerts, Notable find card, Flight alerts, Route and ship status, System targets, Body info, Biology, Bio status, Bio radar, Sample popup, Expedition Log, Powerplay, Missions list, Interdiction warning, Landing assist, Inventory pickups and bars, Mining stats, Mining radar, Surface compass and Screenshot messages. *Spot* is one of nine places or **Exact position**; the offsets are screen pixels in from the edge, or the overlay's own x and y for Exact position. Unticking *Show* hides that display whatever its own settings say |
 | **Display scaling** | Automatic (from the overlay and Windows) | Automatic, 100%, 125%, 150%, 175%, 200%, 250% or 300% |
 | **Overlay mode** | Automatic (from the overlay's settings) | Fit (canvas keeps its shape) or Fill (canvas stretched over the screen); ignored by the built-in overlay |
 | *Carry displays on the right to the screen edge* | on | EDMCModernOverlay only: sets an offset on a right-hand display's group so it reaches the edge. Untick it if displays end up in the wrong place |
@@ -188,6 +190,10 @@ Four ticks, all off: *Enable the Bio status card (progress, current species, dis
 ### Expedition Log
 
 *Enable the Expedition Log card* (off); **Test Card**. The card shows the expedition that is running or paused. A paused one keeps its totals until you resume or stop it; stopping resets the card. You start, pause and stop an expedition in the Expedition window (its Plan and Log tabs; the Expedition section of the Exploration panel has no such buttons), and name and edit them in the Log tab. See [Expedition Log](guide/exploration.md#expedition-log).
+
+### Powerplay
+
+*Enable the Powerplay card* (off); **Test Card**. The card shows only in a system that has a Powerplay state, and clears elsewhere. It lists your Power, rank, total merits and the merits of the cycle in progress; the system's state and who holds it; what merits earned here now count as (Acquisition, Reinforcement or Undermining, a best guess as on the Powerplay panel); and the merits and estimated Control Points you have earned in this system this session, by type. The Control Points use the ratios on the Powerplay tab. See [Powerplay](guide/powerplay.md).
 
 ### Flight Alerts
 
@@ -288,7 +294,7 @@ Where each display goes is set once, for every WFMT overlay, on **Settings → W
 
 - Each row has a **Show** checkbox. Untick it and that display is never drawn, whatever its own settings say, and what is already on screen goes the next time it would redraw.
 - The spot and offsets are kept, so ticking it again puts it back where it was.
-- It works for every display on the tab (Colonization shopping list, Discovery, Notable, Flight alerts, Route, Expedition Log, Biology, Bio status, Bio radar, Sample popup, System targets, Body info, Interdiction, Missions, Landing, Inventory, Mining stats, Mining radar, Surface compass, Screenshot messages).
+- It works for every display on the tab (Colonization shopping list, Discovery, Notable, Flight alerts, Route, Expedition Log, Powerplay, Biology, Bio status, Bio radar, Sample popup, System targets, Body info, Interdiction, Missions, Landing, Inventory, Mining stats, Mining radar, Surface compass, Screenshot messages).
 - **Reset all to defaults** shows them all again.
 
 **How WFMT knows your screen**
@@ -358,7 +364,7 @@ If displays land in the wrong place or at the wrong size, check that the line on
   - The right-hand column runs Notable, Surface compass, Inventory, Mining stats, Flight alerts, Missions and Screenshot messages from the top.
   - System targets and Body info sit one above the other in the lower middle of the right half of the screen.
 - The Exobiology cards start at the top center (Bio status), the bottom center left of the Body info card (Biology), the left middle (Bio radar) and above Biology (Sample popup).
-- The Expedition Log card sits at the top left, to the right of the Route card.
+- The Expedition Log card sits at the top left, to the right of the Route card. The Powerplay card sits at the top right, to the left of the Notable find and Inventory cards.
 - The Bio radar and the Mining radar share a spot with the Colonization list, and Bio status and the Expedition Log with the Interdiction warning, because those are not normally up at the same time (a planet's surface, a construction depot, supercruise).
 - The displays are sized in pixels, so on a smaller screen they take up more of it and some can overlap: use **Show placement preview** and move them.
 - A position you chose yourself is never changed.

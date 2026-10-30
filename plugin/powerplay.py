@@ -330,6 +330,11 @@ class PowerplayTracker:
             self._delivery_chain_until = when + timedelta(seconds=DELIVERY_FOLLOW_ON_S)
             return DELIVERY
 
+        return self.system_activity(current_system)
+
+    def system_activity(self, current_system: Optional[str] = None) -> str:
+        """What merits earned in the system whose context is stored would count as, from its state and controller alone. It reads and changes nothing, so a display can call it
+        as often as it likes (classify_current_activity is the one that also settles hand-ins)."""
         if not self.my_power:
             return UNKNOWN
 
@@ -1185,7 +1190,27 @@ class PowerplayController:
             self._last_event_label["text"] = message
             self._last_event_label["foreground"] = "green"
 
+    def overlay_info(self):
+        """What the Powerplay overlay card is drawn from, or None when you are not in a system with Powerplay data (a context kept from an earlier system does not count)."""
+        from . import powerplay_overlay
+        pp = self.tracker
+        if self.sessions is None or not pp.system_state or not self._current_system or pp.system_name != self._current_system:
+            return None
+        session = self.sessions.current
+        totals = system_totals(session, self._current_system)
+        label, cycle_merits, _ = _cycle_tally(self.ledger.live_view())
+        pledged = bool(pp.my_power)
+        return powerplay_overlay.Info(
+            system=self._current_system, state=pp.system_state, controller=pp.system_controller or "",
+            power=pp.my_power or "", rank=pp.rank, total_merits=pp.total_merits, cycle_label=label, cycle_merits=cycle_merits,
+            activity=pp.system_activity(self._current_system) if pledged else "",
+            here=tuple((a, totals[a]) for a in ACTIVITIES if totals.get(a, 0) > 0),
+            cp=tuple((a, c) for a, c in _cp_by_activity(totals).items()),
+        )
+
     def _refresh_panel(self) -> None:
+        from . import powerplay_overlay
+        powerplay_overlay.refresh()
         if self.sessions is None or self._merits_label is None:
             return
 

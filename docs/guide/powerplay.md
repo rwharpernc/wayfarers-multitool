@@ -117,6 +117,17 @@ Three buttons on the bottom row:
 - **Rares** opens the Rare Goods Finder (see below).
 - **Rescan** re-reads the current journal from scratch to recover merits missed after an EDMC restart. Use it if a session's numbers ever look wrong. Hover over a button for a one-line reminder.
 
+## The overlay card
+
+**Settings → WFMT → Overlays → Powerplay** (off until ticked) puts a small card on your game screen while you are in a system that has Powerplay data. It clears when you leave for a system without it.
+
+- The heading is the system, with your rank beside it.
+- **Power**, **Total merits** and the merits of the cycle in progress (`Cycle N merits`) come from the same figures as this page. If you are not pledged, the card says so and leaves them out.
+- **System** is the system's state and **Held by** the Power that holds it.
+- **Merits here count as** is what merits earned in this system now would be filed as: Acquisition, Reinforcement or Undermining. It is a best guess from the state and the holder, as on this page.
+- Below that, a row for each type of merit you have earned in this system this session, with the merits and, except for Delivery and Unattributed, the estimated Control Points (from the ratios in Settings).
+- Place it on **Overlay Placement** ("Powerplay (your standing in this system)"); it starts at the top right, to the left of the Notable find and Inventory cards.
+
 ## The Sessions window
 
 Click **Report**. It has six tabs.

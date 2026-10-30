@@ -38,7 +38,7 @@ from ttkHyperlinkLabel import HyperlinkLabel
 from . import (
     __version__, autohonk, bgs_panel, boxel_survey, discord_settings, poi_reference_panel, codex_completionist_panel, colonization_panel, discovery,
     exploration_value, flight_alerts, interdiction, inventory_panel, landing, materials_panel, mining_panel, missions, missions_overlay,
-    notable, notes_panel, expedition_panel, expedition_log_panel, expedition_log_overlay, explore_dashboard, route_planner_panel, landing_finder_panel, surface_compass, organic_scan_panel, exobiology_overlay, overlay, overlay_appearance, overlay_placement, overlay_visibility, shortcuts, catchup_status, panelkit, powerplay, route_overlay, targets_overlay, body_info_overlay, screenshots, ship_builds_panel,
+    notable, notes_panel, expedition_panel, expedition_log_panel, expedition_log_overlay, explore_dashboard, route_planner_panel, landing_finder_panel, surface_compass, organic_scan_panel, exobiology_overlay, overlay, overlay_appearance, overlay_placement, overlay_visibility, shortcuts, catchup_status, panelkit, powerplay, powerplay_overlay, route_overlay, targets_overlay, body_info_overlay, screenshots, ship_builds_panel,
     credits_ledger, game_mode, session_credits, session_merits, settings_scroll, system_names, trade_panel, trade_watch_panel,
 )
 from . import __version__, data_backup, issue_report, settings_online
@@ -68,7 +68,7 @@ FEATURES = (
     trade_panel, trade_watch_panel,
     bgs_panel,
     discord_settings,
-    interdiction, flight_alerts, route_overlay, targets_overlay, body_info_overlay, exobiology_overlay, expedition_log_overlay, missions_overlay, landing,
+    interdiction, flight_alerts, route_overlay, targets_overlay, body_info_overlay, exobiology_overlay, expedition_log_overlay, powerplay_overlay, missions_overlay, landing,
 )
 
 # Feature pairs built into a single shared row (side by side) instead of
@@ -750,7 +750,7 @@ def _build_settings_tabs(tabs: nb.Notebook, page_bg: str) -> None:
         colonization_panel.build_overlay_settings,
         *settings_of(discovery),
         inventory_panel.build_overlay_settings,
-        *settings_of(interdiction, flight_alerts, route_overlay, targets_overlay, body_info_overlay, exobiology_overlay, expedition_log_overlay, missions_overlay, landing, surface_compass),
+        *settings_of(interdiction, flight_alerts, route_overlay, targets_overlay, body_info_overlay, exobiology_overlay, expedition_log_overlay, powerplay_overlay, missions_overlay, landing, surface_compass),
         mining_panel.build_overlay_settings,
         *settings_of(notable),
         screenshots.build_overlay_settings,

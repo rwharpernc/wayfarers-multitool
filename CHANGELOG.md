@@ -3,6 +3,12 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## Unreleased
+
+### Added
+
+- **Powerplay overlay:** a small card on the game screen (Settings → Overlays → Powerplay, off until ticked) that shows while you are in a system with Powerplay data: your Power, rank, total merits and the cycle's merits, the system's state and holder, what merits earned there now count as (Acquisition, Reinforcement or Undermining), and the merits and estimated Control Points earned there this session, by type. It has a Test Card button and its own Overlay Placement slot.
+
 ## 1.3.2 (2026-10-29)
 
 ### Changed
