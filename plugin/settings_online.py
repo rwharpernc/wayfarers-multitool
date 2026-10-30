@@ -34,6 +34,7 @@ LOOKUPS: Tuple[Tuple[str, str, str, bool, str], ...] = (
     ("System targets: bodies other commanders scanned", "EDSM", "wfmt_targets_online", False, "Overlays > System targets"),
     ("System targets: life and points of interest others found", "Spansh", "wfmt_targets_known", False, "Overlays > System targets"),
     ("Route overlay: systems EDSM does not know", "EDSM", "wfmt_route_edsm", False, "Overlays > Route"),
+    ("Powerplay card: the system you are jumping to", "Spansh", "wfmt_powerplay_overlay_lookahead", False, "Overlays > Powerplay"),
     ("Colonization: share progress and deliveries", "Raven Colonial", "wfmt_rcc_enabled", False, "Colonization"),
     ("System name suggestions while typing", "Spansh", "wfmt_system_suggest_spansh", False, "General > Window"),
     ("Download and install updates", "GitHub", "wfmt_auto_update", False, "General > Updates"),

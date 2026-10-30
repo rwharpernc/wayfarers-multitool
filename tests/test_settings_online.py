@@ -37,7 +37,7 @@ class OnlineLookupsPageTests(unittest.TestCase):
         real = {
             "BGS", "Colonization", "Mining", "Missions", "Powerplay", "Trade",
             "Exploration > Exploration Value", "Exploration > Boxel Survey", "Exploration > Nearest place to land",
-            "Overlays > System targets", "Overlays > Route", "General > Window", "General > Updates",
+            "Overlays > System targets", "Overlays > Route", "Overlays > Powerplay", "General > Window", "General > Updates",
         }
         for what, _service, _key, _default, where in _lookups():
             self.assertIn(where, real, f"{what}: {where} is not a Settings page")

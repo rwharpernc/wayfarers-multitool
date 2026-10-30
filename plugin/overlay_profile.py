@@ -50,7 +50,7 @@ _FIXED: Tuple[str, ...] = (
     "wfmt_body_info_enabled", "wfmt_body_info_targeted", "wfmt_body_info_near", "wfmt_chemistry_style",
     "wfmt_missions_overlay_enabled", "wfmt_missions_overlay_rows", "wfmt_missions_overlay_next",
     "wfmt_missions_overlay_urgent_minutes",
-    "wfmt_expedition_log_overlay", "wfmt_powerplay_overlay",
+    "wfmt_expedition_log_overlay", "wfmt_powerplay_overlay", "wfmt_powerplay_overlay_lookahead",
     "wfmt_exo_status_enabled", "wfmt_exo_list_enabled", "wfmt_exo_radar_enabled", "wfmt_exo_popup_enabled",
     "wfmt_exo_radar_size", "wfmt_exo_radar_fill", "wfmt_exo_radar_line",
     # how the overlay looks

@@ -25,8 +25,9 @@ import logging
 import os
 import queue
 import threading
+import time
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Mapping, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple
 
 import tkinter as tk
 from tkinter import ttk
@@ -75,6 +76,10 @@ _INFO_COLOR = "#1565c0"
 # current names seen in the wild and is deliberately conservative — an
 # unrecognized state falls through to Acquisition rather than guessing wrong.
 _CONTROLLED_STATES = {"exploited", "fortified", "stronghold", "controlled", "homesystem"}
+
+# How long a started hyperspace jump keeps the Powerplay card on its destination if no arrival (or other end to the jump) is journaled.
+NEXT_JUMP_TTL_S = 120.0
+_JUMP_ENDS = ("FSDJump", "CarrierJump", "Location", "SupercruiseEntry", "SupercruiseExit", "Interdicted", "Died", "LoadGame", "Shutdown")
 
 # "SearchAndRescue" is shared by several mechanics (Thargoid War salvage,
 # regular mission hand-ins, PowerPlay commodity delivery) — Frontier's
@@ -341,24 +346,29 @@ class PowerplayTracker:
         if current_system and self.system_name and current_system != self.system_name:
             return UNKNOWN
 
-        state = (self.system_state or "").lower()
-        controller = self.system_controller
+        return activity_for(self.my_power, self.system_state, self.system_controller, self.system_powers)
 
-        if state in _CONTROLLED_STATES:
-            if controller == self.my_power:
-                return REINFORCEMENT
-            if controller:
-                return UNDERMINING
-            # A controlled-type state but no ControllingPower reported
-            # (shouldn't normally happen): fall back to Acquisition if we're
-            # among the Powers listed as active there.
-            return ACQUISITION if self.my_power in self.system_powers else UNKNOWN
 
-        if self.system_state:
-            # Unoccupied / Contested / Turmoil / etc: nobody holds it yet.
-            return ACQUISITION
-
+def activity_for(my_power: Optional[str], state: Optional[str], controller: Optional[str], powers: Iterable[str] = ()) -> str:
+    """What merits earned in a system would count as for `my_power`, from the system's state, the Power that holds it and the Powers active there."""
+    if not my_power:
         return UNKNOWN
+
+    if (state or "").lower() in _CONTROLLED_STATES:
+        if controller == my_power:
+            return REINFORCEMENT
+        if controller:
+            return UNDERMINING
+        # A controlled-type state but no ControllingPower reported
+        # (shouldn't normally happen): fall back to Acquisition if we're
+        # among the Powers listed as active there.
+        return ACQUISITION if my_power in powers else UNKNOWN
+
+    if state:
+        # Unoccupied / Contested / Turmoil / etc: nobody holds it yet.
+        return ACQUISITION
+
+    return UNKNOWN
 
 
 # ---------------------------------------------------------------------------
@@ -634,6 +644,10 @@ class PowerplayController:
         # The system's allegiance and government from the same events, for the Rare Goods Finder's Legality column.
         self._current_allegiance: Optional[str] = None
         self._current_government: Optional[str] = None
+        # The system a hyperspace jump has started for (name, id64, give-up time on the monotonic clock) and the system the last arrival event was for, so the
+        # Powerplay overlay card can look ahead, and can tell "this system has no Powerplay data" from "no arrival has been seen yet".
+        self._next_jump: Optional[Tuple[str, int, float]] = None
+        self._arrived_at: Optional[str] = None
 
         # Main-panel widgets (built in build_panel).
         self._status_label: Optional[tk.Label] = None
@@ -840,6 +854,7 @@ class PowerplayController:
 
         if system:
             self._current_system = system
+        self._track_jump(entry)
         if cmdr and cmdr != self._cmdr:
             self._switch_cmdr(cmdr)
         self._poll_scan()
@@ -1190,23 +1205,63 @@ class PowerplayController:
             self._last_event_label["text"] = message
             self._last_event_label["foreground"] = "green"
 
-    def overlay_info(self):
-        """What the Powerplay overlay card is drawn from, or None when you are not in a system with Powerplay data (a context kept from an earlier system does not count)."""
-        from . import powerplay_overlay
-        pp = self.tracker
-        if self.sessions is None or not pp.system_state or not self._current_system or pp.system_name != self._current_system:
+    def _track_jump(self, entry: Mapping[str, Any]) -> None:
+        """Note where a hyperspace jump is heading (and ask about it, if the Powerplay card's look-ahead is on) and where the last arrival was; any other end to the jump forgets the destination."""
+        event = entry.get("event")
+        if event == "StartJump":
+            name, id64 = entry.get("StarSystem"), entry.get("SystemAddress")
+            if entry.get("JumpType") == "Hyperspace" and name and isinstance(id64, int):
+                self._next_jump = (str(name), id64, time.monotonic() + NEXT_JUMP_TTL_S)
+                from . import powerplay_overlay, powerplay_system_lookup
+                if powerplay_overlay.load_config().lookahead:
+                    powerplay_system_lookup.request(id64, powerplay_overlay.refresh)
+            return
+        if event in _JUMP_ENDS:
+            self._next_jump = None
+        if event in ("FSDJump", "CarrierJump", "Location"):
+            self._arrived_at = str(entry.get("StarSystem") or "") or None
+
+    def _destination(self) -> Optional[Tuple[str, int]]:
+        if self._next_jump is None:
             return None
-        session = self.sessions.current
-        totals = system_totals(session, self._current_system)
+        name, id64, until = self._next_jump
+        if time.monotonic() > until:
+            self._next_jump = None
+            return None
+        return name, id64
+
+    def overlay_info(self):
+        """What the Powerplay overlay card is drawn from: the system a hyperspace jump is heading for (when the card's look-ahead is on), else the system you are in. None when there is
+        nothing to say yet (no commander, or no arrival seen since EDMC started)."""
+        from . import powerplay_overlay as card, powerplay_system_lookup as lookup
+        pp = self.tracker
+        if self.sessions is None:
+            return None
         label, cycle_merits, _ = _cycle_tally(self.ledger.live_view())
-        pledged = bool(pp.my_power)
-        return powerplay_overlay.Info(
-            system=self._current_system, state=pp.system_state, controller=pp.system_controller or "",
-            power=pp.my_power or "", rank=pp.rank, total_merits=pp.total_merits, cycle_label=label, cycle_merits=cycle_merits,
-            activity=pp.system_activity(self._current_system) if pledged else "",
-            here=tuple((a, totals[a]) for a in ACTIVITIES if totals.get(a, 0) > 0),
-            cp=tuple((a, c) for a, c in _cp_by_activity(totals).items()),
-        )
+        mine = dict(power=pp.my_power or "", rank=pp.rank, total_merits=pp.total_merits, cycle_label=label, cycle_merits=cycle_merits)
+
+        destination = self._destination() if card.load_config().lookahead else None
+        if destination is not None:
+            name, id64 = destination
+            status, standing = lookup.peek(id64)
+            if status == lookup.FOUND and standing is not None:
+                return card.Info(system=name, state=standing.state, controller=standing.controller, destination=True, progress=standing.progress, **mine,
+                                 activity=activity_for(pp.my_power, standing.state, standing.controller, standing.powers) if pp.my_power else "")
+            shown = {lookup.NONE: card.NO_POWERPLAY, lookup.FAILED: card.UNAVAILABLE}.get(status, card.LOOKING)
+            return card.Info(system=name, state="", status=shown, destination=True, **mine)
+
+        here = self._current_system
+        if not here:
+            return None
+        if pp.system_state and pp.system_name == here:
+            totals = system_totals(self.sessions.current, here)
+            return card.Info(system=here, state=pp.system_state, controller=pp.system_controller or "", **mine,
+                             activity=pp.system_activity(here) if pp.my_power else "",
+                             here=tuple((a, totals[a]) for a in ACTIVITIES if totals.get(a, 0) > 0),
+                             cp=tuple((a, c) for a, c in _cp_by_activity(totals).items()))
+        if self._arrived_at == here:        # arrived here and the journal gave no Powerplay data for it
+            return card.Info(system=here, state="", status=card.NO_POWERPLAY, **mine)
+        return None
 
     def _refresh_panel(self) -> None:
         from . import powerplay_overlay

@@ -16,7 +16,9 @@ if "config" not in sys.modules:
     config_stub.config = mock.MagicMock()
     sys.modules["config"] = config_stub
 
-from plugin import powerplay, powerplay_overlay as O  # noqa: E402
+import threading  # noqa: E402
+
+from plugin import powerplay, powerplay_overlay as O, powerplay_system_lookup as L  # noqa: E402
 from plugin.formulas import ACQUISITION, DELIVERY, REINFORCEMENT, UNDERMINING, UNKNOWN  # noqa: E402
 
 
@@ -28,6 +30,26 @@ class BuildCardTests(unittest.TestCase):
     def test_no_info_or_no_state_is_an_empty_card(self):
         self.assertFalse(O.build_card(None))
         self.assertFalse(O.build_card(O.Info("Sol", "")))
+
+    def test_a_system_without_powerplay_says_so(self):
+        card = O.build_card(O.Info("Shinrarta Dezhra", "", status=O.NO_POWERPLAY))
+        self.assertEqual(card.header, (("No Powerplay Detected in system", "muted"),))
+        self.assertEqual(card.title[0], "Shinrarta Dezhra")
+        self.assertEqual(card.badge, "")
+
+    def test_a_destination_is_marked_jumping_and_says_what_it_is_waiting_for(self):
+        for status, words in ((O.NO_POWERPLAY, "No Powerplay Detected in system"), (O.LOOKING, "Looking up Powerplay…"), (O.UNAVAILABLE, "Powerplay lookup unavailable")):
+            card = O.build_card(O.Info("Sol", "", status=status, destination=True))
+            self.assertEqual((card.header[0][0], card.badge), (words, "jumping"))
+
+    def test_a_destination_with_a_standing_shows_it_without_the_session_rows(self):
+        info = O.Info("Sol", "Stronghold", "Jerome Archer", "Aisling Duval", 4, 100, "Cycle 3", 50, "undermining", destination=True, progress=0.657)
+        shown = rows(O.build_card(info))
+        self.assertEqual(shown["System"][0], "Stronghold · 66%")
+        self.assertEqual(shown["Held by"][0], "Jerome Archer")
+        self.assertEqual(shown["Merits there count as"][0], "Undermining")
+        self.assertNotIn("Earned here", shown)
+        self.assertEqual(O.build_card(info).badge, "jumping")
 
     def test_the_sample_card_shows_everything(self):
         card = O.build_card(O.sample_info())
@@ -84,10 +106,18 @@ class ControllerInfoTests(unittest.TestCase):
     def test_a_context_kept_from_an_earlier_system_is_not_shown(self):
         self.assertIsNone(self.controller(system="Nervi", here="Sol").overlay_info())
 
-    def test_no_powerplay_state_is_nothing_to_show(self):
+    def test_no_powerplay_state_after_an_arrival_says_no_powerplay(self):
         c = self.controller()
         c.tracker.system_state = None
-        self.assertIsNone(c.overlay_info())
+        self.assertIsNone(c.overlay_info())                      # no arrival seen yet: not known, so nothing is claimed
+        c._track_jump({"event": "FSDJump", "StarSystem": "Nervi"})
+        info = c.overlay_info()
+        self.assertEqual((info.system, info.status, info.destination), ("Nervi", O.NO_POWERPLAY, False))
+
+    def test_arriving_somewhere_with_no_powerplay_data_says_so(self):
+        c = self.controller(system="Nervi", here="Sol")
+        c._track_jump({"event": "FSDJump", "StarSystem": "Sol"})
+        self.assertEqual(c.overlay_info().status, O.NO_POWERPLAY)
 
     def test_system_activity_changes_nothing(self):
         c = self.controller()
@@ -99,6 +129,113 @@ class ControllerInfoTests(unittest.TestCase):
         self.assertEqual(c.tracker.system_activity("Nervi"), UNDERMINING)
         c.tracker.my_power = None
         self.assertEqual(c.tracker.system_activity("Nervi"), UNKNOWN)
+
+
+class LookaheadTests(unittest.TestCase):
+    ID = 3932277478106
+
+    def setUp(self):
+        L.clear()
+        self.addCleanup(L.clear)
+        self.lookahead = True
+        patcher = mock.patch.object(O, "load_config", lambda: O.PowerplayOverlayConfig(enabled=True, lookahead=self.lookahead))
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.c = powerplay.PowerplayController()
+        self.c.sessions = mock.MagicMock()
+        self.c.sessions.current = {}
+        self.c.tracker.my_power = "Aisling Duval"
+        self.c._current_system = "Sol"
+
+    def start_jump(self, fetch):
+        calls = []
+        with mock.patch.object(L, "request", lambda id64, on_done=None: calls.append(id64) or True):
+            self.c._track_jump({"event": "StartJump", "JumpType": "Hyperspace", "StarSystem": "Nervi", "SystemAddress": self.ID})
+        return calls
+
+    def test_a_started_jump_asks_once_and_shows_the_destination(self):
+        self.assertEqual(self.start_jump(None), [self.ID])
+        self.assertEqual(self.c.overlay_info().status, O.LOOKING)
+        L._cache[self.ID] = (L.FOUND, L.Standing("Fortified", "Aisling Duval", ("Aisling Duval",), 0.5), L.time.monotonic())
+        info = self.c.overlay_info()
+        self.assertEqual((info.system, info.state, info.destination, info.activity), ("Nervi", "Fortified", True, "reinforcement"))
+
+    def test_no_standing_at_the_destination_says_no_powerplay(self):
+        self.start_jump(None)
+        L._cache[self.ID] = (L.NONE, None, L.time.monotonic())
+        info = self.c.overlay_info()
+        self.assertEqual((info.system, info.status, info.destination), ("Nervi", O.NO_POWERPLAY, True))
+
+    def test_a_failed_lookup_is_reported(self):
+        self.start_jump(None)
+        L._cache[self.ID] = (L.FAILED, None, L.time.monotonic())
+        self.assertEqual(self.c.overlay_info().status, O.UNAVAILABLE)
+
+    def test_with_the_tick_off_nothing_is_asked_and_the_current_system_shows(self):
+        self.lookahead = False
+        self.assertEqual(self.start_jump(None), [])
+        self.assertIsNone(self.c.overlay_info())                 # in Sol, no arrival seen
+        self.c._track_jump({"event": "Location", "StarSystem": "Sol"})
+        self.assertEqual(self.c.overlay_info().system, "Sol")
+
+    def test_arriving_or_leaving_the_jump_ends_the_destination(self):
+        for event in ("FSDJump", "SupercruiseEntry", "Interdicted", "Died"):
+            self.start_jump(None)
+            self.c._track_jump({"event": event, "StarSystem": "Nervi"})
+            self.assertIsNone(self.c._destination(), event)
+
+    def test_a_jump_that_never_ends_gives_up(self):
+        self.start_jump(None)
+        with mock.patch.object(powerplay.time, "monotonic", lambda: 1e12):
+            self.assertIsNone(self.c._destination())
+
+    def test_a_supercruise_jump_is_not_a_destination(self):
+        with mock.patch.object(L, "request", lambda *a, **k: self.fail("asked")):
+            self.c._track_jump({"event": "StartJump", "JumpType": "Supercruise", "StarSystem": "Nervi", "SystemAddress": self.ID})
+        self.assertIsNone(self.c._destination())
+
+
+class SpanshLookupTests(unittest.TestCase):
+    def setUp(self):
+        L.clear()
+        self.addCleanup(L.clear)
+
+    def test_parse_reads_the_standing(self):
+        standing = L.parse({"record": {"power_state": "Stronghold", "controlling_power": "Jerome Archer", "power": ["A", "B"], "power_state_control_progress": 0.5}})
+        self.assertEqual(standing, L.Standing("Stronghold", "Jerome Archer", ("A", "B"), 0.5))
+
+    def test_parse_returns_none_without_a_state_or_with_junk(self):
+        for data in ({"record": {"name": "Shinrarta Dezhra"}}, {"record": None}, {}, [], None):
+            self.assertIsNone(L.parse(data))
+
+    def test_request_asks_once_and_answers_from_memory(self):
+        done, asked = threading.Event(), []
+
+        def fetch(id64):
+            asked.append(id64)
+            return L.FOUND, L.Standing("Exploited")
+        self.assertTrue(L.request(7, done.set, fetch))
+        self.assertTrue(done.wait(5))
+        self.assertEqual(L.peek(7), (L.FOUND, L.Standing("Exploited")))
+        self.assertFalse(L.request(7, None, fetch))
+        self.assertEqual(asked, [7])
+
+    def test_an_answer_expires_and_a_failure_is_retried_sooner(self):
+        L._cache[1] = (L.FOUND, L.Standing("Exploited"), 0.0)
+        L._cache[2] = (L.FAILED, None, 0.0)
+        self.assertEqual(L.peek(1, L.TTL_S - 1)[0], L.FOUND)
+        self.assertEqual(L.peek(1, L.TTL_S + 1)[0], L.UNKNOWN)
+        self.assertEqual(L.peek(2, L.RETRY_S - 1)[0], L.FAILED)
+        self.assertEqual(L.peek(2, L.RETRY_S + 1)[0], L.UNKNOWN)
+
+    def test_a_crashing_fetch_is_a_failure(self):
+        done = threading.Event()
+
+        def boom(id64):
+            raise RuntimeError("no")
+        L.request(9, done.set, boom)
+        self.assertTrue(done.wait(5))
+        self.assertEqual(L.peek(9)[0], L.FAILED)
 
 
 if __name__ == "__main__":

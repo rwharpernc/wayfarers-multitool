@@ -193,7 +193,7 @@ Four ticks, all off: *Enable the Bio status card (progress, current species, dis
 
 ### Powerplay
 
-*Enable the Powerplay card* (off); **Test Card**. The card shows only in a system that has a Powerplay state, and clears elsewhere. It lists your Power, rank, total merits and the merits of the cycle in progress; the system's state and who holds it; what merits earned here now count as (Acquisition, Reinforcement or Undermining, a best guess as on the Powerplay panel); and the merits and estimated Control Points you have earned in this system this session, by type. The Control Points use the ratios on the Powerplay tab. See [Powerplay](guide/powerplay.md).
+*Enable the Powerplay card* (off); *Look up the system I am jumping to (asks Spansh)* (off); **Test Card**. In a system without a Powerplay state the card says **No Powerplay Detected in system**. With the look-ahead ticked it turns to the jump's destination as soon as the journal says the jump has started, using a Spansh lookup of the destination's id (see [What goes on the internet](guide/internet-and-privacy.md)). It lists your Power, rank, total merits and the merits of the cycle in progress; the system's state and who holds it; what merits earned here now count as (Acquisition, Reinforcement or Undermining, a best guess as on the Powerplay panel); and the merits and estimated Control Points you have earned in this system this session, by type. The Control Points use the ratios on the Powerplay tab. See [Powerplay](guide/powerplay.md).
 
 ### Flight Alerts
 

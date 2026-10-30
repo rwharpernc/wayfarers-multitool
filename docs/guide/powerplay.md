@@ -119,13 +119,14 @@ Three buttons on the bottom row:
 
 ## The overlay card
 
-**Settings → WFMT → Overlays → Powerplay** (off until ticked) puts a small card on your game screen while you are in a system that has Powerplay data. It clears when you leave for a system without it.
+**Settings → WFMT → Overlays → Powerplay** (off until ticked) puts a small card on your game screen with your Powerplay standing in the system you are in. In a system that has no Powerplay data it says **No Powerplay Detected in system**.
 
 - The heading is the system, with your rank beside it.
 - **Power**, **Total merits** and the merits of the cycle in progress (`Cycle N merits`) come from the same figures as this page. If you are not pledged, the card says so and leaves them out.
 - **System** is the system's state and **Held by** the Power that holds it.
 - **Merits here count as** is what merits earned in this system now would be filed as: Acquisition, Reinforcement or Undermining. It is a best guess from the state and the holder, as on this page.
 - Below that, a row for each type of merit you have earned in this system this session, with the merits and, except for Delivery and Unattributed, the estimated Control Points (from the ratios in Settings).
+- **Looking ahead.** Tick **Look up the system I am jumping to** (off until ticked; it asks Spansh, see [What goes on the internet](internet-and-privacy.md)) and the card turns to the destination as soon as the journal says the jump has started, with `jumping` beside its name. It shows the destination's state, holder and control progress, and what merits there would count as. While Spansh answers it says `Looking up Powerplay…`; if Spansh has no Powerplay data for the system it says `No Powerplay Detected in system`, and if it cannot be reached, `Powerplay lookup unavailable`. When the jump ends the card shows the system you arrive in, from the journal. With the tick off, the card shows only the system you are in.
 - Place it on **Overlay Placement** ("Powerplay (your standing in this system)"); it starts at the top right, to the left of the Notable find and Inventory cards.
 
 ## The Sessions window
