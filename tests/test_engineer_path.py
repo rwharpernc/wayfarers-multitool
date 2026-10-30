@@ -66,6 +66,27 @@ class BuildTests(unittest.TestCase):
         self.assertIsNone(EP.build("Not An Engineer"))
 
 
+class OnFootTests(unittest.TestCase):
+    def test_an_on_foot_hand_in_is_a_step_for_the_next_engineer_not_their_own(self):
+        kit = EP.build("Kit Fowler")
+        refer = [s for s in kit.steps if s.kind == EP.REFER]
+        self.assertEqual(len(refer), 1)
+        self.assertIn("Domino Green", refer[0].text)
+        self.assertIn("Push", refer[0].text)
+        self.assertNotIn(EP.UNLOCK, [s.kind for s in EP.build("Domino Green").steps])
+        self.assertNotIn(EP.REFER, [s.kind for s in EP.build("Domino Green").steps])
+
+    def test_the_end_of_a_chain_hands_nothing_over(self):
+        for name in ("Yarden Bond", "Oden Geiger", "Uma Laszlo", "Yi Shen"):
+            self.assertNotIn(EP.UNLOCK, [s.kind for s in EP.build(name).steps], name)
+        self.assertEqual(len([s for s in EP.build("Yi Shen").steps if s.kind == EP.REFER]), 3)
+
+    def test_a_ship_engineer_keeps_their_own_unlock_and_has_no_hand_in_step(self):
+        kinds = [s.kind for s in EP.build("Hera Tani").steps]
+        self.assertIn(EP.UNLOCK, kinds)
+        self.assertNotIn(EP.REFER, kinds)
+
+
 class StandingTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
