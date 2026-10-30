@@ -26,7 +26,7 @@ from config import appname, config
 
 from . import blueprint_needs as needs_mod
 from . import blueprint_wishlist as wishlist_mod
-from . import blueprints, engineers, stored_modules
+from . import blueprints, engineer_path, engineers, stored_modules
 from .odyssey_plan_tab import UpgradePlanTab
 from .ship_plan_tab import ShipPlanTab
 from .uikit import palette as P
@@ -541,12 +541,9 @@ class BlueprintsWindow:
         if info is None:
             return clip(f"{name}: not in the location table. What they offer is in the blueprint table.", 900)
         parts = [f"{info.name}: {info.place()}."]
-        if info.find:
-            parts.append(f"Find: {info.find}")
-        if info.invite:
-            parts.append(f"Invited by: {info.invite}")
-        if info.unlock:
-            parts.append(f"Unlock: {info.unlock}")
+        path = engineer_path.build(name, self._engineers)
+        if path is not None and (path.steps or path.first):
+            parts.append("\n" + engineer_path.render(path) + "\n")
         if info.standing:
             parts.append(f"Standing: {info.standing}")
         unlock = blueprints.unlock_for(name, key=engineers.name_key)
@@ -557,7 +554,7 @@ class BlueprintsWindow:
         quirk = engineers.QUIRKS.get(engineers.name_key(name))
         if quirk:
             parts.append(quirk)
-        return clip(" ".join(p if p.endswith((".", "!", "?")) else p + "." for p in parts), 900)
+        return clip(" ".join(p if p.endswith((".", "!", "?", "\n")) else p + "." for p in parts), 1800)
 
     def _show_engineer_blueprints(self) -> None:
         if self._picked_engineer is None:

@@ -3,6 +3,12 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## Unreleased
+
+### Added
+
+- **Path to unlock an engineer:** selecting an engineer on the Engineers tab now shows the way to them as numbered steps in order: find them, hold the permit if one is needed, earn the invitation, unlock them. Steps the game says you have done are marked `[done]`. When an engineer is found through another (Tiana Fortune through Hera Tani, who is found through Liz Ryder), the engineers to deal with first are listed in order, and any already unlocked are left out. The steps are the community table's wording; the game does not report permits or invitation requirements, so those are marked done only once the engineer is invited or unlocked.
+
 ## 1.3.3 (2026-10-30)
 
 ### Added
