@@ -205,7 +205,7 @@ Larger features add `start(plugin_dir)` and `stop()` for loading and flushing st
 
 The **Overlays** group holds every overlay setting and toggle:
 
-- Overlay Connection, Appearance, Overlay Placement and Hide overlays, then one tab per feature that draws on the overlay (Colonization, Discovery, Inventory, Interdiction Warning, Flight Alerts, Route, System targets, Body info, Exobiology, Expedition Log, Missions, Landing, Surface Compass, Mining, Notable Bodies, Screenshots).
+- Overlay Connection, Appearance, Overlay Placement and Hide overlays, then one tab per feature that draws on the overlay (Colonization, Discovery, Inventory, Interdiction Warning, Flight Alerts, Route, System targets, Body info, Exobiology, Expedition Log, Powerplay, Missions, Landing, Surface Compass, Mining, Notable Bodies, Screenshots).
 - Interdiction, Landing, Discovery and Notable Bodies are overlay features through and through, so their whole `build_settings` is listed there.
 - Colonization, Inventory, Mining and Screenshots keep their other settings in their own tabs (Colonization, Operations, Mining) and expose a second builder, `build_overlay_settings`, for the Overlays group.
   - It shares the controller's variables so `save_settings` is unchanged (it skips a variable whose tab was not built).
@@ -984,7 +984,7 @@ Design decisions that apply to all of them:
   - `edsm_client.py` says so in its docstring: any failure (offline, service down, unexpected shape) returns an empty result. A network feature failing must not break journal handling.
   - The BGS tick client is the deliberate exception: it *raises*, and the caller decides, because a fabricated or stale tick would corrupt the tally. It never returns a guessed value.
 - **Identify WFMT in every request.** Every call sends a User-Agent naming WFMT, its version and the
-  project's address (`http_identity.py`, for example `WFMT/1.3.2 (rare-goods; +https://github.com/...)`),
+  project's address (`http_identity.py`, for example `WFMT/1.3.3 (rare-goods; +https://github.com/...)`),
   so a service operator who sees the traffic can tell what it is and get in touch. EDSM returns HTTP 403
   to the default `python-requests` agent, so its client sends EDMC's own `config.user_agent` followed by
   WFMT's.
@@ -1135,7 +1135,7 @@ cap what one action can do, set a timeout, and identify WFMT with `http_identity
 
 Short explanations of the non-obvious decisions in each area. Filenames are in `plugin/`.
 
-### Powerplay (`powerplay.py`, `session.py`, `store.py`, `formulas.py`, `powerplay_ledger.py`, `powerplay_state.py`, `powerplay_backfill.py`, `powerplay_systems_tab.py`)
+### Powerplay (`powerplay.py`, `session.py`, `store.py`, `formulas.py`, `powerplay_ledger.py`, `powerplay_state.py`, `powerplay_backfill.py`, `powerplay_systems_tab.py`, `powerplay_overlay.py`, `powerplay_system_lookup.py`)
 
 The journal's `PowerplayMerits` event reports what you earned, after every game multiplier.
 
@@ -1159,6 +1159,12 @@ The window's filters apply before the number shown:
   - It asks Spansh about `POWER_BATCH` (10) uncached origin systems at a time and re-evaluates from the cache after each batch.
   - It stops when `limit` are controlled by the commander's pledged Power (`PowerplayTracker.my_power`, compared by `rare_goods.same_power`) or none are left.
 - Both choices are remembered (`wfmt_rares_large_only`, `wfmt_rares_my_power`); the second is unavailable until a Power is known.
+
+**The overlay card** (`powerplay_overlay.py`, spec section 12 in [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md)).
+
+- `PowerplayController.overlay_info()` builds an `Info` from the tracker, the session and the cycle ledger. `powerplay_overlay.build_card` turns it into a `Card` (pure), and a `LiveCard` redraws it on every event and once a second.
+- `PowerplayTracker.system_activity` and the module function `activity_for` give the Acquisition / Reinforcement / Undermining guess without the side effects of `classify_current_activity`, so a display may call them as often as it likes.
+- A `StartJump` to a hyperspace destination is noted by the controller and, only with the `wfmt_powerplay_overlay_lookahead` tick on, looked up through `powerplay_system_lookup.py` (Spansh by system id, via `spansh_courtesy`).
 
 ### Boxel Survey (`boxel*.py`, `region_sweep_*.py`, `waypoint_route*.py`, `edsm_client.py`)
 

@@ -1,6 +1,6 @@
-# Test plan: 1.3.2
+# Test plan: 1.3.3
 
-What to check in EDMC after the 1.3.2 release (and before any later one), on **Windows** first and then on **Linux**.
+What to check in EDMC after the 1.3.3 release (and before any later one), on **Windows** first and then on **Linux**.
 
 - This is the quick pass over the whole release:
   - the Rare Goods Finder
@@ -11,12 +11,12 @@ What to check in EDMC after the 1.3.2 release (and before any later one), on **W
 - The unit and smoke tests pass, but they cannot show what the game, the overlay and a real clipboard do.
 - The overview is in [CHANGELOG.md](../CHANGELOG.md) and [STATUS.md](STATUS.md). The longer wording for each check is in [TODO.md](TODO.md) (under "Verification in the game").
 
-## Where the testing stands (2026-10-29)
+## Where the testing stands (2026-10-30)
 
 | Platform | Automated tests | Checks in the game |
 |---|---|---|
 | **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is proved only by the in-game pass. | Not yet recorded for 1.3.0. Sections 1 to 7 below are open. |
-| **Linux** | 3,687 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-10-29 for the 1.3.2 release (3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
+| **Linux** | 3,723 tests pass in the Docker container (Xvfb and a window manager), 13 skipped, run on 2026-10-30 for the 1.3.3 release (3,687 for 1.3.2, 3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
 
 - 1.0.0 was released on 2026-10-26 (tag `v1.0.0`). 1.1.0 was released on 2026-10-27 (tag `v1.1.0`). 1.2.0 was released on 2026-10-28 (tag `v1.2.0`). 1.3.0 was released on 2026-10-29 (tag `v1.3.0`), 1.3.1 the same day (tag `v1.3.1`) and 1.3.2 the same day (tag `v1.3.2`). These passes are the checks to run on the released build, and a failure goes to a fix on a short bugfix branch (`bugfix/1.3.2` is open).
 - Tick a box in the sections below only when you have seen it pass; nothing here has been ticked from the automated run.
@@ -139,6 +139,14 @@ The longer wording for each is in [TODO.md](TODO.md). Tick a box only when you h
 - [ ] **Always on EDMC's monitor:** tick *Always open WFMT's windows on EDMC's monitor* (Settings → WFMT → General → Window) and open that window again: it now opens over the EDMC window, wherever you left it. Untick it: it goes back to reopening where you left it.
 - [ ] **A monitor that is gone:** with a window left on the second monitor, disconnect that monitor (or on Windows set the display to the first monitor only) and open the window: it opens over the EDMC window, not off-screen.
 - [ ] **Buttons and tooltips:** the mode row reads Powerplay, BGS, Explore, Mining, Trade, Missions, Operations, Colony without making EDMC's window wider; every button on the panels and in the windows shows a tooltip when hovered; no button label is in capitals.
+
+## 9. Added in 1.3.3 (2026-10-30)
+
+- [ ] **Powerplay card:** Settings → WFMT → Overlays → Powerplay, tick *Enable the Powerplay card* and press **Test Card**: a card headed *Sample System* with *Rank 12* appears at the top right, showing **Your Power**, Total merits, the Cycle merits, System, Held by, *Merits here count as* and the Reinforcement and Delivery/Donation rows, and clears after a few seconds.
+- [ ] **Powerplay card in a Powerplay system:** jump into a system with a Powerplay state: the card shows your Power and rank, the system's state and holder, what merits there count as, and nothing under *Earned here* until you earn some; after earning merits it lists each type with merits and, except for Delivery and Unattributed, the estimated Control Points (they match the Powerplay panel).
+- [ ] **No Powerplay Detected:** jump to a system with no Powerplay state (a populated system with no Power presence, say): the card is headed with the system's name and says **No Powerplay Detected in system**. Right after starting EDMC mid-session, before your first jump, the card stays blank instead of saying so.
+- [ ] **Look-ahead:** tick *Look up the system I am jumping to* and start a hyperspace jump to a Powerplay system: the card turns to the destination as soon as the jump charges (marked *jumping*, `Looking up Powerplay…` for a moment, then its state, holder, what merits there count as and, when the lookup is fresh, a control progress percentage) and to the system you arrive in when the jump ends. A jump to a system with no Powerplay data says **No Powerplay Detected in system**. A jump you cancel or are interdicted out of puts the card back on the system you are in. With the tick off, the card never turns to the destination and nothing is sent to Spansh.
+- [ ] **Loop route:** with the look-ahead on, fly a loop of Powerplay systems twice: the second lap's destinations show at once, with no `Looking up…`, and the log shows no new Spansh request for them (only systems you have not arrived in within the hour are asked about). A destination's percentage is gone ten minutes after the card first showed it.
 
 ## Linux specifics
 

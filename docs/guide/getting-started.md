@@ -87,9 +87,9 @@ releases (a draft or a pre-release is ignored). The **Release notes** link on th
 4. **When it takes effect.** The new files are staged now and run when EDMC starts again; nothing is swapped into a running program. Restart EDMC when you are ready.
 5. **If it fails.** A failed check or download is written to EDMC's log and tried again at the next start. The panel is unchanged. Extracting the ZIP by hand always works.
 
-The first line under the mode buttons always says which version you are running (**Plugin: v1.3.2**).
+The first line under the mode buttons always says which version you are running (**Plugin: v1.3.3**).
 
-- While an update is coming it says, for example, **Plugin: v1.3.2 (downloading v1.3.3...)**.
+- While an update is coming it says, for example, **Plugin: v1.3.3 (downloading v1.3.4...)**.
 - Once the update is downloaded it turns bold black on **orange** and reads **the new version's number, then download - Restart EDMC**.
 - The update only takes effect when EDMC starts again; nothing is swapped in while it runs.
 - After the restart the line shows the new version with **(updated)** after it, in green for 15 seconds.
@@ -136,7 +136,7 @@ mining and flip to Trade to check a price, your mining stats keep counting.
 
 Just under the mode buttons, above the page itself, WFMT shows these lines, on every mode:
 
-- **Plugin**: the version you are running, for example `Plugin: v1.3.2` (see "Updating" for what it says during an update). Click it to open the latest release's page.
+- **Plugin**: the version you are running, for example `Plugin: v1.3.3` (see "Updating" for what it says during an update). Click it to open the latest release's page.
 - **Game mode**: `You are in Open mode.`, `You are in Solo mode.` or `You are in Private Group mode (the group's name).` Until the game has logged in it reads `Game mode: waiting for login…`.
 - **Credits this session**: what you've earned or lost since you logged in, for example `Credits this session: +1,234,567 cr earned (+411,522 cr/hr)`, `Credits this session: -5,000 cr lost` or `Credits this session: no change yet`. It is your balance now minus your balance at login (`waiting for your balance…` until EDMC has told WFMT the balance).
   - The hourly rate appears once the session is about three minutes old.
@@ -352,7 +352,7 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 | **Screenshots** | *Delete original file after conversion* (off); *Include WFMT's built-in overlay in the converted screenshot* (off; Windows, built-in overlay); *Group converted files into a per-system subfolder* (off); *Show the auto-capture timer icon on the main window* (on); *Filename Mask* (a preset list); *Auto-capture poll interval (seconds)*; *Use high-resolution capture on the auto-timer (Solo play only)* (off); *Automatically capture a screenshot when scanning a Thargoid signal* (on). See [Screenshots](operations.md#screenshots) |
 | **Ship Builds** | An explanation only: the builds are kept by link in the Ship Builds window (**Ships**) |
 
-**Overlays** (inner tabs: Overlay Connection, Appearance and Overlay Placement first, then in order Body info, Colonization, Discovery, Exobiology, Expedition Log, Flight Alerts, Hide overlays, Interdiction Warning, Inventory, Landing, Mining, Missions, Notable Bodies, Route, Screenshots, Surface Compass, System targets). Every option, with its starting value, is in [Setting up the overlay](../OVERLAY_SETUP.md#every-overlays-tab-in-detail).
+**Overlays** (inner tabs: Overlay Connection, Appearance and Overlay Placement first, then in order Body info, Colonization, Discovery, Exobiology, Expedition Log, Flight Alerts, Hide overlays, Interdiction Warning, Inventory, Landing, Mining, Missions, Notable Bodies, Powerplay, Route, Screenshots, Surface Compass, System targets). Every option, with its starting value, is in [Setting up the overlay](../OVERLAY_SETUP.md#every-overlays-tab-in-detail).
 
 ## Typing a system name
 

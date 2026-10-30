@@ -158,7 +158,8 @@ A window listing the rare commodities closest to your current system.
 
 **File → Settings → WFMT → Powerplay** (keys start `wfmt_powerplay_`): the three merits-per-CP ratios,
 the clipboard format, and how many cycles the start-up journal scan covers (`wfmt_powerplay_backfill_cycles`,
-default 4, 1-12). Sessions, cycles and history need no setting.
+default 4, 1-12). Sessions, cycles and history need no setting. The overlay card's two ticks are on **Settings → Overlays → Powerplay**
+(`wfmt_powerplay_overlay` and `wfmt_powerplay_overlay_lookahead`, both off; section 12).
 
 ## 9. Testing
 
@@ -364,3 +365,14 @@ updates (`update.py`). The controller switches ledger and pins whenever the comm
   the merit events that follow, a late first merit, the legacy signals ignored once `PowerplayDeliver`
   is seen).
 - The widgets are exercised by hand in EDMC.
+
+## 12. The overlay card
+
+A small card on the game screen (`powerplay_overlay.py`; Settings → Overlays → Powerplay; one Overlay Placement slot, "Powerplay").
+
+- **What it shows.** Your pledged Power, rank and total merits, the merits of the cycle in progress, the system's state and holder, what merits earned there now count as, and the merits and estimated Control Points earned there this session by activity (Delivery and Unattributed show merits only). It reads the same tracker, session and ledger as the panel, and the CP use the same ratios.
+- **The system you are in.** From the arrival event (`FSDJump`, `CarrierJump`, `Location`). A system whose arrival named no Powerplay state shows **No Powerplay Detected in system**. Before any arrival has been seen (EDMC started mid-session) the card says nothing rather than guess.
+- **The system you are jumping to.** Only with *Look up the system I am jumping to* ticked. A `StartJump` with `JumpType` `Hyperspace` names the destination and its system address; the card asks Spansh's system API (`powerplay_system_lookup.py`, through `spansh_courtesy`) for its state, holder, Powers and control progress, and shows `Looking up Powerplay…`, the standing, **No Powerplay Detected in system** (Spansh has no state for it) or `Powerplay lookup unavailable`. Any other end to the jump (an arrival, `SupercruiseEntry`, `SupercruiseExit`, `Interdicted`, `Died`, a load or shutdown) puts the card back on the system you are in, and a jump that never ends gives up after two minutes.
+- **Keeping the calls down.** An answer is kept for an hour (a failure for two minutes), a request already on its way is not repeated, and an arrival event that carries a Powerplay state is stored in the same cache, so a loop route asks only about systems it has not arrived in. An arrival that names no state stores nothing, because a missing field does not prove the system has none.
+- **Stale progress.** The control percentage moves as players earn merits, so a cached standing gives it out only for ten minutes (`PROGRESS_FRESH_S`); after that the card shows the state and holder alone. State, holder and Powers change at the weekly cycle, not within the hour.
+- **Tests.** `tests/test_powerplay_overlay.py` (the card in each situation, the controller's `overlay_info`, the jump handling, the Spansh parsing, the cache and its expiry).

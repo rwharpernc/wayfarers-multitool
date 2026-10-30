@@ -3,11 +3,13 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
-## Unreleased
+## 1.3.3 (2026-10-30)
 
 ### Added
 
-- **Powerplay overlay:** a small card on the game screen (Settings → Overlays → Powerplay, off until ticked) that shows while you are in a system with Powerplay data: your Power, rank, total merits and the cycle's merits, the system's state and holder, what merits earned there now count as (Acquisition, Reinforcement or Undermining), and the merits and estimated Control Points earned there this session, by type. It has a Test Card button and its own Overlay Placement slot. In a system without Powerplay data it says **No Powerplay Detected in system**. An opt-in tick, **Look up the system I am jumping to** (asks Spansh), turns the card to the destination as soon as a hyperspace jump starts; systems you arrive in are remembered from the journal, so a loop route asks Spansh only on its first lap. A destination's control progress is shown only while the figure is under ten minutes old.
+- **Powerplay overlay:** a small card on the game screen (Settings → Overlays → Powerplay, off until ticked) with your Powerplay standing in the system you are in: **Your Power**, rank and total merits, the merits of the cycle in progress, the system's state and holder, what merits earned there now count as (Acquisition, Reinforcement or Undermining), and the merits and estimated Control Points earned there this session, by type. In a system without Powerplay data it says **No Powerplay Detected in system**. It has a Test Card button and its own Overlay Placement slot (top right by default).
+- **Looking ahead to the next system:** an opt-in tick on the same tab, **Look up the system I am jumping to** (off until ticked; it asks Spansh), turns the card to the destination as soon as the journal says a hyperspace jump has started, marked `jumping`, with its state, holder, what merits there would count as and its control progress. It says `Looking up Powerplay…` while Spansh answers, and `Powerplay lookup unavailable` if Spansh cannot be reached. Answers are kept for an hour, and the systems you arrive in are remembered from the journal, so a loop route asks Spansh about each system only on its first lap. A destination's control progress is shown only while the figure is under ten minutes old, because it moves as players earn merits. The lookup is listed on the Online lookups page and in [What goes on the internet](docs/guide/internet-and-privacy.md).
+- **Merit cap research:** [POWERPLAY_MERIT_RESEARCH.md](docs/POWERPLAY_MERIT_RESEARCH.md) records whether merits are capped per day, per cycle or per delivery. The journals show no cap, and the page lists the published claims as unverified and the open items.
 
 ## 1.3.2 (2026-10-29)
 

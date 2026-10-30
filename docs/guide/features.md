@@ -86,6 +86,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Systems tab | A tab per system with its standing and what you earned; pin up to five | **☆ Pin**, **Show a system** and **Add system**, **× Close tab** | [The Systems tab](powerplay.md#the-systems-tab) |
 | Catch-up | Rebuilds cycles from your journals so playing without EDMC loses nothing | Automatic at start-up; **Rescan** to rebuild | [Catching up](powerplay.md#catching-up-from-your-journals) |
 | Megaships | The megaships whose datalink you scanned this cycle, with a count and where | Drop out of supercruise at the megaship, then scan; see the **Megaships** tab | [Megaships](powerplay.md#megaships) |
+| Powerplay overlay card | Your Power, rank, merits and the cycle's merits, the system's state and holder, what merits there count as, and what you earned there this session (with estimated CP), on your game screen; says **No Powerplay Detected in system** where there is none; optionally turns to the system you are jumping to (asks Spansh) | **Settings → WFMT → Overlays → Powerplay** | [The overlay card](powerplay.md#the-overlay-card) |
 | Rare Goods Finder | The rare commodities nearest you: distance to the origin system, the station's distance from its star, pad, legality, and which Power controls the system | **Rares**; **Show nearest** and **Apply**, **Large pads only**, **Only my Power**, **Copy system**; double-click opens Inara | [Rare Goods Finder](powerplay.md#rare-goods-finder) |
 
 ### Exploration ([guide](exploration.md))

@@ -501,6 +501,12 @@ The items below are implemented and covered by unit tests, but have not all been
   - Verify that it sits in the chosen corner without covering the HUD.
   - Record which rows should be added or removed (the label for each kind of mission, and the row limit).
 
+- [ ] **Powerplay card:** Settings → WFMT → Overlays → Powerplay, tick *Enable the Powerplay card* and press **Test Card**: a card headed *Sample System* with *Rank 12* appears at the top right, showing **Your Power**, Total merits, the Cycle merits, System, Held by, *Merits here count as* and the Reinforcement and Delivery/Donation rows, and clears after a few seconds.
+- [ ] **Powerplay card in a Powerplay system:** jump into a system with a Powerplay state: the card shows your Power and rank, the system's state and holder, what merits there count as, and nothing under *Earned here* until you earn some; after earning merits it lists each type with merits and, except for Delivery and Unattributed, the estimated Control Points (they match the Powerplay panel).
+- [ ] **No Powerplay Detected:** jump to a system with no Powerplay state (a populated system with no Power presence, say): the card is headed with the system's name and says **No Powerplay Detected in system**. Right after starting EDMC mid-session, before your first jump, the card stays blank instead of saying so.
+- [ ] **Look-ahead:** tick *Look up the system I am jumping to* and start a hyperspace jump to a Powerplay system: the card turns to the destination as soon as the jump charges (marked *jumping*, `Looking up Powerplay…` for a moment, then its state, holder, what merits there count as and, when the lookup is fresh, a control progress percentage) and to the system you arrive in when the jump ends. A jump to a system with no Powerplay data says **No Powerplay Detected in system**. A jump you cancel or are interdicted out of puts the card back on the system you are in. With the tick off, the card never turns to the destination and nothing is sent to Spansh.
+- [ ] **Loop route:** with the look-ahead on, fly a loop of Powerplay systems twice: the second lap's destinations show at once, with no `Looking up…`, and the log shows no new Spansh request for them (only systems you have not arrived in within the hour are asked about). A destination's percentage is gone ten minutes after the card first showed it.
+
 ### Exploration and survey
 
 - [ ] **Local star index.** Settings → WFMT → General → Online lookups → Local star index: press **Download and build**.
@@ -764,7 +770,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that a second commander's data is untouched.
   - Then Linux.
 - [ ] **Settings tabs.** Check:
-  - With a narrow Settings window, the tab rows wrap and every label is whole (Overlays has twenty).
+  - With a narrow Settings window, the tab rows wrap and every label is whole (Overlays has twenty-one).
   - A **Related settings** link opens its page (the link click was not tried in EDMC).
   - Hiding mode buttons under General → Window works.
   - OK stays on screen on a 1080p display.

@@ -3,11 +3,15 @@
 Read this first when picking the project up on a machine that has not seen the recent work (for example the Linux test machine).
 
 - It is kept in Git because Git is the only thing shared between the two test machines, one Windows and one Linux.
-- Last updated 2026-10-29.
+- Last updated 2026-10-30.
 
 ## Release
 
-- **1.3.2** is the version number in `plugin/__init__.py` and `package.json`. It was released on 2026-10-29 (tag `v1.3.2`) from the `bugfix/1.3.2` branch, which was merged into `master` and deleted.
+- **1.3.3** is the version number in `plugin/__init__.py` and `package.json`. It is prepared on the `bugfix/1.3.3` branch and is not yet merged into `master` or tagged (`v1.3.3`).
+  - 1.3.3 adds the Powerplay overlay card (Settings → Overlays → Powerplay): your Power, rank and merits, the cycle's merits, the system's state and holder, what merits there count as, and the merits and estimated Control Points earned there this session, with **No Powerplay Detected in system** where the game gives no Powerplay data.
+  - 1.3.3 also adds an opt-in look-ahead (**Look up the system I am jumping to**, which asks Spansh) that turns the card to a jump's destination, with arrivals remembered from the journal and the destination's control progress shown only while under ten minutes old, and the Powerplay merit cap research page.
+  - It has had the Docker tests on Linux; the card has not been seen in the game on either machine (checks in [TEST_PLAN.md](TEST_PLAN.md) section 9).
+- **1.3.2** was released on 2026-10-29 (tag `v1.3.2`) from the `bugfix/1.3.2` branch, which was merged into `master` and deleted.
   - 1.3.2 gives the mode buttons full names (Powerplay, BGS, Explore, Mining, Trade, Missions, Operations, Colony) and every panel and window button a Mixed Case name and a tooltip, and rows of panel buttons wrap instead of widening EDMC's window.
   - 1.3.2 also merges the Powerplay panel's Session and Cycle lines when they would repeat, removes lines that repeated another on the Colony, Trade, Mining, Exploration, Missions and BGS panels, opens pop-out windows on EDMC's monitor (with a Settings tick to always do so), gives the Route Planner and Mining live windows larger minimum sizes, and renames the guide file `field-ops.md` to `operations.md`.
   - 1.3.1 was released on 2026-10-29 (tag `v1.3.1`) from the `bugfix/1.3.1` branch, which was merged into `master` and deleted. It made the Region Sweep EDSM skip option work, started the Colonization Show and List choices at the same place, corrected three Settings texts and brought the documentation in line with the code, with a checker that keeps it so.
@@ -26,8 +30,8 @@ Read this first when picking the project up on a machine that has not seen the r
 
 There is one long-lived branch, `master`.
 
-- A release is built on a branch named for it (`release/1.3.0` was the last; 1.3.1 and 1.3.2 were fixes on `bugfix/1.3.1` and `bugfix/1.3.2`), merged fast-forward into `master` and deleted after it is tagged.
-- For a fix to a released version, cut a short branch from `master` (for example `bugfix/1.3.3`), and merge it back.
+- A release is built on a branch named for it (`release/1.3.0` was the last; 1.3.1, 1.3.2 and 1.3.3 were fixes on `bugfix/1.3.1`, `bugfix/1.3.2` and `bugfix/1.3.3`), merged fast-forward into `master` and deleted after it is tagged.
+- For a fix to a released version, cut a short branch from `master` (for example `bugfix/1.3.4`), and merge it back.
 
 ## Testing
 
@@ -55,7 +59,7 @@ There is one long-lived branch, `master`.
 
 ### Linux, next pass
 
-- Automated: 3,687 tests pass in the Docker container (12 skipped), run on 2026-10-29 for the 1.3.2 release (3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
+- Automated: 3,723 tests pass in the Docker container (13 skipped), run on 2026-10-30 for the 1.3.3 release (3,687 for 1.3.2, 3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
 - Manual: 1.3.0 (and the released 1.2.0, 1.1.0 and 1.0.0) is still to be tested on CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC.
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Report the session type (Wayland or X11) with the results.

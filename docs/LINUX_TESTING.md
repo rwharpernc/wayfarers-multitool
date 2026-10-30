@@ -48,6 +48,9 @@ For anyone testing WFMT on Linux with Elite Dangerous under Steam Proton (or Win
 
 Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 under "Getting set up") and work through these. They are the work added since the earlier passes; each has its longer wording in `docs/TODO.md` under "Verification in the game".
 
+- **Added in 1.3.3 (not yet run on Linux).**
+  - **Powerplay card.** Needs EDMCModernOverlay. Tick *Enable the Powerplay card* (Settings → WFMT → Overlays → Powerplay) and press **Test Card**: a card appears at the top right. Jump into a Powerplay system and then one without Powerplay data (it says **No Powerplay Detected in system**).
+  - **Look-ahead.** Tick *Look up the system I am jumping to* and start a hyperspace jump: the card turns to the destination (marked *jumping*) and then to the system you arrive in. Fly a loop twice: the second lap should not look anything up. The steps are in [TEST_PLAN.md](TEST_PLAN.md) section 9.
 - **Added in 1.3.2 (not yet run on Linux).**
   - **Windows open on EDMC's monitor.** With two monitors, open a WFMT window you have not opened before (the Notes window, say). On Linux Tk cannot list the monitors, so it opens centered over the EDMC window and kept on the visible screen; note which monitor it lands on, under X11 and under Wayland. Drag it to the other monitor, close it and open it again: it should reopen there. Then tick *Always open WFMT's windows on EDMC's monitor* (Settings → WFMT → General → Window) and open it again: it should open over the EDMC window.
 - **Added 2026-10-23 (none of it run on Linux).** The Windows side of each is in [TEST_PLAN.md](TEST_PLAN.md) section 5.
@@ -179,7 +182,7 @@ Use them for anything the passes did not reach.
 
 **Settings pages**
 
-- Every Settings page's tab row wraps and shows whole labels (Overlays has twenty).
+- Every Settings page's tab row wraps and shows whole labels (Overlays has twenty-one).
 - A Related settings link opens its page.
 - The mode buttons can be hidden under General → Window.
 - Number boxes snap back into their range.
@@ -204,7 +207,7 @@ Use them for anything the passes did not reach.
 
 1. Install the plugin: the zip from the [releases page](https://github.com/rwharpernc/wayfarers-multitool/releases/latest), or `npm run deploy` (step 4 below).
    - Restart EDMC.
-   - The line under the mode buttons should read `Plugin: v1.3.2`.
+   - The line under the mode buttons should read `Plugin: v1.3.3`.
    - Work through sections 0 and 1 below first.
 2. To get the checklist and the test suite, fetch the repository and use `master`:
    - `git fetch --all --tags`, then `git switch master`, then `git pull --rebase`.
@@ -793,8 +796,8 @@ Written on Windows against a 3840 x 2160 screen in EDMCModernOverlay's fill mode
   - the display scaling under XWayland
   - how the overlay maps its canvas and sizes there
 
-- [ ] **Settings -> Overlays** has twenty tabs: Overlay Connection, Appearance, Overlay Placement, Hide overlays, Colonization, Discovery,
-      Inventory, Interdiction Warning, Flight Alerts, Route, System targets, Body info, Exobiology, Expedition Log, Missions, Landing,
+- [ ] **Settings -> Overlays** has twenty-one tabs: Overlay Connection, Appearance, Overlay Placement, Hide overlays, Colonization, Discovery,
+      Inventory, Interdiction Warning, Flight Alerts, Route, System targets, Body info, Exobiology, Expedition Log, Powerplay, Missions, Landing,
       Surface Compass, Mining, Notable Bodies and Screenshots. General has no overlay tab.
 - [ ] **Default spots:** with every box ticked, **Show placement preview** on a screen of 1920 x 1080 or more draws the boxes
       without any two overlapping (Interdiction at the top, Discovery below it, Notable find at the top right above Inventory, Flight

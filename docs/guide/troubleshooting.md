@@ -21,6 +21,7 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | A Route Planner route on the Route overlay card | The route is plotted in the Route Planner, and **Enable the Route overlay** is ticked (it does not turn the card on by itself) | Exploration panel, and Settings → WFMT → Overlays → Route |
 | The Route Planner copying the next system for you | **Copy the next system to the clipboard automatically** (one tickbox, on the Exploration panel and in the plotter) | Exploration panel (Route Planner) |
 | Backups made for you | **Back up automatically** and a folder | Settings → WFMT → General → Backup |
+| My Powerplay standing in this system, or the next one, on the game screen | **Enable the Powerplay card** (and, for the system you are jumping to, **Look up the system I am jumping to**) | Settings → WFMT → Overlays → Powerplay |
 | The running expedition's totals on the game screen | **Enable the Expedition Log card** (and press Start in the Expedition window) | Settings → WFMT → Overlays → Expedition Log |
 | What is left to map and sample in a system | **Enable the System targets card** | Settings → WFMT → Overlays → System targets |
 | A card describing the body you target or are near | **Enable the Body info card** | Settings → WFMT → Overlays → Body info |
