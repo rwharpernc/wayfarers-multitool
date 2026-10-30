@@ -1164,6 +1164,7 @@ The window's filters apply before the number shown:
 
 - `PowerplayController.overlay_info()` builds an `Info` from the tracker, the session and the cycle ledger. `powerplay_overlay.build_card` turns it into a `Card` (pure), and a `LiveCard` redraws it on every event and once a second.
 - `PowerplayTracker.system_activity` and the module function `activity_for` give the Acquisition / Reinforcement / Undermining guess without the side effects of `classify_current_activity`, so a display may call them as often as it likes.
+- The card is drawn by `StackedLayout` (new ids when its geometry changes, so the panel stays under the heading text) through `LatestOnly` and a render lock, so redraws do not overlap.
 - A `StartJump` to a hyperspace destination is noted by the controller and, only with the `wfmt_powerplay_overlay_lookahead` tick on, looked up through `powerplay_system_lookup.py` (Spansh by system id, via `spansh_courtesy`).
 
 ### Boxel Survey (`boxel*.py`, `region_sweep_*.py`, `waypoint_route*.py`, `edsm_client.py`)

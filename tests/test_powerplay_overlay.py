@@ -109,6 +109,122 @@ class TitleWidthTests(unittest.TestCase):
         self.assertEqual(O.build_card(O.Info(name, "", status=O.NO_POWERPLAY)).title[0], name)
 
 
+class Recorder:
+    """An overlay client that remembers what it was told, in order."""
+
+    def __init__(self):
+        self.calls = []
+
+    def send_message(self, msg_id, text, color, x, y, ttl=8, size="normal"):
+        self.calls.append(("text", msg_id, text, ttl))
+
+    def send_shape(self, shape_id, shape, color, fill, x, y, w, h, ttl=8, thickness=None):
+        self.calls.append(("shape", shape_id, "", ttl))
+
+    def send_circle(self, shape_id, color, fill, x, y, radius, ttl=8, thickness=None):
+        self.calls.append(("circle", shape_id, "", ttl))
+
+    def drawn(self):
+        """The ids drawn for real (a TTL above one second), in the order sent."""
+        return [c[1] for c in self.calls if c[3] > 1]
+
+
+class StackedLayoutTests(unittest.TestCase):
+    """The overlay stacks items in the order their ids were first drawn, so a card that changes size or place is redrawn under new ids, panel first."""
+
+    def layout(self):
+        return O.StackedLayout("wfmt_powerplay_", x=650, y=100, max_header=1, max_rows=12, name_chars=O.NAME_CHARS, tag_chars=14, sample_tag=O.SAMPLE_TAG,
+                               sample_lines=11, title_chars=O.TITLE_CHARS, sample_badge="Rank 100")
+
+    def test_the_same_geometry_keeps_the_same_ids(self):
+        layout, card = self.layout(), O.build_card(O.sample_info())
+        first, second = Recorder(), Recorder()
+        layout.render(card, first, geometry=("a",))
+        layout.render(card, second, geometry=("a",))
+        self.assertEqual(first.drawn(), second.drawn())
+        self.assertEqual(layout.generation, 0)
+
+    def test_a_new_geometry_redraws_everything_under_new_ids_panel_first(self):
+        layout, card = self.layout(), O.build_card(O.sample_info())
+        first, second = Recorder(), Recorder()
+        layout.render(card, first, geometry=("a",))
+        layout.render(card, second, geometry=("b",))
+        self.assertEqual(layout.generation, 1)
+        new_ids = second.drawn()
+        self.assertTrue(all("_g1_" in i for i in new_ids))
+        self.assertTrue(set(new_ids).isdisjoint(first.drawn()))
+        kinds = [c[0] for c in second.calls if c[3] > 1]
+        self.assertEqual(new_ids[0], "wfmt_powerplay_g1_card")                  # the panel is the first thing drawn,
+        self.assertLess(kinds.index("text"), len(kinds))
+        self.assertTrue(all(k != "text" for k in kinds[:kinds.index("text")]))   # then the shapes, and only then any text
+        cleared = {c[1] for c in second.calls if c[3] == 1 and c[1] in first.drawn()}
+        self.assertEqual(cleared, set(first.drawn()))                            # and every old id is cleared
+
+    def test_an_empty_card_does_not_start_new_ids(self):
+        layout, card = self.layout(), O.build_card(O.sample_info())
+        layout.render(card, Recorder(), geometry=("a",))
+        layout.render(O.Card(), Recorder(), geometry=("b",))
+        self.assertEqual(layout.generation, 0)
+
+    def test_the_ids_stay_inside_the_group_prefix(self):
+        layout, card = self.layout(), O.build_card(O.sample_info())
+        layout.render(card, Recorder(), geometry=("a",))
+        recorder = Recorder()
+        layout.render(card, recorder, geometry=("b",))
+        self.assertTrue(all(i.startswith(O.GROUP_PREFIX) for _k, i, _t, _l in recorder.calls))
+
+    def test_geometry_changes_with_the_card_size(self):
+        short = O.geometry_of(O.build_card(O.Info("Sol", "", status=O.NO_POWERPLAY)))
+        tall = O.geometry_of(O.build_card(O.sample_info()))
+        self.assertNotEqual(short, tall)
+        self.assertEqual(tall, O.geometry_of(O.build_card(O.sample_info())))
+
+
+class LatestOnlyTests(unittest.TestCase):
+    def test_a_busy_drawer_keeps_only_the_newest_waiting_item_and_never_overlaps(self):
+        gate, started, done = threading.Event(), threading.Event(), threading.Event()
+        drawn, active, worst = [], [0], [0]
+
+        def work(item):
+            active[0] += 1
+            worst[0] = max(worst[0], active[0])
+            drawn.append(item)
+            if item == 1:
+                started.set()
+                gate.wait(5)
+            active[0] -= 1
+            if item == 3:
+                done.set()
+        drawer = O.LatestOnly(work, "test")
+        drawer.submit(1)
+        self.assertTrue(started.wait(5))
+        drawer.submit(2)
+        drawer.submit(3)
+        gate.set()
+        self.assertTrue(done.wait(5))
+        self.assertEqual(drawn, [1, 3])             # 2 was replaced by 3 before it started
+        self.assertEqual(worst[0], 1)
+
+    def test_a_failing_draw_does_not_stop_the_drawer(self):
+        done = threading.Event()
+
+        def work(item):
+            if item == "bad":
+                raise RuntimeError("no")
+            done.set()
+        drawer = O.LatestOnly(work, "test")
+        drawer.submit("bad")
+        drawer.submit("good")
+        self.assertTrue(done.wait(5))
+
+    def test_render_holds_the_lock_while_it_draws(self):
+        seen = []
+        with mock.patch.object(O.LAYOUT, "render", lambda *a, **k: seen.append(O._render_lock.locked())):
+            O.render(O.build_card(O.sample_info()), Recorder())
+        self.assertEqual(seen, [True])
+        self.assertFalse(O._render_lock.locked())
+
+
 class ControllerInfoTests(unittest.TestCase):
     def controller(self, system="Nervi", here="Nervi"):
         c = powerplay.PowerplayController()

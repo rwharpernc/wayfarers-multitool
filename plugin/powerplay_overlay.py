@@ -44,7 +44,33 @@ GROUP_PREFIX = "wfmt_powerplay_"
 NAME_CHARS = 16
 TITLE_CHARS = 32         # the system's full name, so the title is never cut (the same room System targets keeps)
 SAMPLE_TAG = "Reinforcement"
-LAYOUT = CardLayout(GROUP_PREFIX, x=650, y=100, max_header=1, max_rows=12, name_chars=NAME_CHARS, tag_chars=14, sample_tag=SAMPLE_TAG, sample_lines=11,
+class StackedLayout(CardLayout):
+    """A card layout whose ids start afresh whenever the card's rectangle on the screen changes (it grew, shrank, or was moved).
+
+    The overlay stacks items in the order their ids were first drawn, so a panel that is redrawn at a new size or place while the heading's text is still alive can end up above the
+    heading and hide it (the rows, which are drawn anew more often, stay on top). Giving the card new ids when its geometry changes makes the panel, then the shapes, then the
+    text the newest items again, in that order; the old ids are cleared. The ids still start with the group prefix, so the card's Plugin Group and the Hide overlays switch keep covering it."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._base_prefix = self.prefix
+        self.generation = 0
+        self._geometry: Any = None
+
+    def render(self, card: Card, client: Any, look: Look = LEGACY, ttl: int = 4, geometry: Any = None) -> None:
+        if card and geometry is not None and geometry != self._geometry:
+            if self._geometry is not None:
+                self.clear(client)                        # the old ids go (a TTL of one second)
+                self.generation += 1
+                self.prefix = f"{self._base_prefix}g{self.generation}_"
+                self.card_id = f"{self.prefix}card"
+                self._used_texts = self._used_shapes = 0
+                logger.info("Powerplay card moved or resized (%s -> %s); drawing it under new ids (generation %d)", self._geometry, geometry, self.generation)
+            self._geometry = geometry
+        super().render(card, client, look, ttl)
+
+
+LAYOUT = StackedLayout(GROUP_PREFIX, x=650, y=100, max_header=1, max_rows=12, name_chars=NAME_CHARS, tag_chars=14, sample_tag=SAMPLE_TAG, sample_lines=11,
                     title_chars=TITLE_CHARS, sample_badge="Rank 100")
 
 
@@ -147,8 +173,22 @@ def placed_client(client: OverlayClient, look: Look = LEGACY, card: Optional[Car
     return overlay_placement.client_for_measured("powerplay", client, block_rect(look, card), look)
 
 
+_render_lock = threading.Lock()     # one render at a time: the live card, a redraw after an event and Test Card all draw through the one layout
+
+
+def geometry_of(card: Card, look: Look = LEGACY) -> tuple:
+    """Where the card is on the screen now: its rectangle and how far placement moves it. A change in either means a new set of ids (see StackedLayout)."""
+    block = block_rect(look, card)
+    try:
+        shift = tuple(overlay_placement.shift_for("powerplay", block))
+    except Exception:
+        shift = (0, 0)
+    return block, shift
+
+
 def render(card: Card, client: OverlayClient, look: Look = LEGACY) -> None:
-    LAYOUT.render(card, client, look, ttl=OVERLAY_TTL)
+    with _render_lock:
+        LAYOUT.render(card, client, look, ttl=OVERLAY_TTL, geometry=geometry_of(card, look))
 
 
 def _build() -> Card:
@@ -158,16 +198,51 @@ def _build() -> Card:
     return build_card(powerplay.controller.overlay_info())
 
 
+class LatestOnly:
+    """Runs `work(item)` on one background thread at a time. An item offered while it is busy replaces any item already waiting, so redraws never overlap and an older card is
+    never drawn after a newer one."""
+
+    def __init__(self, work: Any, name: str) -> None:
+        self._work, self._name = work, name
+        self._lock = threading.Lock()
+        self._waiting: Any = None
+        self._has_waiting = False
+        self._running = False
+
+    def submit(self, item: Any) -> None:
+        with self._lock:
+            self._waiting, self._has_waiting = item, True
+            if self._running:
+                return
+            self._running = True
+        threading.Thread(target=self._run, name=self._name, daemon=True).start()
+
+    def _run(self) -> None:
+        while True:
+            with self._lock:
+                if not self._has_waiting:
+                    self._running = False
+                    return
+                item, self._waiting, self._has_waiting = self._waiting, None, False
+            try:
+                self._work(item)
+            except Exception:
+                logger.debug("Powerplay card draw failed", exc_info=True)
+
+
+def _draw_now(item: tuple) -> None:
+    card, look = item
+    try:
+        render(card, placed_client(_overlay_client, look, card), look)
+    except OSError:
+        logger.debug("Could not reach the overlay for the Powerplay card", exc_info=True)
+
+
+_drawer = LatestOnly(_draw_now, "WFMT-powerplay-render")
+
+
 def _draw_live(card: Card) -> None:
-    look = overlay_appearance.current_look()
-
-    def worker() -> None:
-        try:
-            render(card, placed_client(_overlay_client, look, card), look)
-        except OSError:
-            logger.debug("Could not reach the overlay for the Powerplay card", exc_info=True)
-
-    threading.Thread(target=worker, name="WFMT-powerplay-render", daemon=True).start()
+    _drawer.submit((card, overlay_appearance.current_look()))
 
 
 live = LiveCard(_build, lambda: load_config().enabled, _draw_live)

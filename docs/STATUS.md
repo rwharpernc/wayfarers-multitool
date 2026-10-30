@@ -59,7 +59,7 @@ There is one long-lived branch, `master`.
 
 ### Linux, next pass
 
-- Automated: 3,723 tests pass in the Docker container (13 skipped), run on 2026-10-30 for the 1.3.3 release (3,687 for 1.3.2, 3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
+- Automated: 3,731 tests pass in the Docker container (13 skipped), run on 2026-10-30 for the 1.3.3 release (3,687 for 1.3.2, 3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0, 3,447 on 2026-10-26 before 1.0.0).
 - Manual: 1.3.0 (and the released 1.2.0, 1.1.0 and 1.0.0) is still to be tested on CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC.
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Report the session type (Wayland or X11) with the results.
