@@ -86,6 +86,29 @@ class BuildCardTests(unittest.TestCase):
         self.assertEqual(rows(O.build_card(O.Info("Sol", "Unoccupied")))["Held by"][0], "no one")
 
 
+class TitleWidthTests(unittest.TestCase):
+    """The system's name is the card's heading and is drawn whole, whatever the text size: the card is made wide enough for the longest names, not cut to a shorter limit."""
+
+    def drawn_titles(self, name, look, **fields):
+        card = O.build_card(O.Info(name, "Fortified", "Aisling Duval", "Aisling Duval", 100, 1_000_000, "Cycle 41", 5, **fields))
+        _shapes, texts, _width, _height = O.LAYOUT.plan(card, look)
+        return [text for text, _role, _x, _y, _size in texts]
+
+    def test_a_long_name_is_drawn_whole_at_both_text_sizes(self):
+        from plugin import overlay_style as S
+        names = ("Blaa Hypai AA-A b1-1234", "Col 285 Sector XY-Z b15-1234", "X" * O.TITLE_CHARS)
+        for look in (S.LEGACY, S.DEFAULT, S.look_from_choices(None, 1, 0, 0)):
+            for name in names:
+                with self.subTest(name=name, text_level=look.text_level):
+                    self.assertIn(name, self.drawn_titles(name, look))
+                    self.assertIn(name, self.drawn_titles(name, look, destination=True))
+
+    def test_the_card_does_not_cut_the_name_before_drawing(self):
+        name = "Col 285 Sector XY-Z b15-1234"
+        self.assertEqual(O.build_card(O.Info(name, "Fortified")).title[0], name)
+        self.assertEqual(O.build_card(O.Info(name, "", status=O.NO_POWERPLAY)).title[0], name)
+
+
 class ControllerInfoTests(unittest.TestCase):
     def controller(self, system="Nervi", here="Nervi"):
         c = powerplay.PowerplayController()

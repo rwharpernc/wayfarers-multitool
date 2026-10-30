@@ -42,9 +42,10 @@ OVERLAY_TTL = 4
 GROUP_NAME = "wfmt_powerplay"
 GROUP_PREFIX = "wfmt_powerplay_"
 NAME_CHARS = 16
+TITLE_CHARS = 32         # the system's full name, so the title is never cut (the same room System targets keeps)
 SAMPLE_TAG = "Reinforcement"
 LAYOUT = CardLayout(GROUP_PREFIX, x=650, y=100, max_header=1, max_rows=12, name_chars=NAME_CHARS, tag_chars=14, sample_tag=SAMPLE_TAG, sample_lines=11,
-                    title_chars=24, sample_badge="Rank 100")
+                    title_chars=TITLE_CHARS, sample_badge="Rank 100")
 
 
 @dataclass
@@ -87,7 +88,7 @@ def build_card(info: Optional[Info]) -> Card:
     """The card for a system, or an empty one when there is nothing to say."""
     if info is None:
         return Card()
-    title = cut(info.system, 24)
+    title = info.system
     badge = "jumping" if info.destination else ""
     if not info.state:
         words = {NO_POWERPLAY: ("No Powerplay Detected in system", "muted"), LOOKING: ("Looking up Powerplay…", "muted"),
