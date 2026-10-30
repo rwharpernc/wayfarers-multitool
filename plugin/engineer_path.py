@@ -6,6 +6,11 @@ community table words them. The steps are those texts, not a re-reading of them.
 names: "From Hera Tani (grade 3-4)" in how to find, or the three engineers a referral task is done for in what earns the invitation. Each is an
 engineer to deal with first, and so on down the chain, so Tiana Fortune's path starts with Liz Ryder, then Hera Tani.
 
+**On-foot engineers.** For a ship engineer the table's "unlock" is what to hand *them* to unlock them. For an on-foot (Odyssey) engineer it is what to
+hand them to learn of the *next* engineer (Provide Domino Green 5 Push to learn of Kit Fowler), so it is a step on the path of the engineer who
+comes after, and an on-foot engineer has no unlock step of their own. The last in a chain (Yarden Bond, Oden Geiger, Uma Laszlo, Yi Shen) hands
+nothing over, which is why the table leaves theirs empty.
+
 **What is marked done.** Only what the journal's `EngineerProgress` says: *Known* means found, *Invited* means found and invited, *Unlocked* means
 every step. The game does not report permits or the requirements for an invitation, so those steps are never marked done until the engineer is
 invited or unlocked."""
@@ -17,14 +22,14 @@ from typing import List, Optional, Tuple
 
 from . import engineers
 
-FIND, REACH, INVITE, UNLOCK = "find", "reach", "invite", "unlock"
+FIND, REFER, REACH, INVITE, UNLOCK = "find", "refer", "reach", "invite", "unlock"
 MAX_DEPTH = 6
 """The longest referral chain in the table is three engineers; the limit only stops a table that loops."""
 
 
 @dataclass(frozen=True)
 class Step:
-    kind: str                # find, reach, invite or unlock
+    kind: str                # find, refer, reach, invite or unlock
     text: str
     done: bool
 
@@ -53,6 +58,12 @@ def _named_in(text: str, own_key: str) -> List[str]:
         if match:
             found.append((match.start(), info.name))
     return [name for _at, name in sorted(found)]
+
+
+def referrers(name: str) -> List[str]:
+    """The engineers named in how to find `name` (those who refer to them), in the order the table names them."""
+    info = engineers.info(name)
+    return _named_in(info.find, engineers.name_key(name)) if info is not None else []
 
 
 def prerequisites(name: str) -> List[str]:
@@ -86,11 +97,15 @@ def build(name: str, book: Optional[engineers.EngineerBook] = None, _seen: Tuple
     steps: List[Step] = []
     if info.find:
         steps.append(Step(FIND, f"Find them: {info.find}", found))
+    for other in referrers(name):
+        giver = engineers.info(other)
+        if giver is not None and giver.on_foot and giver.unlock:
+            steps.append(Step(REFER, f"To learn of {info.name}, give {giver.name} the items: {giver.unlock}", found))
     if info.permit:
         steps.append(Step(REACH, f"Hold the {info.system} permit to reach {info.base}.", unlocked))
     if info.invite:
         steps.append(Step(INVITE, f"Earn the invitation: {info.invite}", invited))
-    if info.unlock:
+    if info.unlock and not info.on_foot:
         steps.append(Step(UNLOCK, f"Unlock them: {info.unlock}", unlocked))
     first: List[Path] = []
     key = engineers.name_key(name)

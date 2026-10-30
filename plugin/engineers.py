@@ -84,7 +84,7 @@ class Info:
     body: str                # planet or orbit, e.g. "3 A"; may be empty
     find: str                # how to learn where they are
     invite: str              # what gets you an invitation
-    unlock: str              # what unlocks them once invited
+    unlock: str              # what unlocks them once invited; for an on-foot engineer, what to hand them to learn of the next one
     standing: str            # how to gain standing (rank) with them
     permit: bool             # a permit is needed to reach them
     on_foot: bool            # an Odyssey (on-foot) engineer: no ranks
