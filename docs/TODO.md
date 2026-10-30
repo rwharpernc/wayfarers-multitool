@@ -726,7 +726,7 @@ The items below are implemented and covered by unit tests, but have not all been
 
 ### Screenshots, settings and general
 
-- [ ] **Discord sharing (needs a real webhook in a private test channel of your own; Claude never posts to Discord).** Follow [Sharing reports to Discord](guide/discord.md) from a fresh webhook.
+- [ ] **Discord sharing (needs a real webhook in a private test channel of your own).** Follow [Sharing reports to Discord](guide/discord.md) from a fresh webhook.
   - **Settings → WFMT → Discord:** tick **Allow Post to Discord**, name the first destination, paste the link, press **Test** (it says `Works: <name>.` and posts nothing), close Settings with **OK**.
   - **Several destinations:** add a second destination (a second webhook in another channel) and **OK**. **Post to Discord** now shows a small menu of the two names; pick each in turn and check each channel got its own post, and that posting again edits only the chosen destination's message. With one destination there is no menu.
   - **Two commanders:** log in as another commander: their Discord tab starts empty, **Copy their destinations** copies the first commander's, and each commander's post carries their own report.
