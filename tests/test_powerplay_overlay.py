@@ -56,7 +56,7 @@ class BuildCardTests(unittest.TestCase):
         self.assertEqual(card.title[0], "Sample System")
         self.assertEqual(card.badge, "Rank 12")
         shown = rows(card)
-        self.assertEqual(shown["Power"][0], "Aisling Duval")
+        self.assertEqual(shown["Your Power"][0], "Aisling Duval")
         self.assertEqual(shown["Total merits"][0], "1,204,500")
         self.assertEqual(shown["Cycle 41 merits"][0], "86,300")
         self.assertEqual(shown["System"][0], "Fortified")
@@ -70,7 +70,7 @@ class BuildCardTests(unittest.TestCase):
 
     def test_not_pledged_leaves_out_the_power_figures_and_the_guess(self):
         shown = rows(O.build_card(O.Info("Sol", "Unoccupied", activity=ACQUISITION)))
-        self.assertEqual(shown["Power"][0], "not pledged")
+        self.assertEqual(shown["Your Power"][0], "not pledged")
         self.assertNotIn("Total merits", shown)
         self.assertNotIn("Merits here count as", shown)
         self.assertNotIn("Earned here", shown)

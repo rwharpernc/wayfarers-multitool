@@ -122,7 +122,7 @@ Three buttons on the bottom row:
 **Settings → WFMT → Overlays → Powerplay** (off until ticked) puts a small card on your game screen with your Powerplay standing in the system you are in. In a system that has no Powerplay data it says **No Powerplay Detected in system**.
 
 - The heading is the system, with your rank beside it.
-- **Power**, **Total merits** and the merits of the cycle in progress (`Cycle N merits`) come from the same figures as this page. If you are not pledged, the card says so and leaves them out.
+- **Your Power**, **Total merits** and the merits of the cycle in progress (`Cycle N merits`) come from the same figures as this page. If you are not pledged, the card says so and leaves them out.
 - **System** is the system's state and **Held by** the Power that holds it.
 - **Merits here count as** is what merits earned in this system now would be filed as: Acquisition, Reinforcement or Undermining. It is a best guess from the state and the holder, as on this page.
 - Below that, a row for each type of merit you have earned in this system this session, with the merits and, except for Delivery and Unattributed, the estimated Control Points (from the ratios in Settings).

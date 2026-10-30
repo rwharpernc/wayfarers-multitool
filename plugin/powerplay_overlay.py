@@ -95,11 +95,11 @@ def build_card(info: Optional[Info]) -> Card:
         return Card((words,), title=(title, "title"), badge=badge) if words else Card()
     rows = []
     if info.power:
-        rows.append(("Power", cut(info.power, 22), "text"))
+        rows.append(("Your Power", cut(info.power, 22), "text"))
         rows.append(("Total merits", f"{info.total_merits:,}" if info.total_merits is not None else "—", "text"))
         rows.append((f"{info.cycle_label} merits", f"{info.cycle_merits:,}", "ok" if info.cycle_merits else "text"))
     else:
-        rows.append(("Power", "not pledged", "muted"))
+        rows.append(("Your Power", "not pledged", "muted"))
     rows.append(("System", info.state if info.progress is None else f"{info.state} · {info.progress * 100:.0f}%", "title"))
     rows.append(("Held by", cut(info.controller, 22) if info.controller else "no one", "text" if info.controller else "muted"))
     label = ACTIVITY_LABELS.get(info.activity, "") if info.power and info.activity else ""
