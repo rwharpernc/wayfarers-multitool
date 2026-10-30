@@ -40,3 +40,7 @@ docs/roadmap.md
 
 # The optional local star index, built by an installed copy (star_index.py)
 plugin/star_index/
+
+# Claude Code notes: local to each machine, not part of the repo
+CLAUDE.md
+.claude/
