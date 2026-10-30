@@ -495,7 +495,7 @@ class BlueprintsWindow:
             return clip(items, 170) if items else "-"
         owner, step = action
         own = engineers.name_key(owner.name) == engineers.name_key(name)
-        text = step.text if own else f"First {owner.name}: {step.text}"
+        text = (step.text if own else f"First {owner.name}: {step.text}") + (f" ({step.note})" if step.note else "")
         if own and items:
             text += f" Items: {items}"
         return clip(text, 170)

@@ -11,6 +11,9 @@ hand them to learn of the *next* engineer (Provide Domino Green 5 Push to learn 
 comes after, and an on-foot engineer has no unlock step of their own. The last in a chain (Yarden Bond, Oden Geiger, Uma Laszlo, Yi Shen) hands
 nothing over, which is why the table leaves theirs empty.
 
+**What is checked.** An invitation requirement that is a rank or a lifetime figure is compared with what the journal says the commander has
+(`engineer_requirements`), and the result is the step's `note`. It is a note and never marks the step done: the engineer's standing does that.
+
 **What is marked done.** Only what the journal's `EngineerProgress` says: *Known* means found, *Invited* means found and invited, *Unlocked* means
 every step. The game does not report permits or the requirements for an invitation, so those steps are never marked done until the engineer is
 invited or unlocked."""
@@ -32,6 +35,7 @@ class Step:
     kind: str                # find, refer, reach, invite or unlock
     text: str
     done: bool
+    note: str = ""           # what the journal says about the step ("you have Dealer: met"), when it can be checked
 
 
 @dataclass(frozen=True)
@@ -104,7 +108,8 @@ def build(name: str, book: Optional[engineers.EngineerBook] = None, _seen: Tuple
     if info.permit:
         steps.append(Step(REACH, f"Hold the {info.system} permit to reach {info.base}.", unlocked))
     if info.invite:
-        steps.append(Step(INVITE, f"Earn the invitation: {info.invite}", invited))
+        result = book.progress.check(engineers.name_key(name)) if book is not None else None
+        steps.append(Step(INVITE, f"Earn the invitation: {info.invite}", invited, result.describe() if result is not None else ""))
     if info.unlock and not info.on_foot:
         steps.append(Step(UNLOCK, f"Unlock them: {info.unlock}", unlocked))
     first: List[Path] = []
@@ -163,5 +168,5 @@ def render(path: Path) -> str:
     for stop in stops:
         lines.append(f"{stop.name}:")
         for number, step in enumerate(stop.steps, 1):
-            lines.append(f"  {number}. {step.text}" + (" [done]" if step.done else ""))
+            lines.append(f"  {number}. {step.text}" + (f" ({step.note})" if step.note and not step.done else "") + (" [done]" if step.done else ""))
     return "\n".join(lines)

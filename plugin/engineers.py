@@ -23,7 +23,7 @@ import re
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Mapping, Optional
 
-from . import commander_data, engineers_data
+from . import commander_data, engineer_requirements, engineers_data
 
 try:
     from config import appname
@@ -170,6 +170,7 @@ class EngineerBook:
         self._plugin_dir: Optional[str] = None
         self._cmdr = ""
         self._standing: Dict[str, Standing] = {}      # name_key -> standing
+        self.progress = engineer_requirements.Progress()   # ranks and lifetime figures, for checking the invitation requirements
         self._listeners: List[Callable[[], None]] = []
 
     # --- loading and saving --------------------------------------------------------------------------------------
@@ -190,8 +191,10 @@ class EngineerBook:
 
     def _reload(self) -> None:
         self._standing = {}
+        self.progress = engineer_requirements.Progress()
         if self._cmdr:
             payload = commander_data.payload_for(self._store, self._cmdr, _empty)
+            self.progress = engineer_requirements.Progress.from_json(payload.get("progress") if isinstance(payload, dict) else None)
             raw = payload.get("engineers") if isinstance(payload, dict) else None
             for item in raw if isinstance(raw, list) else []:
                 standing = _standing({"Engineer": item.get("name"), "Progress": item.get("progress"), "Rank": item.get("rank"),
@@ -205,7 +208,7 @@ class EngineerBook:
             return
         commander_data.put(self._store, self._cmdr, {"engineers": [
             {"name": s.name, "progress": s.progress, "rank": s.rank, "rank_progress": s.rank_progress}
-            for s in self._standing.values()]})
+            for s in self._standing.values()], "progress": self.progress.to_json()})
         commander_data.write(os.path.join(self._plugin_dir, STATE_FILENAME), self._store)
 
     def add_listener(self, callback: Callable[[], None]) -> None:
@@ -242,11 +245,32 @@ class EngineerBook:
     def unlocked(self) -> List[Standing]:
         return [s for s in self.all() if s.unlocked]
 
+    def needs_journal_read(self) -> bool:
+        """True when a commander is known and the book has no rank or figure for them yet (the game's login events came before WFMT started)."""
+        return bool(self._cmdr) and self.progress.empty
+
+    def adopt_progress(self, cmdr: str, found: "engineer_requirements.Progress") -> bool:
+        """Add the ranks and figures read from the journals for `cmdr`, keeping anything the live events gave since. Nothing happens when the
+        commander has changed meanwhile. True when something was added."""
+        if commander_data.key_for(cmdr) != commander_data.key_for(self._cmdr) or not self.progress.fill_from(found):
+            return False
+        self._save()
+        self._changed()
+        return True
+
     # --- changing --------------------------------------------------------------------------------------------------
 
     def apply_event(self, entry: Mapping[str, Any]) -> bool:
-        """Take one journal event; True when the standings changed. The login list replaces everything (unless it is empty); a single-engineer event updates one."""
-        if entry.get("event") != "EngineerProgress" or not self._cmdr:
+        """Take one journal event; True when the standings (or the ranks and figures the requirements are checked against) changed. The login list replaces everything (unless it is empty); a single-engineer event updates one."""
+        if not self._cmdr:
+            return False
+        if entry.get("event") in ("Rank", "Promotion", "Statistics"):
+            if not self.progress.apply_event(entry):
+                return False
+            self._save()
+            self._changed()
+            return True
+        if entry.get("event") != "EngineerProgress":
             return False
         listed = entry.get("Engineers")
         if isinstance(listed, list):

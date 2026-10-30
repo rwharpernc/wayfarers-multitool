@@ -8,12 +8,14 @@ from __future__ import annotations
 
 import logging
 import os
+import queue
+import threading
 import tkinter as tk
 from typing import Any, Dict, Mapping, Optional, Tuple
 
 from config import appname
 
-from . import blueprint_needs, blueprint_wishlist, blueprints_window, engineers, inventory_panel, material_trader_window, materials, materials_window, panelkit
+from . import blueprint_needs, blueprint_wishlist, blueprints_window, commander_data, engineer_requirements, engineers, inventory_panel, material_trader_window, materials, materials_window, panelkit
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -25,6 +27,7 @@ _NAME_SHOWN = 40       # characters of a material name shown in the panel
 _HOLDING_EVENTS = ("ShipLocker", "Backpack", "BackpackChange", "Resupply", "TransferMicroResources", "BuyMicroResources", "SellMicroResources",
                    "UseConsumable", "CollectItems", "DropItems", "Embark", "Disembark", "LoadGame")
 _ARRIVAL_EVENTS = ("FSDJump", "CarrierJump", "Location")
+_PROGRESS_POLL_MS = 400    # how often the Tk thread looks for the journal read's result
 _WRAP_PX = 200         # the summary wraps here: what it shows comes from the game, and must not widen EDMC's window
 
 book = materials.MaterialBook()
@@ -85,6 +88,9 @@ class MaterialsController:
         self._summary_var: Optional[tk.StringVar] = None
         self._section: Optional[tk.Frame] = None
         self._parent: Optional[tk.Frame] = None
+        self._progress_tried: set = set()      # commanders whose ranks and figures were read from the journals this session
+        self._progress_found: "queue.Queue[Tuple[str, engineer_requirements.Progress]]" = queue.Queue()
+        self._progress_waiting = 0
         book.add_listener(self._update_summary)
         wishlist.add_listener(self._update_summary)
 
@@ -111,10 +117,50 @@ class MaterialsController:
         wishlist.set_commander(cmdr)
         engineer_book.set_commander(cmdr)
         engineer_book.apply_event(entry)
+        if engineer_book.needs_journal_read():
+            self._read_progress(cmdr)
         book.apply_event(entry, state)
         if wishlist.count() and entry.get("event") in _HOLDING_EVENTS:
             self._update_summary()              # the Inventory (which runs first) may have changed what the wishlist is weighed against
             blueprints_window.refresh()
+
+    def _read_progress(self, cmdr: str) -> None:
+        """Read the commander's ranks and lifetime figures from the journals once, off the Tk thread: EDMC does not replay the game's login events to
+        a plugin started after them. Whatever the live events gave meanwhile is kept."""
+        key = commander_data.key_for(cmdr)
+        if key in self._progress_tried or self._parent is None:
+            return
+        self._progress_tried.add(key)
+        self._progress_waiting += 1
+        threading.Thread(target=self._progress_worker, args=(cmdr,), name="WFMT-engineer-progress", daemon=True).start()
+        self._schedule_progress_poll()
+
+    def _progress_worker(self, cmdr: str) -> None:
+        try:
+            found = engineer_requirements.read_from_journals(cmdr)
+        except Exception:
+            logger.exception("Could not read the ranks and statistics from the journals")
+            found = engineer_requirements.Progress()
+        self._progress_found.put((cmdr, found))
+
+    def _schedule_progress_poll(self) -> None:
+        try:
+            if self._parent is not None:
+                self._parent.after(_PROGRESS_POLL_MS, self._poll_progress)
+        except tk.TclError:
+            pass   # the panel has gone
+
+    def _poll_progress(self) -> None:
+        try:
+            cmdr, found = self._progress_found.get_nowait()
+        except queue.Empty:
+            if self._progress_waiting:
+                self._schedule_progress_poll()
+            return
+        self._progress_waiting -= 1
+        engineer_book.adopt_progress(cmdr, found)
+        if self._progress_waiting:
+            self._schedule_progress_poll()
 
     # --- the panel row ---------------------------------------------------------------------------------------------------
 
