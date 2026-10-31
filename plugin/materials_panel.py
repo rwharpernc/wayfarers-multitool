@@ -257,9 +257,16 @@ class MaterialsController:
 
     def _find_site(self) -> str:
         """Start the Canonn lookup of the nearest Thargoid site; the line says where the answer will be."""
-        if canonn_poi_panel.controller.start_lookup():
+        controller = canonn_poi_panel.controller
+        if not controller.position_known():
+            return ("Could not look up a Thargoid site: WFMT does not know where you are yet. Log in to the game (EDMC must be running) "
+                    "and jump to a system or load into one, then try again.")
+        if not canonn_poi_panel.thargoid_enabled():
+            return ("Could not look up a Thargoid site: Thargoid sites are switched off. Turn on Include Thargoid sites in Settings, "
+                    "Exploration, POI Reference.")
+        if controller.start_lookup():
             return "Looking up the nearest Thargoid site. The answer is in Exploration, POI Reference."
-        return "Could not look up a Thargoid site: WFMT does not know your position yet, or the Thargoid sites are switched off in Settings."
+        return "Could not look up a Thargoid site. Try again from Exploration, POI Reference."
 
 controller = MaterialsController()
 

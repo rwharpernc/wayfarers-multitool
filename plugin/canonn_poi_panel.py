@@ -115,6 +115,10 @@ class CanonnPoiController:
 
     # --- lookup -----------------------------------------------------------
 
+    def position_known(self) -> bool:
+        """True once WFMT has a position to measure from (it comes from the journal when you jump, load into the game or start EDMC with the game running)."""
+        return self._star_pos is not None
+
     def start_lookup(self, force_refresh: bool = False) -> bool:
         """Starts a lookup; True when one is running (its end is reported through `on_done`), False when it could not start."""
         if self._star_pos is None:

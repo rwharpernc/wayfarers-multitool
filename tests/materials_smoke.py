@@ -325,6 +325,20 @@ for action_name, shown in note.actions().items():
         note.run_action(action_name)
 check(calls == [("site",)] and "Looking." in bwin._shell._status.cget("text"), f"the action runs the finder and says what it started: {calls}")
 check("no written guide for this engineer yet" in note.text(), "an engineer with no guide says so and how to help")
+
+# The real Thargoid site finder says which of its two conditions failed, and where the switch is.
+poi = materials_panel.canonn_poi_panel
+saved_pos, saved_enabled = poi.controller._star_pos, poi.thargoid_enabled
+try:
+    poi.controller._star_pos = None
+    said = panel._find_site()
+    check("Log in to the game" in said and "EDMC must be running" in said and "Settings" not in said, f"no position: asks for the game and a jump: {said!r}")
+    poi.controller._star_pos = (0.0, 0.0, 0.0)
+    poi.thargoid_enabled = lambda: False
+    said = panel._find_site()
+    check("Include Thargoid sites" in said and "Settings, Exploration, POI Reference" in said, f"sites off: names the switch and where it is: {said!r}")
+finally:
+    poi.controller._star_pos, poi.thargoid_enabled = saved_pos, saved_enabled
 bwin._engineer_table.select("Liz Ryder", notify=True)
 pump()
 buy_actions = [name for name, shown in note.actions().items() if shown == "Find where to buy"]
