@@ -516,10 +516,13 @@ class BuyWindow:
         self._show_plan(bool(plan is not None and plan.stops) or bool(surface_only))
         table = self._plan_table    # the route goes in the plan block, the commodity lists in the table below it
         if surface_only:
-            # Said on the route itself: these cannot be bought anywhere but on a planet's surface.
-            names = _clip(", ".join(surface_only), _ERROR_MAX)
-            table.insert("surfacenote", ((f"Only at surface ports: {names}" if include_surface
-                                          else f"Only at surface ports, so left out: {names}"), "", "", "", "", "", "", "", ""), tag="warn")
+            # Said on the route itself: these are sold only at surface ports, none at an orbital port in range. One row each, so no name is clipped.
+            table.insert("surfacenote", ("Only at surface ports" if include_surface else "Only at surface ports, so left out of the route",
+                                         "", "", "", "", "", "", "", ""), group=True, open=True)
+            for index, name in enumerate(surface_only):
+                tons = self._whole_to_get.get(name, 0)
+                table.insert(f"surfacenote{index}", (f"{name} x {tons:,} t" if tons else name, "", "", "", "", "", "", "", ""),
+                             parent="surfacenote", tag="warn")
         if plan is not None and plan.stops:
             # The suggested shopping route: a stop is a row with what to buy there as rows beneath it.
             table.insert("route", ("Suggested route", f"{len(plan.stops)} stop{'s' if len(plan.stops) != 1 else ''}",
@@ -565,8 +568,8 @@ class BuyWindow:
                  f"{' (stopped early)' if whole.stopped else ''}."]
         missing = [label for label in whole.without_sources() if label not in surface_only]
         if surface_only:
-            parts.append(("Only at surface ports: " if include_surface
-                          else "Only at surface ports, so left out of the lists and the route (tick Include surface ports): ")
+            parts.append(("Only at surface ports (none at an orbital port in range): " if include_surface
+                          else "Only at surface ports (none at an orbital port in range), so left out of the lists and the route; tick Include surface ports: ")
                          + _clip(", ".join(surface_only), _ERROR_MAX) + ".")
         if missing:
             parts.append(f"No source found for {_clip(', '.join(missing), _ERROR_MAX)}; try a larger radius, any pad size "

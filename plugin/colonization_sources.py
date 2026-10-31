@@ -101,15 +101,16 @@ def order(sources: Sequence[Source], sort: str = SORT_DISTANCE) -> List[Source]:
 
 
 def _cache_key(reference_system: str, commodity: str, radius_ly: Optional[float], pad: str, include_carriers: bool,
-               sort: str, search: SearchFn) -> tuple:
-    return (reference_system.strip().casefold(), commodity.casefold(), radius_ly, pad, include_carriers, sort, search)
+               sort: str, search: SearchFn, orbital_only: bool = False) -> tuple:
+    return (reference_system.strip().casefold(), commodity.casefold(), radius_ly, pad, include_carriers, sort, search, orbital_only)
 
 
 def is_cached(reference_system: str, commodity: str, *, radius_ly: Optional[float] = DEFAULT_RADIUS_LY,
               pad: str = PAD_ANY, include_carriers: bool = False, sort: str = SORT_DISTANCE,
-              search: SearchFn = search_best_price_stations, now: Callable[[], float] = time.monotonic) -> bool:
+              search: SearchFn = search_best_price_stations, now: Callable[[], float] = time.monotonic,
+              orbital_only: bool = False) -> bool:
     """Whether `find` with these arguments would be answered from memory (so it sends no request)."""
-    cached = _cache.get(_cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search))
+    cached = _cache.get(_cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search, orbital_only))
     return cached is not None and now() - cached[0] < CACHE_SECONDS
 
 
@@ -119,20 +120,23 @@ def clear_cache() -> None:
 
 def find(reference_system: str, commodity: str, *, radius_ly: Optional[float] = DEFAULT_RADIUS_LY,
          pad: str = PAD_ANY, include_carriers: bool = False, sort: str = SORT_DISTANCE,
-         search: SearchFn = search_best_price_stations, now: Callable[[], float] = time.monotonic) -> SearchResult:
+         search: SearchFn = search_best_price_stations, now: Callable[[], float] = time.monotonic,
+         orbital_only: bool = False) -> SearchResult:
     """Stations (and optionally fleet carriers) near `reference_system` with `commodity` in stock. `search` is the
     Spansh call; it raises on a network or parse failure, which the caller reports. Stations are asked for apart from
-    carriers so the volatile carrier prices cannot crowd the real stations out of the first page."""
+    carriers so the volatile carrier prices cannot crowd the real stations out of the first page. `orbital_only` asks
+    for orbital stations alone (no surface ports), so a commodity whose nearest sellers are all on planets still shows
+    the orbital ports that have it."""
     if not reference_system.strip():
         raise ValueError("Enter a system to search around.")
-    key = _cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search)
+    key = _cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search, orbital_only)
     cached = _cache.get(key)
     if cached is not None and now() - cached[0] < CACHE_SECONDS:
         return cached[1]
     required = None if pad == PAD_ANY else pad
     spansh_sort = SORT_DISTANCE if sort == SORT_DISTANCE else SORT_PRICE
     stations = search(reference_system.strip(), commodity, "Buy", radius_ly, max_results=STATION_RESULTS,
-                      market_days_old=MAX_AGE_DAYS, station_types=trade_prices.station_types(True),
+                      market_days_old=MAX_AGE_DAYS, station_types=trade_prices.station_types(not orbital_only),
                       sort_by=spansh_sort, required_pad=required)
     carriers: List[StationPrice] = []
     if include_carriers:
@@ -228,7 +232,33 @@ def find_whole_list(reference_system: str, commodities: Sequence[str], *, radius
             pass
     if one_stop is not None and needs and not out.failed:
         _cover_leftovers(out, reference_system, one_stop, needs, radius_ly, pad, include_carriers, sort, sleep, pause)
+    if not (cancelled is not None and cancelled()):
+        _check_orbital(out, reference_system, options, needs, sleep, pause, cancelled)
     return out
+
+
+def _check_orbital(out: WholeListResult, reference_system: str, options: Dict[str, Any], needs: Optional[Dict[str, int]],
+                   sleep: Callable[[float], None], pause: float, cancelled: Optional[Callable[[], bool]]) -> None:
+    """A commodity whose every source in the answer is a surface port may still be sold at an orbital port: the nearest few sellers can all be
+    on planets and push the orbital ones out of the page. For each such commodity (still to get, when `needs` is known) one more request asks for
+    orbital stations alone, and any found are added to its sources. A bonus request: a failure loses nothing."""
+    for label in sorted(surface_only_labels(out.found), key=str.casefold):
+        if needs is not None and needs.get(label, 0) <= 0:
+            continue
+        if cancelled is not None and cancelled():
+            return
+        try:
+            if pause > 0 and not is_cached(reference_system, label, orbital_only=True, **{k: v for k, v in options.items()}):
+                sleep(pause)
+            extra = find(reference_system, label, orbital_only=True, **options)
+        except Exception:
+            continue
+        for index, (name, result) in enumerate(out.found):
+            if name != label:
+                continue
+            have = {(s.station, s.system) for s in [*result.stations, *result.carriers]}
+            stations = list(result.stations) + [s for s in extra.stations if (s.station, s.system) not in have]
+            out.found[index] = (name, SearchResult(stations=order(stations, options["sort"]), carriers=list(result.carriers)))
 
 
 def _one_stop_hits(one_stop: OneStopFn, reference_system: str, labels: Sequence[str], radius_ly: Optional[float], pad: str,

@@ -1481,6 +1481,7 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 **Where to Buy: surface ports and purchases** (`colonization_buy_window.py`, `colonization_sources.py`)
 
 - `SearchPrefs.surface` (default true) is the Include surface ports tick. The raw Find all answer is kept; `_found_view` filters it with `without_surface` at draw time, so toggling needs no request. `surface_only_labels` names the commodities (still to get) whose every source with stock is planetary; `plan_route(..., surface_only=)` marks their `Purchase.surface_only`, and `Stop.is_planetary` marks a surface stop.
+- `_check_orbital` (end of `find_whole_list`): for each commodity still to get whose every source with stock is planetary, one `find(..., orbital_only=True)` (station types `ORBITAL_TYPES` only) is merged in, because the nearest sellers can all be on planets. Only a commodity still surface-only after that is named.
 - `refresh_needs` is called by the Sites window at the end of `_refresh_detail`: it takes the Acquire tons (`to_buy` rows with `to_get` above zero, for the commodities searched) and, when they differ from the last, replans with `plan_route` and redraws quietly (no change to the note). No request is made. A commodity with no tons left is skipped when the groups are drawn.
 
 **Shopping-list overlay card** (`colonization_overlay.py`)

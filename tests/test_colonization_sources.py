@@ -426,6 +426,33 @@ class SurfacePortTests(unittest.TestCase):
         plan = src.plan_route(src.without_surface(self.found()), {"Steel": 100, "Titanium": 50})
         self.assertEqual(plan.uncovered, (("Titanium", 50),))
 
+    def test_an_orbital_port_found_by_a_second_search_clears_the_surface_only_note(self):
+        calls = []
+
+        def search(reference, commodity, transaction, radius, **kwargs):
+            calls.append((commodity, tuple(kwargs["station_types"])))
+            if "Planetary Port" in kwargs["station_types"]:
+                return [item("Ground", 5.0, planetary=True)]
+            return [item("Orbital", 30.0)]
+
+        src.clear_cache()
+        out = src.find_whole_list("Sol", ["Steel"], search=search, pause=0, now=lambda: 0.0)
+        self.assertEqual([s.station for s in out.found[0][1].stations], ["Ground", "Orbital"])
+        self.assertEqual(src.surface_only_labels(out.found), frozenset())
+        self.assertEqual(len(calls), 2)
+        self.assertNotIn("Planetary Port", calls[1][1])
+
+    def test_a_commodity_with_an_orbital_seller_needs_no_second_search(self):
+        calls = []
+
+        def search(reference, commodity, transaction, radius, **kwargs):
+            calls.append(commodity)
+            return [item("Ground", 5.0, planetary=True), item("Orbital", 9.0)]
+
+        src.clear_cache()
+        src.find_whole_list("Sol", ["Steel"], search=search, pause=0, now=lambda: 0.0)
+        self.assertEqual(calls, ["Steel"])
+
     def test_the_choice_is_remembered(self):
         self.assertTrue(src.SearchPrefs().surface)
         self.assertFalse(src.load_prefs(src.dump_prefs(src.SearchPrefs(surface=False))).surface)
