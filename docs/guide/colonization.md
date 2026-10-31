@@ -534,7 +534,7 @@ Find all also works out a shopping route and shows it in a shaded block of its o
 
 ### Reading the results
 
-The results table has the columns **Station**, **System**, **Type**, **Planetary**, **Pad** (largest landing pad), **Distance** (light years from the Around system), **Arrival** (distance from the arrival star, in ls), **Price** (per ton) and **Supply** (the stock). **Find nearest** lists up to 25 stations and, if carriers are ticked, up to 10 carriers.
+The results table has the columns **Station**, **System**, **Type**, **Planetary**, **Pad** (largest landing pad), **Distance** (light years from the Around system), **Arrival** (distance from the arrival star, in ls), **Price** (per ton) and **Supply** (the stock). **Find nearest** lists up to 25 stations and, unless you excluded fleet carriers, up to 10 carriers. The filters in the third and fourth rows (surface ports, stock, shipyard, arrival distance) only change what is shown, so the note says how many stations they left out, and loosening one brings them back without a new search.
 
 - **Planetary: Yes** means a base on a planet's surface, so you have to descend to land (planetary ports and outposts, settlements).
 - **Planetary: No** means an orbital station, asteroid base, megaship or fleet carrier, which you dock at in space.
@@ -548,7 +548,7 @@ The results table has the columns **Station**, **System**, **Type**, **Planetary
 - Only stations whose market was updated in the last 7 days are listed, because older figures are probably out of date.
   The prices and stock come from players' own market updates, so confirm on arrival.
 - A fleet carrier can move or sell out at any time, and its prices are set by its owner, which is why carriers are
-  opt-in and kept in their own section.
+  kept in their own section, and can be left out altogether with **Exclude fleet carriers**.
 - A station for which Spansh gives no pad figures is kept in the list (its Pad shows `?`) rather than hidden.
 - If Spansh is busy or unreachable, the panel says the search failed; try again shortly. Nothing else in WFMT is affected.
 - The search looks for stock that is **for sale**. It does not know what a station's market will have tomorrow.

@@ -170,6 +170,7 @@ Things true of every feature tab:
 | **Show placement preview** | | Draws a labeled box for every display at its real size for 12 seconds, using what is typed now |
 | **Reset all to defaults** | | Shows every display's default spot, makes them all shown, and sets scaling, mode and the edge carry back to their starting values (press OK to keep) |
 | **Detect screen again** | | Reads the overlay's log and the game's files again; the line above shows what it found |
+| **Copy all overlay layouts and settings from** (a list of your other commanders, and **Copy**) | Shown once a second commander has been seen | Replaces this commander's overlay choices with the chosen commander's when you press OK in Settings; Cancel keeps yours ([details](#moving-things-around)) |
 
 ### Body info
 
@@ -275,6 +276,7 @@ Where each display goes is set once, for every WFMT overlay, on **Settings → W
 - A commander's choices are filed when Settings are saved and when you switch commanders (log in as another one, or restart EDMC).
 - Which overlay draws (the built-in one or EDMCModernOverlay), its host and port and the shortcut keys describe your computer, so they are shared.
 - Choices saved when EDMC does not yet know the commander go to the first commander it sees.
+- **To copy another commander's choices:** play the commander who should receive them, open the **Overlay Placement** tab, pick the other commander next to **Copy all overlay layouts and settings from** (the row shows once a second commander has been seen), press **Copy**, then **OK** in Settings. Everything in the list above is replaced with the other commander's, including turning off cards they do not use; **Cancel** changes nothing, and the other commander is not touched. Machine settings (the overlay connection, the hide hotkey) are not copied.
 
 **Why not just x and y numbers?**
 
