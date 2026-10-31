@@ -20,17 +20,20 @@ from __future__ import annotations
 import logging
 import os
 import tkinter as tk
-from typing import Callable, List, Optional
+from dataclasses import dataclass
+from typing import Callable, List, Optional, Sequence, Tuple
 
 from config import appname, config
 
 from . import blueprint_needs as needs_mod
 from . import blueprint_wishlist as wishlist_mod
-from . import blueprints, engineer_path, engineers, issue_report, stored_modules
+from . import blueprints, engineer_guides_data, engineer_path, engineers, ingredient_sources, issue_report, stored_modules
+from .powerplay_clipboard import inara_system_url
 from .odyssey_plan_tab import UpgradePlanTab
 from .ship_plan_tab import ShipPlanTab
 from .uikit import palette as P
 from .uikit import style
+from .uikit.richtext import RichText
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
 from .uikit.widgets import Combobox, FlatButton, NoteLabel, ScrollFrame, Tabs, clip
@@ -100,12 +103,21 @@ _HELP = (
 
 
 BLUEPRINTS_TAB, ENGINEERS_TAB = "Blueprints", "Engineers"
-VERIFY_NOTE = ("Verification needed: WFMT cannot check this invitation requirement against your journal (it is a faction's standing, a kind of mission, "
-               "a data sale or similar), so confirm it in the game. If you can tell us what the game shows for this engineer, press Report engineer data below.")
+
+
+@dataclass(frozen=True)
+class Tools:
+    """The finders the Engineering window can start for an ingredient, given by whoever opens it (materials_panel), so this window does not import them: the Source
+    commodities lookup for something bought at a market (`where_to_buy` is given `(name, tons)` pairs), the Material trader, and the nearest Thargoid site."""
+    where_to_buy: Optional[Callable[[Sequence[Tuple[str, int]]], None]] = None
+    open_trader: Optional[Callable[[], None]] = None
+    find_site: Optional[Callable[[], str]] = None         # starts the lookup and returns a line for the status bar
+VERIFY_TEXT = ("WFMT cannot check this invitation requirement against your journal (it is a faction's standing, a kind of mission, a data sale or similar), "
+               "so confirm it in the game. If you can tell us what the game shows for this engineer, press Report engineer data below.")
 
 
 def show(parent: tk.Misc, wishbook: wishlist_mod.WishBook, holdings: Counts, engineer_book: engineers.EngineerBook,
-         tab: Optional[str] = None) -> None:
+         tab: Optional[str] = None, tools: Optional[Tools] = None) -> None:
     """Open the Engineering window, or raise it if it is already open. `tab` (a tab's title, such as "Engineers") opens it on that tab."""
     global _window
     if _window is not None and _window.alive:
@@ -113,6 +125,8 @@ def show(parent: tk.Misc, wishbook: wishlist_mod.WishBook, holdings: Counts, eng
         _window.lift()
     else:
         _window = BlueprintsWindow(parent, wishbook, holdings, engineer_book)
+    if tools is not None:
+        _window._tools = tools
     if tab:
         _window.select_tab(tab)
 
@@ -200,6 +214,7 @@ class BlueprintsWindow:
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._shell.add_action("Refresh counts", self.refresh, tip="Refresh counts - recount the materials you hold against the wishlist")
 
+        self._tools = Tools()
         self._tab_titles: List[str] = [BLUEPRINTS_TAB, "Wishlist", "Ship planner", "Upgrade planner", ENGINEERS_TAB]
         self._tabs = Tabs(self._shell.body)
         self._tabs.pack(fill="both", expand=True)
@@ -456,14 +471,12 @@ class BlueprintsWindow:
                    tip="Show their blueprints - list the blueprints the selected engineer offers").pack(side="left")
         FlatButton(controls, "Put their unlock on the wishlist", self._add_unlock,
                    tip="Put their unlock on the wishlist - add the selected engineer's unlock items to your wishlist").pack(side="left", padx=(P.PAD, 0))
+        FlatButton(controls, "Copy details", self._copy_engineer,
+                   tip="Copy details - copy the selected engineer's details as plain text (you can also select part of them and press Ctrl+C, or right-click)").pack(side="left", padx=(P.PAD, 0))
         FlatButton(controls, "Report engineer data", self._report_engineer,
                    tip="Report engineer data - open a prefilled GitHub form to tell us what the game shows for the selected engineer (nothing is sent until you submit it there)").pack(side="left", padx=(P.PAD, 0))
-        self._engineer_note = NoteLabel(pad, padx=0)
+        self._engineer_note = RichText(pad)
         self._engineer_note.pack(fill="x", pady=(P.PAD_SM, 0))
-        NoteLabel(pad, text="Colors: green is unlocked, yellow is known or invited (in progress), red is not available yet (the game has not listed you "
-                            "as knowing them).", padx=0).pack(fill="x", pady=(P.PAD_SM, 0))
-        NoteLabel(pad, text="Ship engineers open higher grades by the net profit you sell at their workshop: " + engineers.grade_profit_text()
-                  + ". On-foot engineers have no grades.", padx=0).pack(fill="x", pady=(P.PAD_SM, 0))
         self._picked_engineer: Optional[str] = None
 
     def _engineer_rows(self) -> List[tuple]:
@@ -560,45 +573,135 @@ class BlueprintsWindow:
         if self._picked_engineer:
             self._pick_engineer(self._picked_engineer)           # keep the picked engineer's details
         elif self._engineers.has_data:
-            self._engineer_note.configure(text="Select an engineer for the details.")
+            self._engineer_note.message("Select an engineer to see where they are, how to unlock them and what to do next.")
         else:
-            self._engineer_note.configure(text="The game has not listed your engineers yet. Log in to the game and they appear here.")
+            self._engineer_note.message("The game has not listed your engineers yet. Log in to the game and they appear here.")
 
     def _pick_engineer(self, name: str) -> None:
         self._picked_engineer = name
-        self._engineer_note.configure(text=self._engineer_detail(name))
+        self._render_engineer(name)
 
-    def _engineer_detail(self, name: str) -> str:
-        """Everything the tables hold about one engineer, in labelled sections separated by a blank line: where they are, the path to unlock them,
-        how to gain standing, and any note."""
+    def _render_engineer(self, name: str) -> None:
+        """The details of one engineer in the pane under the table: the name with where the commander stands, where they are, the path to unlock them,
+        how to raise standing with them and any notes, each under a heading."""
+        note = self._engineer_note
+        note.clear()
         info = engineers.info(name)
+        standing = self._engineers.standing(name)
+        status, status_tag = "", ""
+        if self._engineers.has_data:
+            if standing is None or standing.progress == engineers.BARRED:
+                status, status_tag = "Not available yet", "bad"
+            elif standing.unlocked:
+                status, status_tag = standing.describe(), "good"
+            else:
+                status, status_tag = standing.describe(), "progress"
         if info is None:
-            return clip(f"{name}: not in the location table. What they offer is in the blueprint table.", 900)
+            note.title(name, status, status_tag)
+            note.paragraph("This engineer is not in the location table. What they offer is in the blueprint table.", "muted")
+            note.finish()
+            return
+        note.title(info.name, status, status_tag)
+        region = info.region()
+        inara = inara_system_url(info.system)
+        note.subtitle(f"{info.base}, ", (info.system, inara), (f" {info.body}" if info.body else "") + (f"  \u00b7  {region}" if region else ""))
 
-        def section(title: str, body: str) -> str:
-            return title + "\n" + "\n".join("  " + line if line else line for line in body.splitlines())
+        note.heading("Location")
+        note.row("Base", info.base)
+        note.row("System", info.system, url=inara)
+        if info.body:
+            note.row("Body", f"{info.system} {info.body}")
+        if region:
+            note.row("Region", region + (" (the human bubble)" if region == engineers.BUBBLE else " (around Colonia, about 22,000 ly from Sol)"))
+        note.row("Getting there", ("On foot (an Odyssey engineer)" if info.on_foot else "By ship") + (f"; the {info.system} permit is needed" if info.permit else ""))
 
-        sections = [f"{info.name}\n  {info.place()}"]
         path = engineer_path.build(name, self._engineers)
         if path is not None and (path.steps or path.first):
-            sections.append(section("Path to unlock", engineer_path.render(path)))
+            note.heading("Path to unlock")
+            if path.unlocked:
+                note.paragraph("Unlocked. Nothing is left to do.", "good")
+            else:
+                stops = engineer_path.order(path)
+                if len(stops) > 1:
+                    note.paragraph(f"This takes {len(stops)} engineers, in this order: " + ", then ".join(p.name for p in stops) + ".", "muted")
+                for stop in stops:
+                    if len(stops) > 1:
+                        note.stop(stop.name)
+                    for number, step in enumerate(stop.steps, 1):
+                        label, detail = engineer_path.describe_step(step)
+                        note.step(number, label, detail, done=step.done, note=step.note if not step.done else "")
+
+        unlocked = standing is not None and standing.unlocked
+        self._render_items(note, name, info, unlocked)
         if info.standing:
-            sections.append(section("How to gain standing", info.standing))
-        unlock = blueprints.unlock_for(name, key=engineers.name_key)
-        if unlock is not None:
-            sections.append(section("Unlock items", "Hand each of the other three their items (see the table)."))
+            note.heading("Raising your rank with them")
+            note.paragraph(info.standing)
+
         notes = []
         if info.on_foot:
-            notes.append("On-foot engineer: no ranks; every upgrade is offered once you have met them.")
+            notes.append(("On foot.", "No ranks: every upgrade is offered once you have met them.", "label"))
         quirk = engineers.QUIRKS.get(engineers.name_key(name))
         if quirk:
-            notes.append(quirk)
-        standing = self._engineers.standing(name)
+            notes.append(("Known problem.", quirk, "label"))
         if not engineers.requirement_checkable(name) and not (standing is not None and standing.progress in (engineers.INVITED, engineers.UNLOCKED)):
-            notes.append(VERIFY_NOTE)
+            notes.append(("Verification needed.", VERIFY_TEXT, "warn"))
         if notes:
-            sections.append(section("Notes", "\n".join(notes)))
-        return clip("\n\n".join(sections), 2400)
+            note.heading("Notes")
+            for label, text, tag in notes:
+                note.bullet(text, label=label, tag=tag)
+        note.finish()
+
+    def _render_items(self, note: RichText, name: str, info: engineers.Info, unlocked: bool) -> None:
+        """What the engineer asks to be handed over, each item with how many are needed and held, how it is got, and the finders that can help; then the written guide for
+        the engineer if there is one."""
+        unlock = blueprints.unlock_for(name, key=engineers.name_key)
+        needs = needs_mod.needs_for(unlock, 1, self._holdings()) if unlock is not None else []
+        if needs and not unlocked:
+            note.heading("What you need to hand over" if not info.on_foot else "What you hand over (to learn of the next engineer)")
+            for need in needs:
+                kind = ingredient_sources.classify(need.ingredient)
+                quantity = f"need {need.need:,}" + (f", have {need.have:,}" if need.have is not None else ", not counted (a commodity)")
+                where = "; ".join(need.ingredient.found)
+                how = ingredient_sources.label(kind) + (f". Found: {where}" if where else "")
+                note.item(need.ingredient.name, quantity, how, self._actions_for(kind, need))
+        guide = engineer_guides_data.guide_for(engineers.name_key(name))
+        if guide is None:
+            if needs and not unlocked:
+                note.paragraph("There is no written guide for this engineer yet. If you know how to get these, press Report engineer data and tell us.", "muted")
+            return
+        note.heading("How to get it")
+        note.paragraph(guide.summary)
+        for number, text in enumerate(guide.steps, 1):
+            note.numbered(number, text)
+        if guide.where:
+            note.row("Where", guide.where, url=inara_system_url(guide.system) if guide.system else "")
+        for item, text in guide.items:
+            note.row(item, text)
+        for caution in guide.cautions:
+            note.bullet(caution, label="Careful.", tag="warn")
+        if guide.verified:
+            note.paragraph("Confirmed in the game" + (f" on {guide.updated}" if guide.updated else "") + ".", "good")
+        else:
+            note.paragraph("Community-reported and not yet confirmed in the game. If you can confirm or correct it, press Report engineer data.", "warn")
+
+    def _actions_for(self, kind: str, need: needs_mod.Need) -> List[Tuple[str, Callable[[], None]]]:
+        """The finders that fit how an ingredient is got, as (text, what to run)."""
+        tools = self._tools
+        if kind == ingredient_sources.BUY and tools.where_to_buy is not None:
+            return [("Find where to buy", lambda: tools.where_to_buy([(need.ingredient.name, need.need)]))]
+        if kind == ingredient_sources.TRADE and tools.open_trader is not None:
+            return [("Find a material trader", tools.open_trader)]
+        if kind == ingredient_sources.SITE and tools.find_site is not None:
+            return [("Look up the nearest Thargoid site", lambda: self._shell.set_status(tools.find_site() or "", ok=True))]
+        return []
+
+    def _copy_engineer(self) -> None:
+        """Put the selected engineer's details on the clipboard as plain text."""
+        if self._picked_engineer is None:
+            self._shell.set_status("Select an engineer first.")
+            return
+        if self._engineer_note.copy_all():
+            self._shell.set_status(f"Copied the details for {self._picked_engineer}.", ok=True)
 
     def _report_engineer(self) -> None:
         """Open the Game data form on GitHub for the selected engineer (the browser does the sending, if the player submits it)."""

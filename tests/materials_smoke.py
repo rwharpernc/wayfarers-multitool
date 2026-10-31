@@ -119,7 +119,7 @@ panel.handle_event(login, "Bocheaux", "Sol", None, {})
 text, suffix = panel.summary()
 check(text.splitlines()[0] == "Materials held: Raw 432 · Manufactured 40 · Encoded 7", f"the totals line: {text!r}")
 check("At the limit: Iron" in text, f"iron is at its limit: {text!r}")
-check(suffix == "- 479 held", f"the folded title says how many: {suffix!r}")
+check(suffix == "", f"the folded title says just Engineering: {suffix!r}")
 check(panel._summary_var.get() == text, "the label follows the summary")
 
 panel.handle_event({"event": "MaterialCollected", "Category": "Raw", "Name": "carbon", "Count": 3}, "Bocheaux", "Sol", None, {})
@@ -254,7 +254,7 @@ panel.handle_event({"event": "EngineerProgress", "Engineers": [
     {"Engineer": "Lei Cheung", "EngineerID": 300120, "Progress": "Invited"},
     {"Engineer": "Eleanor Bresa", "EngineerID": 400011, "Progress": "Known"}]}, "Bocheaux", "Sol", None, {})
 check(eng.has_data and eng.standing("Felicity Farseer").rank == 3, "the panel feeds EngineerProgress to the engineer book")
-check("Engineers: 1 of 38 unlocked · 1 invited · 1 known" in panel.summary()[0] and panel.summary()[1].endswith("· 1 engineers"),
+check("Engineers: 1 of 38 unlocked · 1 invited · 1 known" in panel.summary()[0] and panel.summary()[1] == "",
       f"the Engineering row counts the engineers: {panel.summary()}")
 
 
@@ -301,10 +301,77 @@ check(len(names) >= 38, f"every engineer in the location table is listed: {len(n
 check(dict(rows)["Yi Shen"][4].startswith("First ") and "Colonia" in dict(rows)["Yi Shen"][4], f"Yi Shen's next step is another engineer's: {dict(rows)['Yi Shen'][4]!r}")
 check(dict(rows)["Yi Shen"][1] == "not known yet", f"and an unknown standing says so: {dict(rows)['Yi Shen'][1]!r}")
 bwin._engineer_table.select("Baltanos", notify=True)
-check("Deriso" in bwin._engineer_note.cget("text") and "Friendly reputation" in bwin._engineer_note.cget("text") and "On-foot" in bwin._engineer_note.cget("text"),
-      f"selecting one shows where, the unlock and that they have no ranks: {bwin._engineer_note.cget('text')!r}")
+check("Deriso" in bwin._engineer_note.text() and "Friendly reputation" in bwin._engineer_note.text() and "On foot" in bwin._engineer_note.text(),
+      f"selecting one shows where, the unlock and that they have no ranks: {bwin._engineer_note.text()!r}")
+import tkinter.font as tkfont
+note = bwin._engineer_note
+title_font, heading_font, body_font = (tkfont.Font(font=note.tag_cget(tag, "font")) for tag in ("title", "heading", "body"))
+check(title_font.cget("weight") == "bold" and title_font.cget("size") > body_font.cget("size"), "the engineer's name is a larger, bold title")
+check(heading_font.cget("weight") == "bold" and heading_font.cget("size") >= body_font.cget("size"), "section headings are bold")
+check(note.tag_ranges("heading") and note.tag_ranges("step"), "headings and numbered steps are tagged")
+headings = [note.get(a, b).strip() for a, b in zip(note.tag_ranges("heading")[::2], note.tag_ranges("heading")[1::2])]
+check(headings[:3] == ["Location", "Path to unlock", "Notes"], f"the sections have clear headings: {headings}")
+check("Colors:" not in note.text(), "no color key in the details")
+import plugin.engineer_guides_data as guides_data
+calls = []
+bwin._tools = blueprints_window.Tools(where_to_buy=lambda items: calls.append(("buy", list(items))), open_trader=lambda: calls.append(("trader",)),
+                                      find_site=lambda: calls.append(("site",)) or "Looking.")
+bwin._engineer_table.select("Chloe Sedesi", notify=True)
+pump()
+check("What you need to hand over" in note.text() and "Sensor Fragment" in note.text() and "need 25" in note.text(), f"the items are listed: {note.text()[:400]!r}")
+check("Look up the nearest Thargoid site" in note.actions().values(), f"a Thargoid site item offers the site lookup: {note.actions()}")
+for action_name, shown in note.actions().items():
+    if shown == "Look up the nearest Thargoid site":
+        note.run_action(action_name)
+check(calls == [("site",)] and "Looking." in bwin._shell._status.cget("text"), f"the action runs the finder and says what it started: {calls}")
+check("no written guide for this engineer yet" in note.text(), "an engineer with no guide says so and how to help")
+bwin._engineer_table.select("Liz Ryder", notify=True)
+pump()
+buy_actions = [name for name, shown in note.actions().items() if shown == "Find where to buy"]
+check(buy_actions, f"a market item offers a lookup: {note.actions()}")
+note.run_action(buy_actions[0])
+check(calls[-1] == ("buy", [("Landmines", 200)]), f"the lookup gets the commodity and the tons: {calls[-1]}")
+guides_data.GUIDES["chloe sedesi"] = guides_data.Guide(summary="Shoot the sensors at a crash site.", steps=("Land nearby.", "Shoot a sensor."), where="A crash site",
+                                                       system="Sol", cautions=("Do not scoop a whole sensor.",))
+bwin._engineer_table.select("Chloe Sedesi", notify=True)
+pump()
+text = note.text()
+check("How to get it" in text and "Shoot the sensors" in text and "1.  Land nearby." in text and "Do not scoop" in text and "not yet confirmed" in text,
+      f"a written guide is shown, marked unconfirmed: {text[-600:]!r}")
+check("https://inara.cz/elite/starsystem/?search=Sol" in note.links().values(), "the guide's system links to Inara")
+guides_data.GUIDES["chloe sedesi"] = guides_data.Guide(summary="x", verified=True, updated="2026-11-01")
+bwin._engineer_table.select("Chloe Sedesi", notify=True)
+pump()
+check("Confirmed in the game on 2026-11-01" in note.text(), "a confirmed guide says so")
+guides_data.GUIDES.clear()
+bwin._tools = blueprints_window.Tools()
+bwin._engineer_table.select("Baltanos", notify=True)
+pump()
+links = note.links()
+check(links and all(url == "https://inara.cz/elite/starsystem/?search=Deriso" for url in links.values()) and len(links) == 2,
+      f"the engineer's system is a link to Inara in the subtitle and the System row: {links}")
+opened_urls = []
+import webbrowser
+webbrowser.open = lambda url, *a, **k: opened_urls.append(url)
+check(note.open_link(next(iter(links))) and opened_urls == ["https://inara.cz/elite/starsystem/?search=Deriso"], f"clicking a link opens Inara: {opened_urls}")
+check(not note.open_link("nothing"), "an unknown link name does nothing")
+check(note.copy_all() and root.clipboard_get() == note.text(), "Copy all puts the details on the clipboard")
+bwin._copy_engineer()
+check("Copied the details for Baltanos" in bwin._shell._status.cget("text"), "the Copy details button says what it did")
+note.focus_force()
+note._select_all()
+note._copy_selection()
+check(root.clipboard_get() == note.text(), "a selection copies as it was written")
+note.update_idletasks()
+for who in ("Baltanos", "Tiana Fortune", "Terra Velasquez"):
+    bwin._engineer_table.select(who, notify=True)
+    pump()
+    note.update_idletasks()
+    needed = int(note.count("1.0", "end", "ypixels")[0])
+    given = int(note.cget("height")) * int(tkfont.Font(font=note.cget("font")).metrics("linespace"))
+    check(given >= needed, f"the details pane for {who} is tall enough for its text (needs {needed} px, has {given} px)")
 bwin._engineer_table.select("Terra Velasquez", notify=True)
-check("bugged" in bwin._engineer_note.cget("text"), f"a known quirk is shown: {bwin._engineer_note.cget('text')!r}")
+check("bugged" in bwin._engineer_note.text(), f"a known quirk is shown: {bwin._engineer_note.text()!r}")
 bwin._engineer_table.select("Baltanos", notify=True)
 bwin._add_unlock()
 check("an action" in bwin._shell._status.cget("text"), f"an action-only unlock cannot go on the wishlist: {bwin._shell._status.cget('text')!r}")
@@ -318,7 +385,7 @@ check(dict(rows)["Felicity Farseer"][4] == "-", "an unlocked engineer needs noth
 check("x Bromellite" in dict(rows)["Bill Turner"][4] and "not counted" in dict(rows)["Bill Turner"][4], f"a commodity unlock is shown, not counted: {dict(rows)['Bill Turner'][4]!r}")
 check(dict(rows)["Lei Cheung"][4].startswith("First The Dweller") and "Gold" not in dict(rows)["Lei Cheung"][4], f"another engineer comes first and the items wait: {dict(rows)['Lei Cheung'][4]!r}")
 check(len(bwin._engineer_table) == len(rows), "the table lists every row")
-detail_of = lambda n: (bwin._engineer_table.select(n, notify=True), bwin._engineer_note.cget("text"))[1]
+detail_of = lambda n: (bwin._engineer_table.select(n, notify=True), bwin._engineer_note.text())[1]
 check("Verification needed" in detail_of("Eleanor Bresa") and "Verification needed" in detail_of("Baltanos"),
       "an engineer whose requirement the journal cannot check says verification is needed")
 check("Verification needed" not in detail_of("Felicity Farseer") and "Verification needed" not in detail_of("Lei Cheung"),
@@ -340,7 +407,7 @@ check(len(bwin._engineer_table) == 8 and bwin._engineer_table.exists("Baltanos")
       f"Colonia shows the eight Colonia engineers only: {len(bwin._engineer_table)}")
 check(saved.get("wfmt_engineers_region") == "Colonia", f"the choice is remembered: {saved.get('wfmt_engineers_region')!r}")
 check(bwin._region_label.cget("text") == f"8 of {len(rows)} engineers", f"the count is shown: {bwin._region_label.cget('text')!r}")
-check("Deriso" in bwin._engineer_note.cget("text"), "an engineer still listed stays selected")
+check("Deriso" in bwin._engineer_note.text(), "an engineer still listed stays selected")
 bwin._region.set("Bubble")
 bwin._region_changed()
 pump()

@@ -16,7 +16,7 @@ from typing import Any, Dict, Mapping, Optional, Tuple
 
 from config import appname
 
-from . import blueprint_needs, blueprint_wishlist, blueprints_window, commander_data, engineer_requirements, engineers, inventory_panel, material_trader_window, materials, materials_window, panelkit
+from . import blueprint_needs, blueprint_wishlist, blueprints_window, canonn_poi_panel, commander_data, mission_sources, mission_sources_window, engineer_requirements, engineers, inventory_panel, material_trader_window, materials, materials_window, panelkit
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -68,7 +68,7 @@ def engineers_line(engineer_book_: engineers.EngineerBook) -> str:
 
 
 def summary_lines(book_: materials.MaterialBook, engineer_book_: Optional[engineers.EngineerBook] = None) -> Tuple[str, str]:
-    """(the lines under the title, the note after the title when folded). The engineers line comes last but one, before the wishlist."""
+    """(the lines under the title, and the note after the title when folded, which is always empty: the title says just Engineering). The engineers line comes last but one, before the wishlist."""
     engineer_book_ = engineer_book if engineer_book_ is None else engineer_book_
     people = engineers_line(engineer_book_)
     if not book_.ready:
@@ -96,10 +96,7 @@ def summary_lines(book_: materials.MaterialBook, engineer_book_: Optional[engine
     wish = wishlist_line(wishlist)
     if wish:
         lines.append(wish)
-    suffix = f"- {sum(totals.values()):,} held"
-    if engineer_book_.has_data:
-        suffix += f" · {sum(1 for s in engineer_book_.all() if s.unlocked)} engineers"
-    return "\n".join(lines), suffix
+    return "\n".join(lines), ""      # the folded title says just Engineering; the figures are in the section
 
 
 def _clip(text: str) -> str:
@@ -236,12 +233,33 @@ class MaterialsController:
 
     def _open_blueprints(self) -> None:
         if self._parent is not None:
-            blueprints_window.show(self._parent, wishlist, holdings, engineer_book, tab=blueprints_window.BLUEPRINTS_TAB)
+            blueprints_window.show(self._parent, wishlist, holdings, engineer_book, tab=blueprints_window.BLUEPRINTS_TAB, tools=self._tools())
 
     def _open_engineers(self) -> None:
         if self._parent is not None:
-            blueprints_window.show(self._parent, wishlist, holdings, engineer_book, tab=blueprints_window.ENGINEERS_TAB)
+            blueprints_window.show(self._parent, wishlist, holdings, engineer_book, tab=blueprints_window.ENGINEERS_TAB, tools=self._tools())
 
+    def _tools(self) -> blueprints_window.Tools:
+        """The finders the Engineering window can start for an ingredient: the Source commodities lookup, the Material trader and the nearest Thargoid site."""
+        return blueprints_window.Tools(where_to_buy=self._where_to_buy, open_trader=self._open_trader, find_site=self._find_site)
+
+    def _where_to_buy(self, items) -> None:
+        """Open the Source commodities lookup for these `(commodity, tons)` pairs (nothing is looked up until Find sources is pressed there)."""
+        if self._parent is None:
+            return
+        needs = [mission_sources.Need(commodity=name, tons=tons, missions=0, turn_in="") for name, tons in items]
+        mission_sources_window.show_for(self._parent, lambda: needs, self.system, title="WFMT - Where to buy", subtitle="Where to get what an engineer asks for",
+                                        empty_text="Nothing to look up.")
+
+    def _open_trader(self) -> None:
+        if self._parent is not None:
+            material_trader_window.show(self._parent, book, self)
+
+    def _find_site(self) -> str:
+        """Start the Canonn lookup of the nearest Thargoid site; the line says where the answer will be."""
+        if canonn_poi_panel.controller.start_lookup():
+            return "Looking up the nearest Thargoid site. The answer is in Exploration, POI Reference."
+        return "Could not look up a Thargoid site: WFMT does not know your position yet, or the Thargoid sites are switched off in Settings."
 
 controller = MaterialsController()
 

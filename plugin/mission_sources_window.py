@@ -95,7 +95,9 @@ def rows_for(need: mission_sources.Need, picks: Optional[source_picks.Picks]) ->
 
 
 class MissionSourcesWindow:
-    def __init__(self, parent: tk.Misc, needs: Callable[[], List[mission_sources.Need]], here: Callable[[], str]) -> None:
+    def __init__(self, parent: tk.Misc, needs: Callable[[], List[mission_sources.Need]], here: Callable[[], str],
+                 title: str = "WFMT - Source commodities", subtitle: str = "Where to get what your missions still need",
+                 empty_text: str = "Nothing to source: no active Collect, Mining or Delivery mission still needs cargo.") -> None:
         self._needs, self._here = needs, here
         self._results: Dict[str, source_picks.Picks] = {}
         self._pending: Dict[str, source_picks.Picks] = {}
@@ -106,7 +108,7 @@ class MissionSourcesWindow:
         self._copyable: Dict[str, str] = {}      # table row id -> the system on that row
         self._selected: Optional[str] = None
         self._shell = WindowShell(
-            parent, "WFMT - Source commodities", "Where to get what your missions still need", size=(1100, 520), min_size=(760, 320),
+            parent, title, subtitle, size=(1100, 520), min_size=(760, 320),
             load_geometry=lambda: (config.get_str(_CFG_GEOMETRY) if config else "") or "",
             save_geometry=lambda value: config.set(_CFG_GEOMETRY, value) if config else None)
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
@@ -121,7 +123,7 @@ class MissionSourcesWindow:
         box.pack(side="left")
         box.bind("<<ComboboxSelected>>", lambda _e: self._clear_results())
         self._table = DataTable(self._shell.body, _COLUMNS, on_select=self._select, sortable=False,
-                                empty_text="Nothing to source: no active Collect, Mining or Delivery mission still needs cargo.")
+                                empty_text=empty_text)
         self._table.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
         self.refresh()
 
@@ -244,3 +246,22 @@ class MissionSourcesWindow:
             self._shell.set_status("Pick a row with a station first.")
         elif panelkit.copy_to_clipboard(self._shell.window, system):
             self._shell.set_status(f"Copied {system}.")
+
+
+_extra: Optional[MissionSourcesWindow] = None
+
+
+def show_for(parent: tk.Misc, needs: Callable[[], List[mission_sources.Need]], here: Callable[[], str],
+             title: str = "WFMT - Where to buy", subtitle: str = "Where to get what you still need",
+             empty_text: str = "Nothing to look up.") -> MissionSourcesWindow:
+    """Open this lookup for a list of commodities that does not come from the missions (for example what an engineer asks for), or raise it and give it the new list. It is
+    the same window and the same Spansh searches as Source commodities, and the same Trade tick has to be on for it to look anything up. Nothing is looked up until Find sources is pressed."""
+    global _extra
+    if _extra is not None and _extra.alive:
+        _extra._needs, _extra._here = needs, here
+        _extra._clear_results()
+        _extra.refresh()
+        _extra.lift()
+        return _extra
+    _extra = MissionSourcesWindow(parent, needs, here, title, subtitle, empty_text)
+    return _extra

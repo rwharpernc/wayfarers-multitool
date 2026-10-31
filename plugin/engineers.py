@@ -14,7 +14,7 @@ checked); an engineer who ranks up is unlocked, so it is read as `Unlocked` at t
 drops a nickname in quotes, case and spacing (`name_key`).
 
 **Where each engineer is** and how to be invited by and unlock them is `engineers_data.py`, read through
-`info(name)`. `GRADE_PROFIT_CREDITS` and `QUIRKS` are the community-documented facts about the ship engineers' grades and one known bug."""
+`info(name)`. `QUIRKS` holds the one known problem worth telling the commander about."""
 from __future__ import annotations
 
 import logging
@@ -114,18 +114,10 @@ def info(name: Any) -> Optional[Info]:
     return INFO.get(name_key(name))
 
 
-GRADE_PROFIT_CREDITS = ((2, 500_000), (3, 2_000_000), (4, 8_000_000), (5, 16_000_000))
-"""Net profit from selling at a ship engineer's workshop that opens each grade, as documented by the community (grade 1 opens with the unlock
-itself). Facts only, read 2026-10-14. On-foot engineers have no grades: they offer everything once met."""
-
 QUIRKS: Dict[str, str] = {
     "terra velasquez": "Her meeting requirement is reported bugged: Covert Theft missions may not count, Covert Heist missions do.",
 }
 """Known quirks worth telling the commander about, by `name_key`."""
-
-
-def grade_profit_text() -> str:
-    return ", ".join(f"grade {grade} at {credits:,} cr" for grade, credits in GRADE_PROFIT_CREDITS)
 
 
 def _progress(value: Any) -> Optional[str]:

@@ -237,9 +237,7 @@ class LocationTableTests(unittest.TestCase):
     def test_yarden_bonds_meeting_requirement_is_five_plans(self):
         self.assertIn("5 Smear campaign plans", E.info("Yarden Bond").invite)
 
-    def test_the_grade_thresholds_and_the_one_quirk(self):
-        self.assertEqual(E.GRADE_PROFIT_CREDITS, ((2, 500_000), (3, 2_000_000), (4, 8_000_000), (5, 16_000_000)))
-        self.assertEqual(E.grade_profit_text(), "grade 2 at 500,000 cr, grade 3 at 2,000,000 cr, grade 4 at 8,000,000 cr, grade 5 at 16,000,000 cr")
+    def test_the_one_quirk(self):
         self.assertIn("terra velasquez", E.QUIRKS)
 
 

@@ -157,6 +157,19 @@ def next_action(path: Path) -> Optional[Tuple[Path, Step]]:
     return None
 
 
+STEP_LABELS = {FIND: "Find them", REFER: "Learn of them", REACH: "Reach them", INVITE: "Earn the invitation", UNLOCK: "Unlock them"}
+
+
+def describe_step(step: Step) -> Tuple[str, str]:
+    """A step as (a short label, the detail): `Find them: Public sources.` is ("Find them", "Public sources."); a step that is already a sentence keeps it whole as
+    the detail under the label of its kind."""
+    label = STEP_LABELS.get(step.kind, "Step")
+    prefix = label + ": "
+    if step.text.startswith(prefix):
+        return label, step.text[len(prefix):]
+    return label, step.text
+
+
 def render(path: Path) -> str:
     """The path as lines of text: a heading per engineer in the order to deal with them, then their numbered steps with `[done]` on those done."""
     lines: List[str] = []
