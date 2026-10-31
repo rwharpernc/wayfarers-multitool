@@ -63,6 +63,29 @@ class PlaceTests(unittest.TestCase):
         self.assertEqual(P.place((800, 600), None, EDMC_LEFT, []), (100, 100))
 
 
+class _Root:
+    """Stands in for EDMC's window on a desktop with a monitor to the left of the primary one (x from -3072 to 6144)."""
+    def _root(self): return self
+    def state(self): return "normal"
+    def winfo_rootx(self): return 100
+    def winfo_rooty(self): return 100
+    def winfo_width(self): return 420
+    def winfo_height(self): return 700
+    def winfo_vrootx(self): return -3072
+    def winfo_vrooty(self): return 0
+    def winfo_vrootwidth(self): return 9216
+    def winfo_vrootheight(self): return 1680
+
+
+class GeometryStringTests(unittest.TestCase):
+    def test_a_position_left_of_the_primary_monitor_is_written_with_a_plus(self):
+        # "-2000" would mean 2000 px in from the screen's right edge to Tk; "+-2000" is the position left of the primary monitor.
+        self.assertEqual(P.geometry_for(_Root(), "1060x640+-2000+300", (1060, 640)), "1060x640+-2000+300")
+
+    def test_a_positive_position_is_unchanged(self):
+        self.assertEqual(P.geometry_for(_Root(), "1060x640+5156+467", (1060, 640)), "1060x640+5156+467")
+
+
 class SettingTests(unittest.TestCase):
     def test_the_always_switch(self):
         P.set_always(True)

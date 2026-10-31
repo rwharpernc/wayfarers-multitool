@@ -397,5 +397,40 @@ class NeedsAwareTests(unittest.TestCase):
         self.assertEqual(len(result.found), 2)
 
 
+class SurfacePortTests(unittest.TestCase):
+    @staticmethod
+    def source(name, planetary, supply=1000):
+        return src.Source(name, "Sol", "Coriolis Starport", False, planetary, "Large", 5.0, 100.0, 400, supply)
+
+    def found(self):
+        ship = self.source("Orbital", False)
+        ground = self.source("Ground", True)
+        return [("Steel", src.SearchResult([ship, ground], [])), ("Titanium", src.SearchResult([ground], []))]
+
+    def test_surface_ports_are_taken_out(self):
+        left = src.without_surface(self.found())
+        self.assertEqual([(label, [s.station for s in r.stations]) for label, r in left], [("Steel", ["Orbital"]), ("Titanium", [])])
+
+    def test_a_commodity_found_only_at_surface_ports_is_named(self):
+        self.assertEqual(src.surface_only_labels(self.found()), frozenset({"Titanium"}))
+        self.assertEqual(src.surface_only_labels([("Gold", src.SearchResult([], []))]), frozenset())
+
+    def test_the_route_marks_surface_ports(self):
+        plan = src.plan_route(self.found(), {"Steel": 100, "Titanium": 50}, surface_only=src.surface_only_labels(self.found()))
+        ground = next(stop for stop in plan.stops if stop.station == "Ground")
+        self.assertTrue(ground.is_planetary)
+        self.assertEqual([(b.commodity, b.surface_only) for b in ground.buys if b.commodity == "Titanium"], [("Titanium", True)])
+        self.assertTrue(any("(surface port)" in line and "(surface ports only)" in line for line in plan.lines()))
+
+    def test_without_them_the_commodity_is_not_covered(self):
+        plan = src.plan_route(src.without_surface(self.found()), {"Steel": 100, "Titanium": 50})
+        self.assertEqual(plan.uncovered, (("Titanium", 50),))
+
+    def test_the_choice_is_remembered(self):
+        self.assertTrue(src.SearchPrefs().surface)
+        self.assertFalse(src.load_prefs(src.dump_prefs(src.SearchPrefs(surface=False))).surface)
+        self.assertTrue(src.load_prefs("{}").surface)
+
+
 if __name__ == "__main__":
     unittest.main()

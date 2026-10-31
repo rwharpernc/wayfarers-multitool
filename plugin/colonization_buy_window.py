@@ -97,6 +97,12 @@ def set_wanted(label: Optional[str]) -> None:
         _window.set_wanted(label)
 
 
+def refresh_needs() -> None:
+    """The Sites window's figures changed (a purchase reached the hold or the carrier, or a delivery was made); the route and the lists follow them."""
+    if _window is not None and _window.alive:
+        _window.refresh_needs()
+
+
 def follow_site(system: str) -> None:
     """The Sites window's selected site (or its system) changed; the search follows it unless the commander typed their own system."""
     if _window is not None and _window.alive:
@@ -115,7 +121,8 @@ class BuyWindow:
         self._result: Optional[sources.SearchResult] = None
         self._result_label = ""
         self._whole: Optional[sources.WholeListResult] = None   # the last "Find all" answer (instead of _result)
-        self._whole_to_get: Dict[str, int] = {}                 # commodity label -> tons still to get, for its heading
+        self._whole_to_get: Dict[str, int] = {}                 # commodity label -> tons still to get, for its heading (kept up to date by refresh_needs)
+        self._whole_system = ""                                 # the system the last "Find all" searched around
         self._plan: Optional[sources.RoutePlan] = None          # the suggested shopping route for the last "Find all"
         self._whole_job: Optional[Dict[str, Any]] = None        # the "Find all" running now
         self._prefs = sources.load_prefs(config.get_str(CONFIG_SEARCH))
@@ -131,6 +138,7 @@ class BuyWindow:
 
         self._system_var = tk.StringVar(master=self._toplevel, value="")
         self._carriers_var = tk.BooleanVar(master=self._toplevel, value=self._prefs.carriers)
+        self._surface_var = tk.BooleanVar(master=self._toplevel, value=self._prefs.surface)
         content = tk.Frame(self._shell.body, bg=P.PANE)    # the note wraps to this frame's width, which the body's side padding does not narrow
         content.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
         self._build(content)
@@ -173,7 +181,6 @@ class BuyWindow:
         self._pad = Combobox(second, state="readonly", width=17, values=[label for _, label in sources.PAD_CHOICES])
         self._pad.set(next((text for key, text in sources.PAD_CHOICES if key == self._prefs.pad), sources.PAD_CHOICES[0][1]))
         self._pad.pack(side="left", padx=(P.PAD_SM, P.PAD))
-        tk.Checkbutton(second, text="Include fleet carriers", variable=self._carriers_var).pack(side="left")
         self._find_button = FlatButton(second, "Find nearest", self._on_find, kind="accent",
                                        tip="Find nearest - search for the nearest stations selling the selected commodity (Spansh)")
         self._find_button.pack(side="right")
@@ -184,6 +191,11 @@ class BuyWindow:
                    tip="Copy System - copy the selected result's system name to the clipboard").pack(side="right", padx=(0, 6))
         FlatButton(second, "Copy Route", self._on_copy_route,
                    tip="Copy Route - copy the shopping route from the last Find all to the clipboard").pack(side="right", padx=(0, 6))
+
+        third = tk.Frame(options, bg=P.PANE)
+        third.pack(fill="x")
+        tk.Checkbutton(third, text="Include fleet carriers", variable=self._carriers_var).pack(side="left", padx=(0, P.PAD))
+        tk.Checkbutton(third, text="Include surface ports", variable=self._surface_var, command=self._on_surface_toggle).pack(side="left")
 
         self._sources_note = tk.Label(host, text=_HINT, fg=P.MUTED, bg=P.PANE, anchor="w", justify="left", padx=P.PAD)
         self._sources_note.pack(fill="x")
@@ -196,12 +208,14 @@ class BuyWindow:
         self._plan_table = DataTable(self._plan_frame, _SOURCE_COLUMNS, sortable=False, on_select=self._on_plan_pick,
                                      select_groups=True, visible_rows=_PLAN_ROWS)
         self._plan_table.tag_configure("carrier", foreground=P.INFO)
+        self._plan_table.tag_configure("warn", foreground=P.WARN)
         self._plan_table.pack(fill="x")
         self._list_heading = tk.Label(host, text="Closest stations for each commodity", fg=P.HEADING, bg=P.PANE, anchor="w",
                                       font=style.font(P.FONT_SECTION), padx=P.PAD, pady=P.PAD_SM)
         self._source_table = DataTable(host, _SOURCE_COLUMNS, sortable=False, on_header=self._on_source_sort,
                                        on_select=self._on_source_pick, select_groups=True, empty_text="No search yet.")
         self._source_table.tag_configure("carrier", foreground=P.INFO)
+        self._source_table.tag_configure("warn", foreground=P.WARN)
         self._source_table.pack(fill="both", expand=True)
 
     def _show_plan(self, show: bool) -> None:
@@ -269,7 +283,7 @@ class BuyWindow:
     def _save_prefs(self) -> None:
         config.set(CONFIG_SEARCH, sources.dump_prefs(sources.SearchPrefs(
             radius_ly=self._radius_ly(), pad=self._pad_choice(), carriers=bool(self._carriers_var.get()),
-            sort=self._sort_choice())))
+            sort=self._sort_choice(), surface=bool(self._surface_var.get()))))
 
     def _say(self, text: str, busy: bool = False) -> None:
         """The note under the buttons. A search in progress is shown in the status color so it stands out; anything else in the plain text one."""
@@ -377,8 +391,8 @@ class BuyWindow:
         if job["error"]:
             self._say(f"The search failed: {_clip(job['error'], _ERROR_MAX)}.")
             return
-        self._whole, self._whole_to_get, self._result = job["result"], to_get, None
-        self._plan = sources.plan_route(job["result"].found, to_get)
+        self._whole, self._whole_to_get, self._result, self._whole_system = job["result"], to_get, None, system
+        self._plan = self._make_plan()
         self._render_whole(system)
 
     def _on_source_sort(self, key: str) -> None:
@@ -416,22 +430,77 @@ class BuyWindow:
                           f"{item.arrival_ls:,.0f} ls" if item.arrival_ls else "", f"{item.price:,}",
                           f"{item.supply:,}"), tag=tag, parent=parent)
 
-        add(result.stations, "s", None, None)
-        if result.carriers:
-            self._source_table.insert("carriers", (f"Fleet carriers ({len(result.carriers)})", "", "", "", "", "", "", "", ""),
+        keep = bool(self._surface_var.get())
+        shown_stations = [s for s in result.stations if keep or not s.is_planetary]
+        shown_carriers = [c for c in result.carriers if keep or not c.is_planetary]
+        hidden = len(result.stations) + len(result.carriers) - len(shown_stations) - len(shown_carriers)
+        add(shown_stations, "s", None, None)
+        if shown_carriers:
+            self._source_table.insert("carriers", (f"Fleet carriers ({len(shown_carriers)})", "", "", "", "", "", "", "", ""),
                                       tag="carrier", group=True, open=True)
-            add(result.carriers, "c", "carrier", "carriers")
-        stations, carriers = len(result.stations), len(result.carriers)
+            add(shown_carriers, "c", "carrier", "carriers")
+        stations, carriers = len(shown_stations), len(shown_carriers)
         if not stations and not carriers:
-            self._say(f"Nothing found with {self._result_label} in stock. Try a larger radius, any landing pad size, "
-                     f"or include fleet carriers.")
+            if hidden:
+                self._say(f"{self._result_label} is only at surface ports ({hidden} found). Tick Include surface ports to see them.")
+            else:
+                self._say(f"Nothing found with {self._result_label} in stock. Try a larger radius, any landing pad size, "
+                          f"or include fleet carriers.")
             return
         extra = f" and {carriers} fleet carrier{'s' if carriers != 1 else ''}" if carriers else ""
         around = f" around {_clip(system, _NAME_MAX)}" if system else ""
-        self._say(f"{self._result_label}: {stations} station{'s' if stations != 1 else ''}{extra}{around}. Price is per "
-                 f"ton; the data is from players' own market updates, so confirm on arrival.")
+        left_out = f" {hidden} surface port{'s' if hidden != 1 else ''} left out." if hidden else ""
+        self._say(f"{self._result_label}: {stations} station{'s' if stations != 1 else ''}{extra}{around}.{left_out} Price is per "
+                  f"ton; the data is from players' own market updates, so confirm on arrival.")
 
-    def _render_whole(self, system: str = "") -> None:
+    def _found_view(self) -> List[Any]:
+        """The Find all answers as the commander wants to see them: without the surface ports when they are not included."""
+        whole = self._whole
+        if whole is None:
+            return []
+        return list(whole.found) if self._surface_var.get() else sources.without_surface(whole.found)
+
+    def _surface_only(self) -> frozenset:
+        """The commodities still to get whose every source found is a surface port."""
+        if self._whole is None:
+            return frozenset()
+        return frozenset(label for label in sources.surface_only_labels(self._whole.found) if self._whole_to_get.get(label))
+
+    def _make_plan(self) -> sources.RoutePlan:
+        return sources.plan_route(self._found_view(), self._whole_to_get, surface_only=self._surface_only())
+
+    def _on_surface_toggle(self) -> None:
+        """Surface ports shown or left out: the lists and the route are drawn again from what was already found (nothing is asked of Spansh)."""
+        try:
+            self._save_prefs()
+        except tk.TclError:
+            return
+        if self._whole is not None:
+            self._plan = self._make_plan()
+            self._render_whole(self._whole_system)
+        elif self._result is not None:
+            self._render_sources()
+
+    def refresh_needs(self) -> None:
+        """Follow what the commander has bought. The tons still to get come from the Sites window again (its Acquire figures, after the ship's
+        hold and the fleet carrier), and the route is worked out again from the stations Find all already found: nothing is asked of Spansh. A
+        commodity that is covered drops out of the lists and the route; one partly bought shrinks."""
+        if self._whole is None or not self.alive or self._whole_job is not None:
+            return
+        rows = self.host.to_buy()
+        if rows is None:
+            return
+        searched = {label for label, _result in self._whole.found}
+        needs = {r.label: r.to_get for r in rows if r.to_get > 0 and r.label in searched}
+        if needs == {label: tons for label, tons in self._whole_to_get.items() if tons > 0}:
+            return                                  # nothing changed for the commodities searched
+        self._whole_to_get = needs
+        self._plan = self._make_plan()
+        self._render_whole(self._whole_system, quiet=True)
+        if not needs:
+            self._say("Everything on the list is bought: it is in your hold or on your carrier, or delivered.")
+
+    def _render_whole(self, system: str = "", quiet: bool = False) -> None:
         """The "Find all" answer: a heading per commodity, with its closest few stations (and carriers, if asked) below."""
         whole = self._whole
         if whole is None or not self.alive:
@@ -441,9 +510,16 @@ class BuyWindow:
         self._source_table.mark_sorted(key, descending)
         self._source_rows.clear()
         plan = self._plan
+        include_surface = bool(self._surface_var.get())
+        surface_only = sorted(self._surface_only(), key=str.casefold)
         self._plan_table.clear()
-        self._show_plan(plan is not None and bool(plan.stops))
+        self._show_plan(bool(plan is not None and plan.stops) or bool(surface_only))
         table = self._plan_table    # the route goes in the plan block, the commodity lists in the table below it
+        if surface_only:
+            # Said on the route itself: these cannot be bought anywhere but on a planet's surface.
+            names = _clip(", ".join(surface_only), _ERROR_MAX)
+            table.insert("surfacenote", ((f"Only at surface ports: {names}" if include_surface
+                                          else f"Only at surface ports, so left out: {names}"), "", "", "", "", "", "", "", ""), tag="warn")
         if plan is not None and plan.stops:
             # The suggested shopping route: a stop is a row with what to buy there as rows beneath it.
             table.insert("route", ("Suggested route", f"{len(plan.stops)} stop{'s' if len(plan.stops) != 1 else ''}",
@@ -453,20 +529,26 @@ class BuyWindow:
                 stop_id = f"route{number}"
                 self._source_rows[stop_id] = stop.system
                 table.insert(
-                    stop_id, (f"{number}. {stop.station}", stop.system, stop.kind, "", "", f"{stop.distance_ly:,.1f} ly", "", "",
+                    stop_id, (f"{number}. {stop.station}", stop.system, stop.kind, "Yes" if stop.is_planetary else "No", "", f"{stop.distance_ly:,.1f} ly", "", "",
                               f"{stop.tons:,} t"), group=True, open=True, parent="route", tag="carrier" if stop.is_carrier else None)
                 for index, buy in enumerate(stop.buys):
-                    table.insert(f"{stop_id}b{index}", (f"{buy.commodity} x {buy.tons:,} t", "", "", "", "", "", "",
-                                 f"{buy.price:,}", f"{buy.supply:,}" if buy.supply else ""), parent=stop_id)
-        for g, (label, result) in enumerate(whole.found):
+                    table.insert(f"{stop_id}b{index}", (f"{buy.commodity} x {buy.tons:,} t"
+                                                        + (" - surface ports only" if buy.surface_only else ""), "", "", "", "", "", "",
+                                 f"{buy.price:,}", f"{buy.supply:,}" if buy.supply else ""), parent=stop_id,
+                                 tag="warn" if buy.surface_only else None)
+        for g, (label, result) in enumerate(self._found_view()):
             need = self._whole_to_get.get(label)
+            if not need:
+                continue                            # bought (or delivered) since the search: off the list
             stations = list(result.stations[:sources.WHOLE_LIST_STATIONS])
             carriers = list(result.carriers[:sources.WHOLE_LIST_CARRIERS])
             gid = f"g{g}"
             # The label in the first column and the rest in later ones: a cell is clipped to its column, so one long heading
             # in the first would lose its end.
             self._source_table.insert(
-                gid, (label, f"{need:,} t to get" if need else "", "" if stations or carriers else "no source found",
+                gid, (label, f"{need:,} t to get" if need else "",
+                      "" if stations or carriers else ("surface ports only (left out)" if label in surface_only and not include_surface
+                                                       else "no source found"),
                       "", "", "", "", "", ""), group=True, open=True)
             for prefix, group, tag in (("s", stations, None), ("c", carriers, "carrier")):
                 for index, item in enumerate(sorted(group, key=lambda s: self._source_value(s, key), reverse=descending)):
@@ -476,10 +558,16 @@ class BuyWindow:
                         iid, (item.station, item.system, item.kind, "Yes" if item.is_planetary else "No", item.pad,
                               f"{item.distance_ly:,.1f} ly", f"{item.arrival_ls:,.0f} ls" if item.arrival_ls else "",
                               f"{item.price:,}", f"{item.supply:,}"), tag=tag, parent=gid)
+        if quiet:                                   # a refresh after a purchase leaves the note alone
+            return
         around = f" around {_clip(system, _NAME_MAX)}" if system else ""
         parts = [f"Searched {len(whole.found)} commodit{'y' if len(whole.found) == 1 else 'ies'}{around}"
                  f"{' (stopped early)' if whole.stopped else ''}."]
-        missing = whole.without_sources()
+        missing = [label for label in whole.without_sources() if label not in surface_only]
+        if surface_only:
+            parts.append(("Only at surface ports: " if include_surface
+                          else "Only at surface ports, so left out of the lists and the route (tick Include surface ports): ")
+                         + _clip(", ".join(surface_only), _ERROR_MAX) + ".")
         if missing:
             parts.append(f"No source found for {_clip(', '.join(missing), _ERROR_MAX)}; try a larger radius, any pad size "
                          f"or include fleet carriers.")

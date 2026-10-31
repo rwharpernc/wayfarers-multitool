@@ -439,6 +439,7 @@ class ColonizationWindow:
         self._tile_buy.set(f"{totals.buy_trips:,}" if capacity > 0 else "–")
         self._tile_haul.set(f"{totals.haul_trips:,}" if capacity > 0 else "–")
 
+        colonization_buy_window.refresh_needs()    # a purchase in the hold or on the carrier takes it off the Where to Buy route
         rows = self._visible_rows(site, on_carrier, capacity)
         rows.sort(key=self._commodity_value, reverse=self._sort_desc)
         self._commodity_table.mark_sorted(self._sort_key, self._sort_desc)

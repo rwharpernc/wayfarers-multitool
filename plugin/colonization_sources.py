@@ -285,6 +285,7 @@ class Purchase:
     tons: int
     price: int           # cr per ton at this stop
     supply: int = 0      # tons in stock at this stop (0 when not known)
+    surface_only: bool = False   # every source found for this commodity is on a planet's surface
 
 
 @dataclass(frozen=True)
@@ -295,6 +296,7 @@ class Stop:
     is_carrier: bool
     distance_ly: float
     buys: Tuple[Purchase, ...]
+    is_planetary: bool = False    # a surface port (needs a planetary landing)
 
     @property
     def tons(self) -> int:
@@ -315,15 +317,32 @@ class RoutePlan:
         out = [f"Suggested shopping route: {len(self.stops)} stop{'s' if len(self.stops) != 1 else ''}, "
                f"{self.covered:,} of {self.needed:,} t covered"]
         for number, stop in enumerate(self.stops, 1):
-            buys = ", ".join(f"{b.commodity} {b.tons:,} t" for b in stop.buys)
-            tag = " (fleet carrier)" if stop.is_carrier else ""
+            buys = ", ".join(f"{b.commodity} {b.tons:,} t" + (" (surface ports only)" if b.surface_only else "") for b in stop.buys)
+            tag = (" (fleet carrier)" if stop.is_carrier else "") + (" (surface port)" if stop.is_planetary else "")
             out.append(f"{number}. {stop.station} ({stop.system}){tag}, {stop.distance_ly:,.1f} ly: {buys}")
         if self.uncovered:
             out.append("Not covered: " + ", ".join(f"{label} {tons:,} t" for label, tons in self.uncovered))
         return out
 
 
-def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int], max_stops: int = ROUTE_MAX_STOPS) -> RoutePlan:
+def without_surface(found: Sequence[Tuple[str, "SearchResult"]]) -> List[Tuple[str, "SearchResult"]]:
+    """The whole-list answers with the surface ports (planetary stations) taken out, for a commander who cannot or will not land on a planet."""
+    return [(label, SearchResult([s for s in result.stations if not s.is_planetary], [c for c in result.carriers if not c.is_planetary]))
+            for label, result in found]
+
+
+def surface_only_labels(found: Sequence[Tuple[str, "SearchResult"]]) -> frozenset:
+    """The commodities whose every source in `found` (with stock) is a surface port; a commodity with no source at all is not among them."""
+    out = set()
+    for label, result in found:
+        sources = [s for s in [*result.stations, *result.carriers] if s.supply > 0]
+        if sources and all(s.is_planetary for s in sources):
+            out.add(label)
+    return frozenset(out)
+
+
+def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int], max_stops: int = ROUTE_MAX_STOPS,
+               surface_only: frozenset = frozenset()) -> RoutePlan:
     """Pick the few stops that between them supply the most of what is still needed, from the per-commodity answers of a
     whole-list search. `needs` is the tons still to get for each commodity (by label).
 
@@ -360,12 +379,12 @@ def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int
         for label, (supply, price) in sorted(candidates[best].items(), key=lambda kv: kv[0].casefold()):
             take = min(supply, left.get(label, 0))
             if take > 0:
-                buys.append(Purchase(label, take, price, supply))
+                buys.append(Purchase(label, take, price, supply, label in surface_only))
                 left[label] -= take
                 if left[label] <= 0:
                     del left[label]
         source = details[best]
-        chosen.append(Stop(source.station, source.system, source.kind, source.is_carrier, source.distance_ly, tuple(buys)))
+        chosen.append(Stop(source.station, source.system, source.kind, source.is_carrier, source.distance_ly, tuple(buys), source.is_planetary))
         del candidates[best]
     chosen.sort(key=lambda stop: (stop.distance_ly, stop.station.casefold()))
     uncovered = tuple(sorted(left.items(), key=lambda kv: kv[0].casefold()))
@@ -383,10 +402,12 @@ class SearchPrefs:
     pad: str = PAD_ANY
     carriers: bool = False
     sort: str = SORT_DISTANCE
+    surface: bool = True     # include surface ports (planetary stations)
 
 
 def dump_prefs(prefs: SearchPrefs) -> str:
-    return json.dumps({"radius": prefs.radius_ly, "pad": prefs.pad, "carriers": prefs.carriers, "sort": prefs.sort})
+    return json.dumps({"radius": prefs.radius_ly, "pad": prefs.pad, "carriers": prefs.carriers, "sort": prefs.sort,
+                       "surface": prefs.surface})
 
 
 def load_prefs(raw: Any) -> SearchPrefs:
@@ -404,8 +425,10 @@ def load_prefs(raw: Any) -> SearchPrefs:
     pad = data.get("pad")
     sort = data.get("sort")
     carriers = data.get("carriers")
+    surface = data.get("surface")
     return SearchPrefs(
         radius_ly=float(radius) if radius is not None else None,
         pad=pad if pad in {key for key, _ in PAD_CHOICES} else default.pad,
         carriers=carriers if isinstance(carriers, bool) else default.carriers,
-        sort=sort if sort in (SORT_DISTANCE, SORT_PRICE) else default.sort)
+        sort=sort if sort in (SORT_DISTANCE, SORT_PRICE) else default.sort,
+        surface=surface if isinstance(surface, bool) else default.surface)

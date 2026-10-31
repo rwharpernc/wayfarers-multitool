@@ -359,6 +359,36 @@ buy._say("Searching 1 of 2: Steel…", busy=True)
 check(buy._sources_note.cget("fg") == P.STATUS, "a search in progress is shown in the status color")
 buy._say("Done.")
 check(buy._sources_note.cget("fg") == P.TEXT, "any other note goes back to the plain text color")
+# A purchase: Aluminium now in the hold, so it drops off the route and the lists without asking Spansh again; the note is left alone.
+note_before = buy._sources_note.cget("text")
+calls_before = len(whole_calls)
+window.set_cargo({"water": 50, "aluminium": 80})
+root.update()
+check(len(whole_calls) == calls_before, "following a purchase must not search again")
+check("Aluminium" not in [row.values[0] for row in buy._source_table._rows.values()]
+      and not any("Aluminium" in row.values[0] for row in buy._plan_table._rows.values() if row.group), "a bought commodity leaves the lists and the route")
+check(len(buy._plan_table) == 0 and buy._plan_frame.winfo_manager() == "", "with nothing left on the route the plan block is hidden")
+check(buy._plan is not None and not buy._plan.stops and buy._whole_to_get == {"Steel": 400}, "the needs follow the Sites window")
+window.set_cargo({"water": 50})
+root.update()
+check(buy._whole_to_get == {"Aluminium": 80, "Steel": 400} and len(buy._plan_table) == 3, "taking the cargo away again brings it back")
+# Surface ports: a commodity sold only on a planet's surface is named on the route; leaving surface ports out drops it from the lists.
+ground = S.Source("Ground Base", "Sol", "Surface Port", False, True, "Large", 6.0, 200.0, 900, 700)
+buy._whole = S.WholeListResult(found=[("Aluminium", S.SearchResult([ground], [])), ("Steel", S.SearchResult([], []))], failed=[])
+buy._whole_to_get = {"Aluminium": 80, "Steel": 400}
+buy._surface_var.set(True)
+buy._on_surface_toggle()
+check(buy._plan_table._rows["surfacenote"].values[0].startswith("Only at surface ports: Aluminium"), "the route names what only a surface port sells")
+check(any("surface ports only" in row.values[0] for row in buy._plan_table._rows.values()), "the buy line says surface ports only")
+check(buy._plan_table._rows["route1"].values[3] == "Yes", "the stop is marked as a surface port")
+check("Only at surface ports: Aluminium" in buy._sources_note.cget("text"), "the note says so too")
+buy._surface_var.set(False)
+buy._on_surface_toggle()
+check(buy._plan_table._rows["surfacenote"].values[0].startswith("Only at surface ports, so left out: Aluminium"), "with surface ports left out the route says what was left out")
+check(not any(row.group and row.values[0].startswith("1.") for row in buy._plan_table._rows.values()), "no surface port stop is on the route")
+check(buy._source_table._rows["g0"].values[2] == "surface ports only (left out)", "the commodity heading says why nothing is listed")
+buy._surface_var.set(True)
+buy._on_surface_toggle()
 BW.sources.find_whole_list = S_whole
 
 # The header: related actions sit under a heading each, as drop-down menus.

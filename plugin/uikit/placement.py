@@ -124,6 +124,7 @@ def geometry_for(parent: tk.Misc, geometry: str, size: Tuple[int, int]) -> str:
         match = _POSITION.search(geometry)
         saved = (int(match.group(1)), int(match.group(2))) if match else None
         x, y = place(size, saved, parent_rect, screens(root), _always)
-        return f"{size[0]}x{size[1]}{x:+d}{y:+d}"
+        # "+-1500" is a position left of the primary monitor; a bare "-1500" would mean 1500 px in from the screen's right edge.
+        return f"{size[0]}x{size[1]}+{x}+{y}"
     except Exception:          # noqa: BLE001
         return geometry
