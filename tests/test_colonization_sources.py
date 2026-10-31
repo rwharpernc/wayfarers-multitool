@@ -267,7 +267,7 @@ class PrefsTests(unittest.TestCase):
         self.assertEqual(src.load_prefs(None), src.SearchPrefs())
 
     def test_a_round_trip_keeps_every_choice(self):
-        prefs = src.SearchPrefs(radius_ly=100.0, pad=src.PAD_LARGE, carriers=True, sort=src.SORT_PRICE)
+        prefs = src.SearchPrefs(radius_ly=100.0, pad=src.PAD_LARGE, no_carriers=True, sort=src.SORT_PRICE)
         self.assertEqual(src.load_prefs(src.dump_prefs(prefs)), prefs)
 
     def test_no_limit_survives_a_round_trip(self):
@@ -277,7 +277,7 @@ class PrefsTests(unittest.TestCase):
     def test_junk_falls_back_to_the_defaults_field_by_field(self):
         self.assertEqual(src.load_prefs("not json"), src.SearchPrefs())
         self.assertEqual(src.load_prefs("[1, 2]"), src.SearchPrefs())
-        loaded = src.load_prefs('{"radius": 7, "pad": "huge", "carriers": "yes", "sort": "newest"}')
+        loaded = src.load_prefs('{"radius": 7, "pad": "huge", "no_carriers": "yes", "sort": "newest"}')
         self.assertEqual(loaded, src.SearchPrefs())
         self.assertEqual(src.load_prefs('{"radius": 25, "pad": "medium"}'),
                          src.SearchPrefs(radius_ly=25.0, pad=src.PAD_MEDIUM))
@@ -454,9 +454,9 @@ class SurfacePortTests(unittest.TestCase):
         self.assertEqual(calls, ["Steel"])
 
     def test_the_choice_is_remembered(self):
-        self.assertTrue(src.SearchPrefs().surface)
-        self.assertFalse(src.load_prefs(src.dump_prefs(src.SearchPrefs(surface=False))).surface)
-        self.assertTrue(src.load_prefs("{}").surface)
+        self.assertEqual((src.SearchPrefs().no_surface, src.SearchPrefs().no_carriers), (False, False))
+        self.assertTrue(src.load_prefs(src.dump_prefs(src.SearchPrefs(no_surface=True))).no_surface)
+        self.assertFalse(src.load_prefs("{}").no_surface)
 
 
 if __name__ == "__main__":

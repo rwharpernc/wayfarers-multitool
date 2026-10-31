@@ -82,7 +82,6 @@ buy = BW._window
 F.pump(root)
 buy._system_var.set(F.SYSTEM)
 buy._pad.set("Large only")
-buy._carriers_var.set(True)
 buy._on_find()
 settle(lambda: buy._find_button._enabled)
 views = [("results", lambda: None)]

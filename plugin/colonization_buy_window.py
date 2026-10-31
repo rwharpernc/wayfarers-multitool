@@ -137,8 +137,8 @@ class BuyWindow:
         self._toplevel = self._shell.window
 
         self._system_var = tk.StringVar(master=self._toplevel, value="")
-        self._carriers_var = tk.BooleanVar(master=self._toplevel, value=self._prefs.carriers)
-        self._surface_var = tk.BooleanVar(master=self._toplevel, value=self._prefs.surface)
+        self._no_carriers_var = tk.BooleanVar(master=self._toplevel, value=self._prefs.no_carriers)
+        self._no_surface_var = tk.BooleanVar(master=self._toplevel, value=self._prefs.no_surface)
         content = tk.Frame(self._shell.body, bg=P.PANE)    # the note wraps to this frame's width, which the body's side padding does not narrow
         content.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
         self._build(content)
@@ -194,8 +194,8 @@ class BuyWindow:
 
         third = tk.Frame(options, bg=P.PANE)
         third.pack(fill="x")
-        tk.Checkbutton(third, text="Include fleet carriers", variable=self._carriers_var).pack(side="left", padx=(0, P.PAD))
-        tk.Checkbutton(third, text="Include surface ports", variable=self._surface_var, command=self._on_surface_toggle).pack(side="left")
+        tk.Checkbutton(third, text="Exclude fleet carriers", variable=self._no_carriers_var).pack(side="left", padx=(0, P.PAD))
+        tk.Checkbutton(third, text="Exclude surface ports", variable=self._no_surface_var, command=self._on_surface_toggle).pack(side="left")
 
         self._sources_note = tk.Label(host, text=_HINT, fg=P.MUTED, bg=P.PANE, anchor="w", justify="left", padx=P.PAD)
         self._sources_note.pack(fill="x")
@@ -282,8 +282,8 @@ class BuyWindow:
 
     def _save_prefs(self) -> None:
         config.set(CONFIG_SEARCH, sources.dump_prefs(sources.SearchPrefs(
-            radius_ly=self._radius_ly(), pad=self._pad_choice(), carriers=bool(self._carriers_var.get()),
-            sort=self._sort_choice(), surface=bool(self._surface_var.get()))))
+            radius_ly=self._radius_ly(), pad=self._pad_choice(), no_carriers=bool(self._no_carriers_var.get()),
+            sort=self._sort_choice(), no_surface=bool(self._no_surface_var.get()))))
 
     def _say(self, text: str, busy: bool = False) -> None:
         """The note under the buttons. A search in progress is shown in the status color so it stands out; anything else in the plain text one."""
@@ -300,7 +300,7 @@ class BuyWindow:
             self._say("Enter a system to search around, or press Here.")
             return
         commodity, radius, pad = wanted, self._radius_ly(), self._pad_choice()
-        carriers, order = bool(self._carriers_var.get()), self._sort_choice()
+        carriers, order = not self._no_carriers_var.get(), self._sort_choice()
         self._save_prefs()
         self._search_id += 1
         job: Dict[str, Any] = {"id": self._search_id, "done": False, "result": None, "error": ""}
@@ -353,7 +353,7 @@ class BuyWindow:
             return
         labels = [r.label for r in rows]
         to_get = {r.label: r.to_get for r in rows}
-        radius, pad, carriers, order = self._radius_ly(), self._pad_choice(), bool(self._carriers_var.get()), self._sort_choice()
+        radius, pad, carriers, order = self._radius_ly(), self._pad_choice(), not self._no_carriers_var.get(), self._sort_choice()
         self._save_prefs()
         self._search_id += 1
         job: Dict[str, Any] = {"id": self._search_id, "done": False, "result": None, "error": "", "cancel": False,
@@ -430,7 +430,7 @@ class BuyWindow:
                           f"{item.arrival_ls:,.0f} ls" if item.arrival_ls else "", f"{item.price:,}",
                           f"{item.supply:,}"), tag=tag, parent=parent)
 
-        keep = bool(self._surface_var.get())
+        keep = not self._no_surface_var.get()
         shown_stations = [s for s in result.stations if keep or not s.is_planetary]
         shown_carriers = [c for c in result.carriers if keep or not c.is_planetary]
         hidden = len(result.stations) + len(result.carriers) - len(shown_stations) - len(shown_carriers)
@@ -442,10 +442,10 @@ class BuyWindow:
         stations, carriers = len(shown_stations), len(shown_carriers)
         if not stations and not carriers:
             if hidden:
-                self._say(f"{self._result_label} is only at surface ports ({hidden} found). Tick Include surface ports to see them.")
+                self._say(f"{self._result_label} is only at surface ports ({hidden} found). Untick Exclude surface ports to see them.")
             else:
                 self._say(f"Nothing found with {self._result_label} in stock. Try a larger radius, any landing pad size, "
-                          f"or include fleet carriers.")
+                          f"or untick Exclude fleet carriers.")
             return
         extra = f" and {carriers} fleet carrier{'s' if carriers != 1 else ''}" if carriers else ""
         around = f" around {_clip(system, _NAME_MAX)}" if system else ""
@@ -458,7 +458,7 @@ class BuyWindow:
         whole = self._whole
         if whole is None:
             return []
-        return list(whole.found) if self._surface_var.get() else sources.without_surface(whole.found)
+        return sources.without_surface(whole.found) if self._no_surface_var.get() else list(whole.found)
 
     def _surface_only(self) -> frozenset:
         """The commodities still to get whose every source found is a surface port."""
@@ -510,7 +510,7 @@ class BuyWindow:
         self._source_table.mark_sorted(key, descending)
         self._source_rows.clear()
         plan = self._plan
-        include_surface = bool(self._surface_var.get())
+        include_surface = not self._no_surface_var.get()
         surface_only = sorted(self._surface_only(), key=str.casefold)
         self._plan_table.clear()
         self._show_plan(bool(plan is not None and plan.stops) or bool(surface_only))
@@ -569,11 +569,11 @@ class BuyWindow:
         missing = [label for label in whole.without_sources() if label not in surface_only]
         if surface_only:
             parts.append(("Only at surface ports (none at an orbital port in range): " if include_surface
-                          else "Only at surface ports (none at an orbital port in range), so left out of the lists and the route; tick Include surface ports: ")
+                          else "Only at surface ports (none at an orbital port in range), so left out of the lists and the route; untick Exclude surface ports: ")
                          + _clip(", ".join(surface_only), _ERROR_MAX) + ".")
         if missing:
             parts.append(f"No source found for {_clip(', '.join(missing), _ERROR_MAX)}; try a larger radius, any pad size "
-                         f"or include fleet carriers.")
+                         f"or untick Exclude fleet carriers.")
         if whole.failed:
             parts.append(f"The search failed for {_clip(', '.join(label for label, _ in whole.failed), _ERROR_MAX)}"
                          f" - Spansh may be busy; press Find all again.")

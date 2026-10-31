@@ -235,18 +235,18 @@ buy._on_find()
 wait_for_search()
 check(len(asked) == 1 and asked[0][1] == "Steel", "the search should ask for Steel")
 check(asked[0][2]["pad"] == "any", "the pad size must default to ANY")
-check(asked[0][2]["include_carriers"] is False, "fleet carriers must be off by default")
-check(len(buy._source_table) == 2, "two stations should be listed")
-planetary = {row.values[0]: row.values[3] for row in buy._source_table._rows.values()}
-check(planetary == {"Near Port": "No", "Small Post": "Yes"},
+check(asked[0][2]["include_carriers"] is True, "fleet carriers must be included by default")
+check(len(buy._source_table) == 4, "two stations, the carrier group row and one carrier should be listed")
+planetary = {row.values[0]: row.values[3] for row in buy._source_table._rows.values() if not row.group}
+check(planetary == {"Near Port": "No", "Small Post": "Yes", "K7X-LLL": "No"},
       f"the Planetary column should say whether landing on a surface is needed, got {planetary}")
 
 buy._pad.set("Large only")
-buy._carriers_var.set(True)
+buy._no_carriers_var.set(True)
 buy._on_find()
 wait_for_search()
-check(asked[1][2]["pad"] == "large" and asked[1][2]["include_carriers"] is True, "the options should reach the search")
-check(len(buy._source_table) == 4, "two stations, the carrier group row and one carrier should be listed")
+check(asked[1][2]["pad"] == "large" and asked[1][2]["include_carriers"] is False, "the options should reach the search")
+check(len(buy._source_table) == 2, "with fleet carriers excluded only the two stations are listed")
 buy._source_table.select("s0")
 buy._on_copy_system()
 check("Copied" in buy._sources_note.cget("text"), "Copy System should confirm")
@@ -264,15 +264,15 @@ BW.sources.find = S_find
 
 # The search choices are remembered: the two searches above used "Large only" and carriers on.
 saved_prefs = S.load_prefs(saved.get(BW.CONFIG_SEARCH))
-check(saved_prefs.pad == "large" and saved_prefs.carriers is True and saved_prefs.radius_ly == 50.0,
+check(saved_prefs.pad == "large" and saved_prefs.no_carriers is True and saved_prefs.radius_ly == 50.0,
       f"the search choices should be saved when a search starts, got {saved_prefs}")
 BW.close()
 check(not buy.alive, "closing the Where to Buy window closes it")
-saved[BW.CONFIG_SEARCH] = S.dump_prefs(S.SearchPrefs(radius_ly=None, pad="medium", carriers=True, sort="price"))     # after the close, which saves the window's own choices
+saved[BW.CONFIG_SEARCH] = S.dump_prefs(S.SearchPrefs(radius_ly=None, pad="medium", no_carriers=True, sort="price"))     # after the close, which saves the window's own choices
 window._on_where_to_buy()
 reopened = BW._window
 check(reopened is not buy and reopened._radius.get() == "No limit" and reopened._pad.get() == "Medium or larger"
-      and reopened._sort.get() == "Cheapest first" and reopened._carriers_var.get() is True,
+      and reopened._sort.get() == "Cheapest first" and reopened._no_carriers_var.get() is True,
       "a new window should start from the remembered choices")
 check(reopened._system_var.get() == "Sol" and "Ready to search for Steel" in reopened._sources_note.cget("text"),
       "a new window should start with the site's system and the picked commodity")
@@ -376,18 +376,18 @@ check(buy._whole_to_get == {"Aluminium": 80, "Steel": 400} and len(buy._plan_tab
 ground = S.Source("Ground Base", "Sol", "Surface Port", False, True, "Large", 6.0, 200.0, 900, 700)
 buy._whole = S.WholeListResult(found=[("Aluminium", S.SearchResult([ground], [])), ("Steel", S.SearchResult([], []))], failed=[])
 buy._whole_to_get = {"Aluminium": 80, "Steel": 400}
-buy._surface_var.set(True)
+buy._no_surface_var.set(False)
 buy._on_surface_toggle()
 check(buy._plan_table._rows["surfacenote"].values[0] == "Only at surface ports" and buy._plan_table._rows["surfacenote0"].values[0] == "Aluminium x 80 t", "the route names what only a surface port sells, one row each")
 check(any("surface ports only" in row.values[0] for row in buy._plan_table._rows.values()), "the buy line says surface ports only")
 check(buy._plan_table._rows["route1"].values[3] == "Yes", "the stop is marked as a surface port")
 check("Only at surface ports (none at an orbital port in range): Aluminium" in buy._sources_note.cget("text"), "the note says so too")
-buy._surface_var.set(False)
+buy._no_surface_var.set(True)
 buy._on_surface_toggle()
 check(buy._plan_table._rows["surfacenote"].values[0] == "Only at surface ports, so left out of the route" and buy._plan_table._rows["surfacenote0"].values[0] == "Aluminium x 80 t", "with surface ports left out the route says what was left out")
 check(not any(row.group and row.values[0].startswith("1.") for row in buy._plan_table._rows.values()), "no surface port stop is on the route")
 check(buy._source_table._rows["g0"].values[2] == "surface ports only (left out)", "the commodity heading says why nothing is listed")
-buy._surface_var.set(True)
+buy._no_surface_var.set(False)
 buy._on_surface_toggle()
 BW.sources.find_whole_list = S_whole
 

@@ -430,14 +430,14 @@ class SearchPrefs:
     anything about their play, so they are shared by every commander like the window's size."""
     radius_ly: Optional[float] = DEFAULT_RADIUS_LY   # None = no limit
     pad: str = PAD_ANY
-    carriers: bool = False
+    no_carriers: bool = False    # leave fleet carriers out (they are included unless asked)
     sort: str = SORT_DISTANCE
-    surface: bool = True     # include surface ports (planetary stations)
+    no_surface: bool = False     # leave surface ports (planetary stations) out (they are included unless asked)
 
 
 def dump_prefs(prefs: SearchPrefs) -> str:
-    return json.dumps({"radius": prefs.radius_ly, "pad": prefs.pad, "carriers": prefs.carriers, "sort": prefs.sort,
-                       "surface": prefs.surface})
+    return json.dumps({"radius": prefs.radius_ly, "pad": prefs.pad, "no_carriers": prefs.no_carriers, "sort": prefs.sort,
+                       "no_surface": prefs.no_surface})
 
 
 def load_prefs(raw: Any) -> SearchPrefs:
@@ -454,11 +454,11 @@ def load_prefs(raw: Any) -> SearchPrefs:
         radius = default.radius_ly
     pad = data.get("pad")
     sort = data.get("sort")
-    carriers = data.get("carriers")
-    surface = data.get("surface")
+    no_carriers = data.get("no_carriers")
+    no_surface = data.get("no_surface")
     return SearchPrefs(
         radius_ly=float(radius) if radius is not None else None,
         pad=pad if pad in {key for key, _ in PAD_CHOICES} else default.pad,
-        carriers=carriers if isinstance(carriers, bool) else default.carriers,
+        no_carriers=no_carriers if isinstance(no_carriers, bool) else default.no_carriers,
         sort=sort if sort in (SORT_DISTANCE, SORT_PRICE) else default.sort,
-        surface=surface if isinstance(surface, bool) else default.surface)
+        no_surface=no_surface if isinstance(no_surface, bool) else default.no_surface)

@@ -39,7 +39,7 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | Routes and Market on the Trade page | **Enable Spansh trade lookups** ([details](#the-lookup-buttons-are-grayed-out-or-there-is-no-commodity-box)) | Settings → WFMT → Trade |
 | The **Hotspots**, **Prices** or **Reserves** buttons in Mining | **Enable Spansh nearby hotspot finder**, **Enable Spansh best price finder**, **Enable EDSM ring reserve lookup** (each separately) | Settings → WFMT → Mining |
 | ELW rarity or EDSM upload status in Exploration | The two options under Exploration Value | Settings → WFMT → Exploration → Exploration Value |
-| Fleet carriers or surface ports missing from "where to buy" results | **Include fleet carriers** and **Include surface ports** in the Where to Buy window | Where to Buy window (the **Where to Buy** button in the Colonization Sites window) |
+| Fleet carriers or surface ports missing from "where to buy" results | **Exclude fleet carriers** and **Exclude surface ports** in the Where to Buy window (both off, so everything is included, by default) | Where to Buy window (the **Where to Buy** button in the Colonization Sites window) |
 | Raven Colonial not updating | The master switch and the two options under it ([steps](#raven-colonial-doesnt-update-as-i-deliver)) | Settings → WFMT → Colonization → Raven Colonial |
 | Something else is wrong | **Report an issue**, then **Copy diagnostics** to paste the log lines into it ([how](reporting-problems.md)) | Settings → WFMT → General → Help |
 | WFMT never updates itself | **Automatically download and install updates** (see also [the update did not take](#the-update-did-not-take)) | Settings → WFMT → General → Updates |
