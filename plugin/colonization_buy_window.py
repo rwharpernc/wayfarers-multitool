@@ -54,7 +54,8 @@ _PAD_ORDER = {"Large": 0, "Medium": 1, "Small": 2, "?": 3}
 _NO_LIMIT = "No limit"
 _SORT_CHOICES = (("Closest first", sources.SORT_DISTANCE), ("Cheapest first", sources.SORT_PRICE))
 _POLL_MS = 150
-_ERROR_MAX = 90    # a failure message from outside is clipped to this
+_PLAN_ROWS = 12    # the shopping plan block is this many rows tall at most, then it scrolls
+_ERROR_MAX = 90   # a failure message from outside is clipped to this
 _NAME_MAX = 60     # a system or commodity name is clipped to this in a note
 _HINT = "Pick a commodity row in the Sites window, then Find nearest - or Find all to search everything still to buy."
 _STEPS = ("Find nearest searches the commodity picked in the Colonization Sites window: click its row there first. "
@@ -198,10 +199,30 @@ class BuyWindow:
         self._sources_note = tk.Label(host, text=_HINT, fg=P.MUTED, bg=P.PANE, anchor="w", justify="left", padx=P.PAD)
         self._sources_note.pack(fill="x")
         host.bind("<Configure>", lambda e: [label.configure(wraplength=max(e.width - 2 * P.PAD, 100)) for label in (self._sources_note, self._picked, self._steps)])
+        # The shopping plan (best single systems and the suggested route) has a block of its own above the per-commodity
+        # lists, so it is not lost among them. It is shown only after a Find all that produced one.
+        self._plan_frame = tk.Frame(host, bg=P.CARD, padx=P.PAD_SM, pady=P.PAD_SM)
+        tk.Label(self._plan_frame, text="Closest way to buy everything", fg=P.ACCENT, bg=P.CARD, anchor="w",
+                 font=style.font(P.FONT_SECTION)).pack(fill="x", padx=P.PAD_SM)
+        self._plan_table = DataTable(self._plan_frame, _SOURCE_COLUMNS, sortable=False, on_select=self._on_plan_pick,
+                                     select_groups=True, visible_rows=_PLAN_ROWS)
+        self._plan_table.tag_configure("carrier", foreground=P.INFO)
+        self._plan_table.pack(fill="x")
+        self._list_heading = tk.Label(host, text="Closest stations for each commodity", fg=P.HEADING, bg=P.PANE, anchor="w",
+                                      font=style.font(P.FONT_SECTION), padx=P.PAD, pady=P.PAD_SM)
         self._source_table = DataTable(host, _SOURCE_COLUMNS, sortable=False, on_header=self._on_source_sort,
                                        on_select=self._on_source_pick, select_groups=True, empty_text="No search yet.")
         self._source_table.tag_configure("carrier", foreground=P.INFO)
         self._source_table.pack(fill="both", expand=True)
+
+    def _show_plan(self, show: bool) -> None:
+        """Show or hide the shopping plan block (and the heading that tells the commodity lists apart from it)."""
+        if show:
+            self._plan_frame.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, P.PAD_SM), before=self._source_table)
+            self._list_heading.pack(fill="x", before=self._source_table)
+        else:
+            self._plan_frame.pack_forget()
+            self._list_heading.pack_forget()
 
     # --- state ------------------------------------------------------------
 
@@ -404,6 +425,8 @@ class BuyWindow:
         self._source_table.clear()
         self._source_table.mark_sorted(key, descending)
         self._source_rows.clear()
+        self._plan_table.clear()
+        self._show_plan(False)
 
         def add(group: List[sources.Source], prefix: str, tag: Optional[str], parent: Optional[str]) -> None:
             for index, item in enumerate(sorted(group, key=lambda s: self._source_value(s, key), reverse=descending)):
@@ -441,15 +464,18 @@ class BuyWindow:
         self._source_rows.clear()
         plan = self._plan
         found_systems = self._systems.plans if self._systems is not None else []
+        self._plan_table.clear()
+        self._show_plan(bool(found_systems) or (plan is not None and bool(plan.stops)))
+        table = self._plan_table    # the systems and the route go in the plan block, the commodity lists in the table below it
         if found_systems:
             # The best single systems first, each with its stations in the order to visit and what to buy at each; only the best is open.
-            self._source_table.insert("systems", ("Best single systems", f"{len(found_systems)} checked", "", "", "", "", "", "", ""),
+            table.insert("systems", ("Best single systems", f"{len(found_systems)} checked", "", "", "", "", "", "", ""),
                                       group=True, open=True)
             for rank, found in enumerate(found_systems, 1):
                 sid = f"sys{rank}"
                 short = sum(tons for _label, tons in found.uncovered)
                 self._source_rows[sid] = found.system
-                self._source_table.insert(
+                table.insert(
                     sid, (f"{rank}. {_clip(found.system, _NAME_MAX)}", f"{found.covered:,} of {found.needed:,} t",
                           "everything" if found.complete else f"short {short:,} t", "", "",
                           f"{found.distance_ly:,.1f} ly" if found.distance_ly else "", "", _credits(found.cost), ""),
@@ -457,28 +483,28 @@ class BuyWindow:
                 for number, stop in enumerate(found.stops, 1):
                     stop_id = f"{sid}s{number}"
                     self._source_rows[stop_id] = found.system
-                    self._source_table.insert(
+                    table.insert(
                         stop_id, (f"{number}. {stop.station}", found.system, stop.kind, "Yes" if stop.is_planetary else "No", stop.pad, "",
                                   f"{stop.arrival_ls:,.0f} ls" if stop.arrival_ls else "", "", f"{stop.tons:,} t"),
                         group=True, open=rank == 1, parent=sid)
                     for index, buy in enumerate(stop.buys):
-                        self._source_table.insert(f"{stop_id}b{index}", (f"{buy.commodity} x {buy.tons:,} t", "", "", "", "", "", "",
+                        table.insert(f"{stop_id}b{index}", (f"{buy.commodity} x {buy.tons:,} t", "", "", "", "", "", "",
                                                                          f"{buy.price:,}", ""), parent=stop_id)
                 for index, (label, tons) in enumerate(found.uncovered):
-                    self._source_table.insert(f"{sid}u{index}", (f"Short: {label} x {tons:,} t", "", "", "", "", "", "", "", ""), parent=sid)
+                    table.insert(f"{sid}u{index}", (f"Short: {label} x {tons:,} t", "", "", "", "", "", "", "", ""), parent=sid)
         if plan is not None and plan.stops:
             # The suggested shopping route: a stop is a row with what to buy there as rows beneath it.
-            self._source_table.insert("route", ("Suggested route", f"{len(plan.stops)} stop{'s' if len(plan.stops) != 1 else ''}",
+            table.insert("route", ("Suggested route", f"{len(plan.stops)} stop{'s' if len(plan.stops) != 1 else ''}",
                                                 f"{plan.covered:,} of {plan.needed:,} t", "", "", "", "", "", ""),
                                       group=True, open=True)
             for number, stop in enumerate(plan.stops, 1):
                 stop_id = f"route{number}"
                 self._source_rows[stop_id] = stop.system
-                self._source_table.insert(
+                table.insert(
                     stop_id, (f"{number}. {stop.station}", stop.system, stop.kind, "", "", f"{stop.distance_ly:,.1f} ly", "", "",
                               f"{stop.tons:,} t"), group=True, open=True, parent="route", tag="carrier" if stop.is_carrier else None)
                 for index, buy in enumerate(stop.buys):
-                    self._source_table.insert(f"{stop_id}b{index}", (f"{buy.commodity} x {buy.tons:,} t", "", "", "", "", "", "",
+                    table.insert(f"{stop_id}b{index}", (f"{buy.commodity} x {buy.tons:,} t", "", "", "", "", "", "",
                                                                      f"{buy.price:,}", ""), parent=stop_id)
         for g, (label, result) in enumerate(whole.found):
             need = self._whole_to_get.get(label)
@@ -541,11 +567,17 @@ class BuyWindow:
     def _on_source_pick(self, iid: str) -> None:
         """Clicking a result row copies its system, ready to paste into the galaxy map's search. Rows with no system (the
         commodity headings and the route's buy lines) copy nothing."""
+        self._plan_table.select(None)    # one selection across the two tables
+        if self._source_rows.get(iid):
+            self._on_copy_system()
+
+    def _on_plan_pick(self, iid: str) -> None:
+        self._source_table.select(None)
         if self._source_rows.get(iid):
             self._on_copy_system()
 
     def _on_copy_system(self) -> None:
-        selection = self._source_table.selection()
+        selection = self._plan_table.selection() or self._source_table.selection()
         system = self._source_rows.get(selection[0]) if selection else None
         if not system:
             self._say("Select a result row first.")

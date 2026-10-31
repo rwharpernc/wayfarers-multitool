@@ -338,20 +338,23 @@ for _ in range(100):
 check(len(whole_calls) == 1 and whole_calls[0][1] == ["Aluminium", "Steel"],
       f"Find all should search what is still to buy, got {whole_calls}")
 check(whole_calls[0][2]["pad"] == "large", "Find all should use the chosen options")
-headings = [row.values[0] for row in buy._source_table._rows.values() if row.group]
-check(headings == ["Best single systems", "1. Sol", "1. Near Port", "Suggested route", "1. Near Port", "Aluminium", "Steel"],
-      f"the best systems, the route, then one heading per commodity: {headings}")
+headings = [row.values[0] for row in buy._plan_table._rows.values() if row.group]
+check(headings == ["Best single systems", "1. Sol", "1. Near Port", "Suggested route", "1. Near Port"],
+      f"the best systems and the route sit in their own block: {headings}")
+check([row.values[0] for row in buy._source_table._rows.values() if row.group] == ["Aluminium", "Steel"],
+      "the commodity lists keep one heading per commodity, apart from the plan")
+check(buy._plan_frame.winfo_manager() == "pack", "the plan block is shown after a Find all that made one")
 check(system_calls == [("Sol", {"Aluminium": 80, "Steel": 400}, "large")], f"the systems check gets the needs and the pad choice: {system_calls}")
-systems_detail = {row.values[0]: row.values for row in buy._source_table._rows.values() if row.group}
+systems_detail = {row.values[0]: row.values for row in buy._plan_table._rows.values() if row.group}
 check(systems_detail["Best single systems"][1] == "1 checked", f"the systems heading counts them: {systems_detail['Best single systems']}")
 check(systems_detail["1. Sol"][1:3] == ["80 of 480 t", "short 400 t"] and systems_detail["1. Sol"][7] == "32.8K cr",
       f"a system row shows coverage, what is short and the basket's cost: {systems_detail['1. Sol']}")
-check(any(row.values[0] == "Short: Steel x 400 t" for row in buy._source_table._rows.values()), "the shortfall is listed under the system")
-detail = {row.values[0]: row.values[1:3] for row in buy._source_table._rows.values() if row.group}
+check(any(row.values[0] == "Short: Steel x 400 t" for row in buy._plan_table._rows.values()), "the shortfall is listed under the system")
+detail = {row.values[0]: row.values[1:3] for row in list(buy._plan_table._rows.values()) + list(buy._source_table._rows.values()) if row.group}
 check(detail["Aluminium"] == ["80 t to get", ""] and detail["Steel"] == ["400 t to get", "no source found"],
       f"the detail sits in later columns so the label is not clipped: {detail}")
 check(detail["Suggested route"][0] == "1 stop", f"the route heading counts its stops: {detail['Suggested route']}")
-check(len(buy._source_table) == 11, f"the systems (5 rows), the route (3 rows), two headings and one station: {len(buy._source_table)}")
+check(len(buy._plan_table) == 8 and len(buy._source_table) == 3, f"the plan block (systems 5 rows, route 3) apart from two headings and one station: {len(buy._plan_table)}, {len(buy._source_table)}")
 check(buy._plan is not None and [s.station for s in buy._plan.stops] == ["Near Port"], "a plan should be kept for Copy Route")
 check(buy._find_all_button.cget("text") == "Find all" and buy._find_button._enabled,
       "the buttons come back when the search is done")
@@ -366,7 +369,7 @@ check("Copied" in buy._sources_note.cget("text"), "Copy System works on a Find a
 buy._on_copy_route()
 check("Copied the best system and the shopping route" in buy._sources_note.cget("text"), "Copy Route should confirm")
 buy._on_source_sort("price")
-check(len(buy._source_table) == 11, "sorting a Find all result keeps it, systems and route included")
+check(len(buy._plan_table) == 8 and len(buy._source_table) == 3, "sorting a Find all result keeps it, systems and route included")
 buy._plan = None
 buy._on_copy_route()
 check("Copied the best system to the clipboard" in buy._sources_note.cget("text"), "Copy Route copies the best system alone when there is no route")
