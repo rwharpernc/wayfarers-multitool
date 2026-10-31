@@ -7,7 +7,8 @@ Read this first when picking the project up on a machine that has not seen the r
 
 ## Release
 
-- **1.3.3** is the version number in `plugin/__init__.py` and `package.json`. It was released on 2026-10-30 (tag `v1.3.3`) from the `bugfix/1.3.3` branch, which was merged into `master` and deleted.
+- **1.4.0** is the version number in `plugin/__init__.py` and `package.json`. It is prepared on 2026-10-31 and not yet tagged or published. It adds the Engineers tab's path to unlock, status colors, formatted details and requirement checks against your journal, the Engineers button, Where to Buy's shopping route and filters, copying overlay choices from another commander, a separate diagnostic log and window tooltips, and brings three engineer requirements (Wellington Beck, Kit Fowler, Hero Ferrari) in line with Frontier's update 18.08. The full list is in [CHANGELOG.md](../CHANGELOG.md). It has had the Docker tests on Linux (3,805 pass, 12 skipped) and no in-game pass yet.
+- **1.3.3** was released on 2026-10-30 (tag `v1.3.3`) from the `bugfix/1.3.3` branch, which was merged into `master` and deleted.
   - 1.3.3 adds the Powerplay overlay card (Settings → Overlays → Powerplay): your Power, rank and merits, the cycle's merits, the system's state and holder, what merits there count as, and the merits and estimated Control Points earned there this session, with **No Powerplay Detected in system** where the game gives no Powerplay data.
   - 1.3.3 also adds an opt-in look-ahead (**Look up the system I am jumping to**, which asks Spansh) that turns the card to a jump's destination, with arrivals remembered from the journal and the destination's control progress shown only while under ten minutes old, and the Powerplay merit cap research page.
   - It had the Docker tests on Linux before release; the card has had little time in the game and none on Windows (checks in [TEST_PLAN.md](TEST_PLAN.md) section 9).
@@ -23,7 +24,7 @@ Read this first when picking the project up on a machine that has not seen the r
   - The project was renamed Wayfarer's Multitool (WFMT) and its version history restarted at 1.0.0 on 2026-10-21.
   - Everything built up to 2026-10-26 is the first release, published as 1.0.0.
   - The checks to run first are in [TEST_PLAN.md](TEST_PLAN.md), and the open in-game checks are in [TODO.md](TODO.md).
-- The latest release is 1.3.3, published on 2026-10-30 (1.3.2, 1.3.1 and 1.3.0 were published on 2026-10-29, 1.2.0 was published on 2026-10-28, 1.1.0 on 2026-10-27 and 1.0.0 on 2026-10-26), and the repository is public.
+- The latest published release is 1.3.3, published on 2026-10-30 (1.4.0 is prepared; 1.3.2, 1.3.1 and 1.3.0 were published on 2026-10-29, 1.2.0 was published on 2026-10-28, 1.1.0 on 2026-10-27 and 1.0.0 on 2026-10-26), and the repository is public.
   - The in-app updater and the README's "latest release" link read GitHub's public releases API.
 
 ## Branches
