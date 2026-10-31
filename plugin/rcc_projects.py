@@ -30,6 +30,15 @@ def rows(views: Iterable[rcc_client.RccProjectView], hidden: AbstractSet[str], p
     return sorted(built, key=lambda r: (r.view.system.casefold(), r.view.name.casefold(), r.view.build_id))
 
 
+def unlisted(views: Iterable[rcc_client.RccProjectView], sites: Iterable[Tuple[int, str, str]]) -> List[Tuple[int, str, str]]:
+    """The tracked active sites (market id, name, system) that none of the commander's Raven projects is for: a project deleted on Raven leaves its
+    site active in WFMT. A project counts as being for a site by its market id, or, when Raven holds none, by the same name and system."""
+    views = list(views)
+    markets = {v.market_id for v in views if v.market_id is not None}
+    named = {(v.name.casefold(), v.system.casefold()) for v in views if v.market_id is None}
+    return [s for s in sites if s[0] not in markets and (s[1].casefold(), s[2].casefold()) not in named]
+
+
 def progress(view: rcc_client.RccProjectView) -> float:
     """How much of the build is delivered, 0 to 1 (1 for one marked complete)."""
     if view.complete:

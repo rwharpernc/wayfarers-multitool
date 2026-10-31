@@ -144,6 +144,30 @@ class Rows(unittest.TestCase):
         self.assertEqual(original, {"a"})
 
 
+class Unlisted(unittest.TestCase):
+    """Active sites that no Raven project is for (Clear Stale)."""
+
+    def setUp(self):
+        self.views = R.parse_project_views(LIVE)
+
+    def test_a_site_with_a_project_by_market_id_is_kept(self):
+        self.assertEqual(P.unlisted(self.views, [(3700000001, "Primary port", "Synuefe NI-R c21-10")]), [])
+
+    def test_a_site_with_no_project_is_listed(self):
+        gone = (3962243330, "Slusser Prospect", "Hyades Sector DB-W b2-6")
+        kept = (3700000001, "Primary port", "Synuefe NI-R c21-10")
+        self.assertEqual(P.unlisted(self.views, [gone, kept]), [gone])
+
+    def test_a_project_with_no_market_id_matches_by_name_and_system(self):
+        by_name = (123, "alpha outpost", "ALPHA")
+        self.assertEqual(P.unlisted(self.views, [by_name]), [])
+        self.assertEqual(P.unlisted(self.views, [(123, "Alpha Outpost", "Elsewhere")]), [(123, "Alpha Outpost", "Elsewhere")])
+
+    def test_no_projects_at_all_lists_every_site(self):
+        sites = [(1, "One", "A"), (2, "Two", "B")]
+        self.assertEqual(P.unlisted([], sites), sites)
+
+
 class Labels(unittest.TestCase):
     def test_the_building_is_named_with_its_layout(self):
         by_id = {v.build_id: v for v in R.parse_project_views(LIVE)}

@@ -18,7 +18,7 @@ import os
 import threading
 import tkinter as tk
 import webbrowser
-from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set
+from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set, Tuple
 
 from config import appname, config
 
@@ -51,21 +51,26 @@ _HELP = (
     ("Count", "A project is counted unless it is on your hidden list on Raven Colonial. Double-click a row to change it, then Save Counted List "
               "to keep the change there. Other tools that read the list, such as SrvSurvey, see the same one."),
     ("Note", "Primary is your primary project on Raven Colonial. Here marks a site WFMT also tracks from your journal."),
+    ("Clear Stale", "A project you delete on Raven Colonial leaves its site active in WFMT, and the Colony panel keeps naming it as the current project. "
+                    "Clear Stale lists the active sites with no project here and, once you agree, stops tracking them. Nothing changes on Raven Colonial."),
     ("Writing", "Saving the list and setting your primary project need your Raven Colonial key and the master switch in Settings → Colonization."),
 )
 
 _window: Optional["ProjectsWindow"] = None
 
 
-def show(parent: tk.Misc, cmdr: Callable[[], str], tracked: Callable[[], FrozenSet[int]], capacity: Callable[[], int]) -> None:
+def show(parent: tk.Misc, cmdr: Callable[[], str], tracked: Callable[[], FrozenSet[int]], capacity: Callable[[], int],
+         active_sites: Optional[Callable[[], List[Tuple[int, str, str]]]] = None,
+         forget: Optional[Callable[[List[int]], None]] = None) -> None:
     """Open the window, or refresh and raise it if it is open. `cmdr` gives the commander now, `tracked` the market ids of the sites
-    WFMT tracks for them, and `capacity` the ship's cargo capacity (0 when unknown)."""
+    WFMT tracks for them, and `capacity` the ship's cargo capacity (0 when unknown). `active_sites` gives their active sites as (market id,
+    name, system) and `forget` stops tracking the sites with the given market ids (for Clear Stale)."""
     global _window
     if _window is not None and _window.alive:
         _window.refresh()
         _window.lift()
         return
-    _window = ProjectsWindow(parent, cmdr, tracked, capacity)
+    _window = ProjectsWindow(parent, cmdr, tracked, capacity, active_sites, forget)
 
 
 def refresh_cmdr() -> None:
@@ -84,10 +89,14 @@ def _clip(text: str, limit: int) -> str:
 
 
 class ProjectsWindow:
-    def __init__(self, parent: tk.Misc, cmdr: Callable[[], str], tracked: Callable[[], FrozenSet[int]], capacity: Callable[[], int]) -> None:
+    def __init__(self, parent: tk.Misc, cmdr: Callable[[], str], tracked: Callable[[], FrozenSet[int]], capacity: Callable[[], int],
+                 active_sites: Optional[Callable[[], List[Tuple[int, str, str]]]] = None,
+                 forget: Optional[Callable[[List[int]], None]] = None) -> None:
         self._cmdr = cmdr
         self._tracked = tracked
         self._capacity = capacity
+        self._active_sites = active_sites
+        self._forget = forget
         self._request_id = 0
         self._views: List[rcc_client.RccProjectView] = []
         self._hidden: Set[str] = set()
@@ -104,6 +113,8 @@ class ProjectsWindow:
                                 tip="Refresh - ask Raven Colonial again for your projects")
         self._shell.add_action("Count / Don't Count", self._on_toggle,
                                 tip="Count / Don't Count - include or leave out the selected project in the shopping list")
+        self._shell.add_action("Clear Stale", self._on_clear_stale,
+                                tip="Clear Stale - stop tracking active sites that none of your Raven Colonial projects is for (asks first)")
         self._shell.add_menu("More", [
             ("Copy Shopping List", self._on_copy),
             None,
@@ -243,6 +254,29 @@ class ProjectsWindow:
             return
         webbrowser.open(rcc_client.build_page_url(row.view.build_id))
         self._shell.set_status(f"Opened {row.view.name or 'the project'} on Raven Colonial in your browser.")
+
+    def _on_clear_stale(self) -> None:
+        """Stop tracking the active sites Raven has no project for (for example after deleting the project there). Only WFMT's own record of
+        them is removed, and only after the commander has seen their names; nothing is sent to Raven Colonial."""
+        if self._active_sites is None or self._forget is None:
+            return
+        if not self._loaded_for or self._loaded_for != (self._cmdr() or "").strip():
+            self._shell.set_status("Refresh first, so WFMT knows what is on Raven Colonial.")
+            return
+        stale = projects.unlisted(self._views, self._active_sites())
+        if not stale:
+            self._shell.set_status("Every active site you track has a project on Raven Colonial. Nothing to clear.")
+            return
+        names = "\n".join(f"  {_clip(name or 'Unnamed site', _NAME_MAX)} ({_clip(system, _NAME_MAX)})" if system else f"  {_clip(name, _NAME_MAX)}"
+                          for _market, name, system in stale[:12]) + (f"\n  and {len(stale) - 12} more" if len(stale) > 12 else "")
+        if not dialogs.confirm(
+                self._shell.window, "Clear stale sites",
+                f"Raven Colonial has no project for these {len(stale)} active site{'s' if len(stale) != 1 else ''}:\n\n{names}\n\n"
+                "Stop tracking them in WFMT? Docking at one again tracks it afresh. Nothing is changed on Raven Colonial."):
+            return
+        self._forget([market for market, _name, _system in stale])
+        self._render()
+        self._shell.set_status(f"Stopped tracking {len(stale)} site{'s' if len(stale) != 1 else ''}.")
 
     # --- the two writes --------------------------------------------------------------------------------
 

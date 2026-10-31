@@ -729,7 +729,14 @@ class ColonizationController:
             colonization_projects_window.show(
                 self._parent, lambda: self._cmdr or "",
                 lambda: frozenset(s.market_id for s in self._repository.for_cmdr(self._cmdr)) if self._cmdr else frozenset(),
-                lambda: self._capacity)
+                lambda: self._capacity,
+                lambda: [(s.market_id, s.display_name(), s.system) for s in self._repository.for_cmdr(self._cmdr) if s.active] if self._cmdr else [],
+                self._forget_sites)
+
+    def _forget_sites(self, market_ids: list) -> None:
+        """Stop tracking these sites for the commander (the Projects window's Clear Stale)."""
+        for market_id in market_ids:
+            self._repository.remove(self._cmdr or "", market_id)
 
     def _on_history_clicked(self) -> None:
         if self._parent is not None:
