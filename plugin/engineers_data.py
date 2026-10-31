@@ -8,6 +8,9 @@ Corrected 2026-10-14: Yarden Bond's meeting requirement reads 5 Smear campaign p
 sources say 5). The blueprint table's "Unlock" row for him, which is from the blueprint data, still asks for 8 to be handed over; the two are different
 steps and the sources do not agree on that one.
 
+Corrected 2026-10-31 from Frontier's update 18.08 notes (August 2024): Wellington Beck's meeting requirement reads a total of 15 (the imported table has 25),
+Kit Fowler's reads 5 Opinion polls (10) and Hero Ferrari's unlock reads 5 Settlement Defence Plans (15).
+
 The Colonia on-foot engineers (Baltanos, Eleanor Bresa, Rosa Dayette, Yi Shen) are in this table, so their places and unlock steps are
 confirmed by a second source, and which suit and weapon upgrades each offers is in `blueprints_data.py` (from a community engineer list).
 """
@@ -31,10 +34,10 @@ ENGINEER_ROWS: Tuple[tuple, ...] = (
     ('Etienne Dorn', 'Los', "Kraken's Retreat", (-9509.34375, -886.3125, 19820.125), 'A 2 B', 'From Liz Ryder (grade 3-4).', 'Gain trade rank Dealer or higher.', 'Provide 25 units of Occupied Escape Pods.', 'Craft modules for a major increase.', False, False),
     ('Felicity Farseer', 'Deciat', 'Farseer Inc', (122.625, -0.8125, -47.28125), '6 A', 'Public data sources.', 'Gain exploration rank Scout or higher.', 'Provide 1 unit of Meta Alloys.', 'Craft modules for a major increase. Sell exploration data at Farseer Inc.', False, False),
     ('Hera Tani', 'Kuwemaki', "The Jet's Hole", (134.65625, -226.90625, -7.8125), 'A 3 A', 'From Liz Ryder (grade 3-4).', 'Gain rank Outsider or higher with the Empire.', 'Provide 50 units of Kamitra Cigars.', "Craft modules for a major increase. Sell commodities to The Jet's Hole.", False, False),
-    ('Hero Ferrari', 'Siris', 'Nevermore Terrace', (131.0625, -73.59375, -11.25), '5 C', 'Common knowledge.', 'Complete 10 surface conflict zones.', 'Provide 15 Settlement Defence Plans.', '', False, True),
+    ('Hero Ferrari', 'Siris', 'Nevermore Terrace', (131.0625, -73.59375, -11.25), '5 C', 'Common knowledge.', 'Complete 10 surface conflict zones.', 'Provide 5 Settlement Defence Plans.', '', False, True),
     ('Jude Navarro', 'Aurai', "Marshall's Drift", (0.9375, -47.8125, 46.28125), '1 A', 'Common knowledge.', 'Complete 10 Restore or Reactivation missions.', 'Provide 5 units of Genetic Repair Meds.', '', False, True),
     ('Juri Ishmaak', 'Giryak', "Pater's Memorial", (14.6875, 27.65625, 108.65625), '2 A', 'From Felicity Farseer (grade 3-4).', 'Earn more than 50 combat bonds.', 'Provide 100,000 or 1,000,000 credits worth of combat bonds.', "Craft modules for a major increase. Hand in bounty vouchers or combat bonds to Pater's Memorial.", False, False),
-    ('Kit Fowler', 'Capoya', 'The Last Call', (-60.65625, 82.4375, -45.0625), '2', 'From Domino Green', 'Sell 10 Opinion polls to bartenders.', 'Provide 5 units of Surveillance equipment.', '', False, True),
+    ('Kit Fowler', 'Capoya', 'The Last Call', (-60.65625, 82.4375, -45.0625), '2', 'From Domino Green', 'Sell 5 Opinion polls to bartenders.', 'Provide 5 units of Surveillance equipment.', '', False, True),
     ('Lei Cheung', 'Laksak', "Trader's Rest", (-21.53125, -6.3125, 116.03125), 'A 1', 'From The Dweller (grade 3-4).', 'You have traded in over 50 markets.', 'Provide 200 units of Gold.', "Craft modules for a major increase. Sell commodities to Trader's Rest.", False, False),
     ('Liz Ryder', 'Eurybia', 'Demolition Unlimited', (51.40625, -54.40625, -30.5), 'Makalu', 'Public sources.', 'Gain Cordial or Friendly status with Eurybia Blue Mafia.', 'Provide 200 units of Landmines.', 'Craft modules for a major increase. Sell commodities to Demolition Unlimited.', False, False),
     ('Lori Jameson', 'Shinrarta Dezhra', 'Jameson Base', (55.71875, 17.59375, 27.15625), 'A 1', 'From Marco Qwent (grade 3-4).', 'Gain combat rank Dangerous or higher.', 'Provide 25 units of Kongga Ale.', 'Craft modules for a major increase. Sell exploration data to Jameson Base.', True, False),
@@ -53,7 +56,7 @@ ENGINEER_ROWS: Tuple[tuple, ...] = (
     ('Tiana Fortune', 'Achenar', "Fortune's Loss", (67.5, -119.46875, 24.84375), '4 A', 'From Hera Tani (grade 3-4).', 'Friendly with the Empire.', 'Provide 50 units of Decoded Emission Data.', "Craft modules for a major increase. Sell commodities to Fortune's Loss.", True, False),
     ("Tod 'The Blaster' McQuinn", 'Wolf 397', 'Trophy Camp', (40.0, 79.21875, -10.40625), 'Trus Madi', 'Common knowledge.', 'Earn more than 15 bounty vouchers.', 'Provide 100,000 credits worth of bounty vouchers.', 'Craft modules for a major increase. Hand in Alliance bounty vouchers to Trophy Camp.', False, False),
     ('Uma Laszlo', 'Xuane', "Laszlo's Resolve", (93.875, -9.25, -32.53125), 'A 3', 'From Wellington Beck', 'Reach Unfriendly reputation or lower with Sirius Corporation.', '', '', False, True),
-    ('Wellington Beck', 'Jolapa', 'Beck Facility', (100.1875, -41.34375, -78.0), '6 A', 'From Hero Ferrari', 'Sell a total of 25 Multimedia Entertainment, Classic Entertainment and Cat media to bartenders.', 'Provide 5 units of Insight Entertainment suites.', '', False, True),
+    ('Wellington Beck', 'Jolapa', 'Beck Facility', (100.1875, -41.34375, -78.0), '6 A', 'From Hero Ferrari', 'Sell a total of 15 Multimedia Entertainment, Classic Entertainment and Cat media to bartenders.', 'Provide 5 units of Insight Entertainment suites.', '', False, True),
     ('Yarden Bond', 'Bayan', 'Salamander Bank', (-19.96875, 117.625, -90.46875), '7 B', 'From Kit Fowler', 'Sell 5 Smear campaign plans to bartenders.', '', '', False, True),
     ('Yi Shen', 'Einheriar', 'Eidolon Hold', (-9557.8125, -880.1875, 19801.5625), '1 A', 'From Baltanos, Eleanor Bresa and Rosa Dayette', 'Complete referral tasks for Baltanos, Eleanor Bresa and Rosa Dayette.', '', '', False, True),
     ('Zacariah Nemo', 'Yoru', 'Nemo Cyber Party Base', (97.875, -86.90625, 64.125), '4', 'From Elvira Martuuk (grade 3-4).', 'Gain invitation from Party of Yoru.', 'Provide 25 units of Xihe Companions.', 'Craft modules for a major increase. Sell commodities to Nemo Cyber Party Base.', False, False),
