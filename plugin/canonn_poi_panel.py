@@ -97,6 +97,8 @@ class CanonnPoiController:
         # supersede an in-flight one.
         self._generation = 0
         self._result_queue: "queue.Queue[Tuple[int, Optional[canonn_poi_data.CanonnPoi], Optional[float], Optional[str], bool]]" = queue.Queue()
+        # Answers to find_thargoid, each with the callback to give it to (same polling as above).
+        self._thargoid_answers: "queue.Queue[Tuple[Callable[[str, Optional[str]], None], str, Optional[str]]]" = queue.Queue()
 
     # --- journal dispatch -----------------------------------------------
 
@@ -145,6 +147,32 @@ class CanonnPoiController:
         ).start()
         return True
 
+    def find_thargoid(self, done: Callable[[str, Optional[str]], None]) -> bool:
+        """Find the nearest Thargoid site for another window (the Engineers tab) and give it `done(sentence, system)` on the Tk thread; `system` is None
+        when nothing was found or the lookup failed. It does not touch the POI Reference result line and ignores the Codex Completionist skip, so the answer is
+        the nearest Thargoid site, never a Guardian one. False when it could not start (no position yet, or the panel is not built)."""
+        if self._star_pos is None or self._parent is None:
+            return False
+        x, y, z = self._star_pos
+
+        def work() -> None:
+            try:
+                if not self._thargoid_sites:
+                    self._thargoid_sites = canonn_poi_data.fetch_thargoid_sites()
+                found = canonn_poi_data.find_nearest(self._thargoid_sites, x, y, z)
+                if found is None:
+                    self._thargoid_answers.put((done, "Canonn's list has no Thargoid sites to measure from.", None))
+                    return
+                poi, distance = found
+                text = f"The nearest Thargoid site is in {poi.system}, {distance:,.0f} ly from you" + (f". Canonn says: {poi.instructions}" if poi.instructions else ".")
+                self._thargoid_answers.put((done, text, poi.system))
+            except Exception:
+                logger.exception("canonn_poi_panel Thargoid lookup failed for (%s, %s, %s)", x, y, z)
+                self._thargoid_answers.put((done, "The Thargoid site lookup failed. Check your internet connection and try again.", None))
+
+        threading.Thread(target=work, daemon=True, name="WFMT-canonn-thargoid").start()
+        return True
+
     def _worker(self, generation: int, x: float, y: float, z: float, force_refresh: bool) -> None:
         """Runs off the main thread — must not touch any Tk widget directly."""
         poi: Optional[canonn_poi_data.CanonnPoi] = None
@@ -184,6 +212,12 @@ class CanonnPoiController:
 
     def _poll_queue(self) -> None:
         """Runs on the main thread via after() — safe to touch widgets here."""
+        try:
+            done, sentence, system = self._thargoid_answers.get_nowait()
+        except queue.Empty:
+            pass
+        else:
+            done(sentence, system)
         try:
             generation, poi, distance, error, all_logged = self._result_queue.get_nowait()
         except queue.Empty:

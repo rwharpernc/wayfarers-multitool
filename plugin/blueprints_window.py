@@ -112,6 +112,9 @@ class Tools:
     where_to_buy: Optional[Callable[[Sequence[Tuple[str, int]]], None]] = None
     open_trader: Optional[Callable[[], None]] = None
     find_site: Optional[Callable[[], str]] = None         # starts the lookup and returns a line for the status bar
+RANK_TEXT = ("Crafting modules with them raises your standing. Some engineers also take other activities, such as selling exploration data or commodities "
+             "at their base.")
+RANK_UNCONFIRMED = "Community-reported and not yet checked for this engineer. The in-game Engineers panel shows what theirs asks for."
 VERIFY_TEXT = ("WFMT cannot check this invitation requirement against your journal (it is a faction's standing, a kind of mission, a data sale or similar), "
                "so confirm it in the game. If you can tell us what the game shows for this engineer, press Report engineer data below.")
 
@@ -635,7 +638,11 @@ class BlueprintsWindow:
         self._render_items(note, name, info, unlocked)
         if info.standing:
             note.heading("Raising your rank with them")
-            note.paragraph(info.standing)
+            if engineers.name_key(name) in engineers.STANDING_CONFIRMED:
+                note.paragraph(info.standing)
+            else:
+                note.paragraph(RANK_TEXT)
+                note.paragraph(RANK_UNCONFIRMED, "warn")
 
         notes = []
         if info.on_foot:

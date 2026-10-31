@@ -15,7 +15,7 @@ Work through an engineer at a time. Write plain notes as you go; wording can be 
 **A. What the game says about the invitation and the unlock.**
 1. Open the in-game **Engineers** panel (Commander screen, Engineers) and select the engineer.
 2. Copy, word for word, what it says an invitation needs, and what it says unlocking needs. Note your standing with them (Unknown, Known, Invited, Unlocked and the rank).
-3. Note whether the wording matches the Engineers tab's **Path to unlock** and **Raising your rank with them**. Anything that differs or is missing is what to report.
+3. Note whether the wording matches the Engineers tab's **Path to unlock** and **Raising your rank with them** (which stays a general line until an engineer's own text is confirmed). Anything that differs or is missing is what to report.
 4. If the requirement is one WFMT checks (a rank or a lifetime figure), compare the **you have ...** note with the figure the game shows (Commander screen, Statistics).
 
 **B. How to get an item that cannot be bought.** For each such item:

@@ -264,9 +264,16 @@ class MaterialsController:
         if not canonn_poi_panel.thargoid_enabled():
             return ("Could not look up a Thargoid site: Thargoid sites are switched off. Turn on Include Thargoid sites in Settings, "
                     "Exploration, POI Reference.")
-        if controller.start_lookup():
-            return "Looking up the nearest Thargoid site. The answer is in Exploration, POI Reference."
-        return "Could not look up a Thargoid site. Try again from Exploration, POI Reference."
+        if controller.find_thargoid(self._thargoid_found):
+            return "Looking up the nearest Thargoid site..."
+        return "Could not look up a Thargoid site just now. Try again in a moment."
+
+    def _thargoid_found(self, sentence: str, system: Optional[str]) -> None:
+        """The nearest Thargoid site is known: say so in the Engineers window's status line, and copy its system for the galaxy map."""
+        copied = bool(system and self._parent is not None and panelkit.copy_to_clipboard(self._parent, system))
+        window = blueprints_window._window
+        if window is not None and window.alive:
+            window._shell.set_status(sentence + (" The system name is copied: paste it into the galaxy map." if copied else ""), ok=bool(system))
 
 controller = MaterialsController()
 

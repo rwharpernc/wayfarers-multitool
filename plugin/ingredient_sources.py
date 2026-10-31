@@ -7,7 +7,7 @@ engineer can say how to get each item and offer the finder WFMT already has for 
 
 - `BUY`: the Source commodities lookup (nearest stations that have it in stock, Spansh, only when asked).
 - `TRADE`: the Material trader finder.
-- `SITE`: the Canonn lookup of the nearest Thargoid site (the result is in Exploration, POI Reference).
+- `SITE`: the Canonn lookup of the nearest Thargoid site (the answer is shown in the Engineers window's status line).
 - `MINE`, `SETTLEMENT`, `SCAN` and `SPECIAL`: no finder; the hint says where it comes from.
 
 The wording is the data's own (`Ingredient.found`); nothing here is looked up or sent."""

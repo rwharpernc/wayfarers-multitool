@@ -42,6 +42,10 @@ MAX_NAME = 80
 _NICKNAME = re.compile(r"""\s*(['"“”‘’]).*?\1\s*""")
 
 
+STANDING_CONFIRMED: frozenset = frozenset()
+"""Name keys of the engineers whose "how to raise your rank" text has been confirmed in the game. The table's sentence (Craft modules for a major increase, Sell ... to <base>) is a community report that has not been checked, so the details show a general line instead for all but those listed here."""
+
+
 def name_key(name: Any) -> str:
     """A name reduced for matching: any nickname in quotes dropped, case folded, spaces collapsed."""
     text = _NICKNAME.sub(" ", str(name or ""))

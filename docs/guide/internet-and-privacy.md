@@ -96,7 +96,7 @@ Everything else makes **no internet connection at all**:
 
 - Powerplay tracking, Missions tracking, Inventory and Screenshots. The exceptions are the Powerplay Sessions window's Post to Discord button and the Missions **Find sources** button, both listed above.
 - Copy diagnostics (clipboard only).
-- **Find where to buy** on an engineer's items opens the same Spansh lookup as Source commodities (it needs the Trade online-lookups tick and a press of **Find sources**), and **Look up the nearest Thargoid site** starts the Canonn lookup of POI Reference; both are covered by those pages' entries above.
+- **Find where to buy** on an engineer's items opens the same Spansh lookup as Source commodities (it needs the Trade online-lookups tick and a press of **Find sources**), and **Look up the nearest Thargoid site** downloads Canonn's list of Thargoid sites the first time it is used (the same Google-hosted list as POI Reference: Canonn, in the table above). Neither sends anything but what those entries above describe.
 - The separate diagnostic log (a file on your computer in EDMC's `logs/WFMT` folder, off by default; nothing is sent anywhere, and your commander name, home folder and webhook links are hidden in it).
 - The Missions overlay card and window (with pinned missions).
 - The Ship planner. It reads a loadout or an import link you paste, and your own journal for the ship you fly. Its **Open in Coriolis** and **Open in EDSY** buttons only open your browser at that site when you press them, with the loadout in the address.

@@ -324,6 +324,7 @@ for action_name, shown in note.actions().items():
     if shown == "Look up the nearest Thargoid site":
         note.run_action(action_name)
 check(calls == [("site",)] and "Looking." in bwin._shell._status.cget("text"), f"the action runs the finder and says what it started: {calls}")
+check("Raising your rank with them" in note.text() and blueprints_window.RANK_TEXT in note.text() and "Craft modules" not in note.text() and "Cinder Dock. " not in note.text(), "the general rank line is shown instead of the table's unchecked sentence")
 check("How to get it" in note.text() and "HIP 17403" in note.text() and "not yet confirmed in the game" in note.text(), f"Chloe has the Sensor Fragment guide, marked unconfirmed: {note.text()[-900:]!r}")
 bwin._engineer_table.select("Liz Ryder", notify=True)
 pump()
@@ -342,6 +343,28 @@ try:
     check("Include Thargoid sites" in said and "Settings, Exploration, POI Reference" in said, f"sites off: names the switch and where it is: {said!r}")
 finally:
     poi.controller._star_pos, poi.thargoid_enabled = saved_pos, saved_enabled
+
+# The Thargoid finder answers with a Thargoid site only (a nearer Guardian site is ignored) and hands the sentence to the caller.
+import time as _time
+data = poi.canonn_poi_data
+saved_fetch, saved_sites, saved_parent = data.fetch_thargoid_sites, poi.controller._thargoid_sites, poi.controller._parent
+answers = []
+try:
+    poi.controller._star_pos, poi.controller._parent, poi.controller._thargoid_sites = (0.0, 0.0, 0.0), root, None
+    data.fetch_thargoid_sites = lambda: [data.CanonnPoi("Thargoid", "Far Thargoid", 100.0, 0.0, 0.0, "Land by the spire", None),
+                                         data.CanonnPoi("Thargoid", "Near Thargoid", 10.0, 0.0, 0.0, "", None)]
+    check(poi.controller.find_thargoid(lambda sentence, system: answers.append((sentence, system))), "the finder starts with a position and a built panel")
+    for _ in range(100):
+        poi.controller._poll_queue()
+        if answers:
+            break
+        _time.sleep(0.05)
+    check(answers and answers[0][1] == "Near Thargoid" and "10 ly" in answers[0][0], f"the nearest Thargoid site is named with its distance: {answers}")
+    poi.controller._star_pos = None
+    check(not poi.controller.find_thargoid(lambda *a: None), "no position, no lookup")
+finally:
+    data.fetch_thargoid_sites = saved_fetch
+    poi.controller._thargoid_sites, poi.controller._parent, poi.controller._star_pos = saved_sites, saved_parent, saved_pos
 bwin._engineer_table.select("Liz Ryder", notify=True)
 pump()
 buy_actions = [name for name, shown in note.actions().items() if shown == "Find where to buy"]
