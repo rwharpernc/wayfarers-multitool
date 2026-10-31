@@ -836,8 +836,9 @@ Written on Windows against a 3840 x 2160 screen in EDMCModernOverlay's fill mode
 - [ ] The button row has a **Colony** button (eight buttons); the panel is not noticeably wider than the other modes'.
 - [ ] Colony shows **Current project** for your newest active site and a **History** block; Dashboard opens the sites window, and
       Overlay toggles the overlay card (lit while on).
-- [ ] Without a fleet carrier there is no Carrier row, Trips left reads like "3 loads of 400 t", and the sites window has a single
-      Trips column (Covered and Trips left go once the site has nothing left to deliver). With one, Carrier is shown and Trips left reads "N to buy · N to haul".
+- [ ] Without a fleet carrier there is no On your carrier row, Trips left reads like "3 loads of 400 t", and the sites window has a single
+      Trips column (Commodities and Trips left go once the site has nothing left to deliver). With one, On your carrier is shown and Trips left reads "N to buy · N to haul".
+- [ ] The Colony page is in sections: the project (Delivered, Still needed), **What you have** and **To finish the build**; there is no Next line. With no site under construction it lists the last 5 completed sites, newest first, as "Name (System) - date".
 - [ ] After delivering cargo to a depot, "You delivered" and "Recently" go up by the same tons, and again after restarting EDMC
       (no double counting).
 - [ ] After a build completes, History's "done" count goes up.

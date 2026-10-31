@@ -105,6 +105,10 @@ def overlay_rows() -> int:
 
 
 _NO_CMDR_TEXT = "Waiting for commander login"
+_RECENT = 5    # finished sites listed when none is under construction
+_PAGE_ROWS = ("delivered", "needed", "hold", "carrier", "to_get", "coverage", "trips", "gaps", "more")   # the project rows below its name
+_DONE_ROWS = tuple(f"done{i}" for i in range(_RECENT))                                                  # the finished sites
+_PAGE_SECTIONS = {"have": ("hold", "carrier", "to_get"), "finish": ("coverage", "trips", "gaps"), "recent": _DONE_ROWS}   # heading -> the rows it heads
 _NAME_MAX = 64   # a safety bound on a site or system name; the labels wrap anything long, so nothing is cut short of this
 _BAR_WIDTH, _BAR_HEIGHT = 220, 10   # fixed, so the progress bar can never widen EDMC's main window
 _BAR_FILL, _BAR_DONE = "#ff8c0d", "#2e7d32"
@@ -144,6 +148,8 @@ class ColonizationController:
         self._offer_frame: Optional[tk.Frame] = None
 
         self._vars: Dict[str, tk.StringVar] = {}      # the page's value cells, by name
+        self._shown: Dict[str, bool] = {}             # name -> whether its row is drawn now
+        self._headings: Dict[str, tk.Label] = {}      # the section headings, by key (see _PAGE_SECTIONS)
         self._rows: Dict[str, tuple] = {}             # name -> (caption label, value label), to hide a row that does not apply
         self._bar: Optional[tk.Canvas] = None
         self._parent: Optional[tk.Frame] = None
@@ -507,9 +513,18 @@ class ColonizationController:
         if var is None:
             return
         var.set(text)
+        self._shown[name] = show
         caption, value = self._rows[name]
         (caption.grid if show else caption.grid_remove)()
         (value.grid if show else value.grid_remove)()
+
+    def _show_headings(self) -> None:
+        """A section heading is drawn only while one of its rows is."""
+        for key, names in _PAGE_SECTIONS.items():
+            label = self._headings.get(key)
+            if label is None:
+                continue
+            (label.grid if any(self._shown.get(name) for name in names) else label.grid_remove)()
 
     def _draw_bar(self, fraction: float, done: bool) -> None:
         if self._bar is None:
@@ -529,18 +544,23 @@ class ColonizationController:
         if not self._cmdr:
             self._set("project", _NO_CMDR_TEXT)
             self._draw_bar(0, False)
-            for name in ("delivered", "needed", "coverage", "hold", "carrier", "to_get", "trips", "gaps", "next", "more"):
+            for name in _PAGE_ROWS + _DONE_ROWS:
                 self._set(name, "", show=False)
+            self._show_headings()
             self._refresh_history_window()
             return
         sites = self._repository.for_cmdr(self._cmdr)
         active = [s for s in sites if s.active]
         has_carrier = self._carrier_cargo.has_carrier(self._cmdr)
         if not active:
+            finished = stats.recent_completed(sites, _RECENT)
             self._set("project", "No active construction site. Dock at one to register it.")
             self._draw_bar(0, False)
-            for name in ("delivered", "needed", "coverage", "hold", "carrier", "to_get", "trips", "gaps", "next", "more"):
+            for name in _PAGE_ROWS:
                 self._set(name, "", show=False)
+            for index, name in enumerate(_DONE_ROWS):
+                self._set(name, _clip(stats.completed_line(finished[index]), 80) if index < len(finished) else "", show=index < len(finished))
+            self._show_headings()
         else:
             current = active[0]
             p = stats.project_for(current, self._cargo, self._carrier_cargo.tons(self._cmdr), has_carrier, self._capacity,
@@ -549,15 +569,17 @@ class ColonizationController:
             self._set("project", where)
             self._draw_bar(p.progress, p.complete)
             self._set("delivered", stats.delivered_text(p))
-            self._set("needed", f"{p.remaining:,} t")
-            # Nothing left to deliver: the Covered and Trips left lines would only repeat that, so Next carries it.
-            self._set("coverage", stats.coverage_text(p), show=p.remaining > 0)
-            self._set("hold", f"{p.in_hold:,} t in your ship")
-            self._set("carrier", f"{p.on_carrier:,} t moved onto your carrier", show=p.has_carrier)
+            for name in _DONE_ROWS:
+                self._set(name, "", show=False)
+            self._set("needed", stats.needed_text(p))
+            self._set("hold", f"{p.in_hold:,} t")
+            self._set("carrier", f"{p.on_carrier:,} t", show=p.has_carrier)
             self._set("to_get", f"{p.to_get:,} t")
+            # Nothing left to deliver: the coverage and trips lines would only repeat that, so they go.
+            self._set("coverage", stats.coverage_text(p), show=p.remaining > 0)
             self._set("trips", stats.trips_text(p), show=p.remaining > 0)
             self._set("gaps", ", ".join(f"{_clip(label, 40)} {tons:,}" for label, tons in p.gaps) or "None", show=bool(p.gaps))
-            self._set("next", stats.next_step(p))
+            self._show_headings()
             self._set("more", f"+{p.more_active} more active {'site' if p.more_active == 1 else 'sites'}", show=p.more_active > 0)
         self._refresh_history_window()
 
@@ -586,9 +608,12 @@ class ColonizationController:
         self._offer_frame.grid_remove()
         row += 1
 
-        def heading(text: str, top: int = 0) -> None:
+        def heading(text: str, top: int = 0, key: str = "") -> None:
             nonlocal row
-            tk.Label(parent, text=text, font=fonts["bold"]).grid(row=row, column=0, columnspan=3, sticky=tk.W, pady=(top, 0))
+            label = tk.Label(parent, text=text, font=fonts["bold"])
+            label.grid(row=row, column=0, columnspan=3, sticky=tk.W, pady=(top, 0))
+            if key:
+                self._headings[key] = label
             row += 1
 
         def line(name: str, caption: str, wide: bool = False) -> None:
@@ -618,14 +643,22 @@ class ColonizationController:
         row += 1
         line("delivered", "Delivered")
         line("needed", "Still needed")
-        line("coverage", "Covered")
-        line("hold", "On hand")
-        line("carrier", "Carrier")
+        heading("What you have", top=6, key="have")
+        line("hold", "In your ship")
+        line("carrier", "On your carrier")
         line("to_get", "Still to get")
+        heading("To finish the build", top=6, key="finish")
+        line("coverage", "Commodities")
         line("trips", "Trips left")
         line("gaps", "Biggest gaps (t)", wide=True)
-        line("next", "Next", wide=True)
         line("more", "Others")
+        heading(f"Last {_RECENT} completed", top=6, key="recent")
+        for name in _DONE_ROWS:
+            self._vars[name] = tk.StringVar()
+            value = panelkit.wrap_label(parent, textvariable=self._vars[name], anchor="w")
+            value.grid(row=row, column=0, columnspan=3, sticky=tk.W)
+            self._rows[name] = (value, value)
+            row += 1
 
         row = panelkit.add_separator(parent, row)
 

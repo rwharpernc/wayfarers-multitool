@@ -1427,8 +1427,8 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
 
 - It is `PANEL_PLACEMENT = "colonization"`, the Colony button; the mode key is `colonization`.
 - It shows a page built by `colonization_panel.build_panel`: the current project and the commander's history, filled by `_refresh_summary` from the saved sites, the ship's hold and capacity, the carrier record and the delivery ledger.
-- The figures and wording live in `colonization_stats.py` (pure; `project_for`, `history_for`, `coverage_text`, `trips_text`, `next_step`, `delivered_text`).
-  - The page has no separate Progress line: Delivered reads `N of M t (P%)`. Next does not repeat the Still to get figure, and Covered and Trips left are hidden once nothing is left to deliver.
+- The figures and wording live in `colonization_stats.py` (pure; `project_for`, `history_for`, `coverage_text`, `trips_text`, `delivered_text`, `needed_text`, `recent_completed`, `completed_line`).
+  - The page has no separate Progress line: Delivered reads `N of M t (P%)`. The rows are in three sections (project, What you have, To finish the build), each heading drawn only while one of its rows is (`_PAGE_SECTIONS`, `_show_headings`). Commodities and Trips left are hidden once nothing is left to deliver, and `needed_text` says whether the build is complete or waits for a final dock. With no active site the page lists `recent_completed` (the last `_RECENT` = 5 finished sites, newest first) in place of the project rows.
   - It branches on whether the commander has a fleet carrier: no carrier means no carrier row and one trips figure of whole-ship loads; with a carrier it shows trips to buy and to haul.
   - The sites window follows the same rule (`_arrange_tiles`, one Trips column).
 - `colonization_history.py` is the per-commander delivery ledger (`colonization_history.json`: totals by commodity, site and day, a `journal_at` watermark so the start-up catch-up and live events never count a delivery twice).

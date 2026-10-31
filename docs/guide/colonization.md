@@ -36,7 +36,7 @@ Short task lists. Each one links to the section with the detail. The numbers in 
 **See your current build.**
 
 1. Press **Colony** in EDMC.
-2. Read **Current project**: **Delivered**, **Still to get**, **Trips left** and **Next**.
+2. Read **Current project**: **Delivered** and **Still needed**, then **What you have** (with **Still to get**) and **To finish the build** (with **Trips left**). With no site under construction it lists the last five you completed instead.
 3. If you have more than one active site, the **Others** line says so. Press **Dashboard** to pick a different one.
 
 See [The Colony page](#the-colony-page).
@@ -99,32 +99,42 @@ See [The shopping list on the overlay](#the-shopping-list-on-the-overlay).
 
 ## The Colony page
 
-**Current project** is your most recently updated active site:
+**Current project** is your most recently updated active site. The page is in three short sections:
 
-| Line | What it says |
+| Section and line | What it says |
 |---|---|
 | Name, system and a bar | The site, and how far its build has come (the bar turns green when the build is complete) |
-| Delivered, Still needed | The tons handed over by everyone against the tons it needs, with the build's percentage (`1,200 of 8,000 t (15%)`), and what is left |
-| Covered | Of the commodities still needed, how many are **fully** covered, **partly** covered and **not yet** covered (`3 fully · 2 partly · 5 not yet (of 10 commodities)`), counting your ship, or your ship and carrier together if you have one. Left out once nothing remains to deliver |
-| On hand | Tons of needed commodities in your ship now (read from `Cargo.json`) |
-| Carrier | (Only with a fleet carrier.) Tons of needed commodities you have moved onto it (`120 t moved onto your carrier`) |
+| Delivered | The tons handed over by everyone against the tons it needs, with the build's percentage (`1,200 of 8,000 t (15%)`) |
+| Still needed | What is left to deliver. Once nothing is, it says whether the build is complete or only waits for you to dock and finish it |
+| **What you have** | |
+| In your ship | Tons of needed commodities in your ship now (read from `Cargo.json`) |
+| On your carrier | (Only with a fleet carrier.) Tons of needed commodities you have moved onto it |
 | Still to get | What is left to buy or mine after your ship (and carrier) |
-| Trips left | **Without a carrier:** the loads of your current ship it takes to finish (`4 loads of 400 t`; one trip buys and delivers). **With a carrier:** `N to buy · N to haul (400 t ship)`. Left out once nothing remains to deliver. `Unknown (ship size not seen yet)` until EDMC has reported your ship's cargo capacity |
+| **To finish the build** | (Left out once nothing remains to deliver.) |
+| Commodities | Of the commodities still needed, how many are **fully** covered, **partly** covered and **not yet** covered (`3 fully · 2 partly · 5 not yet (of 10 commodities)`), counting your ship, or your ship and carrier together if you have one |
+| Trips left | **Without a carrier:** the loads of your current ship it takes to finish (`4 loads of 400 t`; one trip buys and delivers). **With a carrier:** `N to buy · N to haul (400 t ship)`. `Unknown (ship size not seen yet)` until EDMC has reported your ship's cargo capacity |
 | Biggest gaps (t) | The four commodities with the most still to get, with their tons. Left out when nothing is left to get |
-| Next | One sentence on what to do now: to buy or mine the rest (with a carrier, buy it or move it onto your carrier; the tons are on the Still to get line), that your ship and carrier hold everything so you should deliver it, that everything is delivered and you should dock to finish the build, or that the build is complete |
 | Others | `+N more active sites` when you have more than the one shown (the line is left out when you have none) |
+
+**When nothing is under construction.** The page lists the **last 5 completed** sites you have, newest first, each as `Name (System) - date` (the date is left out for a site finished before WFMT kept it). Archived sites are included.
 
 **Example (made-up numbers).** You are building an outpost with 8,000 t to deliver, 1,200 t of it handed over so far, and you have a fleet carrier. Your ship holds 400 t. The page might read:
 
 ```
-Delivered       1,200 of 8,000 t (15%)
-Covered         3 fully · 2 partly · 5 not yet (of 10 commodities)
-On hand         180 t
-Carrier         120 t moved onto your carrier
-Trips left      9 to buy · 17 to haul (400 t ship)
+Delivered         1,200 of 8,000 t (15%)
+Still needed      6,800 t
+
+What you have
+In your ship      180 t
+On your carrier   120 t
+Still to get      6,500 t
+
+To finish the build
+Commodities       3 fully · 2 partly · 5 not yet (of 10 commodities)
+Trips left        9 to buy · 17 to haul (400 t ship)
 ```
 
-Read it as: ten commodities are still outstanding, three need nothing more, and you should expect about nine buying loads and seventeen hauling loads to finish. The **Next** line then tells you in one sentence what to do now.
+Read it as: ten commodities are still outstanding, three need nothing more, and you should expect about nine buying loads and seventeen hauling loads to finish. The ship and carrier figures tell you how much of the rest you already hold.
 
 **An offer to start a Raven project.** When a construction site appears for the first time and [Raven Colonial](https://ravencolonial.com) has no project for it, a line above **Current project** says `Raven Colonial has no project for <site>.` with two buttons. **Create on Raven** opens the Colonization Sites window on that site and its [Create dialog](#starting-a-project-on-raven-colonial); **Not Now** hides the line. It is made once per site and goes away once a project exists. It needs the master switch and progress sharing on, and your Raven key saved, because WFMT only looks at Raven for a site when it is allowed to share.
 

@@ -7,6 +7,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Changed
 
+- **Colony page:** the page in the main EDMC window is now in short sections: the project (**Delivered**, **Still needed**), **What you have** (**In your ship**, **On your carrier**, **Still to get**) and **To finish the build** (**Commodities**, **Trips left**, **Biggest gaps**). A section is drawn only while it has something to show. The **Next** line is gone: **Still needed** now says when the build is complete or only waits for a final dock. With no site under construction the page lists the **last 5 completed** sites, newest first.
 - **Where to Buy filters exclude:** everything is included by default. **Include fleet carriers** is now **Exclude fleet carriers** (carriers are searched and listed unless you tick it), and the surface port tick is **Exclude surface ports**. Both are remembered. A saved choice of the old Include tick is not carried over.
 - **Rescan Journals:** the Colonization Sites window's **Rescan Carrier** button is now **Rescan Journals**. It reads your journals again for everything the window shows: it folds in the last 30 days of site activity, rebuilds your delivery history, and rebuilds the fleet carrier tally. It no longer needs a fleet carrier; a commander without one gets the first two.
 

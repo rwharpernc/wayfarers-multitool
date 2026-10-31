@@ -133,7 +133,7 @@ class ProjectTests(unittest.TestCase):
     def test_without_a_carrier_the_words_carrier_and_haul_never_appear(self):
         project = S.project_for(site(), {"steel": 300}, {"steel": 500}, has_carrier=False, capacity=400)
         self.assertEqual(project.on_carrier, 0)             # a carrier's tons are ignored
-        texts = [S.coverage_text(project), S.trips_text(project), S.next_step(project)]
+        texts = [S.coverage_text(project), S.trips_text(project), S.needed_text(project)]
         for text in texts:
             self.assertNotIn("carrier", text.lower(), text)
             self.assertNotIn("haul", text.lower(), text)
@@ -145,7 +145,6 @@ class ProjectTests(unittest.TestCase):
         self.assertEqual(S.coverage_text(project), "2 fully · 0 partly · 0 not yet (of 2 commodities)")
         self.assertEqual(project.to_get, 0)
         self.assertEqual(S.trips_text(project), "0 to buy · 3 to haul (400 t ship)")
-        self.assertIn("ship and carrier", S.next_step(project).lower())
 
     def test_fully_partly_and_not_yet_covered(self):
         project = S.project_for(site(), {"steel": 100}, {"steel": 100, "water": 300}, has_carrier=True, capacity=400)
@@ -157,17 +156,27 @@ class ProjectTests(unittest.TestCase):
         project = S.project_for(site(), {}, None, False, 0)
         self.assertIn("Unknown", S.trips_text(project))
         done = S.project_for(site(complete=True), {}, None, False, 400)
-        self.assertEqual(S.next_step(done), "This build is complete.")
+        self.assertEqual(S.needed_text(done), "Nothing: the build is complete")
         self.assertEqual(done.progress, 1.0)
 
-    def test_next_step_does_not_repeat_the_still_to_get_figure(self):
-        plain = S.project_for(site(), {}, None, False, 400)
-        self.assertGreater(plain.to_get, 0)
-        self.assertEqual(S.next_step(plain), "Buy or mine the rest.")
-        with_carrier = S.project_for(site(), {}, {}, True, 400)
-        self.assertEqual(S.next_step(with_carrier), "Buy the rest, or move it onto your carrier.")
-        for text in (S.next_step(plain), S.next_step(with_carrier)):
-            self.assertFalse(any(ch.isdigit() for ch in text), text)
+    def test_still_needed_says_why_nothing_is_left(self):
+        working = S.project_for(site(), {}, None, False, 400)
+        self.assertTrue(S.needed_text(working).endswith(" t"))
+
+    def test_the_last_completed_sites_are_listed_newest_first(self):
+        old = site(market_id=11, complete=True, name="Old", system="A")
+        old.completed_at = "2026-09-01T10:00:00+00:00"
+        new = site(market_id=12, complete=True, name="New", system="B")
+        new.completed_at = "2026-10-20T10:00:00+00:00"
+        unfinished = site(market_id=13)
+        undated = site(market_id=14, complete=True, name="Undated", system="")
+        undated.completed_at, undated.updated = "", "2026-01-01T00:00:00+00:00"
+        listed = S.recent_completed([old, unfinished, new, undated], 2)
+        self.assertEqual(listed[0].market_id, 12)
+        self.assertEqual(len(S.recent_completed([old, new, undated], 5)), 3)
+        self.assertEqual(len(S.recent_completed([old, new, undated], 1)), 1)
+        self.assertEqual(S.completed_line(new), "New (B) - 2026-10-20")
+        self.assertEqual(S.completed_line(undated), "Undated")
 
     def test_delivered_text_carries_the_percentage(self):
         project = S.project_for(site(), {}, None, False, 400)

@@ -93,17 +93,27 @@ def trips_text(project: Project) -> str:
             f"({project.capacity:,} t ship)")
 
 
-def next_step(project: Project) -> str:
-    """One sentence on what to do next."""
+def needed_text(project: Project) -> str:
+    """What is left to deliver; once nothing is, whether the build is finished or only waits for the last dock."""
     if project.complete:
-        return "This build is complete."
+        return "Nothing: the build is complete"
     if project.remaining <= 0:
-        return "Everything is delivered. Dock at the site to finish the build."
-    if project.to_get <= 0:
-        where = "your ship and carrier" if project.has_carrier else "your ship"
-        return f"{where.capitalize()} hold everything still needed. Deliver it to the site."
-    # The figure is on the Still to get line right above, so it is not repeated here.
-    return "Buy the rest, or move it onto your carrier." if project.has_carrier else "Buy or mine the rest."
+        return "Nothing: dock at the site to finish the build"
+    return f"{project.remaining:,} t"
+
+
+def recent_completed(sites, limit: int = 5):
+    """The most recently finished sites, newest first (archived ones included): by the time the depot reported them complete, else the last update."""
+    done = [s for s in sites if s.complete]
+    done.sort(key=lambda s: s.completed_at or s.updated or "", reverse=True)
+    return done[:limit]
+
+
+def completed_line(site) -> str:
+    """One finished site as a line: name, system and the date it was finished (the date is left out when it was finished before it was kept)."""
+    where = f" ({site.system})" if site.system else ""
+    when = (site.completed_at or "")[:10]
+    return f"{site.display_name()}{where}" + (f" - {when}" if when else "")
 
 
 def delivered_text(project: Project) -> str:
