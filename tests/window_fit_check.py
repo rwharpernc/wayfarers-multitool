@@ -29,7 +29,7 @@ from unittest import mock
 SLACK = 3                  # pixels of difference that are rounding, not clipping
 WIDE = 1600                # the wide size, or the screen's width when that is smaller
 TABLE_DEAD_AREA = 40       # pixels a wide table may stop short of its right edge
-FAIL_KINDS = ("clipped", "outside", "wrap", "table")
+FAIL_KINDS = ("clipped", "outside", "wrap", "table", "tip")
 _CONTROLS = ("Label", "Button", "Entry", "Checkbutton")
 
 Finding = Tuple[str, str]
@@ -189,11 +189,20 @@ def _check_widget(widget: tk.Misc, top: tk.Toplevel, findings: List[Finding]) ->
             findings.append(("clipped", f"{describe(widget)} asks for {widget.winfo_reqwidth()}px wide and gets {width}px"))
         elif widget.winfo_reqheight() - height > SLACK:
             findings.append(("clipped", f"{describe(widget)} asks for {widget.winfo_reqheight()}px high and gets {height}px"))
+    _check_tip(widget, findings)
     _check_bounds(widget, top, findings)
     if cls == "Label":
         _check_wrap(widget, findings)
     elif cls == "Text":
         _check_text(widget, findings)
+
+
+def _check_tip(widget: tk.Misc, findings: List[Finding]) -> None:
+    """Every button in a window has a tooltip ("Name - what it does"): a FlatButton (or MenuButton) built without one is reported."""
+    from plugin.uikit.widgets import FlatButton
+
+    if isinstance(widget, FlatButton) and not getattr(widget, "_has_tooltip", False):
+        findings.append(("tip", f"{describe(widget)} has no tooltip"))
 
 
 def _check_bounds(widget: tk.Misc, top: tk.Toplevel, findings: List[Finding]) -> None:

@@ -320,8 +320,9 @@ class FlatButton(tk.Label):
         self._enabled = True
         if tip:
             add_tooltip(self, tip)
-        self.bind("<Enter>", lambda _e: self._enabled and self.configure(bg=self._hover))
-        self.bind("<Leave>", lambda _e: self.configure(bg=self._bg))
+        # add="+": a plain bind would replace the tooltip's own <Enter> and <Leave> handlers (add_tooltip above), and the tip would never show.
+        self.bind("<Enter>", lambda _e: self._enabled and self.configure(bg=self._hover), add="+")
+        self.bind("<Leave>", lambda _e: self.configure(bg=self._bg), add="+")
         self.bind("<ButtonRelease-1>", self._on_release)
 
     def _on_release(self, event: tk.Event) -> None:

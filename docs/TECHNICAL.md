@@ -1484,6 +1484,7 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 
 **Tooltips on window buttons** (`tests/test_window_button_tips.py`)
 
+- `FlatButton` binds its hover highlight with `add="+"`: a plain `bind` replaces the tooltip's own `<Enter>`/`<Leave>` handlers (`add_tooltip` runs first), which left every window tip attached and never shown until 2026-10-31. `tests/uikit_tooltip_smoke.py` hovers a button, a menu button, a window action and the footer's A-/A+ for real; `tests/window_fit_check.py` fails any visible `FlatButton` without a tooltip (`add_tooltip` marks its widget `_has_tooltip`).
 - The test reads every plugin source file and fails on a `FlatButton`, `MenuButton`, `add_action` or `add_menu` call without a `tip` keyword, naming the file and line. The wording is `Name - what it does`.
 
 **Overlay choices copied from another commander** (`overlay_profile.py`, `overlay_placement._build_copy_row`)

@@ -376,10 +376,13 @@ There are two ways to correct the FC column, for different problems.
 If the FC column is missing something you moved to the carrier, press **Rescan Journals** (top right of the Colonization Sites
 window; the carrier part applies only to a commander with a fleet carrier).
 
-1. WFMT discards its saved carrier tally for that commander, including any figure taken from Frontier.
-2. It reads your journals for the **last 30 days**, oldest first, and counts every transfer you made while docked at your fleet
-   carrier: tons moved to the carrier minus tons moved back to the ship.
-3. The status line at the bottom says how many commodities and tons it found. Transfers you make after that count on top as usual.
+Pressing it does up to three things, for the commander shown in the window:
+
+1. **Sites.** It reads the journals of the **last 30 days** and folds in any delivery or depot visit a site has not seen, by the same newest-only rule as the catch-up when EDMC starts, so nothing is counted twice.
+2. **Delivery history.** It reads all your journals again and rebuilds the figures on the History page. If the saved figures are larger (because older journals were deleted), they are kept.
+3. **Fleet carrier** (only with a carrier). WFMT discards its saved carrier tally, including any figure taken from Frontier, reads the last 30 days of journals oldest first and counts every transfer you made while docked at your fleet carrier: tons moved to the carrier minus tons moved back to the ship.
+
+The status line at the bottom says how many site updates it applied and, with a carrier, how many commodities and tons it found. Transfers you make after that count on top as usual.
 
 What to expect:
 
@@ -492,7 +495,7 @@ search system is not: it starts as the site's system again.
 
 ### Find all
 
-**Find all** searches every commodity you still have to buy, using the same options. It lists the closest 5 stations (and, if carriers are ticked, the closest 2 carriers) under a heading for each commodity.
+**Find all** searches every commodity you still have to buy, using the same options. It lists the closest 5 stations (and, unless you excluded fleet carriers, the closest 2 carriers) under a heading for each commodity.
 
 - It follows the table as you have it filtered. Rows already covered are left out, and so are rows the Filter box, **Show** or **Only what [station] sells** hide.
 - Spansh can only look up one commodity per request. So WFMT sends one request per commodity, a short pause (0.4 second) apart, plus one more asking for the nearest stations that have every commodity on the list in stock (see below).
@@ -501,7 +504,7 @@ search system is not: it starts as the site's system again.
 - A commodity that fails is named and the others still show. Press **Find all** again to retry.
 - Commodities with no source in range are listed in the note.
 
-**A station that sells the whole list.** The extra request finds stations (and carriers, if ticked) that have *every* commodity you are searching for in stock.
+**A station that sells the whole list.** The extra request finds stations (and carriers, unless excluded) that have *every* commodity you are searching for in stock.
 
 - Any it finds are added under each commodity with that commodity's price and stock, so the route can use a station that is not among the nearest few for any one commodity.
 - For a long list Spansh usually has no such station and nothing is added.
@@ -511,6 +514,7 @@ search system is not: it starts as the site's system again.
 
 - That request goes first. A commodity that one of those stations can supply in full is not searched on its own (its answer comes from that station's market), so a list that one station can fill takes a single request.
 - After the searches, if the route still leaves two or more commodities uncovered, one more request asks for stations that have all of those in stock. The whole market it returns also fills in any other commodity on your list those stations sell.
+- A commodity whose every seller found is on a planet's surface costs one more request, for orbital stations alone (see [Suggested route](#suggested-route)).
 
 **Example: planning the whole list (made-up).** You have 12 commodities left to buy.
 
@@ -550,6 +554,7 @@ The results table has the columns **Station**, **System**, **Type**, **Planetary
   The prices and stock come from players' own market updates, so confirm on arrival.
 - A fleet carrier can move or sell out at any time, and its prices are set by its owner, which is why carriers are
   kept in their own section, and can be left out altogether with **Exclude fleet carriers**.
+- The stock, shipyard, arrival and surface-port filters act on the stations Spansh returned (the nearest 25 per commodity within your radius, 5 shown per commodity in Find all). If a filter leaves a commodity with nothing, a qualifying station may still exist farther out: widen **Within**, sort by **Closest first**, or loosen the filter. "Only at surface ports" likewise means none at an orbital port among the stations found.
 - A station for which Spansh gives no pad figures is kept in the list (its Pad shows `?`) rather than hidden.
 - If Spansh is busy or unreachable, the panel says the search failed; try again shortly. Nothing else in WFMT is affected.
 - The search looks for stock that is **for sale**. It does not know what a station's market will have tomorrow.
@@ -562,7 +567,7 @@ The header of the window, top right. All of them act on the site picked on the l
 - **Copy To Acquire** copies a short list for someone who asks what you still need, for example part way through loading your carrier: a first line such as `Example Outpost (Example System) - still to acquire:`, then one line per commodity such as `Steel: 200 t`, biggest first. Only commodities with something left to acquire are listed; what is in your ship and on your fleet carrier is already taken off. It uses the figures the window shows, so a transfer WFMT missed can be fixed first with **Rescan Journals**.
   The amounts are the **t still to get** figures, so what is on your ship and on your carrier is taken off. If nothing is needed it says
   so.
-- **Rescan Journals** rebuilds the fleet carrier tally from your journals; see [Rescan Journals](#rescan-journals-when-a-load-did-not-register).
+- **Rescan Journals** reads your journals again for the sites, your delivery history and (with a fleet carrier) the carrier tally; see [Rescan Journals](#rescan-journals-when-a-load-did-not-register).
 - **Raven Colonial** (a menu): **My Projects**, **Planned Builds**, **Raven Progress**, then **Open Selected Build on Raven**, **Open This System on Raven**,
   **Raven Colonial Website**, then **Create Project on Raven…**, **Report Complete to Raven** and **Mark Plan Entry Demolished…** (the three that write; the dots mean a question follows). See
   [Planned builds](#planned-builds), [Starting a project on Raven Colonial](#starting-a-project-on-raven-colonial) and

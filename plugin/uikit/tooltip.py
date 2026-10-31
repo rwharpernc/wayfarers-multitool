@@ -17,6 +17,7 @@ def add_tooltip(widget: tk.Widget, text: Union[str, Callable[[], str]]) -> None:
     function returning the text, read each time the popup opens, for a button whose
     meaning changes with its label."""
     state = {"after": None, "tip": None}
+    widget._has_tooltip = True      # read by the window-fit test, which fails a window button that has none
 
     def hide(_event: object = None) -> None:
         if state["after"] is not None:

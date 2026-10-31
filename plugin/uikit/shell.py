@@ -12,6 +12,7 @@ from typing import Callable, Optional, Sequence, Union
 from . import palette as P
 from . import placement
 from . import style
+from .tooltip import add_tooltip
 from .widgets import FlatButton, MenuButton, ScrollFrame
 
 HelpItem = Union[str, tuple]   # "a line", or ("Name", "what it means")
@@ -38,13 +39,15 @@ class _Parts:
             button = tk.Label(self._sizer, text=text, fg=P.MUTED, bg=P.BG, padx=7, cursor="hand2", font=style.font(P.FONT_SMALL_BOLD))
             button.pack(side="left")
             button.bind("<Button-1>", lambda _e, n=step: style.set_text_delta(style.text_delta() + n))
-            button.bind("<Enter>", lambda _e, b=button: b.configure(fg=P.TEXT))
-            button.bind("<Leave>", lambda _e, b=button: b.configure(fg=P.MUTED))
+            button.bind("<Enter>", lambda _e, b=button: b.configure(fg=P.TEXT), add="+")
+            button.bind("<Leave>", lambda _e, b=button: b.configure(fg=P.MUTED), add="+")
+            add_tooltip(button, "A- - make the text in every WFMT window smaller" if step < 0 else "A+ - make the text in every WFMT window larger")
         # The color theme: its name, and a menu of the themes when it is pressed. The label changes with the theme, wherever it is chosen.
         theme = tk.Label(self._sizer, text=style.theme_name(), fg=P.MUTED, bg=P.BG, padx=7, cursor="hand2", font=style.font(P.FONT_SMALL_BOLD))
         theme.pack(side="left")
-        theme.bind("<Enter>", lambda _e: theme.configure(fg=P.TEXT))
-        theme.bind("<Leave>", lambda _e: theme.configure(fg=P.MUTED))
+        theme.bind("<Enter>", lambda _e: theme.configure(fg=P.TEXT), add="+")
+        theme.bind("<Leave>", lambda _e: theme.configure(fg=P.MUTED), add="+")
+        add_tooltip(theme, "Color theme - choose the colors of every WFMT window")
 
         menu = tk.Menu(theme, tearoff=0)
         for name in P.THEMES:
