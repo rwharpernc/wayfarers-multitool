@@ -97,6 +97,38 @@ def section_header(parent: tk.Misc, text: str, bg: Optional[str] = None) -> tk.L
                     font=style.font(P.FONT_SMALL_BOLD), padx=P.PAD, pady=P.PAD_SM)
 
 
+def _install_wheel(widget: tk.Misc) -> None:
+    """One mouse-wheel handler for every scrolling page, installed once per Tk interpreter: it scrolls the innermost `ScrollFrame` under the pointer. (The wheel used
+    to be bound when the pointer entered a page and unbound when it left, so leaving a page nested in another, such as a table inside the Engineers tab, dropped the
+    outer page's wheel for good.) On Windows the wheel event goes to the focused widget, so the widget under the pointer is looked up rather than taken from the event."""
+    if "_wheel_down" in (widget.bind_all("<MouseWheel>") or ""):
+        return
+
+    def _wheel_down(event: tk.Event) -> None:
+        _scroll_under_pointer(event, -1 if event.delta > 0 else 1)
+
+    def _wheel_button4(event: tk.Event) -> None:
+        _scroll_under_pointer(event, -2)
+
+    def _wheel_button5(event: tk.Event) -> None:
+        _scroll_under_pointer(event, 2)
+
+    widget.bind_all("<MouseWheel>", _wheel_down, add="+")
+    widget.bind_all("<Button-4>", _wheel_button4, add="+")
+    widget.bind_all("<Button-5>", _wheel_button5, add="+")
+
+
+def _scroll_under_pointer(event: tk.Event, units: int) -> None:
+    try:
+        widget = event.widget.winfo_containing(*event.widget.winfo_pointerxy())
+    except (tk.TclError, KeyError, AttributeError):
+        return
+    while widget is not None and not isinstance(widget, ScrollFrame):
+        widget = getattr(widget, "master", None)
+    if widget is not None:
+        widget._canvas.yview_scroll(units, "units")
+
+
 class ScrollFrame(tk.Frame):
     """A vertically scrolling container; put content in `.body`."""
 
@@ -115,24 +147,11 @@ class ScrollFrame(tk.Frame):
             scrollregion=self._canvas.bbox("all")))
         self._canvas.bind("<Configure>", lambda e: self._canvas.itemconfigure(
             self._window, width=e.width))
-        self.bind("<Enter>", self._bind_wheel)
-        self.bind("<Leave>", self._unbind_wheel)
+        _install_wheel(self)
 
     def set_viewport(self, width: int, height: int) -> None:
         """The size the scrolling area asks for (a canvas does not size itself to what is inside it)."""
         self._canvas.configure(width=width, height=height)
-
-    def _bind_wheel(self, _e: tk.Event) -> None:
-        self._canvas.bind_all("<MouseWheel>", self._on_wheel)
-        self._canvas.bind_all("<Button-4>", lambda _e: self._canvas.yview_scroll(-2, "units"))
-        self._canvas.bind_all("<Button-5>", lambda _e: self._canvas.yview_scroll(2, "units"))
-
-    def _unbind_wheel(self, _e: tk.Event) -> None:
-        for sequence in ("<MouseWheel>", "<Button-4>", "<Button-5>"):
-            self._canvas.unbind_all(sequence)
-
-    def _on_wheel(self, event: tk.Event) -> None:
-        self._canvas.yview_scroll(-1 if event.delta > 0 else 1, "units")
 
     def clear(self) -> None:
         for child in self.body.winfo_children():
