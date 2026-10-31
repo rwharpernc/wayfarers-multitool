@@ -296,7 +296,7 @@ Use them for anything the passes did not reach.
   - With the compass enabled the arrow follows the target as you move and turn, and clears when you lift off.
   - Check the Mining settings tab has no waypoint tick.
 - [ ] Materials (Operations mode, **Engineering** section, the first in Operations):
-  - Log in and the row shows the pieces of each type (`Materials held: ...`) and `Engineers: N of 38 unlocked` once the game has listed your engineers; the folded title carries `- N held · N engineers`.
+  - Log in and the row shows the pieces of each type (`Materials held: ...`) and `Engineers: N of 38 unlocked` once the game has listed your engineers; the section title says just Engineering, folded or open.
   - Collect or discard a material and "Last change: ..." follows.
   - A material at its limit is named.
   - **Materials** opens the window; **Blueprints** and **Engineers** open the Engineering window on its Blueprints and Engineers tabs.
@@ -495,7 +495,7 @@ Use them for anything the passes did not reach.
 
 - [ ] Engineering window → **Engineers** tab (Windows-tested only):
   - The table has a **Where** column.
-  - Selecting an engineer shows their find, invite and unlock steps under the table, and the grade-profit line sits below that.
+  - Selecting an engineer shows their details under the table (see TEST_PLAN.md section 10).
   - Selecting Baltanos shows Deriso and "On-foot engineer". Terra Velasquez shows the "reported bugged" note.
   - The **Show** box offers Both / Bubble / Colonia: Colonia lists 8 engineers (`8 of 38 engineers`), Bubble 30, and the choice survives closing and reopening the window.
   - The table stays inside the window with the Where column, with no horizontal scroll.
