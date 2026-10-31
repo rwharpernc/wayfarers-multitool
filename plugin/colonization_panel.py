@@ -734,7 +734,7 @@ class ColonizationController:
                 self._forget_sites)
 
     def _forget_sites(self, market_ids: list) -> None:
-        """Stop tracking these sites for the commander (the Projects window's Clear Stale)."""
+        """Stop tracking these sites for the commander (the Projects window's Sync Sites)."""
         for market_id in market_ids:
             self._repository.remove(self._cmdr or "", market_id)
 

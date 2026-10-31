@@ -34,7 +34,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Fixed
 
-- **A deleted Raven project still shown as the current project:** deleting a project on Raven Colonial left its construction site active in WFMT, so the Colony panel kept naming it. The My Projects window has a **Clear Stale** button that lists the active sites none of your Raven projects is for and, once you agree, stops tracking them. Nothing changes on Raven Colonial, and docking at a site again tracks it afresh.
+- **A deleted Raven project still shown as the current project:** deleting a project on Raven Colonial left its construction site active in WFMT, so the Colony panel kept naming it. The My Projects window has a **Sync Sites** button that lists the active sites none of your Raven projects is for and, once you agree, stops tracking them. Nothing changes on Raven Colonial, and docking at a site again tracks it afresh.
 - **Tooltips in the pop-out windows never appeared:** a window button (the Colonization Sites window, My Projects and every other window built on the window kit) had its tooltip attached, but the button's hover highlight replaced the handler that shows it, so hovering did nothing. The tooltips now show. The A- and A+ text size buttons and the color theme name in a window's footer, which had no tooltip, have one too. A test now hovers a button and checks the tip appears, and the window-fit test fails any window button with no tip.
 - **Windows reopening on the wrong monitor:** a window last closed on a monitor to the left of (or above) the primary one was reopened with its position written as `-2000`, which means 2000 px in from the right edge of the screen, not a place left of the primary. The position is now written as `+-2000`.
 

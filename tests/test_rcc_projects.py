@@ -145,7 +145,7 @@ class Rows(unittest.TestCase):
 
 
 class Unlisted(unittest.TestCase):
-    """Active sites that no Raven project is for (Clear Stale)."""
+    """Active sites that no Raven project is for (Sync Sites)."""
 
     def setUp(self):
         self.views = R.parse_project_views(LIVE)

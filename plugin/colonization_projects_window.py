@@ -51,8 +51,8 @@ _HELP = (
     ("Count", "A project is counted unless it is on your hidden list on Raven Colonial. Double-click a row to change it, then Save Counted List "
               "to keep the change there. Other tools that read the list, such as SrvSurvey, see the same one."),
     ("Note", "Primary is your primary project on Raven Colonial. Here marks a site WFMT also tracks from your journal."),
-    ("Clear Stale", "A project you delete on Raven Colonial leaves its site active in WFMT, and the Colony panel keeps naming it as the current project. "
-                    "Clear Stale lists the active sites with no project here and, once you agree, stops tracking them. Nothing changes on Raven Colonial."),
+    ("Sync Sites", "A project you delete on Raven Colonial leaves its site active in WFMT, and the Colony panel keeps naming it as the current project. "
+                    "Sync Sites lists the active sites with no project here and, once you agree, stops tracking them. Nothing changes on Raven Colonial."),
     ("Writing", "Saving the list and setting your primary project need your Raven Colonial key and the master switch in Settings → Colonization."),
 )
 
@@ -64,7 +64,7 @@ def show(parent: tk.Misc, cmdr: Callable[[], str], tracked: Callable[[], FrozenS
          forget: Optional[Callable[[List[int]], None]] = None) -> None:
     """Open the window, or refresh and raise it if it is open. `cmdr` gives the commander now, `tracked` the market ids of the sites
     WFMT tracks for them, and `capacity` the ship's cargo capacity (0 when unknown). `active_sites` gives their active sites as (market id,
-    name, system) and `forget` stops tracking the sites with the given market ids (for Clear Stale)."""
+    name, system) and `forget` stops tracking the sites with the given market ids (for Sync Sites)."""
     global _window
     if _window is not None and _window.alive:
         _window.refresh()
@@ -113,8 +113,8 @@ class ProjectsWindow:
                                 tip="Refresh - ask Raven Colonial again for your projects")
         self._shell.add_action("Count / Don't Count", self._on_toggle,
                                 tip="Count / Don't Count - include or leave out the selected project in the shopping list")
-        self._shell.add_action("Clear Stale", self._on_clear_stale,
-                                tip="Clear Stale - stop tracking active sites that none of your Raven Colonial projects is for (asks first)")
+        self._shell.add_action("Sync Sites", self._on_sync_sites,
+                                tip="Sync Sites - stop tracking active sites that none of your Raven Colonial projects is for (asks first)")
         self._shell.add_menu("More", [
             ("Copy Shopping List", self._on_copy),
             None,
@@ -255,7 +255,7 @@ class ProjectsWindow:
         webbrowser.open(rcc_client.build_page_url(row.view.build_id))
         self._shell.set_status(f"Opened {row.view.name or 'the project'} on Raven Colonial in your browser.")
 
-    def _on_clear_stale(self) -> None:
+    def _on_sync_sites(self) -> None:
         """Stop tracking the active sites Raven has no project for (for example after deleting the project there). Only WFMT's own record of
         them is removed, and only after the commander has seen their names; nothing is sent to Raven Colonial."""
         if self._active_sites is None or self._forget is None:
@@ -270,7 +270,7 @@ class ProjectsWindow:
         names = "\n".join(f"  {_clip(name or 'Unnamed site', _NAME_MAX)} ({_clip(system, _NAME_MAX)})" if system else f"  {_clip(name, _NAME_MAX)}"
                           for _market, name, system in stale[:12]) + (f"\n  and {len(stale) - 12} more" if len(stale) > 12 else "")
         if not dialogs.confirm(
-                self._shell.window, "Clear stale sites",
+                self._shell.window, "Sync sites with Raven",
                 f"Raven Colonial has no project for these {len(stale)} active site{'s' if len(stale) != 1 else ''}:\n\n{names}\n\n"
                 "Stop tracking them in WFMT? Docking at one again tracks it afresh. Nothing is changed on Raven Colonial."):
             return
