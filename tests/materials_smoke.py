@@ -294,8 +294,8 @@ rows = bwin._engineer_rows()
 names = [r[0] for r in rows]
 check(names[0] == "Felicity Farseer", f"unlocked engineers come first: {names[:3]}")
 check("Eleanor Bresa" in names, "a Colonia engineer is listed")
-check(dict(rows)["Eleanor Bresa"][2] >= 5 and "Desy" in dict(rows)["Eleanor Bresa"][3] and "5 settlements" in dict(rows)["Eleanor Bresa"][4],
-      f"a Colonia engineer offers upgrades, has a place, and shows what unlocks them: {dict(rows)['Eleanor Bresa']}")
+check(dict(rows)["Eleanor Bresa"][2] == "Suit, Weapon" and "Desy" in dict(rows)["Eleanor Bresa"][3] and "5 settlements" in dict(rows)["Eleanor Bresa"][4],
+      f"a Colonia engineer works on suits and weapons, has a place, and shows what unlocks them: {dict(rows)['Eleanor Bresa']}")
 check("Baltanos" in names and "Yi Shen" in names, "the other Colonia engineers are listed even before the game names them")
 check(len(names) >= 38, f"every engineer in the location table is listed: {len(names)}")
 check(dict(rows)["Yi Shen"][4].startswith("First ") and "Colonia" in dict(rows)["Yi Shen"][4], f"Yi Shen's next step is another engineer's: {dict(rows)['Yi Shen'][4]!r}")
@@ -310,7 +310,7 @@ check(title_font.cget("weight") == "bold" and title_font.cget("size") > body_fon
 check(heading_font.cget("weight") == "bold" and heading_font.cget("size") >= body_font.cget("size"), "section headings are bold")
 check(note.tag_ranges("heading") and note.tag_ranges("step"), "headings and numbered steps are tagged")
 headings = [note.get(a, b).strip() for a, b in zip(note.tag_ranges("heading")[::2], note.tag_ranges("heading")[1::2])]
-check(headings[:3] == ["Location", "Path to unlock", "Notes"], f"the sections have clear headings: {headings}")
+check(headings[:4] == ["Location", "Works on", "Path to unlock", "Notes"], f"the sections have clear headings: {headings}")
 check("Colors:" not in note.text(), "no color key in the details")
 import plugin.engineer_guides_data as guides_data
 calls = []

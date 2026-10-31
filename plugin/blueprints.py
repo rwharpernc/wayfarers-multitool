@@ -163,6 +163,24 @@ def engineer_names() -> List[str]:
     return sorted({e for b in ALL for e in b.engineers if e not in STAND_IN_NAMES}, key=str.casefold)
 
 
+def works_on(engineer: str, key: Callable[[str], str] = str.casefold) -> List[Tuple[str, int, Tuple[str, ...]]]:
+    """What an engineer works on, matching names through `key`: (module type, top grade, the names of their grade 0 rows A to Z) for each type,
+    highest grade first and then A to Z. Grade 0 rows are a ship module's experimental effects or an on-foot engineer's suit and weapon
+    upgrades, which have no grade; unlock rows are left out."""
+    wanted = key(engineer)
+    top: Dict[str, int] = {}
+    plain: Dict[str, set] = {}
+    for b in ALL:
+        if b.is_unlock or not any(key(e) == wanted for e in real_engineers(b)):
+            continue
+        top[b.type] = max(top.get(b.type, 0), b.grade)
+        names = plain.setdefault(b.type, set())
+        if not b.grade:
+            names.add(b.name)
+    return [(kind, grade, tuple(sorted(plain[kind], key=str.casefold)))
+            for kind, grade in sorted(top.items(), key=lambda t: (-t[1], t[0].casefold()))]
+
+
 def unlock_for(engineer: str, key: Callable[[str], str] = str.casefold) -> Optional[Blueprint]:
     """The "Unlock" row that says what an engineer asks for, matching names through `key`; None when the table has none."""
     wanted = key(engineer)

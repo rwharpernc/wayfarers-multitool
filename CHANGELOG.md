@@ -3,6 +3,12 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## Unreleased
+
+### Changed
+
+- **Engineers: what each engineer works on.** The Engineers table's **Offers** column (a count of blueprints) is now **Works on**: the module types the engineer engineers, each with the top grade they offer (`Frame Shift Drive 5, Thrusters 3`), or `Suit, Weapon` for an on-foot engineer. The details pane has a **Works on** section that lists every type with its top grade and experimental effects, or an on-foot engineer's suit and weapon upgrades.
+
 ## 1.4.0 (2026-10-31)
 
 ### Changed

@@ -9,7 +9,7 @@ whole wishlist: need, have, short and where to find each ingredient.
 (`ship_plan_tab.py`, logic in `ship_plan.py`).
 **Upgrade planner** tab: take an Odyssey suit or weapon from one class to another and fit up to four modifications, see the materials and credits, and put
 them on the wishlist (`odyssey_plan_tab.py`, logic in `odyssey_upgrade_plan.py`).
-**Engineers** tab: where you stand with each engineer (from the journal's `EngineerProgress`), what they offer and what unlocking them takes, with
+**Engineers** tab: where you stand with each engineer (from the journal's `EngineerProgress`), the module types they work on and what unlocking them takes, with
 buttons to list their blueprints or put their unlock on the wishlist.
 
 Built on the shared window kit (plugin/uikit); the lists are `blueprints.py` and `blueprint_wishlist.WishBook`, the arithmetic is
@@ -80,7 +80,7 @@ _WISH_COLUMNS = (
 _ENGINEER_COLUMNS = (
     Column("engineer", "Engineer", 170, max_chars=34),
     Column("standing", "You are", 130, max_chars=30),
-    Column("offers", "Offers", 60, anchor="e"),
+    Column("works", "Works on", 260, max_chars=60),
     Column("where", "Where", 250, max_chars=60),
     Column("unlock", "Next step", 340, stretch=True, max_chars=170),
 )
@@ -153,6 +153,13 @@ def engineers_text(blueprint: blueprints.Blueprint, book: Optional[engineers.Eng
         standing = book.standing(name) if book is not None and name not in blueprints.STAND_IN_NAMES else None
         parts.append(f"{name} ({standing.describe().lower()})" if standing is not None else name)
     return ", ".join(parts)
+
+
+def works_on_text(name: str) -> str:
+    """The module types an engineer works on, each with its top grade ("Frame Shift Drive 5, Thrusters 3"); a type with no grades (an on-foot
+    engineer's suits and weapons) is named alone. "-" when the blueprint table has nothing for them."""
+    kinds = blueprints.works_on(name, key=engineers.name_key)
+    return ", ".join(f"{kind} {grade}" if grade else kind for kind, grade, _names in kinds) or "-"
 
 
 def who_can(blueprint: blueprints.Blueprint, book: Optional[engineers.EngineerBook]) -> str:
@@ -491,12 +498,6 @@ class BlueprintsWindow:
             names.setdefault(key, info.name)          # everyone in the location table is listed, even before the game names them
         for standing in self._engineers.all():
             names.setdefault(engineers.name_key(standing.name), standing.name)
-        offers: dict = {}
-        for b in blueprints.ALL:
-            if b.is_unlock:
-                continue                     # an unlock row lists whom the items are handed to, not what they offer
-            for e in blueprints.real_engineers(b):
-                offers[engineers.name_key(e)] = offers.get(engineers.name_key(e), 0) + 1
         known = self._engineers.has_data
         rows = []
         for key, name in names.items():
@@ -514,7 +515,7 @@ class BlueprintsWindow:
                 text = "not in the table"
             rows.append((standing is not None and standing.unlocked, name, (
                 name, standing.describe() if standing is not None else ("not known yet" if known else "?"),
-                offers.get(key, 0) or "-", info.place() if info is not None else "-", text)))
+                works_on_text(name), info.place() if info is not None else "-", text)))
         rows.sort(key=lambda r: (not r[0], r[1].casefold()))
         return [(name, values) for _unlocked, name, values in rows]
 
@@ -617,6 +618,16 @@ class BlueprintsWindow:
         if region:
             note.row("Region", region + (" (the human bubble)" if region == engineers.BUBBLE else " (around Colonia, about 22,000 ly from Sol)"))
         note.row("Getting there", ("On foot (an Odyssey engineer)" if info.on_foot else "By ship") + (f"; the {info.system} permit is needed" if info.permit else ""))
+
+        kinds = blueprints.works_on(name, key=engineers.name_key)
+        if kinds:
+            note.heading("Works on")
+            for kind, grade, names in kinds:
+                if grade:
+                    value = f"up to grade {grade}" + (f"; experimental effects: {', '.join(names)}" if names else "")
+                else:
+                    value = ", ".join(names)
+                note.row(kind, value)
 
         path = engineer_path.build(name, self._engineers)
         if path is not None and (path.steps or path.first):
