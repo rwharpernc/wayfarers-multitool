@@ -27,7 +27,7 @@ Things that surprise people, and what to do about them. Back to the [README](../
 - WFMT, like every third-party tool, only knows what the game writes to its journal, plus what it can add from Frontier's servers and community services.
   - Where it can't be sure, it says so.
   - Each guide lists these gaps and the workaround in "What the game does and doesn't tell us".
-- Everything is kept **per commander**. Switching commanders in EDMC switches the data. Overlay choices (which cards are on, where they sit, how they look) are per commander too.
+- Everything is kept **per commander**. Switching commanders in EDMC switches the data. Overlay choices (which cards are on, where they sit, how they look) are per commander too, and Overlay Placement can copy them from another commander.
 - A gray line under the mode buttons, *Reading your journals to catch up (...)*, means a first-time or long catch-up is running. It happens once, can take a minute, and goes by itself.
 - **Linux:**
   - EDMC's **Journal directory** must point at Elite's journal folder inside the Proton/Wine folder, or most features will find nothing.

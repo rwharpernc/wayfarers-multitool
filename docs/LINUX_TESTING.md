@@ -838,6 +838,7 @@ Written on Windows against a 3840 x 2160 screen in EDMCModernOverlay's fill mode
       Overlay toggles the overlay card (lit while on).
 - [ ] Without a fleet carrier there is no On your carrier row, Trips left reads like "3 loads of 400 t", and the sites window has a single
       Trips column (Commodities and Trips left go once the site has nothing left to deliver). With one, On your carrier is shown and Trips left reads "N to buy · N to haul".
+- [ ] Overlay Placement tab, with two commanders seen: **Copy all overlay layouts and settings from** lists the other commander; **Copy** then **OK** gives this commander the other's cards, placement and look (the overlay redraws); **Cancel** changes nothing; the other commander's choices are unchanged. With one commander the row is not shown.
 - [ ] The Colony page is in sections: the project (Delivered, Still needed), **What you have** and **To finish the build**; there is no Next line. With no site under construction it lists the last 5 completed sites, newest first, as "Name (System) - date".
 - [ ] After delivering cargo to a depot, "You delivered" and "Recently" go up by the same tons, and again after restarting EDMC
       (no double counting).

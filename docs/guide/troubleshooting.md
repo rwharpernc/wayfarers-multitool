@@ -53,6 +53,7 @@ Notes:
 - **Settings are per computer.** A tick on one machine does not carry to another, so check each one you play on.
 - **Overlay settings are per commander.** The cards you switch on, where they sit and how they look are saved for the commander playing.
   - If a card is missing after you change commanders, check Settings → WFMT → Overlays for that commander. Settings say whose choices they are on the Overlay Placement tab.
+  - To give a commander the same overlay as another one, open Settings → WFMT → Overlay Placement while playing the commander who should receive it, pick the other commander next to **Copy all overlay layouts and settings from**, press **Copy**, then **OK**. It replaces every overlay choice of the current commander (which cards are on, their options, where they sit and how they look) with the other's; Cancel changes nothing. The other commander is not touched, and settings that belong to the machine (such as the overlay connection) are not copied. The button appears once WFMT has seen a second commander.
   - The overlay's connection (which overlay draws, host and port) is shared.
 - **Press OK** in Settings to keep a change.
 - Anything that contacts the internet is listed, with what it sends, on [what goes on the internet](internet-and-privacy.md).

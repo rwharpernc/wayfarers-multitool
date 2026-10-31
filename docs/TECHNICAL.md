@@ -1478,6 +1478,10 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 - `plan_system` adds up the stations' stock per commodity and reuses `colonization_sources.plan_route` limited to that system (fewest stations, most tons), then orders the stops by arrival distance. `rank` puts systems that cover everything first, then the larger share, the nearer, the cheaper.
 - A single commodity asks for nothing. The Spansh names are normalized as the one-stop search does, and compared without regard to case.
 
+**Overlay choices copied from another commander** (`overlay_profile.py`, `overlay_placement._build_copy_row`)
+
+- `OverlayProfiles.others()` lists the other commanders with filed choices; `request_copy(name)` only records the request, and `save_current` (run from `prefs_changed`, after the tabs have written their values) applies it: `apply()` the source's filed settings (removing keys the source never set), file them as the active commander's, then call `on_changed` to redraw. Doing it at save time stops the open Settings window writing its stale values over the copy. The tab drops any earlier request when it is built, so a cancelled Settings leaves nothing pending.
+
 **Where to Buy: surface ports and purchases** (`colonization_buy_window.py`, `colonization_sources.py`)
 
 - `SearchPrefs.no_surface` and `no_carriers` (both default false: everything is included) are the Exclude surface ports and Exclude fleet carriers ticks. The raw Find all answer is kept; `_found_view` filters it with `without_surface` at draw time, so toggling needs no request. `surface_only_labels` names the commodities (still to get) whose every source with stock is planetary; `plan_route(..., surface_only=)` marks their `Purchase.surface_only`, and `Stop.is_planetary` marks a surface stop.

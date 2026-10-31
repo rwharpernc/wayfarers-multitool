@@ -20,7 +20,7 @@ from __future__ import annotations
 import logging
 import os
 import threading
-from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 from . import commander_data
 
@@ -138,6 +138,7 @@ class OverlayProfiles:
         self._lock = threading.Lock()
         self._active = ""              # the commander key whose choices the config holds
         self._edited_unclaimed = False  # Settings were saved before any commander was known
+        self._copy_from = ""            # a commander whose choices replace the active one's when Settings are saved
 
     def configure(self, plugin_dir: str, cfg: Any, on_changed: Optional[Callable[[], None]]) -> None:
         with self._lock:
@@ -168,6 +169,31 @@ class OverlayProfiles:
         if not commander_data.known(self._store, cmdr):
             return None
         return dict(commander_data.payload_for(self._store, cmdr, _empty).get("settings") or {})
+
+    def others(self) -> List[str]:
+        """The names of the other commanders who have overlay choices filed, to copy from (empty until one other is known)."""
+        names = []
+        with self._lock:
+            for key, entry in self._store["commanders"].items():
+                if key != self._active and isinstance(entry.get("data"), dict) and entry["data"].get("settings"):
+                    names.append(str(entry.get("name") or key))
+        return sorted(names, key=str.casefold)
+
+    def request_copy(self, cmdr: str) -> bool:
+        """Asks for the active commander's overlay choices (cards, options, placement, look) to be replaced by `cmdr`'s when Settings are
+        next saved, not at once, because the open Settings window still holds the old values and would write them over a copy made now.
+        False when there is nothing to copy from. An empty name drops the request."""
+        with self._lock:
+            if not cmdr:
+                self._copy_from = ""
+                return True
+            if commander_data.key_for(cmdr) == self._active or not self.settings_of(cmdr):
+                return False
+            self._copy_from = cmdr
+            return True
+
+    def pending_copy(self) -> str:
+        return self._copy_from
 
     def _file(self, cmdr: str, values: Dict[str, Value]) -> None:
         if self.settings_of(cmdr) == values:
@@ -227,12 +253,25 @@ class OverlayProfiles:
         commander known yet, they are kept for whoever is seen next."""
         if self._cfg is None:
             return
+        copied = False
         with self._lock:
             target = self._active
             if not target:
                 self._edited_unclaimed = True
                 return
+            source, self._copy_from = self._copy_from, ""
+            filed = self.settings_of(source) if source else None
+            if filed:
+                apply(self._cfg, filed)          # replaces every overlay choice, and removes the ones the source never set
+                copied = True
             self._file(target, snapshot(self._cfg))
+        if copied:
+            logger.info("Overlay settings: copied from %s", source)
+            if self._on_changed is not None:
+                try:
+                    self._on_changed()
+                except Exception:
+                    logger.exception("Could not refresh the overlay after copying another commander's choices")
 
 
 profiles = OverlayProfiles()

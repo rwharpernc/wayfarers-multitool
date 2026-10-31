@@ -231,5 +231,56 @@ class EveryOverlaySettingIsClassifiedTests(unittest.TestCase):
         self.assertEqual(set(P.profile_keys()) & set(SHARED_BY_DESIGN), set())
 
 
+class CopyFromTests(unittest.TestCase):
+    def setUp(self):
+        P.register([PLACE])
+        self.dir = tempfile.mkdtemp()
+        self.cfg = FakeConfig()
+        self.changed = []
+        self.profiles = P.OverlayProfiles(self.dir, self.cfg, lambda: self.changed.append(1))
+        self.cfg.values.update({ENABLED: 1, PLACE: "left,top,10,20", SHARED: "x"})
+        self.profiles.activate("Alpha")
+        self.cfg.values.update({ENABLED: 0, PLACE: "right,bottom,5,5"})
+        self.profiles.activate("Beta")                       # Beta is new: starts with Alpha's choices; Alpha's were filed on the way out
+        self.profiles.activate("Alpha")
+        self.cfg.values.pop(PLACE)
+        self.cfg.values[ENABLED] = 1
+        self.profiles.save_current()
+        self.profiles.activate("Beta")
+        self.changed.clear()
+
+    def test_the_other_commanders_are_offered(self):
+        self.assertEqual(self.profiles.others(), ["Alpha"])
+        self.assertEqual(self.profiles.active_name, "Beta")
+
+    def test_the_copy_waits_for_settings_to_be_saved(self):
+        self.assertTrue(self.profiles.request_copy("Alpha"))
+        self.assertEqual(self.profiles.pending_copy(), "Alpha")
+        self.assertEqual(self.cfg.values[ENABLED], 0, "nothing changes until Settings are saved")
+        self.profiles.save_current()
+        self.assertEqual(self.cfg.values[ENABLED], 1)
+        self.assertNotIn(PLACE, self.cfg.values, "a choice the source never made is removed too")
+        self.assertEqual(self.cfg.values[SHARED], "x", "machine settings are not copied")
+        self.assertEqual(self.profiles.settings_of("Beta")[ENABLED], 1)
+        self.assertEqual(self.profiles.pending_copy(), "")
+        self.assertEqual(self.changed, [1], "the overlay is redrawn")
+
+    def test_a_request_can_be_dropped_and_is_used_once(self):
+        self.profiles.request_copy("Alpha")
+        self.profiles.request_copy("")
+        self.profiles.save_current()
+        self.assertEqual(self.cfg.values[ENABLED], 0)
+        self.profiles.request_copy("Alpha")
+        self.profiles.save_current()
+        self.cfg.values[ENABLED] = 0
+        self.profiles.save_current()
+        self.assertEqual(self.cfg.values[ENABLED], 0, "a second save does not copy again")
+
+    def test_nothing_to_copy_from(self):
+        self.assertFalse(self.profiles.request_copy("Beta"), "not from yourself")
+        self.assertFalse(self.profiles.request_copy("Nobody"))
+        self.assertEqual(self.profiles.pending_copy(), "")
+
+
 if __name__ == "__main__":
     unittest.main()

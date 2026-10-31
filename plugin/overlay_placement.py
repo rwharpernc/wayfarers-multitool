@@ -484,6 +484,31 @@ def _show_info() -> None:
         _info_var.set(layout.describe_screen(_typed_screen()))
 
 
+def _build_copy_row(parent: tk.Misc) -> None:
+    """Copy another commander's overlay choices (cards, options, placement, look) over this commander's. It is done when Settings are saved
+    with OK, not when the button is pressed: this window still holds the old values and would write them back over a copy made at once."""
+    overlay_profile.profiles.request_copy("")        # a request from an earlier visit to Settings that was cancelled is dropped
+    others = overlay_profile.profiles.others()
+    if not others or not overlay_profile.profiles.active:
+        return
+    box = tk.Frame(parent)
+    box.pack(anchor=tk.W, pady=(8, 0))
+    nb.Label(box, text="Copy all overlay layouts and settings from:").grid(row=0, column=0, sticky=tk.W)
+    chosen = tk.StringVar(value=others[0])
+    tk.OptionMenu(box, chosen, *others).grid(row=0, column=1, sticky=tk.W, padx=(6, 6))
+    note = tk.StringVar(value="")
+
+    def ask() -> None:
+        source = chosen.get()
+        if overlay_profile.profiles.request_copy(source):
+            note.set(f"When you press OK, CMDR {source}'s overlay choices replace this commander's. Cancel keeps yours.")
+        else:
+            note.set("There is nothing to copy from that commander.")
+
+    tk.Button(box, text="Copy", command=ask).grid(row=0, column=2, sticky=tk.W)
+    nb.Label(box, textvariable=note, wraplength=460, justify=tk.LEFT).grid(row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
+
+
 def build_settings(notebook: tk.Misc) -> None:
     global _scaling_var, _mode_var, _info_var, _result_var, _frame, _offsets_var
 
@@ -492,15 +517,18 @@ def build_settings(notebook: tk.Misc) -> None:
     frame.columnconfigure(0, weight=1)
     notebook.add(frame, text="Overlay Placement")
 
+    head = tk.Frame(frame)
+    head.grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 6))
     nb.Label(
-        frame,
+        head,
         text=("Where each on-screen display goes, for every overlay feature in WFMT. Pick one of nine spots and an "
               "offset in screen pixels: \"Bottom right\" is the bottom right corner of your screen on any monitor, however "
               "big the display. For the edge spots the offset moves the display inward from the edge; for Center and "
               "Middle it nudges it. \"Exact position\" uses the two numbers as the overlay's own x and y (a 1280 x 960 "
               "canvas stretched over the screen) instead.\n\n" + overlay_profile.profiles.note()),
         wraplength=460, justify=tk.LEFT,
-    ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 6))
+    ).pack(anchor=tk.W)
+    _build_copy_row(head)
 
     _info_var = tk.StringVar(value="")
     nb.Label(frame, textvariable=_info_var, wraplength=460, justify=tk.LEFT).grid(
