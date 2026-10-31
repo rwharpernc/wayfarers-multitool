@@ -27,6 +27,7 @@ SORT_DISTANCE = "distance"
 SORT_PRICE = "price"
 
 DEFAULT_RADIUS_LY = 50
+ARRIVAL_CHOICES = (500, 1000, 2500, 5000, 10000, 25000)   # light seconds from the arrival star; "no limit" is None
 RADIUS_CHOICES = (25, 50, 100, 200, 500)   # light years; "no limit" is None
 MAX_AGE_DAYS = 7          # market data older than this is ignored: it is probably out of date
 STATION_RESULTS = 25
@@ -56,6 +57,7 @@ class Source:
     arrival_ls: float
     price: int           # cr per ton
     supply: int          # tons in stock
+    has_shipyard: bool = False
 
 
 @dataclass(frozen=True)
@@ -90,7 +92,7 @@ def to_source(item: StationPrice) -> Source:
     return Source(
         station=item.station, system=item.system, kind=item.station_type, is_carrier=carrier,
         is_planetary=item.is_planetary, pad=largest_pad(item), distance_ly=item.distance_ly, arrival_ls=item.distance_to_arrival_ls,
-        price=item.price, supply=item.quantity)
+        price=item.price, supply=item.quantity, has_shipyard=item.has_shipyard)
 
 
 def order(sources: Sequence[Source], sort: str = SORT_DISTANCE) -> List[Source]:
@@ -281,7 +283,8 @@ def _merge_hits(out: WholeListResult, hits: Sequence[Tuple[StationPrice, Dict[st
             source = to_source(StationPrice(
                 station=item.station, system=item.system, station_type=item.station_type, distance_ly=item.distance_ly,
                 distance_to_arrival_ls=item.distance_to_arrival_ls, is_planetary=item.is_planetary, price=price,
-                quantity=supply, small_pads=item.small_pads, medium_pads=item.medium_pads, large_pads=item.large_pads))
+                quantity=supply, small_pads=item.small_pads, medium_pads=item.medium_pads, large_pads=item.large_pads,
+                has_shipyard=item.has_shipyard))
             (carriers if source.is_carrier else stations).append(source)
         out.found[index] = (label, SearchResult(stations=order(stations, sort), carriers=order(carriers, sort)))
 
@@ -361,6 +364,25 @@ def without_surface(found: Sequence[Tuple[str, "SearchResult"]]) -> List[Tuple[s
             for label, result in found]
 
 
+def filter_found(found: Sequence[Tuple[str, "SearchResult"]], *, no_surface: bool = False, max_arrival_ls: Optional[int] = None,
+                 needs: Optional[Dict[str, int]] = None, shipyard_only: bool = False) -> List[Tuple[str, "SearchResult"]]:
+    """The whole-list answers with the sources the commander does not want taken out: surface ports (`no_surface`), stations farther than
+    `max_arrival_ls` from their arrival star (an unknown distance is kept), and, given `needs` (tons still to get by label), stations
+    holding less of a commodity than is still needed there, and, with `shipyard_only`, stations without a shipyard (a smaller cargo ship can be kept there)."""
+    def keep(label: str, source: Source) -> bool:
+        if no_surface and source.is_planetary:
+            return False
+        if shipyard_only and not source.has_shipyard:
+            return False
+        if max_arrival_ls and source.arrival_ls and source.arrival_ls > max_arrival_ls:
+            return False
+        need = needs.get(label, 0) if needs is not None else 0
+        return not (need and source.supply < need)
+
+    return [(label, SearchResult([s for s in result.stations if keep(label, s)], [c for c in result.carriers if keep(label, c)]))
+            for label, result in found]
+
+
 def surface_only_labels(found: Sequence[Tuple[str, "SearchResult"]]) -> frozenset:
     """The commodities whose every source in `found` (with stock) is a surface port; a commodity with no source at all is not among them."""
     out = set()
@@ -433,11 +455,15 @@ class SearchPrefs:
     no_carriers: bool = False    # leave fleet carriers out (they are included unless asked)
     sort: str = SORT_DISTANCE
     no_surface: bool = False     # leave surface ports (planetary stations) out (they are included unless asked)
+    max_arrival_ls: Optional[int] = None   # leave out stations farther than this from their arrival star (None = no limit)
+    enough_stock: bool = False   # leave out stations holding less of a commodity than is still needed
+    shipyard_only: bool = False  # only stations with a shipyard
 
 
 def dump_prefs(prefs: SearchPrefs) -> str:
     return json.dumps({"radius": prefs.radius_ly, "pad": prefs.pad, "no_carriers": prefs.no_carriers, "sort": prefs.sort,
-                       "no_surface": prefs.no_surface})
+                       "no_surface": prefs.no_surface, "arrival": prefs.max_arrival_ls, "enough": prefs.enough_stock,
+                       "shipyard": prefs.shipyard_only})
 
 
 def load_prefs(raw: Any) -> SearchPrefs:
@@ -456,9 +482,15 @@ def load_prefs(raw: Any) -> SearchPrefs:
     sort = data.get("sort")
     no_carriers = data.get("no_carriers")
     no_surface = data.get("no_surface")
+    arrival = data.get("arrival")
+    enough = data.get("enough")
+    shipyard = data.get("shipyard")
     return SearchPrefs(
         radius_ly=float(radius) if radius is not None else None,
         pad=pad if pad in {key for key, _ in PAD_CHOICES} else default.pad,
         no_carriers=no_carriers if isinstance(no_carriers, bool) else default.no_carriers,
         sort=sort if sort in (SORT_DISTANCE, SORT_PRICE) else default.sort,
-        no_surface=no_surface if isinstance(no_surface, bool) else default.no_surface)
+        no_surface=no_surface if isinstance(no_surface, bool) else default.no_surface,
+        max_arrival_ls=arrival if (not isinstance(arrival, bool) and arrival in ARRIVAL_CHOICES) else default.max_arrival_ls,
+        enough_stock=enough if isinstance(enough, bool) else default.enough_stock,
+        shipyard_only=shipyard if isinstance(shipyard, bool) else default.shipyard_only)

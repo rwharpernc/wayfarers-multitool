@@ -36,7 +36,7 @@ CONFIG_GEOMETRY = "wfmt_colonization_buy_window_geometry"
 CONFIG_SEARCH = "wfmt_colonization_search_prefs"   # radius, pad, carriers and sort of the search (the key the Sites window kept it under)
 
 MIN_WIDTH = 960
-MIN_HEIGHT = 460
+MIN_HEIGHT = 560
 DEFAULT_SIZE = (1060, 640)
 
 _SOURCE_COLUMNS = (
@@ -54,7 +54,7 @@ _PAD_ORDER = {"Large": 0, "Medium": 1, "Small": 2, "?": 3}
 _NO_LIMIT = "No limit"
 _SORT_CHOICES = (("Closest first", sources.SORT_DISTANCE), ("Cheapest first", sources.SORT_PRICE))
 _POLL_MS = 150
-_PLAN_ROWS = 12    # the shopping plan block is this many rows tall at most, then it scrolls
+_PLAN_ROWS = 8     # the shopping plan block is this many rows tall at most, then it scrolls
 _ERROR_MAX = 90   # a failure message from outside is clipped to this
 _NAME_MAX = 60     # a system or commodity name is clipped to this in a note
 _HINT = "Pick a commodity row in the Sites window, then Find nearest - or Find all to search everything still to buy."
@@ -139,6 +139,8 @@ class BuyWindow:
         self._system_var = tk.StringVar(master=self._toplevel, value="")
         self._no_carriers_var = tk.BooleanVar(master=self._toplevel, value=self._prefs.no_carriers)
         self._no_surface_var = tk.BooleanVar(master=self._toplevel, value=self._prefs.no_surface)
+        self._enough_var = tk.BooleanVar(master=self._toplevel, value=self._prefs.enough_stock)
+        self._shipyard_var = tk.BooleanVar(master=self._toplevel, value=self._prefs.shipyard_only)
         content = tk.Frame(self._shell.body, bg=P.PANE)    # the note wraps to this frame's width, which the body's side padding does not narrow
         content.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
         self._build(content)
@@ -195,7 +197,16 @@ class BuyWindow:
         third = tk.Frame(options, bg=P.PANE)
         third.pack(fill="x")
         tk.Checkbutton(third, text="Exclude fleet carriers", variable=self._no_carriers_var).pack(side="left", padx=(0, P.PAD))
-        tk.Checkbutton(third, text="Exclude surface ports", variable=self._no_surface_var, command=self._on_surface_toggle).pack(side="left")
+        tk.Checkbutton(third, text="Exclude surface ports", variable=self._no_surface_var, command=self._on_filter_change).pack(side="left", padx=(0, P.PAD))
+        fourth = tk.Frame(options, bg=P.PANE)
+        fourth.pack(fill="x")
+        tk.Checkbutton(fourth, text="Only stations with enough stock", variable=self._enough_var, command=self._on_filter_change).pack(side="left", padx=(0, P.PAD))
+        tk.Checkbutton(fourth, text="Only stations with a shipyard", variable=self._shipyard_var, command=self._on_filter_change).pack(side="left", padx=(0, P.PAD))
+        tk.Label(fourth, text="Arrival within", fg=P.MUTED, bg=P.PANE).pack(side="left")
+        self._arrival = Combobox(fourth, state="readonly", width=10, values=[f"{n:,} ls" for n in sources.ARRIVAL_CHOICES] + [_NO_LIMIT])
+        self._arrival.set(_NO_LIMIT if self._prefs.max_arrival_ls is None else f"{self._prefs.max_arrival_ls:,} ls")
+        self._arrival.pack(side="left", padx=(P.PAD_SM, 0))
+        self._arrival.bind("<<ComboboxSelected>>", lambda _e: self._on_filter_change())
 
         self._sources_note = tk.Label(host, text=_HINT, fg=P.MUTED, bg=P.PANE, anchor="w", justify="left", padx=P.PAD)
         self._sources_note.pack(fill="x")
@@ -272,6 +283,15 @@ class BuyWindow:
         except (ValueError, IndexError):
             return float(sources.DEFAULT_RADIUS_LY)
 
+    def _arrival_ls(self) -> Optional[int]:
+        text = self._arrival.get()
+        if text == _NO_LIMIT:
+            return None
+        try:
+            return int(text.split()[0].replace(",", ""))
+        except (ValueError, IndexError):
+            return None
+
     def _pad_choice(self) -> str:
         label = self._pad.get()
         return next((key for key, text in sources.PAD_CHOICES if text == label), sources.PAD_ANY)
@@ -283,7 +303,8 @@ class BuyWindow:
     def _save_prefs(self) -> None:
         config.set(CONFIG_SEARCH, sources.dump_prefs(sources.SearchPrefs(
             radius_ly=self._radius_ly(), pad=self._pad_choice(), no_carriers=bool(self._no_carriers_var.get()),
-            sort=self._sort_choice(), no_surface=bool(self._no_surface_var.get()))))
+            sort=self._sort_choice(), no_surface=bool(self._no_surface_var.get()), max_arrival_ls=self._arrival_ls(),
+            enough_stock=bool(self._enough_var.get()), shipyard_only=bool(self._shipyard_var.get()))))
 
     def _say(self, text: str, busy: bool = False) -> None:
         """The note under the buttons. A search in progress is shown in the status color so it stands out; anything else in the plain text one."""
@@ -430,9 +451,10 @@ class BuyWindow:
                           f"{item.arrival_ls:,.0f} ls" if item.arrival_ls else "", f"{item.price:,}",
                           f"{item.supply:,}"), tag=tag, parent=parent)
 
-        keep = not self._no_surface_var.get()
-        shown_stations = [s for s in result.stations if keep or not s.is_planetary]
-        shown_carriers = [c for c in result.carriers if keep or not c.is_planetary]
+        (_label, shown), = sources.filter_found([(self._result_label, result)], no_surface=bool(self._no_surface_var.get()),
+                                                max_arrival_ls=self._arrival_ls(), needs=self._need_for_single(),
+                                                shipyard_only=bool(self._shipyard_var.get()))
+        shown_stations, shown_carriers = shown.stations, shown.carriers
         hidden = len(result.stations) + len(result.carriers) - len(shown_stations) - len(shown_carriers)
         add(shown_stations, "s", None, None)
         if shown_carriers:
@@ -442,23 +464,31 @@ class BuyWindow:
         stations, carriers = len(shown_stations), len(shown_carriers)
         if not stations and not carriers:
             if hidden:
-                self._say(f"{self._result_label} is only at surface ports ({hidden} found). Untick Exclude surface ports to see them.")
+                self._say(f"{self._result_label}: all {hidden} found are left out by the filters (surface ports, arrival distance, stock or shipyard). Loosen them to see them.")
             else:
                 self._say(f"Nothing found with {self._result_label} in stock. Try a larger radius, any landing pad size, "
                           f"or untick Exclude fleet carriers.")
             return
         extra = f" and {carriers} fleet carrier{'s' if carriers != 1 else ''}" if carriers else ""
         around = f" around {_clip(system, _NAME_MAX)}" if system else ""
-        left_out = f" {hidden} surface port{'s' if hidden != 1 else ''} left out." if hidden else ""
+        left_out = f" {hidden} left out by the filters." if hidden else ""
         self._say(f"{self._result_label}: {stations} station{'s' if stations != 1 else ''}{extra}{around}.{left_out} Price is per "
                   f"ton; the data is from players' own market updates, so confirm on arrival.")
+
+    def _need_for_single(self) -> Optional[Dict[str, int]]:
+        """The tons still to get of the commodity a Find nearest searched, when "Only stations with enough stock" is ticked (else None)."""
+        if not self._enough_var.get():
+            return None
+        rows = self.host.to_buy() or []
+        return {r.label: r.to_get for r in rows if r.label == self._result_label and r.to_get > 0}
 
     def _found_view(self) -> List[Any]:
         """The Find all answers as the commander wants to see them: without the surface ports when they are not included."""
         whole = self._whole
         if whole is None:
             return []
-        return sources.without_surface(whole.found) if self._no_surface_var.get() else list(whole.found)
+        return sources.filter_found(whole.found, no_surface=bool(self._no_surface_var.get()), max_arrival_ls=self._arrival_ls(),
+                                    needs=self._whole_to_get if self._enough_var.get() else None, shipyard_only=bool(self._shipyard_var.get()))
 
     def _surface_only(self) -> frozenset:
         """The commodities still to get whose every source found is a surface port."""
@@ -469,8 +499,8 @@ class BuyWindow:
     def _make_plan(self) -> sources.RoutePlan:
         return sources.plan_route(self._found_view(), self._whole_to_get, surface_only=self._surface_only())
 
-    def _on_surface_toggle(self) -> None:
-        """Surface ports shown or left out: the lists and the route are drawn again from what was already found (nothing is asked of Spansh)."""
+    def _on_filter_change(self) -> None:
+        """A filter changed (surface ports, stock or arrival distance): the lists and the route are drawn again from what was already found (nothing is asked of Spansh)."""
         try:
             self._save_prefs()
         except tk.TclError:
@@ -539,6 +569,7 @@ class BuyWindow:
                                                         + (" - surface ports only" if buy.surface_only else ""), "", "", "", "", "", "",
                                  f"{buy.price:,}", f"{buy.supply:,}" if buy.supply else ""), parent=stop_id,
                                  tag="warn" if buy.surface_only else None)
+        raw_counts = {label: len(result.stations) + len(result.carriers) for label, result in whole.found}
         for g, (label, result) in enumerate(self._found_view()):
             need = self._whole_to_get.get(label)
             if not need:
@@ -551,7 +582,7 @@ class BuyWindow:
             self._source_table.insert(
                 gid, (label, f"{need:,} t to get" if need else "",
                       "" if stations or carriers else ("surface ports only (left out)" if label in surface_only and not include_surface
-                                                       else "no source found"),
+                                                       else "left out by the filters" if raw_counts.get(label) else "no source found"),
                       "", "", "", "", "", ""), group=True, open=True)
             for prefix, group, tag in (("s", stations, None), ("c", carriers, "carrier")):
                 for index, item in enumerate(sorted(group, key=lambda s: self._source_value(s, key), reverse=descending)):
@@ -567,6 +598,10 @@ class BuyWindow:
         parts = [f"Searched {len(whole.found)} commodit{'y' if len(whole.found) == 1 else 'ies'}{around}"
                  f"{' (stopped early)' if whole.stopped else ''}."]
         missing = [label for label in whole.without_sources() if label not in surface_only]
+        shown_total = sum(len(result.stations) + len(result.carriers) for _label, result in self._found_view())
+        left_out = sum(raw_counts.values()) - shown_total
+        if left_out > 0:
+            parts.append(f"{left_out} station{'s' if left_out != 1 else ''} left out by the filters.")
         if surface_only:
             parts.append(("Only at surface ports (none at an orbital port in range): " if include_surface
                           else "Only at surface ports (none at an orbital port in range), so left out of the lists and the route; untick Exclude surface ports: ")

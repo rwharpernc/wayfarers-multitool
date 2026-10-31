@@ -471,9 +471,12 @@ It asks [Spansh](https://spansh.co.uk) (a community-run map of the game), so it 
 | Sort | **Closest first** (default) or **Cheapest first**. This decides which stations Spansh returns, not just their order. Click a result heading to re-sort what came back |
 | Landing pad | **Any size** (default), **Medium or larger**, or **Large only**. Any size lists stations whose biggest pad is small, so you can swap to a smaller cargo ship when a commodity isn't sold at a large-pad station. The **Pad** column shows each station's largest pad |
 | Exclude fleet carriers | Off by default, so carriers are included: they are searched separately and listed under their own **Fleet carriers** heading after the stations. Tick it to leave them out (and save one request per commodity) |
-| Exclude surface ports | Off by default, so surface ports are included. Tick it to leave out stations on a planet's surface (planetary ports), from the lists and from the route. It changes what is shown, not what is asked of Spansh, so ticking or unticking it after a search redraws the results at once |
+| Exclude surface ports | Off by default, so surface ports are included. Tick it to leave out stations on a planet's surface (planetary ports), from the lists and from the route. It changes what is shown, not what is asked of Spansh, so ticking or unticking it after a search redraws the results at once. The stock, shipyard and arrival choices below work the same way |
+| Only stations with enough stock | Off by default. Leaves out any station holding less of a commodity than you still have to get (the Sites window's **Acquire** figure), so every station listed can fill that commodity in one visit. It follows your purchases as the need shrinks |
+| Only stations with a shipyard | Off by default. Keeps only stations with a shipyard, handy when you want to keep a smaller cargo ship close by. Spansh reports it for each station, so it costs no extra request |
+| Arrival within | **No limit** by default, or 500, 1,000, 2,500, 5,000, 10,000 or 25,000 ls. Leaves out stations farther than this from their arrival star, since a station far out is a long supercruise even when it is close in light years. A station whose distance is not known is kept |
 
-The options are **remembered** (within, sort, landing pad and fleet carriers) for the next time you open the window. The
+The options are **remembered** (within, sort, landing pad, and the exclude, stock, shipyard and arrival choices) for the next time you open the window. The
 search system is not: it starts as the site's system again.
 
 ### Find all

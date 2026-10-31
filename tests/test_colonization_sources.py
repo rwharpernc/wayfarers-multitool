@@ -453,6 +453,31 @@ class SurfacePortTests(unittest.TestCase):
         src.find_whole_list("Sol", ["Steel"], search=search, pause=0, now=lambda: 0.0)
         self.assertEqual(calls, ["Steel"])
 
+    def test_arrival_and_stock_filters(self):
+        near = src.Source("Near", "Sol", "Coriolis Starport", False, False, "Large", 3.0, 200.0, 400, 500)
+        far = src.Source("Far", "Sol", "Coriolis Starport", False, False, "Large", 4.0, 40000.0, 400, 500)
+        small = src.Source("Small", "Sol", "Coriolis Starport", False, False, "Large", 5.0, 300.0, 400, 20)
+        unknown = src.Source("Unknown", "Sol", "Coriolis Starport", False, False, "Large", 6.0, 0.0, 400, 500)
+        found = [("Steel", src.SearchResult([near, far, small, unknown], []))]
+        names = lambda out: [s.station for s in out[0][1].stations]
+        self.assertEqual(names(src.filter_found(found, max_arrival_ls=5000)), ["Near", "Small", "Unknown"])
+        self.assertEqual(names(src.filter_found(found, needs={"Steel": 100})), ["Near", "Far", "Unknown"])
+        self.assertEqual(names(src.filter_found(found, max_arrival_ls=5000, needs={"Steel": 100})), ["Near", "Unknown"])
+        self.assertEqual(names(src.filter_found(found, needs={"Other": 100})), ["Near", "Far", "Small", "Unknown"])
+        self.assertEqual(names(src.filter_found(found)), ["Near", "Far", "Small", "Unknown"])
+        yard = src.Source("Yard", "Sol", "Orbis Starport", False, False, "Large", 8.0, 100.0, 400, 500, True)
+        both = [("Steel", src.SearchResult([near, yard], []))]
+        self.assertEqual(names(src.filter_found(both, shipyard_only=True)), ["Yard"])
+        self.assertEqual(names(src.filter_found(both)), ["Near", "Yard"])
+
+    def test_the_new_filter_choices_are_remembered(self):
+        prefs = src.SearchPrefs(max_arrival_ls=5000, enough_stock=True, shipyard_only=True)
+        self.assertEqual(src.load_prefs(src.dump_prefs(prefs)), prefs)
+        self.assertIsNone(src.load_prefs('{"arrival": 123}').max_arrival_ls)
+        self.assertIsNone(src.SearchPrefs().max_arrival_ls)
+        self.assertFalse(src.SearchPrefs().enough_stock)
+        self.assertFalse(src.SearchPrefs().shipyard_only)
+
     def test_the_choice_is_remembered(self):
         self.assertEqual((src.SearchPrefs().no_surface, src.SearchPrefs().no_carriers), (False, False))
         self.assertTrue(src.load_prefs(src.dump_prefs(src.SearchPrefs(no_surface=True))).no_surface)

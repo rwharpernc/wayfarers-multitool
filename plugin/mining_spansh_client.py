@@ -183,6 +183,7 @@ class StationPrice:
     small_pads: Optional[int] = None    # pad counts as Spansh reports them; None = not given
     medium_pads: Optional[int] = None
     large_pads: Optional[int] = None
+    has_shipyard: bool = False          # Spansh's `has_shipyard` (absent when the station has none)
 
 
 def _count(value) -> Optional[int]:
@@ -256,6 +257,7 @@ def search_stations_selling_all(reference_system: str, commodities: Sequence[str
                 station_type=station.get("type") or "?", distance_ly=station.get("distance", 0.0),
                 distance_to_arrival_ls=station.get("distance_to_arrival", 0.0),
                 is_planetary=bool(station.get("is_planetary", False)), price=first[0], quantity=first[1],
+                has_shipyard=bool(station.get("has_shipyard")),
                 small_pads=_count(station.get("small_pads")), medium_pads=_count(station.get("medium_pads")),
                 large_pads=_count(station.get("large_pads"))), offers))
     return out
@@ -371,6 +373,7 @@ def search_best_price_stations(reference_system: str, commodity: str, transactio
             small_pads=_count(station.get("small_pads")),
             medium_pads=_count(station.get("medium_pads")),
             large_pads=_count(station.get("large_pads")),
+            has_shipyard=bool(station.get("has_shipyard")),
         ))
     return results
 
