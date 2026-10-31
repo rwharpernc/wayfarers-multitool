@@ -121,6 +121,7 @@ check(heading_drawn("have") and heading_drawn("finish") and not heading_drawn("r
 check(shown("hold") and shown("to_get") and shown("coverage") and shown("trips") and not shown("carrier"), "no carrier row without a carrier")
 check(panel._vars["needed"].get().endswith(" t"), f"still needed is a tonnage: {panel._vars['needed'].get()}")
 check("next" not in panel._vars, "the Next line is gone")
+check(not [w for w in frame.winfo_children() if isinstance(w, tk.Label) and str(w.cget("text")).startswith("See ")], "the page itself draws no hint: the main panel adds it at the foot of the mode")
 
 if problems:
     print("PROBLEMS:")

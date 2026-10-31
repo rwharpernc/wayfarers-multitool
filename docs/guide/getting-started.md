@@ -510,7 +510,6 @@ a moment and a tooltip shows its name and what it does.** The same goes for the 
 | **Find sources** | Where to buy the cargo your Collect and Mining missions need, and where to pick up a Delivery mission's cargo (needs Trade lookups on) | Missions (bottom of every page) |
 | **Ships** | Manage ship builds | Operations |
 | **Dashboard** | Colonization sites (the Colonization mode's own button) | Colonization |
-| **Overlay** | Force the colonization shopping list onto the overlay (lit while on), press again to let go | Colonization |
 | **Projects** | Open My Projects, every active project you have on Raven Colonial | Colonization |
 | **History** | Open Colonization History, what you have delivered over time | Colonization |
 | **Create on Raven** / **Not Now** | Shown only when Raven Colonial has no project for a new construction site: open the Create dialog for it / hide the offer | Colonization |

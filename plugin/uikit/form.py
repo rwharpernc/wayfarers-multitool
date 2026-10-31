@@ -77,8 +77,8 @@ class FormDialog:
         self._error.grid(row=row, column=0, columnspan=2, sticky="ew", pady=(P.PAD_SM, 0))
         buttons = tk.Frame(body, bg=P.BG)
         buttons.grid(row=row + 1, column=0, columnspan=2, sticky="e", pady=(P.PAD_SM, 0))
-        FlatButton(buttons, save_text, self.submit, kind="accent").pack(side="left")
-        FlatButton(buttons, "Cancel", self.close).pack(side="left", padx=(6, 0))
+        FlatButton(buttons, save_text, self.submit, kind="accent", tip=f"{save_text} - save these details and close this window").pack(side="left")
+        FlatButton(buttons, "Cancel", self.close, tip="Cancel - close this window without saving").pack(side="left", padx=(6, 0))
         window.bind("<Return>", lambda _e: self.submit())
         window.bind("<Configure>", lambda e: self._later_fit() if e.widget is window else None)
         if first is not None:

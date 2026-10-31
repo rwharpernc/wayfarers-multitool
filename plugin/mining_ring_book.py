@@ -304,5 +304,5 @@ class RingBook:
 
         buttons = tk.Frame(dialog, bg=P.BG)
         buttons.grid(row=6, column=0, columnspan=2, sticky="e", padx=P.PAD, pady=P.PAD)
-        FlatButton(buttons, "Add", save, kind="accent").pack(side="left")
-        FlatButton(buttons, "Cancel", dialog.destroy).pack(side="left", padx=(6, 0))
+        FlatButton(buttons, "Add", save, kind="accent", tip="Add - save this ring in the Mining Book").pack(side="left")
+        FlatButton(buttons, "Cancel", dialog.destroy, tip="Cancel - close this window without adding a ring").pack(side="left", padx=(6, 0))

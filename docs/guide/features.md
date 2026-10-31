@@ -192,7 +192,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 ### Colonization ([guide](colonization.md))
 
-**Controls:** the **Colony** page with **Dashboard** (the Sites window), **Overlay** (the shopping list on your screen), **Projects** (My Projects on Raven Colonial) and **History**; and in the Sites window **Copy Shopping List**, **Copy To Acquire**, **Where to Buy** (its own window, with **Find nearest** and **Find all**), **Rescan Journals**, the **Raven Colonial** menu and the **Manage Sites** menu.
+**Controls:** the **Colony** page with **Dashboard** (the Sites window), **Projects** (My Projects on Raven Colonial) and **History**; and in the Sites window **Copy Shopping List**, **Copy To Acquire**, **Where to Buy** (its own window, with **Find nearest** and **Find all**), **Rescan Journals**, the **Raven Colonial** menu and the **Manage Sites** menu.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
@@ -202,7 +202,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Where to buy | The closest places to buy a commodity, or a whole list, with, for a list, a suggested shopping route that shows the price and stock at each stop | Click a commodity row, press **Where to Buy**, then **Find nearest** or **Find all** (**Stop** while it runs) | [Where to buy](colonization.md#where-to-buy), [Suggested route](colonization.md#suggested-route) |
 | My Projects | Every active project you have on Raven Colonial, across systems, with totals and trips | **Projects** | [My Projects](colonization.md#my-projects) |
 | Planned Builds and Raven Colonial | Links, starting a Raven project for a site, and opt-in sharing of progress and deliveries | **Raven Colonial** menu in the Sites window; **Settings → WFMT → Colonization** (master switch and your Raven key) | [Planned builds](colonization.md#planned-builds), [Starting a project](colonization.md#starting-a-project-on-raven-colonial) |
-| Shopping list overlay | Shown at the market, your carrier or a construction site; a List choice (All, To buy or To haul) picks which rows it shows | **Overlay**, or the options under Settings → WFMT → Overlays → Colonization (automatic showing, rows, *List*) | [The overlay](colonization.md#the-shopping-list-on-the-overlay) |
+| Shopping list overlay | Shown at the market, your carrier or a construction site; a List choice (All, To buy or To haul) picks which rows it shows | The options under Settings → WFMT → Overlays → Colonization (*Always show*, automatic showing, rows, *List*) | [The overlay](colonization.md#the-shopping-list-on-the-overlay) |
 | Colonization Archive | Finished sites put away for reference, with how they ended, their dates and the commodities they needed; restore or remove them | **Manage Sites → Archive Finished**, then **Show Archive** | [The archive](colonization.md#the-archive) |
 | Colonization History | What you delivered over time, by day, commodity and site | **History** | [History](colonization.md#history) |
 

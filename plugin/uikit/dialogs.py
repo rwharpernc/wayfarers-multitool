@@ -170,8 +170,14 @@ def _show(owner: tk.Misc, kind: str, title: str, message: str, labels: list[str]
         row.pack(fill="x")
         buttons: dict[int, FlatButton] = {}
         for index in reversed(range(len(labels))):
+            if len(labels) == 1:
+                what = "close this message"
+            elif index == default:
+                what = "go ahead"
+            else:
+                what = "close this without going ahead"
             button = FlatButton(row, clip(labels[index], _BUTTON_CHARS), lambda i=index: finish(i),
-                                kind="accent" if index == default else "normal")
+                                kind="accent" if index == default else "normal", tip=f"{clip(labels[index], _BUTTON_CHARS)} - {what}")
             button.pack(side="right", padx=(P.PAD_SM, 0))
             buttons[index] = button
 

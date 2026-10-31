@@ -380,7 +380,7 @@ class PreviewWindow:
         if folder:
             self._shell.add_action("Open Folder", lambda: open_folder(folder),
                                    tip="Open Folder - open the folder this screenshot was saved in")
-        self._shell.add_action("Close", self._shell.close, accent=True)
+        self._shell.add_action("Close", self._shell.close, accent=True, tip="Close - close this window")
 
         self._label = tk.Label(self._shell.body, bg=P.BG)
         self._label.place(relx=0.5, rely=0.5, anchor="center")

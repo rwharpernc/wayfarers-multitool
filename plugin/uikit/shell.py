@@ -106,7 +106,7 @@ class _Parts:
 
             grid = fill(window)
             grid.pack(padx=P.PAD, pady=P.PAD)
-            close = FlatButton(window, "Close", window.destroy)
+            close = FlatButton(window, "Close", window.destroy, tip="Close - close this window")
             close.pack(pady=(0, P.PAD))
             window.update_idletasks()
             room = window.winfo_screenheight() - 160

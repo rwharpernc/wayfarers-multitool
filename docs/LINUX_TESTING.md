@@ -711,7 +711,7 @@ Written and tried on Linux (Flatpak EDMC, Proton game, EDMCModernOverlay). The c
   - with the right-hand cockpit panel open when docked at the carrier (the cargo transfer)
   - in Carrier Management
   - docked at a construction site
-  - It goes when you leave, and the Overlay button forces it on and off.
+  - It goes when you leave, and the **Always show the shopping list** tick (Settings → Overlays → Colonization) forces it on and off.
   - The EDMC debug log lines "Colonization overlay ..." say what was decided and why.
 - [ ] Rows left at the default list every commodity not yet covered; the card fits on screen from the default position (20, 300).
 - [ ] **List (overlay card):** with **To buy** (the default) a commodity the hold plus the carrier cover is left out and the footer still counts it; **All** brings the covered rows back; **To haul** lists only the covered rows not yet aboard in full (put everything on the carrier and check that the card still lists them, and that a row drops off once its whole need is in the hold).

@@ -3,9 +3,8 @@
 Colonization has its own mode: press the **Colony** button.
 
 - The page shows the project you are building now and nothing historical.
-- Four buttons sit under it, left to right:
+- Three buttons sit under it, left to right:
   - **Dashboard** opens the full [Colonization Sites window](#the-colonization-sites-window).
-  - **Overlay** turns the [shopping list on the overlay](#the-shopping-list-on-the-overlay) on or off. It is lit while the card is on.
   - **Projects** opens [My Projects](#my-projects): everything you have on Raven Colonial.
   - **History** opens your [history](#history) in its own window.
   - Hover over a button for a one-line reminder of what it does.
@@ -92,8 +91,8 @@ See [The archive](#the-archive).
 **Use the shopping list on the overlay.**
 
 1. Make sure an overlay is running ([Setting up the overlay](../OVERLAY_SETUP.md)).
-2. Press **Overlay** on the Colony page. It lights while the card is on.
-3. Press it again to turn the card off. It stays as you left it after a restart.
+2. Tick **Always show the shopping list, whatever screen you are on** in **Settings → WFMT → Overlays → Colonization**.
+3. Untick it to turn the card off again. The choice is kept after a restart. The **Overlays shown (click to hide)** line at the top of the WFMT panel hides every overlay, this card included, until you click it again.
 
 See [The shopping list on the overlay](#the-shopping-list-on-the-overlay).
 
@@ -115,6 +114,8 @@ See [The shopping list on the overlay](#the-shopping-list-on-the-overlay).
 | Trips left | **Without a carrier:** the loads of your current ship it takes to finish (`4 loads of 400 t`; one trip buys and delivers). **With a carrier:** `N to buy · N to haul (400 t ship)`. `Unknown (ship size not seen yet)` until EDMC has reported your ship's cargo capacity |
 | Biggest gaps (t) | The four commodities with the most still to get, with their tons. Left out when nothing is left to get |
 | Others | `+N more active sites` when you have more than the one shown (the line is left out when you have none) |
+
+The page ends with its buttons and a line, **See Dashboard for details.**, because the Sites window (**Dashboard**) shows every site and the full list of commodities.
 
 **When nothing is under construction.** The page lists the **last 5 completed** sites you have, newest first, each as `Name (System) - date` (the date is left out for a site finished before WFMT kept it). Archived sites are included.
 
@@ -739,7 +740,7 @@ Select a site your journal has reported **complete** and press **Report Complete
 
 Optional, and **off until you ask for it**. It needs an overlay running; see [Setting up the overlay](../OVERLAY_SETUP.md).
 
-- Press **Overlay** on the Colony page to put it up whatever screen you are on.
+- Tick **Always show the shopping list, whatever screen you are on** in **Settings → WFMT → Overlays → Colonization** to put it up on every screen.
 - Or tick **Also show the shopping list automatically (markets, carrier inventory, construction sites)** in **Settings → WFMT → Overlays → Colonization**, so it appears by itself in the places listed below.
 
 ### The table
@@ -812,7 +813,7 @@ A last line gives the tons remaining (still to get, as in the Acquire column) an
   - Optionally, **whenever the right-hand cockpit panel is open, anywhere** (even in flight). Off by
     default; tick **Also show whenever the right-hand cockpit panel is open, anywhere** in the Colonization settings.
 
-  **Prefer to switch it yourself?** Leave the automatic option unticked and use the **Overlay** button beside Dashboard on the Colony page.
+  **Prefer to switch it yourself?** Leave the automatic option unticked and use **Always show the shopping list** in the same settings.
   - It turns the card on or off, whatever screen you are on.
   - The button lights up while the card is on. Its name does not change.
   - It works whether or not the automatic option is ticked, and it **stays as you left it, even after you restart EDMC**.

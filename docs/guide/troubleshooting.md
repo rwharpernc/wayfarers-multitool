@@ -33,7 +33,7 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | Mining stats on the game screen | **Enable HUD Overlay** | Settings → WFMT → Overlays → Mining |
 | The Mining radar (the Surface Live radar) over the game | **Show the Mining radar over the game while the Rhino is out**, and WFMT's built-in overlay chosen (Windows) | Settings → WFMT → Overlays → Mining and Overlay Connection |
 | "Screenshot saved" message on the game screen | **Show a notification on the in-game overlay when a screenshot is saved** | Settings → WFMT → Overlays → Screenshots |
-| The Colonization shopping list appears by itself at markets | **Also show the shopping list automatically**. Otherwise only the **Overlay** button on the Colony page shows it | Settings → WFMT → Overlays → Colonization |
+| The Colonization shopping list appears by itself at markets | **Also show the shopping list automatically**. Otherwise only **Always show the shopping list** shows it | Settings → WFMT → Overlays → Colonization |
 | Auto-Honk | **Enable Auto-Honk** or the **Auto-Honk** button | Settings → WFMT → Exploration → Auto-Honk |
 | **Find sources** (Missions) and **Best picks** (Trade) | **Enable Spansh trade lookups**; Find sources asks to turn it on when you press it | Settings → WFMT → Trade |
 | Routes and Market on the Trade page | **Enable Spansh trade lookups** ([details](#the-lookup-buttons-are-grayed-out-or-there-is-no-commodity-box)) | Settings → WFMT → Trade |

@@ -178,7 +178,7 @@ Things true of every feature tab:
 
 ### Colonization
 
-*Also show the shopping list automatically (markets, carrier inventory, construction sites)* (off); *Also show whenever the right-hand cockpit panel is open, anywhere* (off); **Rows** (0 to 60; 0, the starting value, lists every commodity and a number limits the list, the rest being summarized); **List** (All, To buy, To haul; To buy); **Test Overlay**. The **Overlay** button on the Colony page switches the card on and off whether or not the first tick is on. See [the shopping list on the overlay](guide/colonization.md#the-shopping-list-on-the-overlay).
+*Always show the shopping list, whatever screen you are on* (off); *Also show the shopping list automatically (markets, carrier inventory, construction sites)* (off); *Also show whenever the right-hand cockpit panel is open, anywhere* (off); **Rows** (0 to 60; 0, the starting value, lists every commodity and a number limits the list, the rest being summarized); **List** (All, To buy, To haul; To buy); **Test Overlay**. The first tick keeps the card up on every screen whether or not the second is ticked. See [the shopping list on the overlay](guide/colonization.md#the-shopping-list-on-the-overlay).
 
 ### Discovery
 

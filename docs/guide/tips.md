@@ -92,7 +92,7 @@ Things that surprise people, and what to do about them. Back to the [README](../
   - If Raven has no project for the site you are building, **Create Project on Raven** (in the Colonization Sites window) makes one.
   - **Test key** checks the key.
 - **Shopping-list overlay:**
-  - Switch it on and off with the **Overlay** button (it stays as you leave it).
+  - Tick **Always show the shopping list** in Settings to keep it up on every screen (it stays as you leave it).
   - Tick the automatic option in Settings if you want it to appear by itself at a market, in Carrier Management or at a construction site.
   - It leaves out commodities your hold and fleet carrier already cover (*List: To buy*, the default; choose *To haul* once everything is on the carrier) and its Acquire column shows the tons still to get.
 

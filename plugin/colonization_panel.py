@@ -40,7 +40,7 @@ _CFG_OVERLAY_ENABLED = "wfmt_colonization_overlay_enabled"
 _CFG_OVERLAY_ROWS = "wfmt_colonization_overlay_row_limit"   # 0 = all; the older "..._rows" key held a default of 10
 _CFG_OVERLAY_RIGHT_PANEL = "wfmt_colonization_overlay_right_panel"
 _CFG_OVERLAY_SHOW = colonization_window.CONFIG_SHOW   # which stage of the work the card lists: "all", "buy" or "haul" (colonization_view.SHOW_*); the Sites window's Show dropdown sets it too
-_CFG_OVERLAY_FORCED = "wfmt_colonization_overlay_forced"   # the OVERLAY button: the card stays on until switched off, across restarts
+_CFG_OVERLAY_FORCED = "wfmt_colonization_overlay_forced"   # "Always show the shopping list" (Settings): the card stays on, whatever screen, across restarts
 _CFG_RCC_PROGRESS = "wfmt_rcc_share_progress"      # report depot progress and deliveries to Raven Colonial (off by default)
 _CFG_RCC_CARRIER = "wfmt_rcc_share_carrier"        # report fleet carrier cargo changes to Raven Colonial (off by default)
 
@@ -175,8 +175,7 @@ class ColonizationController:
         self._rcc_key_result: Optional[tk.Label] = None
         self._right_panel_var: Optional[tk.BooleanVar] = None
         self._show_var: Optional[tk.StringVar] = None
-        self._show_button: Optional[tk.Button] = None
-        self._show_off_colors = ("", "")
+        self._forced_var: Optional[tk.BooleanVar] = None
         self._overlay_vars: Dict[str, tk.StringVar] = {}
         self._overlay_result: Optional[tk.Label] = None
 
@@ -667,12 +666,6 @@ class ColonizationController:
         manage_button = tk.Button(buttons, text="Dashboard", command=self._on_manage_clicked)
         manage_button.pack(side=tk.LEFT)
         panelkit.add_tooltip(manage_button, "Colonization Sites - open your colonization sites")
-        self._show_button = tk.Button(buttons, text="Overlay", command=self._on_show_clicked)
-        self._show_off_colors = panelkit.capture_toggle_off_colors(self._show_button)
-        self._show_button.pack(side=tk.LEFT, padx=(6, 0))
-        panelkit.add_tooltip(self._show_button, "Turn the shopping list on the overlay on or off, whatever screen you are on "
-                                                "(lit while it is on). It stays as you leave it, even after a restart, and works "
-                                                "whether or not the automatic option in Settings is ticked.")
         projects_button = tk.Button(buttons, text="Projects", command=self._on_projects_clicked)
         projects_button.pack(side=tk.LEFT, padx=(6, 0))
         panelkit.add_tooltip(projects_button, "My Projects - every active project you have on Raven Colonial, across systems")
@@ -680,7 +673,6 @@ class ColonizationController:
         history_button.pack(side=tk.LEFT, padx=(6, 0))
         panelkit.add_tooltip(history_button, "Colonization History - what you have delivered over time (kept off this panel)")
         self._visibility.forced = config.get_bool(_CFG_OVERLAY_FORCED, default=False)
-        panelkit.apply_toggle_button_state(self._show_button, self._visibility.forced, self._show_off_colors)
         if self._visibility.forced:
             self._update_overlay()
         self._refresh_summary()
@@ -727,14 +719,6 @@ class ColonizationController:
         self._rcc.note_created(market_id, build_id)
         if self._offer is not None and self._offer[1] == market_id:
             self._clear_offer()
-
-    def _on_show_clicked(self) -> None:
-        """Manual override of the automatic screens: force the shopping list on the overlay, or let go again."""
-        self._visibility.forced = not self._visibility.forced
-        config.set(_CFG_OVERLAY_FORCED, self._visibility.forced)
-        if self._show_button is not None:
-            panelkit.apply_toggle_button_state(self._show_button, self._visibility.forced, self._show_off_colors)
-        self._update_overlay()
 
     def _history_view(self) -> tuple:
         """What the History window draws: the commander, their tracked sites and their delivery record."""
@@ -875,17 +859,22 @@ class ColonizationController:
         frame.columnconfigure(0, weight=1)
         notebook.add(frame, text="Colonization")
 
+        self._forced_var = tk.BooleanVar(value=self._visibility.forced)
+        nb.Checkbutton(
+            frame, text="Always show the shopping list, whatever screen you are on",
+            variable=self._forced_var,
+        ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(10, 2))
         self._overlay_enabled_var = tk.BooleanVar(value=overlay_enabled())
         nb.Checkbutton(
             frame, text="Also show the shopping list automatically (markets, carrier inventory, construction sites)",
             variable=self._overlay_enabled_var,
-        ).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(10, 2))
+        ).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(2, 2))
         nb.Label(
             frame,
             text=(
-                "Leave this off to switch the overlay on and off only with the Overlay button on the Colony page; the button works "
-                "either way. When ticked, the card also appears by itself in a commodity market, the carrier inventory, or docked at a "
-                "construction site. "
+                "The first tick keeps the card up on every screen, whether or not the second is ticked. With only the second ticked, the "
+                "card appears by itself in a commodity market, the carrier inventory, or docked at a construction site. With neither, it "
+                "does not show. The Overlays line at the top of the WFMT panel hides every overlay, this card included, until you click it again. "
                 "A table for your most recently updated active site: what it still needs, what is in your ship's hold "
                 "(a tick when it is covered), and, if you have a fleet carrier, what you have moved onto it."
             ),
@@ -963,6 +952,9 @@ class ColonizationController:
         if self._overlay_enabled_var is None:
             return
         config.set(_CFG_OVERLAY_ENABLED, self._overlay_enabled_var.get())
+        if self._forced_var is not None:
+            self._visibility.forced = bool(self._forced_var.get())
+            config.set(_CFG_OVERLAY_FORCED, self._visibility.forced)
         if self._right_panel_var is not None:
             config.set(_CFG_OVERLAY_RIGHT_PANEL, self._right_panel_var.get())
         if self._show_var is not None:

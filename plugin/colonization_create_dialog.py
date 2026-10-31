@@ -202,8 +202,9 @@ def ask(parent: tk.Misc, system: str, name: str, planned: Sequence[rcc_client.Rc
 
         buttons = tk.Frame(window, bg=P.BG, padx=P.PAD * 2, pady=P.PAD)
         buttons.pack(fill="x")
-        FlatButton(buttons, "Create", lambda: finish(True), kind="accent").pack(side="right", padx=(P.PAD_SM, 0))
-        FlatButton(buttons, "Cancel", lambda: finish(False)).pack(side="right")
+        FlatButton(buttons, "Create", lambda: finish(True), kind="accent",
+                   tip="Create - start the project on Raven Colonial with these choices (nothing is sent before this)").pack(side="right", padx=(P.PAD_SM, 0))
+        FlatButton(buttons, "Cancel", lambda: finish(False), tip="Cancel - close this window without creating anything").pack(side="right")
         window.bind("<Escape>", lambda _e: finish(False))
         window.protocol("WM_DELETE_WINDOW", lambda: finish(False))
 

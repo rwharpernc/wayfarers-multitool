@@ -110,6 +110,16 @@ _MODE_TOOLTIPS = {
     "fieldops": "Operations - screenshots, backpack/locker/cargo and saved ship builds",
     "colonization": "Colony - the project you are building now (progress, what is left, trips); history is in the History window",
 }
+# A line at the foot of a mode's page pointing at the window with the whole story. Left out of a mode with several windows and no one of them to name
+# (Trade, Operations).
+_MODE_HINTS = {
+    "powerplay": "See Report for details.",
+    "bgs": "See Report for details.",
+    "exploration": "See Dashboard for details.",
+    "mining": "See Dashboard for details.",
+    "missions": "See the Missions window for details.",
+    "colonization": "See Dashboard for details.",
+}
 _DEFAULT_PANEL_MODE = PANEL_MODES[0][0]
 _MODE_KEYS = {key for key, _ in PANEL_MODES}
 
@@ -141,7 +151,7 @@ _windows_on_edmc_var: Optional[tk.BooleanVar] = None
 PLUGIN_DISPLAY_NAME = "Wayfarer's Multitool (WFMT)"
 
 
-def _stack_features(frame: tk.Frame, placement_key: str, placeholder_text: Optional[str] = None) -> None:
+def _stack_features(frame: tk.Frame, placement_key: str, placeholder_text: Optional[str] = None, hint: str = "") -> None:
     """Builds every feature matching `placement_key` into its *own* child
     frame of `frame`, stacked top to bottom with a separator between
     consecutive features (never before the first) - each feature no longer
@@ -204,6 +214,8 @@ def _stack_features(frame: tk.Frame, placement_key: str, placeholder_text: Optio
     if not built and placeholder_text:
         placeholder = panelkit.wrap_label(frame, text=placeholder_text)
         placeholder.grid(row=0, column=0, sticky=tk.W, pady=(4, 0))
+    elif built and hint:
+        panelkit.add_hint(frame, row, hint)      # a line at the foot of the mode saying where the rest is
 
 
 def _mode_row_full_label_size(frame: tk.Frame) -> Tuple[int, int]:
@@ -296,7 +308,7 @@ def create_plugin_app(parent: tk.Frame) -> tk.Frame:
         mode_frame.columnconfigure(0, weight=1)
         mode_frame.grid(row=0, column=0, sticky="new")
         mode_frame.bind("<Configure>", lambda _e: _sync_mode_holder_height())
-        _stack_features(mode_frame, key, placeholder_text=f"{label} — coming soon.")
+        _stack_features(mode_frame, key, placeholder_text=f"{label} — coming soon.", hint=_MODE_HINTS.get(key, ""))
         _mode_frames[key] = mode_frame
 
     # Mode-independent features ("always" placement, e.g. Landing) build

@@ -87,7 +87,7 @@ def open_import_export_dialog(parent: tk.Misc) -> None:
         row.pack(fill="x", pady=(0, P.PAD))
         FlatButton(row, text, action, kind="accent" if text == "Import" else "normal", tip=tip).pack(side="left", padx=(0, P.PAD))
         NoteLabel(row, label, bg=P.BG, padx=0).pack(side="left", fill="x", expand=True)
-    FlatButton(body, "Close", shell.close).pack(anchor="e", pady=(P.PAD, 0))
+    FlatButton(body, "Close", shell.close, tip="Close - close this window").pack(anchor="e", pady=(P.PAD, 0))
     shell.set_status("Hotspots are kept for the commander you are playing; an export holds only that commander's list.")
 
 

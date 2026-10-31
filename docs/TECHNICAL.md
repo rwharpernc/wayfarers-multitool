@@ -1478,6 +1478,14 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 - `plan_system` adds up the stations' stock per commodity and reuses `colonization_sources.plan_route` limited to that system (fewest stations, most tons), then orders the stops by arrival distance. `rank` puts systems that cover everything first, then the larger share, the nearer, the cheaper.
 - A single commodity asks for nothing. The Spansh names are normalized as the one-stop search does, and compared without regard to case.
 
+**A hint at the foot of a mode** (`ui._MODE_HINTS`, `panelkit.add_hint`)
+
+- `_stack_features` takes a `hint` and draws it after the mode's last section, so one dictionary in `ui.py` decides which modes have one (`tests/test_panel_order.py` checks the keys are real modes and the wording is `See ... for details.`).
+
+**Tooltips on window buttons** (`tests/test_window_button_tips.py`)
+
+- The test reads every plugin source file and fails on a `FlatButton`, `MenuButton`, `add_action` or `add_menu` call without a `tip` keyword, naming the file and line. The wording is `Name - what it does`.
+
 **Overlay choices copied from another commander** (`overlay_profile.py`, `overlay_placement._build_copy_row`)
 
 - `OverlayProfiles.others()` lists the other commanders with filed choices; `request_copy(name)` only records the request, and `save_current` (run from `prefs_changed`, after the tabs have written their values) applies it: `apply()` the source's filed settings (removing keys the source never set), file them as the active commander's, then call `on_changed` to redraw. Doing it at save time stops the open Settings window writing its stale values over the copy. The tab drops any earlier request when it is built, so a cancelled Settings leaves nothing pending.
@@ -1511,7 +1519,7 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 4. The `Music` event's track is `FleetCarrier_Managment` (Carrier Management; both opening and closing are announced).
 5. Optionally (`wfmt_colonization_overlay_right_panel`) `GuiFocus` 1 anywhere.
 
-A manual `forced` flag (the Colony page Overlay button) overrides all of it and the enabled setting.
+A manual `forced` flag (the **Always show the shopping list** tick in Settings → Overlays → Colonization; it was the Colony page's Overlay button until 2026-10-31) overrides all of it and the enabled setting.
 
 Settings keys: `wfmt_colonization_overlay_enabled` and `wfmt_colonization_overlay_row_limit` (0 shows every row, at most 60). The position is set on Overlay Placement; the older `_x` and `_y` keys are read only as a starting point.
 
