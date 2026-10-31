@@ -41,6 +41,7 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 | See what I earned today, by day and over my career | Click the **Credits this session** line (the Credits Ledger) | [The lines under the mode buttons](getting-started.md#the-lines-under-the-mode-buttons) |
 | Back up my data, restore it or move it to another computer | **Settings → WFMT → General → Backup** | [Backing up your data](getting-started.md#backing-up-your-data) |
 | Keep WFMT up to date | **Settings → WFMT → General → Updates**, or extract the new ZIP over the old folder | [Updating](getting-started.md#updating) |
+| Troubleshoot with a detailed log | **Settings → WFMT → General → Help → Write a separate diagnostic log** (off until ticked) | [The diagnostic log](reporting-problems.md#the-diagnostic-log) |
 | Report a bug | **Settings → WFMT → General → Help → Report an issue** and **Copy diagnostics** | [Reporting a problem](reporting-problems.md) |
 | See every setting and what it starts as | **File → Settings → WFMT** | [Settings](getting-started.md#settings) |
 | Know which online services WFMT contacts | The internet page | [What goes on the internet](internet-and-privacy.md) |
@@ -179,7 +180,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 ### Operations ([guide](operations.md))
 
-**Controls:** **Materials**, **Blueprints**, **Ships**, and the **inventory bars** (click one to open Inventory).
+**Controls:** **Materials**, **Blueprints**, **Engineers** (all in the Engineering row), **Ships**, and the **inventory bars** (click one to open Inventory).
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|

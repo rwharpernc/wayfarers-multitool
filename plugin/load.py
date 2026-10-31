@@ -30,6 +30,8 @@ from . import (
     missions, missions_overlay, notable, organic_scan_panel, overlay, overlay_native, overlay_placement, overlay_profile, overlay_visibility, platform_support, shortcuts, powerplay, powerplay_overlay, system_names, powerplay_window, rare_goods_window, restore, route_overlay, screenshots, session_credits, ship_current, session_merits, ship_builds_panel, system_survey, targets_overlay, body_info_overlay, trade_panel, trade_watch_panel, ui,
 )
 from .update import UpdateManager, check_applied_update
+from . import diag_log
+from .uikit import trace as uikit_trace
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -130,6 +132,9 @@ def plugin_start3(plugin_dir: str) -> str:
     """Load WFMT into EDMarketConnector."""
     global _updater
     logger.info("WFMT v%s starting from %s", __version__, plugin_dir)
+    diag_log.configure()      # the separate diagnostic log, when its Settings tick is on
+    uikit_trace.listener = diag_log.log
+    diag_log.log("lifecycle", "plugin starting", level="INFO", plugin_dir=plugin_dir)
 
     restored = data_backup.apply_pending_restore(plugin_dir)      # before any feature reads a data file
     if restored:
@@ -254,6 +259,7 @@ def _on_update_ready(version: str) -> None:
 
 
 def plugin_stop() -> None:
+    diag_log.log("lifecycle", "plugin stopping", level="INFO", uptime_s=diag_log.uptime_s())
     """EDMarketConnector is closing."""
     overlay_profile.profiles.save_current()
     powerplay.controller.flush()
@@ -327,6 +333,7 @@ def plugin_prefs(parent, cmdr: str, is_beta: bool):
 def prefs_changed(cmdr: str, is_beta: bool) -> None:
     """Settings were saved."""
     ui.save_prefs()
+    diag_log.log("settings", "saved", level="INFO")
     overlay_profile.profiles.save_current(cmdr)
     powerplay.controller.flush()
     # A changed overlay host/port applies straight away: drop the old connection
@@ -346,6 +353,9 @@ def journal_entry(
     """Dispatches journal events to every feature module's own handle_event."""
     global _live_event_seen
     _live_event_seen = True
+    if diag_log.enabled():
+        diag_log.note_commander(cmdr)
+        diag_log.log("journal", str(entry.get("event", "?")), system=system or "", station=station or "")
     overlay_profile.profiles.activate(cmdr)    # before any feature reads its overlay settings for this event
     visited = entry.get("StarSystem") if entry.get("event") in ("FSDJump", "Location", "CarrierJump") else system
     if isinstance(visited, str):
@@ -359,6 +369,7 @@ def capi_fleetcarrier(data: Any) -> None:
     (requires Frontier auth; fetched on CarrierBuy/CarrierStats, ~15min
     throttle) - a separate hook from journal_entry, not a journal event.
     Inventory's fleet-carrier-locker tracking and the Colonization panel's carrier cargo need this."""
+    diag_log.log("capi", "fleet carrier data received", level="INFO")
     inventory_panel.capi_fleetcarrier(data)
     colonization_panel.capi_fleetcarrier(data)
 

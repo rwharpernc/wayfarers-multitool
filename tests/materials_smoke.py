@@ -117,15 +117,15 @@ login = {"event": "Materials",
          "Manufactured": [{"Name": "gridresistors", "Count": 40}], "Encoded": [{"Name": "legacyfirmware", "Count": 7}]}
 panel.handle_event(login, "Bocheaux", "Sol", None, {})
 text, suffix = panel.summary()
-check(text.splitlines()[0] == "Raw 432 · Manufactured 40 · Encoded 7", f"the totals line: {text!r}")
+check(text.splitlines()[0] == "Materials held: Raw 432 · Manufactured 40 · Encoded 7", f"the totals line: {text!r}")
 check("At the limit: Iron" in text, f"iron is at its limit: {text!r}")
 check(suffix == "- 479 held", f"the folded title says how many: {suffix!r}")
 check(panel._summary_var.get() == text, "the label follows the summary")
 
 panel.handle_event({"event": "MaterialCollected", "Category": "Raw", "Name": "carbon", "Count": 3}, "Bocheaux", "Sol", None, {})
-check("Last: +3 Carbon (now 123)" in panel.summary()[0], f"the last change: {panel.summary()[0]!r}")
+check("Last change: +3 Carbon (now 123)" in panel.summary()[0], f"the last change: {panel.summary()[0]!r}")
 panel.handle_event({"event": "MaterialDiscarded", "Category": "Raw", "Name": "carbon", "Count": 23}, "Bocheaux", "Sol", None, {})
-check("Last: -23 Carbon (now 100)" in panel.summary()[0], f"a discard: {panel.summary()[0]!r}")
+check("Last change: -23 Carbon (now 100)" in panel.summary()[0], f"a discard: {panel.summary()[0]!r}")
 
 # The row never gets wider because of what is held or named.
 for n in range(8):
@@ -254,6 +254,31 @@ panel.handle_event({"event": "EngineerProgress", "Engineers": [
     {"Engineer": "Lei Cheung", "EngineerID": 300120, "Progress": "Invited"},
     {"Engineer": "Eleanor Bresa", "EngineerID": 400011, "Progress": "Known"}]}, "Bocheaux", "Sol", None, {})
 check(eng.has_data and eng.standing("Felicity Farseer").rank == 3, "the panel feeds EngineerProgress to the engineer book")
+check("Engineers: 1 of 38 unlocked · 1 invited · 1 known" in panel.summary()[0] and panel.summary()[1].endswith("· 1 engineers"),
+      f"the Engineering row counts the engineers: {panel.summary()}")
+
+
+def find_buttons(widget):
+    found = []
+    for child in widget.winfo_children():
+        if isinstance(child, tk.Button):
+            found.append(child)
+        found += find_buttons(child)
+    return found
+
+
+row_buttons = {b.cget("text"): b for b in find_buttons(host)}
+pump()
+check(list(row_buttons) == ["Materials", "Blueprints", "Engineers"], f"the Engineering row has three buttons: {list(row_buttons)}")
+check(len({b.master for b in row_buttons.values()}) == 1 and len({int(b.grid_info()["row"]) for b in row_buttons.values()}) == 1,
+      "the buttons sit in one row, not stacked")
+row_buttons["Engineers"].invoke()
+pump()
+check(blueprints_window._window is not None and blueprints_window._window._tabs.selected == 4, "Engineers opens the Engineering window on its Engineers tab")
+row_buttons["Blueprints"].invoke()
+pump()
+check(blueprints_window._window._tabs.selected == 0, "Blueprints brings the Blueprints tab back")
+blueprints_window.close()
 check("Felicity Farseer" in blueprints_window.who_can(fsd5, eng), f"an unlocked engineer who offers it: {blueprints_window.who_can(fsd5, eng)!r}")
 suit = next(b for b in blueprints.ALL if b.type == "Suit")
 check(blueprints_window.who_can(suit, eng) != "", f"a suit upgrade: {blueprints_window.who_can(suit, eng)!r}")

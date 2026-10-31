@@ -314,7 +314,7 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 | Inner tab | Controls and their starting values |
 |---|---|
 | **Backup** | **Back up my data**; **Restore my data...**; **Cancel the waiting restore** (shown only while one waits); *Back up automatically* (off) with **Choose folder...** and *Every [n] days* (7). See [Backing up your data](#backing-up-your-data) |
-| **Help** | **Report an issue** and **Copy diagnostics**. See [Reporting a problem](reporting-problems.md) |
+| **Help** | **Report an issue**, **Copy diagnostics** and *Write a separate diagnostic log* (off). See [Reporting a problem](reporting-problems.md) |
 | **Online lookups** | A read-out (not controls) of every switch that lets WFMT ask another service: On or Off, what it does, who it asks and which tab changes it; the lookups that need no switch and run only when you press a button; and the **Local star index** group below it |
 | **Shortcuts** | One row per action (Mark the center, Mark the border, Rig placed, Radar range, Open the Live window, Hide or show overlays): the last key of Ctrl+Alt+Shift plus a key (C, B, R, Z, L and O to start; any letter, digit, F1 to F12, or Off), with a warning if two actions share a key or Elite already uses the combination; *Chat commands* (labelled `Chat commands (type  !wf <word>  in Elite's chat)`) (off); *Play a sound when a shortcut worked* (on). The key choices work on Windows only. See [Shortcuts](shortcuts.md) |
 | **Updates** | *Automatically download and install updates* (off); the **Release notes** link. See [Updating](#updating) |
@@ -411,8 +411,9 @@ Switch to the mode first, then use the button listed here.
 | Missions window (tabs: Active, By place) | Missions | **Missions window** button at the very bottom of the panel, or click a mission's card |
 | Source commodities | Missions | **Find sources** button at the very bottom of the panel (or **Sources** in the Missions window) |
 | Inventory | Operations | Click one of the **inventory bars** (there is no button) |
-| Materials | Operations | **Materials** button in the Materials section |
-| Engineering (blueprints, wishlist, ship and Odyssey upgrade planners, engineers) | Operations | **Blueprints** button in the Materials section |
+| Materials | Operations | **Materials** button in the Engineering section |
+| Engineering (blueprints, wishlist, ship and Odyssey upgrade planners) | Operations | **Blueprints** button in the Engineering section |
+| Engineers (where you stand with each engineer and the path to unlock them) | Operations | **Engineers** button in the Engineering section |
 | Material trader | Operations | **Find a trader** button in the Materials window |
 | Ship Builds | Operations | **Ships** button |
 | Colonization Sites | Colonization | **Dashboard** button |
@@ -479,8 +480,9 @@ a moment and a tooltip shows its name and what it does.** The same goes for the 
 | **Mark** | Save where you are as a mark for the Surface Compass | Exploration (Compass section) |
 | **Target** | Aim the compass at the next target: the nearest hotspot, each mark on this body, then none | Exploration (Compass section) |
 | **Marks** | Open the Marks window | Exploration (Compass section) |
-| **Materials** | Open the Materials window | Operations (Materials section) |
-| **Blueprints** | Open the Engineering window (blueprints, wishlist, ship and Odyssey upgrade planners, engineers) | Operations (Materials section) |
+| **Materials** | Open the Materials window | Operations (Engineering section) |
+| **Blueprints** | Open the Engineering window (blueprints, wishlist, ship and Odyssey upgrade planners) | Operations (Engineering section) |
+| **Engineers** | Open the Engineering window on its Engineers tab | Operations (Engineering section) |
 | **Hotspots** | Find nearby hotspots | Mining |
 | **Add hotspot** | Save hotspot here | Mining (the live window's header) |
 | **Prices** | Find best price | Mining |

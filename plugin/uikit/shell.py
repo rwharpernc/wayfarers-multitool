@@ -10,6 +10,7 @@ import tkinter as tk
 from typing import Callable, Optional, Sequence, Union
 
 from . import palette as P
+from . import trace
 from . import placement
 from . import style
 from .tooltip import add_tooltip
@@ -150,6 +151,7 @@ class WindowShell(_Parts):
         size = (int(size[0] * factor), int(size[1] * factor))
         min_size = (int(min_size[0] * factor), int(min_size[1] * factor))
         self.window.title(title)
+        trace.emit("window", "opened", title=title)
         self.window.configure(bg=P.BG)
         self.window.minsize(*min_size)
         self._save_geometry = save_geometry
@@ -226,6 +228,7 @@ class WindowShell(_Parts):
         if self.alive:
             if self._save_geometry:
                 self._save_geometry(self.window.winfo_geometry())
+            trace.emit("window", "closed", title=str(self.window.title()), geometry=self.window.winfo_geometry())
             self.window.destroy()
 
 

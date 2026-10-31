@@ -659,7 +659,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Compare each ingredient's Have value with the in-game inventory.
   - Confirm that an Odyssey ingredient counts the **ship locker**. The game's rule is unconfirmed: does an upgrade also draw on the backpack?
   - Confirm that an unlock requiring trade goods states that they are not counted.
-  - Confirm which engineer can complete each wishlist entry, that "ready" follows list order, and the Wishlist line on the Materials section.
+  - Confirm which engineer can complete each wishlist entry, that "ready" follows list order, and the Wishlist line on the Engineering section.
   - On the Engineers tab:
     - Compare status, rank and rank-ups (a rank-only event) with the in-game Engineers panel.
     - Verify the **Where** column, the detail text and the Bubble / Colonia filter.

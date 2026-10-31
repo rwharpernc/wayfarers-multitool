@@ -26,7 +26,7 @@ NAMES = {
     "organic_scan_panel": ("exploration", "Organic Scanning"),
     "poi_reference_panel": ("exploration", "POI Reference"),
     "inventory_panel": ("fieldops", "Inventory"),
-    "materials_panel": ("fieldops", "Materials"),
+    "materials_panel": ("fieldops", "Engineering"),
     "screenshots": ("fieldops", "Screenshots"),
     "ship_builds_panel": ("fieldops", "Ship Builds"),
     "trade_panel": ("trade", "Trade"),

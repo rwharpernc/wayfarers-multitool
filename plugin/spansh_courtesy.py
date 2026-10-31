@@ -23,6 +23,7 @@ import random
 import threading
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, Optional
@@ -143,10 +144,20 @@ class Courtesy:
                 pass
         return min(wait, MAX_WAIT_S)
 
+    @staticmethod
+    def _note(request: urllib.request.Request, outcome: str, began: float, attempt: int, size: int = 0) -> None:
+        """A line in the diagnostic log (if it is on): the endpoint without its query, the outcome, the time taken and which try it was."""
+        from . import diag_log
+        if diag_log.enabled():
+            parts = urllib.parse.urlsplit(request.full_url)
+            diag_log.log("spansh", f"{request.get_method()} {parts.netloc}{parts.path}", outcome=outcome, ms=int((time.monotonic() - began) * 1000),
+                         attempt=attempt + 1, bytes=size)
+
     def call(self, request: urllib.request.Request, timeout: float, cancel: Optional[threading.Event] = None, retries: Optional[int] = None) -> bytes:
         """The body of Spansh's answer to `request`. Raises SpanshBusy while the breaker is open, Cancelled if `cancel` is set during a wait, urllib.error.HTTPError for an
         answer that is not retried (or still failing after the retries), and the network error after the last retry. `retries` overrides MAX_RETRIES (0 = try once)."""
         self._check_breaker()
+        began = time.monotonic()
         is_get = (request.get_method() == "GET")
         limit = MAX_RETRIES if retries is None else max(0, min(int(retries), MAX_RETRIES))
         for attempt in range(limit + 1):
@@ -158,20 +169,24 @@ class Courtesy:
                     with self._opener(request, timeout=timeout) as response:
                         body = response.read()
                     self._succeeded()
+                    self._note(request, "ok", began, attempt, len(body))
                     return body
                 except urllib.error.HTTPError as err:
                     if err.code not in RETRY_STATUS:
                         self._succeeded()                    # an answer, even a refusal of this request, means Spansh is up
+                        self._note(request, f"http {err.code}", began, attempt)
                         raise
                     error = err
                 except (OSError, TimeoutError) as err:       # URLError and timeouts
                     if not is_get:
                         self._failed()
+                        self._note(request, f"error {type(err).__name__}", began, attempt)
                         raise
                     error = err
             if attempt >= limit:
                 self._failed()
                 assert error is not None
+                self._note(request, f"gave up: {error}", began, attempt)
                 raise error
             self.retries += 1
             delay = self._delay(attempt, error)

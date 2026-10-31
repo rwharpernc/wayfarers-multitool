@@ -20,7 +20,7 @@ from typing import Any, Callable, Dict, FrozenSet, List, Mapping, Optional, Tupl
 
 from config import appname, config
 
-from . import colonization, colonization_archive_window, colonization_builds_window, colonization_buy_window, colonization_carrier, colonization_catchup, colonization_create_dialog, colonization_projects_window, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys
+from . import colonization, diag_log, colonization_archive_window, colonization_builds_window, colonization_buy_window, colonization_carrier, colonization_catchup, colonization_create_dialog, colonization_projects_window, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys
 from .colonization_carrier import CarrierCargo
 from .colonization import Site
 from .colonization_data import SiteRepository
@@ -657,6 +657,8 @@ class ColonizationWindow:
         with_carrier = self._carrier is not None and self._carrier.has_carrier(cmdr)
         job: Dict[str, Any] = {"done": False, "events": None, "record": None}
         self._announce("Rescanning the journals…")
+        finished = diag_log.timed("rescan", "Rescan Journals", with_carrier=with_carrier)
+        job["finished"] = finished
 
         def work() -> None:
             try:
@@ -701,6 +703,7 @@ class ColonizationWindow:
                 tons = self._carrier.tons(cmdr)
                 parts.append(f"{sum(tons.values()):,} t on your carrier in {len(tons)} commodit{'y' if len(tons) == 1 else 'ies'} "
                              "(the next Frontier fetch can replace this with its real cargo)")
+        job["finished"](outcome="ok", events=len(job["events"]) if job["events"] is not None else "unreadable")
         self._announce(f"Rescanned the journals: {'; '.join(parts)}.")
 
     def _raven_ready(self, site: Optional[Site]) -> str:

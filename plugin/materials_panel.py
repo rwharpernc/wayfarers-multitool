@@ -1,8 +1,9 @@
-"""Materials: the commander's Raw, Manufactured and Encoded engineering materials, in Operations mode's panel.
+"""Engineering: the commander's Raw, Manufactured and Encoded materials and where they stand with the engineers, in Operations mode's panel.
 
-A collapsible "Materials" row shows how many pieces of each type are held, the last change the journal reported and which materials are at the
-most the game lets you hold, with a MATERIALS button that opens the window (`materials_window.py`) to search, filter and read every count with
-its grade and limit. The counts are kept per commander (`materials.py`) and never leave the computer. They come from the journal's `Materials`
+A collapsible "Engineering" row shows how many pieces of each type are held, the last change the journal reported, which materials are at the
+most the game lets you hold, how many engineers are unlocked and the wishlist, with a row of buttons: Materials opens the window
+(`materials_window.py`) to search, filter and read every count with its grade and limit, Blueprints opens the Engineering window
+(`blueprints_window.py`) and Engineers opens it on its Engineers tab. The counts are kept per commander (`materials.py`) and never leave the computer. They come from the journal's `Materials`
 list at login and every event that changes a count; if WFMT starts in the middle of a session it takes EDMC's own totals once."""
 from __future__ import annotations
 
@@ -50,21 +51,39 @@ def wishlist_line(wishbook: blueprint_wishlist.WishBook) -> str:
     return line + (f", {shopping.short_pieces:,} pieces short" if shopping.short_pieces else "")
 
 
-def summary_lines(book_: materials.MaterialBook) -> Tuple[str, str]:
-    """(the lines under the title, the note after the title when folded)."""
+def engineers_line(engineer_book_: engineers.EngineerBook) -> str:
+    """`Engineers: 7 of 38 unlocked · 2 invited · 4 known`; empty until the game has listed the commander's engineers."""
+    if not engineer_book_.has_data:
+        return ""
+    standings = engineer_book_.all()
+    unlocked = sum(1 for s in standings if s.unlocked)
+    invited = sum(1 for s in standings if s.progress == engineers.INVITED)
+    known = sum(1 for s in standings if s.progress == engineers.KNOWN)
+    line = f"Engineers: {unlocked} of {len(engineers.INFO)} unlocked"
+    if invited:
+        line += f" · {invited} invited"
+    if known:
+        line += f" · {known} known"
+    return line
+
+
+def summary_lines(book_: materials.MaterialBook, engineer_book_: Optional[engineers.EngineerBook] = None) -> Tuple[str, str]:
+    """(the lines under the title, the note after the title when folded). The engineers line comes last but one, before the wishlist."""
+    engineer_book_ = engineer_book if engineer_book_ is None else engineer_book_
+    people = engineers_line(engineer_book_)
     if not book_.ready:
-        return "Log in to see your materials.", ""
+        return "\n".join(["Log in to see your materials."] + ([people] if people else [])), ""
     held = book_.held()
     if not held:
-        return "No materials yet. The counts fill in when you are in the game.", ""
+        return "\n".join(["No materials yet. The counts fill in when you are in the game."] + ([people] if people else [])), ""
     totals = book_.totals()
-    lines = [" · ".join(f"{kind} {totals.get(kind, 0):,}" for kind in materials.TYPES)]
+    lines = ["Materials held: " + " · ".join(f"{kind} {totals.get(kind, 0):,}" for kind in materials.TYPES)]
     if totals.get(materials.OTHER):
         lines[0] += f" · Other {totals[materials.OTHER]:,}"
     last = book_.last
     if last is not None:
         name = _clip(last.name)
-        lines.append(f"Last: {'+' if last.delta > 0 else '-'}{abs(last.delta):,} {name} (now {last.total:,})")
+        lines.append(f"Last change: {'+' if last.delta > 0 else '-'}{abs(last.delta):,} {name} (now {last.total:,})")
     full = book_.full()
     if full:
         names = ", ".join(_clip(h.material.name) for h in full[:_FULL_SHOWN])
@@ -72,10 +91,15 @@ def summary_lines(book_: materials.MaterialBook) -> Tuple[str, str]:
         lines.append(f"At the limit: {names}{more}")
     if not book_.has_counts:
         lines.append("As of your last session.")
+    if people:
+        lines.append(people)
     wish = wishlist_line(wishlist)
     if wish:
         lines.append(wish)
-    return "\n".join(lines), f"- {sum(totals.values()):,} held"
+    suffix = f"- {sum(totals.values()):,} held"
+    if engineer_book_.has_data:
+        suffix += f" · {sum(1 for s in engineer_book_.all() if s.unlocked)} engineers"
+    return "\n".join(lines), suffix
 
 
 def _clip(text: str) -> str:
@@ -93,6 +117,7 @@ class MaterialsController:
         self._progress_waiting = 0
         book.add_listener(self._update_summary)
         wishlist.add_listener(self._update_summary)
+        engineer_book.add_listener(self._update_summary)
 
     # --- what the game tells us -----------------------------------------------------------------------------------------
 
@@ -181,18 +206,24 @@ class MaterialsController:
     def build_panel(self, parent: tk.Frame) -> None:
         self._parent = parent
         self._summary_var = tk.StringVar()
-        body = panelkit.collapsible_section(parent, "Materials", "wfmt_materials_collapsed")
+        body = panelkit.collapsible_section(parent, "Engineering", "wfmt_materials_collapsed")
         self._section = body
         # Wraps at the window's width but never below _WRAP_PX, so a long name wraps instead of being cut off and still can't widen
         # EDMC's window past the width it already has.
         panelkit.wrap_label(body, min_wrap=_WRAP_PX, textvariable=self._summary_var, anchor="w").grid(
             row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
-        button = tk.Button(body, text="Materials", command=self._open_window)
-        button.grid(row=2, column=0, sticky=tk.W, pady=(4, 0))
-        panelkit.add_tooltip(button, "Open the Materials window: search and filter every material with its grade and limit")
-        engineering = tk.Button(body, text="Blueprints", command=self._open_blueprints)
-        engineering.grid(row=3, column=0, columnspan=3, sticky=tk.W, pady=(4, 0))   # under, not beside: two buttons side by side outgrow the panel
-        panelkit.add_tooltip(engineering, "Open the Engineering window: browse blueprints, keep a wishlist and see what you still need")
+        # One row of buttons. flow_buttons puts them on a second line only if the row would be wider than EDMC's window already is.
+        row = tk.Frame(body)
+        row.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(4, 0))
+        buttons = []
+        for text, command, tip in (
+                ("Materials", self._open_window, "Materials - open the window to search and filter every material with its grade and limit"),
+                ("Blueprints", self._open_blueprints, "Blueprints - open the Engineering window: browse blueprints, keep a wishlist and see what you still need"),
+                ("Engineers", self._open_engineers, "Engineers - open the Engineering window on its Engineers tab: where you stand with each engineer and the path to unlock them")):
+            button = tk.Button(row, text=text, command=command)
+            panelkit.add_tooltip(button, tip)
+            buttons.append(button)
+        panelkit.flow_buttons(row, buttons)
         self._update_summary()
 
     def system(self) -> str:
@@ -205,7 +236,11 @@ class MaterialsController:
 
     def _open_blueprints(self) -> None:
         if self._parent is not None:
-            blueprints_window.show(self._parent, wishlist, holdings, engineer_book)
+            blueprints_window.show(self._parent, wishlist, holdings, engineer_book, tab=blueprints_window.BLUEPRINTS_TAB)
+
+    def _open_engineers(self) -> None:
+        if self._parent is not None:
+            blueprints_window.show(self._parent, wishlist, holdings, engineer_book, tab=blueprints_window.ENGINEERS_TAB)
 
 
 controller = MaterialsController()

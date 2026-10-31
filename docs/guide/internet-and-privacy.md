@@ -95,6 +95,7 @@ Everything else makes **no internet connection at all**:
 
 - Powerplay tracking, Missions tracking, Inventory and Screenshots. The exceptions are the Powerplay Sessions window's Post to Discord button and the Missions **Find sources** button, both listed above.
 - Copy diagnostics (clipboard only).
+- The separate diagnostic log (a file on your computer in EDMC's `logs/WFMT` folder, off by default; nothing is sent anywhere, and your commander name, home folder and webhook links are hidden in it).
 - The Missions overlay card and window (with pinned missions).
 - The Ship planner. It reads a loadout or an import link you paste, and your own journal for the ship you fly. Its **Open in Coriolis** and **Open in EDSY** buttons only open your browser at that site when you press them, with the loadout in the address.
 - The Upgrade planner (your own journal for the gear you own).

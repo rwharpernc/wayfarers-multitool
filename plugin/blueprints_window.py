@@ -99,14 +99,20 @@ _HELP = (
 )
 
 
-def show(parent: tk.Misc, wishbook: wishlist_mod.WishBook, holdings: Counts, engineer_book: engineers.EngineerBook) -> None:
-    """Open the Engineering window, or raise it if it is already open."""
+BLUEPRINTS_TAB, ENGINEERS_TAB = "Blueprints", "Engineers"
+
+
+def show(parent: tk.Misc, wishbook: wishlist_mod.WishBook, holdings: Counts, engineer_book: engineers.EngineerBook,
+         tab: Optional[str] = None) -> None:
+    """Open the Engineering window, or raise it if it is already open. `tab` (a tab's title, such as "Engineers") opens it on that tab."""
     global _window
     if _window is not None and _window.alive:
         _window.refresh()
         _window.lift()
-        return
-    _window = BlueprintsWindow(parent, wishbook, holdings, engineer_book)
+    else:
+        _window = BlueprintsWindow(parent, wishbook, holdings, engineer_book)
+    if tab:
+        _window.select_tab(tab)
 
 
 def refresh() -> None:
@@ -192,6 +198,7 @@ class BlueprintsWindow:
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._shell.add_action("Refresh counts", self.refresh, tip="Refresh counts - recount the materials you hold against the wishlist")
 
+        self._tab_titles: List[str] = [BLUEPRINTS_TAB, "Wishlist", "Ship planner", "Upgrade planner", ENGINEERS_TAB]
         self._tabs = Tabs(self._shell.body)
         self._tabs.pack(fill="both", expand=True)
         self._build_browse(self._tabs.add("Blueprints"))
@@ -585,6 +592,11 @@ class BlueprintsWindow:
         if notes:
             sections.append(section("Notes", "\n".join(notes)))
         return clip("\n\n".join(sections), 2400)
+
+    def select_tab(self, title: str) -> None:
+        """Bring the tab with this title to the front (nothing happens for a title the window does not have)."""
+        if title in self._tab_titles:
+            self._tabs.select(self._tab_titles.index(title))
 
     def _show_engineer_blueprints(self) -> None:
         if self._picked_engineer is None:

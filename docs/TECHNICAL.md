@@ -560,7 +560,7 @@ Fields the game documents poorly are handled conservatively.
 - A defensive reader (`migrate_old_waypoint_settings`, recorded by `wfmt_compass_migrated_v1`) copies the settings of a Mining waypoint overlay (enabled flag, placement, hidden flag), if it finds them, to the compass's own keys, once.
 - The panel row's summary label wraps at 200 px and the quick-name box starts at 26 characters and is lowered until it asks for no more than 190 px (`panelkit.fit_entry`), so nothing the commander or the game supplies can widen EDMC's window.
 
-**Materials and Engineering** (`materials.py`, `materials_panel.py`, `materials_window.py`, `blueprints*.py`, `engineers.py`, `material_traders.py`)
+**Materials and Engineering** (`materials.py`, `materials_panel.py`, `materials_window.py`, `blueprints*.py`, `engineers.py`, `material_traders.py`). The Operations section is titled Engineering (its collapsed-state key is still `wfmt_materials_collapsed`), listed first in Operations because the sections are in A to Z order; its buttons are laid out by `panelkit.flow_buttons`, and `blueprints_window.show(..., tab=)` opens the window on a given tab
 
 - They keep the commander's Raw, Manufactured and Encoded counts in `materials.json` (`MaterialBook`, per commander).
   - The login `Materials` list sets them, then each journal event that changes a count moves it, within the grade limits (300 to 100).
@@ -1480,6 +1480,14 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 - Each candidate costs one request (a station search of distance 0 from the system returns every station with its whole market), paced `SYSTEM_PAUSE` apart. A failed system is recorded and the rest carry on; `cancelled()` is checked between systems, and the Stop button keeps what was found.
 - `plan_system` adds up the stations' stock per commodity and reuses `colonization_sources.plan_route` limited to that system (fewest stations, most tons), then orders the stops by arrival distance. `rank` puts systems that cover everything first, then the larger share, the nearer, the cheaper.
 - A single commodity asks for nothing. The Spansh names are normalized as the one-stop search does, and compared without regard to case.
+
+**The diagnostic log** (`diag_log.py`, `uikit/trace.py`)
+
+- Off by default (`wfmt_diag_log_enabled`, Settings → Help; a machine setting, listed as shared by design in `tests/test_overlay_profile.py`). `set_enabled(True)` opens a `RotatingFileHandler` (1 MB, 3 backups) at `<EDMC data>/logs/WFMT/wfmt-diagnostics.log` and attaches it to the plugin logger and to a non-propagating `...diagnostics` logger that `log()` writes through.
+- The plugin logger is set to DEBUG while it is on, so every `logger.debug` shows in the diagnostic file. `_KeepOutOfEdmc` is added to each handler up the logger's parents (EDMC's) and drops the plugin's records below the level EDMC already used, so EDMC's log is unchanged. `set_enabled(False)` removes the handler and the filters and restores the level.
+- Lines are `time | LEVEL | thread | area message key=value ...`; a field is clipped to 200 characters and flattened to one line, and `issue_report.redact` hides commander names (`note_commander`), the home folder and webhook links.
+- Call sites: `load.py` (start, stop, each journal event's name, settings saved, Frontier data), `spansh_courtesy.Courtesy._note` (endpoint, outcome, ms, attempt, bytes), `colonization_buy_window` and `colonization_window` (`diag_log.timed` for searches and the rescan), `ui._on_panel_mode_click`, and, through `uikit.trace.emit`, `FlatButton` presses and `WindowShell` opening and closing (the kit imports nothing from the plugin; `load.py` sets `trace.listener`).
+- `log()` does nothing and cannot raise while it is off or on a failure. `tests/test_diag_log.py` covers it.
 
 **Tooltips on window buttons** (`tests/test_window_button_tips.py`)
 

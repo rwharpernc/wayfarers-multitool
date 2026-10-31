@@ -8,6 +8,7 @@ from typing import Callable, Optional, Sequence
 
 from . import palette as P
 from . import style
+from . import trace
 from .tooltip import add_tooltip
 
 
@@ -328,7 +329,14 @@ class FlatButton(tk.Label):
     def _on_release(self, event: tk.Event) -> None:
         inside = 0 <= event.x < self.winfo_width() and 0 <= event.y < self.winfo_height()
         if self._enabled and inside:
+            trace.emit("ui", "button pressed", label=str(self.cget("text")), window=self._window_title())
             self._command()
+
+    def _window_title(self) -> str:
+        try:
+            return str(self.winfo_toplevel().title())
+        except tk.TclError:
+            return ""
 
     def set_enabled(self, enabled: bool) -> None:
         self._enabled = enabled

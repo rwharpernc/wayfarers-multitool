@@ -22,7 +22,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 from config import appname, config
 
-from . import colonization_sources as sources, colonization_view as view, panelkit, system_autocomplete
+from . import colonization_sources as sources, colonization_view as view, diag_log, panelkit, system_autocomplete
 from .mining_spansh_client import search_stations_selling_all
 from .uikit import palette as P, style
 from .uikit.shell import WindowShell
@@ -327,6 +327,8 @@ class BuyWindow:
         job: Dict[str, Any] = {"id": self._search_id, "done": False, "result": None, "error": ""}
         self._find_button.set_enabled(False)
         self._say(f"Searching for {commodity} around {_clip(system, _NAME_MAX)}…", busy=True)
+        finished = diag_log.timed("search", "Find nearest", commodity=commodity, system=system, radius_ly=radius, pad=pad, carriers=carriers, sort=order)
+        job["finished"] = finished
 
         def work() -> None:
             try:
@@ -348,9 +350,11 @@ class BuyWindow:
             return
         self._find_button.set_enabled(True)
         if job["error"]:
+            job["finished"](outcome="failed", error=job["error"])
             self._say(f"The search failed: {_clip(job['error'], _ERROR_MAX)}. Spansh may be busy; try again shortly.")
             return
         self._result, self._result_label, self._whole, self._plan = job["result"], commodity, None, None
+        job["finished"](outcome="ok", stations=len(job["result"].stations), carriers=len(job["result"].carriers))
         self._render_sources(system)
 
     def _on_find_all(self) -> None:
@@ -383,6 +387,7 @@ class BuyWindow:
         self._find_button.set_enabled(False)
         self._find_all_button.configure(text="Stop")
         self._say(f"Searching for {len(labels)} commodities around {_clip(system, _NAME_MAX)}…", busy=True)
+        job["finished"] = diag_log.timed("search", "Find all", commodities=len(labels), system=system, radius_ly=radius, pad=pad, carriers=carriers, sort=order)
 
         def work() -> None:
             try:
@@ -410,9 +415,12 @@ class BuyWindow:
         self._find_button.set_enabled(True)
         self._find_all_button.configure(text="Find all")
         if job["error"]:
+            job["finished"](outcome="failed", error=job["error"])
             self._say(f"The search failed: {_clip(job['error'], _ERROR_MAX)}.")
             return
         self._whole, self._whole_to_get, self._result, self._whole_system = job["result"], to_get, None, system
+        job["finished"](outcome="stopped" if job["result"].stopped else "ok", searched=len(job["result"].found), failed=len(job["result"].failed),
+                        without_sources=len(job["result"].without_sources()))
         self._plan = self._make_plan()
         self._render_whole(system)
 

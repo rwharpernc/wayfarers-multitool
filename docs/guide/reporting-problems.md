@@ -6,6 +6,7 @@ Found a bug, or a number that looks wrong? WFMT has two buttons that make a good
 | Button | What it does |
 |---|---|
 | **Report an issue** | Opens a bug report on GitHub in your browser, with the title started and your versions and operating system already filled in |
+| **Write a separate diagnostic log** | Off until ticked. A detailed log of WFMT's own, in a separate file, for a problem that is hard to pin down ([how](#the-diagnostic-log)) |
 | **Copy diagnostics** | Copies the same version lines plus the newest WFMT lines from EDMC's log to your clipboard, so you can paste them into the report |
 
 Neither button sends anything by itself. The report only exists on GitHub if you press **Submit new issue** there, and that needs your
@@ -33,6 +34,28 @@ own free GitHub account. You can always write the report by hand on the
 7. **Read the whole form before you submit it**, the pasted log included, and delete anything you would rather not post. Anything you submit
    on the Issues page is visible to everyone who can see the repository (see [what is left out](#what-is-left-out-and-what-to-check)).
 8. Press **Submit new issue**.
+
+## The diagnostic log
+
+For a problem that is hard to pin down, WFMT can write a **separate, more detailed log** of its own, apart from EDMC's. It is **off by default**; nothing is written and no file is made until you switch it on.
+
+1. Open **File → Settings → WFMT → General → Help**.
+2. Tick **Write a separate diagnostic log (off by default)** and press **OK**. Untick it and press **OK** to stop; the choice is kept across restarts.
+3. Make the problem happen, then send the file named under the tick (**Open log folder** shows it, **Copy log path** copies its path) together with EDMC's own log.
+
+**Where it is.** `logs/WFMT/wfmt-diagnostics.log` in EDMC's data folder, next to EDMC's own `logs` folder. It is rotated at 1 MB with three older files kept (about 4 MB at most), and an update never touches it.
+
+**What it records:**
+- everything WFMT normally logs, at every level, including the finer lines EDMC's log leaves out (EDMC's log is not changed: it reads the same with this on),
+- the version, Python and operating system when it is switched on,
+- the name of each journal event as it arrives, with the system and station,
+- each button pressed in a WFMT window and each window opened or closed,
+- each Spansh request: the endpoint (without its query), how it ended, how long it took, which try it was and the size of the answer,
+- each Where to Buy search and Rescan Journals with its result and time, a Settings save, a mode button pressed, and Frontier carrier data arriving.
+
+**What it leaves out.** The contents of journal events, request bodies, keys and webhook links are not written. In every line your commander name is replaced by `<commander>`, your home folder by `~` and any Discord webhook link by `<webhook>`, the same as Copy diagnostics, so the file can be attached to a report. Read it first if you want to be sure; it is plain text.
+
+A line looks like `2026-10-31 14:02:11.482 | DEBUG   | 1234 | spansh    POST spansh.co.uk/api/stations/search outcome=ok ms=412 attempt=1 bytes=18232`: the time, the level, the thread, the part of WFMT, what happened and the details.
 
 ## What "Report an issue" fills in
 

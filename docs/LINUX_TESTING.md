@@ -197,7 +197,7 @@ Use them for anything the passes did not reach.
 - **Panel width:**
   - With Expedition (Exploration mode) and Materials (Operations mode) open, the main EDMC window must not grow wider.
   - In Expedition, **Copy on arrival** sits on its own line under **Copy Next** and **Expedition**.
-  - In Materials, **Blueprints** sits under **Materials**, not beside it.
+  - In Engineering, **Materials**, **Blueprints** and **Engineers** sit in one row.
   - With a large font the Trade page and the Trade History window should not widen the EDMC window either.
 - **History heading and Busiest site:**
   - The Colonization History heading names the commander (`History - NAME`).
@@ -295,11 +295,11 @@ Use them for anything the passes did not reach.
   - **Marks** opens the window (edit, **Here**, Delete twice).
   - With the compass enabled the arrow follows the target as you move and turn, and clears when you lift off.
   - Check the Mining settings tab has no waypoint tick.
-- [ ] Materials (Operations mode, **Materials** section):
-  - Log in and the row shows the pieces of each type.
-  - Collect or discard a material and "Last: ..." follows.
+- [ ] Materials (Operations mode, **Engineering** section, the first in Operations):
+  - Log in and the row shows the pieces of each type (`Materials held: ...`) and `Engineers: N of 38 unlocked` once the game has listed your engineers; the folded title carries `- N held · N engineers`.
+  - Collect or discard a material and "Last change: ..." follows.
   - A material at its limit is named.
-  - **Materials** opens the window.
+  - **Materials** opens the window; **Blueprints** and **Engineers** open the Engineering window on its Blueprints and Engineers tabs.
   - Search, Type, Grade and **Only what is at the limit** narrow the table, and headings sort.
   - The window keeps its size and place.
   - Restart EDMC mid-session and the counts are right.
@@ -310,14 +310,14 @@ Use them for anything the passes did not reach.
   - **Here** refills the system, and a typed system works.
   - Double-click copies the system name.
   - With no network the status says Spansh could not be reached and **Find** works again afterwards.
-- [ ] Engineering (Operations, **Blueprints** on the Materials section):
+- [ ] Engineering (Operations, **Blueprints** on the Engineering section):
   - The window opens with **Blueprints** and **Wishlist** tabs.
   - Search (it waits a moment after typing) and the Module drop-down narrow the list.
   - Picking a row shows its ingredients, what you hold and where each is found.
   - **Add to wishlist** and a double-click add.
   - The Wishlist tab shows each entry's crafts, whether it can be made and the shopping list.
   - **Set crafts**, **Remove** and **Clear list** ask twice.
-  - The Materials section shows the `Wishlist:` line and stays narrow.
+  - The Engineering section shows the `Wishlist:` line and stays narrow.
   - The window keeps its size and place.
   - The **Engineers** tab:
     - It lists engineers with where you stand (after a login), unlocked ones first.

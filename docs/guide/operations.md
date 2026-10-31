@@ -219,20 +219,21 @@ On Linux, the pickup sound needs `canberra-gtk-play` or `paplay`; see [Windows a
 
 What you hold of each engineering material: **Raw** (mined and scanned), **Manufactured** and **Encoded**, with each one's grade (1 very common to 5 very rare) and the most the game lets you hold of it.
 
-A collapsible **Materials** row shows (click its title to fold it; the folded title carries a total such as `- 1,234 held`):
+A collapsible **Engineering** row (it was called Materials before 1.4.0, and is first in Operations mode, which lists its sections A to Z) shows (click its title to fold it; the folded title carries totals such as `- 1,234 held · 7 engineers`):
 
-- the pieces held of each type (`Raw 400 · Manufactured 350 · Encoded 300`, plus `Other` for a material the table does not know),
-- the last pick-up or discard ("Last: +3 Carbon (now 123)"),
+- the pieces held of each type (`Materials held: Raw 400 · Manufactured 350 · Encoded 300`, plus `Other` for a material the table does not know),
+- the last pick-up or discard (`Last change: +3 Carbon (now 123)`),
 - which materials are **at the limit** (`At the limit: ...`), so you know that collecting more is wasted,
 - `As of your last session.` until the game has sent a fresh list,
+- how many engineers you have unlocked (`Engineers: 7 of 38 unlocked · 2 invited · 4 known`), once the game has listed them,
 - a wishlist line when you have one.
 
-Before the game has told WFMT anything the row says `Log in to see your materials.`, and with an empty book `No materials yet. The counts fill in when you are in the game.`
+Before the game has told WFMT anything the row says `Log in to see your materials.`, and with an empty book `No materials yet. The counts fill in when you are in the game.` (the engineers line still shows if the game has listed your engineers).
 
-**Materials** opens the window, and **Blueprints** (under it) opens the Engineering window.
+Three buttons sit in one row under the text: **Materials** opens the Materials window, **Blueprints** opens the Engineering window on its Blueprints tab, and **Engineers** opens the Engineering window on its Engineers tab. (If the row would be wider than EDMC's window, the last button wraps to a second line instead of widening it.)
 
 **To use it:**
-1. Switch to Operations mode and open the **Materials** row if it is folded. Log in to the game once, so WFMT has the full list.
+1. Switch to Operations mode and open the **Engineering** row if it is folded. Log in to the game once, so WFMT has the full list.
 2. Read the row: pieces held of each type, the last change, and anything at the limit.
 3. Press **Materials** to search, filter and sort. To find where to swap materials, press **Find a trader** inside that window (see below).
 4. To plan crafts, press **Blueprints** (see [Engineering](#engineering-blueprints-and-a-wishlist)).

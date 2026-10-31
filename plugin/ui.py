@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import logging
 import os
+import sys
 import webbrowser
 from typing import Callable, Dict, List, Optional, Tuple
 
@@ -41,7 +42,7 @@ from . import (
     notable, notes_panel, expedition_panel, expedition_log_panel, expedition_log_overlay, explore_dashboard, route_planner_panel, landing_finder_panel, surface_compass, organic_scan_panel, exobiology_overlay, overlay, overlay_appearance, overlay_placement, overlay_visibility, shortcuts, catchup_status, panelkit, powerplay, powerplay_overlay, route_overlay, targets_overlay, body_info_overlay, screenshots, ship_builds_panel,
     credits_ledger, game_mode, session_credits, session_merits, settings_scroll, system_names, trade_panel, trade_watch_panel,
 )
-from . import __version__, data_backup, issue_report, settings_online
+from . import __version__, data_backup, diag_log, issue_report, settings_online
 from .uikit import dialogs, placement, style
 from .update import CONFIG_AUTO_UPDATE, RELEASES_PAGE_URL
 
@@ -61,8 +62,8 @@ FEATURES = (
     autohonk, discovery, boxel_survey, codex_completionist_panel, surface_compass, explore_dashboard,
     expedition_panel, expedition_log_panel, exploration_value, landing_finder_panel,
     notes_panel, organic_scan_panel, poi_reference_panel, route_planner_panel, notable,
-    # Operations: Inventory, Materials, Screenshots, Ship Builds.
-    inventory_panel, materials_panel, screenshots, ship_builds_panel,
+    # Operations: Engineering (the Materials module), Inventory, Screenshots, Ship Builds.
+    materials_panel, inventory_panel, screenshots, ship_builds_panel,
     colonization_panel,
     mining_panel,
     trade_panel, trade_watch_panel,
@@ -432,6 +433,7 @@ def _on_panel_mode_click(mode: str) -> None:
         return
     _panel_mode = mode
     config.set(CONFIG_PANEL_MODE, _panel_mode)
+    diag_log.log("ui", "mode selected", mode=_panel_mode)
     _apply_panel_mode_button_colors()
     _apply_panel_mode_visibility()
 
@@ -1001,8 +1003,46 @@ def _create_help_tab(notebook: nb.Notebook) -> None:
     ).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(0, 4))
     nb.Label(frame, textvariable=copy_status).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(0, 10))
 
+    global _diag_var
+    _diag_var = tk.BooleanVar(value=diag_log.enabled() or diag_log.saved_setting())
+    nb.Checkbutton(frame, text="Write a separate diagnostic log (off by default)", variable=_diag_var).grid(
+        row=5, column=0, sticky=tk.W, padx=10, pady=(4, 2))
+    nb.Label(
+        frame, justify=tk.LEFT, wraplength=420,
+        text="While this is ticked, WFMT writes its own detailed log, apart from EDMC's: every journal event's name, the buttons you press and the windows "
+             "you open, each Spansh request and how long it took, searches and their results, and WFMT's usual messages including the finer ones EDMC's log leaves out. "
+             "No journal contents, keys or webhook links are written, and your commander name and home folder are replaced. It keeps about 4 MB at most. "
+             "Use it with EDMC's log when something goes wrong. Press OK to apply the tick.",
+    ).grid(row=6, column=0, sticky=tk.W, padx=10, pady=(0, 4))
+    diag_status = tk.StringVar(value="File: " + diag_log.log_path())
+    nb.Label(frame, textvariable=diag_status, justify=tk.LEFT, wraplength=420).grid(row=7, column=0, sticky=tk.W, padx=10, pady=(0, 4))
+
+    def open_log_folder() -> None:
+        folder = os.path.dirname(diag_log.log_path())
+        try:
+            os.makedirs(folder, exist_ok=True)
+            if sys.platform == "win32":
+                os.startfile(folder)         # noqa: S606 - opens the folder in Explorer
+            else:
+                webbrowser.open("file://" + folder)
+        except OSError:
+            diag_status.set("Could not open " + folder)
+
+    def copy_log_path() -> None:
+        diag_status.set("Copied the path." if panelkit.copy_to_clipboard(frame, diag_log.log_path()) else "Could not copy to the clipboard.")
+
+    buttons = tk.Frame(frame)
+    buttons.grid(row=8, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+    open_button = nb.Button(buttons, text="Open log folder", command=open_log_folder)
+    open_button.pack(side=tk.LEFT)
+    panelkit.add_tooltip(open_button, "Open log folder - show the folder with the diagnostic log")
+    path_button = nb.Button(buttons, text="Copy log path", command=copy_log_path)
+    path_button.pack(side=tk.LEFT, padx=(6, 0))
+    panelkit.add_tooltip(path_button, "Copy log path - copy the diagnostic log's file path to the clipboard")
+
 
 _mode_vars: Dict[str, tk.BooleanVar] = {}
+_diag_var: Optional[tk.BooleanVar] = None
 
 
 def restore_text_size() -> None:
@@ -1017,6 +1057,8 @@ def restore_text_size() -> None:
 
 
 def save_prefs() -> None:
+    if _diag_var is not None:
+        diag_log.set_enabled(bool(_diag_var.get()))
     if _mode_vars:
         shown = {key for key, var in _mode_vars.items() if var.get()} or set(_mode_vars)     # all unticked: show every mode
         for key in _mode_vars:
