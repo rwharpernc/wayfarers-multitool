@@ -180,18 +180,6 @@ def totals(site: Site, cargo: Mapping[str, int], capacity: int = 0,
                   lines=len(rows), covered=sum(1 for r in rows if r.covered), buy_trips=buy_trips, haul_trips=haul_trips)
 
 
-def acquire_lines(site: Site, cargo: Mapping[str, int], carrier: Optional[Mapping[str, int]] = None) -> List[str]:
-    """A list to hand to someone who asks what the site still needs: the site, then each commodity with the tons still to acquire (what the ship and
-    the fleet carrier already hold is taken off), biggest first. Commodities already covered are left out."""
-    rows = sorted((r for r in commodity_rows(site, cargo, carrier) if r.to_get > 0), key=lambda r: (-r.to_get, r.label.casefold()))
-    system = f" ({site.system})" if site.system else ""
-    lines = [f"{site.display_name()}{system} - still to acquire:"]
-    lines += [f"{row.label}: {row.to_get:,} t" for row in rows]
-    if not rows:
-        lines.append("Nothing: everything still needed is already in the ship or on the carrier.")
-    return lines
-
-
 def site_status(site: Site) -> str:
     """The one-word state shown beside a site: its progress, or complete / failed."""
     if site.complete:

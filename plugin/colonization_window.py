@@ -167,8 +167,6 @@ class ColonizationWindow:
 
         self._shell.add_action("Copy Shopping List", self._on_copy, accent=True,
                                 tip="Copy Shopping List - copy what the selected site still needs to the clipboard")
-        self._shell.add_action("Copy To Acquire", self._on_copy_acquire,
-                                tip="Copy To Acquire - copy the tons still to acquire, after your ship and carrier, to the clipboard")
         self._shell.add_action("Where to Buy", self._on_where_to_buy,
                                 tip="Where to Buy - open the window that finds stations selling the commodities (Spansh, only when you press Find)")
         self._shell.add_action("Rescan Journals", self._on_rescan,
@@ -536,17 +534,6 @@ class ColonizationWindow:
             lines.append("(nothing - everything needed is already on your ship, on your carrier or delivered)")
         if panelkit.copy_to_clipboard(self._toplevel, "\n".join(lines)):
             self._shell.set_status(f"Copied the shopping list for {site.display_name()}.")
-
-    def _on_copy_acquire(self) -> None:
-        """Copy each commodity with the tons still to acquire (the ship's cargo and the carrier's tally taken off), for someone who asks for the list
-        part way through loading the carrier."""
-        site = self._selected_site()
-        if site is None:
-            self._shell.set_status("Select a site on the left first.")
-            return
-        lines = view.acquire_lines(site, self._cargo, self._carrier_tons())
-        if panelkit.copy_to_clipboard(self._toplevel, "\n".join(lines)):
-            self._announce(f"Copied what is left to acquire for {site.display_name()}.", ok=True)
 
     def _on_projects(self) -> None:
         """Open My Projects: every active project the commander has on Raven Colonial. Nothing is asked until it opens."""

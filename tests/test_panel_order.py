@@ -61,17 +61,5 @@ class PanelOrderTests(unittest.TestCase):
                 self.assertIn(module, NAMES, f"{module} is a section in the {match.group(1)} mode; give it a name in NAMES")
 
 
-class ModeHintTests(unittest.TestCase):
-    def test_hints_name_real_modes_and_say_where_to_look(self):
-        text = open(os.path.join(PLUGIN, "ui.py"), encoding="utf-8").read()
-        modes = set(re.findall(r'^    \("([a-z]+)", "[A-Za-z]+"\),$', text, re.M))
-        block = text[text.index("_MODE_HINTS = {"):]
-        block = block[:block.index("\n}\n")]
-        hints = dict(re.findall(r'"([a-z]+)": "([^"]+)"', block))
-        self.assertTrue(hints and set(hints) <= modes, hints)
-        for mode, hint in hints.items():
-            self.assertTrue(hint.startswith("See ") and hint.endswith(" for details."), hint)
-
-
 if __name__ == "__main__":
     unittest.main()

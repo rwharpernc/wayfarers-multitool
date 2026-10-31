@@ -166,10 +166,10 @@ stage 2 is **A (shopping list), B (progress update), C (call for helpers) and D 
 **E depends on co-op building, which WFMT does not have yet**, so the co-op work comes first (see "Order of work" below).
 
 **What exists to build on**
-- The Colonization Sites window (`plugin/colonization_window.py`) already has **Copy To Acquire** (`_on_copy_acquire`: each commodity with the tons still to
-  get, after the ship's cargo and the carrier's tally, biggest first) and the full shopping list copy. Both are plain text for the clipboard.
+- The Colonization Sites window (`plugin/colonization_window.py`) already has **Copy Shopping List** (each commodity with the tons still to get, after the ship's cargo and the carrier's tally, biggest first), which is plain
+  text for the clipboard.
 - A site (`colonization.Site`) holds its name, system, progress, remaining tons, whether it is complete or failed, when it was first seen and when it
-  finished (so a build time), and the commodity rows (`colonization_view.py`, `view.acquire_lines`, `colonization.shopping_list`).
+  finished (so a build time), and the commodity rows (`colonization_view.py`, `colonization.shopping_list`).
 - Raven Colonial links already exist: `rcc_client.build_page_url(build_id)` and `system_page_url(system)` open the project or the system in a browser. Someone
   who gets the link can see the project and join it on Raven.
 - **Co-op building in WFMT is not built.** [TODO.md](TODO.md) ("Multi-commander projects: plan") lists claim, release, join and ready as future phases. Two commanders
@@ -179,13 +179,13 @@ stage 2 is **A (shopping list), B (progress update), C (call for helpers) and D 
 
 | Candidate | What it says | Builds on | Needs |
 |---|---|---|---|
-| **A. Shopping list** | The site and system, then what is left to get, in tons, biggest first, and the trips for the commander's ship | **Copy To Acquire** and `view.acquire_lines` | Nothing new. The smallest piece |
+| **A. Shopping list** | The site and system, then what is left to get, in tons, biggest first, and the trips for the commander's ship | **Copy Shopping List** and `colonization.shopping_list` | Nothing new. The smallest piece |
 | **B. Progress update** | The site, percent done, tons still needed, the biggest gaps, trips left, and a Raven link. Posted again later it edits the same message, so the channel keeps one live status post for the site | `Site.progress`, `remaining_total`, `view.commodity_rows`, the edit-earlier-post behavior already built | Nothing new |
 | **C. Call for helpers (the team-building post)** | "Building *Station* in *System*: help wanted." The top commodities with tons, where to deliver (the system and the construction site), the Raven project link so a helper can join, and an optional line of the commander's own to say who to ask | A and B, and `rcc_client.build_page_url` | A **preview dialog** (as for expedition announcements) so the commander edits the wording and chooses whether their commander name and carrier name are included |
 | **D. Completion post** | "*Station* in *System* is complete", with how long it took and the tons delivered (from the history) | `Site.completed_at`, `first_seen`, the delivery record in `colonization_ledger` | Nothing new |
 | **E. Who is hauling what** | Which teammate has claimed which commodity | Raven's `commanders` data | **Not possible yet.** It needs the co-op phases in TODO.md. Listed so the Discord layer is ready to carry it when they exist |
 
-**Where the buttons go:** beside **Copy To Acquire** in the Colonization Sites window, in a **Share** menu (the header bar there is also full at narrow
+**Where the buttons go:** beside **Copy Shopping List** in the Colonization Sites window, in a **Share** menu (the header bar there is also full at narrow
 widths, as the Powerplay window showed), with **Call for helpers** opening its preview dialog.
 
 **Privacy.** These posts say where a colony is being built and may name the carrier. All are manual. The call for helpers is the one most likely to be

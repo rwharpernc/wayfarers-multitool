@@ -418,14 +418,6 @@ def is_dark_theme() -> bool:
     return theme.active not in (None, theme.THEME_DEFAULT)
 
 
-def add_hint(parent: tk.Frame, row: int, text: str) -> int:
-    """A short hint line in the small font at the bottom of a mode's page (for example "See Dashboard for details."), wrapped to the room the page has.
-    Returns `row + 1`."""
-    hint = wrap_label(parent, text=text, font=view_fonts()["small"], anchor="w")
-    hint.grid(row=row, column=0, columnspan=3, sticky=tk.W, pady=(4, 0))
-    return row + 1
-
-
 def add_separator(parent: tk.Frame, row: int) -> int:
     """A thin horizontal rule marking the boundary between two features'
     sections stacked in the same mode/always frame (see `ui.py`'s

@@ -416,12 +416,8 @@ BW.sources.find_whole_list = S_whole
 # The header: related actions sit under a heading each, as drop-down menus.
 from plugin.uikit.widgets import FlatButton, MenuButton
 header = [w for w in window._shell.actions.winfo_children() if isinstance(w, FlatButton)]
-check([w.cget("text") for w in header] == ["Copy Shopping List", "Copy To Acquire", "Where to Buy", "Rescan Journals", "Raven Colonial ▾", "Manage Sites ▾"],
+check([w.cget("text") for w in header] == ["Copy Shopping List", "Where to Buy", "Rescan Journals", "Raven Colonial ▾", "Manage Sites ▾"],
       f"the header buttons: {[w.cget('text') for w in header]}")
-window._on_copy_acquire()
-copied = root.clipboard_get()
-check(copied.startswith("Depot One (Sol) - still to acquire:") and "Steel: " in copied and " t" in copied,
-      f"Copy To Acquire should put the breakdown on the clipboard: {copied!r}")
 menus = {w.cget("text").split(" ")[0]: w for w in header if isinstance(w, MenuButton)}
 check(menus["Raven"].entries() == ["My Projects", "Planned Builds", "Raven Progress", "Open Selected Build on Raven", "Open This System on Raven",
                                    "Raven Colonial Website", "Create Project on Raven…", "Report Complete to Raven",

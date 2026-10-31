@@ -64,11 +64,11 @@ See [The Colonization Sites window](#the-colonization-sites-window) and [Buttons
 
 See [Where to buy](#where-to-buy).
 
-**Copy a To Acquire list for someone who asks what you still need.**
+**Copy the shopping list for someone who asks what you still need.**
 
 1. Press **Dashboard** and click the site.
 2. If a transfer to your carrier did not register, press **Rescan Journals** first.
-3. Press **Copy To Acquire** and paste the result.
+3. Press **Copy Shopping List** and paste the result.
 
 See [Buttons](#buttons).
 
@@ -114,8 +114,6 @@ See [The shopping list on the overlay](#the-shopping-list-on-the-overlay).
 | Trips left | **Without a carrier:** the loads of your current ship it takes to finish (`4 loads of 400 t`; one trip buys and delivers). **With a carrier:** `N to buy · N to haul (400 t ship)`. `Unknown (ship size not seen yet)` until EDMC has reported your ship's cargo capacity |
 | Biggest gaps (t) | The four commodities with the most still to get, with their tons. Left out when nothing is left to get |
 | Others | `+N more active sites` when you have more than the one shown (the line is left out when you have none) |
-
-The page ends with its buttons and a line, **See Dashboard for details.**, because the Sites window (**Dashboard**) shows every site and the full list of commodities.
 
 **When nothing is under construction.** The page lists the **last 5 completed** sites you have, newest first, each as `Name (System) - date` (the date is left out for a site finished before WFMT kept it). Archived sites are included.
 
@@ -564,9 +562,6 @@ The results table has the columns **Station**, **System**, **Type**, **Planetary
 The header of the window, top right. All of them act on the site picked on the left:
 
 - **Copy Shopping List** (the highlighted button) copies that site's list to the clipboard: a first line such as `Example Outpost (Example System) - still to get:`, then lines like `1,200 t  Steel`, biggest first. What is in your ship and on your fleet carrier is already taken off.
-- **Copy To Acquire** copies a short list for someone who asks what you still need, for example part way through loading your carrier: a first line such as `Example Outpost (Example System) - still to acquire:`, then one line per commodity such as `Steel: 200 t`, biggest first. Only commodities with something left to acquire are listed; what is in your ship and on your fleet carrier is already taken off. It uses the figures the window shows, so a transfer WFMT missed can be fixed first with **Rescan Journals**.
-  The amounts are the **t still to get** figures, so what is on your ship and on your carrier is taken off. If nothing is needed it says
-  so.
 - **Rescan Journals** reads your journals again for the sites, your delivery history and (with a fleet carrier) the carrier tally; see [Rescan Journals](#rescan-journals-when-a-load-did-not-register).
 - **Raven Colonial** (a menu): **My Projects**, **Planned Builds**, **Raven Progress**, then **Open Selected Build on Raven**, **Open This System on Raven**,
   **Raven Colonial Website**, then **Create Project on Raven…**, **Report Complete to Raven** and **Mark Plan Entry Demolished…** (the three that write; the dots mean a question follows). See
@@ -582,7 +577,7 @@ Example Outpost (Example System) - still to get:
 800 t  Titanium
 ```
 
-**Copy To Acquire** gives the same commodities as `Steel: 1,200 t` and `Titanium: 800 t` under its own first line (`... - still to acquire:`). Once you have moved 500 t of Steel onto your carrier, both lists show `700 t` for Steel.
+Once you have moved 500 t of Steel onto your carrier, the list shows `700 t` for Steel.
 
 ### The archive
 

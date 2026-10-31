@@ -26,19 +26,6 @@ def site(**flags) -> colonization.Site:
     return colonization.apply_depot_event(entry, None, name="Depot One", system="Sol")
 
 
-class AcquireListTests(unittest.TestCase):
-    def test_each_commodity_with_the_tons_still_to_acquire_biggest_first(self):
-        lines = view.acquire_lines(site(), {"steel": 50, "water": 50}, {"steel": 150, "aluminium": 30})
-        self.assertEqual(lines, ["Depot One (Sol) - still to acquire:", "Steel: 200 t", "Aluminium: 50 t"])      # Water is covered by the ship
-
-    def test_the_carrier_is_only_counted_when_it_is_given(self):
-        self.assertEqual(view.acquire_lines(site(), {"steel": 50})[1], "Steel: 350 t")
-
-    def test_nothing_left_to_acquire_says_so(self):
-        lines = view.acquire_lines(site(), {"steel": 400, "water": 50, "aluminium": 80})
-        self.assertEqual(lines, ["Depot One (Sol) - still to acquire:", "Nothing: everything still needed is already in the ship or on the carrier."])
-
-
 def tint_row(remaining, in_cargo=0, on_carrier=0, available=True):
     return view.CommodityRow("steel", "Steel", remaining, 0, remaining, in_cargo, max(0, remaining - in_cargo - on_carrier), on_carrier, available=available)
 
