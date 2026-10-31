@@ -213,11 +213,15 @@ class ColonizationController:
 
     # --- delivery history rebuild ---------------------------------------------
 
-    def _maybe_backfill_history(self, cmdr: str) -> None:
+    def rescan_history(self, cmdr: str) -> None:
+        """Rebuild `cmdr`'s delivery history from all their journals again, though it was done before (the saved figures are kept if larger)."""
+        self._maybe_backfill_history(cmdr, force=True)
+
+    def _maybe_backfill_history(self, cmdr: str, force: bool = False) -> None:
         """Once per commander, rebuild their delivery history from all their journals (the start-up catch-up only reads the
         last 14 to 30 days). A failure is logged and tried again at the next start."""
         key = commander_data.key_for(cmdr)
-        if not key or key in self._history_pending or self._ledger.backfilled(cmdr):
+        if not key or key in self._history_pending or (self._ledger.backfilled(cmdr) and not force):
             return
         self._history_pending.add(key)
 
@@ -722,7 +726,7 @@ class ColonizationController:
             return
         colonization_window.show(self._parent, self._repository, self._cmdr or "", self._cargo, self._carrier_cargo,
                                lambda: self._capacity, lambda: self._system, lambda: self._market,
-                               lambda: self._carrier_feed.own_market_id, self._project_created, create_for)
+                               lambda: self._carrier_feed.own_market_id, self._project_created, create_for, self.rescan_history)
 
     # --- Settings tab --------------------------------------------------
 

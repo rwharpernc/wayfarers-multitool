@@ -760,9 +760,9 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
       narrows the list to what that market has for sale (in stock, with a buy price); it unticks itself when you undock.
       (`Market.json` lives in the journal folder: check EDMC's journal path on Linux/Proton.)
 
-## 7e-1. Rescan Carrier (Windows-tested only: check on Linux)
+## 7e-1. Rescan Journals (Windows-tested only: check on Linux)
 
-- [ ] With a fleet carrier and some transfers in the journals, **Rescan Carrier** in the Colonization Sites window rebuilds the FC column
+- [ ] With a fleet carrier and some transfers in the journals, **Rescan Journals** in the Colonization Sites window rebuilds the FC column
       from the last 30 days; the status line names the commodities and tons. Pressing it twice gives the same figures.
 
 ## 7e-2. Raven Colonial sharing (needs a Raven project for a site; Windows-tested only: check on Linux)
@@ -780,7 +780,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
 
 ## 7e-4. Colonization Sites window header (Windows-tested only: check on Linux)
 
-- [ ] The header has **Copy Shopping List**, **Copy To Acquire** (pastes one line per commodity with the tons still to acquire), **Where to Buy**, **Rescan Carrier**, **Raven Colonial ▾** and **Manage Sites ▾**. The two menus open under their buttons,
+- [ ] The header has **Copy Shopping List**, **Copy To Acquire** (pastes one line per commodity with the tons still to acquire), **Where to Buy**, **Rescan Journals**, **Raven Colonial ▾** and **Manage Sites ▾**. The two menus open under their buttons,
       are readable (dark colors) and close when you click elsewhere or pick an item.
 - [ ] **Raven Colonial ▾** lists My Projects, Planned Builds, Raven Progress, Open Selected Build on Raven, Open This System on Raven, Raven Colonial
       Website, Create Project on Raven, Report Complete to Raven and Mark Plan Entry Demolished; the three Open items open the right page in your browser.

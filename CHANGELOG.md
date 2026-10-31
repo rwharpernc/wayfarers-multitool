@@ -5,6 +5,12 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ## Unreleased
 
+### Changed
+
+- **Rescan Journals:** the Colonization Sites window's **Rescan Carrier** button is now **Rescan Journals**. It reads your journals again for everything the window shows: it folds in the last 30 days of site activity, rebuilds your delivery history, and rebuilds the fleet carrier tally. It no longer needs a fleet carrier; a commander without one gets the first two.
+
+- **Where to Buy:** the shopping route has a block of its own above the per-commodity lists, and each buy line on it shows the supply at that stop. The Best single systems list is gone; Find all no longer checks systems with Spansh.
+
 ### Added
 
 - **Requirements checked against your journal:** where an engineer's invitation asks for a rank or a lifetime figure, the path now says where you stand, for example `you have Competent: needs Expert` or `you have 304 markets: met`. It covers 18 engineers: the combat, trade and exploration ranks, the Empire and Federation Navy ranks, the greatest distance from your start, markets and black markets traded with, tons mined, combat bonds and bounty vouchers. Ranks and lifetime figures are read from the `Rank`, `Promotion` and `Statistics` events and kept for each commander, so they are as fresh as your last login (a promotion shows at once). If EDMC starts after you have logged in, the newest ones are read from your journal files once, in the background, so the notes appear without logging in again. The note is information only: a step is marked done by the engineer's standing, as before. Requirements the journal does not total (a faction's standing, missions of one kind, items sold to a bartender) show the table's words with no check.

@@ -353,9 +353,9 @@ The journal only records cargo you transfer to the carrier, so WFMT's carrier fi
 
 - **For the real hold:** sign EDMC in to Frontier and open **Carrier Management** in the game. WFMT then reads the carrier's actual
   cargo (at most every 15 minutes, and Frontier's copy can lag the game by a little).
-- **For a transfer that did not register:** press **Rescan Carrier** in the Colonization Sites window. It rebuilds the tally from the
+- **For a transfer that did not register:** press **Rescan Journals** in the Colonization Sites window. It rebuilds the tally from the
   last 30 days of journals and drops any figure taken from Frontier, so it is a quick fix, not a replacement for the real hold. See
-  [Rescan Carrier](colonization.md#rescan-carrier-when-a-load-did-not-register).
+  [Rescan Journals](colonization.md#rescan-journals-when-a-load-did-not-register).
 
 ### Raven Colonial doesn't update as I deliver
 

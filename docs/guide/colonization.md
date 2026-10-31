@@ -68,7 +68,7 @@ See [Where to buy](#where-to-buy).
 **Copy a To Acquire list for someone who asks what you still need.**
 
 1. Press **Dashboard** and click the site.
-2. If a transfer to your carrier did not register, press **Rescan Carrier** first.
+2. If a transfer to your carrier did not register, press **Rescan Journals** first.
 3. Press **Copy To Acquire** and paste the result.
 
 See [Buttons](#buttons).
@@ -340,7 +340,7 @@ level just as you came back for the next load. So WFMT applies these rules to ea
 
 The result: your own transfers are never undone by an old copy, and a Frontier figure that has really changed still corrects stock
 that arrived or left some other way. The ignored copy is remembered in the saved carrier file, so a restart of EDMC does not forget it,
-and **Rescan Carrier** clears it.
+and **Rescan Journals** clears it.
 
 **Reading it in the log.** Each Frontier figure writes one line to EDMC's log (Help → Open Log Folder in EDMC). Use it to see what
 WFMT decided:
@@ -355,15 +355,15 @@ WFMT decided:
 If you report a column that looks wrong, press **Copy diagnostics** soon afterward: these lines are among the WFMT lines it copies
 (see [Reporting problems](reporting-problems.md)).
 
-### Rescan Carrier: when a load did not register
+### Rescan Journals: when a load did not register
 
 There are two ways to correct the FC column, for different problems.
 
 - **Opening Carrier Management** in the game (with EDMC signed in to Frontier) brings in the carrier's *real* hold from Frontier. This is the right fix after taking cargo *off* the carrier or when others have moved stock.
-- **Rescan Carrier** rebuilds the tally from your own journals. This is the right fix when a transfer *you* made did not register.
+- **Rescan Journals** reads your own journals again. This is the right fix when a transfer *you* made did not register, or when a delivery or site is missing. It also folds in the last 30 days of site activity and rebuilds your delivery history, and it works for a commander with no fleet carrier too (the carrier step is simply skipped).
 
-If the FC column is missing something you moved to the carrier, press **Rescan Carrier** (top right of the Colonization Sites
-window; it needs a commander with a fleet carrier).
+If the FC column is missing something you moved to the carrier, press **Rescan Journals** (top right of the Colonization Sites
+window; the carrier part applies only to a commander with a fleet carrier).
 
 1. WFMT discards its saved carrier tally for that commander, including any figure taken from Frontier.
 2. It reads your journals for the **last 30 days**, oldest first, and counts every transfer you made while docked at your fleet
@@ -395,30 +395,30 @@ without a transfer you made: you sold from the carrier's market, a trade order f
 
 1. Make no transfers for 15 minutes, so your last transfer is no longer "recent".
 2. In the game, open Carrier Management (EDMC must be signed in to Frontier). EDMC fetches the carrier, and a figure that has moved replaces the tally.
-3. If the log says `unchanged since an earlier fetch`, Frontier has not updated yet. Wait and open Carrier Management again (a copy that keeps repeating is applied once an hour has passed since it was first ignored), or press **Rescan Carrier** to restart from your journals.
+3. If the log says `unchanged since an earlier fetch`, Frontier has not updated yet. Wait and open Carrier Management again (a copy that keeps repeating is applied once an hour has passed since it was first ignored), or press **Rescan Journals** to restart from your journals.
 
 **The column is lower than the carrier's real hold.** Stock reached the carrier without a transfer you made (bought through its market, a trade
-order, a squadron mate), or it was moved more than 30 days ago. Follow the same three steps. **Rescan Carrier** will not help here, because it
+order, a squadron mate), or it was moved more than 30 days ago. Follow the same three steps. **Rescan Journals** will not help here, because it
 only counts your own transfers.
 
 **A load you moved never showed up.** The game did not write the transfer (or EDMC was closed, and it was not caught up). Press
-**Rescan Carrier**. If the transfer is in your journals it is counted, and it is never counted twice.
+**Rescan Journals**. If the transfer is in your journals it is counted, and it is never counted twice.
 
 **You took cargo off the carrier** (to the ship). That is a transfer, so the column drops at once. Nothing to do.
 
 **EDMC is not signed in to Frontier.** There is no Frontier figure at all. The column is your transfers only, so it drifts as in the
-cases above. Sign EDMC in to Frontier, then open Carrier Management. Until then, **Rescan Carrier** is the only correction.
+cases above. Sign EDMC in to Frontier, then open Carrier Management. Until then, **Rescan Journals** is the only correction.
 
 **You played with EDMC closed.** At the next start WFMT reads the last 14 to 30 days of journals and adds any transfers it has not
-counted. Press **Rescan Carrier** only if one is still missing.
+counted. Press **Rescan Journals** only if one is still missing.
 
 **The column stays on an old Frontier value you know is wrong.** Check the log for the lines above. If every line says `ignored`,
-Frontier's copy is not updating. This is on Frontier's side. Press **Rescan Carrier** to rebuild from your journals, or move a
+Frontier's copy is not updating. This is on Frontier's side. Press **Rescan Journals** to rebuild from your journals, or move a
 little cargo, wait 15 minutes and open Carrier Management again.
 
 **The column drops after you opened Carrier Management.** Frontier's figure had changed and your last transfer was more than 15 minutes
 old, so WFMT took Frontier's figure as the real hold. If a load of yours is missing from it, Frontier's copy was only partly updated.
-Press **Rescan Carrier**, and tell us if it happens often, with the log lines.
+Press **Rescan Journals**, and tell us if it happens often, with the log lines.
 
 **Example (a worked sequence).** Following the steel row above, where **Acquire** was 300 t:
 
@@ -560,10 +560,10 @@ The results table has the columns **Station**, **System**, **Type**, **Planetary
 The header of the window, top right. All of them act on the site picked on the left:
 
 - **Copy Shopping List** (the highlighted button) copies that site's list to the clipboard: a first line such as `Example Outpost (Example System) - still to get:`, then lines like `1,200 t  Steel`, biggest first. What is in your ship and on your fleet carrier is already taken off.
-- **Copy To Acquire** copies a short list for someone who asks what you still need, for example part way through loading your carrier: a first line such as `Example Outpost (Example System) - still to acquire:`, then one line per commodity such as `Steel: 200 t`, biggest first. Only commodities with something left to acquire are listed; what is in your ship and on your fleet carrier is already taken off. It uses the figures the window shows, so a transfer WFMT missed can be fixed first with **Rescan Carrier**.
+- **Copy To Acquire** copies a short list for someone who asks what you still need, for example part way through loading your carrier: a first line such as `Example Outpost (Example System) - still to acquire:`, then one line per commodity such as `Steel: 200 t`, biggest first. Only commodities with something left to acquire are listed; what is in your ship and on your fleet carrier is already taken off. It uses the figures the window shows, so a transfer WFMT missed can be fixed first with **Rescan Journals**.
   The amounts are the **t still to get** figures, so what is on your ship and on your carrier is taken off. If nothing is needed it says
   so.
-- **Rescan Carrier** rebuilds the fleet carrier tally from your journals; see [Rescan Carrier](#rescan-carrier-when-a-load-did-not-register).
+- **Rescan Journals** rebuilds the fleet carrier tally from your journals; see [Rescan Journals](#rescan-journals-when-a-load-did-not-register).
 - **Raven Colonial** (a menu): **My Projects**, **Planned Builds**, **Raven Progress**, then **Open Selected Build on Raven**, **Open This System on Raven**,
   **Raven Colonial Website**, then **Create Project on Raven…**, **Report Complete to Raven** and **Mark Plan Entry Demolished…** (the three that write; the dots mean a question follows). See
   [Planned builds](#planned-builds), [Starting a project on Raven Colonial](#starting-a-project-on-raven-colonial) and

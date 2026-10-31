@@ -284,6 +284,7 @@ class Purchase:
     commodity: str
     tons: int
     price: int           # cr per ton at this stop
+    supply: int = 0      # tons in stock at this stop (0 when not known)
 
 
 @dataclass(frozen=True)
@@ -359,7 +360,7 @@ def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int
         for label, (supply, price) in sorted(candidates[best].items(), key=lambda kv: kv[0].casefold()):
             take = min(supply, left.get(label, 0))
             if take > 0:
-                buys.append(Purchase(label, take, price))
+                buys.append(Purchase(label, take, price, supply))
                 left[label] -= take
                 if left[label] <= 0:
                     del left[label]

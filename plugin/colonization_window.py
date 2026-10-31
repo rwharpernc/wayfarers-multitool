@@ -15,11 +15,12 @@ import threading
 import time
 import tkinter as tk
 import webbrowser
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Dict, FrozenSet, List, Mapping, Optional, Tuple
 
 from config import appname, config
 
-from . import colonization, colonization_archive_window, colonization_builds_window, colonization_buy_window, colonization_carrier, colonization_create_dialog, colonization_projects_window, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys
+from . import colonization, colonization_archive_window, colonization_builds_window, colonization_buy_window, colonization_carrier, colonization_catchup, colonization_create_dialog, colonization_projects_window, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys
 from .colonization_carrier import CarrierCargo
 from .colonization import Site
 from .colonization_data import SiteRepository
@@ -76,7 +77,8 @@ def show(parent: tk.Misc, repository: SiteRepository, cmdr: str, cargo: Mapping[
          current_system: Optional[Callable[[], str]] = None,
          market: Optional[Callable[[], Optional[Tuple[str, FrozenSet[str]]]]] = None,
          carrier_id: Optional[Callable[[], Optional[int]]] = None,
-         rcc_created: Optional[Callable[[int, str], None]] = None, create_for: Optional[int] = None) -> None:
+         rcc_created: Optional[Callable[[int, str], None]] = None, create_for: Optional[int] = None,
+         rescan_history: Optional[Callable[[str], None]] = None) -> None:
     """Open the window for `cmdr`, or raise/refresh it if already open. `capacity` returns the current ship's cargo
     capacity (0 when unknown), for the trips figure; `current_system` the system the commander is in, for the
     "Here" button of the where-to-buy search; `market` the docked station's name and the commodities it has for
@@ -89,7 +91,7 @@ def show(parent: tk.Misc, repository: SiteRepository, cmdr: str, cargo: Mapping[
         _window.set_cargo(cargo)
         _window.lift()
     else:
-        _window = ColonizationWindow(parent, repository, cmdr, cargo, carrier, capacity, current_system, market, carrier_id, rcc_created)
+        _window = ColonizationWindow(parent, repository, cmdr, cargo, carrier, capacity, current_system, market, carrier_id, rcc_created, rescan_history)
     if create_for is not None:
         _window.create_for(create_for)
 
@@ -136,8 +138,10 @@ class ColonizationWindow:
                  current_system: Optional[Callable[[], str]] = None,
                  market: Optional[Callable[[], Optional[Tuple[str, FrozenSet[str]]]]] = None,
                  carrier_id: Optional[Callable[[], Optional[int]]] = None,
-                 rcc_created: Optional[Callable[[int, str], None]] = None) -> None:
+                 rcc_created: Optional[Callable[[int, str], None]] = None,
+                 rescan_history: Optional[Callable[[str], None]] = None) -> None:
         self._repository = repository
+        self._rescan_history = rescan_history or (lambda _cmdr: None)
         self._carrier_id = carrier_id or (lambda: None)
         self._rcc_created = rcc_created or (lambda _market_id, _build_id: None)
         self._market = market or (lambda: None)
@@ -167,8 +171,8 @@ class ColonizationWindow:
                                 tip="Copy To Acquire - copy the tons still to acquire, after your ship and carrier, to the clipboard")
         self._shell.add_action("Where to Buy", self._on_where_to_buy,
                                 tip="Where to Buy - open the window that finds stations selling the commodities (Spansh, only when you press Find)")
-        self._shell.add_action("Rescan Carrier", self._on_rescan_carrier,
-                                tip="Rescan Carrier - rebuild the fleet carrier tally from the last 30 days of journals")
+        self._shell.add_action("Rescan Journals", self._on_rescan,
+                                tip="Rescan Journals - read your journals again for sites, deliveries and (if you have one) your fleet carrier")
         # Raven Colonial's actions under one heading: the first ones only read, the last three write (each asks first).
         self._shell.add_menu("Raven Colonial", [
             ("My Projects", self._on_projects),
@@ -654,42 +658,62 @@ class ColonizationWindow:
         self._announce(f"{site.display_name()}: Raven Colonial says {project.sum_need:,} t still needed of {project.max_need:,}; "
                                f"WFMT says {ours:,} t ({verdict}).{state}")
 
-    def _on_rescan_carrier(self) -> None:
-        """Rebuild the fleet carrier tally from the last 30 days of journals, for a transfer that did not register (see
-        colonization_carrier.scan_journals). The files are read on a worker thread; the result is applied here on the Tk thread."""
-        if self._carrier is None or not self._cmdr or not self._carrier.has_carrier(self._cmdr):
-            self._announce("Rescan Carrier needs a commander with a fleet carrier.")
+    def _on_rescan(self) -> None:
+        """Read the journals again for everything this window shows: the sites (the last 30 days, folded in by the same newest-only
+        rule as at start-up), the delivery history (every journal) and, for a commander with a fleet carrier, the carrier tally (see
+        colonization_carrier.scan_journals). The files are read on a worker thread; the results are applied here on the Tk thread."""
+        if not self._cmdr:
+            self._announce("Rescan Journals needs a commander; WFMT has not seen one yet.")
             return
         cmdr = self._cmdr
-        job: Dict[str, Any] = {"done": False, "record": None}
-        self._announce("Rescanning the journals for carrier transfers…")
+        with_carrier = self._carrier is not None and self._carrier.has_carrier(cmdr)
+        job: Dict[str, Any] = {"done": False, "events": None, "record": None}
+        self._announce("Rescanning the journals…")
 
         def work() -> None:
             try:
-                job["record"] = colonization_carrier.scan_journals(cmdr)
+                since = (datetime.now(timezone.utc) - timedelta(days=colonization_catchup.MAX_DAYS)).timestamp()
+                job["events"] = colonization_catchup.read_since(since)
             except Exception:
-                logger.exception("Carrier rescan failed")
+                logger.exception("Site rescan failed")
+            if with_carrier:
+                try:
+                    job["record"] = colonization_carrier.scan_journals(cmdr)
+                except Exception:
+                    logger.exception("Carrier rescan failed")
             job["done"] = True
 
-        threading.Thread(target=work, daemon=True, name="WFMT-carrier-rescan").start()
-        self._poll_rescan(job, cmdr)
+        threading.Thread(target=work, daemon=True, name="WFMT-colonization-rescan").start()
+        self._poll_rescan(job, cmdr, with_carrier)
 
-    def _poll_rescan(self, job: Dict[str, Any], cmdr: str) -> None:
+    def _poll_rescan(self, job: Dict[str, Any], cmdr: str, with_carrier: bool) -> None:
         if not self._shell.alive:
             return
         if not job["done"]:
-            self._toplevel.after(150, self._poll_rescan, job, cmdr)
+            self._toplevel.after(150, self._poll_rescan, job, cmdr, with_carrier)
             return
-        record = job["record"]
-        if record is None or self._carrier is None or cmdr != self._cmdr:
-            self._announce("The rescan failed; see the EDMC log." if record is None else "The commander changed; rescan again.")
+        if cmdr != self._cmdr:
+            self._announce("The commander changed; rescan again.")
             return
-        self._carrier.replace_from_journals(cmdr, record)
-        self._carrier.commit()
-        tons = self._carrier.tons(cmdr)
-        self._announce(f"Rescanned the last {colonization_carrier.MAX_DAYS} days of journals: {len(tons)} commodit"
-                               f"{'y' if len(tons) == 1 else 'ies'}, {sum(tons.values()):,} t on your carrier. The next Frontier "
-                               "fetch can replace this with the carrier's real cargo.")
+        parts = []
+        if job["events"] is None:
+            parts.append("the sites could not be read (see the EDMC log)")
+        else:
+            changed = colonization_catchup.apply_events(self._repository, job["events"])
+            parts.append(f"{changed} site update{'' if changed == 1 else 's'}")
+        self._rescan_history(cmdr)
+        parts.append("delivery history being rebuilt")
+        if with_carrier and self._carrier is not None:
+            record = job["record"]
+            if record is None:
+                parts.append("the carrier could not be read (see the EDMC log)")
+            else:
+                self._carrier.replace_from_journals(cmdr, record)
+                self._carrier.commit()
+                tons = self._carrier.tons(cmdr)
+                parts.append(f"{sum(tons.values()):,} t on your carrier in {len(tons)} commodit{'y' if len(tons) == 1 else 'ies'} "
+                             "(the next Frontier fetch can replace this with its real cargo)")
+        self._announce(f"Rescanned the journals: {'; '.join(parts)}.")
 
     def _raven_ready(self, site: Optional[Site]) -> str:
         """The commander's Raven key when a write may go ahead, else "" (with the reason in the status line). Asks for the key when

@@ -1,11 +1,11 @@
 """The Where to Buy window - the closest stations (and, if asked, fleet carriers) with a commodity in stock, opened from the Colonization Sites window.
 
 "Find nearest" searches the commodity picked in the Sites window; "Find all" searches every commodity still to be bought for the selected site (as the
-Sites table lists them, covered rows left out), one request each, and lists the closest few stations under each, with the best single systems and a
+Sites table lists them, covered rows left out), one request each, and lists the closest few stations under each, with a
 suggested shopping route. The search choices are remembered between sessions. Nothing is asked of Spansh until a Find button is pressed, and only the
 commodity name and the system searched around are sent.
 
-What is searched and how the answer adds up lives in colonization_sources.py and colonization_systems.py; this file draws them. The window knows nothing
+What is searched and how the answer adds up lives in colonization_sources.py; this file draws them. The window knows nothing
 of the Sites window beyond the `Host` it is given: which commodity is picked, which rows are still to buy, and the site's system.
 
 Built on the shared window kit (plugin/uikit - see docs/WINDOW_FRAMEWORK_SPEC.md); a worker thread does the searches and the Tk thread polls for the answer.
@@ -22,7 +22,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 from config import appname, config
 
-from . import colonization_sources as sources, colonization_systems as systems, colonization_view as view, panelkit, system_autocomplete
+from . import colonization_sources as sources, colonization_view as view, panelkit, system_autocomplete
 from .mining_spansh_client import search_stations_selling_all
 from .uikit import palette as P, style
 from .uikit.shell import WindowShell
@@ -103,16 +103,6 @@ def follow_site(system: str) -> None:
         _window.follow_site(system)
 
 
-def _credits(amount: int) -> str:
-    """A basket's cost short enough for the Price column: 950 cr, 12.5K cr, 22.8M cr, 1.2B cr (blank for none)."""
-    if amount <= 0:
-        return ""
-    for size, suffix in ((1_000_000_000, "B"), (1_000_000, "M"), (1_000, "K")):
-        if amount >= size:
-            return f"{amount / size:,.1f}{suffix} cr"
-    return f"{amount:,} cr"
-
-
 def _clip(text: str, limit: int) -> str:
     return text if len(text) <= limit else text[:limit - 1] + "…"
 
@@ -127,7 +117,6 @@ class BuyWindow:
         self._whole: Optional[sources.WholeListResult] = None   # the last "Find all" answer (instead of _result)
         self._whole_to_get: Dict[str, int] = {}                 # commodity label -> tons still to get, for its heading
         self._plan: Optional[sources.RoutePlan] = None          # the suggested shopping route for the last "Find all"
-        self._systems: Optional[systems.SystemsResult] = None   # the best single systems for the last "Find all" (each checked with Spansh)
         self._whole_job: Optional[Dict[str, Any]] = None        # the "Find all" running now
         self._prefs = sources.load_prefs(config.get_str(CONFIG_SEARCH))
         self._source_sort = ("distance", False)
@@ -199,7 +188,7 @@ class BuyWindow:
         self._sources_note = tk.Label(host, text=_HINT, fg=P.MUTED, bg=P.PANE, anchor="w", justify="left", padx=P.PAD)
         self._sources_note.pack(fill="x")
         host.bind("<Configure>", lambda e: [label.configure(wraplength=max(e.width - 2 * P.PAD, 100)) for label in (self._sources_note, self._picked, self._steps)])
-        # The shopping plan (best single systems and the suggested route) has a block of its own above the per-commodity
+        # The shopping plan (the suggested route) has a block of its own above the per-commodity
         # lists, so it is not lost among them. It is shown only after a Find all that produced one.
         self._plan_frame = tk.Frame(host, bg=P.CARD, padx=P.PAD_SM, pady=P.PAD_SM)
         tk.Label(self._plan_frame, text="Closest way to buy everything", fg=P.ACCENT, bg=P.CARD, anchor="w",
@@ -326,7 +315,7 @@ class BuyWindow:
         if job["error"]:
             self._say(f"The search failed: {_clip(job['error'], _ERROR_MAX)}. Spansh may be busy; try again shortly.")
             return
-        self._result, self._result_label, self._whole, self._plan, self._systems = job["result"], commodity, None, None, None
+        self._result, self._result_label, self._whole, self._plan = job["result"], commodity, None, None
         self._render_sources(system)
 
     def _on_find_all(self) -> None:
@@ -366,15 +355,6 @@ class BuyWindow:
                     system, labels, radius_ly=radius, pad=pad, include_carriers=carriers, sort=order,
                     progress=lambda done, total, label: job.__setitem__("progress", (done, total, label)),
                     cancelled=lambda: job["cancel"], one_stop=search_stations_selling_all, needs=to_get)
-                if not job["result"].stopped:
-                    job["phase"] = "systems"
-                    try:   # a bonus on top of the answer above: the systems where most of the list can be bought in one place
-                        job["systems"] = systems.find_best_systems(
-                            job["result"].found, to_get, system, pad=pad,
-                            progress=lambda done, total, label: job.__setitem__("progress", (done, total, label)),
-                            cancelled=lambda: job["cancel"])
-                    except Exception:
-                        logger.exception("Colonization best-systems check failed")
             except Exception as exc:   # bad input or an unexpected failure: shown, not raised into the main thread
                 logger.exception("Colonization whole-list search failed")
                 job["error"] = str(exc) or exc.__class__.__name__
@@ -388,8 +368,7 @@ class BuyWindow:
             return
         if not job["done"]:
             done, total, label = job["progress"]
-            verb = "Checking system" if job.get("phase") == "systems" else "Searching"
-            self._say(f"{verb} {done + 1} of {total}: {_clip(label, _NAME_MAX)}…", busy=True)
+            self._say(f"Searching {done + 1} of {total}: {_clip(label, _NAME_MAX)}…", busy=True)
             self._toplevel.after(_POLL_MS, self._poll_whole, job, system, to_get)
             return
         self._whole_job = None
@@ -400,7 +379,6 @@ class BuyWindow:
             return
         self._whole, self._whole_to_get, self._result = job["result"], to_get, None
         self._plan = sources.plan_route(job["result"].found, to_get)
-        self._systems = job.get("systems")
         self._render_whole(system)
 
     def _on_source_sort(self, key: str) -> None:
@@ -463,35 +441,9 @@ class BuyWindow:
         self._source_table.mark_sorted(key, descending)
         self._source_rows.clear()
         plan = self._plan
-        found_systems = self._systems.plans if self._systems is not None else []
         self._plan_table.clear()
-        self._show_plan(bool(found_systems) or (plan is not None and bool(plan.stops)))
-        table = self._plan_table    # the systems and the route go in the plan block, the commodity lists in the table below it
-        if found_systems:
-            # The best single systems first, each with its stations in the order to visit and what to buy at each; only the best is open.
-            table.insert("systems", ("Best single systems", f"{len(found_systems)} checked", "", "", "", "", "", "", ""),
-                                      group=True, open=True)
-            for rank, found in enumerate(found_systems, 1):
-                sid = f"sys{rank}"
-                short = sum(tons for _label, tons in found.uncovered)
-                self._source_rows[sid] = found.system
-                table.insert(
-                    sid, (f"{rank}. {_clip(found.system, _NAME_MAX)}", f"{found.covered:,} of {found.needed:,} t",
-                          "everything" if found.complete else f"short {short:,} t", "", "",
-                          f"{found.distance_ly:,.1f} ly" if found.distance_ly else "", "", _credits(found.cost), ""),
-                    group=True, open=rank == 1, parent="systems")
-                for number, stop in enumerate(found.stops, 1):
-                    stop_id = f"{sid}s{number}"
-                    self._source_rows[stop_id] = found.system
-                    table.insert(
-                        stop_id, (f"{number}. {stop.station}", found.system, stop.kind, "Yes" if stop.is_planetary else "No", stop.pad, "",
-                                  f"{stop.arrival_ls:,.0f} ls" if stop.arrival_ls else "", "", f"{stop.tons:,} t"),
-                        group=True, open=rank == 1, parent=sid)
-                    for index, buy in enumerate(stop.buys):
-                        table.insert(f"{stop_id}b{index}", (f"{buy.commodity} x {buy.tons:,} t", "", "", "", "", "", "",
-                                                                         f"{buy.price:,}", ""), parent=stop_id)
-                for index, (label, tons) in enumerate(found.uncovered):
-                    table.insert(f"{sid}u{index}", (f"Short: {label} x {tons:,} t", "", "", "", "", "", "", "", ""), parent=sid)
+        self._show_plan(plan is not None and bool(plan.stops))
+        table = self._plan_table    # the route goes in the plan block, the commodity lists in the table below it
         if plan is not None and plan.stops:
             # The suggested shopping route: a stop is a row with what to buy there as rows beneath it.
             table.insert("route", ("Suggested route", f"{len(plan.stops)} stop{'s' if len(plan.stops) != 1 else ''}",
@@ -505,7 +457,7 @@ class BuyWindow:
                               f"{stop.tons:,} t"), group=True, open=True, parent="route", tag="carrier" if stop.is_carrier else None)
                 for index, buy in enumerate(stop.buys):
                     table.insert(f"{stop_id}b{index}", (f"{buy.commodity} x {buy.tons:,} t", "", "", "", "", "", "",
-                                                                     f"{buy.price:,}", ""), parent=stop_id)
+                                 f"{buy.price:,}", f"{buy.supply:,}" if buy.supply else ""), parent=stop_id)
         for g, (label, result) in enumerate(whole.found):
             need = self._whole_to_get.get(label)
             stations = list(result.stations[:sources.WHOLE_LIST_STATIONS])
@@ -534,14 +486,6 @@ class BuyWindow:
         if whole.failed:
             parts.append(f"The search failed for {_clip(', '.join(label for label, _ in whole.failed), _ERROR_MAX)}"
                          f" - Spansh may be busy; press Find all again.")
-        if self._systems is not None and self._systems.failed:
-            parts.append(f"Could not check {_clip(', '.join(name for name, _ in self._systems.failed), _ERROR_MAX)} with Spansh.")
-        if found_systems:
-            best = found_systems[0]
-            more = " Its station list may be longer than Spansh sent." if best.more_stations else ""
-            parts.append((f"{best.system} has everything: {len(best.stops)} station{'s' if len(best.stops) != 1 else ''}."
-                          if best.complete else
-                          f"No single system covers everything; {best.system} covers the most ({best.share:.0%} of the tons).") + more)
         if plan is not None and plan.stops:
             parts.append(f"A shopping route of {len(plan.stops)} stop{'s' if len(plan.stops) != 1 else ''} covers "
                          f"{plan.covered:,} of {plan.needed:,} t (Copy Route copies it).")
@@ -552,17 +496,11 @@ class BuyWindow:
 
     def _on_copy_route(self) -> None:
         plan = self._plan
-        best = self._systems.plans[0] if self._systems is not None and self._systems.plans else None
-        if (plan is None or not plan.stops) and best is None:
+        if plan is None or not plan.stops:
             self._say("Press Find all first; the shopping route is worked out from its answer.")
             return
-        lines = (["Best single system:"] + best.lines() + [""]) if best is not None else []
-        if plan is not None and plan.stops:
-            lines += plan.lines()
-        if panelkit.copy_to_clipboard(self._toplevel, "\n".join(_clip(line, 240) for line in lines)):
-            what = "the best system and the shopping route" if best is not None and plan is not None and plan.stops else (
-                "the best system" if best is not None else f"the {len(plan.stops)}-stop shopping route")
-            self._say(f"Copied {what} to the clipboard.")
+        if panelkit.copy_to_clipboard(self._toplevel, "\n".join(_clip(line, 240) for line in plan.lines())):
+            self._say(f"Copied the {len(plan.stops)}-stop shopping route to the clipboard.")
 
     def _on_source_pick(self, iid: str) -> None:
         """Clicking a result row copies its system, ready to paste into the galaxy map's search. Rows with no system (the

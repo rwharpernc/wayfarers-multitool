@@ -315,20 +315,8 @@ def fake_whole(system, commodities, **kwargs):
     return S.WholeListResult(found=found, failed=[])
 
 
-system_calls = []
-
-
-def fake_systems(found, needs, reference, **kwargs):
-    system_calls.append((reference, dict(needs), kwargs["pad"]))
-    kwargs["progress"](0, 1, "Sol")
-    stop = BW.systems.SystemStop("Near Port", "Coriolis Starport", False, "Large", 300.0, (S.Purchase("Aluminium", 80, 410),))
-    return BW.systems.SystemsResult(plans=[BW.systems.SystemPlan("Sol", 0.0, (stop,), 480, 80, (("Steel", 400),), 32800, 1)])
-
-
 S_whole = BW.sources.find_whole_list
 BW.sources.find_whole_list = fake_whole
-S_systems = BW.systems.find_best_systems
-BW.systems.find_best_systems = fake_systems
 buy._on_find_all()
 for _ in range(100):
     root.update()
@@ -339,41 +327,31 @@ check(len(whole_calls) == 1 and whole_calls[0][1] == ["Aluminium", "Steel"],
       f"Find all should search what is still to buy, got {whole_calls}")
 check(whole_calls[0][2]["pad"] == "large", "Find all should use the chosen options")
 headings = [row.values[0] for row in buy._plan_table._rows.values() if row.group]
-check(headings == ["Best single systems", "1. Sol", "1. Near Port", "Suggested route", "1. Near Port"],
-      f"the best systems and the route sit in their own block: {headings}")
+check(headings == ["Suggested route", "1. Near Port"], f"the route sits in its own block: {headings}")
 check([row.values[0] for row in buy._source_table._rows.values() if row.group] == ["Aluminium", "Steel"],
       "the commodity lists keep one heading per commodity, apart from the plan")
 check(buy._plan_frame.winfo_manager() == "pack", "the plan block is shown after a Find all that made one")
-check(system_calls == [("Sol", {"Aluminium": 80, "Steel": 400}, "large")], f"the systems check gets the needs and the pad choice: {system_calls}")
-systems_detail = {row.values[0]: row.values for row in buy._plan_table._rows.values() if row.group}
-check(systems_detail["Best single systems"][1] == "1 checked", f"the systems heading counts them: {systems_detail['Best single systems']}")
-check(systems_detail["1. Sol"][1:3] == ["80 of 480 t", "short 400 t"] and systems_detail["1. Sol"][7] == "32.8K cr",
-      f"a system row shows coverage, what is short and the basket's cost: {systems_detail['1. Sol']}")
-check(any(row.values[0] == "Short: Steel x 400 t" for row in buy._plan_table._rows.values()), "the shortfall is listed under the system")
 detail = {row.values[0]: row.values[1:3] for row in list(buy._plan_table._rows.values()) + list(buy._source_table._rows.values()) if row.group}
 check(detail["Aluminium"] == ["80 t to get", ""] and detail["Steel"] == ["400 t to get", "no source found"],
       f"the detail sits in later columns so the label is not clipped: {detail}")
 check(detail["Suggested route"][0] == "1 stop", f"the route heading counts its stops: {detail['Suggested route']}")
-check(len(buy._plan_table) == 8 and len(buy._source_table) == 3, f"the plan block (systems 5 rows, route 3) apart from two headings and one station: {len(buy._plan_table)}, {len(buy._source_table)}")
+check(len(buy._plan_table) == 3 and len(buy._source_table) == 3, f"the plan block (the route, 3 rows) apart from two headings and one station: {len(buy._plan_table)}, {len(buy._source_table)}")
 check(buy._plan is not None and [s.station for s in buy._plan.stops] == ["Near Port"], "a plan should be kept for Copy Route")
 check(buy._find_all_button.cget("text") == "Find all" and buy._find_button._enabled,
       "the buttons come back when the search is done")
 check("No source found for Steel" in buy._sources_note.cget("text"), "the note should name what had no source")
 check("shopping route of 1 stop" in buy._sources_note.cget("text") and "Not covered: Steel 400 t" in buy._sources_note.cget("text"),
       f"the note should describe the route and what it leaves out: {buy._sources_note.cget('text')}")
-check("No single system covers everything; Sol covers the most (17% of the tons)." in buy._sources_note.cget("text"),
-      f"the note should name the best system: {buy._sources_note.cget('text')}")
+route_buy = buy._plan_table._rows["route1b0"].values
+check(route_buy[7:9] == ["410", "900"], f"a route stop's buy line shows price and supply: {route_buy}")
 buy._source_table.select("g0s0")
 buy._on_copy_system()
 check("Copied" in buy._sources_note.cget("text"), "Copy System works on a Find all result")
 buy._on_copy_route()
-check("Copied the best system and the shopping route" in buy._sources_note.cget("text"), "Copy Route should confirm")
+check("Copied the 1-stop shopping route" in buy._sources_note.cget("text"), "Copy Route should confirm")
 buy._on_source_sort("price")
-check(len(buy._plan_table) == 8 and len(buy._source_table) == 3, "sorting a Find all result keeps it, systems and route included")
+check(len(buy._plan_table) == 3 and len(buy._source_table) == 3, "sorting a Find all result keeps it, route included")
 buy._plan = None
-buy._on_copy_route()
-check("Copied the best system to the clipboard" in buy._sources_note.cget("text"), "Copy Route copies the best system alone when there is no route")
-buy._systems = None
 buy._on_copy_route()
 check("Press Find all first" in buy._sources_note.cget("text"), "Copy Route with no route says what to do")
 check(buy._sources_note.cget("fg") == P.TEXT, "the note is in the plain text color once a search is done")
@@ -382,12 +360,11 @@ check(buy._sources_note.cget("fg") == P.STATUS, "a search in progress is shown i
 buy._say("Done.")
 check(buy._sources_note.cget("fg") == P.TEXT, "any other note goes back to the plain text color")
 BW.sources.find_whole_list = S_whole
-BW.systems.find_best_systems = S_systems
 
 # The header: related actions sit under a heading each, as drop-down menus.
 from plugin.uikit.widgets import FlatButton, MenuButton
 header = [w for w in window._shell.actions.winfo_children() if isinstance(w, FlatButton)]
-check([w.cget("text") for w in header] == ["Copy Shopping List", "Copy To Acquire", "Where to Buy", "Rescan Carrier", "Raven Colonial ▾", "Manage Sites ▾"],
+check([w.cget("text") for w in header] == ["Copy Shopping List", "Copy To Acquire", "Where to Buy", "Rescan Journals", "Raven Colonial ▾", "Manage Sites ▾"],
       f"the header buttons: {[w.cget('text') for w in header]}")
 window._on_copy_acquire()
 copied = root.clipboard_get()
