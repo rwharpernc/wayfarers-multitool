@@ -471,6 +471,7 @@ It asks [Spansh](https://spansh.co.uk) (a community-run map of the game), so it 
 | Sort | **Closest first** (default) or **Cheapest first**. This decides which stations Spansh returns, not just their order. Click a result heading to re-sort what came back |
 | Landing pad | **Any size** (default), **Medium or larger**, or **Large only**. Any size lists stations whose biggest pad is small, so you can swap to a smaller cargo ship when a commodity isn't sold at a large-pad station. The **Pad** column shows each station's largest pad |
 | Include fleet carriers | Off by default. When ticked, carriers are searched separately and listed under their own **Fleet carriers** heading after the stations |
+| Include surface ports | On by default. Untick it to leave out stations on a planet's surface (planetary ports), from the lists and from the route. It changes what is shown, not what is asked of Spansh, so ticking or unticking it after a search redraws the results at once |
 
 The options are **remembered** (within, sort, landing pad and fleet carriers) for the next time you open the window. The
 search system is not: it starts as the site's system again.
@@ -481,7 +482,7 @@ search system is not: it starts as the site's system again.
 
 - It follows the table as you have it filtered. Rows already covered are left out, and so are rows the Filter box, **Show** or **Only what [station] sells** hide.
 - Spansh can only look up one commodity per request. So WFMT sends one request per commodity, a short pause (0.4 second) apart, plus one more asking for the nearest stations that have every commodity on the list in stock (see below).
-- A list of 20 takes some seconds, and the note under the buttons shows how far it has got, in amber while a search is running so it stands out. The best single systems are checked at the end (see below).
+- A list of 20 takes some seconds, and the note under the buttons shows how far it has got, in amber while a search is running so it stands out.
 - While it runs, **Find all** is relabeled **Stop** and **Find nearest** is disabled. Press **Stop** to stop after the search in progress, keeping what it found (the note says `(stopped early)`).
 - A commodity that fails is named and the others still show. Press **Find all** again to retry.
 - Commodities with no source in range are listed in the note.
@@ -501,35 +502,19 @@ search system is not: it starts as the site's system again.
 
 1. In the Sites window set **Show** to **To buy**, so covered rows are left out.
 2. In Where to Buy set **Within** to 100 ly and press **Find all**. The note shows how far it has got; press **Stop** if you want to stop early and keep what it found.
-3. Read **Best single systems** first. If system 1 shows `18,000 of 20,000 t` with a **Short** list under it, you can park the carrier there and buy most of the list in its stations, then cover the short items from the suggested route.
+3. Read the **Closest way to buy everything** block above the lists: the stops in the order to fly them, what to buy at each, and the price and stock of every item. Anything the route cannot cover is named in the note.
 4. Press **Copy Route** to paste the plan into a note.
-
-### Best single systems
-
-If you park your fleet carrier in one system and fly between its stations, the question is which **system** can supply the most of your list, not which station. Find all answers it first, at the top of the results, under **Best single systems**.
-
-- After the searches, WFMT picks up to 6 systems that looked best (the most of your commodities, then the most tons; a system that offered fewer than two of them is not worth a request when your list has more than one), plus the system you searched around, and asks Spansh for **every station in each**, with its whole market. That is one more request per system (up to 6), with a short pause (0.4 second) between them. The note shows "Checking system 2 of 6".
-- The stock of a system's stations is added up. A system is then planned with the fewest stations that supply the most, the same way as the suggested route.
-- The systems are ranked: those that cover **everything** first, then the larger share of the tons, then the nearer, then the cheaper basket.
-- Each system is numbered and shows how many tons it covers of the total (`18,000 of 20,000 t`), **everything** or how much it is **short**, its distance, and the cost of the whole basket (for example `22.8M cr`). Open it to see its stations in the order to visit (nearest the arrival star first) and what to buy at each, with the price per ton. Anything the system cannot supply in full is listed under it as **Short**.
-- A system plan never has more than 12 stations. Only the best system is open to start with. Click a system or station row to copy the system name.
-- **Copy Route** copies the best system's plan first, then the suggested route.
-- It is skipped when only one commodity is left, since a plain search answers that.
-
-Things to know:
-- Only stations whose market was updated in the last 7 days count, and fleet carriers are left out (they move, and their markets go stale). The landing pad choice applies to the stations considered.
-- The systems come from the nearest stations Find all returned for each commodity inside your radius. A good system farther out than that will not be offered; widen **Within** to look further.
-- A very large system may have more stations than Spansh sends in one answer. The note says so for the best system.
-- If a system cannot be checked, the note names it and the others still show.
 
 ### Suggested route
 
-Find all also works out a shopping route and puts it first in the results: the few stops (at most 6) that between them supply the most of what you still have to get.
+Find all also works out a shopping route and shows it in a shaded block of its own, **Closest way to buy everything**, above the per-commodity lists (the block scrolls if it is long): the few stops (at most 6) that between them supply the most of what you still have to get.
 
 - A station that sells several of your commodities counts for all of them, so it is taken first. Ties go to the nearer, then the cheaper.
-- Each stop shows what to buy there and the price.
+- Each stop shows what to buy there, with the price per ton and the stock (**Supply**) at that stop. Click a stop to copy its system name.
 - The stops are listed nearest first, which is the order to fly them.
 - What no station in range can supply is named in the note.
+- **Surface ports.** A stop on a planet's surface is marked **Yes** in the **Planetary** column. When a commodity is sold *only* at surface ports among the stations found, the block says so on its first line (**Only at surface ports: …**), the item is marked **surface ports only** under its stop, the commodity's heading says so, and the note repeats it. With **Include surface ports** unticked those commodities are left out of the route and the lists instead, and the line reads **Only at surface ports, so left out: …**, so you know why they are missing.
+- **It follows your purchases.** When what you have bought reaches your ship's hold or your fleet carrier (or is delivered), the route and the lists are worked out again from the stations already found, with no new search. A commodity you now have in full leaves the route and its heading disappears; one you have part of shrinks to the tons still to get. The tons come from the Sites window's **Acquire** column, so they follow its hold and carrier figures. The note under the buttons is left alone, except to say when everything is bought.
 - It only considers the stations Find all returned (including any that sell the whole list), which is the nearest 25 per commodity within your radius.
 - Stock changes, so treat it as a plan to check on arrival.
 - **Copy Route** copies it as plain lines to paste into a note or chat.

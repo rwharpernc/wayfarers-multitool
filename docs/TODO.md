@@ -714,12 +714,12 @@ The items below are implemented and covered by unit tests, but have not all been
   - Verify that the History button on the Colonization panel opens its window.
 - [ ] **BGS** after a tick passes while EDMC is closed: the period that closed should contain the play made in the meantime. Also verify that a finished Colonization build is displayed without the "Construction Site:" prefix.
 - [ ] Colonization window: **Find all** against Spansh, **Only what [station] sells** with a real `Market.json`, and copying a system by clicking a result row.
-- [ ] **Colonization: hold, Acquire and best single systems** (Windows, then Linux; steps in [LINUX_TESTING.md](LINUX_TESTING.md)).
+- [ ] **Colonization: hold and Acquire** (Windows, then Linux; steps in [LINUX_TESTING.md](LINUX_TESTING.md)).
   - Buy a tracked commodity at a market: the **In Cargo** figures in the Sites window, on the Colony page and on the overlay card follow the hold within a couple of seconds (WFMT reads the game's `Cargo.json`).
   - **Acquire** falls as you load the ship or the carrier and reaches 0 once the whole amount is acquired, wherever it is stored; **Haul Trips** still counts everything the site needs.
   - The overlay card shows the same Acquire and no To buy column. With the card's *List* set to **To buy** (the default), the covered commodities are left out and the footer still counts them; **To haul** keeps the ones covered but not yet aboard in full, for when everything is on the carrier.
   - **A lagging Frontier copy does not undo a transfer** (EDMC signed in to Frontier): unload cargo at your carrier, then open Carrier Management. The FC column keeps the unloaded stock and **Copy diagnostics** shows an `ignored` line from `Carrier cargo from Frontier`. After 15 minutes without a transfer, a changed Frontier figure replaces the tally and an unchanged one stays ignored. The rules and log lines are in [the Colonization guide](guide/colonization.md).
-  - After **Find all** with two or more commodities, **Best single systems** lists the few best systems with their stations in visiting order; **Copy Route** copies the best system first. The note under the buttons is in the accent color while a search runs.
+  - After **Find all**, the **Closest way to buy everything** block shows the suggested route with price and stock at each stop; **Copy Route** copies it. The note under the buttons is in the accent color while a search runs.
 - [ ] **Raven Colonial writes not yet observed:** Report Complete on a finished build, and carrier cargo sharing (the second switch).
   - **Create Project on Raven** has worked against the live service (1.2.0 testing). Still to try: docked at a construction ship, once with a planned site and once with none, checking the project, the link, the primary project and the attached carrier on ravencolonial.com.
   - **Mark Plan Entry Demolished** has not been observed against the live service.

@@ -737,6 +737,9 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
       window closes it; its size and position are remembered.
 - [ ] **Landing pad**: Any size lists stations whose largest pad is Medium or Small; Large only lists none of those.
 - [ ] **Include fleet carriers** off lists no carriers; on adds a **Fleet carriers** group under the stations.
+- [ ] **Include surface ports** (on by default): unticked, planetary stations disappear from the lists and the route at once, and a commodity sold only at surface ports shows an amber **Only at surface ports, so left out** line at the top of the route block and **surface ports only (left out)** on its heading; ticked, the line reads **Only at surface ports** and the item is marked under its stop. The choice is remembered.
+- [ ] **Following purchases:** after Find all, put some of a listed commodity in the ship's hold (or on the carrier); the route and lists shrink by that much within a moment, and a commodity you have in full disappears, with no new search.
+- [ ] **Window positions:** with a monitor to the left of the primary, move a WFMT window onto it, close it and reopen it: it comes back on that monitor.
 - [ ] The **Planetary** column says Yes for planetary ports, outposts and settlements and No for orbital stations and
       carriers; the whole results table fits at the window's minimum width.
 - [ ] **Here** puts the system you are in (the last system EDMC saw) into Around. **Copy System** copies the selected row, and so does clicking a result row (a station or a route stop) at once.
@@ -752,8 +755,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
   - Clicking a row names its biggest commodities.
   - **Refresh** works.
   - With no network it says it could not reach Raven Colonial.
-- [ ] **Best single systems:** after Find all with two or more commodities, a "Best single systems" group comes first (the note shows "Checking system N of M"); each system shows how much of the list it covers, "everything" or how much it is short, and a cost; the best one is open with its stations in visiting order and what to buy at each. **Copy Route** copies the best system first.
-- [ ] **Suggested route:** after Find all, a "Suggested route" group comes first with numbered stops and the commodities to buy under each; **Copy Route** puts plain lines on the clipboard.
+- [ ] **Suggested route:** after Find all, a shaded "Closest way to buy everything" block sits above the per-commodity lists, with a "Suggested route" group of numbered stops and, under each, the commodities to buy with their price and supply; **Copy Route** puts plain lines on the clipboard. A plain Find nearest shows no such block.
 - [ ] **Remembered choices**: change Within, Sort, Landing pad and Include fleet carriers, run a search, close and reopen
       the window: the same choices are back.
 - [ ] **Only what [station] sells**: grayed out until you open a station's commodity market; then it names the station and

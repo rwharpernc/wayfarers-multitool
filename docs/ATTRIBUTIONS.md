@@ -196,8 +196,6 @@ planner for what to build next. Several community projects got there first, and 
   category table (`plugin/commodity_categories.py`) is taken from its `ColonyData.mapCargoType` (GPL-3.0; notice in
   `THIRD-PARTY-NOTICES.md`). The code is WFMT's own.
 - **Where to buy a Colonization commodity:** [Spansh](https://spansh.co.uk/)'s station search, the same one the Mining and Trade finders use.
-  The **Best single systems** list asks the same search for every station of a few systems, one request each, and adds up their stock; the
-  ranking is WFMT's own.
 
 ## Power, factions and fighting
 

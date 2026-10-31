@@ -1470,13 +1470,18 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 - An ignored copy is stored in `capi_ignored` with the time in `capi_ignored_at`; an applied one clears both and sets `from_capi`. `replace_from_journals` (Rescan Journals) clears both.
 - Each call logs one INFO line (applied, same, or ignored with the reason), which is how a report of a wrong column is diagnosed.
 
-**Best single systems** (`colonization_systems.py`)
+**Best single systems** (`colonization_systems.py`) - no longer used by the Where to Buy window (it showed the suggested route only from 2026-10-31); the module and its tests are kept
 
-- After Find all (`colonization_sources.find_whole_list`), the window runs `find_best_systems` on the same worker thread. It is pure logic around an injected `fetch` (`mining_spansh_client.search_system_stations`), so the tests use no network.
+- It was run after Find all (`colonization_sources.find_whole_list`) by `find_best_systems` on the same worker thread. It is pure logic around an injected `fetch` (`mining_spansh_client.search_system_stations`), so the tests use no network.
 - `candidate_systems` groups the per-commodity answers by system (fleet carriers ignored) and keeps up to 6: the system searched around first, then those with the most commodities and tons, skipping systems found for a single commodity.
 - Each candidate costs one request (a station search of distance 0 from the system returns every station with its whole market), paced `SYSTEM_PAUSE` apart. A failed system is recorded and the rest carry on; `cancelled()` is checked between systems, and the Stop button keeps what was found.
 - `plan_system` adds up the stations' stock per commodity and reuses `colonization_sources.plan_route` limited to that system (fewest stations, most tons), then orders the stops by arrival distance. `rank` puts systems that cover everything first, then the larger share, the nearer, the cheaper.
 - A single commodity asks for nothing. The Spansh names are normalized as the one-stop search does, and compared without regard to case.
+
+**Where to Buy: surface ports and purchases** (`colonization_buy_window.py`, `colonization_sources.py`)
+
+- `SearchPrefs.surface` (default true) is the Include surface ports tick. The raw Find all answer is kept; `_found_view` filters it with `without_surface` at draw time, so toggling needs no request. `surface_only_labels` names the commodities (still to get) whose every source with stock is planetary; `plan_route(..., surface_only=)` marks their `Purchase.surface_only`, and `Stop.is_planetary` marks a surface stop.
+- `refresh_needs` is called by the Sites window at the end of `_refresh_detail`: it takes the Acquire tons (`to_buy` rows with `to_get` above zero, for the commodities searched) and, when they differ from the last, replans with `plan_route` and redraws quietly (no change to the note). No request is made. A commodity with no tons left is skipped when the groups are drawn.
 
 **Shopping-list overlay card** (`colonization_overlay.py`)
 

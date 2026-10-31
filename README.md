@@ -93,7 +93,7 @@ Step by step, with the Discord side explained (making the webhook, thread ids, n
 "I want to..." table that points to the right guide.
 
 **Colonization is a work in progress.** It is the newest part of the game and WFMT is still growing into it. Working today: the Colony page, the Sites
-window, My Projects (your projects on Raven Colonial), starting a Raven project for a site, Where to buy (with the best single systems for a whole list)
+window, My Projects (your projects on Raven Colonial), starting a Raven project for a site, Where to buy (with a shopping route for a whole list)
 and the shopping-list overlay. Planned: co-op building and colony tracking.
 
 ## Always-on tools
