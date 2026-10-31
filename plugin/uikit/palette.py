@@ -116,6 +116,14 @@ def apply(name: str) -> dict:
 
 apply(DEFAULT_THEME)
 
+# The Engineers tab's status colors. They are the same in every theme and are not tokens: the themes' own green and amber are close to each other in
+# the Amber and Green themes (a yellow-green and a yellow), which would blur "unlocked" and "in progress". These three differ in hue by at least 35
+# degrees and in lightness (the order green, yellow, red also reads without color), and each is at least 4.5:1 against every theme's table rows and
+# 2.9:1 against its selected row (tests/test_window_themes.py checks it).
+ENGINEER_UNLOCKED = "#3ddc84"
+ENGINEER_PROGRESS = "#ffe066"
+ENGINEER_UNAVAILABLE = "#ff8f73"
+
 PAD = 10
 PAD_SM = 5
 

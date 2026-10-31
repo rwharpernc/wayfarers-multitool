@@ -186,7 +186,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Screenshots | Converts Elite's screenshots to PNG, with an optional crop to the HUD; an optional auto-capture timer and Thargoid-scan capture press the screenshot key for you | Nothing to do; **Click to expand** shows thumbnails; the clock icon starts the timer | [Screenshots](operations.md#screenshots) |
 | Inventory | Your backpack, locker and cargo as bars, and the Carrier Locker, with a pick-up sound | Click an inventory bar | [Inventory](operations.md#inventory) |
 | Materials | The Raw, Manufactured and Encoded materials you hold, their grade and limit | **Materials** | [Materials](operations.md#materials) |
-| Engineering | About 1,180 blueprints against what you hold, a wishlist and shopping list, a ship planner (which also shows the engineered modules you already have in storage), an Odyssey upgrade planner and an Engineers tab | **Blueprints** | [Engineering](operations.md#engineering-blueprints-and-a-wishlist) |
+| Engineering | About 1,180 blueprints against what you hold, a wishlist and shopping list, a ship planner (which also shows the engineered modules you already have in storage), an Odyssey upgrade planner and an Engineers tab (rows colored by status, the next step and the full unlock path for each engineer) | **Blueprints** | [Engineering](operations.md#engineering-blueprints-and-a-wishlist) |
 | Material trader finder | The closest Raw, Manufactured or Encoded trader, with distance and pad filters | **Find a trader** in the Materials window | [Materials](operations.md#materials) |
 | Ship Builds | Builds from Coriolis, EDSY or Spansh, kept by link | **Ships** | [Ship Builds](operations.md#ship-builds) |
 

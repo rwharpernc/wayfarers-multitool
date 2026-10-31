@@ -15,6 +15,42 @@ from plugin.uikit.widgets import FlatButton, Pill, StatTile  # noqa: E402
 HEX = re.compile(r"^#[0-9a-f]{6}$")
 
 
+def _luminance(color: str) -> float:
+    channels = []
+    for i in (1, 3, 5):
+        c = int(color[i:i + 2], 16) / 255
+        channels.append(c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4)
+    return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
+
+
+def _contrast(a: str, b: str) -> float:
+    high, low = sorted((_luminance(a), _luminance(b)), reverse=True)
+    return (high + 0.05) / (low + 0.05)
+
+
+def _hue(color: str) -> float:
+    import colorsys
+    return colorsys.rgb_to_hsv(*[int(color[i:i + 2], 16) / 255 for i in (1, 3, 5)])[0] * 360
+
+
+class EngineerStatusColorTests(unittest.TestCase):
+    COLORS = {"unlocked": P.ENGINEER_UNLOCKED, "progress": P.ENGINEER_PROGRESS, "unavailable": P.ENGINEER_UNAVAILABLE}
+
+    def test_each_color_is_readable_on_every_theme_s_table_rows(self):
+        for name, tokens in P.THEMES.items():
+            for state, color in self.COLORS.items():
+                for row in ("PANE", "STRIPE", "CARD", "HOVER"):
+                    self.assertGreaterEqual(_contrast(color, tokens[row]), 4.5, f"{state} on {name} {row}")
+                self.assertGreaterEqual(_contrast(color, tokens["SELECT"]), 2.9, f"{state} on {name} selected row")
+
+    def test_the_three_are_told_apart_by_hue_and_by_lightness(self):
+        pairs = (("unlocked", "progress"), ("progress", "unavailable"), ("unlocked", "unavailable"))
+        for a, b in pairs:
+            gap = abs(_hue(self.COLORS[a]) - _hue(self.COLORS[b]))
+            self.assertGreaterEqual(min(gap, 360 - gap), 35, f"{a} / {b} hue")
+            self.assertGreaterEqual(_contrast(self.COLORS[a], self.COLORS[b]), 1.2, f"{a} / {b} lightness")
+
+
 class PaletteTests(unittest.TestCase):
     def tearDown(self):
         P.apply(P.DEFAULT_THEME)

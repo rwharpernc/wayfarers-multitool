@@ -437,9 +437,9 @@ class BlueprintsWindow:
         self._region_label.pack(side="left")
         self._engineer_table = DataTable(pad, _ENGINEER_COLUMNS, on_select=self._pick_engineer, visible_rows=14,
                                          empty_text="No engineers yet. They appear when the game lists them (at login).")
-        self._engineer_table.tag_configure("unlocked", foreground=P.OK)
-        self._engineer_table.tag_configure("progress", foreground=P.WARN)
-        self._engineer_table.tag_configure("unavailable", foreground=P.DANGER)
+        self._engineer_table.tag_configure("unlocked", foreground=P.ENGINEER_UNLOCKED)
+        self._engineer_table.tag_configure("progress", foreground=P.ENGINEER_PROGRESS)
+        self._engineer_table.tag_configure("unavailable", foreground=P.ENGINEER_UNAVAILABLE)
         self._engineer_table.pack(fill="x", pady=(0, P.PAD_SM))
         controls = tk.Frame(pad, bg=P.PANE)
         controls.pack(fill="x")
@@ -558,25 +558,33 @@ class BlueprintsWindow:
         self._engineer_note.configure(text=self._engineer_detail(name))
 
     def _engineer_detail(self, name: str) -> str:
-        """Everything the tables hold about one engineer, as a paragraph."""
+        """Everything the tables hold about one engineer, in labelled sections separated by a blank line: where they are, the path to unlock them,
+        how to gain standing, and any note."""
         info = engineers.info(name)
         if info is None:
             return clip(f"{name}: not in the location table. What they offer is in the blueprint table.", 900)
-        parts = [f"{info.name}: {info.place()}."]
+
+        def section(title: str, body: str) -> str:
+            return title + "\n" + "\n".join("  " + line if line else line for line in body.splitlines())
+
+        sections = [f"{info.name}\n  {info.place()}"]
         path = engineer_path.build(name, self._engineers)
         if path is not None and (path.steps or path.first):
-            parts.append("\n" + engineer_path.render(path) + "\n")
+            sections.append(section("Path to unlock", engineer_path.render(path)))
         if info.standing:
-            parts.append(f"Standing: {info.standing}")
+            sections.append(section("How to gain standing", info.standing))
         unlock = blueprints.unlock_for(name, key=engineers.name_key)
         if unlock is not None:
-            parts.append("Hand each of the other three their items (see the table).")
+            sections.append(section("Unlock items", "Hand each of the other three their items (see the table)."))
+        notes = []
         if info.on_foot:
-            parts.append("On-foot engineer: no ranks; every upgrade is offered once you have met them.")
+            notes.append("On-foot engineer: no ranks; every upgrade is offered once you have met them.")
         quirk = engineers.QUIRKS.get(engineers.name_key(name))
         if quirk:
-            parts.append(quirk)
-        return clip(" ".join(p if p.endswith((".", "!", "?", "\n")) else p + "." for p in parts), 1800)
+            notes.append(quirk)
+        if notes:
+            sections.append(section("Notes", "\n".join(notes)))
+        return clip("\n\n".join(sections), 2400)
 
     def _show_engineer_blueprints(self) -> None:
         if self._picked_engineer is None:

@@ -570,6 +570,9 @@ Fields the game documents poorly are handled conservatively.
   - Yi Shen's unlock (`blueprints_extra.py`).
   - The engineer location table (`engineers_data.py`, read through `engineers.info`, which also tells the region: Bubble or within 500 ly of Colonia; the Engineers tab's Show choice is kept in `wfmt_engineers_region`).
 - Per commander: `blueprint_wishlist.py` (`blueprint_wishlist.json`) and `engineers.py` (`engineers.json`, from `EngineerProgress`).
+- The Engineers tab (`blueprints_window.py`):
+  - `engineer_path.build` makes the numbered path to one engineer, with the engineers to deal with first; `next_action` is the Next step column. `engineer_requirements` compares a rank or lifetime figure in an invitation requirement with the commander's `Rank`, `Promotion` and `Statistics` (kept per commander in `engineers.json`, read from the newest journals once if EDMC started after the login).
+  - `_engineer_tag` colors the row: `unlocked` (green), `progress` for Known or Invited (yellow), `unavailable` for an engineer the game has not listed or has barred (red); no tag until the game has listed any engineers. The colors are `palette.ENGINEER_UNLOCKED`, `ENGINEER_PROGRESS` and `ENGINEER_UNAVAILABLE`, fixed rather than theme tokens (the Amber and Green themes' own green and yellow are too close); `tests/test_window_themes.py` checks their contrast on every theme and their hue and lightness gaps. `_engineer_detail` builds the selected engineer's text in labelled sections.
 - `blueprint_needs.py` works out what a blueprint or the wishlist needs against what is held (ship materials, and the Odyssey ship locker).
 - The material trader finder is the only online part.
   - When **Find** is pressed it passes the system and the trader type to Spansh's station search on a worker thread, with a two-minute cache.
