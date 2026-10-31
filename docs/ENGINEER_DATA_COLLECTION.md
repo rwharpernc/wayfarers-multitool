@@ -99,7 +99,7 @@ The table lists every engineer with what to gather (the letters are the sections
 
 ## Order to work in
 
-1. The two Sensor Fragment engineers (Chloe Sedesi and Professor Palin) need one guide between them: what the item is, where it comes from, and how many a pickup gives.
+1. The two Sensor Fragment engineers (Chloe Sedesi and Professor Palin) share one guide, already written from a community report and not yet confirmed. To confirm it, follow it in the game and note how many fragments one sensor drops, whether they go to materials or cargo, and whether the sensors return after a relog; then set `verified` and `updated` in `plugin/engineer_guides_data.py`.
 2. The engineers whose items come from planetary settlements (on foot): Kit Fowler, Oden Geiger, Terra Velasquez, Uma Laszlo, Wellington Beck and Yarden Bond.
 3. The engineers whose items are scanned data: Ram Tah, The Sarge and Tiana Fortune.
 4. The engineers whose items are a mission reward or a rescue: Etienne Dorn and Marco Qwent.

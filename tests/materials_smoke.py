@@ -324,6 +324,9 @@ for action_name, shown in note.actions().items():
     if shown == "Look up the nearest Thargoid site":
         note.run_action(action_name)
 check(calls == [("site",)] and "Looking." in bwin._shell._status.cget("text"), f"the action runs the finder and says what it started: {calls}")
+check("How to get it" in note.text() and "HIP 17403" in note.text() and "not yet confirmed in the game" in note.text(), f"Chloe has the Sensor Fragment guide, marked unconfirmed: {note.text()[-900:]!r}")
+bwin._engineer_table.select("Liz Ryder", notify=True)
+pump()
 check("no written guide for this engineer yet" in note.text(), "an engineer with no guide says so and how to help")
 
 # The real Thargoid site finder says which of its two conditions failed, and where the switch is.

@@ -54,8 +54,11 @@ class ClassifyTests(unittest.TestCase):
 
 
 class GuideTests(unittest.TestCase):
-    def test_no_guides_are_written_yet_and_an_unknown_engineer_has_none(self):
+    def test_the_two_sensor_fragment_engineers_share_a_guide_and_an_unknown_engineer_has_none(self):
         self.assertIsNone(G.guide_for("nobody"))
+        self.assertIs(G.guide_for("chloe sedesi"), G.guide_for("professor palin"))
+        self.assertFalse(G.guide_for("chloe sedesi").verified)
+        self.assertEqual(G.guide_for("chloe sedesi").system, "HIP 17403")
 
     def test_a_guide_is_unconfirmed_until_it_says_otherwise(self):
         guide = G.Guide(summary="Do the thing.", steps=("One", "Two"), cautions=("Mind the corrosion",))
