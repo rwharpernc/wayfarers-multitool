@@ -437,6 +437,9 @@ class BlueprintsWindow:
         self._region_label.pack(side="left")
         self._engineer_table = DataTable(pad, _ENGINEER_COLUMNS, on_select=self._pick_engineer, visible_rows=14,
                                          empty_text="No engineers yet. They appear when the game lists them (at login).")
+        self._engineer_table.tag_configure("unlocked", foreground=P.OK)
+        self._engineer_table.tag_configure("progress", foreground=P.WARN)
+        self._engineer_table.tag_configure("unavailable", foreground=P.DANGER)
         self._engineer_table.pack(fill="x", pady=(0, P.PAD_SM))
         controls = tk.Frame(pad, bg=P.PANE)
         controls.pack(fill="x")
@@ -446,6 +449,8 @@ class BlueprintsWindow:
                    tip="Put their unlock on the wishlist - add the selected engineer's unlock items to your wishlist").pack(side="left", padx=(P.PAD, 0))
         self._engineer_note = NoteLabel(pad, padx=0)
         self._engineer_note.pack(fill="x", pady=(P.PAD_SM, 0))
+        NoteLabel(pad, text="Colors: green is unlocked, yellow is known or invited (in progress), red is not available yet (the game has not listed you "
+                            "as knowing them).", padx=0).pack(fill="x", pady=(P.PAD_SM, 0))
         NoteLabel(pad, text="Ship engineers open higher grades by the net profit you sell at their workshop: " + engineers.grade_profit_text()
                   + ". On-foot engineers have no grades.", padx=0).pack(fill="x", pady=(P.PAD_SM, 0))
         self._picked_engineer: Optional[str] = None
@@ -485,6 +490,16 @@ class BlueprintsWindow:
                 offers.get(key, 0) or "-", info.place() if info is not None else "-", text)))
         rows.sort(key=lambda r: (not r[0], r[1].casefold()))
         return [(name, values) for _unlocked, name, values in rows]
+
+    def _engineer_tag(self, name: str) -> Optional[str]:
+        """The row color: unlocked (green), known or invited (yellow, in progress), or not available yet (red: the game has not listed the commander as
+        knowing them, or has barred them). No color before the game has listed any engineers, when nothing is known."""
+        if not self._engineers.has_data:
+            return None
+        standing = self._engineers.standing(name)
+        if standing is None or standing.progress == engineers.BARRED:
+            return "unavailable"
+        return "unlocked" if standing.unlocked else "progress"
 
     def _next_step_text(self, name: str, items: str) -> str:
         """The next thing to do towards unlocking one engineer: a step on their own path, or the engineer to deal with first and their step.
@@ -527,7 +542,7 @@ class BlueprintsWindow:
         rows = self._engineer_rows()
         shown = [(name, values) for name, values in rows if self._in_region(name)]
         for name, values in shown:
-            self._engineer_table.insert(name, values)
+            self._engineer_table.insert(name, values, tag=self._engineer_tag(name))
         self._region_label.configure(text=f"{len(shown)} of {len(rows)} engineers")
         if keep and self._engineer_table.exists(keep):
             self._engineer_table.select(keep)

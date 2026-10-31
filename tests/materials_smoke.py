@@ -293,6 +293,9 @@ check(dict(rows)["Felicity Farseer"][4] == "-", "an unlocked engineer needs noth
 check("x Bromellite" in dict(rows)["Bill Turner"][4] and "not counted" in dict(rows)["Bill Turner"][4], f"a commodity unlock is shown, not counted: {dict(rows)['Bill Turner'][4]!r}")
 check(dict(rows)["Lei Cheung"][4].startswith("First The Dweller") and "Gold" not in dict(rows)["Lei Cheung"][4], f"another engineer comes first and the items wait: {dict(rows)['Lei Cheung'][4]!r}")
 check(len(bwin._engineer_table) == len(rows), "the table lists every row")
+tags = {name: bwin._engineer_table._rows[name].tag for name in names}
+check((tags["Felicity Farseer"], tags["Lei Cheung"], tags["Eleanor Bresa"], tags["Baltanos"]) == ("unlocked", "progress", "progress", "unavailable"),
+      f"unlocked is green, invited or known is yellow, not listed is red: {tags}")
 check(bwin._region.get() == "Both", f"both regions are shown to begin with: {bwin._region.get()!r}")
 bwin._engineer_table.select("Baltanos", notify=True)
 bwin._region.set("Colonia")

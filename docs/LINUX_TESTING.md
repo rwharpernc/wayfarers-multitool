@@ -499,6 +499,7 @@ Use them for anything the passes did not reach.
   - Selecting Baltanos shows Deriso and "On-foot engineer". Terra Velasquez shows the "reported bugged" note.
   - The **Show** box offers Both / Bubble / Colonia: Colonia lists 8 engineers (`8 of 38 engineers`), Bubble 30, and the choice survives closing and reopening the window.
   - The table stays inside the window with the Where column, with no horizontal scroll.
+  - The unlock path, the **Next step** column, the on-foot hand-in steps and the requirement notes are checked in [TEST_PLAN.md](TEST_PLAN.md) section 10 (not yet run on Linux).
 
 - [ ] **BGS with EDMC closed over a tick** (Windows-tested only): note the BGS archive, close EDMC, do a few BGS actions (missions, bounties)
       in the game, wait for a tick to pass, start EDMC: the archived tick that just closed includes those actions, and EDMC's log has
