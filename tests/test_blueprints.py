@@ -98,6 +98,20 @@ class BrowseTests(unittest.TestCase):
         b = B.ALL[0]
         self.assertIs(B.get(b.id), b)
 
+    def test_works_on_gives_each_type_with_its_top_grade(self):
+        kinds = {kind: (grade, names) for kind, grade, names in B.works_on("felicity farseer")}
+        self.assertEqual(kinds["Frame Shift Drive"][0], 5)
+        self.assertNotIn("Unlock", kinds)
+        grades = [grade for _kind, grade, _names in B.works_on("Felicity Farseer")]
+        self.assertEqual(grades, sorted(grades, reverse=True))
+
+    def test_works_on_names_an_on_foot_engineers_upgrades(self):
+        kinds = {kind: (grade, names) for kind, grade, names in B.works_on("Eleanor Bresa")}
+        self.assertEqual(set(kinds), {"Suit", "Weapon"})
+        self.assertEqual(kinds["Suit"][0], 0)
+        self.assertIn("Added melee damage", kinds["Suit"][1])
+        self.assertEqual(B.works_on("Nobody"), [])
+
     def test_an_unlock_is_recognized(self):
         self.assertTrue(next(b for b in B.ALL if b.type == "Unlock").is_unlock)
 
