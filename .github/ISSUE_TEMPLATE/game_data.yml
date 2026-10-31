@@ -1,0 +1,51 @@
+name: Game data
+description: Tell us what the game shows where WFMT cannot check it or has it wrong (an engineer's requirements, a place, a number)
+labels: ["game-data"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping. WFMT cannot check some things against the game's journal, and some of its tables come from community lists, so what you see in the game helps. Please do not include your commander name or anything else you want kept private.
+  - type: input
+    id: area
+    attributes:
+      label: Area
+      description: The part of WFMT it is about, such as Engineers, Colonization, Mining or Trade. Filled in for you by the Report buttons.
+    validations:
+      required: true
+  - type: input
+    id: subject
+    attributes:
+      label: What it is about
+      description: The engineer, station, item or screen. Filled in for you by the Report buttons.
+  - type: input
+    id: context
+    attributes:
+      label: What WFMT has for it
+      description: WFMT's own view, such as the standing it recorded. Filled in for you; correct it if the game says otherwise.
+  - type: textarea
+    id: game-shows
+    attributes:
+      label: What the game shows
+      description: Exactly what the game says or does, in its own words (for an engineer, the invitation and unlock requirements from the in-game Engineers panel).
+      placeholder: |
+        ...
+    validations:
+      required: true
+  - type: textarea
+    id: wfmt-wrong
+    attributes:
+      label: What WFMT showed that is wrong or missing (if anything)
+      description: For example a step that is out of date, a place or permit that is wrong, or something you completed that WFMT did not mark.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Filled in for you by the Report buttons.
+      placeholder: |
+        - WFMT:
+        - EDMC:
+        - Python:
+        - OS:
+    validations:
+      required: true

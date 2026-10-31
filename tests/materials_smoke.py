@@ -318,6 +318,16 @@ check(dict(rows)["Felicity Farseer"][4] == "-", "an unlocked engineer needs noth
 check("x Bromellite" in dict(rows)["Bill Turner"][4] and "not counted" in dict(rows)["Bill Turner"][4], f"a commodity unlock is shown, not counted: {dict(rows)['Bill Turner'][4]!r}")
 check(dict(rows)["Lei Cheung"][4].startswith("First The Dweller") and "Gold" not in dict(rows)["Lei Cheung"][4], f"another engineer comes first and the items wait: {dict(rows)['Lei Cheung'][4]!r}")
 check(len(bwin._engineer_table) == len(rows), "the table lists every row")
+detail_of = lambda n: (bwin._engineer_table.select(n, notify=True), bwin._engineer_note.cget("text"))[1]
+check("Verification needed" in detail_of("Eleanor Bresa") and "Verification needed" in detail_of("Baltanos"),
+      "an engineer whose requirement the journal cannot check says verification is needed")
+check("Verification needed" not in detail_of("Felicity Farseer") and "Verification needed" not in detail_of("Lei Cheung"),
+      "an unlocked engineer, or one the journal can check, does not")
+opened = []
+blueprints_window.issue_report.open_feedback = lambda area="", subject="", context="": opened.append((area, subject, context))
+bwin._engineer_table.select("Eleanor Bresa", notify=True)
+bwin._report_engineer()
+check(opened == [("Engineers", "Eleanor Bresa", "Standing in WFMT: Known")], f"Report engineer data opens the form for the selected engineer: {opened}")
 tags = {name: bwin._engineer_table._rows[name].tag for name in names}
 check((tags["Felicity Farseer"], tags["Lei Cheung"], tags["Eleanor Bresa"], tags["Baltanos"]) == ("unlocked", "progress", "progress", "unavailable"),
       f"unlocked is green, invited or known is yellow, not listed is red: {tags}")

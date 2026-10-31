@@ -124,5 +124,47 @@ class TemplateTests(unittest.TestCase):
             self.assertIn(f"id: {issue_report.ENVIRONMENT_FIELD}", handle.read())
 
 
+FEEDBACK_TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "..", ".github", "ISSUE_TEMPLATE", issue_report.FEEDBACK_TEMPLATE)
+
+
+class FeedbackReportTests(unittest.TestCase):
+    def test_the_address_names_the_form_the_area_the_subject_and_the_context(self) -> None:
+        url = issue_report.build_feedback_url("Engineers", "Marco Qwent", "Standing in WFMT: Known", "- OS: test")
+        parts = urlparse(url)
+        self.assertEqual(f"{parts.scheme}://{parts.netloc}{parts.path}", issue_report.NEW_ISSUE_URL)
+        query = parse_qs(parts.query)
+        self.assertEqual(["game_data.yml"], query["template"])
+        self.assertEqual(["Engineers"], query["area"])
+        self.assertEqual(["Marco Qwent"], query["subject"])
+        self.assertEqual(["Standing in WFMT: Known"], query["context"])
+        self.assertEqual(["- OS: test"], query["environment"])
+        self.assertIn("Game data: Engineers - Marco Qwent", query["title"][0])
+        self.assertIn(__version__, query["title"][0])
+
+    def test_with_nothing_given_the_form_opens_blank_apart_from_the_environment(self) -> None:
+        url = issue_report.build_feedback_url()
+        query = parse_qs(urlparse(url).query)
+        self.assertNotIn("area", query)
+        self.assertNotIn("subject", query)
+        self.assertIn("environment", query)
+        self.assertLess(len(url), issue_report.MAX_URL_LENGTH)
+
+    def test_a_huge_input_still_gives_a_working_address(self) -> None:
+        url = issue_report.build_feedback_url("x" * 5000, "y" * 5000, environment="- OS: " + "z" * 3000)
+        self.assertLessEqual(len(url), issue_report.MAX_URL_LENGTH)
+        self.assertEqual(["game_data.yml"], parse_qs(urlparse(url).query)["template"])
+
+    def test_the_form_has_the_prefilled_field_ids(self) -> None:
+        with open(FEEDBACK_TEMPLATE_PATH, encoding="utf-8") as handle:
+            text = handle.read()
+        for field in (issue_report.AREA_FIELD, issue_report.SUBJECT_FIELD, issue_report.CONTEXT_FIELD, issue_report.ENVIRONMENT_FIELD):
+            self.assertIn(f"id: {field}", text)
+
+    def test_open_feedback_opens_the_built_address(self) -> None:
+        with mock.patch.object(issue_report.webbrowser, "open") as opened:
+            issue_report.open_feedback("Engineers", "Marco Qwent")
+        self.assertIn("template=game_data.yml", opened.call_args[0][0])
+
+
 if __name__ == "__main__":
     unittest.main()

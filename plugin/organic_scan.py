@@ -427,14 +427,6 @@ class GenusView:
         share = round(100 / len(self.candidates))
         return tuple((name, value, share) for name, value in self.candidates)
 
-    @property
-    def best_value(self) -> Optional[int]:
-        """What it pays: the confirmed species' value, else the highest of the candidates (None when neither is known)."""
-        if self.value:
-            return self.value
-        return max((v for _n, v in self.candidates), default=None)
-
-
 @dataclass(frozen=True)
 class Waypoint:
     """A plant the Composition Scanner identified: where it is (from the CodexEntry's latitude and longitude), so the commander can be led back to it."""

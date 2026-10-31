@@ -407,10 +407,6 @@ class SurfacePortTests(unittest.TestCase):
         ground = self.source("Ground", True)
         return [("Steel", src.SearchResult([ship, ground], [])), ("Titanium", src.SearchResult([ground], []))]
 
-    def test_surface_ports_are_taken_out(self):
-        left = src.without_surface(self.found())
-        self.assertEqual([(label, [s.station for s in r.stations]) for label, r in left], [("Steel", ["Orbital"]), ("Titanium", [])])
-
     def test_a_commodity_found_only_at_surface_ports_is_named(self):
         self.assertEqual(src.surface_only_labels(self.found()), frozenset({"Titanium"}))
         self.assertEqual(src.surface_only_labels([("Gold", src.SearchResult([], []))]), frozenset())
@@ -423,7 +419,7 @@ class SurfacePortTests(unittest.TestCase):
         self.assertTrue(any("(surface port)" in line and "(surface ports only)" in line for line in plan.lines()))
 
     def test_without_them_the_commodity_is_not_covered(self):
-        plan = src.plan_route(src.without_surface(self.found()), {"Steel": 100, "Titanium": 50})
+        plan = src.plan_route(src.filter_found(self.found(), no_surface=True), {"Steel": 100, "Titanium": 50})
         self.assertEqual(plan.uncovered, (("Titanium", 50),))
 
     def test_an_orbital_port_found_by_a_second_search_clears_the_surface_only_note(self):
@@ -452,6 +448,10 @@ class SurfacePortTests(unittest.TestCase):
         src.clear_cache()
         src.find_whole_list("Sol", ["Steel"], search=search, pause=0, now=lambda: 0.0)
         self.assertEqual(calls, ["Steel"])
+
+    def test_surface_ports_are_taken_out(self):
+        left = src.filter_found(self.found(), no_surface=True)
+        self.assertEqual([(label, [s.station for s in r.stations]) for label, r in left], [("Steel", ["Orbital"]), ("Titanium", [])])
 
     def test_arrival_and_stock_filters(self):
         near = src.Source("Near", "Sol", "Coriolis Starport", False, False, "Large", 3.0, 200.0, 400, 500)

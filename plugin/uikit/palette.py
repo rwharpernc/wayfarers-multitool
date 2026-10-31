@@ -32,8 +32,8 @@ def _mix(color: str, other: str, amount: float) -> str:
 
 
 def _from_variables(v: dict) -> dict:
-    """A theme from the named colors of EDDDT's stylesheet (--bg, --panel, --panel-2, --line, --text, --dim, --label, --cyan, --amber,
-    --green, --red, --violet, --hot, --deep, --key-hi, --key-on-hi, --green-dim, --amber-dim, plus --status, the footer message). In EDDDT --cyan is the theme's own
+    """A theme from a set of named colors (--bg, --panel, --panel-2, --line, --text, --dim, --label, --cyan, --amber,
+    --green, --red, --violet, --hot, --deep, --key-hi, --key-on-hi, --green-dim, --amber-dim, plus --status, the footer message). --cyan is the theme's own
     color (cyan, orange or green), so it becomes the accent and the headings."""
     primary = v["cyan"]
     return {
@@ -72,7 +72,7 @@ THEMES: dict = {
         "ROW_OK": "#1d5a45", "ROW_OVER": "#6e4414", "ROW_HAUL": "#244c77",
         "MAP_BG": "#0b1424", "MAP_GRID": "#2b2a1c", "MAP_COVERAGE": "#2e5c3a", "MAP_HOTSPOT": "#eee8be", "MAP_DEPLETED": "#969696",
     },
-    # The three themes of EDDDT (its mfd.css), as the same tokens.
+    # The three themes Cyan, Amber and Green, as the same tokens.
     "Cyan": _from_variables({
         "bg": "#04080b", "panel": "#091218", "panel-2": "#0d1b23", "line": "#14343f", "text": "#c4eaf3", "dim": "#6a909c", "label": "#3d6574",
         "cyan": "#38e1ff", "amber": "#ffb347", "green": "#5dff9a", "red": "#ff5b6b", "violet": "#b48cff", "hot": "#0f2f3a",

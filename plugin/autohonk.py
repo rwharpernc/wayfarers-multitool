@@ -713,7 +713,7 @@ class AutoHonkController:
         fire_button = self._firebutton_var.get()
         focus_window = bool(self._focus_var.get()) if self._focus_var is not None else DEFAULT_FOCUS
         try:
-            hold_ms = max(1, round(float(self._hold_var.get()) * 1000)) if self._hold_var is not None else DEFAULT_HOLD_MS
+            hold_ms = max(1000, round(float(self._hold_var.get()) * 1000)) if self._hold_var is not None else DEFAULT_HOLD_MS
         except ValueError:
             hold_ms = DEFAULT_HOLD_MS
 

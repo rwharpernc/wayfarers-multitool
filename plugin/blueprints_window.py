@@ -26,7 +26,7 @@ from config import appname, config
 
 from . import blueprint_needs as needs_mod
 from . import blueprint_wishlist as wishlist_mod
-from . import blueprints, engineer_path, engineers, stored_modules
+from . import blueprints, engineer_path, engineers, issue_report, stored_modules
 from .odyssey_plan_tab import UpgradePlanTab
 from .ship_plan_tab import ShipPlanTab
 from .uikit import palette as P
@@ -100,6 +100,8 @@ _HELP = (
 
 
 BLUEPRINTS_TAB, ENGINEERS_TAB = "Blueprints", "Engineers"
+VERIFY_NOTE = ("Verification needed: WFMT cannot check this invitation requirement against your journal (it is a faction's standing, a kind of mission, "
+               "a data sale or similar), so confirm it in the game. If you can tell us what the game shows for this engineer, press Report engineer data below.")
 
 
 def show(parent: tk.Misc, wishbook: wishlist_mod.WishBook, holdings: Counts, engineer_book: engineers.EngineerBook,
@@ -454,6 +456,8 @@ class BlueprintsWindow:
                    tip="Show their blueprints - list the blueprints the selected engineer offers").pack(side="left")
         FlatButton(controls, "Put their unlock on the wishlist", self._add_unlock,
                    tip="Put their unlock on the wishlist - add the selected engineer's unlock items to your wishlist").pack(side="left", padx=(P.PAD, 0))
+        FlatButton(controls, "Report engineer data", self._report_engineer,
+                   tip="Report engineer data - open a prefilled GitHub form to tell us what the game shows for the selected engineer (nothing is sent until you submit it there)").pack(side="left", padx=(P.PAD, 0))
         self._engineer_note = NoteLabel(pad, padx=0)
         self._engineer_note.pack(fill="x", pady=(P.PAD_SM, 0))
         NoteLabel(pad, text="Colors: green is unlocked, yellow is known or invited (in progress), red is not available yet (the game has not listed you "
@@ -589,9 +593,21 @@ class BlueprintsWindow:
         quirk = engineers.QUIRKS.get(engineers.name_key(name))
         if quirk:
             notes.append(quirk)
+        standing = self._engineers.standing(name)
+        if not engineers.requirement_checkable(name) and not (standing is not None and standing.progress in (engineers.INVITED, engineers.UNLOCKED)):
+            notes.append(VERIFY_NOTE)
         if notes:
             sections.append(section("Notes", "\n".join(notes)))
         return clip("\n\n".join(sections), 2400)
+
+    def _report_engineer(self) -> None:
+        """Open the Game data form on GitHub for the selected engineer (the browser does the sending, if the player submits it)."""
+        if self._picked_engineer is None:
+            self._shell.set_status("Select an engineer first.")
+            return
+        standing = self._engineers.standing(self._picked_engineer)
+        issue_report.open_feedback("Engineers", self._picked_engineer, "Standing in WFMT: " + (standing.describe() if standing is not None else "Unknown"))
+        self._shell.set_status("Opened the Game data form in your browser. Read it, fill in what the game shows, and submit it with your own GitHub account.", ok=True)
 
     def select_tab(self, title: str) -> None:
         """Bring the tab with this title to the front (nothing happens for a title the window does not have)."""

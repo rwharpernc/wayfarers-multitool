@@ -31,12 +31,3 @@ def normalize(name: Any) -> str:
     if known:
         return known
     return " ".join(word[:1].upper() + word[1:] for word in text.split(" "))
-
-
-def merge_counts(counts: Dict[str, Any]) -> Dict[str, Any]:
-    """`counts` keyed by name, with the names that differ only in spelling added together under the normalized name."""
-    merged: Dict[str, Any] = {}
-    for name, count in counts.items():
-        key = normalize(name) or str(name)
-        merged[key] = merged.get(key, 0) + count if isinstance(count, (int, float)) else count
-    return merged

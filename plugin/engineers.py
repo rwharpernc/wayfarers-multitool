@@ -48,6 +48,11 @@ def name_key(name: Any) -> str:
     return " ".join(text.split()).casefold()
 
 
+def requirement_checkable(name: Any) -> bool:
+    """Whether WFMT can compare this engineer's invitation requirement with the journal (a rank or a lifetime figure). The others need the commander to confirm it in the game."""
+    return name_key(name) in engineer_requirements.CHECKS
+
+
 @dataclass(frozen=True)
 class Standing:
     name: str

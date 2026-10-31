@@ -178,9 +178,6 @@ class DiscordTemplates:
         """The template this report is posted with: the one the commander chose, or Standard when none is chosen or it has been deleted."""
         return self.get(report, self._choice.get(report, STANDARD)) or standard(report)
 
-    def is_preset(self, report: str, name: str) -> bool:
-        return preset(report, name) is not None
-
     # --- changing -------------------------------------------------------------------------------------------------
     def choose(self, report: str, name: str) -> None:
         found = self.get(report, name)

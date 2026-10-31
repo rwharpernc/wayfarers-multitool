@@ -358,12 +358,6 @@ class RoutePlan:
         return out
 
 
-def without_surface(found: Sequence[Tuple[str, "SearchResult"]]) -> List[Tuple[str, "SearchResult"]]:
-    """The whole-list answers with the surface ports (planetary stations) taken out, for a commander who cannot or will not land on a planet."""
-    return [(label, SearchResult([s for s in result.stations if not s.is_planetary], [c for c in result.carriers if not c.is_planetary]))
-            for label, result in found]
-
-
 def filter_found(found: Sequence[Tuple[str, "SearchResult"]], *, no_surface: bool = False, max_arrival_ls: Optional[int] = None,
                  needs: Optional[Dict[str, int]] = None, shipyard_only: bool = False) -> List[Tuple[str, "SearchResult"]]:
     """The whole-list answers with the sources the commander does not want taken out: surface ports (`no_surface`), stations farther than

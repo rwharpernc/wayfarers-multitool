@@ -88,12 +88,6 @@ def find_nearest_neutron(x: float, y: float, z: float, current_system: Optional[
     return replace(found, source=f"{found.source}, {note}") if note else found
 
 
-def find_nearest_neutron_local(x: float, y: float, z: float, current_system: Optional[str] = None) -> Optional[NearestStar]:
-    """The nearest neutron-star system from the local star index, skipping `current_system`; None when the index is switched off, not installed, damaged, from another format, or has nothing
-    within its search range, so the caller asks Spansh instead."""
-    return _try_local_index(x, y, z, current_system)[0]
-
-
 def _try_local_index(x: float, y: float, z: float, current_system: Optional[str]) -> Tuple[Optional[NearestStar], str]:
     """(the answer or None, a few words on why the index was not used when it is installed but cannot be read)."""
     if not star_index.use_local_index():

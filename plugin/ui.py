@@ -837,7 +837,7 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
     tk.OptionMenu(theme_row, _theme_var, *style.P.THEMES).pack(side=tk.LEFT)
     nb.Label(
         frame,
-        text=("Navy is the default; Cyan, Amber and Green are the themes of EDDDT. The theme applies to WFMT's own pop-out windows and dashboards, "
+        text=("Navy is the default; Cyan, Amber and Green are the other themes. The theme applies to WFMT's own pop-out windows and dashboards, "
               "also the ones already open, and never changes EDMC or the overlay cards. The same choice is under the Theme label in a window's bottom line."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=12, column=0, sticky=tk.W, padx=10, pady=(0, 10))
@@ -986,6 +986,14 @@ def _create_help_tab(notebook: nb.Notebook) -> None:
              "operating system already filled in. Nothing is sent until you submit it there with your own GitHub "
              "account; you can read and change everything first. No commander name, system or file path is included.",
     ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+
+    nb.Button(frame, text="Report game data", command=issue_report.open_feedback).grid(
+        row=9, column=0, sticky=tk.W, padx=10, pady=(0, 4))
+    nb.Label(
+        frame, justify=tk.LEFT, wraplength=420,
+        text="Opens a short GitHub form for telling us what the game shows where WFMT cannot check it or has it wrong (for example an engineer's requirements). "
+             "The Engineers tab has the same button prefilled for the engineer you select. Nothing is sent until you submit it there with your own GitHub account.",
+    ).grid(row=10, column=0, sticky=tk.W, padx=10, pady=(0, 10))
 
     copy_status = tk.StringVar(value="")
 

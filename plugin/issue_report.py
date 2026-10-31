@@ -32,6 +32,10 @@ from .http_identity import HOMEPAGE
 NEW_ISSUE_URL = f"{HOMEPAGE}/issues/new"
 TEMPLATE = "bug_report.yml"
 ENVIRONMENT_FIELD = "environment"
+FEEDBACK_TEMPLATE = "game_data.yml"
+AREA_FIELD = "area"
+SUBJECT_FIELD = "subject"
+CONTEXT_FIELD = "context"
 MAX_URL_LENGTH = 2000
 
 LOG_NAME = "EDMarketConnector-debug.log"
@@ -74,6 +78,30 @@ def build_url(environment: str = "") -> str:
     if len(url) > MAX_URL_LENGTH:  # never expected; fall back to the plain form rather than a broken link
         url = f"{NEW_ISSUE_URL}?{urlencode({'template': TEMPLATE})}"
     return url
+
+
+def build_feedback_url(area: str = "", subject: str = "", context: str = "", environment: str = "") -> str:
+    """The prefilled new-issue address for the Game data form, which any part of WFMT can use to ask the player what the game shows: `area` is the part of WFMT
+    (Engineers, Colonization, ...), `subject` what it is about (an engineer's name) and `context` WFMT's own view (the standing it recorded). Nothing about the
+    player (no commander name) is in it; the player adds what the game shows."""
+    params: Dict[str, str] = {
+        "template": FEEDBACK_TEMPLATE,
+        "labels": "game-data",
+        "title": f"[{__version__}] Game data" + (f": {area[:30]}" if area else "") + (f" - {subject[:60]}" if subject else ""),
+        AREA_FIELD: area[:40],
+        SUBJECT_FIELD: subject[:80],
+        CONTEXT_FIELD: context[:80],
+        ENVIRONMENT_FIELD: environment or environment_text(),
+    }
+    url = f"{NEW_ISSUE_URL}?{urlencode({key: value for key, value in params.items() if value})}"
+    if len(url) > MAX_URL_LENGTH:
+        url = f"{NEW_ISSUE_URL}?{urlencode({'template': FEEDBACK_TEMPLATE})}"
+    return url
+
+
+def open_feedback(area: str = "", subject: str = "", context: str = "") -> None:
+    """Open the prefilled Game data form in the user's browser (nothing is sent from here)."""
+    webbrowser.open(build_feedback_url(area, subject, context))
 
 
 def open_report() -> None:
