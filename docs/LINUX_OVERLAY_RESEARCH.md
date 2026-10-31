@@ -79,7 +79,6 @@ A separate Python program that WFMT starts, using Qt's translucent, input-transp
 
 - **For:** mature, well-documented windowing, and a native Wayland path where the compositor supports layer-shell (KDE Plasma, wlroots compositors; GNOME does not, see Sources).
 - **Against:** the user must install the toolkit; a Flatpak EDMC cannot run it directly, so it would be started on the host (`flatpak-spawn --host`, which WFMT already uses for `xdotool`); two processes bring back the stale-window problem the Windows design avoids unless the helper exits when its parent does; more code and more things to package.
-- **Note:** this is also the general shape of existing Linux overlay tools. Its public README lists Windows and Linux, host and Flatpak EDMC, GPL-3.0 and "100% Python", but does not say how its window is built.
 
 ### D. Native Wayland (layer-shell) from WFMT's own code
 

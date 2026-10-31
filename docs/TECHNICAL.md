@@ -70,7 +70,7 @@ plugin/           everything that ships; becomes the Wayfarers-Multitool folder
   update.py       the one self-updater
   <feature>*.py   one or more modules per feature (every module is listed in MODULES.md)
 tests/            unittest suites for the pure-logic modules
-.github/          ISSUE_TEMPLATE/bug_report.yml, the form the Report an issue button opens (not shipped in the zip)
+.github/          ISSUE_TEMPLATE/bug_report.yml and game_data.yml, the forms the Report an issue and Report game data buttons open (not shipped in the zip)
 .githooks/        commit-msg (enforces the commit message form) and pre-commit (runs scripts/check_docs.py); enable with core.hooksPath
 docker/           Dockerfile and run-tests.sh for the headless test run (`npm run test:docker`, via scripts/docker-test.mjs)
 scripts/          dev only, none of it ships:
@@ -188,7 +188,7 @@ Larger features add `start(plugin_dir)` and `stop()` for loading and flushing st
 **Button names and tooltips**
 
 - Every button, on the main panel and in the pop-out windows, has a tooltip: `panelkit.add_tooltip` gives the name and a one-line description on hover ("Name - what it does"). A window button passes it as `tip=` to `FlatButton`, `shell.add_action` or `shell.add_menu`; the tip may be a function, read each time it opens, for a button whose caption changes with its state. The user guide's "Button names" lists the panel's buttons.
-- The tooltip is a borderless `Toplevel`, so it can't affect the main window's size.
+- The tooltip is a borderless `Toplevel` (`uikit/tooltip.py`, which `panelkit` re-exports; it appears after `TOOLTIP_DELAY_MS`, 500 ms, and wraps at `TOOLTIP_WRAP`, 280 px), so it can't affect the main window's size.
 - The mode buttons carry the `PANEL_MODES` labels as written; their tooltips (`ui._MODE_TOOLTIPS`) give the name and a one-line description.
 - EDMC sizes its window to the widest row across all plugins, and the mode row is WFMT's widest. Panel buttons carry their full names, and a row that could pass that width wraps (`panelkit.flow_buttons`), so the window does not grow.
   - So it is held at the size measured from a throwaway row of full-label buttons (`ui._mode_row_full_label_size`), which the buttons now match.
@@ -314,7 +314,7 @@ one:
 - **Never change ttk globally.** ttk themes and stock styles (`TButton`, `Treeview`, ...) are application-wide, so `theme_use()` or restyling them would recolor EDMC's main window and every other plugin.
   - The kit uses classic tk widgets plus its own `FlatButton`, `Combobox`, `SlimScrollbar`, `Tabs`, `ProgressBar` and `DataTable` (a Label grid, not a Treeview).
   - `tests/test_ui_kit.py` fails if `plugin/uikit` touches the ttk theme or styles.
-- **Themes.** `uikit/palette.py` holds the colors as module attributes (`P.BG`, `P.TEXT`, ...) and four themes in `THEMES`: Navy (the default) and Cyan, Amber and Green, built by `_from_variables` from EDDDT's `mfd.css` colors (its own color becomes `ACCENT`; `TITLE` is its amber). `palette.apply(name)` sets the attributes and returns {old color: new color}. `style.set_theme` applies it, re-skins and recolors every window `skin()` has seen (`_recolor`: color options, canvas items, text tags, and the color strings a kit widget keeps), and calls the theme listeners (`DataTable` remaps its tag colors). The theme is saved as `wfmt_window_theme` by `ui.restore_text_size`. Read palette colors when a widget is built, never at import time or as a default argument (use `None` and `x or P.TOKEN`); a table that maps a role to a color stores the token name and calls `getattr(P, name)` when it draws.
+- **Themes.** `uikit/palette.py` holds the colors as module attributes (`P.BG`, `P.TEXT`, ...) and four themes in `THEMES`: Navy (the default) and Cyan, Amber and Green, built by `_from_variables` from a few base colors per theme (the theme's own color becomes `ACCENT`; `TITLE` is its amber). `palette.apply(name)` sets the attributes and returns {old color: new color}. `style.set_theme` applies it, re-skins and recolors every window `skin()` has seen (`_recolor`: color options, canvas items, text tags, and the color strings a kit widget keeps), and calls the theme listeners (`DataTable` remaps its tag colors). The theme is saved as `wfmt_window_theme` by `ui.restore_text_size`. Read palette colors when a widget is built, never at import time or as a default argument (use `None` and `x or P.TOKEN`); a table that maps a role to a color stores the token name and calls `getattr(P, name)` when it draws.
 - **Text size.** `uikit/style.py` keeps one setting (`set_text_delta`, -2 to +6 points, saved as `wfmt_window_text_delta` by `ui.restore_text_size`). `style.font` resizes its cached fonts in place (`scaled=False` gives a font that ignores the setting: the stat tiles and the status chips use it), `skin()` gives plain widgets the same body font, and `DataTable` listens (`add_text_listener`) to measure its columns again. The A- and A+ labels sit in the shells' footers (`_make_text_size_buttons`).
 - **Table columns.** `DataTable._sync_widths` sizes a column that does not stretch to its content (the declared width is only the least an empty table gives it) and shares spare width in proportion to that.
 - **Shell.** `uikit.shell.WindowShell` gives a Toplevel a header (title, subtitle, action buttons), a body, a wrapping status footer, a minimum size and saved geometry. `uikit/placement.py` chooses its position: the saved one while it is still on a connected monitor, otherwise centered over EDMC's window (`root._root()`) inside the monitor EDMC is on, or always there with `wfmt_windows_always_on_edmc_monitor`. `place` is pure; the monitors come from `EnumDisplayMonitors` on Windows (work areas) and the Tk virtual screen elsewhere, and a minimized EDMC changes nothing. The position is written back as `WxH+x+y` with an explicit plus sign (`geometry_for`): a bare `-2000` would mean 2000 px in from the right edge of the screen to Tk, so a window saved on a monitor left of the primary came back elsewhere.
@@ -572,7 +572,8 @@ Fields the game documents poorly are handled conservatively.
 - Per commander: `blueprint_wishlist.py` (`blueprint_wishlist.json`) and `engineers.py` (`engineers.json`, from `EngineerProgress`).
 - The Engineers tab (`blueprints_window.py`):
   - `engineer_path.build` makes the numbered path to one engineer, with the engineers to deal with first; `next_action` is the Next step column. `engineer_requirements` compares a rank or lifetime figure in an invitation requirement with the commander's `Rank`, `Promotion` and `Statistics` (kept per commander in `engineers.json`, read from the newest journals once if EDMC started after the login).
-  - `_engineer_tag` colors the row: `unlocked` (green), `progress` for Known or Invited (yellow), `unavailable` for an engineer the game has not listed or has barred (red); no tag until the game has listed any engineers. The colors are `palette.ENGINEER_UNLOCKED`, `ENGINEER_PROGRESS` and `ENGINEER_UNAVAILABLE`, fixed rather than theme tokens (the Amber and Green themes' own green and yellow are too close); `tests/test_window_themes.py` checks their contrast on every theme and their hue and lightness gaps. `_engineer_detail` builds the selected engineer's text in labelled sections.
+  - `_engineer_tag` colors the row: `unlocked` (green), `progress` for Known or Invited (yellow), `unavailable` for an engineer the game has not listed or has barred (red); no tag until the game has listed any engineers. The colors are `palette.ENGINEER_UNLOCKED`, `ENGINEER_PROGRESS` and `ENGINEER_UNAVAILABLE`, fixed rather than theme tokens (the Amber and Green themes' own green and yellow are too close); `tests/test_window_themes.py` checks their contrast on every theme and their hue and lightness gaps. `_engineer_detail` builds the selected engineer's text in labelled sections, adding `VERIFY_NOTE` ("Verification needed") for an engineer whose requirement `engineers.requirement_checkable` says cannot be checked (20 of the 38; 18 are in `engineer_requirements.CHECKS`).
+  - The **Report engineer data** button calls `issue_report.open_feedback("Engineers", <engineer>, "Standing in WFMT: ...")`, which opens the Game data form (see "Report an issue and Copy diagnostics").
 - `blueprint_needs.py` works out what a blueprint or the wishlist needs against what is held (ship materials, and the Odyssey ship locker).
 - The material trader finder is the only online part.
   - When **Find** is pressed it passes the system and the trader type to Spansh's station search on a worker thread, with a two-minute cache.
@@ -974,10 +975,12 @@ journal cannot say. They never overrule the journal, and none is needed for the 
 | Service | Used for | Trigger |
 |---|---|---|
 | EDSM | Nearby systems, "does EDSM know this system", bodies, ring reserves | Buttons; some opt-in automatic checks |
-| Spansh | Mining price finder and Market research, hotspot and boxel lookups, expedition planners (Road to Riches, Exomastery), ELW rarity, rare-goods origin Power, nearest neutron star and white dwarf (the Neutron Star and White Dwarf buttons), Trade routes and best-price searches | Buttons; opt-in; the Rares window looks up on open |
+| Spansh | Mining price finder and Market research, hotspot and boxel lookups, expedition planners (Road to Riches, Exomastery), ELW rarity, rare-goods origin Power, nearest neutron star and white dwarf (the Neutron Star and White Dwarf buttons), Trade routes and best-price searches, Colonization's Where to Buy, the material trader finder, the Carrier Route and Route Planner plotters, the Powerplay overlay's look-ahead | Buttons; opt-in; the Rares window looks up on open |
 | edastro.com (GEC) | Nearest exploration POI: the whole list (`/gec/json/all`, ~2 MB, 652 entries) is downloaded and the nearest worked out locally | Button only; kept in memory for 6 hours |
 | Canonn sheets | Thargoid and Guardian site lists | Button; downloaded once per session |
 | tick.infomancer.uk | BGS tick time | 60-second poll; can be turned off |
+| Raven Colonial | Planned Builds, My Projects, and (with the commander's own key) creating, updating and completing projects | Buttons; the writes only after a press, with `wfmt_rcc_enabled` on and a saved key |
+| Discord | Post to Discord (a webhook the commander sets up) | A button press for every post |
 | GitHub Releases | Update check | Opt-in, once per EDMC run |
 
 Design decisions that apply to all of them:
@@ -1118,7 +1121,7 @@ Where it lives and how it is used:
 - Each lookup carries a generation number, so a newer request supersedes an older one and a stale
   result is dropped. Region Sweep's auto-discover only fires when the queue is nearly empty, and only
   one lookup is ever in flight (so at most one per jump).
-- A failed request returns "no result" and is not retried. The only repeat is the BGS tick's next
+- A failed request returns "no result" and is not retried by the feature (Spansh calls get only the courtesy layer's bounded retries of a busy answer, described above). The only repeat is the BGS tick's next
   scheduled poll, a minute later.
 - Every request has a timeout (8 to 60 seconds), so a slow service never leaves a request hanging.
 - Trade's route search is the one lookup that polls: Spansh queues a job and WFMT asks for the result every 5 seconds, for at most 4 minutes (about 48 requests), then gives up. It stops at once on **Cancel**.
@@ -1387,7 +1390,7 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
 - `check_key` is `GET /api/Cmdr/_` (401 without a valid key, checked live; changes nothing), run on a worker thread from the Settings page's **Test key** button against the text in the box.
 - A build in progress has a `buildId` but no `marketId` on the plan's sites.
   - `find_build_id` therefore falls back to the station's name (`station_part` strips the game's "Orbital Construction Site: " prefix; a build in progress wins over a finished namesake).
-  - `build_id_for` adds a second route when the plan names none: `fetch_project_by_market` does `GET /api/system/<address>/<market id>` (public, 404 means none), the lookup SrvSurvey uses. The address is the plan's `id64` or the game state's `SystemAddress`. This finds a standalone project, one named "Primary port", and a station the game has renamed. A failed read raises `RccError`.
+  - `build_id_for` adds a second route when the plan names none: `fetch_project_by_market` does `GET /api/system/<address>/<market id>` (public, 404 means none). The address is the plan's `id64` or the game state's `SystemAddress`. This finds a standalone project, one named "Primary port", and a station the game has renamed. A failed read raises `RccError`.
 - `send_json` is `send_write` that returns the parsed answer (both share `_send_request`: one retry on 429 / 503, 401 / 403 worded without the key).
 - The page links are opened with `webbrowser.open`:
   - `home_page_url`
@@ -1405,7 +1408,7 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
   - The building is chosen in three steps: location (`orbital` / `surface`), building (`BuildChoice`, by tier and name) and layout, the build type Raven knows it by (every key in the bundled table: `build_costs.table()` maps layout to building, `layouts_of` lists them with the building's own first). The layout is what is sent as `buildType`.
   - Body choices are `RccSystem.bodies` (`num`, `name`, `subType`; numbers above 999 are belts and rings and are dropped).
   - A construction ship (`is_construction_ship`: either spelling of colonization ship in the raw name) defaults to the name "Primary port" and `isPrimaryPort`.
-- `create`: `PUT /api/project` with the market id, system address and name, star position, name, `buildType`, `commodities` still needed (required minus provided), `maxNeed`, a rebuilt `colonisationConstructionDepot`, and the optional fields only when known. A chosen plan entry goes in as `systemSiteId`; none leaves it out, so the project stands alone and the plan is never edited (as SrvSurvey does). The answer's `buildId` is required.
+- `create`: `PUT /api/project` with the market id, system address and name, star position, name, `buildType`, `commodities` still needed (required minus provided), `maxNeed`, a rebuilt `colonisationConstructionDepot`, and the optional fields only when known. A chosen plan entry goes in as `systemSiteId`; none leaves it out, so the project stands alone and the plan is never edited. The answer's `buildId` is required.
 - Then, each reporting its own failure without undoing the project: `PUT /api/project/<id>/link/<cmdr>`, `PUT /api/Cmdr/<cmdr>/primary/<id>`, `PUT /api/project/<id>/fc/<carrier market id>`.
 - The system address and position come from the plan (`id64`, `pos`) first, then EDMC's `monitor.state` when the commander is in that system (`rcc_create.locate`). The carrier id is the commander's own, from `CarrierStats` / `CarrierLocation` (`Feeder.own_market_id`).
 - **Mark Plan Entry Demolished** sends `PUT /api/v2/system/<address>/sites` with the entry's fields and status `demolish`. Create Project has been used against the live service (during 1.2.0 testing); this write has not (see TODO.md).
@@ -1425,6 +1428,7 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
   - replaces the saved record only if the rebuilt tons and deliveries are at least as large (so deleted journals never shrink it)
   - folds in any live delivery that arrived meanwhile under the newest-only rule
   - marks the record `backfilled`
+- **Rescan Journals** (the Sites window's button, `ColonizationWindow._on_rescan`) runs the same rebuild on demand, and also folds the last `colonization_catchup.MAX_DAYS` (30) days of site events through `colonization_catchup.apply_events` and, for a commander with a fleet carrier, rebuilds the carrier tally (`colonization_carrier.scan_journals`, applied with `replace_from_journals`). The files are read on a worker thread and the results are applied on the Tk thread. It needs a commander but not a carrier.
 
 **The Colonization mode**
 
@@ -1460,7 +1464,7 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
 **The Sites window's Acquire column**
 
 - `colonization_view` keeps two figures per commodity: `remaining` (the site's own need, required less delivered) and `to_get` (that less the hold and the carrier, never below zero). The window's Acquire column, its category totals and its sort show `to_get`; the buy trips divide `to_get` by the ship's capacity and the haul trips divide `remaining`, so haul trips still count everything the site needs.
-- The note under the Where to buy buttons is drawn in the accent color while a search runs, while the system check that follows it runs and while a Stop is pending, and in the muted color otherwise (one method sets every update, `_say`).
+- The note under the buttons of the Where to Buy window is drawn in the status color while a search runs or a Stop is pending, and in the plain text color otherwise (one method sets every update, `colonization_buy_window.BuyWindow._say`). Find all makes no system check of its own.
 
 **Fleet carrier column**
 
@@ -1472,14 +1476,6 @@ Colonization (`colonization.py` is pure logic, `colonization_data.py` the reposi
   - **Repeated copy:** the list equals the one stored as `capi_ignored`, the last copy ignored, and `capi_ignored_at` is under `CAPI_REPEAT_EXPIRY` (1 hour) old. After that the copy is applied, so a stable figure is not ignored for ever.
 - An ignored copy is stored in `capi_ignored` with the time in `capi_ignored_at`; an applied one clears both and sets `from_capi`. `replace_from_journals` (Rescan Journals) clears both.
 - Each call logs one INFO line (applied, same, or ignored with the reason), which is how a report of a wrong column is diagnosed.
-
-**Best single systems** (`colonization_systems.py`) - no longer used by the Where to Buy window (it showed the suggested route only from 2026-10-31); the module and its tests are kept
-
-- It was run after Find all (`colonization_sources.find_whole_list`) by `find_best_systems` on the same worker thread. It is pure logic around an injected `fetch` (`mining_spansh_client.search_system_stations`), so the tests use no network.
-- `candidate_systems` groups the per-commodity answers by system (fleet carriers ignored) and keeps up to 6: the system searched around first, then those with the most commodities and tons, skipping systems found for a single commodity.
-- Each candidate costs one request (a station search of distance 0 from the system returns every station with its whole market), paced `SYSTEM_PAUSE` apart. A failed system is recorded and the rest carry on; `cancelled()` is checked between systems, and the Stop button keeps what was found.
-- `plan_system` adds up the stations' stock per commodity and reuses `colonization_sources.plan_route` limited to that system (fewest stations, most tons), then orders the stops by arrival distance. `rank` puts systems that cover everything first, then the larger share, the nearer, the cheaper.
-- A single commodity asks for nothing. The Spansh names are normalized as the one-stop search does, and compared without regard to case.
 
 **The diagnostic log** (`diag_log.py`, `uikit/trace.py`)
 
@@ -1533,8 +1529,11 @@ Settings keys: `wfmt_colonization_overlay_enabled` and `wfmt_colonization_overla
 
 ### Report an issue and Copy diagnostics (`issue_report.py`, `ui._create_help_tab`)
 
-Two buttons on Settings → General → Help.
+Three buttons on Settings → General → Help (the diagnostic log's controls are on the same page; see "The diagnostic log" above).
 
+- **Report game data** opens the Game data form (`issue_report.open_feedback`, `build_feedback_url`) with `webbrowser.open`.
+  - The address is `.../issues/new?template=game_data.yml&labels=game-data&title=...` with the fields `area`, `subject`, `context` (each clipped to 40, 80 and 80 characters) and `environment`. The names must match the `id`s in `.github/ISSUE_TEMPLATE/game_data.yml`.
+  - It is general: any part of WFMT passes its own area, subject and view. The Engineers tab's **Report engineer data** button passes `Engineers`, the selected engineer and `Standing in WFMT: ...`; the Help page's button opens it blank. No commander name is put in it, and it falls back to the template alone past `MAX_URL_LENGTH`.
 - **Report an issue** opens `.../issues/new?template=bug_report.yml&labels=bug&title=...&environment=...` with `webbrowser.open`.
   - GitHub prefills an issue-form field from a query parameter named after the field's `id`, so `ENVIRONMENT_FIELD` (`environment`) must match `id: environment` in `.github/ISSUE_TEMPLATE/bug_report.yml` (a test checks it).
   - If the address would pass `MAX_URL_LENGTH` (2000) it falls back to the template alone.
@@ -2038,7 +2037,7 @@ The parts that depend on the platform:
 
 ### 18.3 Cross-platform review of the modules
 
-The modules in `plugin/` and `plugin/uikit/` (about 365 files, about 97,000 lines) are held to the rules below, which keep
+The modules in `plugin/` and `plugin/uikit/` (about 370 files, about 100,000 lines) are held to the rules below, which keep
 them free of Windows-only and Linux-only assumptions outside the `platform_support` branches. The checks are:
 
 1. **A scan of every module** (AST and text) for platform signals: Win32 and `ctypes` use, `subprocess`, `winsound`, `os.startfile`, `sys.platform` branches, `.exe`/PowerShell/`xdotool` strings, Windows-only Tk color names, Windows paths and environment variables, `open()` without an explicit encoding, `strftime` directives that differ by platform, and file-name case.

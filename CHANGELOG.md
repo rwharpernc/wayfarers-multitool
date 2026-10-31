@@ -16,6 +16,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Added
 
+- **Telling us what the game shows:** engineers whose invitation requirement WFMT cannot check against your journal (20 of the 38) now say **Verification needed** in their details, and a new **Report engineer data** button on the Engineers tab opens a prefilled GitHub form (the engineer, the standing WFMT has, the Environment box) for you to write what the in-game Engineers panel says. The form is general, so other parts of WFMT can use it later: **Settings → WFMT → General → Help → Report game data** opens it blank. Nothing is sent until you submit it on GitHub with your own account, and no commander name is put in it.
 - **A separate diagnostic log:** Settings → WFMT → General → Help has a new tick, **Write a separate diagnostic log** (off by default), with **Open log folder** and **Copy log path** buttons. While it is on, WFMT writes a detailed log of its own to `logs/WFMT/wfmt-diagnostics.log` in EDMC's data folder (about 4 MB at most, rotated), apart from EDMC's log: everything WFMT logs including the finer lines EDMC's log leaves out, journal event names, buttons pressed and windows opened, each Spansh request with its outcome and time, Where to Buy searches, Rescan Journals, and Settings saves. Journal contents, keys and webhook links are not written, and your commander name and home folder are replaced. EDMC's own log is unchanged by it.
 - **Engineers button:** the Operations panel has a separate **Engineers** button that opens the Engineering window on its Engineers tab (**Blueprints** now opens it on the Blueprints tab).
 - **Engineer status colors:** on the Engineers tab a row is green when the engineer is unlocked, yellow when you know of them or have been invited (in progress), and red when they are not available yet (the game has not listed you as knowing them). A key under the table says so. The three colors are the same in every theme (Navy, Cyan, Amber and Green) and are readable on all of them: a test checks their contrast on each theme's rows and that they differ in hue and lightness, so unlocked and in progress are not confused in the Amber and Green themes.
@@ -168,7 +169,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 - **Windows:** four color themes for WFMT's own pop-out windows and dashboards: Navy (the default, brighter than before: blue-tinted
   surfaces, gold titles, cyan section labels and table headings, a soft blue footer message that turns green on success), and Cyan,
-  Amber and Green from EDDDT. Choose one under Settings → WFMT → General → Window or with the theme name at the right end of a window's bottom line;
+  Amber and Green. Choose one under Settings → WFMT → General → Window or with the theme name at the right end of a window's bottom line;
   open windows are recolored at once and the choice is remembered. EDMC's window and the overlay cards are not changed.
   The stat tiles at the top of a dashboard and the status chips keep their size when the text size is changed.
 - **Windows:** the text size of WFMT's pop-out windows and dashboards can be changed, from -2 to +6 points, with the **A-** and **A+**

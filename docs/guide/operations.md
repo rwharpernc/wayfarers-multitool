@@ -40,7 +40,7 @@ The most common tasks, step by step. Each one links to the section with the full
 
 **Check materials for a blueprint** (details: [Engineering](#engineering-blueprints-and-a-wishlist))
 
-1. Press **Blueprints** on the Materials row to open the Engineering window.
+1. Press **Blueprints** on the Engineering row to open the Engineering window.
 2. On the **Blueprints** tab, type the module or effect in **Search** and pick the blueprint. Its ingredients show what one craft takes and how many you hold.
 3. Set **Crafts**, then press **Add to wishlist**.
 4. Open the **Wishlist** tab to see whether it **can be made now** and what you are **short** of.
@@ -264,7 +264,7 @@ The results:
 
 Pressing **Find** is the only thing that goes online: it sends Spansh the system name and the type. The same search within two minutes is answered from memory.
 
-**Worked example: swapping away surplus Raw materials.** Your Materials row says `At the limit: ...` and lists several Raw materials.
+**Worked example: swapping away surplus Raw materials.** Your Engineering row says `At the limit: ...` and lists several Raw materials.
 
 1. Press **Materials**, then **Find a trader**. **Type** starts as the type with the most materials at the limit, here Raw.
 2. Leave **Within** at 100 ly. If your ship needs it, set **Pad** to **Large only**.
@@ -275,10 +275,10 @@ Pressing **Find** is the only thing that goes online: it sends Spansh the system
 
 ## Engineering: blueprints and a wishlist
 
-**Blueprints** on the Materials row opens the Engineering window. It has five tabs: Blueprints, Wishlist, Ship planner, Upgrade planner and Engineers. **Refresh counts** (top right) re-reads what you hold, which the Have and Short figures use.
+**Blueprints** on the Engineering row opens the Engineering window. It has five tabs: Blueprints, Wishlist, Ship planner, Upgrade planner and Engineers. **Refresh counts** (top right) re-reads what you hold, which the Have and Short figures use.
 
 **To use it:**
-1. Press **Blueprints** on the Materials row. On the **Blueprints** tab, search for a module or an effect and pick a blueprint.
+1. Press **Blueprints** on the Engineering row. On the **Blueprints** tab, search for a module or an effect and pick a blueprint.
 2. Read its ingredients: how many one craft takes, how many you hold and where each is found. Set **Crafts** to the number you expect to need.
 3. Press **Add to wishlist**. Repeat for everything you plan to build.
 4. Open the **Wishlist** tab: it says which entries can be made now, what you are short of, and the shopping list for all of it.
@@ -290,7 +290,7 @@ Pressing **Find** is the only thing that goes online: it sends Spansh the system
 2. Pick the blueprint. Under it you see who offers it, its effects and what **one craft** takes: each ingredient with how many you need, how many you hold and where it is found.
 3. Set **Crafts** to 2 and press **Add to wishlist**.
 4. Open the **Wishlist** tab. The entry says whether it **can be made now** and how many pieces it is **short**. The shopping list below lists each ingredient's need, have and short, with what is short at the top, and where it is found.
-5. On the Materials row the wishlist line reads like `Wishlist: 3 blueprints, 2 can be made, 14 pieces short`.
+5. On the Engineering row the wishlist line reads like `Wishlist: 3 blueprints, 2 can be made, 14 pieces short`.
 
 Remember that two crafts is your estimate: the game rolls each result, so the real number can differ. Change it with **Set crafts**.
 
@@ -316,7 +316,7 @@ Remember that two crafts is your estimate: the game rolls each result, so the re
 - Each entry also says **who can do it**: an engineer you have unlocked, or a vendor or the synthesis panel (which need no unlocking), or "No engineer unlocked yet".
 - The table has the columns **Blueprint**, **Crafts**, **Can be made now**, **Short** and **Who can do it**. The shopping list has **Ingredient**, **Kind**, **Need**, **Have**, **Short** and **Where it is found**.
 - Select an entry, type the new number in **Crafts** and press **Set crafts**; **Remove** takes it off and **Clear list** empties the list. Each of the last two asks you to press the button a second time to confirm.
-- The Materials row shows a line such as `Wishlist: 3 blueprints, 2 can be made, 14 pieces short`.
+- The Engineering row shows a line such as `Wishlist: 3 blueprints, 2 can be made, 14 pieces short`.
 
 **Ship planner.** Work out what a whole ship's engineering takes, and put it on the wishlist in one step.
 
@@ -399,7 +399,7 @@ The journal's names for blueprints and effects are matched to the table's from p
 
 - **Show** box: above the table, it picks **Both**, **Bubble** (the 30 engineers in the human bubble) or **Colonia** (the 8 in the Colonia region, about 22,000 ly away: Baltanos, Eleanor Bresa, Etienne Dorn, Marsha Hicks, Mel Brandon, Petra Olmanova, Rosa Dayette and Yi Shen). The count beside it reads like `8 of 38 engineers`, and WFMT remembers your choice. An engineer the location table lacks (a name only your journal knows) shows under **Both** only.
 - **Row colors:** an unlocked engineer's row is green, one you know of or have been invited by (in progress) is yellow, and one the game has not listed you as knowing (not available yet) is red. The colors are the same in every theme and readable on all of them. Before the game has listed any engineers no row is colored. A note under the table repeats the key.
-- **Each row** has where you stand (Known, Invited, or Unlocked with their rank), how many blueprints they offer, **where they are** (base, system and planet, with "on foot" or "permit needed") and the next step towards unlocking them.
+- **Each row** has the columns **Engineer**, **You are** (where you stand: Known, Invited, or Unlocked with their rank), **Offers** (how many blueprints), **Where** (base, system and planet, with "on foot" or "permit needed") and **Next step** (towards unlocking them).
 - **Next step column:** until an engineer is unlocked, it gives the one thing to do next. That is the engineer's own next step, or `First <engineer>:` and that engineer's step when you have to deal with another engineer first (Lei Cheung is found through The Dweller). A find step that only says "Common knowledge" is skipped. When the step is the engineer's own and the unlock is items, it adds how much of them you hold (such as 200 Gold for Lei Cheung); those items can go on the wishlist. Unlocked engineers come first.
 - **Select an engineer** for the full details under the table, in labelled sections (where they are, **Path to unlock**, **How to gain standing**, **Notes**):
   - **the path to unlock them**, as numbered steps in order: find them, hold the permit if one is needed, earn the invitation and unlock them. A step the game says you have done is marked `[done]`: *Known* marks the find, *Invited* marks the find and the invitation, and *Unlocked* marks everything. The game does not report permits or what an invitation asks for, so those stay open until the engineer is invited or unlocked,
@@ -409,8 +409,9 @@ The journal's names for blueprints and effects are matched to the table's from p
   - how to gain standing with them,
   - whether they work on foot (no ranks: every upgrade is offered once you have met them),
   - any known quirk (for example, Terra Velasquez's meeting requirement is reported bugged: Covert Theft missions may not count, Covert Heist missions do).
+- **Verification needed:** for an engineer whose invitation requirement WFMT cannot check against your journal (20 of the 38: a faction's standing, a kind of mission, a data sale and similar), the details end with a note saying so, until the engineer is invited or unlocked. The tables are community lists, so if you can see what the game shows, press **Report engineer data**: it opens a prefilled GitHub form (the engineer, the standing WFMT has, the Environment box) where you write what the in-game Engineers panel says. Nothing is sent until you submit it there. See [Telling us what the game shows](reporting-problems.md#telling-us-what-the-game-shows-game-data).
 - **Net profit line:** a line below the table gives the net profit that opens each grade for a ship engineer: grade 2 at 500,000 cr, grade 3 at 2,000,000 cr, grade 4 at 8,000,000 cr and grade 5 at 16,000,000 cr (sold at their workshop).
-- **Buttons:** **Show their blueprints** lists what they offer, and **Put their unlock on the wishlist** adds what unlocking them takes.
+- **Buttons:** **Show their blueprints** lists what they offer, **Put their unlock on the wishlist** adds what unlocking them takes, and **Report engineer data** opens a prefilled GitHub form so you can tell us what the game shows for them.
 - **Where standings come from:** the game's engineer list, sent at login and whenever one changes (including a rank-up), and kept on your computer for each commander.
 
 **How "can be made now" works.** Entries are weighed in list order, as you would craft them: an entry that can be made takes what it needs, and the

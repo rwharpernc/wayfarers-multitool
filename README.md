@@ -75,7 +75,7 @@ WFMT is one panel with eight **modes**, and you click a button to switch between
 | **Mining** | Space and surface mining runs, a book of rings and deposits, Mining History, mining alerts | [Mining](docs/guide/mining.md) |
 | **Trade** | Profit after fuel and repairs, fleet carrier cargo, saved sessions, best routes and prices, a watch list | [Trade](docs/guide/trade.md) |
 | **Missions** | Every mission in one view, progress bars, a Missions window, where to buy the cargo | [Missions](docs/guide/missions.md) |
-| **Operations** | Screenshots, backpack and cargo, materials, a blueprint browser, material traders, ship builds | [Operations](docs/guide/operations.md) |
+| **Operations** | Screenshots, backpack and cargo, engineering materials, a blueprint browser and wishlist, the engineers and how to unlock them, material traders, ship builds | [Operations](docs/guide/operations.md) |
 | **Colony** (Colonization) | Your current build, history, an archive of finished sites, and every site's shopping list | [Colonization](docs/guide/colonization.md) |
 | **BGS** | Faction states and what your activity does to them; share a tick's report to Discord | [BGS](docs/guide/bgs.md) |
 
@@ -155,6 +155,8 @@ Found a bug? The plugin can start the report for you, so you do not have to reme
 4. Paste the diagnostics into the log box, read the form through, and submit it.
 
 - **Step by step, with what is and is not included:** [Reporting a problem](docs/guide/reporting-problems.md).
+- **Telling us what the game shows:** where WFMT cannot check something (an engineer's invitation requirements, for example), **Settings → WFMT → General → Help → Report game data** or the **Report engineer data** button on the Engineers tab opens a short GitHub form. Nothing is sent until you submit it. See [Reporting a problem](docs/guide/reporting-problems.md).
+- **A detailed log:** tick **Write a separate diagnostic log** on the same Help tab when asked, to record more than EDMC's log does.
 - **By hand:** open an issue on the [Issues page](https://github.com/rwharpernc/wayfarers-multitool/issues). Say what you were doing, what you expected
   and what happened. EDMC's log helps a lot.
 - **Something looks wrong?** Try [Troubleshooting](docs/guide/troubleshooting.md) first.

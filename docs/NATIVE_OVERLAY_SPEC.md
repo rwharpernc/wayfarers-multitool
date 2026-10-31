@@ -15,14 +15,13 @@ WFMT can draw its own overlays, in a window it lays over Elite, instead of sendi
 
 ## Why
 
-EDMCModernOverlay is a separate program with its own font, scaling and lifetime. Problems met while using it with WFMT:
+A separate overlay program (EDMCModernOverlay) has its own font, scaling and lifetime, shared by every plugin that draws through it. Drawing in WFMT's own window gives WFMT direct control of those:
 
-- Its default font has capital letters only.
-- An old overlay window left running after EDMC closed reconnects to the next session and draws a second copy of every card (see [Known issues](guide/known-issues.md)).
-- WFMT cannot choose the font for its own cards.
-- Placement has to work around its right-hand clamp.
+- **Font:** WFMT chooses a lower-case face for its own cards (and any `.ttf` or `.otf` you add), where a shared overlay draws every plugin's text in one font.
+- **Lifetime:** the window is created and closed with WFMT, so a window left running from an earlier session cannot draw a second copy of every card (see [Known issues](guide/known-issues.md) for that case with a separate program).
+- **Placement:** WFMT knows its window's size and position, so right-hand cards can reach the edge without a workaround.
 
-Owning the window removes these, and matches the aim that WFMT alone is enough.
+This matches the aim that WFMT alone is enough.
 
 `scripts/native_overlay_test.py` proved that a transparent, click-through, layered window over Elite is clean, follows the game window, hides on alt-tab and does not stutter.
 
@@ -67,7 +66,7 @@ Owning the window removes these, and matches the aim that WFMT alone is enough.
 - **The font** is WFMT's own, independent of EDMCModernOverlay's.
   - It is the file named by `wfmt_overlay_builtin_font` in WFMT's `plugin/fonts` folder, else the bundled Source Sans 3 (SIL Open Font License, shipped with its license), else a system font.
   - Appearance → Overlay font lists the files in that folder and **Add font file...** copies one in.
-  - A change is used within two seconds, and a font file added stays through updates (the updater only replaces what the release zip holds).
+  - A change is used from the next frame drawn, and a font file added stays through updates (the updater only replaces what the release zip holds).
   - EDMCModernOverlay's font is chosen separately, in its own list, when it is the overlay in use.
 
 ## What is done

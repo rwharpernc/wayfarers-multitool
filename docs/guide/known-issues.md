@@ -6,16 +6,16 @@ limits of what the game's journal tells WFMT are in the last section of each mod
 
 ## Overlay text looks doubled or ghosted
 
-(This is EDMCModernOverlay's behavior. WFMT's own built-in overlay cannot leave a second window behind, but an EDMCModernOverlay window can still be running beside it.)
+(This applies when a separate overlay program draws WFMT's cards. WFMT's own built-in overlay does not leave a second window behind, but an overlay window left over from an earlier session can still be running beside it.)
 
 **What you see:** every overlay card has a faint second copy of its text beside or behind the real one, often in a different font or in capitals, and some rows look
 brighter or dimmer than others. It does not clear when the card refreshes.
 
-**Why:** two copies of EDMCModernOverlay's overlay window are running, and each draws everything it is sent.
+**Why:** two copies of the overlay window are running, and each draws everything it is sent.
 
 - **How it happens:** an old window is left running after EDMC is closed or restarted without stopping it (a crash or a forced close). It reconnects to the next EDMC session while a new window starts.
 - **Why it is easy to miss:** while both use the same font the copies sit exactly on top of each other. If the font or the settings differ, the text looks doubled.
-- **Whose it is:** this is EDMCModernOverlay's behavior, not something WFMT starts, and WFMT cannot stop the extra window for you.
+- **What WFMT can do:** it does not start that window and cannot end the extra one for you; **Check connection** names how many are running so you can end the older ones.
 
 **What to do:**
 1. Open **Settings → WFMT → Overlays → Overlay Connection** and press **Check connection**. When more than one overlay window is running it says so and names their process numbers. (**Copy diagnostics** in the Help tab gives the count too.)
@@ -64,7 +64,7 @@ If cards still stop short, report it with your screen size, scaling, desktop and
 
 ## The built-in overlay is less tested
 
-WFMT's own overlay (Windows) is less tested than EDMCModernOverlay.
+WFMT's own overlay (Windows) is newer and has had less testing in the game so far.
 
 - It works with every card and with Overlay Placement, but a card's box may fit its text a little differently than you are used to.
 - The radar's circles and lines and cards at the screen edges are the least tested.
@@ -142,6 +142,7 @@ These are not bugs, but they surprise people. Each is explained where it belongs
   - A rare is marked *Legal* when the table lists no restriction, which is not a promise. Check the station's Prohibited list before carrying a restricted rare.
   - Treat the Arrival distance (a station's distance from its star) as approximate.
   - See [Powerplay](powerplay.md#rare-goods-finder).
+- **Some engineer invitation requirements cannot be checked.** The journal totals ranks and lifetime figures, so those are noted against your own standing, but for 20 of the 38 engineers (a faction's standing, a kind of mission, a data sale and the like) the details say **Verification needed** and the step is marked done only once the engineer is invited or unlocked. The steps are a community table's wording. If the in-game Engineers panel says something different, **Report engineer data** on the Engineers tab sends it to us ([Reporting a problem](reporting-problems.md#telling-us-what-the-game-shows-game-data)). See [Operations](operations.md).
 - **Carrier Route plans to one destination at a time**, and the tritium figures are Spansh's. WFMT sees the carrier arrive from the journal (when you are aboard or log in), so after a jump you did not see, use **Mark next as reached**. See [Exploration](exploration.md#carrier-route).
 - **The Surface Mining Book's "From your journals" list says which bodies, not where.**
   - The journal records how many mining locations a body has and the tons you refined on it, but not where any deposit is. Deposits are still the hotspots you save.

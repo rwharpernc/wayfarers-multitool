@@ -304,7 +304,7 @@ on Linux, and the design of where things go owes a lot to the tools that came be
   hotkey and a chat command); no code was taken from SrvSurvey.
 - **The drag-and-drop layout editor on Overlay Placement:** a grid for placing overlay displays is a feature common to overlay layout tools;
   WFMT's editor (a to-scale picture of the screen with a box per display that snaps to edges and a grid) is its own design and code.
-- **The color themes of the windows:** Cyan, Amber and Green follow the three themes of EDDDT, the maintainer's own companion app, and use its stylesheet's colors; Navy is WFMT's own. The code that applies a theme is WFMT's own.
+- **The color themes of the windows:** The four themes (Navy, Cyan, Amber and Green) are the maintainer's own palettes, and the code that applies a theme is WFMT's own.
 - **Overlay placement:** SrvSurvey places each overlay relative to the game window (left, center or right; top, middle or bottom; plus
   pixels), which is the model WFMT's Overlay Placement follows. EDMCModernOverlay's open source made it possible to check how it maps
   positions and sizes onto the screen.

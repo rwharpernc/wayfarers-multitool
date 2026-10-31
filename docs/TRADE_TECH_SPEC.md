@@ -704,6 +704,7 @@ Follows TECHNICAL.md section 11 ("Keeping API traffic low").
   times (waits of 2, 6 and 15 s, or the `Retry-After` header up to 60 s); a timed-out POST is not retried, since it may
   have been accepted; and after 5 failed requests in a row WFMT refuses to call Spansh for 300 s and the page shows
   why (`SpanshBusy`).
+  While the separate diagnostic log is on (Settings → WFMT → General → Help), each request's endpoint (without its query), outcome and time is written to it.
 - **Round trip:** one to three station-search requests (100 stations each, nearest first, stops at the first short
   page), about 20 s, request timeout 30 s, identified as `trade-roundtrip`.
 - **Price search:** a press of Near me or Galaxy makes **two requests**, one for stations and one for
@@ -747,7 +748,7 @@ the refresh uses the "Near me" radius held to 5 to 5,000 ly (`trade_watch_panel.
 
 ## 12. Testing
 
-`python -m unittest discover -s tests`.
+`npm run test:docker` (which runs `python -m unittest discover -s tests` in a container).
 
 **The watch list's tests**
 

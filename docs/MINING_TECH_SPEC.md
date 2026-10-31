@@ -386,7 +386,7 @@ selected.
   `state["Cargo"]`, matched by `trade_commodities.resolve`).
 - The price finder's box starts there when selling and takes a whole number of 1 to `MAX_MINIMUM` tons
   (`parse_minimum`); What pays uses the figure for each commodity.
-- Every call still goes through `spansh_courtesy.call`.
+- Every call still goes through `spansh_courtesy.call`, which, while the separate diagnostic log is on (Settings → WFMT → General → Help), writes each request's endpoint (without its query), outcome and time to it.
 
 **Sharing.**
 

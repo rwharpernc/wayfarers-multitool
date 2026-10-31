@@ -2,7 +2,7 @@
 
 Colonization has its own mode: press the **Colony** button.
 
-- The page shows the project you are building now and nothing historical.
+- The page shows the project you are building now. With none under construction it lists the last 5 sites you completed; the rest of your history is in the History window.
 - Three buttons sit under it, left to right:
   - **Dashboard** opens the full [Colonization Sites window](#the-colonization-sites-window).
   - **Projects** opens [My Projects](#my-projects): everything you have on Raven Colonial.
@@ -813,10 +813,10 @@ A last line gives the tons remaining (still to get, as in the Acquire column) an
   - Optionally, **whenever the right-hand cockpit panel is open, anywhere** (even in flight). Off by
     default; tick **Also show whenever the right-hand cockpit panel is open, anywhere** in the Colonization settings.
 
-  **Prefer to switch it yourself?** Leave the automatic option unticked and use **Always show the shopping list** in the same settings.
-  - It turns the card on or off, whatever screen you are on.
-  - The button lights up while the card is on. Its name does not change.
+  **Prefer to switch it yourself?** Leave the automatic option unticked and use **Always show the shopping list, whatever screen you are on** in the same settings.
+  - Ticked, the card stays up on every screen; unticked, it goes back to the automatic rules (or stays off).
   - It works whether or not the automatic option is ticked, and it **stays as you left it, even after you restart EDMC**.
+  - The **Overlays shown (click to hide)** line at the top of the WFMT panel hides every overlay, this card included, until you click it again.
 
   Most of these rely on the game's `Status.json` reporting which screen is open.
 - **Which site:** your most recently updated active site, the one the Colonization mode summary line names. Completed and
@@ -840,11 +840,11 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 | What you might expect | What the game gives | What to do |
 |---|---|---|
-| Everything on your carrier to count | The journal only records cargo you **transfer** to or from the carrier. Stock that arrived any other way is invisible to it. Frontier's carrier data lists the real hold, but only when EDMC is signed in, and it is fetched when you open Carrier Management (or about every 15 minutes) and can lag, sometimes for longer than 15 minutes. WFMT ignores a lagging copy, so your own transfers are not undone. | Sign EDMC in to Frontier, then open Carrier Management once, at least 15 minutes after your last transfer; the Covered line and the Carrier row then follow the real hold. See [Scenarios](#scenarios-what-to-expect-and-what-to-do). |
+| Everything on your carrier to count | The journal only records cargo you **transfer** to or from the carrier. Stock that arrived any other way is invisible to it. Frontier's carrier data lists the real hold, but only when EDMC is signed in, and it is fetched when you open Carrier Management (or about every 15 minutes) and can lag, sometimes for longer than 15 minutes. WFMT ignores a lagging copy, so your own transfers are not undone. | Sign EDMC in to Frontier, then open Carrier Management once, at least 15 minutes after your last transfer; the FC column and the **On your carrier** line then follow the real hold. See [Scenarios](#scenarios-what-to-expect-and-what-to-do). |
 | Colonization sites to appear on their own | The game writes the depot event only when you **dock or open the depot market**. A delivery to a site WFMT has never seen a depot snapshot for is ignored. | Dock at the depot (or open its market) once for each new site. Docking again replaces WFMT's figures with the game's own. Deliveries made with EDMC closed are caught up from the last 14 to 30 days of journals at start-up. |
 | A site to have its real name, or a renamed site to follow | The name is taken from the last time you docked at that market. Otherwise it is `Construction site <number>`. The game does not announce a rename; it shows in the name the market has the next time you dock. | Dock at the market once to pick up the name, and again after a rename. |
 | A full history of everything you ever delivered | The journal records each delivery as it happens. WFMT rebuilds your history once from every journal file you still have, so deliveries from journals you deleted are missing. | The history counts from the first delivery it found (shown in the History window) and keeps growing. |
 | Your teammates' work on the same project | The depot reports only the project's totals, not who delivered what. | Today the page shows your deliveries and the project's overall progress. Team support is planned. |
 | What is in your hold right now | The journal's `Cargo` event carries only a count, and EDMC's own cargo state was seen not to follow a purchase. The game rewrites `Cargo.json` on every change. | WFMT reads `Cargo.json` and reads it again about a second and a half after each cargo event. If the file is missing or describes your SRV, it uses the hold EDMC reports. |
 | Builds you have only planned, or projects you have not docked at | The journal reports a construction site only when you dock at it or open its market. | Use Planned Builds and My Projects, which read what players have entered on Raven Colonial. They show other people's entries too, and a project nobody has entered shows nothing. |
-| A free-form check of a market's prices | The game gives no way to query other stations' markets. | Where to buy asks Spansh, which holds players' market updates; only markets updated in the last 7 days are listed, and fleet carriers are opt-in. Confirm on arrival. |
+| A free-form check of a market's prices | The game gives no way to query other stations' markets. | Where to buy asks Spansh, which holds players' market updates; only markets updated in the last 7 days are listed, and fleet carriers are included unless you tick **Exclude fleet carriers**. Confirm on arrival. |

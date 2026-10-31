@@ -44,9 +44,11 @@ organic_scan_state.py   Per-commander persistence of each body's biology (organi
 exo_observations.py     A global record of conditions against confirmed species, for checking the prediction (exo_observations.json).
 exo_analysis.py         The analysis of that record (hit rate, misses, ranges, species together), pure.
 exo_review_window.py    The Prediction review window: the analysis, with a manual review of each find.
+organic_catchup.py      Reads the last 14 days of journals for samples and bodies seen while EDMC was closed, and merges them into the saved state (section 7).
 organic_scan_panel.py   The panel: reads journal events, builds conditions, shows predictions and progress, and builds the overlay view.
 organic_species_data.py Generated reference data: genera, species, values and habitability rulesets.
 organic_region_data.py  Generated reference data: the galactic region grid and the named zones.
+organic_variant_data.py Generated reference data: the color rules (section 5, Color variants).
 exobiology_overlay.py   The four overlay cards (bio status, biology, sample popup; radar via exo_radar.py).
 exo_radar.py            The Bio radar's geometry (offsets, bearings, circles, little pointers) and drawing.
 ```
@@ -155,6 +157,16 @@ Why it is kept:
 - When `Status.json` names no body (the commander has left the planet) the live view is cleared in the
   same way, so the overlay cards stop showing a finished planet.
 
+### Samples and bodies seen while EDMC was closed
+
+EDMC passes a plugin only the events that happen while it runs, so a sample taken with it closed never reaches the tracker.
+
+- Each time a commander is seen at start-up, a worker thread reads that commander's journals from the last `organic_catchup.CATCH_UP_DAYS` (14) days.
+- It raises the saved stage of any species logged, sampled or analyzed in that time. The merge only ever raises a stage (Log 1, Sample 2, Analyse 3), so reading the same events again changes nothing.
+- A `ScanOrganic` names its body only by number, so the name is learned from the `Scan`, `FSSBodySignals`, `SAASignalsFound` and `ApproachBody` events that name the same body in the same system. A sample whose body cannot be named is skipped.
+- For a body scanned with EDMC closed it also recovers the conditions (from the `Scan`), the genera its signals name and the first footfall flag, but only where nothing is saved for the body.
+- Positions are not recovered, because the journal does not record them. Scans older than 14 days are not found. The journals are only read.
+
 ### Observations for checking the prediction
 
 `exo_observations.json` is kept in the plugin folder (protected from updates) and is **global, not per
@@ -211,6 +223,8 @@ species added by a game update needs the tables regenerated**. Until then it sim
 - `tests/exobiology_checks.py` (run by `tests/test_exobiology_overlay.py` in its own process) covers the
   overlay cards, the radar geometry, the little pointers, the waypoints and the per-body view built from
   journal events and `Status.json`.
+- `tests/test_organic_catchup.py` covers the catch-up from journals (stages only rise, a body named from other events, nothing saved is overwritten).
+- `tests/test_exo_observations.py` covers the observation record and its analysis.
 - The panel itself is exercised by hand in a live game, by visiting a planet with biological signals.
 
 ## 10. Known gaps

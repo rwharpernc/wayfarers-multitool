@@ -1,8 +1,8 @@
 # Sharing reports to Discord: research
 
-Research and plan for sharing WFMT's reports to Discord: what other tools do, what Discord allows, what WFMT already has, the options considered and the plan.
+Research and plan for sharing WFMT's reports to Discord: what existing tools offer, what Discord allows, what WFMT already has, the options considered and the plan.
 
-- **Status:** research and plan, written 2026-10-29. Stage 1 is built (the shared formatter, webhook client, per-commander store and Settings tab, and the BGS report and Powerplay progress); stages 2 and 3 are not. The sections below were written before the build, so where they differ the code and [the guide](guide/discord.md) are right.
+- **Status:** research and plan, written 2026-10-29. Stage 1 is built (the shared formatter, webhook client, per-commander store and Settings tab, the BGS report and Powerplay progress, and the customizing dialog of section 11); the later stages are not. The sections below were written before the build, so where they differ the code and [the guide](guide/discord.md) are right.
 - **Decisions (2026-10-29):** Discord webhooks are in scope, because posting by webhook is now an expected feature for Discord users, and **plain copy and paste stays in scope for everyone else**, so commanders who use other chat programs, forums or notes are not left out.
 - **Changed after stage 1 first shipped:** a webhook belongs to one channel, so each commander now saves a named **list of destinations** (not one webhook), **Post to Discord** asks which one when there are several, the same report keeps a separate earlier post for each destination, and Settings can copy another commander's list.
 
@@ -45,18 +45,15 @@ shows how a share-by-paste format is already handled.
 
 ## 3. What other tools do
 
-- **BGS-Tally** is the one tool confirmed to post to Discord. Per its own wiki:
-  - It generates Discord-ready text to paste by hand, and can post directly to one or more servers through webhooks. The feature list says
-    this can happen "including fully automatically".
-  - Webhooks are set up in EDMC's settings: a table of webhook URLs, each with a nickname and checkboxes for which kinds of information
-    go to that server. A **Post to Discord** button then appears in its windows.
+Existing community tools for Elite Dangerous reports take three forms:
+
+- **An EDMC plugin that posts by webhook.** It generates Discord-ready text to paste by hand and can also post to one or more servers through webhooks.
+  - Webhooks are set up in EDMC's settings: a table of webhook URLs, each with a nickname and checkboxes for which kinds of information go to that server.
   - Posting again within the same tick updates the earlier post instead of creating another.
   - Threads are reached by appending `?thread_id=<id>` to the webhook URL.
-  - It lists Powerplay merits among what it tracks, but its documentation does not say whether Powerplay reports are among what it
-    posts. That is unconfirmed.
-- **EDBGS** (a BGS helper) builds BGS reports to paste into a Discord server. It is not an EDMC plugin and has no webhook.
-- **Elite BGS bot** (Elite-Kode) is a Discord bot that answers BGS questions in a server. It is a bot, not a plugin.
-- **EDMC PowerPlay Progress** shows merits and totals by system. Its thread does not mention Discord.
+  - It lists Powerplay merits among what it tracks, but its documentation does not say whether Powerplay reports are among what it posts. That is unconfirmed.
+- **A web helper** that builds BGS reports to paste into a Discord server. It is not an EDMC plugin and has no webhook.
+- **A Discord bot** that answers BGS questions in a server. It is a bot, not a plugin.
 
 No second EDMC plugin that posts reports by webhook turned up.
 
@@ -98,7 +95,7 @@ All of these would be sent only when the commander presses a button (the options
 | Option | What it is | For | Against |
 |---|---|---|---|
 | **A. Copy for Discord** | A **Copy for Discord** next to each existing copy button, which stays as the plain-text **Copy**. Same data, formatted with Discord's markdown: bold system names, a code block for columns, links wrapped so they do not unfurl, long reports split into messages under 2,000 characters | No network. Keeps "nothing is sent unless you opt in". Fits the existing buttons. Nothing to reverse in the specs | The commander still pastes by hand. Several messages for a long report |
-| **B. Post by webhook** | A **Post to Discord** button that sends the same text to a webhook URL the commander saves in Settings | One press instead of copy and paste. Can update the earlier post for the same tick and use threads, as BGS-Tally does | A new online feature: the internet page and the BGS spec change. The webhook URL is a secret to store and never log. More failure cases (revoked webhook, rate limit, no connection) |
+| **B. Post by webhook** | A **Post to Discord** button that sends the same text to a webhook URL the commander saves in Settings | One press instead of copy and paste. Can update the earlier post for the same tick and use threads | A new online feature: the internet page and the BGS spec change. The webhook URL is a secret to store and never log. More failure cases (revoked webhook, rate limit, no connection) |
 | **C. Automatic posting** | WFMT posts on a tick, a sale, a carrier request or an expedition event | Nothing to remember | The riskiest for privacy and for spam. A mistake posts location data without a press. Not recommended |
 
 **Decision:** A and B are both in scope, and the plain-text copy stays for non-Discord clients. C stays out: every post follows a button
@@ -152,7 +149,7 @@ The stage 1 build settled questions 1, 2, 3 and 6: the list of destinations is s
    with a way to copy it to another commander.
 2. Should **Back up my data** include the webhook URL? Suggested: no, since it is a secret.
 3. Should one webhook serve every report, or should each report type have its own (BGS to one channel, carrier movement to another)?
-   BGS-Tally allows several, each with checkboxes for what goes to it.
+   An existing plugin allows several, each with checkboxes for what goes to it.
 4. Should expedition announcements use fixed wording, or open for editing before they are posted?
 5. For carrier movement, which events are posted: the request, the cancellation and the arrival, or the request only?
 6. Should each report have two buttons (**Copy** and **Copy for Discord**, with **Post to Discord** beside them), or one **Copy** with a
@@ -273,9 +270,4 @@ Time      (x) UTC text  ( ) Discord time tag
 
 ## Sources
 
-- BGS-Tally: <https://github.com/aussig/BGS-Tally> and its wiki page <https://github.com/aussig/BGS-Tally/wiki/Discord-Server-Setup>
-- BGS-Tally changelog: <https://github.imc.re/aussig/BGS-Tally/blob/develop/CHANGELOG.md>
 - Discord webhook reference: <https://docs.discord.com/developers/resources/webhook>
-- EDBGS: <https://codeberg.org/nola/EDBGS>
-- Elite BGS bot: <https://github.com/Elite-Kode/bgsbot>
-- EDMC PowerPlay Progress: <https://forums.frontier.co.uk/threads/edmc-plugin-power-play-progress.636217>

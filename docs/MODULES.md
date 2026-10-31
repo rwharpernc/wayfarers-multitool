@@ -30,7 +30,7 @@ Spec: [TECHNICAL.md](TECHNICAL.md) sections 3 to 5 and 10
 | Module | What it is |
 |---|---|
 | `fsd_data.py` | Frame shift drive base values for the Route Planner (optimal mass, most fuel per jump, fuel multiplier and power for 66 drives, the Guardian booster ranges and the 6x supercharge of the Mk II overcharge drive), generated from public ship-module data (source and license: see docs/ATTRIBUTIONS.md and THIRD-PARTY-NOTICES.md) |
-| `spansh_courtesy.py` | The one polite way WFMT calls Spansh: at most two requests at once, spaced a quarter second apart, retried with growing waits when Spansh answers busy (429, 502, 503, 504, honoring Retry-After), a timeout retried only for a GET, and a pause of five minutes after five failures in a row. Every Spansh request goes through it (a test enforces that), and a caller answering a keystroke asks for no retries. Counters feed the diagnostics. See [SPANSH_USAGE.md](SPANSH_USAGE.md) |
+| `spansh_courtesy.py` | The one polite way WFMT calls Spansh: at most two requests at once, spaced a quarter second apart, retried with growing waits when Spansh answers busy (429, 502, 503, 504, honoring Retry-After), a timeout retried only for a GET, and a pause of five minutes after five failures in a row; with the diagnostic log on, each request is logged with its outcome and time. Every Spansh request goes through it (a test enforces that), and a caller answering a keystroke asks for no retries. Counters feed the diagnostics. See [SPANSH_USAGE.md](SPANSH_USAGE.md) |
 | `star_index.py` | The optional local neutron-star index: the file format, the reader, the nearest-star query by grid cell, the name codec, status and the `wfmt_star_index_use` switch; no network |
 | `star_index_build.py` | Builds the index from Spansh's neutron-star dump: a two-pass streaming build through temporary bucket files, written atomically, with progress and cancel |
 | `star_index_download.py` | The user-started download of the dump: free-space check, resume, conditional request, size cap, one at a time; through the courtesy layer's streaming call |
@@ -50,7 +50,7 @@ Spec: [TECHNICAL.md](TECHNICAL.md) sections 3 to 5 and 10
 | `journal_files.py` | Shared start-up catch-up helpers: the journal folder, files changed since a moment, a filtered event reader, and `read_cargo_file`, the ship's hold from the game's `Cargo.json` beside the journals (nothing when the file is missing or describes the SRV) |
 | `__init__.py` | The package marker; holds `__version__`, the one place the version number lives (mirrored in `package.json`) |
 | `http_identity.py` | The User-Agent every web request sends, so services can tell which WFMT feature is calling |
-| `issue_report.py` | The Settings → General → Help **Report an issue** button: builds the prefilled GitHub bug-report address (versions and OS, nothing personal) and opens it in the browser; also **Copy diagnostics**, which puts the versions and the newest WFMT lines of EDMC's log (commander name and home folder redacted) on the clipboard |
+| `issue_report.py` | The Settings → General → Help **Report an issue** button: builds the prefilled GitHub bug-report address (versions and OS, nothing personal) and opens it in the browser; the Game data form (`build_feedback_url`, `open_feedback`: area, subject and context prefilled, used by the Engineers tab and Settings → Help); also **Copy diagnostics**, which puts the versions and the newest WFMT lines of EDMC's log (commander name and home folder redacted) on the clipboard |
 | `load.py` | The EDMC entry point: `plugin_start3`, `plugin_app`, `journal_entry`, `dashboard_entry`, `plugin_stop`, the one-time overlay reset, and forwarding to every feature |
 | `notifier.py` | A tiny subscribe/notify helper for where one module's data changes and others must redraw |
 | `overlay.py` | The one shared overlay client (EDMCModernOverlay over a local TCP port), its Plugin Group registration and group offsets |
@@ -138,7 +138,7 @@ Spec: [ORGANIC_SCANNING_TECH_SPEC.md](ORGANIC_SCANNING_TECH_SPEC.md), [SCREENSHO
 | `elw_rarity_spansh.py` | Spansh count of known Earth-like worlds around a system |
 | `exploration_progress.py` | Bodies scanned against the honk's body count, and what the last exploration and organic data sales paid |
 | `exploration_value.py` | Estimated scan payout for the last body scanned, the system's age and region, system scan progress and the last data sales. It has no section of its own: its lines are drawn inside the Dashboard section (`build_rows`), and it keeps its Settings tab |
-| `gec_poi_edastro.py` | edastro.com's Galactic Exploration Catalog: downloads the full list once and finds the nearest point of interest locally (their own nearest endpoint does not use the position) |
+| `gec_poi_edastro.py` | edastro.com's Galactic Exploration Catalog: downloads the full list once and finds the nearest point of interest locally (WFMT works out the nearest itself from your position) |
 | `gec_poi_panel.py` | The edastro GEC half of POI Reference: its lookup, result line and Settings |
 | `poi_reference_panel.py` | The POI Reference section: one Find POI runs the GEC and Canonn lookups together and copies the nearer system; owns the buttons and joins the two Settings pages |
 | `materials_data.py` | The 146 engineering materials with type and grade: 137 from a public material list and nine Thargoid-war and chip materials added by hand (source and license: see docs/ATTRIBUTIONS.md and THIRD-PARTY-NOTICES.md) |
@@ -271,7 +271,7 @@ Spec: [MINING_TECH_SPEC.md](MINING_TECH_SPEC.md)
 | `mining_session_archive.py` | Optional per-run JSON archive of finished mining runs |
 | `mining_space.py` | Tracks ship-based mining runs |
 | `mining_share.py` | One deposit as a pasteable line (`WFMT-SPOT1:...`): encode, strict decode and the duplicate check |
-| `mining_spansh_client.py` | Spansh search for hotspots and best-price stations (shared with Trade's price searches) |
+| `mining_spansh_client.py` | Spansh search for hotspots, best-price stations (shared with Trade's price searches; each `StationPrice` carries Spansh's `has_shipyard` flag), stations that sell several commodities at once, a system's stations and material traders |
 | `mining_stops.py` | Rhino stops: saved deposits one parking spot can reach, the best three, and the radius setting's limits |
 | `mining_drive_rings.py` | The rings to drive round a marked mining location so the 2 km scanner reach covers it, from its middle out to its border (pure logic; a guide from the community reach figure, not a measurement) |
 | `mining_map_picture.py` | The saved map picture of a mining location: the radar's marks centered on the location, sized to fit, with a title and a legend, no commander name (the live window's Save map button writes it as a PNG) |
@@ -375,7 +375,6 @@ Guide: [Colonization](guide/colonization.md)
 | `colonization_buy_window.py` | The Where to Buy window: Spansh searches for the picked commodity or the whole list, with a shopping route that shows the stock at each stop, the Exclude fleet carriers and Exclude surface ports ticks and the stock, shipyard and arrival filters (all applied to what was found, so changing one asks Spansh for nothing), and a route that follows purchases; told the picked commodity, the rows to buy and the site's system by the Sites window |
 | `colonization_sources.py` | Where to buy a colonization commodity: the closest stations (and optionally fleet carriers) with it in stock, any landing-pad size by default, via Spansh; the whole-list search (one request per commodity, and one orbital-only request for a commodity sold only at surface ports), the display filters (`filter_found`) and the remembered search choices; pure shaping around an injected search |
 | `colonization_stats.py` | The figures and wording of the Colonization page: the current project and the history, worded for a commander with or without a fleet carrier, and the last completed sites; pure, no Tk |
-| `colonization_systems.py` | (Not used by the window now.) The best single systems for a shopping list: groups the whole-list search by system, checks the best few with Spansh (every station's market in one request each), and ranks them by how much of the list they cover, the distance and the cost; pure logic around an injected search |
 | `colonization_view.py` | What the Colonization Sites window shows for a site: the commodity rows after the filters, and the totals (still to get, on the carrier, in the ship, buy and haul trips); pure, no Tk |
 | `colonization_window.py` | The Colonization Sites window: sites on the left; the picked site's progress, totals, filters and sortable commodity table, and the Where to buy search, on the right |
 
@@ -482,7 +481,7 @@ Spec: [WINDOW_FRAMEWORK_SPEC.md](WINDOW_FRAMEWORK_SPEC.md). Pure tkinter; nothin
 | `uikit/dialogs.py` | Themed confirm, choice, one-line prompt and message boxes (`confirm`, `choose`, `prompt`, `info`, `warning`, `error`) in place of the operating system's own boxes: modal over the parent, centered, a hard width cap, Esc cancels and Enter takes the default; `set_test_responder` lets tests answer without a window |
 | `uikit/form.py` | `FormDialog`: labeled fields under section headings with an error line and Save and Cancel, in the window shell; the shared add/edit form (hotspots, ship builds), with `parse_optional_int` and `parse_optional_float` |
 | `uikit/mapview.py` | Canvas map widget (coverage, hotspots, position, dashed rings, zoom) |
-| `uikit/palette.py` | Color and font tokens for WFMT's own window look, and its four themes (Navy, Cyan, Amber, Green) with `apply` |
+| `uikit/palette.py` | Color and font tokens for WFMT's own window look, and its four themes (Navy, Cyan, Amber, Green) with `apply`; also the three Engineers-tab status colors (`ENGINEER_UNLOCKED`, `ENGINEER_PROGRESS`, `ENGINEER_UNAVAILABLE`), the same in every theme |
 | `uikit/placement.py` | Where a pop-out window opens: the remembered position while it is still on a connected monitor, otherwise over EDMC's window on EDMC's monitor (every time with the "Always open WFMT's windows on EDMC's monitor" setting); `place` is pure, monitors come from user32 on Windows and the Tk virtual screen elsewhere |
 | `uikit/shell.py` | The window shell: header (action buttons and menus take a tooltip), body, status footer, saved geometry; and `TabShell`, the same shell for a window that lives in a tab of another window |
 | `uikit/style.py` | Fonts and per-window skinning |

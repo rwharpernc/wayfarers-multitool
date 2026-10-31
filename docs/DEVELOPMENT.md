@@ -31,6 +31,7 @@ cd wayfarers-multitool
 **The bug-report form**
 
 - `.github/ISSUE_TEMPLATE/bug_report.yml` is the bug-report form that Settings → General → Help → **Report an issue** opens.
+- `.github/ISSUE_TEMPLATE/game_data.yml` is the Game data form that **Report game data** (Help) and the Engineers tab's **Report engineer data** open, prefilled by `issue_report.build_feedback_url` (area, subject, context, environment). Any part of WFMT can use it by calling `issue_report.open_feedback(area, subject, context)`; the field ids in the template must match the `*_FIELD` constants (a test checks).
 - Its `id: environment` field must stay in step with `plugin/issue_report.py` (a test checks).
 - The form is not part of the build, so a change to it takes effect for everyone once pushed to `master`.
 
@@ -95,7 +96,7 @@ detects the OS and EDMC's plugins folder (see "Try your changes in EDMC" above).
    - Aim for a subject of about 50 and a body wrapped at 72.
    - On Linux the hook must be executable, which the repo already records.
    - `tests/test_commit_msg_hook.py` runs it on sample messages.
-4. Check it works: `python -m unittest discover -s tests`, `python tests/import_smoke.py`,
+4. Check it works: `npm run test:docker` (the unit tests and the import check in a Linux container on a virtual display, so no window opens on your screen),
    `npm run build` (the first line should name the right OS) and `npm run package`.
 
 **Rules that apply on both machines**
@@ -115,6 +116,7 @@ detects the OS and EDMC's plugins folder (see "Try your changes in EDMC" above).
   - Linux Flatpak: `~/.var/app/io.edcd.EDMarketConnector/data/EDMarketConnector/logs/EDMarketConnector-debug.log`
   - Windows: `%LOCALAPPDATA%\EDMarketConnector\logs\EDMarketConnector-debug.log`
   - EDMC's **Help → Open Log Folder** opens it.
+  - WFMT's own diagnostic log (Settings → WFMT → General → Help → **Write a separate diagnostic log**, off by default) is `logs/WFMT/wfmt-diagnostics.log` in EDMC's data folder; **Open log folder** in the same place opens it.
 - Not synced by Git (ignored on purpose): `docs/roadmap.md`, `dist/` and other local, ignored files.
   - `docs/TODO.md` is tracked: it is the public list of open work.
   - Copy local notes between machines yourself.
@@ -154,8 +156,10 @@ detects the OS and EDMC's plugins folder (see "Try your changes in EDMC" above).
 ## Test
 
 ```bash
-python -m unittest discover -s tests
+npm run test:docker
 ```
+
+That runs `python -m unittest discover -s tests` and `tests/import_smoke.py` in a container; run the tests this way so no test window takes focus from your screen.
 
 The tests cover the pure-logic modules (parsing, state, estimates, data handling). They don't need EDMC
 or a display, because EDMC's `config` module is stubbed inside the tests. There is also a smoke test that
@@ -299,7 +303,7 @@ A release is cut from a clean `master`:
 
 1. Set the version in `plugin/__init__.py` and `package.json`.
 2. In `CHANGELOG.md`, add a dated section for the version and move the "Unreleased" entries under it.
-3. Run the tests, then `npm run package` to build `dist/Wayfarers-Multitool.zip`.
+3. Run the tests (`npm run test:docker`), then `npm run package` to build `dist/Wayfarers-Multitool.zip`.
 4. Commit, then tag `v<version>` and push the commit and the tag.
 5. Publish the release with the zip as its asset:
 

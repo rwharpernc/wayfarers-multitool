@@ -23,7 +23,7 @@ alphabetical order of their names (in every mode the sections are alphabetical, 
 | POI Reference and Codex Completionist | Exploration → POI Reference (the Canonn, edastro and Codex sections one under another) |
 | Discovery Alerts, Notable Bodies | Overlays → Discovery, Overlays → Notable Bodies |
 | System targets, Body info, Route, Expedition Log card, Surface Compass, Exobiology cards | Overlays → the page of the same name |
-| Where each card sits, its colors and the overlay connection | Overlays → Overlay Placement, Appearance and Overlay Connection |
+| Where each card sits, its colors and the overlay connection | Overlays → Overlay Placement, Appearance and Overlay Connection (Overlay Placement can also copy another commander's overlay choices: see [Setting up the overlay](../OVERLAY_SETUP.md#moving-things-around)) |
 | Local star index and the online lookups | General → Online lookups |
 | Keyboard shortcuts and chat commands | General → Shortcuts |
 
@@ -486,7 +486,7 @@ A quiet readout of what you're finding, in the **Dashboard** section of the Expl
 | Line | What it says |
 |---|---|
 | `Last scan: <body> - est. 1,234,567 cr` | The estimated payout for the last body you scanned (stars as well as planets), with the first-discovery multiplier when nobody had found it. `Last scan: (none yet)` until you scan |
-| `System age: <age>` | The age of the current system, from the star's `Age_MY` in the scan, written in million years (`4,200 My (~4.2 By)` for the oldest) |
+| `System age: <age>` | The age of the current system, from the star's `Age_MY` in the scan, written in million years (`4,200 My (~4.2 By)`: a billion-years figure is added from 1,000 My up) |
 | `Region: Inner Orion Spur` | Which of the galaxy's 42 named regions you are in, worked out from your coordinates |
 | `System bodies: 6 scanned of 14 - all found` | How many of the system's bodies you have scanned out of the number the honk found. `all found` appears once the game reports that your FSS has found every body; before a honk it says `(honk to count them)` |
 | `Last data sale: exploration 1,234,567 cr, organic 350,000 cr` | What your last data sales actually paid, to set against the estimate. `Last data sale: (none yet)` until one is read |
@@ -1378,5 +1378,5 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 | The sale line to include sales before the current journal file | It is read from the current journal file when EDMC starts, then kept up to date live. | It resets to "none yet" when you restart EDMC after a new game session. |
 | Codex Completionist to cover everything | Canonn's catalog has no geological or anomaly entries, so those never appear under **Not found**. The tally is per commander. | Use the game's Codex for those. Press **Refresh Catalog** if the saved copy is old. |
 | POI lists to be current | They are snapshots from Canonn and edastro, and are fetched only when you ask. | Press **Find POI** or **Update POI** to refresh. |
-| edastro's own "nearest" lookup to work | It does not use your position: a check on 2026-10-10 got "The Solar System" for every coordinate and name tried. WFMT downloads the full list and finds the nearest itself. | None needed. If Find POI says the lookup failed, edastro's list could not be downloaded; try again later. |
+| A nearest lookup done by edastro | WFMT does not ask edastro for the nearest point: it downloads the full list and works out the nearest itself from your position. | None needed. If Find POI says the lookup failed, edastro's list could not be downloaded; try again later. |
 

@@ -121,11 +121,10 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 ### 3.1 The built-in overlay
 
 - **Decision:** WFMT can draw its own overlay on Windows, in a window it lays over Elite, and keeps EDMCModernOverlay for Linux and for other plugins. Both can run at once.
-- **Why:** EDMCModernOverlay is a separate program with its own font, scaling and lifetime.
-  - Its default font is capitals only.
-  - An overlay window left running after EDMC closes can reconnect and draw a second copy of every card.
-  - WFMT cannot choose a font for its own cards there.
-  - Its right-hand clamp has to be worked around in placement.
+- **Why:** a separate overlay program has its own font, scaling and lifetime, shared by every plugin that draws through it. Drawing in WFMT's own window gives WFMT direct control of them.
+  - It can choose a lower-case font for its own cards.
+  - The window is created and closed with WFMT, so no window is left running from an earlier session to draw a second copy of every card.
+  - It knows its window's size and position, so placement needs no workaround at the right-hand edge.
 - **What stays the same:** every feature sends small payloads through `overlay.OverlayClient`.
   - The built-in overlay is just another destination for the same payloads (`overlay_native.py`), and no card is specific to it.
   - The hide-everything switch works on both.
@@ -397,7 +396,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 - **Cause:** a label whose `wraplength` is the whole width of the plugin frame is right on its own row and wrong when it shares a row with a button.
   - The row (button plus a label as wide as the frame) is wider than the frame.
   - EDMC sizes its window to the widest row, the frame's next resize is larger, and the label is handed that larger width in turn.
-  - Any text change that lands in such a label can start the creep. For example, the route summary beside NEUTRON ROUTE changes when a window closes and the route state is refreshed.
+  - Any text change that lands in such a label can start the creep. For example, the route summary beside Neutron route changes when a window closes and the route state is refreshed.
 - **Decision:** `panelkit.wrap_label` gives a label the room left of where it starts (`available_wrap`) and also subtracts the widths of the other widgets in its row, which are known.
   - A label's own position is not settled at the moment a hidden panel is shown.
   - So it recomputes when a hidden panel is mapped, and gives a label in a hidden panel only a modest width until then.
@@ -496,6 +495,7 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
   - retries with growing waits on a busy answer
   - a pause after repeated failures
   - a count in the diagnostics
+  - with the separate diagnostic log on (Settings → WFMT → Help), a line for each request with its outcome and time
 - **Why a module and not a setting:** the limits are the same for every feature and belong in one reviewed place; a user setting would only let them be set higher.
 - **Why POSTs are not retried on a timeout:** a submitted job may have been accepted.
 - **Cost:** a long polling loop (route jobs poll every 5 seconds) is unchanged. The star lookups for the next dozen neutron stops take a few seconds instead of arriving at once.
@@ -510,12 +510,11 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 - **The hold comes from `Cargo.json`.** The journal's `Cargo` event carries only a count, and EDMC's cargo state was seen not to follow a purchase, so the ship's hold is read from the file the game rewrites on every change, again shortly after any event that can change it. EDMC's state is the fallback when the file is missing or describes the SRV.
 - **The middle step (after 1.0.0):** once everything is bought and parked on the carrier, the old *hide covered* filter hid every row. It became a three-way choice: All, To buy (the old behavior) and To haul, which keeps the rows the ship and carrier cover but the ship does not yet hold in full, so a row leaves the list as it is loaded and the site drops it once delivered. One function (`colonization_view.shown`) decides for the window and the overlay card, so they agree.
 - **Not done:** counting a commodity on the carrier as delivered. It is not delivered until it is unloaded at the depot, and the carrier column says where it is.
-- **Best single systems** (`colonization_systems.py`) follow the same rule of not guessing: the search by commodity names stations, so a system whose stations together stock the list was invisible. The few best candidates are asked of Spansh for every station's whole market (one request each, through the courtesy layer in 3.23), so the stock is counted from what the stations report. Where to look: [TECHNICAL.md](TECHNICAL.md) (Best single systems). The window no longer shows them (2026-10-31: the suggested route is the only plan, with the stock at each stop); the module is kept.
 
 ### 3.27 Color themes for WFMT's own windows
 
-- **The problem:** one fixed palette suited some commanders and not others, and the EDDDT app next to WFMT already offers three colors.
-- **Decision:** four themes (Navy, the default, and Cyan, Amber and Green after EDDDT's stylesheet), one choice for every pop-out window, from Settings or the window's bottom line. Open windows are recolored by mapping each old color to the new one, because the windows are built from the palette's attributes and keep what they were given.
+- **The problem:** one fixed palette suited some commanders and not others.
+- **Decision:** four themes (Navy, the default, and Cyan, Amber and Green), one choice for every pop-out window, from Settings or the window's bottom line. Open windows are recolored by mapping each old color to the new one, because the windows are built from the palette's attributes and keep what they were given.
 - **Why a color map and not a rebuild:** windows hold state (selections, scroll positions, a search in progress) that a rebuild would lose.
 - **The rule that makes it work:** read palette colors when a widget is built. A color fixed at import time or as a default argument would stay in the old theme, so the kit uses `None` defaults and token names.
 - **Not done:** a light theme, themes for the overlay cards (Settings → Overlays → Appearance has its own schemes) and anything in EDMC's own window.

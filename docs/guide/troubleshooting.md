@@ -33,7 +33,7 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | Mining stats on the game screen | **Enable HUD Overlay** | Settings → WFMT → Overlays → Mining |
 | The Mining radar (the Surface Live radar) over the game | **Show the Mining radar over the game while the Rhino is out**, and WFMT's built-in overlay chosen (Windows) | Settings → WFMT → Overlays → Mining and Overlay Connection |
 | "Screenshot saved" message on the game screen | **Show a notification on the in-game overlay when a screenshot is saved** | Settings → WFMT → Overlays → Screenshots |
-| The Colonization shopping list appears by itself at markets | **Also show the shopping list automatically**. Otherwise only **Always show the shopping list** shows it | Settings → WFMT → Overlays → Colonization |
+| The Colonization shopping list appears by itself at markets | **Also show the shopping list automatically**, or tick **Always show the shopping list, whatever screen you are on** to keep it up on every screen (with neither ticked it does not show) | Settings → WFMT → Overlays → Colonization |
 | Auto-Honk | **Enable Auto-Honk** or the **Auto-Honk** button | Settings → WFMT → Exploration → Auto-Honk |
 | **Find sources** (Missions) and **Best picks** (Trade) | **Enable Spansh trade lookups**; Find sources asks to turn it on when you press it | Settings → WFMT → Trade |
 | Routes and Market on the Trade page | **Enable Spansh trade lookups** ([details](#the-lookup-buttons-are-grayed-out-or-there-is-no-commodity-box)) | Settings → WFMT → Trade |
@@ -41,7 +41,7 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | ELW rarity or EDSM upload status in Exploration | The two options under Exploration Value | Settings → WFMT → Exploration → Exploration Value |
 | Fleet carriers or surface ports missing from "where to buy" results | the filters in the Where to Buy window: **Exclude fleet carriers**, **Exclude surface ports**, **Only stations with enough stock**, **Only stations with a shipyard** and **Arrival within** (all off, so everything is included, by default) | Where to Buy window (the **Where to Buy** button in the Colonization Sites window) |
 | Raven Colonial not updating | The master switch and the two options under it ([steps](#raven-colonial-doesnt-update-as-i-deliver)) | Settings → WFMT → Colonization → Raven Colonial |
-| Something else is wrong | **Report an issue**, then **Copy diagnostics** to paste the log lines into it ([how](reporting-problems.md)) | Settings → WFMT → General → Help |
+| Something else is wrong | **Report an issue**, then **Copy diagnostics** to paste the log lines into it; for a hard-to-pin-down problem tick **Write a separate diagnostic log (off by default)** first ([how](reporting-problems.md)) | Settings → WFMT → General → Help |
 | WFMT never updates itself | **Automatically download and install updates** (see also [the update did not take](#the-update-did-not-take)) | Settings → WFMT → General → Updates |
 | **Neutron Star** asks Spansh every time | Install the optional Local star index, and leave **Use the local index for Neutron Star when it is installed** ticked | Settings → WFMT → General → Online lookups |
 | Chat commands such as `!wf overlays` do nothing | **Chat commands** | Settings → WFMT → General → Shortcuts |
@@ -542,4 +542,4 @@ Each mode guide ends with "What the game does and doesn't tell us, and how to wo
 
 EDMC's **Help** menu can open its log folder. The log often says exactly what went wrong, and including it in a report helps a lot.
 
-**Settings → WFMT → General → Help** has a **Report an issue** button and a **Copy diagnostics** button that do most of the work: see [Reporting a problem](reporting-problems.md).
+**Settings → WFMT → General → Help** has a **Report an issue** button and a **Copy diagnostics** button that do most of the work (and a tick for a separate diagnostic log, with **Open log folder** and **Copy log path**): see [Reporting a problem](reporting-problems.md).

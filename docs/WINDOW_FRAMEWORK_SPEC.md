@@ -34,7 +34,7 @@ A consequence:
 
 - **Palette and tokens** (`palette.py`): navy background layers, text, accent, success, warning and danger
   colors, and three colors for headings and messages (`TITLE` gold for a window title, `HEADING` cyan for section labels and
-  table column headers, `STATUS` for the footer message: a bright color of its own on each theme, yellow or cyan), plus a color-blind-safe set for status. Shape or a label carries the state, never color
+  table column headers, `STATUS` for the footer message: a bright color of its own on each theme, yellow or cyan), plus a color-blind-safe set for status and three fixed row colors for the Engineers tab (`ENGINEER_UNLOCKED`, `ENGINEER_PROGRESS`, `ENGINEER_UNAVAILABLE`), the same on every theme. Shape or a label carries the state, never color
   alone (the minimap markers work the same way).
 - **Style** (`style.py`): applies the look to a window's classic widgets, and holds the shared text size (-2 to +6 points, changed by the footer's A- and A+ or Settings → General → Window). Fonts derive from
   `TkDefaultFont` so Linux and high-DPI displays behave.
@@ -69,7 +69,7 @@ for the same discipline as the main panels.
 
 WFMT's windows deliberately **do not follow EDMC's theme**. They use their own fixed navy look, which gives
 every window a consistent feel and works the same on Linux. The cost is that it ignores a user's EDMC
-theme choice. The palette is token-based: there are four themes (Navy, the default, and Cyan, Amber and Green after EDDDT), chosen under
+theme choice. The palette is token-based: there are four themes (Navy, the default, and Cyan, Amber and Green), chosen under
 Settings → General → Window or in a window's bottom line, and applied to open windows at once.
 
 ## 5. The Surface Mining Book layout

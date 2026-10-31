@@ -185,7 +185,7 @@ The three online lookups are **off until you turn them on in Settings**. See [wh
 
 1. In **Material**, pick or type a mineral (the list holds the materials known to work; a name not in it is still accepted).
 2. In **Where**, choose how far to look: within 25, 50, 100 (the default), 250, 500 or 1,000 ly.
-3. In **Search from**, type the system to measure from. It starts as the system you are in; **Here** puts it back. System names are suggested as you type, from the systems you have been in (and from Spansh while typing only if you ticked *Suggest system names from Spansh while typing* in Settings → WFMT → Window).
+3. In **Search from**, type the system to measure from. It starts as the system you are in; **Here** puts it back. System names are suggested as you type, from the systems you have been in (and from Spansh while typing only if you ticked *Suggest system names from Spansh while typing* in Settings → WFMT → General → Window).
 4. Press **Search** (or Enter).
 
 The table lists up to 25 rings Spansh confirms have a hotspot for that material, nearest first. Columns: **Ring**, **Body**, **System**, **Hotspots** (how many of that material the ring has), **Distance (ly)**, **Arrival (ls)** (distance from the arrival star) and **Reserve level**. Click a heading to sort. Select a row and use **Copy ring**, **Copy body** or **Copy system** in the header, or double-click a row to copy its system, then paste it into the galaxy map.

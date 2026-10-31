@@ -1,15 +1,16 @@
 # Reporting a problem
 
-Found a bug, or a number that looks wrong? WFMT has two buttons that make a good report quick to write. Both are in
+Found a bug, or a number that looks wrong? WFMT has buttons that make a good report quick to write. They are all in
 **File → Settings → WFMT → General → Help**.
 
-| Button | What it does |
+| Control | What it does |
 |---|---|
 | **Report an issue** | Opens a bug report on GitHub in your browser, with the title started and your versions and operating system already filled in |
-| **Write a separate diagnostic log** | Off until ticked. A detailed log of WFMT's own, in a separate file, for a problem that is hard to pin down ([how](#the-diagnostic-log)) |
 | **Copy diagnostics** | Copies the same version lines plus the newest WFMT lines from EDMC's log to your clipboard, so you can paste them into the report |
+| **Report game data** | Opens the Game data form on GitHub, for telling us what the game shows ([how](#telling-us-what-the-game-shows-game-data)) |
+| **Write a separate diagnostic log (off by default)** | A tick, off until ticked. A detailed log of WFMT's own, in a separate file, for a problem that is hard to pin down ([how](#the-diagnostic-log)); **Open log folder** and **Copy log path** sit under it |
 
-Neither button sends anything by itself. The report only exists on GitHub if you press **Submit new issue** there, and that needs your
+None of these sends anything by itself. The report only exists on GitHub if you press **Submit new issue** there, and that needs your
 own free GitHub account. You can always write the report by hand on the
 [Issues page](https://github.com/rwharpernc/wayfarers-multitool/issues) instead.
 
@@ -34,6 +35,15 @@ own free GitHub account. You can always write the report by hand on the
 7. **Read the whole form before you submit it**, the pasted log included, and delete anything you would rather not post. Anything you submit
    on the Issues page is visible to everyone who can see the repository (see [what is left out](#what-is-left-out-and-what-to-check)).
 8. Press **Submit new issue**.
+
+## Telling us what the game shows (Game data)
+
+WFMT cannot check some things against the game's journal, and some of its tables (an engineer's requirements and locations, for example) come from community lists. If you can see what the game really shows, a short form on GitHub lets you tell us. It is separate from a bug report and works for any part of WFMT; **engineers are the first use**.
+
+- **From the Engineers tab:** select an engineer and press **Report engineer data**. The form opens in your browser with the area (Engineers), the engineer's name, the standing WFMT has for them and the Environment box already filled in. Engineers whose invitation requirement WFMT cannot check show **Verification needed** in their details; those are the ones most useful to report.
+- **From Settings:** **File → Settings → WFMT → General → Help → Report game data** opens the same form with nothing filled in but the Environment box, for anything else you want to tell us.
+- **What to write:** under **What the game shows**, copy what the in-game panel says in its own words (for an engineer, the invitation and unlock requirements from the Engineers panel), and under **What WFMT showed that is wrong or missing** anything that did not match. Correct the standing if the game says otherwise.
+- **Nothing is sent by WFMT.** The browser opens the form; you read it, change it and submit it with your own GitHub account, or close the tab. No commander name, system or file path is put in it, and please do not add any.
 
 ## The diagnostic log
 
@@ -71,7 +81,7 @@ The form opens with the title started and the **Environment** box filled in, lik
 On Linux the OS line names your distribution, the session type and whether EDMC is a Flatpak, for example
 `Ubuntu 24.04.1 LTS, wayland, Flatpak`. That is what the Linux problems in [Troubleshooting](troubleshooting.md#linux) usually turn on.
 
-The form is a template (`.github/ISSUE_TEMPLATE/bug_report.yml`), and the bug label is set for you. If your browser opened the plain
+The form is a template (`.github/ISSUE_TEMPLATE/bug_report.yml`), and the bug label is set for you. (Game data uses its own template, `game_data.yml`.) If your browser opened the plain
 new-issue page instead, the template was not found; write the same information in the box by hand.
 
 ## What "Copy diagnostics" copies
@@ -136,6 +146,6 @@ For ideas and requests rather than bugs, the Issues page is the same place.
 
 ## Privacy
 
-**Report an issue** only asks your browser to open a GitHub address, and **Copy diagnostics** only writes to your clipboard. WFMT makes
+**Report an issue** and **Report game data** only ask your browser to open a GitHub address, and **Copy diagnostics** only writes to your clipboard. WFMT makes
 no connection to GitHub itself, and nothing is filed unless you submit it. It is listed with everything else in
 [What goes on the internet](internet-and-privacy.md).

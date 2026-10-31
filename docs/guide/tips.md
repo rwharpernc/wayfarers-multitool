@@ -52,7 +52,7 @@ Things that surprise people, and what to do about them. Back to the [README](../
 **Fonts**
 
 - The built-in overlay has its own font, Source Sans 3 to start with, and you can add any `.ttf` or `.otf` under **Appearance → Overlay font** ([Fonts](../OVERLAY_SETUP.md#fonts)).
-- EDMCModernOverlay's default font has capital letters only.
+- With EDMCModernOverlay, the overlay's default font has capital letters only; pick another under **Appearance → Overlay font**.
 
 **Placement**
 
@@ -92,7 +92,7 @@ Things that surprise people, and what to do about them. Back to the [README](../
   - If Raven has no project for the site you are building, **Create Project on Raven** (in the Colonization Sites window) makes one.
   - **Test key** checks the key.
 - **Shopping-list overlay:**
-  - Tick **Always show the shopping list** in Settings to keep it up on every screen (it stays as you leave it).
+  - Tick **Always show the shopping list, whatever screen you are on** (Settings → WFMT → Overlays → Colonization) to keep it up on every screen (it stays as you leave it). The Colony page has no Overlay button; the **Overlays shown (click to hide)** line hides the card with every other overlay.
   - Tick the automatic option in Settings if you want it to appear by itself at a market, in Carrier Management or at a construction site.
   - It leaves out commodities your hold and fleet carrier already cover (*List: To buy*, the default; choose *To haul* once everything is on the carrier) and its Acquire column shows the tons still to get.
 

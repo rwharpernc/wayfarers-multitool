@@ -46,7 +46,7 @@ All of this is secondhand. None of it was checked against the game.
 - Frontier's Powerplay 2.0 Q&A states there are no diminishing-return restrictions.
 - Players reported diminishing returns when selling goods in the Powerplay 2.0 merit-changes thread. One described repeated sales of the same commodity paying about 2,400 merits three times, then 1,300, then nothing by the fifth. Another claimed trading merits scale with the square root of the quantity sold. Neither is confirmed, and both disagree with the Q&A.
 - The Trailblazers Update 3 notes give offensive actions +5% merits and defensive actions (Reinforcing) -35%. This was seen only in a search summary, so read the notes before relying on it.
-- Merit decay at the weekly reset is described in older guides. A wiki page says Powerplay 2.0 removed merit degradation. Control scores, not merits, decay each week (Update 3.4).
+- Merit decay at the weekly reset is described in older guides. Community pages say Powerplay 2.0 removed merit degradation. Control scores, not merits, decay each week (Update 3.4).
 - Frontier switched off merits for rare goods, settlement data delivery and escape pods in November 2024. Whether they were restored was not found.
 - A July 2026 report says players were unsure whether weekly assignments must be repeated every week to keep ranking up. It came from a secondary site and is unconfirmed.
 - An answer from a web search engine said there is no daily limit and mentioned logarithmic scaling on bulk trades. It named no source, and it does not match the hand-in pay above.
@@ -62,6 +62,3 @@ All of this is secondhand. None of it was checked against the game.
 - [Powerplay 2.0 Q&A](https://www.elitedangerous.com/news/powerplay-20-qa) (Frontier)
 - [Powerplay 2.0 Merit Changes](https://forums.frontier.co.uk/threads/elite-dangerous-powerplay-2-0-merit-changes.630583/page-6) (Frontier forums, player posts)
 - [Trailblazers Update 3 notes](https://www.elitedangerous.com/update-notes/4-1-2-0) and [Update 3.4 notes](https://www.elitedangerous.com/update-notes/4-1-2-103) (Frontier)
-- [Elite Dangerous Wiki: Powerplay](https://elite-dangerous.fandom.com/wiki/Powerplay)
-- [Steam discussion on the November 2024 suspension](https://steamcommunity.com/app/359320/discussions/0/604141990686368357)
-- [Weekly assignment report](https://carriertv.buanzo.org/news/articles/2026-07-04-powerplay-weekly-assignment-requirement-changed.html) (CarrierTV)

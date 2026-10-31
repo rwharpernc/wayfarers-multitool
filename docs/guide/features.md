@@ -41,6 +41,7 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 | See what I earned today, by day and over my career | Click the **Credits this session** line (the Credits Ledger) | [The lines under the mode buttons](getting-started.md#the-lines-under-the-mode-buttons) |
 | Back up my data, restore it or move it to another computer | **Settings → WFMT → General → Backup** | [Backing up your data](getting-started.md#backing-up-your-data) |
 | Keep WFMT up to date | **Settings → WFMT → General → Updates**, or extract the new ZIP over the old folder | [Updating](getting-started.md#updating) |
+| Tell WFMT what the game shows where it cannot check (an engineer's requirements, for example) | **Report engineer data** on the Engineers tab, or **Settings → WFMT → General → Help → Report game data** | [Telling us what the game shows](reporting-problems.md#telling-us-what-the-game-shows-game-data) |
 | Troubleshoot with a detailed log | **Settings → WFMT → General → Help → Write a separate diagnostic log** (off until ticked) | [The diagnostic log](reporting-problems.md#the-diagnostic-log) |
 | Report a bug | **Settings → WFMT → General → Help → Report an issue** and **Copy diagnostics** | [Reporting a problem](reporting-problems.md) |
 | See every setting and what it starts as | **File → Settings → WFMT** | [Settings](getting-started.md#settings) |
@@ -197,7 +198,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
-| The Colony page | Your current project and your history | **Colony** | [The Colony page](colonization.md#the-colony-page) |
+| The Colony page | Your current project in short sections (or, with none under construction, the last 5 you completed), and buttons for the Sites window, My Projects and your history | **Colony** | [The Colony page](colonization.md#the-colony-page) |
 | Site tracking | What each construction site still needs, after counting the cargo in your ship | Dock at a depot once; nothing is typed | [Tracking a site](colonization.md#tracking-a-site) |
 | Colonization Sites window | Every site's shopping list, progress and totals, and the carrier's part | **Dashboard**; **Rescan Journals** if a load did not register | [The Sites window](colonization.md#the-colonization-sites-window) |
 | Where to buy | The closest places to buy a commodity, or a whole list, with, for a list, a suggested shopping route that shows the price and stock at each stop | Click a commodity row, press **Where to Buy**, then **Find nearest** or **Find all** (**Stop** while it runs) | [Where to buy](colonization.md#where-to-buy), [Suggested route](colonization.md#suggested-route) |

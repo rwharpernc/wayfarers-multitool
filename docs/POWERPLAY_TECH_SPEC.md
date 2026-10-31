@@ -31,7 +31,7 @@ are estimated, how sessions work, and how the Rare Goods Finder fits in. For how
 
 - **No exact Control Points.** The journal never reports them (see §4).
 - **No guessing for hand-ins.** Deliveries aren't turned into Control Points (see §3.3).
-- **No network access** except the Rare Goods Finder's Power lookup (see §7).
+- **No network access** except the Rare Goods Finder's Power lookup (see §7) and, only when its tick is on, the overlay card's look-ahead lookup (see §12).
 
 ## 3. How an activity is decided
 
@@ -291,7 +291,7 @@ periods since the cycle start + 1, so day 1 is Thursday 07:00 UTC to Friday 07:0
 - CP is derived from the current ratios (section 4), never stored, and the delivery and unattributed
   merits count in merits only, as everywhere else.
 
-`SCHEMA` (2) marks the saved layout:
+`SCHEMA` (currently 3; version 2 added the daily tally, version 3 the megaship list) marks the saved layout:
 
 - A ledger saved before the daily tally existed (schema 1) is planned as a **rebuild** once, which fills
   the days in from the journals, then marked current.

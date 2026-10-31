@@ -162,7 +162,7 @@ the panel to move between them. For example, Trade has **Session**, **Routes** a
 
 ### Collapsing the panel
 
-The panel itself never folds away. Sections inside the modes (Exploration, Notes, Materials and so on) fold: they start folded, click a
+The panel itself never folds away. Sections inside the modes (Exploration, Notes, Engineering and so on) fold: they start folded, click a
 section's title (▸ / ▾) to open it. They fold again each time EDMC starts.
 
 ### Window height
@@ -314,7 +314,7 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 | Inner tab | Controls and their starting values |
 |---|---|
 | **Backup** | **Back up my data**; **Restore my data...**; **Cancel the waiting restore** (shown only while one waits); *Back up automatically* (off) with **Choose folder...** and *Every [n] days* (7). See [Backing up your data](#backing-up-your-data) |
-| **Help** | **Report an issue**, **Copy diagnostics** and *Write a separate diagnostic log* (off). See [Reporting a problem](reporting-problems.md) |
+| **Help** | **Report an issue**, **Copy diagnostics**, **Report game data** and *Write a separate diagnostic log* (off) with **Open log folder** and **Copy log path**. See [Reporting a problem](reporting-problems.md) |
 | **Online lookups** | A read-out (not controls) of every switch that lets WFMT ask another service: On or Off, what it does, who it asks and which tab changes it; the lookups that need no switch and run only when you press a button; and the **Local star index** group below it |
 | **Shortcuts** | One row per action (Mark the center, Mark the border, Rig placed, Radar range, Open the Live window, Hide or show overlays): the last key of Ctrl+Alt+Shift plus a key (C, B, R, Z, L and O to start; any letter, digit, F1 to F12, or Off), with a warning if two actions share a key or Elite already uses the combination; *Chat commands* (labelled `Chat commands (type  !wf <word>  in Elite's chat)`) (off); *Play a sound when a shortcut worked* (on). The key choices work on Windows only. See [Shortcuts](shortcuts.md) |
 | **Updates** | *Automatically download and install updates* (off); the **Release notes** link. See [Updating](#updating) |
