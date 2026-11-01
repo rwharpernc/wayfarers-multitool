@@ -3,6 +3,12 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## Unreleased
+
+### Changed
+
+- **Where to Buy: surface port requirements.** The **Only at surface ports** group on the route is gone when surface ports are included, since those commodities are on the route marked **surface ports only**. With **Exclude surface ports** ticked, the commodities sold only at surface ports are named in a collapsed group, **IMPORTANT: Surface Port Requirements**, one per row.
+
 ## 1.4.1 (2026-11-01)
 
 ### Changed

@@ -681,15 +681,18 @@ class BuyWindow:
         plan = self._plan
         include_surface = not self._no_surface_var.get()
         surface_only = sorted(self._surface_only(), key=str.casefold)
+        # With surface ports included they are on the route like any other stop (marked as such), so nothing more is said. With them left
+        # out, a commodity sold only at a surface port would silently go missing, so the requirement is named, collapsed.
+        flagged = [] if include_surface else surface_only
         self._plan_table.clear()
         has_trip = plan is not None and bool(plan.stops or self._done_stops())
-        self._show_plan(has_trip or bool(surface_only))
+        self._show_plan(has_trip or bool(flagged))
         table = self._plan_table    # the route goes in the plan block, the commodity lists in the table below it
-        if surface_only:
-            # Said on the route itself: these are sold only at surface ports, none at an orbital port in range. One row each, so no name is clipped.
-            table.insert("surfacenote", ("Only at surface ports" if include_surface else "Only at surface ports, so left out of the route",
-                                         "", "", "", ""), group=True, open=True)
-            for index, name in enumerate(surface_only):
+        if flagged:
+            # One row each, so no name is clipped.
+            table.insert("surfacenote", ("IMPORTANT: Surface Port Requirements", f"{len(flagged)} left out of the route", "", "", ""),
+                         group=True, open=False)
+            for index, name in enumerate(flagged):
                 tons = self._whole_to_get.get(name, 0)
                 table.insert(f"surfacenote{index}", (f"{name} x {tons:,} t" if tons else name, "", "", "", ""),
                              parent="surfacenote", tag="warn")
@@ -731,10 +734,9 @@ class BuyWindow:
         left_out = sum(raw_counts.values()) - shown_total
         if left_out > 0:
             parts.append(f"{left_out} station{'s' if left_out != 1 else ''} left out by the filters.")
-        if surface_only:
-            parts.append(("Only at surface ports (none at an orbital port in range): " if include_surface
-                          else "Only at surface ports (none at an orbital port in range), so left out of the lists and the route; untick Exclude surface ports: ")
-                         + _clip(", ".join(surface_only), _ERROR_MAX) + ".")
+        if flagged:
+            parts.append("Surface port requirements: these are sold only at surface ports (none at an orbital port in range), which are left out; "
+                         "untick Exclude surface ports to include them: " + _clip(", ".join(flagged), _ERROR_MAX) + ".")
         if missing:
             parts.append(f"No source found for {_clip(', '.join(missing), _ERROR_MAX)}; try a larger radius, any pad size "
                          f"or untick Exclude fleet carriers.")
