@@ -665,12 +665,12 @@ class SurfacePortTests(unittest.TestCase):
         self.assertEqual(src.surface_only_labels(self.found()), frozenset({"Titanium"}))
         self.assertEqual(src.surface_only_labels([("Gold", src.SearchResult([], []))]), frozenset())
 
-    def test_the_route_marks_surface_ports(self):
-        plan = src.plan_route(self.found(), {"Steel": 100, "Titanium": 50}, surface_only=src.surface_only_labels(self.found()))
+    def test_a_surface_port_is_a_leg_of_the_route(self):
+        plan = src.plan_route(self.found(), {"Steel": 100, "Titanium": 50})
         ground = next(stop for stop in plan.stops if stop.station == "Ground")
         self.assertTrue(ground.is_planetary)
-        self.assertEqual([(b.commodity, b.surface_only) for b in ground.buys if b.commodity == "Titanium"], [("Titanium", True)])
-        self.assertTrue(any("(surface port)" in line and "(surface ports only)" in line for line in plan.lines()))
+        self.assertEqual([b.commodity for b in ground.buys if b.commodity == "Titanium"], ["Titanium"])
+        self.assertTrue(any("(surface port)" in line and "Titanium 50 t" in line for line in plan.lines()))
 
     def test_without_them_the_commodity_is_not_covered(self):
         plan = src.plan_route(src.filter_found(self.found(), no_surface=True), {"Steel": 100, "Titanium": 50})

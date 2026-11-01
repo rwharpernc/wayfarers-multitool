@@ -344,6 +344,13 @@ check(headings == ["Suggested trip", "1. Near Port"], f"the route sits in its ow
 check([row.values[0] for row in buy._source_table._rows.values() if row.group] == ["Aluminium", "Steel"],
       "the commodity lists keep one heading per commodity, apart from the plan")
 check(buy._plan_frame.winfo_manager() == "pack", "the plan block is shown after a Find all that made one")
+buy._on_toggle_lists()
+check(buy._source_table.winfo_manager() == "" and buy._lists_toggle.cget("text") == "Restore", "Minimize folds the per-commodity lists away")
+buy._show_plan(False)
+buy._show_plan(True)
+check(buy._plan_frame.winfo_manager() == "pack", "the plan block can be shown again while the lists are minimized")
+buy._on_toggle_lists()
+check(buy._source_table.winfo_manager() == "pack" and buy._lists_toggle.cget("text") == "Minimize", "Restore brings the lists back")
 detail = {row.values[0]: row.values[1:3] for row in list(buy._plan_table._rows.values()) + list(buy._source_table._rows.values()) if row.group}
 check(detail["Aluminium"] == ["80 t to get", ""] and detail["Steel"] == ["400 t to get", "no source found"],
       f"the detail sits in later columns so the label is not clipped: {detail}")
@@ -414,7 +421,7 @@ buy._whole_to_get = {"Aluminium": 80, "Steel": 400}
 buy._no_surface_var.set(False)
 buy._on_filter_change()
 check("surfacenote" not in buy._plan_table._rows, "with surface ports included there is no requirements group")
-check(any("surface ports only" in row.values[0] for row in buy._plan_table._rows.values()), "the buy line says surface ports only")
+check(buy._plan_table._rows["route1"].values[0].endswith("Ground Base") and buy._plan_table._rows["route1b0"].values[0] == "Aluminium x 80 t", "the surface port is a leg of the trip with its purchase")
 check("surface port" in buy._plan_table._rows["route1"].values[3], "the stop is marked as a surface port")
 check("Surface port requirements" not in buy._sources_note.cget("text"), "the note stays quiet about it too")
 buy._no_surface_var.set(True)

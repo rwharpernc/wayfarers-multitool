@@ -408,7 +408,6 @@ class Purchase:
     tons: int
     price: int           # cr per ton at this stop
     supply: int = 0      # tons in stock at this stop (0 when not known)
-    surface_only: bool = False   # every source found for this commodity is on a planet's surface
 
 
 @dataclass(frozen=True)
@@ -444,7 +443,7 @@ class RoutePlan:
         out = [f"Suggested shopping route: {len(self.stops)} stop{'s' if len(self.stops) != 1 else ''}, "
                f"{self.covered:,} of {self.needed:,} t covered" + (f", {self.total_ly:,.1f} ly in all" if self.total_ly is not None else "")]
         for number, stop in enumerate(self.stops, 1):
-            buys = ", ".join(f"{b.commodity} {b.tons:,} t" + (" (surface ports only)" if b.surface_only else "") for b in stop.buys)
+            buys = ", ".join(f"{b.commodity} {b.tons:,} t" for b in stop.buys)
             tag = (" (fleet carrier)" if stop.is_carrier else "") + (" (surface port)" if stop.is_planetary else "")
             out.append(f"{number}. {stop.station} ({stop.system}){tag}, {(stop.leg_ly if stop.leg_ly is not None else stop.distance_ly):,.1f} ly: {buys}")
         if self.uncovered:
@@ -503,8 +502,7 @@ def _fly_order(stops: Sequence[Stop]) -> Tuple[List[Stop], Optional[float]]:
     return [replace(s, leg_ly=leg) for s, leg in zip(perm, legs)], sum(legs)
 
 
-def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int], max_stops: int = ROUTE_MAX_STOPS,
-               surface_only: frozenset = frozenset()) -> RoutePlan:
+def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int], max_stops: int = ROUTE_MAX_STOPS) -> RoutePlan:
     """Pick the few stops that between them supply the most of what is still needed, from the per-commodity answers of a
     whole-list search. `needs` is the tons still to get for each commodity (by label).
 
@@ -541,7 +539,7 @@ def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int
         for label, (supply, price) in sorted(candidates[best].items(), key=lambda kv: kv[0].casefold()):
             take = min(supply, left.get(label, 0))
             if take > 0:
-                buys.append(Purchase(label, take, price, supply, label in surface_only))
+                buys.append(Purchase(label, take, price, supply))
                 left[label] -= take
                 if left[label] <= 0:
                     del left[label]

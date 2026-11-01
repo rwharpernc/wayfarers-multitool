@@ -7,7 +7,8 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Changed
 
-- **Where to Buy: surface port requirements.** The **Only at surface ports** group on the route is gone when surface ports are included, since those commodities are on the route marked **surface ports only**. With **Exclude surface ports** ticked, the commodities sold only at surface ports are named in a collapsed group, **IMPORTANT: Surface Port Requirements**, one per row.
+- **Where to Buy: minimize the station lists.** The heading **Closest stations for each commodity** has a **Minimize** button that folds the per-commodity lists away, leaving more room for the route; **Restore** brings them back. The route block is renamed **Suggested route to buy what you need...** (it was Closest way to buy everything).
+- **Where to Buy: surface port requirements.** The **Only at surface ports** group on the route is gone when surface ports are included, since those commodities are just legs of the trip, the stop noted as a surface port (the **surface ports only** tag on the purchase line is gone too). With **Exclude surface ports** ticked, the commodities sold only at surface ports are named in a collapsed group, **IMPORTANT: Surface Port Requirements**, one per row.
 
 ## 1.4.1 (2026-11-01)
 

@@ -256,7 +256,7 @@ class BuyWindow:
         # The shopping plan (the suggested route) has a block of its own above the per-commodity
         # lists, so it is not lost among them. It is shown only after a Find all that produced one.
         self._plan_frame = tk.Frame(host, bg=P.CARD, padx=P.PAD_SM, pady=P.PAD_SM)
-        tk.Label(self._plan_frame, text="Closest way to buy everything", fg=P.ACCENT, bg=P.CARD, anchor="w",
+        tk.Label(self._plan_frame, text="Suggested route to buy what you need...", fg=P.ACCENT, bg=P.CARD, anchor="w",
                  font=style.font(P.FONT_SECTION)).pack(fill="x", padx=P.PAD_SM)
         # The next stop, in words: where to go, what to buy there, and the button that copies its system.
         self._next_card = tk.Frame(self._plan_frame, bg=P.CARD, padx=P.PAD_SM, pady=P.PAD_SM)
@@ -286,19 +286,38 @@ class BuyWindow:
         self._plan_table.tag_configure("done", foreground=P.MUTED)
         self._plan_table.tag_configure("next", foreground=P.ACCENT)
         self._plan_table.pack(fill="x")
-        self._list_heading = tk.Label(host, text="Closest stations for each commodity", fg=P.HEADING, bg=P.PANE, anchor="w",
-                                      font=style.font(P.FONT_SECTION), padx=P.PAD, pady=P.PAD_SM)
+        # The heading row carries a minimize control: the per-commodity lists can be long, and folding them away
+        # leaves the suggested route the room.
+        self._list_heading = tk.Frame(host, bg=P.PANE)
+        tk.Label(self._list_heading, text="Closest stations for each commodity", fg=P.HEADING, bg=P.PANE, anchor="w",
+                 font=style.font(P.FONT_SECTION), padx=P.PAD, pady=P.PAD_SM).pack(side="left")
+        self._lists_minimized = False
+        self._lists_toggle = FlatButton(self._list_heading, "Minimize", self._on_toggle_lists,
+                                        tip="Minimize - fold the per-commodity station lists away to leave more room for the suggested route")
+        self._lists_toggle.pack(side="right", padx=P.PAD)
         self._source_table = DataTable(host, _SOURCE_COLUMNS, sortable=False, on_header=self._on_source_sort,
                                        on_select=self._on_source_pick, select_groups=True, empty_text="No search yet.")
         self._source_table.tag_configure("carrier", foreground=P.INFO)
         self._source_table.tag_configure("warn", foreground=P.WARN)
         self._source_table.pack(fill="both", expand=True)
 
+    def _on_toggle_lists(self) -> None:
+        """Fold the per-commodity station lists away (or bring them back), so the suggested route has the room."""
+        self._lists_minimized = not self._lists_minimized
+        if self._lists_minimized:
+            self._source_table.pack_forget()
+            self._lists_toggle.configure(text="Restore")
+        else:
+            self._source_table.pack(fill="both", expand=True)
+            self._lists_toggle.configure(text="Minimize")
+
     def _show_plan(self, show: bool) -> None:
         """Show or hide the shopping plan block (and the heading that tells the commodity lists apart from it)."""
         if show:
-            self._plan_frame.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, P.PAD_SM), before=self._source_table)
-            self._list_heading.pack(fill="x", before=self._source_table)
+            # the commodity table is not packed while the lists are minimized, so it cannot anchor the order then
+            anchor = {} if self._lists_minimized else {"before": self._source_table}
+            self._plan_frame.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, P.PAD_SM), **anchor)
+            self._list_heading.pack(fill="x", **anchor)
         else:
             self._plan_frame.pack_forget()
             self._list_heading.pack_forget()
@@ -623,7 +642,7 @@ class BuyWindow:
         if self._skipped:   # a skipped stop is not offered again
             found = [(label, replace(result, stations=[x for x in result.stations if _stop_key(x) not in self._skipped],
                                      carriers=[x for x in result.carriers if _stop_key(x) not in self._skipped])) for label, result in found]
-        plan = sources.plan_route(found, self._whole_to_get, surface_only=self._surface_only())
+        plan = sources.plan_route(found, self._whole_to_get)
         seen = {_stop_key(stop) for stop in self._trip_seen}
         for stop in plan.stops:
             if _stop_key(stop) not in seen:
@@ -770,9 +789,8 @@ class BuyWindow:
                                    _stop_notes(stop), ""), group=True, open=True, parent="route",
                          tag="carrier" if stop.is_carrier else "next" if index == 0 else None)
             for b, buy in enumerate(stop.buys):
-                table.insert(f"{stop_id}b{b}", (f"{buy.commodity} x {buy.tons:,} t" + (" - surface ports only" if buy.surface_only else ""), "", "",
-                                                f"{buy.supply:,} in stock" if buy.supply else "", f"{buy.price:,}"), parent=stop_id,
-                             tag="warn" if buy.surface_only else None)
+                table.insert(f"{stop_id}b{b}", (f"{buy.commodity} x {buy.tons:,} t", "", "",
+                                                f"{buy.supply:,} in stock" if buy.supply else "", f"{buy.price:,}"), parent=stop_id)
         site = self.host.site_system()
         if site:
             self._source_rows["deliver"] = site
