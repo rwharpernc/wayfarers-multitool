@@ -1,5 +1,5 @@
 """
-Mining mode's feature-module contract entry point. Owns the panel's
+Mine mode's feature-module contract entry point. Owns the panel's
 persistent chrome (page nav between Space Mining/Surface Mining, the
 scrollable Canvas/Scrollbar frame mirroring missions_ui.py's own
 pattern, and the six persistent buttons (HOTSPOTS, PRICES, RESERVES, BOOK, DASHBOARD,
@@ -10,7 +10,7 @@ rendering lives in `mining_render.py`; HUD-overlay pushes live in
 `mining_surface.py`/`mining_hotspots.py`.
 
 `PANEL_PLACEMENT = "mining"` - this module's entry in `ui.py`'s FEATURES
-tuple is what puts the panel in Mining mode.
+tuple is what puts the panel in Mine mode.
 """
 from __future__ import annotations
 

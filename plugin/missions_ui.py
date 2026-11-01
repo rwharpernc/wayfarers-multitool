@@ -1,5 +1,5 @@
 """
-Renders Missions mode's content: two detailed kill-stacking pages (Massacre
+Renders Mission mode's content: two detailed kill-stacking pages (Massacre
 Space, Settlement Raids Ground), a handful of general pages covering every
 other mission type, and one non-mission page (Community Goals) tacked onto
 the same ◂/▸ nav — see _PAGE_ORDER/_PAGE_LABELS below. Mission pages are

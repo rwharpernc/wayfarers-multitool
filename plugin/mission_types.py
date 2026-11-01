@@ -1,5 +1,5 @@
 """
-Classifies missions into the categories the Missions mode panel scrolls
+Classifies missions into the categories the Mission mode panel scrolls
 through.
 
 Elite Dangerous embeds mission type information in the internal `Name`

@@ -37,7 +37,7 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | Auto-Honk | **Enable Auto-Honk** or the **Auto-Honk** button | Settings → WFMT → Exploration → Auto-Honk |
 | **Find sources** (Missions) and **Best picks** (Trade) | **Enable Spansh trade lookups**; Find sources asks to turn it on when you press it | Settings → WFMT → Trade |
 | Routes and Market on the Trade page | **Enable Spansh trade lookups** ([details](#the-lookup-buttons-are-grayed-out-or-there-is-no-commodity-box)) | Settings → WFMT → Trade |
-| The **Hotspots**, **Prices** or **Reserves** buttons in Mining | **Enable Spansh nearby hotspot finder**, **Enable Spansh best price finder**, **Enable EDSM ring reserve lookup** (each separately) | Settings → WFMT → Mining |
+| The **Hotspots**, **Prices** or **Reserves** buttons in Mine mode | **Enable Spansh nearby hotspot finder**, **Enable Spansh best price finder**, **Enable EDSM ring reserve lookup** (each separately) | Settings → WFMT → Mining |
 | ELW rarity or EDSM upload status in Exploration | The two options under Exploration Value | Settings → WFMT → Exploration → Exploration Value |
 | Fleet carriers or surface ports missing from "where to buy" results | the filters in the Where to Buy window: **Exclude fleet carriers**, **Exclude surface ports**, **Only stations with enough stock**, **Only stations with a shipyard** and **Arrival within** (all off, so everything is included, by default) | Where to Buy window (the **Where to Buy** button in the Colonization Sites window) |
 | Raven Colonial not updating | The master switch and the two options under it ([steps](#raven-colonial-doesnt-update-as-i-deliver)) | Settings → WFMT → Colonization → Raven Colonial |
@@ -102,7 +102,7 @@ back. Things to try if a figure is still off:
 They belong to one commander each, so a commander you have not used before starts empty (see
 [Commanders and your data](getting-started.md#commanders-and-your-data)).
 
-- **Mining hotspots:** to copy them from one commander to another, use **Import/export** in Mining: export as the first commander, then
+- **Mining hotspots:** to copy them from one commander to another, use **Import/export** in Mine mode: export as the first commander, then
   import as the second.
 - **The Codex tally** is built from each commander's own journals the first time they log in; the panel says so
   while it reads (the section title shows "rebuilding..." even when folded) and the summary fills in when it finishes (a

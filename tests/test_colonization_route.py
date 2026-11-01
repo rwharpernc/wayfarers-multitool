@@ -70,6 +70,25 @@ class PlanTests(unittest.TestCase):
         plan = S.plan_route(found, {"Steel": 500, "Water": 50}, order="bogus")
         self.assertEqual([s.station for s in plan.stops], ["Near", "Far"])
 
+    def test_a_stop_carries_its_body_and_the_age_of_its_market_data(self):
+        item = S.Source("Hub", "Sol", "Coriolis Starport", False, False, "Large", 5.0, 100.0, 400, 900, body_name="Sol 3 a", updated="2026-10-30T08:00:00Z")
+        plan = S.plan_route([("Steel", result(item))], {"Steel": 100})
+        self.assertEqual((plan.stops[0].body_name, plan.stops[0].updated), ("Sol 3 a", "2026-10-30T08:00:00Z"))
+        self.assertIn("[body 3 a, data", " ".join(plan.lines()))
+
+    def test_the_body_loses_the_system_name_in_front_of_it(self):
+        self.assertEqual(S.short_body("Col 285 Sector MO-H c10-5 A 6", "Col 285 Sector MO-H c10-5"), "A 6")
+        self.assertEqual(S.short_body("Other Place 2", "Sol"), "Other Place 2")
+        self.assertEqual(S.short_body("", "Sol"), "")
+
+    def test_the_age_of_the_data_is_told_in_days(self):
+        from datetime import datetime, timezone
+        now = datetime(2026, 11, 1, 12, 0, tzinfo=timezone.utc)
+        self.assertEqual(S.data_age_text("2026-11-01T06:06:11Z", now), "data today")
+        self.assertEqual(S.data_age_text("2026-10-31T06:00:00Z", now), "data 1 day old")
+        self.assertEqual(S.data_age_text("2026-10-20T06:00:00Z", now), "data 12 days old")
+        self.assertEqual((S.data_age_text("", now), S.data_age_text("nonsense", now)), ("", ""))
+
     def test_what_nobody_in_range_sells_is_reported_not_guessed(self):
         found = [("Steel", result(src("A", 5, 400, 900))), ("Titanium", result())]
         plan = S.plan_route(found, {"Steel": 100, "Titanium": 80})

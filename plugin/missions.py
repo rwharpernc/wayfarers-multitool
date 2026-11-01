@@ -1,4 +1,4 @@
-"""Missions mode: active mission tracking across every category (massacre/
+"""Mission mode: active mission tracking across every category (massacre/
 settlement-raid kill-stacking, generic Trade/Passenger/Covert/Combat/Other
 missions, and Community Goals).
 

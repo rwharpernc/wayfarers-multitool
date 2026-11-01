@@ -1,6 +1,6 @@
 # Missions technical specification
 
-The standing reference for Missions mode: what it reads, the rules it applies, and what its numbers can
+The standing reference for Mission mode: what it reads, the rules it applies, and what its numbers can
 and can't tell you. For how to use it, see the [README](guide/missions.md). For how the code is
 organized in general, see [TECHNICAL.md](TECHNICAL.md).
 

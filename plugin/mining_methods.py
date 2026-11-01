@@ -9,7 +9,7 @@ mission-name hints, and needs the same kind of manual upkeep as the game's
 ring/commodity tables evolve.
 
 Shared across modes (Missions uses it for mining-mission commodity hints;
-Mining mode reuses it too) rather than each mode carrying its own copy.
+Mine mode reuses it too) rather than each mode carrying its own copy.
 
 Most mineable commodities are Laser Surface only, so that's the default
 for anything not listed below. A short, well-established list of "premium"

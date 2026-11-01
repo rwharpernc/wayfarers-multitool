@@ -449,7 +449,7 @@ Use them for anything the passes did not reach.
       your browser.
 - [ ] Restart EDMC: per-commander data (BGS, Boxel, Codex) is still there.
 
-- [ ] **Mining History**: **Dashboard** in Mining mode reads your journals (check it finds the journal folder), fills the Overview and the three tables, and a run made with EDMC closed appears after a restart.
+- [ ] **Mining History**: **Dashboard** in Mine mode reads your journals (check it finds the journal folder), fills the Overview and the three tables, and a run made with EDMC closed appears after a restart.
 - [ ] **Random**: press **Random** twice near a procedurally named system.
   - The name plots on the galaxy map.
   - The status line gives a distance and says whether EDSM confirmed it.

@@ -617,7 +617,7 @@ Spansh planners:
 
 - It is a second small text card of the same kind: pure layout (`build_lines`, in the Missions specification section 10b) apart from drawing.
 - One fixed width, lines clipped to `LINE_CHARS`, drawn through the shared overlay client at the "Missions list" placement slot (`overlay_placement.SLOTS`, group `wfmt_missions`, registered in `load.py` with the other groups).
-- It follows the commander's system and `FSDTarget` from the journal and rereads the Missions mode's active missions on every change and every 30 s.
+- It follows the commander's system and `FSDTarget` from the journal and rereads the Mission mode's active missions on every change and every 30 s.
 - Nothing is stored.
 
 **Chemistry** (`chemistry.py`)

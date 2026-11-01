@@ -13,7 +13,7 @@ button, not core walker logic, so every failure mode (no network, EDSM
 down, bad response shape) degrades to an empty result rather than raising.
 
 Shared across modes (Boxel Survey uses it for the "Find Nearby"/EDSM-
-visited-skip flows; Mining mode reuses it too) rather than each mode
+visited-skip flows; Mine mode reuses it too) rather than each mode
 carrying its own copy.
 """
 
@@ -109,7 +109,7 @@ def system_known(name: str) -> Optional[bool]:
 
 def system_bodies(system: str) -> Optional[List[Dict[str, Any]]]:
     """Queries EDSM's `api-system-v1/bodies` endpoint for `system` -
-    Mining mode's ring reserve-level/composition lookup ("is this ring
+    Mine mode's ring reserve-level/composition lookup ("is this ring
     worth laser-mining, and how rich is it" without needing a DSS scan
     first). Confirmed directly against a live call to
     `.../bodies?systemName=Sol`: each ringed body carries `reserveLevel`

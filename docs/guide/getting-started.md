@@ -127,7 +127,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 ### The mode buttons
 
 WFMT has one panel with eight modes. You switch between them with the button row at the top of the panel:
-**Powerplay**, **BGS**, **Explore**, **Mining**, **Trade**, **Missions**, **Operations** and **Colony** (Colonization).
+**Powerplay**, **BGS**, **Explore**, **Mine**, **Trade**, **Mission**, **Operations** and **Colony** (Colonization).
 
 **Every mode keeps working in the background** while you look at a different one. Nothing pauses. If you're
 mining and flip to Trade to check a price, your mining stats keep counting.
@@ -445,9 +445,9 @@ a moment and a tooltip shows its name and what it does.** The same goes for the 
 | **Powerplay** | Powerplay | Mode buttons (top of the panel) |
 | **BGS** | BGS | Mode buttons |
 | **Explore** | Exploration | Mode buttons |
-| **Mining** | Mining | Mode buttons |
+| **Mine** | Mining | Mode buttons |
 | **Trade** | Trade | Mode buttons |
-| **Missions** | Missions | Mode buttons |
+| **Mission** | Missions | Mode buttons |
 | **Operations** | Operations | Mode buttons |
 | **Colony** | Colonization | Mode buttons |
 | **Report** | Powerplay Sessions window | Powerplay |
@@ -483,16 +483,16 @@ a moment and a tooltip shows its name and what it does.** The same goes for the 
 | **Materials** | Open the Materials window | Operations (Engineering section) |
 | **Blueprints** | Open the Engineering window (blueprints, wishlist, ship and Odyssey upgrade planners) | Operations (Engineering section) |
 | **Engineers** | Open the Engineering window on its Engineers tab | Operations (Engineering section) |
-| **Hotspots** | Find nearby hotspots | Mining |
-| **Add hotspot** | Save hotspot here | Mining (the live window's header) |
-| **Prices** | Find best price | Mining |
-| **Reserves** | Check ring reserve level | Mining |
-| **Import/export** | Import/export hotspots | Mining (the live window's header) |
-| **Mark center** | Mark the center of a surface mining location | Mining (the live window's header) |
-| **Mark border** | Mark the border of a surface mining location | Mining (the live window's header) |
-| **Live** | Open the live window for the Mining page you are on (a radar and the controls on Surface, the live numbers on Space) | Mining |
-| **Book** | Space Mining Book (Space page) or Surface Mining Book (Surface page) | Mining |
-| **Dashboard** | Open Mining History (the Mining mode's own button) | Mining |
+| **Hotspots** | Find nearby hotspots | Mine |
+| **Add hotspot** | Save hotspot here | Mine (the live window's header) |
+| **Prices** | Find best price | Mine |
+| **Reserves** | Check ring reserve level | Mine |
+| **Import/export** | Import/export hotspots | Mine (the live window's header) |
+| **Mark center** | Mark the center of a surface mining location | Mine (the live window's header) |
+| **Mark border** | Mark the border of a surface mining location | Mine (the live window's header) |
+| **Live** | Open the live window for the Mining page you are on (a radar and the controls on Surface, the live numbers on Space) | Mine |
+| **Book** | Space Mining Book (Space page) or Surface Mining Book (Surface page) | Mine |
+| **Dashboard** | Open Mining History (the Mine mode's own button) | Mine |
 | **Reset** | End this session and start a new tally (offers to save first) | Trade (Session page) |
 | **Save session** | Keep this session in Trade History (the tally keeps running; press Reset to start a new one) | Trade (Session page) |
 | **History** | Open the Trade History window | Trade (Session page) |
@@ -508,8 +508,8 @@ a moment and a tooltip shows its name and what it does.** The same goes for the 
 | **Refresh** | Ask Spansh for the best buy and sell price of each watched commodity near you (needs Trade lookups on) | Trade (Watch list section) |
 | **Watch** | Open the Watch list window | Trade (Watch list section) |
 | **◀** / **▶** | Previous / next page | Mining, Trade, Missions |
-| **Missions window** | Open the window listing every active mission, with progress and pinning | Missions (bottom of every page) |
-| **Find sources** | Where to buy the cargo your Collect and Mining missions need, and where to pick up a Delivery mission's cargo (needs Trade lookups on) | Missions (bottom of every page) |
+| **Missions window** | Open the window listing every active mission, with progress and pinning | Mission (bottom of every page) |
+| **Find sources** | Where to buy the cargo your Collect and Mining missions need, and where to pick up a Delivery mission's cargo (needs Trade lookups on) | Mission (bottom of every page) |
 | **Ships** | Manage ship builds | Operations |
 | **Dashboard** | Colonization sites (the Colonization mode's own button) | Colonization |
 | **Projects** | Open My Projects, every active project you have on Raven Colonial | Colonization |

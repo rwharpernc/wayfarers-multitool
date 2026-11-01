@@ -200,7 +200,7 @@ planner for what to build next. Several community projects got there first, and 
 ## Power, factions and fighting
 
 Merits, influence and kill counts are all numbers the journal reports in pieces, and a good tracker is mostly careful bookkeeping. These
-are the trackers WFMT's Powerplay, BGS and Missions modes were measured against.
+are the trackers WFMT's Powerplay, BGS and Mission modes were measured against.
 
 - **Massacre and kill-mission tracking:** [EDMC-Massacres](https://github.com/CMDR-WDX/EDMC-Massacres),
   [EDMC-CombatTracker](https://github.com/lunarplasma/EDMC-CombatTracker), [EDCarnage](https://github.com/mmomtchev/EDCarnage) and

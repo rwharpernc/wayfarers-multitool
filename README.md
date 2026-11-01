@@ -72,9 +72,9 @@ WFMT is one panel with eight **modes**, and you click a button to switch between
 | **Powerplay** | Merits and Control Points for your Power; a rare goods finder; share your progress to Discord | [Powerplay](docs/guide/powerplay.md) |
 | **Explore** | Auto-honk, discovery alerts, boxel survey, scan values, Codex tally, notes, expeditions, route planners, a dashboard, a surface compass | [Exploration](docs/guide/exploration.md) |
 | **Exobiology** (in **Explore**) | Species prediction, sample tracking, a sample radar, and overlay cards for the body you are on | [Exobiology](docs/guide/exobiology.md) |
-| **Mining** | Space and surface mining runs, a book of rings and deposits, Mining History, mining alerts | [Mining](docs/guide/mining.md) |
+| **Mine** | Space and surface mining runs, a book of rings and deposits, Mining History, mining alerts | [Mining](docs/guide/mining.md) |
 | **Trade** | Profit after fuel and repairs, fleet carrier cargo, saved sessions, best routes and prices, a watch list | [Trade](docs/guide/trade.md) |
-| **Missions** | Every mission in one view, progress bars, a Missions window, where to buy the cargo | [Missions](docs/guide/missions.md) |
+| **Mission** | Every mission in one view, progress bars, a Missions window, where to buy the cargo | [Missions](docs/guide/missions.md) |
 | **Operations** | Screenshots, backpack and cargo, engineering materials, a blueprint browser and wishlist, the engineers and how to unlock them, material traders, ship builds | [Operations](docs/guide/operations.md) |
 | **Colony** (Colonization) | Your current build, history, an archive of finished sites, and every site's shopping list | [Colonization](docs/guide/colonization.md) |
 | **BGS** | Faction states and what your activity does to them; share a tick's report to Discord | [BGS](docs/guide/bgs.md) |

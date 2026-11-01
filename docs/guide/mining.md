@@ -1,6 +1,6 @@
 # Mining
 
-Mining mode tracks two kinds of mining, keeps a book for each, and adds up everything you have mined:
+Mine mode tracks two kinds of mining, keeps a book for each, and adds up everything you have mined:
 
 - **Space Mining**, in your ship, with the **Space Mining Book**: every ring your journals have shown, with its hotspots, tons mined and your notes.
 - **Surface Mining**, in the Rhino SRV, with the **Surface Mining Book**: your catalog of deposits, and the bodies your journals show mining on.

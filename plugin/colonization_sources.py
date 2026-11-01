@@ -14,6 +14,7 @@ import itertools
 import json
 import math
 import time
+from datetime import datetime, timezone
 from dataclasses import dataclass, field, replace
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
@@ -63,6 +64,8 @@ class Source:
     supply: int          # tons in stock
     has_shipyard: bool = False
     position: Optional[Tuple[float, float, float]] = None   # the system's galactic (x, y, z), when Spansh gave it (for the legs of a route)
+    body_name: str = ""          # the body the station is at, when Spansh says
+    updated: str = ""            # when the station's market was last updated, as Spansh gives it ("" when not)
 
 
 @dataclass(frozen=True)
@@ -99,7 +102,8 @@ def to_source(item: StationPrice) -> Source:
     return Source(
         station=item.station, system=item.system, kind=item.station_type, is_carrier=carrier,
         is_planetary=item.is_planetary, pad=largest_pad(item), distance_ly=item.distance_ly, arrival_ls=item.distance_to_arrival_ls,
-        price=item.price, supply=item.quantity, has_shipyard=item.has_shipyard, position=item.position)
+        price=item.price, supply=item.quantity, has_shipyard=item.has_shipyard, position=item.position,
+        body_name=item.body_name, updated=item.market_updated)
 
 
 def order(sources: Sequence[Source], sort: str = SORT_DISTANCE) -> List[Source]:
@@ -361,7 +365,7 @@ def _hit_source(item: StationPrice, offer: Tuple[int, int]) -> Source:
         station=item.station, system=item.system, station_type=item.station_type, distance_ly=item.distance_ly,
         distance_to_arrival_ls=item.distance_to_arrival_ls, is_planetary=item.is_planetary, price=price,
         quantity=supply, small_pads=item.small_pads, medium_pads=item.medium_pads, large_pads=item.large_pads,
-        has_shipyard=item.has_shipyard, position=item.position))
+        has_shipyard=item.has_shipyard, position=item.position, body_name=item.body_name, market_updated=item.market_updated))
 
 
 def _merge_hits(out: WholeListResult, hits: Sequence[Tuple[StationPrice, Dict[str, Tuple[int, int]]]], pad: str, sort: str) -> None:
@@ -422,6 +426,8 @@ class Stop:
     pad: str = ""                 # the largest pad ("Large" / "Medium" / "Small" / "?"), blank when not known
     position: Optional[Tuple[float, float, float]] = None   # the system's galactic position, when Spansh gave it
     leg_ly: Optional[float] = None   # the jump distance from the stop before it (from the search's system for the first); None when not known
+    body_name: str = ""           # the body the stop is at, when Spansh says
+    updated: str = ""             # when the stop's market was last updated, as Spansh gives it ("" when not)
 
     @property
     def tons(self) -> int:
@@ -445,10 +451,34 @@ class RoutePlan:
         for number, stop in enumerate(self.stops, 1):
             buys = ", ".join(f"{b.commodity} {b.tons:,} t" for b in stop.buys)
             tag = (" (fleet carrier)" if stop.is_carrier else "") + (" (surface port)" if stop.is_planetary else "")
+            body, age = short_body(stop.body_name, stop.system), data_age_text(stop.updated)
+            tag += f" [{', '.join(x for x in (('body ' + body) if body else '', age) if x)}]" if (body or age) else ""
             out.append(f"{number}. {stop.station} ({stop.system}){tag}, {(stop.leg_ly if stop.leg_ly is not None else stop.distance_ly):,.1f} ly: {buys}")
         if self.uncovered:
             out.append("Not covered: " + ", ".join(f"{label} {tons:,} t" for label, tons in self.uncovered))
         return out
+
+
+def short_body(body: str, system: str) -> str:
+    """A body's name without the system name in front of it ("Col 285 Sector MO-H c10-5 A 6" in that system is "A 6"); the whole name when it does not start with the system's."""
+    body, system = (body or "").strip(), (system or "").strip()
+    if body and system and body.casefold().startswith(system.casefold() + " "):
+        return body[len(system) + 1:].strip() or body
+    return body
+
+
+def data_age_text(updated: str, now: Optional[datetime] = None) -> str:
+    """How old a market's data is, for a commander deciding whether to trust a stop: "data today", "data 1 day old", "data 12 days old"; blank when the date is missing or unreadable."""
+    try:
+        when = datetime.fromisoformat(str(updated or "").replace("Z", "+00:00"))
+    except ValueError:
+        return ""
+    if when.tzinfo is None:
+        when = when.replace(tzinfo=timezone.utc)
+    days = ((now or datetime.now(timezone.utc)) - when).days
+    if days < 1:
+        return "data today"
+    return f"data {days} day{'s' if days != 1 else ''} old"
 
 
 def filter_found(found: Sequence[Tuple[str, "SearchResult"]], *, no_surface: bool = False, max_arrival_ls: Optional[int] = None,
@@ -566,7 +596,7 @@ def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int
                     del left[label]
         source = details[best]
         chosen.append(Stop(source.station, source.system, source.kind, source.is_carrier, source.distance_ly, tuple(buys), source.is_planetary,
-                           source.pad, source.position))
+                           source.pad, source.position, body_name=source.body_name, updated=source.updated))
         del candidates[best]
     ordered, total = _fly_order(chosen) if order == ROUTE_DEFAULT or order not in dict(ROUTE_ORDERS).values() else _ordered(chosen, order)
     uncovered = tuple(sorted(left.items(), key=lambda kv: kv[0].casefold()))

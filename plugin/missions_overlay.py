@@ -11,7 +11,7 @@ in one place (massacres and settlement raids) are stacked into a single line wit
 amber. The card has one fixed width, every line is clipped to it, and its top-left stays put (Overlay Placement says which corner), so it cannot grow across
 the screen.
 
-Everything comes from what the Missions mode already knows (`all_missions`, `kill_tracker`) and the journal's jump events; nothing is sent anywhere and nothing
+Everything comes from what the Mission mode already knows (`all_missions`, `kill_tracker`) and the journal's jump events; nothing is sent anywhere and nothing
 is stored. Off until ticked, like every overlay. Pure layout (`build_lines`) is kept apart from drawing (`render`) so it is tested without an overlay."""
 from __future__ import annotations
 
@@ -167,7 +167,7 @@ def _short_label(summary: all_missions.MissionSummary) -> str:
 
 def entries_from(missions: Dict[int, all_missions.MissionSummary], cmdr: Optional[str], pinned: Collection[int] = (),
                  kills: Optional[Dict[int, Tuple[int, int, bool]]] = None, held: Optional[Dict[str, int]] = None) -> List[Entry]:
-    """The card's entries from the Missions mode's active missions. A redirected mission is ready, and goes to its new hand-in place if the game gave one.
+    """The card's entries from the Mission mode's active missions. A redirected mission is ready, and goes to its new hand-in place if the game gave one.
     The ids in `pinned` are marked so the card lists them first."""
     done = kill_tracker.get_redirected(cmdr)
     progress_by_id = mission_progress.compute(list(missions.values()), kills=kills, held=held, ready=done)
@@ -389,7 +389,7 @@ JUMP_EVENTS = ("FSDJump", "Location", "CarrierJump")
 
 class MissionsOverlay:
     """Where the commander is and is heading, and what is on the card. `entries`, `now`, `draw` and `cfg` are injected so the behavior is tested without the
-    overlay, the Missions mode or the real clock."""
+    overlay, the Mission mode or the real clock."""
 
     def __init__(self, entries: Callable[[], List[Entry]], draw: Optional[Callable[[List[Line]], None]] = None,
                  now: Callable[[], datetime] = lambda: datetime.now(timezone.utc), cfg: Callable[[], MissionsOverlayConfig] = load_config,
@@ -549,7 +549,7 @@ def build_settings(notebook: nb.Notebook) -> None:
         text=("A small card on your in-game overlay, through the overlay (WFMT's built-in one on Windows, or EDMCModernOverlay: a separate, optional helper WFMT does not install or launch; its connection "
               "settings are on the Overlay Connection tab). It lists the missions that matter where you are: those for the system you are in, then those for "
               "the system you have targeted for the next jump, then the rest soonest to expire, up to the number of rows you choose. A mission whose objective "
-              "is done shows a tick and the place to hand it in; massacres against one faction stack into one line. Everything comes from the Missions mode "
+              "is done shows a tick and the place to hand it in; massacres against one faction stack into one line. Everything comes from the Mission mode "
               "and the journal; nothing is sent anywhere. Where the card sits is the Overlay Placement setting (\"Missions list\")."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))

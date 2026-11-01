@@ -94,9 +94,9 @@ PANEL_MODES: Tuple[Tuple[str, str], ...] = (
     ("powerplay", "Powerplay"),
     ("bgs", "BGS"),
     ("exploration", "Explore"),
-    ("mining", "Mining"),
+    ("mining", "Mine"),
     ("trade", "Trade"),
-    ("missions", "Missions"),
+    ("missions", "Mission"),
     ("fieldops", "Operations"),
     ("colonization", "Colony"),
 )
@@ -105,9 +105,9 @@ _MODE_TOOLTIPS = {
     "powerplay": "Powerplay - merits and Control Points you earn for your Power, and the rare goods finder",
     "bgs": "BGS - faction states in the Background Simulation, and what your own activity does to them",
     "exploration": "Explore - auto-honk, first-discovery alerts, boxel survey, scan values, exobiology help and Codex tally",
-    "mining": "Mining - space and surface (SRV) mining, and your own catalogue of mining hotspots",
+    "mining": "Mine - space and surface (SRV) mining, and your own catalogue of mining hotspots",
     "trade": "Trade - what you bought and sold this session, the value of your hold, and Spansh route and price lookups",
-    "missions": "Missions - every mission you have in one view, with kill-progress bars for massacres",
+    "missions": "Mission - every mission you have in one view, with kill-progress bars for massacres",
     "fieldops": "Operations - screenshots, backpack/locker/cargo and saved ship builds",
     "colonization": "Colony - the project you are building now (progress, what is left, trips); history is in the History window",
 }

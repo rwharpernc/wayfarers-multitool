@@ -138,17 +138,17 @@ class ProjectTests(unittest.TestCase):
             self.assertNotIn("carrier", text.lower(), text)
             self.assertNotIn("haul", text.lower(), text)
         self.assertEqual(S.trips_text(project), "3 loads of 400 t")        # 1,100 t still needed
-        self.assertEqual(S.coverage_text(project), "0 fully · 1 partly · 1 not yet (of 2 commodities)")
+        self.assertEqual(S.coverage_text(project), "0 done - 1 partly - 1 working on it (of 2 commodities)")
 
     def test_with_a_carrier_the_ship_and_carrier_together_cover_and_there_are_two_legs(self):
         project = S.project_for(site(), {"steel": 300}, {"steel": 500, "water": 300}, has_carrier=True, capacity=400)
-        self.assertEqual(S.coverage_text(project), "2 fully · 0 partly · 0 not yet (of 2 commodities)")
+        self.assertEqual(S.coverage_text(project), "2 done - 0 partly - 0 working on it (of 2 commodities)")
         self.assertEqual(project.to_get, 0)
         self.assertEqual(S.trips_text(project), "0 to buy · 3 to haul (400 t ship)")
 
     def test_fully_partly_and_not_yet_covered(self):
         project = S.project_for(site(), {"steel": 100}, {"steel": 100, "water": 300}, has_carrier=True, capacity=400)
-        self.assertEqual(S.coverage_text(project), "1 fully · 1 partly · 0 not yet (of 2 commodities)")
+        self.assertEqual(S.coverage_text(project), "1 done - 1 partly - 0 working on it (of 2 commodities)")
         project = S.project_for(site(), {"water": 5}, None, has_carrier=False, capacity=400)
         self.assertEqual((project.covered, project.partial, project.uncovered), (0, 1, 1))
 
@@ -186,6 +186,12 @@ class ProjectTests(unittest.TestCase):
     def test_the_biggest_gaps_are_listed_biggest_first(self):
         project = S.project_for(site(), {}, None, False, 400)
         self.assertEqual(project.gaps, (("Steel", 800), ("Water", 300)))
+
+    def test_only_the_three_biggest_gaps_are_named(self):
+        big = site()
+        big.resources = [C.Resource(key=f"c{i}", label=f"Item {i}", required=100 * (i + 1), provided=0) for i in range(6)]
+        project = S.project_for(big, {}, None, False, 400)
+        self.assertEqual([label for label, _ in project.gaps], ["Item 5", "Item 4", "Item 3"])
 
 
 class HistoryTests(unittest.TestCase):

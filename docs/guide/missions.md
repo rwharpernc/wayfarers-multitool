@@ -33,7 +33,7 @@ More: [Progress](#progress) and [What the game does and doesn't tell us](#what-t
 
 ### Open the Missions window
 
-1. Press **Missions** in the mode bar.
+1. Press **Mission** in the mode bar.
 2. Press **Missions window** at the bottom of the panel, or click a mission's card to open the window on that mission.
 3. Close it when you are done. It remembers its size and position, and while it is open it keeps counting down and updating as you accept and hand in missions.
 
@@ -97,7 +97,7 @@ The numbers and names below are made up to show how the screens read. The wordin
 
 ## Using it
 
-Press **Missions** in the mode bar. At the top a line reads `Missions: 7/20` (how many missions you hold of the game's limit of 20; switch it off with *Show mission count* in Settings). Under it the panel shows one category at a time, with a line like `◀  Combat (3)  ▶`. Click the **◀** or **▶** arrow to
+Press **Mission** in the mode bar. At the top a line reads `Missions: 7/20` (how many missions you hold of the game's limit of 20; switch it off with *Show mission count* in Settings). Under it the panel shows one category at a time, with a line like `◀  Combat (3)  ▶`. Click the **◀** or **▶** arrow to
 page between categories; the number is how many missions are in that category (left off when the count line above is shown and every mission is in that one category, since it would repeat `Missions: N/20`). The pages, in order, are:
 
 **Massacre (Space) · Settlement Raids (Ground) · Combat · Trade & Mining · Passenger · Covert / On-Foot Ops · Other · Community Goals**

@@ -1,5 +1,5 @@
 """
-Reads recent journal files so Missions mode's state survives EDMC restarts.
+Reads recent journal files so Mission mode's state survives EDMC restarts.
 
 `read_backlog(since)` replays every journal modified after a given date and
 collects, per commander:

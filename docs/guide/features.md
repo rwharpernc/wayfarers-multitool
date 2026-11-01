@@ -20,13 +20,13 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 | Point an arrow at a spot on a planet | **Mark**, **Target** and **Marks** (the Compass) | [Compass](exploration.md#compass) |
 | Find somewhere to land in deep space | **Find** in Nearest place to land | [Nearest place to land](exploration.md#nearest-place-to-land) |
 | Keep my own notes on a system or body | The Notes section: type a line, **Add Note**; **Notes** to browse | [Notes](exploration.md#notes) |
-| See my mining run, and my rings | **Mining** mode; **Book** on the Space page | [Mining](mining.md#what-each-page-shows), [Space Mining Book](mining.md#the-space-mining-book) |
+| See my mining run, and my rings | **Mine** mode; **Book** on the Space page | [Mining](mining.md#what-each-page-shows), [Space Mining Book](mining.md#the-space-mining-book) |
 | Keep a catalog of Rhino deposits | **Book** on the Surface page | [Surface Mining Book](mining.md#the-surface-mining-book) |
-| See everything I have ever mined | **Dashboard** in Mining mode | [Mining History](mining.md#mining-history) |
+| See everything I have ever mined | **Dashboard** in Mine mode | [Mining History](mining.md#mining-history) |
 | Be alerted to a core asteroid, low limpets or a full hold | Flight Alerts (Settings → WFMT → Overlays → Flight Alerts) | [Flight Alerts](always-on.md#flight-alerts) |
 | Know my trading profit | **Trade** mode, the Session page | [The Session page](trade.md#the-session-page) |
 | Find the best trade route or the best price | **Find routes**; the Market page | [Routes](trade.md#routes), [Market](trade.md#market) |
-| See every mission and pin some | **Missions** mode; **Missions window** | [The Missions window](missions.md#the-missions-window) |
+| See every mission and pin some | **Mission** mode; **Missions window** | [The Missions window](missions.md#the-missions-window) |
 | Find where to buy mission cargo | **Find sources** | [Source commodities](missions.md#source-commodities) |
 | Plan engineering upgrades | **Blueprints** in Operations | [Engineering](operations.md#engineering-blueprints-and-a-wishlist) |
 | See what my colony site still needs | **Colony** mode; **Dashboard** | [The Colonization Sites window](colonization.md#the-colonization-sites-window) |

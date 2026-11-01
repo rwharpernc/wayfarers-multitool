@@ -9,7 +9,7 @@ the journal dispatch. Three pages, in trade_pages.PAGE_ORDER:
   planner (trade_spansh_client.py), and the best back-and-forth pair
   (trade_roundtrip.py). Needs the lookups turned on in Settings.
 - Market: where to sell or buy a commodity, near you and galaxy-wide, and a button
-  for the best-price finder Mining mode already has (it works for any commodity).
+  for the best-price finder Mine mode already has (it works for any commodity).
 
 Network calls are opt-in (off by default, like Mining's Spansh finders) and only
 happen when you press a button. They run on a background thread; the panel polls

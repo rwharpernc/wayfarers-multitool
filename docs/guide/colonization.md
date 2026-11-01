@@ -111,9 +111,9 @@ See [The shopping list on the overlay](#the-shopping-list-on-the-overlay).
 | On your carrier | (Only with a fleet carrier.) Tons of needed commodities you have moved onto it |
 | Still to get | What is left to buy or mine after your ship (and carrier) |
 | **To finish the build** | (Left out once nothing remains to deliver.) |
-| Commodities | Of the commodities still needed, how many are **fully** covered, **partly** covered and **not yet** covered (`3 fully · 2 partly · 5 not yet (of 10 commodities)`), counting your ship, or your ship and carrier together if you have one |
+| Commodities | Of the commodities still needed, how many are **done** (fully covered), **partly** covered and **working on it** (not covered yet) (`3 done - 2 partly - 5 working on it (of 10 commodities)`), counting your ship, or your ship and carrier together if you have one |
 | Trips left | **Without a carrier:** the loads of your current ship it takes to finish (`4 loads of 400 t`; one trip buys and delivers). **With a carrier:** `N to buy · N to haul (400 t ship)`. `Unknown (ship size not seen yet)` until EDMC has reported your ship's cargo capacity |
-| Biggest gaps (t) | The four commodities with the most still to get, with their tons. Left out when nothing is left to get |
+| Biggest gaps (t) | The three commodities with the most still to get, with their tons. Left out when nothing is left to get |
 | Others | `+N more active sites` when you have more than the one shown (the line is left out when you have none) |
 
 **When nothing is under construction.** The page lists the **last 5 completed** sites you have, newest first, each as `Name (System) - date` (the date is left out for a site finished before WFMT kept it). Archived sites are included.
@@ -130,7 +130,7 @@ On your carrier   120 t
 Still to get      6,500 t
 
 To finish the build
-Commodities       3 fully · 2 partly · 5 not yet (of 10 commodities)
+Commodities       3 done - 2 partly - 5 working on it (of 10 commodities)
 Trips left        9 to buy · 17 to haul (400 t ship)
 ```
 
@@ -551,8 +551,8 @@ Find all also works out a shopping trip and shows it on its own tab, **Suggested
 - **Done stops stay.** A stop you have bought at, or whose goods you now hold, is ticked and grayed (**done**; **skipped** if you skipped it) instead of vanishing, and the heading counts them (`1 of 4 done`). When every stop is done the card says to deliver at the site. Changing a filter plans the trip afresh, so the ticks start again.
 
 - A station that sells several of your commodities counts for all of them, so it is taken first. Ties go to the nearer, then the cheaper.
-- Each stop shows what to buy there, with the price per ton and the stock (**Supply**) at that stop. Click a stop to copy its system name.
-- The stops are in the order that makes the shortest flight: every order is tried (there are at most six stops), starting from your search system. **Jump** is the distance from the stop before it, and the heading gives the whole trip in light years. The last row, **Then deliver at the site**, is the site's system (click it to copy). If Spansh gave no position for a stop the jumps are left blank and the stops go nearest to your search system first.
+- Each stop shows what to buy there, with the price per ton and the stock (**Supply**) at that stop. Click a stop to copy its system name. The stop's **Notes** also give the body it is at (as Spansh names it, without the system's name) and how old its market data is, such as `data today` or `data 12 days old`; the data is what players' game clients last reported, so an old date is a reason to check before flying there.
+- The stops are in the order that makes the shortest flight: every order is tried (there are at most six stops), starting from your search system. **Jump** is the distance from the stop before it, and the heading gives the whole trip in light years. If Spansh gave no position for a stop the jumps are left blank and the stops go nearest to your search system first.
 - What no station in range can supply is named in the note.
 - **Surface ports.** A stop on a planet's surface is marked **Yes** in the **Planetary** column. When a commodity is sold *only* at surface ports among the stations found, before saying so, Find all makes one more request for each such commodity asking for orbital stations alone, since the nearest sellers can all be on planets and push the orbital ones out of the list. Only if that finds nothing is the commodity planned at a surface port: it is simply a leg of the trip, a stop noted as a surface port (land on the planet). Orbital and surface ports are both searched unless you tick **Exclude surface ports**. With it ticked, those commodities are left out of the route and the lists, and a collapsed group at the top of the route block, **IMPORTANT: Surface Port Requirements**, names each one (one commodity per row, open it to read them), the commodity's heading says **surface ports only (left out)**, and the note repeats it, so you know why they are missing.
 - **It follows your purchases.** When what you have bought reaches your ship's hold or your fleet carrier (or is delivered), the route and the lists are worked out again from the stations already found, with no new search. A commodity you now have in full leaves the route and its heading disappears; one you have part of shrinks to the tons still to get. The tons come from the Sites window's **Acquire** column, so they follow its hold and carrier figures. The note under the buttons is left alone, except to say when everything is bought.

@@ -1,5 +1,5 @@
 """
-Mining mode's EDMCModernOverlay HUD push: `push_stats_overlay(page)` sends the same live numbers the panel itself is
+Mine mode's EDMCModernOverlay HUD push: `push_stats_overlay(page)` sends the same live numbers the panel itself is
 showing (hold, refining rate and run average, limpets remaining), gated by the "Enable HUD Overlay" setting. A background rect behind several lines of
 narrower text. (The surface waypoint arrow that used to live here is now the Surface Compass, `surface_compass.py`.)
 

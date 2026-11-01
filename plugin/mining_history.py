@@ -1,4 +1,4 @@
-"""The commander's mining history, built from their journals, for the Mining History window (the DASHBOARD button in Mining mode).
+"""The commander's mining history, built from their journals, for the Mining History window (the DASHBOARD button in Mine mode).
 
 The Mining pages show the run in progress and nothing else, and that run lives only in memory, so a run that spanned an EDMC restart, a relog or an EDMC that was closed
 could not be seen afterwards and nothing added the runs up. The journals hold all of it, so this reads them and keeps one record per run: when it started and ended, where,

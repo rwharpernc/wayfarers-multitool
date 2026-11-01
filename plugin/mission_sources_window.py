@@ -1,4 +1,4 @@
-"""The "Source commodities" window of the Missions mode: for each commodity your Collect, Mining and Delivery missions still need, the closest place that has it in stock,
+"""The "Source commodities" window of the Mission mode: for each commodity your Collect, Mining and Delivery missions still need, the closest place that has it in stock,
 the best nearby, the cheapest anywhere and a recommended one (see `source_picks.py`). Opened from the "Commodities needed" list.
 
 Nothing is looked up until you press **Find sources**, and only when Trade's online-lookups switch is on (it is off by default): that is the only thing here

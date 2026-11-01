@@ -1,4 +1,4 @@
-"""The Mining History window: the DASHBOARD button in Mining mode.
+"""The Mining History window: the DASHBOARD button in Mine mode.
 
 What the Mining pages cannot show: every mining run found in the commander's journals, added up. There is one window for each half of mining and the button opens the one for the page it
 is on: from the Space Mining page the ring runs (**Overview** with totals, prospecting, limpets, sales and the best runs; **Commodities**; **Rings**; **Runs**), from the Surface Mining

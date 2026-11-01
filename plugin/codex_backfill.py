@@ -4,7 +4,7 @@ return only that commander's `CodexEntry` events (a journal file says whose even
 `LoadGame` lines, and one file can hold more than one commander).
 
 `scan_all_codex_entries` is the full-history scan for the "Backfill from Journal History" button and the one-time rebuild
-after codex tallies became per commander. journal_scan.py (Missions mode) is bounded to two weeks, which is far too
+after codex tallies became per commander. journal_scan.py (Mission mode) is bounded to two weeks, which is far too
 short for a lifetime codex tally, so this has no date cutoff. It is real I/O (years of journal files), so it is
 explicitly user-triggered or one-time. `scan_since` is the small automatic one: only the files written since the tally
 last saw an event.

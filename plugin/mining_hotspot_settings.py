@@ -1,6 +1,6 @@
 """
 The known-surface-hotspots list section (see mining_hotspots.py) of
-Mining mode's Settings tab: add/edit/delete rows plus JSON import/
+Mine mode's Settings tab: add/edit/delete rows plus JSON import/
 export. Split out of mining_panel.py's own build_settings() into its
 own module - at ~115 lines it's substantial enough to give its own
 home, same reasoning as every other feature-module split in this project.

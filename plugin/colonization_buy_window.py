@@ -124,7 +124,8 @@ def _stop_key(item: Any) -> tuple:
 
 
 def _stop_notes(stop: sources.Stop) -> str:
-    """What a commander should know before heading for a stop: its largest pad, and whether it is a surface port or a fleet carrier."""
+    """What a commander should know before heading for a stop: its largest pad, whether it is a surface port or a fleet carrier, the body it
+    is at and how old its market data is (an old or odd record is easy to spot)."""
     notes = []
     if stop.pad in ("Large", "Medium", "Small"):
         notes.append(f"{stop.pad} pad")
@@ -132,6 +133,12 @@ def _stop_notes(stop: sources.Stop) -> str:
         notes.append("surface port")
     if stop.is_carrier:
         notes.append("fleet carrier")
+    body = sources.short_body(stop.body_name, stop.system)
+    if body and not stop.is_carrier:
+        notes.append(f"body {_clip(body, 30)}")
+    age = sources.data_age_text(stop.updated)
+    if age:
+        notes.append(age)
     return ", ".join(notes)
 
 
@@ -847,10 +854,6 @@ class BuyWindow:
             for b, buy in enumerate(stop.buys):
                 table.insert(f"{stop_id}b{b}", (f"{buy.commodity} x {buy.tons:,} t", "", "",
                                                 f"{buy.supply:,} in stock" if buy.supply else "", f"{buy.price:,}"), parent=stop_id)
-        site = self.host.site_system()
-        if site:
-            self._source_rows["deliver"] = site
-            table.insert("deliver", ("Then deliver at the site", site, "", "", ""), parent="route")
 
     def _update_card(self) -> None:
         """The next-stop card: the first stop still to do, what to buy there, and whether the commander is already in its system."""

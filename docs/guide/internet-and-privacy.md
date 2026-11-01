@@ -87,7 +87,7 @@ Only when you press a button:
 - **Find routes**: sends one request, then checks for the answer every 5 seconds, for up to 4 minutes, until you
   press **Cancel**.
 - **Near me** / **Galaxy**: two requests each (stations, then fleet carriers). One if you hide carriers.
-- **Best picks**: about four requests (five with carriers), one after another. **Find sources** in Missions: the same, per commodity, one commodity at a time.
+- **Best picks**: about four requests (five with carriers), one after another. **Find sources** in Mission mode: the same, per commodity, one commodity at a time.
 - **Round trip**: one to three requests of up to 100 stations each.
 
 ## What never goes online

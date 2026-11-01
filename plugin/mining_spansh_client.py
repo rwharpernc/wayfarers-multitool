@@ -4,7 +4,7 @@ find nearby rings with a confirmed hotspot for a given commodity - "where
 do I go next" once the current ring's worth is exhausted. Gated behind
 the "Enable Spansh nearby hotspot finder" setting (default off, like WFMT's own
 shared updater) - a real outbound network call unlike anything else
-Mining mode does by default.
+Mine mode does by default.
 
 Spansh doesn't publish this endpoint's request shape (major API calls
 are still undocumented). The shape used below was worked out from live
@@ -78,7 +78,7 @@ check. Prepopulates mining_price_finder_dialog.py's commodity dropdown
 (merged with whatever the current run has actually refined) and anchors
 _normalize_commodity_name()'s case-insensitive matching below - not
 exhaustive of every tradeable commodity in the game, just the ones
-Mining mode's own pages are likely to have just refined."""
+Mine mode's own pages are likely to have just refined."""
 
 
 def _normalize_commodity_name(commodity: str) -> str:
@@ -185,6 +185,8 @@ class StationPrice:
     large_pads: Optional[int] = None
     has_shipyard: bool = False          # Spansh's `has_shipyard` (absent when the station has none)
     position: Optional[tuple[float, float, float]] = None   # the system's galactic (x, y, z) when Spansh gives it
+    body_name: str = ""                 # the body the station is at, when Spansh says (its `body_name`)
+    market_updated: str = ""            # when the station's market was last updated (Spansh's `market_updated_at`), "" when not given
 
 
 def _position(station: dict) -> Optional[tuple[float, float, float]]:
@@ -270,6 +272,7 @@ def search_stations_selling_all(reference_system: str, commodities: Sequence[str
                 distance_to_arrival_ls=station.get("distance_to_arrival", 0.0),
                 is_planetary=bool(station.get("is_planetary", False)), price=first[0], quantity=first[1],
                 has_shipyard=bool(station.get("has_shipyard")), position=_position(station),
+                body_name=str(station.get("body_name") or "")[:80], market_updated=str(station.get("market_updated_at") or ""),
                 small_pads=_count(station.get("small_pads")), medium_pads=_count(station.get("medium_pads")),
                 large_pads=_count(station.get("large_pads"))), offers))
     return out
@@ -387,6 +390,7 @@ def search_best_price_stations(reference_system: str, commodity: str, transactio
             large_pads=_count(station.get("large_pads")),
             has_shipyard=bool(station.get("has_shipyard")),
             position=_position(station),
+            body_name=str(station.get("body_name") or "")[:80], market_updated=str(station.get("market_updated_at") or ""),
         ))
     return results
 

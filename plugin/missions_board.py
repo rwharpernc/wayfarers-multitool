@@ -1,6 +1,6 @@
 """The Missions window's data: one `Row` per active mission with everything the window shows, the totals line, and the missions grouped by place.
 
-Pure logic. The Missions mode's data (`all_missions.MissionSummary`, the kill progress estimate, the redirected missions and the pinned ids) is passed in, so
+Pure logic. The Mission mode's data (`all_missions.MissionSummary`, the kill progress estimate, the redirected missions and the pinned ids) is passed in, so
 the window and the tests use the same code. Nothing is stored or sent."""
 from __future__ import annotations
 

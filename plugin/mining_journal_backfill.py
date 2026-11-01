@@ -2,8 +2,8 @@
 Locates and reads the current journal file so mining_panel.py can replay
 it through `handle_event()` on a mid-session EDMC start. Same "find the
 journal dir, glob for log files" pattern as this project's own
-journal_scan.py (Missions mode), trimmed down to just the single
-most-recent file (today's session), not full history: Mining mode's run
+journal_scan.py (Mission mode), trimmed down to just the single
+most-recent file (today's session), not full history: Mine mode's run
 state is naturally bounded by the current Undocked/LaunchSRV, so anything
 from a previous day's file is already stale/irrelevant.
 """

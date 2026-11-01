@@ -15,7 +15,7 @@ from .uikit.form import Field, FormDialog, blank_to_none, parse_optional_float, 
 
 
 def preferred_materials() -> List[str]:
-    """The names the Contains box suggests first: the materials of the deposits already saved, then the commodities Mining mode knows."""
+    """The names the Contains box suggests first: the materials of the deposits already saved, then the commodities Mine mode knows."""
     return list(dict.fromkeys(list(hotspot_repository.materials()) + list(mining_spansh_client.KNOWN_MINING_COMMODITIES)))
 
 

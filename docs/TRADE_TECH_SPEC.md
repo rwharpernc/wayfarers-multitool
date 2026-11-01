@@ -646,7 +646,7 @@ The **Best picks** button on the Market page runs `source_picks.find` for the co
   falls back to the nearest station with any stock when none has the full amount (saying how much).
 - A fleet carrier is never a pick; a better carrier price is a note.
 - The results are held in memory only.
-- The Missions mode's Source commodities window calls the same function for each commodity a mission
+- The Mission mode's Source commodities window calls the same function for each commodity a mission
   needs; see `MISSIONS_TECH_SPEC.md` 10c and `TECHNICAL.md`.
 
 ## 10. Settings, config keys and files

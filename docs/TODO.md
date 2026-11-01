@@ -294,7 +294,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that the first open after updating re-reads your journals once.
   - Compare the cost with your own credit balance for a run you remember.
   - Check the new column fits the window at its smallest size.
-- [ ] **Mining History.** In Mining mode press **Dashboard**.
+- [ ] **Mining History.** In Mine mode press **Dashboard**.
   - The header shows the one-time read of your journals.
   - The Overview should add up to what you remember (tons, hours, credits from sales).
   - Check **Commodities** against a few sales.

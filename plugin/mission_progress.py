@@ -28,7 +28,7 @@ class Progress:
 
 
 def live_kills() -> Dict[int, Tuple[int, int, bool]]:
-    """(kills done, kills required, is an estimate) for each active massacre or raid, from the Missions mode's kill data."""
+    """(kills done, kills required, is an estimate) for each active massacre or raid, from the Mission mode's kill data."""
     from . import kill_missions
     missions = list((kill_missions.view.missions or {}).values())
     done = kill_missions.estimate_progress(missions) if missions else {}

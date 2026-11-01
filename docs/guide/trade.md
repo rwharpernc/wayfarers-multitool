@@ -362,7 +362,7 @@ It asks Spansh about four times (five with carriers), one after another, so it t
 **Cheapest anywhere** and **Recommended**. If **Recommended** is within 10% of the galaxy's best price and much
 nearer, that is usually the one to fly to.
 
-The same four picks for a mission's cargo are in the Missions mode ([Source commodities](missions.md#source-commodities)).
+The same four picks for a mission's cargo are in the Mission mode ([Source commodities](missions.md#source-commodities)).
 
 ### Price finder
 

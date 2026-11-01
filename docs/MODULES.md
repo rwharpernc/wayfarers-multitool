@@ -242,7 +242,7 @@ Spec: [MINING_TECH_SPEC.md](MINING_TECH_SPEC.md)
 | `mining_history.py` | The commander's mining runs, read from their journals in the background and saved per commander (`mining_history.json`); the newest journal is read afresh and never saved; no Tk |
 | `mining_history_data.py` | The Mining History window's tiles, fields and tables, worked out from the saved runs; no Tk |
 | `mining_live_window.py` | The Mining live window (the Live button on each Mining page): on the Surface page a radar centered on the Rhino, the panel's lines and the Mark center, Mark border, Add hotspot and Import/export controls; on the Space page the panel's lines and the lookups; drawn by the same code as the panel, no overlay needed |
-| `mining_history_window.py` | The Mining History window (the Dashboard button in Mining mode) |
+| `mining_history_window.py` | The Mining History window (the Dashboard button in Mine mode) |
 | `mining_market.py` | The open station market set against the galactic average: a line for each commodity the run refined that the station buys; no network |
 | `mining_hotspot_dialog.py` | The shared Add/Edit Hotspot form (on `uikit/form.py`), with `build_hotspot`, which turns the typed text into a hotspot and writes the material in the one spelling |
 | `mining_hotspot_finder_dialog.py` | The Find Nearby Hotspots window (Spansh; a sortable results table) |
@@ -264,7 +264,7 @@ Spec: [MINING_TECH_SPEC.md](MINING_TECH_SPEC.md)
 | `mining_methods.py` | Which mining method suits each commodity |
 | `mining_overlay.py` | The mining stats overlay |
 | `mining_pages.py` | Mining's page order |
-| `mining_panel.py` | Mining mode's entry point: page chrome, Settings tab, event dispatch |
+| `mining_panel.py` | Mine mode's entry point: page chrome, Settings tab, event dispatch |
 | `mining_price_finder_dialog.py` | The Find Best Price window (Spansh; a sortable results table), also opened from Trade's Price finder |
 | `mining_rate.py` | The rate now (tons per hour over the last minute) and the run average (tons over mining time, leaving out long gaps), with the text both the panel and the overlay show; no Tk |
 | `mining_targets.py` | The target commodities typed in Settings: parsing, a percentage per name, the problems found; no Tk |
@@ -344,7 +344,7 @@ Spec: [MISSIONS_TECH_SPEC.md](MISSIONS_TECH_SPEC.md)
 | `kill_tracker.py` | Per-mission completion evidence, kept per commander |
 | `mission_cargo.py` | Collect / delivery progress of cargo missions from the journal's `CargoDepot` events |
 | `mission_types.py` | Classifies missions into the panel's categories |
-| `missions.py` | Missions mode's entry point and event handling |
+| `missions.py` | Mission mode's entry point and event handling |
 | `missions_ui.py` | Draws Missions' pages and opens the Missions window |
 
 ## Colonization: current project, history, sites window

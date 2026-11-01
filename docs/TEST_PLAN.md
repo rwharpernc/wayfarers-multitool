@@ -44,7 +44,7 @@ What to check in EDMC after the 1.4.1 release (and before any later one), on **W
   - Both choices are remembered.
 - [ ] **Copy system** puts the selected rare's origin system on the clipboard (check it pastes into the galaxy map).
 
-## 2. Mining (Mining mode)
+## 2. Mining (Mine mode)
 
 - [ ] Space Mining page: **Last rock** follows each prospected rock; a core asteroid adds `core: <mineral>` and **Core asteroids found**; the limpet figure reads `(N on board)` and matches your cargo.
 - [ ] Settings → Mining: type a target commodity and a percentage; a rock at or over it says `target`.
@@ -155,7 +155,7 @@ The longer wording for each is in [TODO.md](TODO.md). Tick a box only when you h
 - [ ] **Where to Buy: presets.** The **Preset** list opens on **Large, then Medium (default)** with fleet carriers excluded. Choosing **Large ship**, **Quick top-up** and the others sets the pad, radius and ticks; changing one by hand reads **Custom**. After a search, changing the preset, pad, within, sort or carriers shows `Options changed: press Find nearest or Find all to search again.` until the next search. Find all answers a commodity your system sells from your system alone.
 - [ ] **Where to Buy: Large, then Medium.** For a commodity no Large-pad station in range sells, the note says `No Large-pad station in range had it, so these have a Medium pad or larger.`
 - [ ] **Interdiction Warning.** Hunter, Hitman and pirate-scan lines raise the warning; a distress call from an ambushed pilot does not. With the diagnostic log on, an interdiction that came with no warning logs the NPC lines before it.
-- [ ] **Where to Buy: the trip.** After **Find all** with several commodities, the **Next stop** card names the first stop and what to buy; the trip lists the stops with **Jump** distances that fit the galaxy map, ending with `Then deliver at the site`. **Copy next system** pastes into the galaxy map's search. Arriving in that system changes the hint to `You are in this system`. Buying a stop's goods ticks the stop off and the card moves on; **Skip this stop** replans without it; when all are done the card says to deliver.
+- [ ] **Where to Buy: the trip.** After **Find all** with several commodities, the **Next stop** card names the first stop and what to buy; the trip lists the stops with **Jump** distances that fit the galaxy map, ending at the last stop. **Copy next system** pastes into the galaxy map's search. Arriving in that system changes the hint to `You are in this system`. Buying a stop's goods ticks the stop off and the card moves on; **Skip this stop** replans without it; when all are done the card says to deliver.
 - [ ] **Create project: the primary port tick.** Start a Raven Colonial project (Create project in the Sites window) for a site in a system that already has a station built (for example HIP 50331): **This is the system's primary port** is unticked and grayed out with a line saying why. For the first site of a new system (the colonization ship) it is ticked and usable.
 - [ ] **Route overlay: a recalculated route.** Plot a route in the galaxy map and plot another over it: the card follows the new route within a second. With the diagnostic log on, `NavRoute.json read` lines show each read.
 

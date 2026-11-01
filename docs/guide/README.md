@@ -54,9 +54,9 @@ know of, how it looks on screen, and what to do. Where a figure is an estimate, 
 | **Explore** (Exploration) | [Exploration](exploration.md): Auto-Honk, alerts, Boxel Survey, Exploration Value, Codex, POI Reference, Notes, Expedition planner, Expedition Log, System targets and Body info, Exploration Dashboard, Route Planner and Carrier Route, Nearest place to land, Compass |
 | **Exobiology** | [Exobiology](exobiology.md): the Organic Scanning panel, the four overlay cards (status, predicted species, sample radar, popup), finding your way back to a plant, first footfall |
 | **Shortcuts** | [Shortcuts](shortcuts.md): keyboard shortcuts (Windows) and chat commands (Windows and Linux) for Mark center, Mark border, the radar range, the Live window and hiding the overlays |
-| **Mining** | [Mining](mining.md): space and surface mining, the Space Mining Book and the Surface Mining Book, Mining History, mining alerts |
+| **Mine** (Mining) | [Mining](mining.md): space and surface mining, the Space Mining Book and the Surface Mining Book, Mining History, mining alerts |
 | **Trade** | [Trade](trade.md): profit, routes, prices, Watch list, carrier cargo, History |
-| **Missions** | [Missions](missions.md): every mission in one view, the Missions window and pinning, progress colors, where to buy mission cargo |
+| **Mission** (Missions) | [Missions](missions.md): every mission in one view, the Missions window and pinning, progress colors, where to buy mission cargo |
 | **Operations** | [Operations](operations.md): screenshots, inventory, engineering materials, blueprints, a wishlist, ship and Odyssey upgrade planners, where the engineers are, material traders, ship builds |
 | **Colony** (Colonization) | [Colonization](colonization.md): your current project, your history, the sites window, where to buy |
 | **BGS** | [BGS](bgs.md): factions, states and your effect on them |

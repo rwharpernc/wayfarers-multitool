@@ -1,5 +1,5 @@
 """
-The Surface Mining Book (the BOOK button on the Surface Mining page; the Space Mining Book is `mining_ring_book.py`) - Mining mode's three-pane window - bodies on the left,
+The Surface Mining Book (the BOOK button on the Surface Mining page; the Space Mining Book is `mining_ring_book.py`) - Mine mode's three-pane window - bodies on the left,
 a body's saved hotspots in the middle, and a detail card with a map on the
 right. Built on the shared kit in plugin/uikit (see
 docs/WINDOW_FRAMEWORK_SPEC.md).

@@ -2,7 +2,7 @@
 detail of the one you select. Replaces the old "All" popup of the Missions panel (and its separate detail popup).
 
 You can pin missions here: a pinned mission is listed first on the Missions overlay card, under PINNED, whatever else is on the board (`mission_pins.py`).
-The window reads the Missions mode's data and the journal's jump events; it opens nothing online. **Sources** opens the Source commodities window (the one
+The window reads the Mission mode's data and the journal's jump events; it opens nothing online. **Sources** opens the Source commodities window (the one
 part that asks Spansh, and only when you press its button)."""
 from __future__ import annotations
 

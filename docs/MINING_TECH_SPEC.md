@@ -1,6 +1,6 @@
 # Mining technical specification
 
-The standing reference for Mining mode: what it tracks, the rules and numbers behind its estimates, the
+The standing reference for Mine mode: what it tracks, the rules and numbers behind its estimates, the
 files it keeps, and the outside lookups it can make. For how to use it, see the
 [README](guide/mining.md). For how the code is organized in general, see
 [TECHNICAL.md](TECHNICAL.md).

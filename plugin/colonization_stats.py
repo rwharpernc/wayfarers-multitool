@@ -16,7 +16,7 @@ from typing import Any, List, Mapping, Optional, Sequence, Tuple
 from . import colonization_view as view
 from .colonization import Site, _parse_time
 
-TOP_GAPS = 4          # biggest outstanding commodities named
+TOP_GAPS = 3          # biggest outstanding commodities named
 TOP_COMMODITIES = 3   # most-delivered commodities named
 CHART_DAYS = 14       # days drawn in the little tons-per-day chart
 _CHART_STEPS = "▁▂▃▄▅▆▇█"   # one block per day, taller for more tons
@@ -76,7 +76,7 @@ def coverage_text(project: Project) -> str:
     the ship, or in the ship and on the carrier together."""
     if project.lines == 0:
         return "Nothing left to deliver"
-    return (f"{project.covered} fully · {project.partial} partly · {project.uncovered} not yet "
+    return (f"{project.covered} done - {project.partial} partly - {project.uncovered} working on it "
             f"(of {project.lines} {_plural(project.lines, 'commodity', 'commodities')})")
 
 

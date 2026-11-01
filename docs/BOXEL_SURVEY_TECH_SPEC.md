@@ -50,7 +50,7 @@ survey_log.py             Notable-finds log (Earthlike/water/ammonia/terraformab
 survey_catchup.py         Replays recent journals into the survey log for scans made while EDMC was
                           closed (§4.4.1). Unit-tested (tests/test_survey_catchup.py).
 undiscovered_nearby.py    The Random button's Spansh lookup, list filtering and in-memory cache (§4.4.1).
-edsm_client.py            Shared EDSM API client (also used by Mining mode) — nearby_systems
+edsm_client.py            Shared EDSM API client (also used by Mine mode) — nearby_systems
                           (cube-systems), system_known (Tier 2), system_fully_scanned (Tier 3),
                           system_bodies, systems_coords. Never raises; every failure degrades to an
                           empty/None result (§7).
