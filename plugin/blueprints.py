@@ -16,6 +16,7 @@ counted). The data is older than the game: blueprints or materials added since M
 added by hand (Yi Shen's unlock, `blueprints_extra.py`) are marked there with their sources."""
 from __future__ import annotations
 
+import functools
 import re
 from dataclasses import dataclass
 from typing import Callable, Dict, Iterable, List, Optional, Tuple
@@ -167,18 +168,26 @@ def works_on(engineer: str, key: Callable[[str], str] = str.casefold) -> List[Tu
     """What an engineer works on, matching names through `key`: (module type, top grade, the names of their grade 0 rows A to Z) for each type,
     highest grade first and then A to Z. Grade 0 rows are a ship module's experimental effects or an on-foot engineer's suit and weapon
     upgrades, which have no grade; unlock rows are left out."""
-    wanted = key(engineer)
-    top: Dict[str, int] = {}
-    plain: Dict[str, set] = {}
+    return list(_works_index(key).get(key(engineer), ()))
+
+
+@functools.lru_cache(maxsize=8)
+def _works_index(key: Callable[[str], str]) -> Dict[str, List[Tuple[str, int, Tuple[str, ...]]]]:
+    """`works_on` for every engineer at once, from one pass over the table (the table does not change while WFMT runs), by name as `key` reads it."""
+    top: Dict[str, Dict[str, int]] = {}
+    plain: Dict[str, Dict[str, set]] = {}
     for b in ALL:
-        if b.is_unlock or not any(key(e) == wanted for e in real_engineers(b)):
+        if b.is_unlock:
             continue
-        top[b.type] = max(top.get(b.type, 0), b.grade)
-        names = plain.setdefault(b.type, set())
-        if not b.grade:
-            names.add(b.name)
-    return [(kind, grade, tuple(sorted(plain[kind], key=str.casefold)))
-            for kind, grade in sorted(top.items(), key=lambda t: (-t[1], t[0].casefold()))]
+        for engineer in {key(e) for e in real_engineers(b)}:
+            kinds = top.setdefault(engineer, {})
+            kinds[b.type] = max(kinds.get(b.type, 0), b.grade)
+            names = plain.setdefault(engineer, {}).setdefault(b.type, set())
+            if not b.grade:
+                names.add(b.name)
+    return {engineer: [(kind, grade, tuple(sorted(plain[engineer][kind], key=str.casefold)))
+                       for kind, grade in sorted(kinds.items(), key=lambda t: (-t[1], t[0].casefold()))]
+            for engineer, kinds in top.items()}
 
 
 def unlock_for(engineer: str, key: Callable[[str], str] = str.casefold) -> Optional[Blueprint]:

@@ -95,12 +95,95 @@ class WholeListCurrentSystemTests(unittest.TestCase):
         for _label, found in result.found:
             self.assertEqual([s.station for s in found.stations], ["Home Port"])
 
+    def test_a_home_answer_from_the_one_stop_search_lists_only_home_stations(self):
+        fake = LocalSpansh([], [])
+        home_hub = local_item("Home Hub", "Home")
+        elsewhere = item("Hub", 10)
+        one_stop = lambda *_a, **_k: [(home_hub, {"Steel": (500, 900), "Water": (400, 900)}), (elsewhere, {"Steel": (500, 900), "Water": (400, 900)})]   # noqa: E731
+        result = self.run_list(fake, one_stop=one_stop, needs={"Steel": 100, "Water": 100})
+        for _label, found in result.found:
+            self.assertTrue(found.local)
+            self.assertEqual([s.station for s in found.stations], ["Home Hub"])
+
+    def test_a_one_stop_home_station_the_filters_would_hide_does_not_stand_in(self):
+        fake = LocalSpansh([], [item("Far", 30)])
+        home_hub = local_item("Home Hub", "Home")   # no shipyard
+        one_stop = lambda *_a, **_k: [(home_hub, {"Steel": (500, 900), "Water": (400, 900)})]   # noqa: E731
+        result = self.run_list(fake, one_stop=one_stop, needs={"Steel": 100, "Water": 100}, filters=src.LocalFilter(shipyard_only=True))
+        for _label, found in result.found:
+            self.assertFalse(found.local)
+
     def test_without_stock_at_home_it_goes_out_as_before(self):
         fake = LocalSpansh([], [item("Far", 30), item("Near", 5)])
         result = self.run_list(fake)
         for _label, found in result.found:
             self.assertEqual([s.station for s in found.stations], ["Near", "Far"])
             self.assertFalse(found.local)
+
+
+class SmallFixTests(unittest.TestCase):
+    def setUp(self):
+        src.clear_cache()
+
+    def test_a_saved_preset_that_is_not_text_gives_way_to_the_default(self):
+        for junk in ('[1]', '{"a": 1}', '5', 'null', 'true'):
+            self.assertEqual(src.load_prefs('{"preset": %s, "radius": 50}' % junk).preset, src.DEFAULT_PRESET)
+
+    def test_an_empty_answer_has_no_fall_back_note(self):
+        result = src.find("Sol", "Steel", pad=src.PAD_LARGE_FIRST, search=FakeSpansh([]))
+        self.assertEqual((result.stations, result.carriers, result.note), ([], [], ""))
+
+    def test_the_filtered_answers_keep_the_local_flag_and_the_note(self):
+        kept = src.filter_found([("Steel", src.SearchResult([], [], local=True, note="n"))])[0][1]
+        self.assertEqual((kept.local, kept.note), (True, "n"))
+
+    def test_the_orbital_check_keeps_the_fall_back_note(self):
+        surface = item("Surface", 3, planetary=True, kind="Planetary Port", pads=(0, 0, 4))
+        orbital = item("Orbit", 9, pads=(0, 4, 0))
+
+        def search(system, commodity, transaction, radius, **kwargs):
+            if kwargs.get("required_pad") == "large":
+                return []
+            return [orbital] if kwargs["station_types"] == src.trade_prices.station_types(False) else [surface]
+        result = src.find_whole_list("Sol", ["Steel"], pad=src.PAD_LARGE_FIRST, search=search, sleep=lambda _s: None)
+        found = result.found[0][1]
+        self.assertIn("Orbit", [s.station for s in found.stations])
+        self.assertEqual(found.note, src.MEDIUM_NOTE)
+
+
+class LocalFilterTests(unittest.TestCase):
+    def setUp(self):
+        src.clear_cache()
+
+    def test_a_local_station_the_filters_would_hide_does_not_stop_the_search(self):
+        fake = LocalSpansh([local_item("Home Port", "Home")], [item("Hub", 12)])   # Home Port has no shipyard in this stand-in
+        result = src.find("Home", "Steel", search=fake, here="Home", filters=src.LocalFilter(shipyard_only=True))
+        self.assertFalse(result.local)
+        self.assertIn("Hub", [s.station for s in result.stations])
+
+    def test_a_local_station_that_passes_the_filters_is_the_answer(self):
+        fake = LocalSpansh([dataclasses.replace(local_item("Home Port", "Home"), has_shipyard=True)], [item("Hub", 12)])
+        result = src.find("Home", "Steel", search=fake, here="Home", filters=src.LocalFilter(shipyard_only=True))
+        self.assertTrue(result.local)
+
+    def test_a_local_station_with_too_little_stock_does_not_count_when_enough_is_asked_for(self):
+        small = dataclasses.replace(local_item("Home Port", "Home"), quantity=50)
+        fake = LocalSpansh([small], [item("Hub", 12, qty=900)])
+        wanted = src.LocalFilter(enough_stock=True)
+        self.assertFalse(src.find("Home", "Steel", search=fake, here="Home", filters=wanted, needed_t=200).local)
+        src.clear_cache()
+        self.assertTrue(src.find("Home", "Steel", search=fake, here="Home", filters=wanted, needed_t=40).local)
+
+    def test_a_surface_port_at_home_does_not_count_when_surface_ports_are_excluded(self):
+        surface = dataclasses.replace(local_item("Home Base", "Home"), is_planetary=True)
+        fake = LocalSpansh([surface], [item("Hub", 12)])
+        self.assertFalse(src.find("Home", "Steel", search=fake, here="Home", filters=src.LocalFilter(no_surface=True)).local)
+
+    def test_the_filters_are_part_of_what_is_remembered(self):
+        fake = LocalSpansh([local_item("Home Port", "Home")], [item("Hub", 12)])
+        src.find("Home", "Steel", search=fake, here="Home")
+        src.find("Home", "Steel", search=fake, here="Home", filters=src.LocalFilter(shipyard_only=True))
+        self.assertEqual(len(fake.calls), 3)   # the second ask was not answered from the first
 
 
 class PresetTests(unittest.TestCase):

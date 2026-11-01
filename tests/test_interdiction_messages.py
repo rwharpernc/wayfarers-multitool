@@ -77,6 +77,15 @@ class TrackerTests(unittest.TestCase):
             self.tracker.handle_event({"event": "Interdicted", "Interdictor": "X", "Submitted": False})
         self.assertIn("$Strange_Taunt01;", "\n".join(logged.output))
 
+    def test_lines_before_one_interdiction_are_not_reported_for_the_next(self):
+        self.tracker.handle_event(npc("$Strange_Taunt01;", "Nothing the patterns know"))
+        with self.assertLogs(I.logger, level="INFO"):
+            self.tracker.handle_event({"event": "Interdicted", "Interdictor": "X", "Submitted": False})
+        self.tracker._active = False
+        with self.assertLogs(I.logger, level="INFO") as logged:
+            self.tracker.handle_event({"event": "Interdicted", "Interdictor": "Y", "Submitted": False})
+        self.assertNotIn("$Strange_Taunt01;", "\n".join(logged.output))
+
     def test_a_warned_interdiction_logs_nothing(self):
         self.tracker.handle_event(npc("$Pirate_StartInterdiction03;", "I have you now"))
         with self.assertNoLogs(I.logger, level="INFO"):

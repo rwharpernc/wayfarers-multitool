@@ -313,10 +313,11 @@ class InterdictionTracker:
     def _note_if_unannounced(self) -> None:
         """An interdiction resolved without a warning having been up: write the NPC lines that came just before it to the log, so a line the
         warning does not know yet can be added (Settings > WFMT > General > Help has the diagnostic log)."""
-        if self._active:
-            return
         now = time.monotonic()
         lines = [f"{raw} | {text}" for t, raw, text in self._recent_npc if now - t <= _RECENT_NPC_S]
+        self._recent_npc = []      # these lines belong to this interdiction: the next one starts with none
+        if self._active:
+            return
         logger.info("Interdiction with no warning beforehand; NPC lines in the last %d s: %s", int(_RECENT_NPC_S), lines or "none")
 
     def _apply_interdictor_fields(self, raw: Mapping[str, Any]) -> None:

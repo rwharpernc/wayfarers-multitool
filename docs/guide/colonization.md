@@ -476,11 +476,11 @@ It asks [Spansh](https://spansh.co.uk) (a community-run map of the game), so it 
 
 ### Your own system first
 
-This is the default way Where to Buy finds commodities for colonization, and it applies only here (Trade, Missions, Mining and the other finders do not use it). Before looking anywhere else it searches **the system you are in** (the system WFMT last saw you in, whatever is in **Around**). If a station there has the commodity in stock, those stations are the answer and nothing outside is searched. If none does, it searches outside, around the **Around** system, and your **Sort** and filters decide the order (closest first by default). **Find all** does the same for each commodity, at the cost of one more Spansh request per commodity.
+This is the default way Where to Buy finds commodities for colonization, and it applies only here (Trade, Missions, Mining and the other finders do not use it). Before looking anywhere else it searches **the system you are in** (the system WFMT last saw you in, whatever is in **Around**). If a station there has the commodity in stock, those stations are the answer and nothing outside is searched. If none does (a station your exclusions below would hide does not count), it searches outside, around the **Around** system, and your **Sort** and filters decide the order (closest first by default). **Find all** does the same for each commodity, at the cost of one more Spansh request per commodity.
 
 ### Presets
 
-The **Preset** list sets the options below in one step. Every preset sorts closest first and leaves fleet carriers out. You can still change any option afterward; the list then reads **Custom**.
+The **Preset** list sets the options below in one step. Every preset sorts closest first and leaves fleet carriers out. You can still change any option afterward; the list then reads **Custom**. The surface, arrival, stock and shipyard choices redraw the table at once; the others (preset, pad, within, sort, carriers) need a new search, and a note beside the list says so until you press Find.
 
 | Preset | What it sets |
 |---|---|

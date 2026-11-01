@@ -381,6 +381,30 @@ check(rc.state.sync_file() and rc.drawn[-1].header[1] == ("Kappa", "title"), "an
 rc.stamp = None
 check(not rc.state.sync_file(), "no file, nothing to read")
 
+# Nothing is read before the first journal event (a route left from an earlier session is not shown), or while the overlay is off, and a file that
+# cannot be read is not tried again until it changes.
+reads = []
+quiet = Recalc()
+quiet.state._read = lambda: (reads.append(1), quiet.file)[1]
+check(not quiet.state.sync_file() and not reads and not quiet.drawn, "no read before the first journal event")
+quiet.state.handle_event({"event": "Music"}, "Sol")
+quiet.file, quiet.stamp = None, (5, 10)
+reads.clear()
+quiet.state.sync_file()
+quiet.state.sync_file()
+quiet.state.sync_file()
+check(len(reads) == 1, f"a file that cannot be read is tried once, not every tick: {len(reads)}")
+quiet.stamp = (5, 40)
+quiet.state.sync_file()
+check(len(reads) == 2, "and again once it changes")
+off = Recalc()
+off.state.handle_event({"event": "Music"}, "Sol")
+off.state._cfg = lambda: RO.RouteConfig(enabled=False, rows=3, edsm=False)
+off.stamp = (9, 9)
+reads.clear()
+off.state._read = lambda: (reads.append(1), off.file)[1]
+check(not off.state.sync_file() and not reads, "nothing is read while the Route overlay is off")
+
 # --- placement ----------------------------------------------------------------------------------------------------------------------------------
 check("route" in P.SLOTS and P.SLOTS["route"].group == RO.GROUP_NAME, "the slot is registered with the card's group")
 

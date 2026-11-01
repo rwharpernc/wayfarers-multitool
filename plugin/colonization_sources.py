@@ -106,23 +106,46 @@ def order(sources: Sequence[Source], sort: str = SORT_DISTANCE) -> List[Source]:
     return sorted(sources, key=lambda s: (s.distance_ly, s.price, s.arrival_ls))
 
 
+@dataclass(frozen=True)
+class LocalFilter:
+    """The exclusions the commander has set (surface ports, arrival distance, shipyard, enough stock), so that a station in their own system that
+    they would not use does not count as the system having the commodity."""
+    no_surface: bool = False
+    max_arrival_ls: Optional[int] = None
+    shipyard_only: bool = False
+    enough_stock: bool = False
+
+
+def _wanted(source: "Source", filters: LocalFilter, needed_t: int) -> bool:
+    """Whether a source passes the exclusions; `needed_t` is the tons still to get, used when enough stock is asked for."""
+    if filters.no_surface and source.is_planetary:
+        return False
+    if filters.shipyard_only and not source.has_shipyard:
+        return False
+    if filters.max_arrival_ls and source.arrival_ls and source.arrival_ls > filters.max_arrival_ls:
+        return False
+    return not (filters.enough_stock and needed_t and source.supply < needed_t)
+
+
 def _pad_stages(pad: str) -> List[str]:
     """The pad sizes to try, in order: Large then Medium for the "Large, then Medium" choice, else just the one asked for."""
     return [PAD_LARGE, PAD_MEDIUM] if pad == PAD_LARGE_FIRST else [pad]
 
 
 def _cache_key(reference_system: str, commodity: str, radius_ly: Optional[float], pad: str, include_carriers: bool,
-               sort: str, search: SearchFn, orbital_only: bool = False, here: str = "") -> tuple:
+               sort: str, search: SearchFn, orbital_only: bool = False, here: str = "", filters: Optional[LocalFilter] = None,
+               needed_t: int = 0) -> tuple:
+    stock = needed_t if filters is not None and filters.enough_stock else 0
     return (reference_system.strip().casefold(), commodity.casefold(), radius_ly, pad, include_carriers, sort, search, orbital_only,
-            here.strip().casefold())
+            here.strip().casefold(), filters, stock)
 
 
 def is_cached(reference_system: str, commodity: str, *, radius_ly: Optional[float] = DEFAULT_RADIUS_LY,
               pad: str = PAD_ANY, include_carriers: bool = False, sort: str = SORT_DISTANCE,
               search: SearchFn = search_best_price_stations, now: Callable[[], float] = time.monotonic,
-              orbital_only: bool = False, here: str = "") -> bool:
+              orbital_only: bool = False, here: str = "", filters: Optional[LocalFilter] = None, needed_t: int = 0) -> bool:
     """Whether `find` with these arguments would be answered from memory (so it sends no request)."""
-    cached = _cache.get(_cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search, orbital_only, here))
+    cached = _cache.get(_cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search, orbital_only, here, filters, needed_t))
     return cached is not None and now() - cached[0] < CACHE_SECONDS
 
 
@@ -133,17 +156,17 @@ def clear_cache() -> None:
 def find(reference_system: str, commodity: str, *, radius_ly: Optional[float] = DEFAULT_RADIUS_LY,
          pad: str = PAD_ANY, include_carriers: bool = False, sort: str = SORT_DISTANCE,
          search: SearchFn = search_best_price_stations, now: Callable[[], float] = time.monotonic,
-         orbital_only: bool = False, here: str = "") -> SearchResult:
+         orbital_only: bool = False, here: str = "", filters: Optional[LocalFilter] = None, needed_t: int = 0) -> SearchResult:
     """Stations (and optionally fleet carriers) near `reference_system` with `commodity` in stock. With `here` (the system the commander is in),
-    that system is searched first: if any station in it has the commodity in stock, those are the answer and nothing outside is searched; only when
-    none does, the search goes out around `reference_system`, ordered by `sort` (closest first by default). `search` is the
+    that system is searched first: if a station in it has the commodity in stock (and passes `filters`, the exclusions the commander has set, with
+    `needed_t` the tons still to get), those are the answer and nothing outside is searched; only when none does, the search goes out around `reference_system`, ordered by `sort` (closest first by default). `search` is the
     Spansh call; it raises on a network or parse failure, which the caller reports. Stations are asked for apart from
     carriers so the volatile carrier prices cannot crowd the real stations out of the first page. `orbital_only` asks
     for orbital stations alone (no surface ports), so a commodity whose nearest sellers are all on planets still shows
     the orbital ports that have it."""
     if not reference_system.strip():
         raise ValueError("Enter a system to search around.")
-    key = _cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search, orbital_only, here)
+    key = _cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search, orbital_only, here, filters, needed_t)
     cached = _cache.get(key)
     if cached is not None and now() - cached[0] < CACHE_SECONDS:
         return cached[1]
@@ -154,7 +177,7 @@ def find(reference_system: str, commodity: str, *, radius_ly: Optional[float] = 
         note = "" if stage == stages[0] else MEDIUM_NOTE
         if here.strip():
             local = _in_system(here.strip(), commodity, stage, include_carriers, orbital_only, sort, search)
-            if local.stations or local.carriers:
+            if any(filters is None or _wanted(source, filters, needed_t) for source in [*local.stations, *local.carriers]):
                 result = SearchResult(local.stations, local.carriers, local=True, note=note)
                 break
         required = None if stage == PAD_ANY else stage
@@ -168,8 +191,9 @@ def find(reference_system: str, commodity: str, *, radius_ly: Optional[float] = 
                               sort_by=spansh_sort, required_pad=required)
         result = SearchResult(
             stations=order([to_source(i) for i in stations if _fits(i, stage)], sort),
-            carriers=order([to_source(i) for i in carriers if _fits(i, stage)], sort), note=note)
+            carriers=order([to_source(i) for i in carriers if _fits(i, stage)], sort))
         if result.stations or result.carriers:
+            result = SearchResult(result.stations, result.carriers, note=note)   # the note says what these are, so an empty answer has none
             break
     _cache[key] = (now(), result)   # a failed search raised above, so a failure is never remembered
     return result
@@ -210,7 +234,7 @@ def find_whole_list(reference_system: str, commodities: Sequence[str], *, radius
                     sleep: Callable[[float], None] = time.sleep, pause: float = WHOLE_LIST_PAUSE,
                     progress: Optional[Callable[[int, int, str], None]] = None,
                     cancelled: Optional[Callable[[], bool]] = None, one_stop: Optional[OneStopFn] = None,
-                    needs: Optional[Dict[str, int]] = None, here: str = "") -> WholeListResult:
+                    needs: Optional[Dict[str, int]] = None, here: str = "", filters: Optional[LocalFilter] = None) -> WholeListResult:
     """`find` for each commodity in turn, one request each (Spansh has no multi-commodity search), pausing between
     requests that really went out. A commodity whose search fails is recorded and the rest carry on, so one bad answer
     does not lose the others; a blank system is refused outright. `progress(done, total, label)` is called before each
@@ -226,15 +250,19 @@ def find_whole_list(reference_system: str, commodities: Sequence[str], *, radius
 
     With `here` (the system the commander is in) each commodity is looked for in that system first, as `find` does: one that a station there
     has in stock is answered from there alone, so the one-stop stations and the orbital check add nothing outside to it, and a one-stop station
-    outside `here` does not stand in for that commodity's own search."""
+    outside `here` does not stand in for that commodity's own search. `filters` (the commander's exclusions, with `needs` as the tons wanted) decide
+    whether a station in `here` counts as having the commodity at all."""
     if not reference_system.strip():
         raise ValueError("Enter a system to search around.")
     out = WholeListResult()
     stop_pad = PAD_LARGE if pad == PAD_LARGE_FIRST else pad   # the one-stop stations are asked for with a Large pad: a Medium fall-back is per commodity
-    options = dict(radius_ly=radius_ly, pad=pad, include_carriers=include_carriers, sort=sort, search=search, now=now, here=here)
+    options = dict(radius_ly=radius_ly, pad=pad, include_carriers=include_carriers, sort=sort, search=search, now=now, here=here, filters=filters)
+
+    def wanted_t(label: str) -> int:
+        return (needs or {}).get(label, 0)
     sent_any = False
     pre_hits: List[Tuple[StationPrice, Dict[str, Tuple[int, int]]]] = []
-    satisfied: set = set()
+    satisfied: Dict[str, SearchResult] = {}
     if one_stop is not None and needs and len(commodities) >= 2 and not (cancelled is not None and cancelled()):
         try:
             pre_hits = _one_stop_hits(one_stop, reference_system, list(commodities), radius_ly, stop_pad, include_carriers)
@@ -244,8 +272,13 @@ def find_whole_list(reference_system: str, commodities: Sequence[str], *, radius
         pre_hits = [(item, offers) for item, offers in pre_hits if _fits(item, stop_pad)]
         for label in commodities:
             need = needs.get(label, 0)
-            if need > 0 and any(label in offers and offers[label][1] >= need and _is_here(item, here) for item, offers in pre_hits):
-                satisfied.add(label)
+            if need <= 0:
+                continue
+            here_stock = [_hit_source(item, offers[label]) for item, offers in pre_hits
+                          if label in offers and offers[label][1] >= need and _is_here(item, here)]
+            here_stock = [source for source in here_stock if filters is None or _wanted(source, filters, need)]
+            if here_stock:   # the one-stop answer already has the whole amount in the commander's system: that is this commodity's answer
+                satisfied[label] = SearchResult(order([s for s in here_stock if not s.is_carrier], sort), order([s for s in here_stock if s.is_carrier], sort), local=True)
     for index, label in enumerate(commodities):
         if cancelled is not None and cancelled():
             out.stopped = True
@@ -253,13 +286,13 @@ def find_whole_list(reference_system: str, commodities: Sequence[str], *, radius
         if progress is not None:
             progress(index, len(commodities), label)
         if label in satisfied:
-            out.found.append((label, SearchResult(stations=[], carriers=[])))   # filled from the one-stop answer below
+            out.found.append((label, satisfied[label]))
             continue
-        cached = is_cached(reference_system, label, **options)
+        cached = is_cached(reference_system, label, needed_t=wanted_t(label), **options)
         if sent_any and not cached and pause > 0:
             sleep(pause)
         try:
-            out.found.append((label, find(reference_system, label, **options)))
+            out.found.append((label, find(reference_system, label, needed_t=wanted_t(label), **options)))
             sent_any = sent_any or not cached
         except Exception as exc:   # a network or parse failure for this commodity only
             out.failed.append((label, str(exc) or exc.__class__.__name__))
@@ -297,9 +330,9 @@ def _check_orbital(out: WholeListResult, reference_system: str, options: Dict[st
         if cancelled is not None and cancelled():
             return
         try:
-            if pause > 0 and not is_cached(reference_system, label, orbital_only=True, **{k: v for k, v in options.items()}):
+            if pause > 0 and not is_cached(reference_system, label, orbital_only=True, needed_t=(needs or {}).get(label, 0), **options):
                 sleep(pause)
-            extra = find(reference_system, label, orbital_only=True, **options)
+            extra = find(reference_system, label, orbital_only=True, needed_t=(needs or {}).get(label, 0), **options)
         except Exception:
             continue
         for index, (name, result) in enumerate(out.found):
@@ -307,7 +340,7 @@ def _check_orbital(out: WholeListResult, reference_system: str, options: Dict[st
                 continue
             have = {(s.station, s.system) for s in [*result.stations, *result.carriers]}
             stations = list(result.stations) + [s for s in extra.stations if (s.station, s.system) not in have]
-            out.found[index] = (name, SearchResult(stations=order(stations, options["sort"]), carriers=list(result.carriers)))
+            out.found[index] = (name, SearchResult(stations=order(stations, options["sort"]), carriers=list(result.carriers), note=result.note))
 
 
 def _one_stop_hits(one_stop: OneStopFn, reference_system: str, labels: Sequence[str], radius_ly: Optional[float], pad: str,
@@ -316,6 +349,16 @@ def _one_stop_hits(one_stop: OneStopFn, reference_system: str, labels: Sequence[
     extra = {"also": list(also)} if also else {}
     return one_stop(reference_system.strip(), list(labels), radius_ly, max_results=ONE_STOP_RESULTS, market_days_old=MAX_AGE_DAYS,
                     station_types=types, required_pad=None if pad == PAD_ANY else pad, **extra)
+
+
+def _hit_source(item: StationPrice, offer: Tuple[int, int]) -> Source:
+    """The source for a one-stop station's offer of one commodity: the station with that commodity's price and stock."""
+    price, supply = offer
+    return to_source(StationPrice(
+        station=item.station, system=item.system, station_type=item.station_type, distance_ly=item.distance_ly,
+        distance_to_arrival_ls=item.distance_to_arrival_ls, is_planetary=item.is_planetary, price=price,
+        quantity=supply, small_pads=item.small_pads, medium_pads=item.medium_pads, large_pads=item.large_pads,
+        has_shipyard=item.has_shipyard))
 
 
 def _merge_hits(out: WholeListResult, hits: Sequence[Tuple[StationPrice, Dict[str, Tuple[int, int]]]], pad: str, sort: str) -> None:
@@ -328,12 +371,7 @@ def _merge_hits(out: WholeListResult, hits: Sequence[Tuple[StationPrice, Dict[st
         for item, offers in hits:
             if (item.station, item.system) in have or label not in offers or not _fits(item, pad):
                 continue
-            price, supply = offers[label]
-            source = to_source(StationPrice(
-                station=item.station, system=item.system, station_type=item.station_type, distance_ly=item.distance_ly,
-                distance_to_arrival_ls=item.distance_to_arrival_ls, is_planetary=item.is_planetary, price=price,
-                quantity=supply, small_pads=item.small_pads, medium_pads=item.medium_pads, large_pads=item.large_pads,
-                has_shipyard=item.has_shipyard))
+            source = _hit_source(item, offers[label])
             (carriers if source.is_carrier else stations).append(source)
         out.found[index] = (label, SearchResult(stations=order(stations, sort), carriers=order(carriers, sort)))
 
@@ -412,17 +450,13 @@ def filter_found(found: Sequence[Tuple[str, "SearchResult"]], *, no_surface: boo
     """The whole-list answers with the sources the commander does not want taken out: surface ports (`no_surface`), stations farther than
     `max_arrival_ls` from their arrival star (an unknown distance is kept), and, given `needs` (tons still to get by label), stations
     holding less of a commodity than is still needed there, and, with `shipyard_only`, stations without a shipyard (a smaller cargo ship can be kept there)."""
-    def keep(label: str, source: Source) -> bool:
-        if no_surface and source.is_planetary:
-            return False
-        if shipyard_only and not source.has_shipyard:
-            return False
-        if max_arrival_ls and source.arrival_ls and source.arrival_ls > max_arrival_ls:
-            return False
-        need = needs.get(label, 0) if needs is not None else 0
-        return not (need and source.supply < need)
+    rule = LocalFilter(no_surface=no_surface, max_arrival_ls=max_arrival_ls, shipyard_only=shipyard_only, enough_stock=needs is not None)
 
-    return [(label, SearchResult([s for s in result.stations if keep(label, s)], [c for c in result.carriers if keep(label, c)]))
+    def keep(label: str, source: Source) -> bool:
+        return _wanted(source, rule, needs.get(label, 0) if needs is not None else 0)
+
+    return [(label, SearchResult([s for s in result.stations if keep(label, s)], [c for c in result.carriers if keep(label, c)],
+                                 local=result.local, note=result.note))
             for label, result in found]
 
 
@@ -584,4 +618,4 @@ def load_prefs(raw: Any) -> SearchPrefs:
         max_arrival_ls=arrival if (not isinstance(arrival, bool) and arrival in ARRIVAL_CHOICES) else default.max_arrival_ls,
         enough_stock=enough if isinstance(enough, bool) else default.enough_stock,
         shipyard_only=shipyard if isinstance(shipyard, bool) else default.shipyard_only,
-        preset=data["preset"] if data.get("preset") in PRESET_LABELS else default.preset)
+        preset=data["preset"] if isinstance(data.get("preset"), str) and data["preset"] in PRESET_LABELS else default.preset)

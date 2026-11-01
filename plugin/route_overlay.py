@@ -318,11 +318,14 @@ class RouteOverlay:
         self._last_sent = 0.0
         self._stamp = stamp
         self._file_stamp: Optional[Tuple[int, int]] = None   # the state of NavRoute.json when it was last read successfully
+        self._failed_stamp: Optional[Tuple[int, int]] = None # the state of NavRoute.json when it last could not be read (not tried again until it changes)
+        self._live = False                                    # a journal event has arrived, so the file is the live session's, not a leftover
 
     def _load_route(self) -> None:
         stamp = self._stamp()
         data = self._read()
         if data is None:
+            self._failed_stamp = stamp
             diag_log.log("route", "NavRoute.json could not be read", stamp=stamp)
             return
         hops = route_plan.parse_route(data)
@@ -335,8 +338,10 @@ class RouteOverlay:
         """Read `NavRoute.json` again if the game rewrote it since it was last read. The `NavRoute` journal event can arrive before the file is
         rewritten (a recalculated route is then read as the old one), or while it is half written (it cannot be read at all); this catches the
         file once it is whole. True when a new route was read."""
+        if not self._live or not self._cfg().enabled:
+            return False
         stamp = self._stamp()
-        if stamp is None or stamp == self._file_stamp:
+        if stamp is None or stamp in (self._file_stamp, self._failed_stamp):
             return False
         with self._lock:
             before = list(self.tracker.route)
@@ -353,6 +358,7 @@ class RouteOverlay:
     def handle_event(self, entry: Dict[str, Any], system: Optional[str] = None) -> None:
         event = entry.get("event")
         with self._lock:
+            self._live = True
             reload = self.tracker.handle_event(entry, system)
             if reload or event in ("LoadGame", "StartUp", restore.RESTORE_EVENT):
                 try:

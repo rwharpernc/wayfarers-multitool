@@ -172,12 +172,12 @@ class BuyWindow:
                                 values=[f"{r} ly" for r in sources.RADIUS_CHOICES] + [_NO_LIMIT])
         self._radius.set(_NO_LIMIT if self._prefs.radius_ly is None else f"{int(self._prefs.radius_ly)} ly")
         self._radius.pack(side="left", padx=(P.PAD_SM, P.PAD))
-        self._radius.bind("<<ComboboxSelected>>", lambda _e: self._on_filter_change())
+        self._radius.bind("<<ComboboxSelected>>", lambda _e: self._on_search_option_change())
         tk.Label(first, text="Sort", fg=P.MUTED, bg=P.PANE).pack(side="left")
         self._sort = Combobox(first, state="readonly", width=14, values=[label for label, _ in _SORT_CHOICES])
         self._sort.set(next((text for text, key in _SORT_CHOICES if key == self._prefs.sort), _SORT_CHOICES[0][0]))
         self._sort.pack(side="left", padx=(P.PAD_SM, 0))
-        self._sort.bind("<<ComboboxSelected>>", lambda _e: self._on_filter_change())
+        self._sort.bind("<<ComboboxSelected>>", lambda _e: self._on_search_option_change())
 
         presets = tk.Frame(options, bg=P.PANE, pady=P.PAD_SM)
         presets.pack(fill="x")
@@ -188,12 +188,14 @@ class BuyWindow:
         self._preset.set(sources.PRESET_LABELS.get(self._prefs.preset, sources.PRESET_LABELS[sources.DEFAULT_PRESET]))
         self._preset.pack(side="left", padx=(P.PAD_SM, P.PAD))
         tk.Label(presets, text="Your own system is always searched first.", fg=P.MUTED, bg=P.PANE).pack(side="left")
+        self._stale_note = tk.Label(presets, text="", fg=P.WARN, bg=P.PANE)
+        self._stale_note.pack(side="left", padx=(P.PAD, 0))
         self._preset.bind("<<ComboboxSelected>>", lambda _e: self._on_preset())
         tk.Label(second, text="Landing pad", fg=P.MUTED, bg=P.PANE).pack(side="left")
         self._pad = Combobox(second, state="readonly", width=17, values=[label for _, label in sources.PAD_CHOICES])
         self._pad.set(next((text for key, text in sources.PAD_CHOICES if key == self._prefs.pad), sources.PAD_CHOICES[0][1]))
         self._pad.pack(side="left", padx=(P.PAD_SM, P.PAD))
-        self._pad.bind("<<ComboboxSelected>>", lambda _e: self._on_filter_change())
+        self._pad.bind("<<ComboboxSelected>>", lambda _e: self._on_search_option_change())
         self._find_button = FlatButton(second, "Find nearest", self._on_find, kind="accent",
                                        tip="Find nearest - search for the nearest stations selling the selected commodity (Spansh)")
         self._find_button.pack(side="right")
@@ -207,7 +209,7 @@ class BuyWindow:
 
         third = tk.Frame(options, bg=P.PANE)
         third.pack(fill="x")
-        tk.Checkbutton(third, text="Exclude fleet carriers", variable=self._no_carriers_var, command=self._on_filter_change).pack(side="left", padx=(0, P.PAD))
+        tk.Checkbutton(third, text="Exclude fleet carriers", variable=self._no_carriers_var, command=self._on_search_option_change).pack(side="left", padx=(0, P.PAD))
         tk.Checkbutton(third, text="Exclude surface ports", variable=self._no_surface_var, command=self._on_filter_change).pack(side="left", padx=(0, P.PAD))
         fourth = tk.Frame(options, bg=P.PANE)
         fourth.pack(fill="x")
@@ -331,7 +333,22 @@ class BuyWindow:
             self._arrival.set(_NO_LIMIT if preset.max_arrival_ls is None else f"{preset.max_arrival_ls:,} ls")
             if preset.radius_ly is not None:
                 self._radius.set(f"{int(preset.radius_ly)} ly")
+        self._on_search_option_change()
+
+    def _local_filter(self) -> sources.LocalFilter:
+        """The exclusions on screen, for the search to know which stations in the commander's own system count."""
+        return sources.LocalFilter(no_surface=bool(self._no_surface_var.get()), max_arrival_ls=self._arrival_ls(),
+                                   shipyard_only=bool(self._shipyard_var.get()), enough_stock=bool(self._enough_var.get()))
+
+    def _set_stale(self, stale: bool) -> None:
+        """Say when the table is from an earlier search than the options now on screen (pad, radius, carriers, sort and presets need a new search)."""
+        self._stale_note.configure(text="Options changed: press Find nearest or Find all to search again." if stale else "")
+
+    def _on_search_option_change(self) -> None:
+        """A choice that is asked of Spansh (pad, radius, carriers, sort, or a preset) changed: results already on screen came from the old choice."""
         self._on_filter_change()
+        if self._result is not None or self._whole is not None:
+            self._set_stale(True)
 
     def _save_prefs(self) -> None:
         key = self._preset_key()
@@ -358,7 +375,10 @@ class BuyWindow:
         commodity, radius, pad = wanted, self._radius_ly(), self._pad_choice()
         carriers, order = not self._no_carriers_var.get(), self._sort_choice()
         here = self.host.current_system()
+        filters = self._local_filter()
+        needed = (self._need_for_single() or {}).get(commodity, 0)
         self._save_prefs()
+        self._set_stale(False)
         self._search_id += 1
         job: Dict[str, Any] = {"id": self._search_id, "done": False, "result": None, "error": ""}
         self._find_button.set_enabled(False)
@@ -369,7 +389,7 @@ class BuyWindow:
         def work() -> None:
             try:
                 job["result"] = sources.find(system, commodity, radius_ly=radius, pad=pad,
-                                             include_carriers=carriers, sort=order, here=here)
+                                             include_carriers=carriers, sort=order, here=here, filters=filters, needed_t=needed)
             except Exception as exc:   # network, parse or bad input: shown, not raised into the main thread
                 logger.exception("Colonization where-to-buy search failed")
                 job["error"] = str(exc) or exc.__class__.__name__
@@ -416,7 +436,9 @@ class BuyWindow:
         to_get = {r.label: r.to_get for r in rows}
         radius, pad, carriers, order = self._radius_ly(), self._pad_choice(), not self._no_carriers_var.get(), self._sort_choice()
         here = self.host.current_system()
+        filters = self._local_filter()
         self._save_prefs()
+        self._set_stale(False)
         self._search_id += 1
         job: Dict[str, Any] = {"id": self._search_id, "done": False, "result": None, "error": "", "cancel": False,
                                "progress": (0, len(labels), labels[0])}
@@ -431,7 +453,7 @@ class BuyWindow:
                 job["result"] = sources.find_whole_list(
                     system, labels, radius_ly=radius, pad=pad, include_carriers=carriers, sort=order,
                     progress=lambda done, total, label: job.__setitem__("progress", (done, total, label)),
-                    cancelled=lambda: job["cancel"], one_stop=search_stations_selling_all, needs=to_get, here=here)
+                    cancelled=lambda: job["cancel"], one_stop=search_stations_selling_all, needs=to_get, here=here, filters=filters)
             except Exception as exc:   # bad input or an unexpected failure: shown, not raised into the main thread
                 logger.exception("Colonization whole-list search failed")
                 job["error"] = str(exc) or exc.__class__.__name__
