@@ -10,9 +10,11 @@ can move), and are listed after the stations."""
 
 from __future__ import annotations
 
+import itertools
 import json
+import math
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 from . import trade_prices
@@ -60,6 +62,7 @@ class Source:
     price: int           # cr per ton
     supply: int          # tons in stock
     has_shipyard: bool = False
+    position: Optional[Tuple[float, float, float]] = None   # the system's galactic (x, y, z), when Spansh gave it (for the legs of a route)
 
 
 @dataclass(frozen=True)
@@ -96,7 +99,7 @@ def to_source(item: StationPrice) -> Source:
     return Source(
         station=item.station, system=item.system, kind=item.station_type, is_carrier=carrier,
         is_planetary=item.is_planetary, pad=largest_pad(item), distance_ly=item.distance_ly, arrival_ls=item.distance_to_arrival_ls,
-        price=item.price, supply=item.quantity, has_shipyard=item.has_shipyard)
+        price=item.price, supply=item.quantity, has_shipyard=item.has_shipyard, position=item.position)
 
 
 def order(sources: Sequence[Source], sort: str = SORT_DISTANCE) -> List[Source]:
@@ -358,7 +361,7 @@ def _hit_source(item: StationPrice, offer: Tuple[int, int]) -> Source:
         station=item.station, system=item.system, station_type=item.station_type, distance_ly=item.distance_ly,
         distance_to_arrival_ls=item.distance_to_arrival_ls, is_planetary=item.is_planetary, price=price,
         quantity=supply, small_pads=item.small_pads, medium_pads=item.medium_pads, large_pads=item.large_pads,
-        has_shipyard=item.has_shipyard))
+        has_shipyard=item.has_shipyard, position=item.position))
 
 
 def _merge_hits(out: WholeListResult, hits: Sequence[Tuple[StationPrice, Dict[str, Tuple[int, int]]]], pad: str, sort: str) -> None:
@@ -417,6 +420,9 @@ class Stop:
     distance_ly: float
     buys: Tuple[Purchase, ...]
     is_planetary: bool = False    # a surface port (needs a planetary landing)
+    pad: str = ""                 # the largest pad ("Large" / "Medium" / "Small" / "?"), blank when not known
+    position: Optional[Tuple[float, float, float]] = None   # the system's galactic position, when Spansh gave it
+    leg_ly: Optional[float] = None   # the jump distance from the stop before it (from the search's system for the first); None when not known
 
     @property
     def tons(self) -> int:
@@ -429,17 +435,18 @@ class RoutePlan:
     needed: int                       # tons the commodities searched for still need in all
     covered: int                      # of that, how many tons the stops can supply
     uncovered: Tuple[Tuple[str, int], ...]   # (commodity, tons) the stops cannot supply (not in range, or too little stock)
+    total_ly: Optional[float] = None         # the whole trip, start to last stop; None when any leg is not known
 
     def lines(self) -> List[str]:
         """The plan as plain lines: a summary, one line per stop, and what is left over."""
         if not self.stops:
             return []
         out = [f"Suggested shopping route: {len(self.stops)} stop{'s' if len(self.stops) != 1 else ''}, "
-               f"{self.covered:,} of {self.needed:,} t covered"]
+               f"{self.covered:,} of {self.needed:,} t covered" + (f", {self.total_ly:,.1f} ly in all" if self.total_ly is not None else "")]
         for number, stop in enumerate(self.stops, 1):
             buys = ", ".join(f"{b.commodity} {b.tons:,} t" + (" (surface ports only)" if b.surface_only else "") for b in stop.buys)
             tag = (" (fleet carrier)" if stop.is_carrier else "") + (" (surface port)" if stop.is_planetary else "")
-            out.append(f"{number}. {stop.station} ({stop.system}){tag}, {stop.distance_ly:,.1f} ly: {buys}")
+            out.append(f"{number}. {stop.station} ({stop.system}){tag}, {(stop.leg_ly if stop.leg_ly is not None else stop.distance_ly):,.1f} ly: {buys}")
         if self.uncovered:
             out.append("Not covered: " + ", ".join(f"{label} {tons:,} t" for label, tons in self.uncovered))
         return out
@@ -468,6 +475,32 @@ def surface_only_labels(found: Sequence[Tuple[str, "SearchResult"]]) -> frozense
         if sources and all(s.is_planetary for s in sources):
             out.add(label)
     return frozenset(out)
+
+
+def _jump(a: Tuple[float, float, float], b: Tuple[float, float, float]) -> float:
+    return math.dist(a, b)
+
+
+def _fly_order(stops: Sequence[Stop]) -> Tuple[List[Stop], Optional[float]]:
+    """Put the stops in the order to fly them: the shortest trip that starts from the search's system (each stop knows its own distance from
+    it) and visits every stop, each leg measured from the stop before. Every order is tried (a route has six stops at most). When a
+    stop's position is not known the legs cannot be measured, so they go nearest the search's system first and carry no leg (total None)."""
+    stops = list(stops)
+    if not stops:
+        return [], 0.0
+    if any(s.position is None for s in stops) or len(stops) > 8:
+        stops.sort(key=lambda s: (s.distance_ly, s.station.casefold()))
+        return stops, None
+    best: Optional[Tuple[float, Tuple[str, ...], Tuple[Stop, ...]]] = None
+    for perm in itertools.permutations(stops):
+        total = perm[0].distance_ly + sum(_jump(a.position, b.position) for a, b in zip(perm, perm[1:]))   # type: ignore[arg-type]
+        key = (round(total, 6), tuple(s.station.casefold() for s in perm))
+        if best is None or key < (best[0], best[1]):
+            best = (key[0], key[1], perm)
+    assert best is not None
+    perm = best[2]
+    legs = [perm[0].distance_ly] + [_jump(a.position, b.position) for a, b in zip(perm, perm[1:])]   # type: ignore[arg-type]
+    return [replace(s, leg_ly=leg) for s, leg in zip(perm, legs)], sum(legs)
 
 
 def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int], max_stops: int = ROUTE_MAX_STOPS,
@@ -513,11 +546,12 @@ def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int
                 if left[label] <= 0:
                     del left[label]
         source = details[best]
-        chosen.append(Stop(source.station, source.system, source.kind, source.is_carrier, source.distance_ly, tuple(buys), source.is_planetary))
+        chosen.append(Stop(source.station, source.system, source.kind, source.is_carrier, source.distance_ly, tuple(buys), source.is_planetary,
+                           source.pad, source.position))
         del candidates[best]
-    chosen.sort(key=lambda stop: (stop.distance_ly, stop.station.casefold()))
+    ordered, total = _fly_order(chosen)
     uncovered = tuple(sorted(left.items(), key=lambda kv: kv[0].casefold()))
-    return RoutePlan(stops=tuple(chosen), needed=needed, covered=needed - sum(left.values()), uncovered=uncovered)
+    return RoutePlan(stops=tuple(ordered), needed=needed, covered=needed - sum(left.values()), uncovered=uncovered, total_ly=total)
 
 
 # --- remembered choices --------------------------------------------------------------------------------------------

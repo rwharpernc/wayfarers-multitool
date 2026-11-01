@@ -184,6 +184,18 @@ class StationPrice:
     medium_pads: Optional[int] = None
     large_pads: Optional[int] = None
     has_shipyard: bool = False          # Spansh's `has_shipyard` (absent when the station has none)
+    position: Optional[tuple[float, float, float]] = None   # the system's galactic (x, y, z) when Spansh gives it
+
+
+def _position(station: dict) -> Optional[tuple[float, float, float]]:
+    """The system's galactic position from a Spansh station result (`system_x/y/z`), or None when any part is missing."""
+    try:
+        values = tuple(station[key] for key in ("system_x", "system_y", "system_z"))
+    except (KeyError, TypeError):
+        return None
+    if any(isinstance(v, bool) or not isinstance(v, (int, float)) for v in values):
+        return None
+    return (float(values[0]), float(values[1]), float(values[2]))
 
 
 def _count(value) -> Optional[int]:
@@ -257,7 +269,7 @@ def search_stations_selling_all(reference_system: str, commodities: Sequence[str
                 station_type=station.get("type") or "?", distance_ly=station.get("distance", 0.0),
                 distance_to_arrival_ls=station.get("distance_to_arrival", 0.0),
                 is_planetary=bool(station.get("is_planetary", False)), price=first[0], quantity=first[1],
-                has_shipyard=bool(station.get("has_shipyard")),
+                has_shipyard=bool(station.get("has_shipyard")), position=_position(station),
                 small_pads=_count(station.get("small_pads")), medium_pads=_count(station.get("medium_pads")),
                 large_pads=_count(station.get("large_pads"))), offers))
     return out
@@ -374,6 +386,7 @@ def search_best_price_stations(reference_system: str, commodity: str, transactio
             medium_pads=_count(station.get("medium_pads")),
             large_pads=_count(station.get("large_pads")),
             has_shipyard=bool(station.get("has_shipyard")),
+            position=_position(station),
         ))
     return results
 

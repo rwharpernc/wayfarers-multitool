@@ -597,6 +597,60 @@ class NeedsAwareTests(unittest.TestCase):
         self.assertEqual(len(result.found), 2)
 
 
+class TripOrderTests(unittest.TestCase):
+    """The stops are flown in the order that makes the shortest trip, each jump measured from the stop before."""
+
+    @staticmethod
+    def source(name, system, distance, position, supply=1000):
+        return src.Source(name, system, "Coriolis Starport", False, False, "Large", distance, 100.0, 400, supply, position=position)
+
+    def found(self):
+        # Away from the search system, in a line along x: A is 10 ly out, B 12 ly (but past C on the far side), C 30 ly.
+        a = self.source("A Port", "A", 10.0, (10.0, 0.0, 0.0))
+        b = self.source("B Port", "B", 12.0, (0.0, 12.0, 0.0))
+        c = self.source("C Port", "C", 30.0, (30.0, 0.0, 0.0))
+        return [("Steel", src.SearchResult([a], [])), ("Water", src.SearchResult([b], [])), ("Ore", src.SearchResult([c], []))]
+
+    def test_the_shortest_trip_is_flown_not_the_nearest_to_the_start_first(self):
+        plan = src.plan_route(self.found(), {"Steel": 100, "Water": 100, "Ore": 100})
+        # B, A, C: 12 + 15.6 + 20 = 47.6 ly, against A, B, C: 10 + 15.6 + 36.1 = 61.7 ly.
+        self.assertEqual([s.system for s in plan.stops], ["B", "A", "C"])
+        self.assertAlmostEqual(plan.total_ly, 12.0 + (10.0 ** 2 + 12.0 ** 2) ** 0.5 + 20.0, places=4)
+        self.assertEqual(plan.stops[0].leg_ly, 12.0)
+        self.assertAlmostEqual(plan.stops[1].leg_ly, (10.0 ** 2 + 12.0 ** 2) ** 0.5, places=4)
+        self.assertAlmostEqual(plan.stops[2].leg_ly, 20.0, places=4)
+
+    def test_a_stop_with_no_known_position_falls_back_to_nearest_first_with_no_legs(self):
+        found = self.found()
+        far = self.source("C Port", "C", 30.0, None)
+        found[2] = ("Ore", src.SearchResult([far], []))
+        plan = src.plan_route(found, {"Steel": 100, "Water": 100, "Ore": 100})
+        self.assertEqual([s.system for s in plan.stops], ["A", "B", "C"])
+        self.assertIsNone(plan.total_ly)
+        self.assertTrue(all(s.leg_ly is None for s in plan.stops))
+
+    def test_the_copied_route_gives_the_legs_and_the_total(self):
+        plan = src.plan_route(self.found(), {"Steel": 100, "Water": 100, "Ore": 100})
+        lines = plan.lines()
+        self.assertIn("47.6 ly in all", lines[0])
+        self.assertIn("1. B Port (B)", lines[1])
+        self.assertIn("12.0 ly", lines[1])
+
+    def test_the_stop_keeps_its_pad_and_position(self):
+        plan = src.plan_route(self.found(), {"Steel": 100})
+        self.assertEqual((plan.stops[0].pad, plan.stops[0].position), ("Large", (10.0, 0.0, 0.0)))
+
+    def test_spansh_positions_are_read_or_left_out(self):
+        from plugin.mining_spansh_client import _position
+        self.assertEqual(_position({"system_x": 1, "system_y": 2.5, "system_z": -3}), (1.0, 2.5, -3.0))
+        self.assertIsNone(_position({"system_x": 1, "system_y": 2}))
+        self.assertIsNone(_position({"system_x": "1", "system_y": 2, "system_z": 3}))
+
+    def test_one_stop_is_a_trip_of_its_own_distance(self):
+        plan = src.plan_route(self.found(), {"Steel": 100})
+        self.assertEqual(plan.total_ly, 10.0)
+
+
 class SurfacePortTests(unittest.TestCase):
     @staticmethod
     def source(name, planetary, supply=1000):

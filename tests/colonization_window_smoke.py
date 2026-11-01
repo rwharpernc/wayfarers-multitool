@@ -340,15 +340,21 @@ check(len(whole_calls) == 1 and whole_calls[0][1] == ["Aluminium", "Steel"],
       f"Find all should search what is still to buy, got {whole_calls}")
 check(whole_calls[0][2]["pad"] == "large", "Find all should use the chosen options")
 headings = [row.values[0] for row in buy._plan_table._rows.values() if row.group]
-check(headings == ["Suggested route", "1. Near Port"], f"the route sits in its own block: {headings}")
+check(headings == ["Suggested trip", "1. Near Port"], f"the route sits in its own block: {headings}")
 check([row.values[0] for row in buy._source_table._rows.values() if row.group] == ["Aluminium", "Steel"],
       "the commodity lists keep one heading per commodity, apart from the plan")
 check(buy._plan_frame.winfo_manager() == "pack", "the plan block is shown after a Find all that made one")
 detail = {row.values[0]: row.values[1:3] for row in list(buy._plan_table._rows.values()) + list(buy._source_table._rows.values()) if row.group}
 check(detail["Aluminium"] == ["80 t to get", ""] and detail["Steel"] == ["400 t to get", "no source found"],
       f"the detail sits in later columns so the label is not clipped: {detail}")
-check(detail["Suggested route"][0] == "1 stop", f"the route heading counts its stops: {detail['Suggested route']}")
-check(len(buy._plan_table) == 3 and len(buy._source_table) == 3, f"the plan block (the route, 3 rows) apart from two headings and one station: {len(buy._plan_table)}, {len(buy._source_table)}")
+check(detail["Suggested trip"][0] == "1 stop", f"the trip heading counts its stops: {detail['Suggested trip']}")
+trip_rows = len(buy._plan_table)
+check(trip_rows >= 3 and len(buy._source_table) == 3, f"the trip block (heading, stop, buy line) apart from two headings and one station: {trip_rows}, {len(buy._source_table)}")
+check(buy._next_card.winfo_manager() == "pack" and buy._next_title.cget("text") == "Next stop: 1 of 1"
+      and "Near Port" in buy._next_where.cget("text") and buy._next_buy.cget("text") == "Buy: Aluminium 80 t",
+      f"the next-stop card names the stop and what to buy: {buy._next_title.cget('text')!r} {buy._next_where.cget('text')!r} {buy._next_buy.cget('text')!r}")
+check(buy._card_system == "Sol", "the card's button copies the next stop's system")
+
 check(buy._plan is not None and [s.station for s in buy._plan.stops] == ["Near Port"], "a plan should be kept for Copy Route")
 check(buy._find_all_button.cget("text") == "Find all" and buy._find_button._enabled,
       "the buttons come back when the search is done")
@@ -356,14 +362,17 @@ check("No source found for Steel" in buy._sources_note.cget("text"), "the note s
 check("shopping route of 1 stop" in buy._sources_note.cget("text") and "Not covered: Steel 400 t" in buy._sources_note.cget("text"),
       f"the note should describe the route and what it leaves out: {buy._sources_note.cget('text')}")
 route_buy = buy._plan_table._rows["route1b0"].values
-check(route_buy[7:9] == ["410", "900"], f"a route stop's buy line shows price and supply: {route_buy}")
+check(route_buy[3:5] == ["900 in stock", "410"], f"a route stop's buy line shows stock and price: {route_buy}")
+check(buy._plan_table._rows["route1"].values[3] == "Large pad", "the stop notes its pad")
 buy._source_table.select("g0s0")
+buy._on_copy_next()
+check("Copied Sol" in buy._sources_note.cget("text"), "Copy next system confirms")
 buy._on_copy_system()
 check("Copied" in buy._sources_note.cget("text"), "Copy System works on a Find all result")
 buy._on_copy_route()
 check("Copied the 1-stop shopping route" in buy._sources_note.cget("text"), "Copy Route should confirm")
 buy._on_source_sort("price")
-check(len(buy._plan_table) == 3 and len(buy._source_table) == 3, "sorting a Find all result keeps it, route included")
+check(len(buy._plan_table) == trip_rows and len(buy._source_table) == 3, "sorting a Find all result keeps it, route included")
 buy._plan = None
 buy._on_copy_route()
 check("Press Find all first" in buy._sources_note.cget("text"), "Copy Route with no route says what to do")
@@ -380,11 +389,24 @@ root.update()
 check(len(whole_calls) == calls_before, "following a purchase must not search again")
 check("Aluminium" not in [row.values[0] for row in buy._source_table._rows.values()]
       and not any("Aluminium" in row.values[0] for row in buy._plan_table._rows.values() if row.group), "a bought commodity leaves the lists and the route")
-check(len(buy._plan_table) == 0 and buy._plan_frame.winfo_manager() == "", "with nothing left on the route the plan block is hidden")
+check(buy._plan_table._rows["done1"].values[0].endswith("1. Near Port") and buy._plan_table._rows["done1"].values[3] == "done",
+      "the stop that was bought at stays on the trip, ticked as done")
+check(buy._next_title.cget("text") == "All stops done", f"with every stop done the card says so: {buy._next_title.cget('text')!r}")
 check(buy._plan is not None and not buy._plan.stops and buy._whole_to_get == {"Steel": 400}, "the needs follow the Sites window")
 window.set_cargo({"water": 50})
 root.update()
-check(buy._whole_to_get == {"Aluminium": 80, "Steel": 400} and len(buy._plan_table) == 3, "taking the cargo away again brings it back")
+check(buy._whole_to_get == {"Aluminium": 80, "Steel": 400}, "taking the cargo away again brings it back")
+check(len(buy._plan_table) == trip_rows and "done1" not in buy._plan_table._rows, "and the stop is on the trip again, not done")
+# Skip this stop: the trip is planned again without it, and it shows as skipped.
+near_only = buy._plan.stops[0].station
+buy._on_skip_stop()
+check(buy._plan is not None and not buy._plan.stops, "skipping the only stop leaves nothing to go to")
+check(buy._plan_table._rows["done1"].values[3] == "skipped", "a skipped stop shows as skipped")
+check("Skipped Near Port" in buy._sources_note.cget("text"), "skipping says so")
+buy._skipped.clear()
+buy._trip_seen = []
+buy._plan = buy._make_plan()
+buy._render_whole(buy._whole_system)
 # Surface ports: a commodity sold only on a planet's surface is named on the route; leaving surface ports out drops it from the lists.
 ground = S.Source("Ground Base", "Sol", "Surface Port", False, True, "Large", 6.0, 200.0, 900, 700)
 buy._whole = S.WholeListResult(found=[("Aluminium", S.SearchResult([ground], [])), ("Steel", S.SearchResult([], []))], failed=[])
@@ -393,12 +415,13 @@ buy._no_surface_var.set(False)
 buy._on_filter_change()
 check(buy._plan_table._rows["surfacenote"].values[0] == "Only at surface ports" and buy._plan_table._rows["surfacenote0"].values[0] == "Aluminium x 80 t", "the route names what only a surface port sells, one row each")
 check(any("surface ports only" in row.values[0] for row in buy._plan_table._rows.values()), "the buy line says surface ports only")
-check(buy._plan_table._rows["route1"].values[3] == "Yes", "the stop is marked as a surface port")
+check("surface port" in buy._plan_table._rows["route1"].values[3], "the stop is marked as a surface port")
 check("Only at surface ports (none at an orbital port in range): Aluminium" in buy._sources_note.cget("text"), "the note says so too")
 buy._no_surface_var.set(True)
 buy._on_filter_change()
 check(buy._plan_table._rows["surfacenote"].values[0] == "Only at surface ports, so left out of the route" and buy._plan_table._rows["surfacenote0"].values[0] == "Aluminium x 80 t", "with surface ports left out the route says what was left out")
 check(not any(row.group and row.values[0].startswith("1.") for row in buy._plan_table._rows.values()), "no surface port stop is on the route")
+check(buy._next_card.winfo_manager() == "", "with no stop to go to the card is hidden")
 check(buy._source_table._rows["g0"].values[2] == "surface ports only (left out)", "the commodity heading says why nothing is listed")
 buy._no_surface_var.set(False)
 buy._on_filter_change()

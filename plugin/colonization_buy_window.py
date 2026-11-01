@@ -17,7 +17,7 @@ import logging
 import os
 import threading
 import tkinter as tk
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Callable, Dict, List, Optional
 
 from config import appname, config
@@ -36,8 +36,8 @@ CONFIG_GEOMETRY = "wfmt_colonization_buy_window_geometry"
 CONFIG_SEARCH = "wfmt_colonization_search_prefs"   # radius, pad, carriers and sort of the search (the key the Sites window kept it under)
 
 MIN_WIDTH = 960
-MIN_HEIGHT = 560
-DEFAULT_SIZE = (1060, 640)
+MIN_HEIGHT = 680
+DEFAULT_SIZE = (1060, 760)
 
 _SOURCE_COLUMNS = (
     Column("station", "Station", 120, stretch=True, max_chars=32),
@@ -50,11 +50,19 @@ _SOURCE_COLUMNS = (
     Column("price", "Price", 70, anchor="e", max_chars=10),
     Column("supply", "Supply", 70, anchor="e", max_chars=10),
 )
+_PLAN_COLUMNS = (   # the trip has columns of its own: a stop, where it is, how far from the stop before, what to know about it, and what a ton costs
+    Column("station", "Stop", 160, stretch=True, max_chars=40),
+    Column("system", "System", 110, stretch=True, max_chars=30),
+    Column("leg", "Jump", 80, anchor="e", max_chars=12),
+    Column("notes", "Notes", 150, max_chars=28),
+    Column("price", "Price", 80, anchor="e", max_chars=10),
+)
+_TICK_MS = 3000    # how often the next-stop card checks whether the commander has reached the stop
 _PAD_ORDER = {"Large": 0, "Medium": 1, "Small": 2, "?": 3}
 _NO_LIMIT = "No limit"
 _SORT_CHOICES = (("Closest first", sources.SORT_DISTANCE), ("Cheapest first", sources.SORT_PRICE))
 _POLL_MS = 150
-_PLAN_ROWS = 8     # the shopping plan block is this many rows tall at most, then it scrolls
+_PLAN_ROWS = 6     # the shopping plan block is this many rows tall at most, then it scrolls
 _ERROR_MAX = 90   # a failure message from outside is clipped to this
 _NAME_MAX = 60     # a system or commodity name is clipped to this in a note
 _HINT = "Pick a commodity row in the Sites window, then Find nearest - or Find all to search everything still to buy."
@@ -109,6 +117,23 @@ def follow_site(system: str) -> None:
         _window.follow_site(system)
 
 
+def _stop_key(item: Any) -> tuple:
+    """A station as the trip knows it: its name and system, case aside."""
+    return (item.station.casefold(), item.system.casefold())
+
+
+def _stop_notes(stop: sources.Stop) -> str:
+    """What a commander should know before heading for a stop: its largest pad, and whether it is a surface port or a fleet carrier."""
+    notes = []
+    if stop.pad in ("Large", "Medium", "Small"):
+        notes.append(f"{stop.pad} pad")
+    if stop.is_planetary:
+        notes.append("surface port")
+    if stop.is_carrier:
+        notes.append("fleet carrier")
+    return ", ".join(notes)
+
+
 def _clip(text: str, limit: int) -> str:
     return text if len(text) <= limit else text[:limit - 1] + "…"
 
@@ -125,6 +150,9 @@ class BuyWindow:
         self._whole_system = ""                                 # the system the last "Find all" searched around
         self._plan: Optional[sources.RoutePlan] = None          # the suggested shopping route for the last "Find all"
         self._whole_job: Optional[Dict[str, Any]] = None        # the "Find all" running now
+        self._trip_seen: List[sources.Stop] = []                # every stop the trip has had since the last Find all, in the order met (a stop that leaves the plan is done)
+        self._skipped: set = set()                              # stops the commander skipped, as (station, system) keys
+        self._card_system = ""                                  # the system the next-stop card's button copies
         self._prefs = sources.load_prefs(config.get_str(CONFIG_SEARCH))
         self._source_sort = ("distance", False)
         self._source_rows: Dict[str, str] = {}   # result row id -> its system name, for Copy System
@@ -145,6 +173,7 @@ class BuyWindow:
         content.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
         self._build(content)
         self.sync()
+        self._toplevel.after(_TICK_MS, self._tick)
 
     # --- layout ----------------------------------------------------------
 
@@ -229,10 +258,33 @@ class BuyWindow:
         self._plan_frame = tk.Frame(host, bg=P.CARD, padx=P.PAD_SM, pady=P.PAD_SM)
         tk.Label(self._plan_frame, text="Closest way to buy everything", fg=P.ACCENT, bg=P.CARD, anchor="w",
                  font=style.font(P.FONT_SECTION)).pack(fill="x", padx=P.PAD_SM)
-        self._plan_table = DataTable(self._plan_frame, _SOURCE_COLUMNS, sortable=False, on_select=self._on_plan_pick,
+        # The next stop, in words: where to go, what to buy there, and the button that copies its system.
+        self._next_card = tk.Frame(self._plan_frame, bg=P.CARD, padx=P.PAD_SM, pady=P.PAD_SM)
+        self._next_title = tk.Label(self._next_card, text="", fg=P.HEADING, bg=P.CARD, anchor="w", justify="left", font=style.font(P.FONT_SECTION))
+        self._next_title.pack(fill="x")
+        self._next_where = tk.Label(self._next_card, text="", fg=P.TEXT, bg=P.CARD, anchor="w", justify="left")
+        self._next_where.pack(fill="x")
+        self._next_buy = tk.Label(self._next_card, text="", fg=P.TEXT, bg=P.CARD, anchor="w", justify="left")
+        self._next_buy.pack(fill="x")
+        self._next_hint = tk.Label(self._next_card, text="", fg=P.MUTED, bg=P.CARD, anchor="w", justify="left")
+        self._next_hint.pack(fill="x")
+        card_buttons = tk.Frame(self._next_card, bg=P.CARD)
+        card_buttons.pack(fill="x", pady=(P.PAD_SM, 0))
+        self._next_copy = FlatButton(card_buttons, "Copy next system", self._on_copy_next, kind="accent",
+                                     tip="Copy next system - copy the next stop's system name, ready to paste into the galaxy map's search")
+        self._next_copy.pack(side="left")
+        self._next_skip = FlatButton(card_buttons, "Skip this stop", self._on_skip_stop,
+                                     tip="Skip this stop - leave it out and plan the trip again without it")
+        self._next_skip.pack(side="left", padx=(P.PAD_SM, 0))
+        # the card sits inside the plan block's padding and its own, so its text wraps narrower than the notes above
+        host.bind("<Configure>", lambda e: [label.configure(wraplength=max(e.width - 2 * P.PAD - 6 * P.PAD_SM - 16, 100))
+                                            for label in (self._next_where, self._next_buy, self._next_hint)], add="+")
+        self._plan_table = DataTable(self._plan_frame, _PLAN_COLUMNS, sortable=False, on_select=self._on_plan_pick,
                                      select_groups=True, visible_rows=_PLAN_ROWS)
         self._plan_table.tag_configure("carrier", foreground=P.INFO)
         self._plan_table.tag_configure("warn", foreground=P.WARN)
+        self._plan_table.tag_configure("done", foreground=P.MUTED)
+        self._plan_table.tag_configure("next", foreground=P.ACCENT)
         self._plan_table.pack(fill="x")
         self._list_heading = tk.Label(host, text="Closest stations for each commodity", fg=P.HEADING, bg=P.PANE, anchor="w",
                                       font=style.font(P.FONT_SECTION), padx=P.PAD, pady=P.PAD_SM)
@@ -478,6 +530,7 @@ class BuyWindow:
             self._say(f"The search failed: {_clip(job['error'], _ERROR_MAX)}.")
             return
         self._whole, self._whole_to_get, self._result, self._whole_system = job["result"], to_get, None, system
+        self._trip_seen, self._skipped = [], set()
         job["finished"](outcome="stopped" if job["result"].stopped else "ok", searched=len(job["result"].found), failed=len(job["result"].failed),
                         without_sources=len(job["result"].without_sources()))
         self._plan = self._make_plan()
@@ -566,7 +619,23 @@ class BuyWindow:
         return frozenset(label for label in sources.surface_only_labels(self._whole.found) if self._whole_to_get.get(label))
 
     def _make_plan(self) -> sources.RoutePlan:
-        return sources.plan_route(self._found_view(), self._whole_to_get, surface_only=self._surface_only())
+        found = self._found_view()
+        if self._skipped:   # a skipped stop is not offered again
+            found = [(label, replace(result, stations=[x for x in result.stations if _stop_key(x) not in self._skipped],
+                                     carriers=[x for x in result.carriers if _stop_key(x) not in self._skipped])) for label, result in found]
+        plan = sources.plan_route(found, self._whole_to_get, surface_only=self._surface_only())
+        seen = {_stop_key(stop) for stop in self._trip_seen}
+        for stop in plan.stops:
+            if _stop_key(stop) not in seen:
+                self._trip_seen.append(stop)
+        return plan
+
+    def _done_stops(self) -> List[sources.Stop]:
+        """The stops the trip has had that the plan no longer needs: bought at (or covered some other way), or skipped."""
+        if self._plan is None:
+            return []
+        current = {_stop_key(stop) for stop in self._plan.stops}
+        return [stop for stop in self._trip_seen if _stop_key(stop) not in current]
 
     def _on_filter_change(self) -> None:
         """A filter changed (surface ports, stock or arrival distance): the lists and the route are drawn again from what was already found (nothing is asked of Spansh)."""
@@ -575,6 +644,7 @@ class BuyWindow:
         except tk.TclError:
             return
         if self._whole is not None:
+            self._trip_seen = []   # a different set of stations: the stops met so far no longer say what is done
             self._plan = self._make_plan()
             self._render_whole(self._whole_system)
         elif self._result is not None:
@@ -612,32 +682,22 @@ class BuyWindow:
         include_surface = not self._no_surface_var.get()
         surface_only = sorted(self._surface_only(), key=str.casefold)
         self._plan_table.clear()
-        self._show_plan(bool(plan is not None and plan.stops) or bool(surface_only))
+        has_trip = plan is not None and bool(plan.stops or self._done_stops())
+        self._show_plan(has_trip or bool(surface_only))
         table = self._plan_table    # the route goes in the plan block, the commodity lists in the table below it
         if surface_only:
             # Said on the route itself: these are sold only at surface ports, none at an orbital port in range. One row each, so no name is clipped.
             table.insert("surfacenote", ("Only at surface ports" if include_surface else "Only at surface ports, so left out of the route",
-                                         "", "", "", "", "", "", "", ""), group=True, open=True)
+                                         "", "", "", ""), group=True, open=True)
             for index, name in enumerate(surface_only):
                 tons = self._whole_to_get.get(name, 0)
-                table.insert(f"surfacenote{index}", (f"{name} x {tons:,} t" if tons else name, "", "", "", "", "", "", "", ""),
+                table.insert(f"surfacenote{index}", (f"{name} x {tons:,} t" if tons else name, "", "", "", ""),
                              parent="surfacenote", tag="warn")
-        if plan is not None and plan.stops:
-            # The suggested shopping route: a stop is a row with what to buy there as rows beneath it.
-            table.insert("route", ("Suggested route", f"{len(plan.stops)} stop{'s' if len(plan.stops) != 1 else ''}",
-                                                f"{plan.covered:,} of {plan.needed:,} t", "", "", "", "", "", ""),
-                                      group=True, open=True)
-            for number, stop in enumerate(plan.stops, 1):
-                stop_id = f"route{number}"
-                self._source_rows[stop_id] = stop.system
-                table.insert(
-                    stop_id, (f"{number}. {stop.station}", stop.system, stop.kind, "Yes" if stop.is_planetary else "No", "", f"{stop.distance_ly:,.1f} ly", "", "",
-                              f"{stop.tons:,} t"), group=True, open=True, parent="route", tag="carrier" if stop.is_carrier else None)
-                for index, buy in enumerate(stop.buys):
-                    table.insert(f"{stop_id}b{index}", (f"{buy.commodity} x {buy.tons:,} t"
-                                                        + (" - surface ports only" if buy.surface_only else ""), "", "", "", "", "", "",
-                                 f"{buy.price:,}", f"{buy.supply:,}" if buy.supply else ""), parent=stop_id,
-                                 tag="warn" if buy.surface_only else None)
+        if plan is not None and has_trip:
+            self._render_trip(plan)
+            self._update_card()
+        else:
+            self._next_card.pack_forget()
         raw_counts = {label: len(result.stations) + len(result.carriers) for label, result in whole.found}
         for g, (label, result) in enumerate(self._found_view()):
             need = self._whole_to_get.get(label)
@@ -688,6 +748,101 @@ class BuyWindow:
                 parts.append("Not covered: " + _clip(", ".join(f"{label} {tons:,} t" for label, tons in plan.uncovered), _ERROR_MAX) + ".")
         parts.append(f"The closest {sources.WHOLE_LIST_STATIONS} stations are listed for each; price is per ton.")
         self._say(" ".join(parts))
+
+    def _render_trip(self, plan: sources.RoutePlan) -> None:
+        """The trip, in the order to fly it: the stops already done (grayed, ticked), the next one marked, what to buy under each, and the delivery at the end."""
+        table = self._plan_table
+        done = self._done_stops()
+        total = len(done) + len(plan.stops)
+        table.insert("route", ("Suggested trip", f"{len(done)} of {total} done" if done else f"{total} stop{'s' if total != 1 else ''}",
+                               f"{plan.total_ly:,.1f} ly" if plan.total_ly is not None else "", f"{plan.covered:,} of {plan.needed:,} t", ""),
+                     group=True, open=True)
+        for number, stop in enumerate(done, 1):
+            table.insert(f"done{number}", (f"\u2713 {number}. {stop.station}", stop.system, "",
+                                           "skipped" if _stop_key(stop) in self._skipped else "done", ""), parent="route", tag="done")
+        for index, stop in enumerate(plan.stops):
+            number = len(done) + index + 1
+            stop_id = f"route{number}"
+            self._source_rows[stop_id] = stop.system
+            table.insert(stop_id, (f"{number}. {stop.station}", stop.system, f"+{stop.leg_ly:,.1f} ly" if stop.leg_ly is not None else "",
+                                   _stop_notes(stop), ""), group=True, open=True, parent="route",
+                         tag="carrier" if stop.is_carrier else "next" if index == 0 else None)
+            for b, buy in enumerate(stop.buys):
+                table.insert(f"{stop_id}b{b}", (f"{buy.commodity} x {buy.tons:,} t" + (" - surface ports only" if buy.surface_only else ""), "", "",
+                                                f"{buy.supply:,} in stock" if buy.supply else "", f"{buy.price:,}"), parent=stop_id,
+                             tag="warn" if buy.surface_only else None)
+        site = self.host.site_system()
+        if site:
+            self._source_rows["deliver"] = site
+            table.insert("deliver", ("Then deliver at the site", site, "", "", ""), parent="route")
+
+    def _update_card(self) -> None:
+        """The next-stop card: the first stop still to do, what to buy there, and whether the commander is already in its system."""
+        plan = self._plan
+        if plan is None or not self.alive:
+            return
+        done = self._done_stops()
+        if not plan.stops:
+            self._card_system = self.host.site_system()
+            if not (done and self._card_system):
+                self._next_card.pack_forget()
+                return
+            self._next_title.configure(text="All stops done")
+            self._next_where.configure(text=f"Deliver the cargo at the site in {self._card_system}.")
+            self._next_buy.configure(text="")
+            self._next_hint.configure(text="Copy the system and paste it into the galaxy map's search to plot the jump.")
+            self._next_copy.configure(text="Copy site system")
+            self._next_skip.pack_forget()
+        else:
+            stop = plan.stops[0]
+            self._card_system = stop.system
+            total = len(done) + len(plan.stops)
+            here = self.host.current_system().strip().casefold() == stop.system.strip().casefold()
+            where = f"{stop.station}, in {stop.system}"
+            if stop.leg_ly is not None:
+                where += f" - {stop.leg_ly:,.1f} ly {'from the search system' if not done else 'from the last stop'}"
+            notes = _stop_notes(stop)
+            self._next_title.configure(text=f"Next stop: {len(done) + 1} of {total}")
+            self._next_where.configure(text=where + (f" ({notes})" if notes else ""))
+            self._next_buy.configure(text="Buy: " + ", ".join(f"{b.commodity} {b.tons:,} t" for b in stop.buys))
+            hint = ("You are in this system: fly to the station." if here
+                    else "Copy the system and paste it into the galaxy map's search to plot the jump.")
+            if stop.is_planetary:
+                hint += " It is a surface port: land on the planet."
+            self._next_hint.configure(text=hint, fg=P.OK if here else P.MUTED)
+            self._next_copy.configure(text="Copy next system")
+            if not self._next_skip.winfo_ismapped():
+                self._next_skip.pack(side="left", padx=(P.PAD_SM, 0))
+        if not self._next_card.winfo_ismapped():
+            self._next_card.pack(fill="x", before=self._plan_table)
+
+    def _tick(self) -> None:
+        """Keep the card in step with where the commander is (arriving in the stop's system changes its hint)."""
+        if not self.alive:
+            return
+        try:
+            if self._plan is not None and self._whole_job is None:
+                self._update_card()
+            self._toplevel.after(_TICK_MS, self._tick)
+        except tk.TclError:
+            pass
+
+    def _on_copy_next(self) -> None:
+        if not self._card_system:
+            return
+        if panelkit.copy_to_clipboard(self._toplevel, self._card_system):
+            self._say(f"Copied {_clip(self._card_system, _NAME_MAX)} to the clipboard.")
+
+    def _on_skip_stop(self) -> None:
+        """Leave the next stop out: the trip is planned again without it, from what Find all already found (nothing is asked of Spansh)."""
+        plan = self._plan
+        if plan is None or not plan.stops:
+            return
+        stop = plan.stops[0]
+        self._skipped.add(_stop_key(stop))
+        self._plan = self._make_plan()
+        self._render_whole(self._whole_system, quiet=True)
+        self._say(f"Skipped {_clip(stop.station, _NAME_MAX)}; the trip is planned again without it.")
 
     def _on_copy_route(self) -> None:
         plan = self._plan

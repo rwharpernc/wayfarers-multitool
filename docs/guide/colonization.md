@@ -538,16 +538,20 @@ search system is not: it starts as the site's system again.
 
 1. In the Sites window set **Show** to **To buy**, so covered rows are left out.
 2. In Where to Buy set **Within** to 100 ly and press **Find all**. The note shows how far it has got; press **Stop** if you want to stop early and keep what it found.
-3. Read the **Closest way to buy everything** block above the lists: the stops in the order to fly them, what to buy at each, and the price and stock of every item. Anything the route cannot cover is named in the note.
-4. Press **Copy Route** to paste the plan into a note.
+3. Read the **Next stop** card at the top of the **Suggested trip** block: where to go and what to buy there. Press **Copy next system** and paste it into the galaxy map's search. Below it the whole trip is listed in flying order with the price and stock of every item. Anything the trip cannot cover is named in the note.
+4. Buy what the card says. When your hold (or carrier) has it, that stop is ticked off and the card moves on to the next one. At the end it tells you to deliver at the site.
+5. Press **Copy Route** if you want the plan in a note.
 
 ### Suggested route
 
-Find all also works out a shopping route and shows it in a shaded block of its own, **Closest way to buy everything**, above the per-commodity lists (the block scrolls if it is long): the few stops (at most 6) that between them supply the most of what you still have to get.
+Find all also works out a shopping trip and shows it in a shaded block of its own, **Closest way to buy everything**, above the per-commodity lists (the block scrolls if it is long): the few stops (at most 6) that between them supply the most of what you still have to get.
+
+- **The Next stop card.** At the top of the block: the stop's position in the trip (`Next stop: 2 of 4`), the station and system with the jump distance and its notes (pad, surface port, fleet carrier), and `Buy: Steel 120 t, Titanium 80 t`. When you are already in that system it says so. **Copy next system** copies the system name; **Skip this stop** leaves the stop out and plans the trip again without it (its goods go to other stops, or are named as not covered).
+- **Done stops stay.** A stop you have bought at, or whose goods you now hold, is ticked and grayed (**done**; **skipped** if you skipped it) instead of vanishing, and the heading counts them (`1 of 4 done`). When every stop is done the card says to deliver at the site. Changing a filter plans the trip afresh, so the ticks start again.
 
 - A station that sells several of your commodities counts for all of them, so it is taken first. Ties go to the nearer, then the cheaper.
 - Each stop shows what to buy there, with the price per ton and the stock (**Supply**) at that stop. Click a stop to copy its system name.
-- The stops are listed nearest first, which is the order to fly them.
+- The stops are in the order that makes the shortest flight: every order is tried (there are at most six stops), starting from your search system. **Jump** is the distance from the stop before it, and the heading gives the whole trip in light years. The last row, **Then deliver at the site**, is the site's system (click it to copy). If Spansh gave no position for a stop the jumps are left blank and the stops go nearest to your search system first.
 - What no station in range can supply is named in the note.
 - **Surface ports.** A stop on a planet's surface is marked **Yes** in the **Planetary** column. When a commodity is sold *only* at surface ports among the stations found, before saying so, Find all makes one more request for each such commodity asking for orbital stations alone, since the nearest sellers can all be on planets and push the orbital ones out of the list. Only if that finds nothing does the block say so, in a group at its top (**Only at surface ports**, one commodity per row), the item is marked **surface ports only** under its stop, the commodity's heading says so, and the note repeats it. With **Exclude surface ports** ticked those commodities are left out of the route and the lists instead, and the group reads **Only at surface ports, so left out of the route**, so you know why they are missing.
 - **It follows your purchases.** When what you have bought reaches your ship's hold or your fleet carrier (or is delivered), the route and the lists are worked out again from the stations already found, with no new search. A commodity you now have in full leaves the route and its heading disappears; one you have part of shrinks to the tons still to get. The tons come from the Sites window's **Acquire** column, so they follow its hold and carrier figures. The note under the buttons is left alone, except to say when everything is bought.
@@ -562,9 +566,9 @@ The results table has the columns **Station**, **System**, **Type**, **Planetary
 - **Planetary: Yes** means a base on a planet's surface, so you have to descend to land (planetary ports and outposts, settlements).
 - **Planetary: No** means an orbital station, asteroid base, megaship or fleet carrier, which you dock at in space.
 - Click a heading to sort by it.
-- **Click a result row** (a station, or a stop in the suggested route) to copy its system name, ready to paste into the galaxy map's search. The note under the buttons says what was copied. Headings and the "buy" lines under a route stop copy nothing.
+- **Click a result row** (a station, or a stop in the suggested trip) to copy its system name, ready to paste into the galaxy map's search. The note under the buttons says what was copied. Headings and the "buy" lines under a trip stop copy nothing.
 - **Copy System** does the same for the row already selected (it asks you to select a result row first if none is).
-- **Copy Route** needs a **Find all** first.
+- **Copy Route** needs a **Find all** first. It copies the trip as plain lines, with each jump and the total.
 
 ### Things worth knowing
 

@@ -1101,7 +1101,10 @@ Where it lives and how it is used:
     - After the searches, if `plan_route` still leaves two or more commodities uncovered, one more request (`also=` the other listed commodities) asks for stations selling all the uncovered ones, whose whole markets are merged the same way.
   - The window keeps the closest 5 stations and 2 carriers of each.
   - `plan_route` then builds a shopping route from the full answers.
-    - It is greedy by tons a station can supply of what is still outstanding (a station selling several commodities counts for each), ties to the nearer then cheaper, at most 6 stops, shown nearest first.
+    - It is greedy by tons a station can supply of what is still outstanding (a station selling several commodities counts for each), ties to the nearer then cheaper, at most 6 stops.
+    - `_fly_order` then orders the chosen stops as a trip: every permutation is tried (at most 6! = 720) and the shortest wins, with the first leg the stop's own `distance_ly` from the search system and later legs the straight-line distance between systems.
+      - Positions are Spansh's `system_x/y/z` on each station result (`StationPrice.position`, `Source.position`, `Stop.position`); no extra request. Any stop without one makes the legs `None` and the order falls back to nearest first.
+    - The Where to Buy window keeps `_trip_seen` (every stop the plan has had since the last Find all or filter change) and `_skipped`; a seen stop no longer in the plan is drawn as done. The next-stop card re-reads the current system every 3 s.
     - It reports what no returned station can supply and never guesses beyond the stations searched.
 - The Colonization window's search choices (preset, radius, pad, carriers, sort and the exclusions) are one JSON string in EDMC's config
   (`wfmt_colonization_search_prefs`, `colonization_sources.SearchPrefs`), written when a search starts and when the window
