@@ -30,6 +30,7 @@ from __future__ import annotations
 import logging
 import os
 import threading
+import time
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, Mapping, Optional
 
@@ -62,6 +63,9 @@ GRACE_CLEAR_S = 3.0
 # of the actual interdiction) is never followed by either the Status.json
 # flag or a resolving journal event at all.
 PENDING_CLEAR_S = 75.0
+# NPC lines kept to report an interdiction that came with no warning (see InterdictionTracker._note_if_unannounced).
+_RECENT_NPC_S = 75.0
+_RECENT_NPC_MAX = 20
 
 # Status.json Flags bit 23 - set the moment an interdiction attempt starts
 # (before it resolves). Confirmed against EDCD/EDMarketConnector's
@@ -76,10 +80,50 @@ _BEING_INTERDICTED_BIT = 1 << 23
 _INTERDICTION_START_TOKEN = "startinterdiction"
 
 
+# Other raw `Message` keys that mean a ship is coming for you, found by checking 291 interdictions in a commander's journals (the
+# text-only check missed a fifth of them). Language-independent like the token above. `$Pirate_HunterHostileSC_Relevant01;` and its Hitman,
+# CargoHunter and BountyHunter forms are a hunter that has picked you out in supercruise; `$HitmanMissionFailure_OnEnemyDetect` is the
+# assassin of a failed mission closing in. These match as a part of the key, lower case.
+_HOSTILE_KEY_PARTS = (
+    "hunterhostilesc_relevant",   # Pirate_, Hitman_, CargoHunter_ (..._RelevantPlayer_), BountyHunter_
+    "hunterhostile_relevant",     # the same in normal space
+    "hitmanmissionfailure_onenemydetect",
+    "onstartscancargo",           # Pirate_ and PirateLord_: a pirate scanning your hold
+)
+# Keys of NPC chatter that is not aimed at you but whose words ("pirates", "ambush") the text check would take for a threat: a pilot calling
+# for help, an escort, a miner. The key decides these before the words are read.
+_BENIGN_KEY_PREFIXES = (
+    "$distresscall", "$ambushedpilot", "$escort_", "$minerenemy", "$contactcovert", "$station_", "$comms_", "$cruiseliner_",
+)
+
+
 def is_interdiction_start_token(raw_message: Optional[str]) -> bool:
     if not raw_message:
         return False
     return _INTERDICTION_START_TOKEN in raw_message.lower()
+
+
+def is_hostile_key(raw_message: Optional[str]) -> bool:
+    """Whether the raw message key is one of the families that mean a ship is after you (see `_HOSTILE_KEY_PARTS`)."""
+    if not raw_message:
+        return False
+    lower = raw_message.lower()
+    return _INTERDICTION_START_TOKEN in lower or any(part in lower for part in _HOSTILE_KEY_PARTS)
+
+
+def is_benign_key(raw_message: Optional[str]) -> bool:
+    """Whether the raw message key is chatter that is not aimed at you, whatever its words say."""
+    return bool(raw_message) and str(raw_message).lower().startswith(_BENIGN_KEY_PREFIXES)
+
+
+def is_threat(raw_message: Optional[str], localised: Optional[str]) -> bool:
+    """Whether an NPC line announces an interdiction or an attack on you: the raw key first (it does not change with the game's language), then,
+    for a key not known either way, the wording."""
+    if is_hostile_key(raw_message):
+        return True
+    if is_benign_key(raw_message):
+        return False
+    return is_interdiction_message(localised or raw_message)
 
 
 CHAT_THREAT_PATTERNS = (
@@ -152,6 +196,7 @@ class InterdictionTracker:
         self._was_being_interdicted = False
         self._clear_timer: Optional[threading.Timer] = None
         self._test_timer: Optional[threading.Timer] = None
+        self._recent_npc: list = []      # (monotonic time, raw key, wording) of the latest NPC lines
 
     def get_snapshot(self) -> InterdictionSnapshot:
         return InterdictionSnapshot(
@@ -227,7 +272,8 @@ class InterdictionTracker:
             if not self._interdictor_name:
                 raw_message = entry.get("Message")
                 localised = entry.get("Message_Localised") or raw_message
-                if is_interdiction_start_token(raw_message) or is_interdiction_message(localised):
+                self._remember_npc_line(raw_message, localised)
+                if is_threat(raw_message, localised):
                     sender = entry.get("From_Localised") or entry.get("From")
                     if sender:
                         if not self._active:
@@ -240,6 +286,7 @@ class InterdictionTracker:
             return
 
         if event == "Interdicted":
+            self._note_if_unannounced()
             self._clear_test_timer()
             self._active = True
             self._resolution = "submitted" if entry.get("Submitted") is True else "pulled-out"
@@ -249,12 +296,28 @@ class InterdictionTracker:
             return
 
         if event == "EscapeInterdiction":
+            self._note_if_unannounced()
             self._clear_test_timer()
             self._active = True
             self._resolution = "escaped"
             self._apply_interdictor_fields(entry)
             self._schedule_clear(RESOLVED_CLEAR_S)
             self._emit_changed()
+
+    def _remember_npc_line(self, raw_message: Optional[str], localised: Optional[str]) -> None:
+        """Keep the last minute of NPC lines so that an interdiction nothing warned about can say which lines came before it."""
+        now = time.monotonic()
+        self._recent_npc = [(t, raw, text) for t, raw, text in self._recent_npc if now - t <= _RECENT_NPC_S][-_RECENT_NPC_MAX:]
+        self._recent_npc.append((now, str(raw_message or ""), str(localised or "")))
+
+    def _note_if_unannounced(self) -> None:
+        """An interdiction resolved without a warning having been up: write the NPC lines that came just before it to the log, so a line the
+        warning does not know yet can be added (Settings > WFMT > General > Help has the diagnostic log)."""
+        if self._active:
+            return
+        now = time.monotonic()
+        lines = [f"{raw} | {text}" for t, raw, text in self._recent_npc if now - t <= _RECENT_NPC_S]
+        logger.info("Interdiction with no warning beforehand; NPC lines in the last %d s: %s", int(_RECENT_NPC_S), lines or "none")
 
     def _apply_interdictor_fields(self, raw: Mapping[str, Any]) -> None:
         name = raw.get("Interdictor")

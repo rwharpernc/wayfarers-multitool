@@ -348,6 +348,39 @@ check([r[0] for r in card.rows] == ["Neutron One", "Plain Stop *", "Injection St
 check(len(card.header) == 3, "and no line is added for them")
 check(ew.asked and ew.asked[0][:3] == ["Neutron One", "Plain Stop", "Injection Stop"], f"the jumps ahead are asked about: {ew.asked}")
 
+# --- a recalculated route: the file is read again once the game has rewritten it --------------------------------------------------------------
+class Recalc:
+    """A NavRoute.json that the game rewrites on its own schedule: `stamp` changes with each rewrite."""
+
+    def __init__(self):
+        self.file = ROUTE
+        self.stamp = (1, 100)
+        self.drawn = []
+        self.state = RO.RouteOverlay(draw=self.drawn.append, now=lambda: 1000.0, cfg=lambda: RO.RouteConfig(enabled=True, rows=3, edsm=False),
+                                     read=lambda: self.file, neutron=lambda: None, neutron_done=lambda: None, reset_neutron=lambda: None,
+                                     stamp=lambda: self.stamp)
+
+
+NEW_ROUTE = route_file(("Sol", "G"), ("Omega", "N"), ("Psi", "K"))
+rc = Recalc()
+rc.state.handle_event({"event": "NavRoute"}, "Sol")
+check(rc.drawn[-1].header[1] == ("Zeta", "title"), "the first route shows")
+check(not rc.state.sync_file(), "an unchanged file is not read again")
+# The journal says NavRoute before the file has been rewritten: the old route is read, then the file changes.
+rc.state.handle_event({"event": "NavRoute"}, "Sol")
+check(rc.drawn[-1].header[1] == ("Zeta", "title"), "an event that beats the rewrite still shows the old route")
+rc.file, rc.stamp = NEW_ROUTE, (2, 80)
+check(rc.state.sync_file(), "the rewritten file is noticed")
+check(rc.drawn[-1].header[1] == ("Psi", "title") and [r[0] for r in rc.drawn[-1].rows] == ["Omega", "Psi"], f"and the card shows the recalculated route: {rc.drawn[-1].header}")
+check(not rc.state.sync_file(), "once")
+# A half-written file cannot be read: it is tried again until it can.
+rc.file, rc.stamp = None, (3, 10)
+check(not rc.state.sync_file() and rc.drawn[-1].header[1] == ("Psi", "title"), "an unreadable file leaves the card as it was")
+rc.file, rc.stamp = route_file(("Sol", "G"), ("Kappa", "M")), (3, 60)
+check(rc.state.sync_file() and rc.drawn[-1].header[1] == ("Kappa", "title"), "and is read when it is whole, even if the time did not move")
+rc.stamp = None
+check(not rc.state.sync_file(), "no file, nothing to read")
+
 # --- placement ----------------------------------------------------------------------------------------------------------------------------------
 check("route" in P.SLOTS and P.SLOTS["route"].group == RO.GROUP_NAME, "the slot is registered with the card's group")
 

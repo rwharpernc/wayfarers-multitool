@@ -249,6 +249,18 @@ def read_route_file() -> Optional[Any]:
         return None
 
 
+def route_file_stamp() -> Optional[Tuple[int, int]]:
+    """(modified time, size) of `NavRoute.json`, which changes whenever the game rewrites it; None when there is no such file."""
+    folder = journal_files.journal_folder()
+    if not folder:
+        return None
+    try:
+        info = os.stat(os.path.join(folder, "NavRoute.json"))
+    except OSError:
+        return None
+    return info.st_mtime_ns, info.st_size
+
+
 def active_neutron_route() -> Optional["route_planner.Route"]:
     """The neutron route plotted in the Route Planner, while it has a stop left to go to; None otherwise (or when that feature cannot be loaded)."""
     try:
@@ -288,7 +300,8 @@ class RouteOverlay:
                  cfg: Callable[[], RouteConfig] = load_config, read: Callable[[], Optional[Any]] = read_route_file,
                  edsm: Optional[route_edsm.EdsmChecker] = None,
                  neutron: Callable[[], Optional["route_planner.Route"]] = active_neutron_route,
-                 neutron_done: Callable[[], Optional[str]] = finished_neutron_route, reset_neutron: Callable[[], None] = reset_neutron_route) -> None:
+                 neutron_done: Callable[[], Optional[str]] = finished_neutron_route, reset_neutron: Callable[[], None] = reset_neutron_route,
+                 stamp: Callable[[], Optional[Tuple[int, int]]] = route_file_stamp) -> None:
         self._lock = threading.RLock()
         self.tracker = RouteTracker()
         self._draw = draw or (lambda card: None)
@@ -303,11 +316,34 @@ class RouteOverlay:
         self._edsm = edsm if edsm is not None else route_edsm.EdsmChecker()
         self._last: Optional[Card] = None
         self._last_sent = 0.0
+        self._stamp = stamp
+        self._file_stamp: Optional[Tuple[int, int]] = None   # the state of NavRoute.json when it was last read successfully
 
     def _load_route(self) -> None:
+        stamp = self._stamp()
         data = self._read()
         if data is not None:
             self.tracker.set_route(route_plan.parse_route(data))
+            self._file_stamp = stamp
+
+    def sync_file(self) -> bool:
+        """Read `NavRoute.json` again if the game rewrote it since it was last read. The `NavRoute` journal event can arrive before the file is
+        rewritten (a recalculated route is then read as the old one), or while it is half written (it cannot be read at all); this catches the
+        file once it is whole. True when a new route was read."""
+        stamp = self._stamp()
+        if stamp is None or stamp == self._file_stamp:
+            return False
+        with self._lock:
+            before = list(self.tracker.route)
+            try:
+                self._load_route()
+            except Exception:   # a route that cannot be read must never stop the live path
+                logger.debug("Could not read the plotted route", exc_info=True)
+                return False
+            changed = self._file_stamp == stamp and self.tracker.route != before
+        if changed:
+            self.refresh()
+        return changed
 
     def handle_event(self, entry: Dict[str, Any], system: Optional[str] = None) -> None:
         event = entry.get("event")
@@ -429,6 +465,7 @@ def _tick_loop() -> None:
     state = get_state()
     while not _stop.wait(TICK_S):
         try:
+            state.sync_file()
             if state.showing():
                 state.refresh()
         except Exception:

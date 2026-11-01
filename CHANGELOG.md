@@ -5,6 +5,11 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ## Unreleased
 
+### Fixed
+
+- **Interdiction Warning: more NPC lines recognized.** The warning now also reads the game's own message key (the `$Pirate_...` name that does not change with your language), not only the wording. It now recognizes pirate, Hitman, cargo hunter and bounty hunter lines that pick you out in supercruise, an assassin closing in on a failed mission, and a pirate scanning your hold, and it ignores calls for help and escort chatter whose words only sounded like a threat. An interdiction that comes with no warning writes the NPC lines before it to the log, so a missing line can be added.
+- **Route overlay: a recalculated route.** The card read `NavRoute.json` only when the journal said it changed, and the file can be rewritten after that, so a recalculated route could keep showing the old one (or nothing). It now also notices the file being rewritten, or a half-written file becoming readable, within a second.
+
 ### Changed
 
 - **Where to Buy: your own system first, and presets.** For colonization commodities only, **Find nearest** and **Find all** now search the system you are in before anywhere else. If a station there has the commodity in stock, those stations are the answer; only when none does, the search goes out around the search system, in the order you chose (closest first by default). Find all costs one extra Spansh request per commodity for this. A new **Preset** list sets the options in one step (Large, then Medium; Large ship; Medium ship; One trip; Quick top-up; Orbital only; Shipyard stops). The defaults change: the landing pad is **Large, then Medium** (Large-pad stations first, Medium or larger only when no Large-pad station in range has it), and fleet carriers are left out unless you untick **Exclude fleet carriers**. Options saved by an earlier version give way to these defaults, keeping only **Within**.
