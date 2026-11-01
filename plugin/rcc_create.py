@@ -88,6 +88,22 @@ def planned_sites(sites: Sequence[rcc_client.RccSite]) -> List[rcc_client.RccSit
 PRIMARY_PORT_NAME = "Primary port"
 
 
+def primary_port_note(plan_sites: Sequence[rcc_client.RccSite], site: Site, tracked: Sequence[Site] = ()) -> str:
+    """Why this system already has a primary port, or "" when nothing shows one. Raven Colonial's system answer does not say which site is the primary port,
+    but a system's first station is always its primary port, so any other station that is built or started tells it exists: a site in Raven's plan with a
+    market (built in the game), a status of building or complete, or a project; or, from WFMT's own records, another construction site in this system that
+    was not abandoned. The site being created is left out of both."""
+    started = [s for s in plan_sites if s.market_id != site.market_id and (
+        s.market_id is not None or s.build_id or s.status in (rcc_client.STATUS_BUILDING, rcc_client.STATUS_COMPLETE))]
+    if started:
+        return f"Raven Colonial already lists {len(started)} station{'s' if len(started) != 1 else ''} started or built in this system, so it already has its primary port."
+    here = site.system.strip().casefold()
+    seen = [s for s in tracked if s.market_id != site.market_id and s.system.strip().casefold() == here and not s.failed]
+    if seen:
+        return f"WFMT has seen {len(seen)} other station{'s' if len(seen) != 1 else ''} here, so the system already has its primary port."
+    return ""
+
+
 def suggested_name(site: Site) -> str:
     """The name to offer: "Primary port" for the system's colonization ship, else the station's own name without the game's
     construction-site prefix."""

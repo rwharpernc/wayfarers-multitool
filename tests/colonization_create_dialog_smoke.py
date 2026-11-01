@@ -58,11 +58,23 @@ def run(label, press, **extra):
             seen["viewable"] = bool(tops[0].winfo_viewable())
             buttons = [w for w in tops[0].winfo_children()[-1].winfo_children()]
             seen["buttons"] = len(buttons)
+
+            def boxes(widget):
+                for child in widget.winfo_children():
+                    if isinstance(child, tk.Checkbutton):
+                        yield child
+                    yield from boxes(child)
+            port = [b for b in boxes(tops[0]) if "primary port" in b.cget("text")]
+            seen["port"] = (str(port[0].cget("state")), port[0].getvar(str(port[0].cget("variable")))) if port else None
             if press == "create":
                 tops[0].event_generate("<Return>")
             tops[0].after(50, lambda: _click(tops[0], press))
     root.after(300, act)
     result = D.ask(root, "HIP 34457", "Primary port", [], None, "TIBER CAELVOX", False, bodies=BODIES, **extra)
+    if label == "primary port exists" and seen.get("port") != ("disabled", 0):
+        problems.append(f"{label}: the primary port tick must be off and disabled, got {seen.get('port')}")
+    if label == "construction ship" and seen.get("port") != ("normal", 1):
+        problems.append(f"{label}: the primary port tick must be on and usable, got {seen.get('port')}")
     if seen.get("count") != 1 or not seen.get("viewable"):
         problems.append(f"{label}: the dialog did not appear ({seen})")
     return result
@@ -80,7 +92,8 @@ def _click(top, press):
 
 
 for label, extra in (("construction ship", {"primary_port": True}), ("ordinary site", {}),
-                     ("locked system", {"primary_port": True, "locked_note": "This system is locked to its architect, X."})):
+                     ("locked system", {"primary_port": True, "locked_note": "This system is locked to its architect, X."}),
+                     ("primary port exists", {"primary_port": True, "primary_exists": "Raven Colonial already lists 2 stations."})):
     run(label, "cancel", **extra)
 
 for p in problems:

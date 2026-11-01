@@ -57,10 +57,11 @@ def _body_label(body: rcc_client.RccBody) -> str:
 
 def ask(parent: tk.Misc, system: str, name: str, planned: Sequence[rcc_client.RccSite], guess: Optional[rcc_client.RccSite],
         architect: str, can_attach_carrier: bool, bodies: Sequence[rcc_client.RccBody] = (), primary_port: bool = False,
-        locked_note: str = "") -> Optional[Choices]:
+        locked_note: str = "", primary_exists: str = "") -> Optional[Choices]:
     """Show the dialog. `planned` are the plan's unbuilt sites, `guess` the one preselected, `bodies` the system's bodies (for the body
     choice), `primary_port` whether the site is the system's colonization ship, `locked_note` a line to show when Raven says the system
-    is locked to someone else."""
+    is locked to someone else, `primary_exists` the reason the system already has a primary port ("" when nothing shows one): the primary port tick is then
+    off and cannot be set."""
     buildings: Dict[str, List[rcc_create.BuildChoice]] = {loc: rcc_create.choices_at(loc) for loc in rcc_create.LOCATIONS}
     planned_labels = {_planned_label(s): s for s in planned}
     body_labels = {_body_label(b): b for b in bodies}
@@ -83,7 +84,7 @@ def ask(parent: tk.Misc, system: str, name: str, planned: Sequence[rcc_client.Rc
         architect_var = tk.StringVar(master=window, value=architect)
         notes_var = tk.StringVar(master=window, value="")
         due_var = tk.StringVar(master=window, value="")
-        port_var = tk.BooleanVar(master=window, value=primary_port)
+        port_var = tk.BooleanVar(master=window, value=primary_port and not primary_exists)
         primary_var = tk.BooleanVar(master=window, value=True)
         carrier_var = tk.BooleanVar(master=window, value=can_attach_carrier)
         error_var = tk.StringVar(master=window, value="")
@@ -164,8 +165,13 @@ def ask(parent: tk.Misc, system: str, name: str, planned: Sequence[rcc_client.Rc
 
         for text, variable in (("This is the system's primary port", port_var), ("Make it my primary project", primary_var)):
             tk.Checkbutton(body, text=text, variable=variable, fg=P.TEXT, bg=P.BG, selectcolor=P.CARD, activebackground=P.BG,
-                           activeforeground=P.TEXT, anchor="w").grid(row=row[0], column=0, columnspan=2, sticky="w")
+                           activeforeground=P.TEXT, anchor="w",
+                           state="disabled" if (variable is port_var and primary_exists) else "normal").grid(row=row[0], column=0, columnspan=2, sticky="w")
             row[0] += 1
+            if variable is port_var and primary_exists:
+                tk.Label(body, text=clip(primary_exists, 200), fg=P.MUTED, bg=P.BG, anchor="w", justify="left",
+                         wraplength=520).grid(row=row[0], column=0, columnspan=2, sticky="w", padx=(P.PAD, 0))
+                row[0] += 1
         carrier_check = tk.Checkbutton(body, text="Attach my fleet carrier", variable=carrier_var, fg=P.TEXT, bg=P.BG, selectcolor=P.CARD,
                                        activebackground=P.BG, activeforeground=P.TEXT, anchor="w",
                                        state="normal" if can_attach_carrier else "disabled")

@@ -50,6 +50,30 @@ class Recorder:
         return {"buildId": "newbuild"} if path == "/api/project" else None
 
 
+class PrimaryPort(unittest.TestCase):
+    def test_a_built_or_started_station_in_the_plan_means_the_primary_port_exists(self):
+        sites = rcc_client.parse_sites(PLAN)
+        self.assertIn("2 stations", C.primary_port_note(sites, site()))
+        only_planned = rcc_client.parse_sites([PLAN[0]])
+        self.assertEqual(C.primary_port_note(only_planned, site()), "")
+        self.assertEqual(C.primary_port_note([], site()), "")
+
+    def test_a_project_alone_counts_even_when_its_site_is_still_planned(self):
+        self.assertIn("1 station ", C.primary_port_note(rcc_client.parse_sites([PLAN[0], PLAN[2]]), site()))
+
+    def test_the_site_being_created_does_not_count_for_itself(self):
+        own = rcc_client.parse_sites([{"id": "x9", "name": "Me", "status": "build", "marketId": 3700000001, "buildId": "b9"}])
+        self.assertEqual(C.primary_port_note(own, site()), "")
+        self.assertEqual(C.primary_port_note([], site(), [site()]), "")
+
+    def test_other_stations_wfmt_has_seen_in_the_system_count_unless_abandoned(self):
+        here = Site(market_id=5, name="Done Station", system="synuefe ni-r c21-10", complete=True)
+        elsewhere = Site(market_id=6, name="Far", system="Sol", complete=True)
+        failed = Site(market_id=7, name="Gave Up", system="Synuefe NI-R c21-10", failed=True)
+        self.assertIn("1 other station ", C.primary_port_note([], site(), [here, elsewhere, failed]))
+        self.assertEqual(C.primary_port_note([], site(), [elsewhere, failed]), "")
+
+
 class Planned(unittest.TestCase):
     def test_only_unbuilt_unlinked_sites_are_offered(self):
         sites = rcc_client.parse_sites(PLAN)

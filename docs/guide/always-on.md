@@ -161,10 +161,12 @@ Puts an alert on your game screen the moment an interdiction starts. It has no p
 **How it knows.** Three signals, whichever arrives first:
 
 1. The game's own "being interdicted" flag in `Status.json`, which flips the moment the interdiction minigame starts. The game writes that file about once a second, so this can trail the instant by up to a second.
-2. An NPC's taunt in the chat (the `npc` channel only, never system or squadron chat, which other commanders type into). A taunt can arrive before the flag.
+2. An NPC's line in the chat (the `npc` channel only, never system or squadron chat, which other commanders type into). A line can arrive before the flag. WFMT reads the game's own message key first (the `$Pirate_...` name, which is the same in every language) and the wording only for a key it does not know. Lines from pirates, Hitmen, cargo hunters and bounty hunters picking you out in supercruise, an assassin closing in on a failed mission, and a pirate scanning your hold raise the warning; a pilot calling for help, an escort or a miner does not, even if the words sound like a threat.
 3. The authoritative `Interdicted` and `EscapeInterdiction` journal events once it is over. They carry the interdictor's name, whether it is a player or a Thargoid, and its Power.
 
 If the flag drops without a journal event, the card clears after three seconds. A warning that came from a chat taunt and is never confirmed clears after 75 seconds.
+
+If an interdiction ever comes with no warning beforehand, turn on [the diagnostic log](reporting-problems.md#the-diagnostic-log): WFMT then writes the NPC lines from the 75 seconds before it, so the line it did not know can be added.
 
 ## Flight Alerts
 
@@ -232,6 +234,7 @@ Sample System 9       WHITE DWARF
 - **The systems have no numbers**, the next one first, each with its star on the right.
   - As you reach a system it is taken off the list, the jump count goes down, the light years left are worked out again from where you are, and the list rolls on.
   - **Systems listed** (below) is how many are shown; the jump count and the light years cover the whole route.
+- **A route you recalculate in the galaxy map follows within a second.** WFMT reads the game's `NavRoute.json` when the journal says it changed and again whenever the file is rewritten (the journal can announce a route before the game has written it). It starts reading only after the first journal event of the session, so a route left from an earlier session is not shown, and a file that cannot be read is tried again only when it changes.
 - **The Route Planner's route takes over** while it has a jump left; then the game's plotted route comes back. With neither, nothing is drawn.
 - **Light years** are the straight-line distances between the systems of the route. A route the game gave without positions shows no light years line rather than a guess.
 - **The star is colored.**

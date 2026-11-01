@@ -807,7 +807,8 @@ class ColonizationWindow:
         chosen = colonization_create_dialog.ask(
             self._toplevel, site.system, name, rcc_create.planned_sites(plan.sites), rcc_create.guess_planned(plan.sites, name),
             plan.architect or self._cmdr, can_attach_carrier=isinstance(carrier_id, int), bodies=plan.bodies,
-            primary_port=rcc_create.is_construction_ship(site), locked_note=locked)
+            primary_port=rcc_create.is_construction_ship(site), locked_note=locked,
+            primary_exists=rcc_create.primary_port_note(plan.sites, site, list(self._sites.values())))
         if chosen is None:
             logger.info("Create project: the dialog was cancelled or did not open")
             self._announce("Nothing was sent to Raven Colonial.")

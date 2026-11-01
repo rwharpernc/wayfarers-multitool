@@ -736,8 +736,10 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
       the window opens with the site's system filled in, results appear, closest first, the button is disabled while it
       searches, and the window stays responsive. Pick another row and the open window's heading follows; closing the Sites
       window closes it; its size and position are remembered.
-- [ ] **Landing pad**: Any size lists stations whose largest pad is Medium or Small; Large only lists none of those.
-- [ ] **Exclude fleet carriers** (off by default, so carriers are searched and listed): ticked, no carriers are listed; unticked, a **Fleet carriers** group follows the stations.
+- [ ] **Landing pad**: the default is **Large, then Medium**; Any size lists stations whose largest pad is Medium or Small; Large only lists none of those. For a commodity no Large-pad station in range sells, Large, then Medium lists Medium-pad stations and the note says so.
+- [ ] **Exclude fleet carriers** (on by default, so carriers are left out): unticked, a **Fleet carriers** group follows the stations; ticked, none is listed.
+- [ ] **Your own system first**: **Find nearest** for a commodity a station in the system you are in sells lists only that system's stations and the note says `Your own system was searched first.`; for one nothing there sells it searches outside, closest first. A seller at home that your exclusions would hide (for example **Only stations with a shipyard**) does not stop the search going outside. **Find all** does the same per commodity.
+- [ ] **Presets**: the **Preset** list opens on **Large, then Medium (default)**; choosing another sets the pad, radius and ticks, changing one by hand reads **Custom**, and after a search a preset, pad, within, sort or carriers change shows `Options changed: press Find nearest or Find all to search again.` until the next search.
 - [ ] **Only stations with enough stock**, **Only stations with a shipyard** and **Arrival within** (all off by default): after a search each one removes the stations that do not qualify from the lists and the route at once, the commodity heading says **left out by the filters** when none are left, and the note counts what was left out. The window is still laid out cleanly at its minimum size.
 - [ ] **Exclude surface ports** (off by default): ticked, planetary stations disappear from the lists and the route at once, and a commodity sold only at surface ports (none at an orbital port in range) shows an **Only at surface ports, so left out of the route** group, one row per commodity, at the top of the route block and **surface ports only (left out)** on its heading; unticked, the group reads **Only at surface ports** and the item is marked under its stop. The choice is remembered.
 - [ ] **Following purchases:** after Find all, put some of a listed commodity in the ship's hold (or on the carrier); the route and lists shrink by that much within a moment, and a commodity you have in full disappears, with no new search.
@@ -758,7 +760,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
   - **Refresh** works.
   - With no network it says it could not reach Raven Colonial.
 - [ ] **Suggested route:** after Find all, a shaded "Closest way to buy everything" block sits above the per-commodity lists, with a "Suggested route" group of numbered stops and, under each, the commodities to buy with their price and supply; **Copy Route** puts plain lines on the clipboard. A plain Find nearest shows no such block.
-- [ ] **Remembered choices**: change Within, Sort, Landing pad, Exclude fleet carriers and Exclude surface ports, run a search, close and reopen
+- [ ] **Remembered choices**: change the Preset, Within, Sort, Landing pad, Exclude fleet carriers and Exclude surface ports, run a search, close and reopen
       the window: the same choices are back.
 - [ ] **Only what [station] sells**: grayed out until you open a station's commodity market; then it names the station and
       narrows the list to what that market has for sale (in stock, with a buy price); it unticks itself when you undock.

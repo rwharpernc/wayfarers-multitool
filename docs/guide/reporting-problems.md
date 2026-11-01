@@ -61,7 +61,9 @@ For a problem that is hard to pin down, WFMT can write a **separate, more detail
 - the name of each journal event as it arrives, with the system and station,
 - each button pressed in a WFMT window and each window opened or closed,
 - each Spansh request: the endpoint (without its query), how it ended, how long it took, which try it was and the size of the answer,
-- each Where to Buy search and Rescan Journals with its result and time, a Settings save, a mode button pressed, and Frontier carrier data arriving.
+- each Where to Buy search and Rescan Journals with its result and time, a Settings save, a mode button pressed, and Frontier carrier data arriving,
+- the Route overlay: each read of the game's `NavRoute.json` (how many systems, the first and last, the system you are in, whether you are on the route, or that it could not be read) and each route card drawn or cleared,
+- an interdiction that came with no warning beforehand: the NPC lines (message key and wording) from the 75 seconds before it.
 
 **What it leaves out.** The contents of journal events, request bodies, keys and webhook links are not written. In every line your commander name is replaced by `<commander>`, your home folder by `~` and any Discord webhook link by `<webhook>`, the same as Copy diagnostics, so the file can be attached to a report. Read it first if you want to be sure; it is plain text.
 
