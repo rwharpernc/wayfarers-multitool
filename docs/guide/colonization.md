@@ -518,7 +518,7 @@ search system is not: it starts as the site's system again.
 
 - It follows the table as you have it filtered. Rows already covered are left out, and so are rows the Filter box, **Show** or **Only what [station] sells** hide.
 - Spansh can only look up one commodity per request. So WFMT sends one request per commodity, a short pause (0.4 second) apart, plus one more asking for the nearest stations that have every commodity on the list in stock (see below).
-- A list of 20 takes some seconds, and the note under the buttons shows how far it has got, in amber while a search is running so it stands out.
+- A list of 20 takes some seconds, and the note under the buttons shows how far it has got, in amber while a search is running so it stands out. A large **Search is underway...** also fills the empty area below (the tabs stay usable) and goes when the search ends or is stopped.
 - While it runs, **Find all** is relabeled **Stop** and **Find nearest** is disabled. Press **Stop** to stop after the search in progress, keeping what it found (the note says `(stopped early)`).
 - A commodity that fails is named and the others still show. Press **Find all** again to retry.
 - Commodities with no source in range are listed in the note.
@@ -558,7 +558,9 @@ Find all also works out a shopping trip and shows it on its own tab, **Suggested
 - **It follows your purchases.** When what you have bought reaches your ship's hold or your fleet carrier (or is delivered), the route and the lists are worked out again from the stations already found, with no new search. A commodity you now have in full leaves the route and its heading disappears; one you have part of shrinks to the tons still to get. The tons come from the Sites window's **Acquire** column, so they follow its hold and carrier figures. The note under the buttons is left alone, except to say when everything is bought.
 - It only considers the stations Find all returned (including any that sell the whole list), which is the nearest 25 per commodity within your radius.
 - Stock changes, so treat it as a plan to check on arrival.
-- **Copy Route** copies it as plain lines to paste into a note or chat.
+- **Copy Route** copies it as plain lines to paste into a note or chat; each stop's line also gives its body and the age of its market data.
+- **Route order.** The **Route order** list at the top of the route tab sets the order of the stops: **Default (shortest flight)** is the order above; **Smallest purchase first** or **Largest purchase first** order them by the tons to buy at each stop (so you can empty a small stop first, or start with the big haul); **Farthest stop first** starts at the stop farthest from your search system and works back toward it. The stops are the same in every order, only their sequence and the jump from each to the next change (the heading's total follows). Changing it redraws the route at once and asks Spansh for nothing.
+- **Expand all and Minimize all.** Each tab has an **Expand all** and a **Minimize all** button for its sections (a stop on the route, a commodity on the lists). Only the first section on each tab starts open; the rest start minimized. Sorting or changing a filter keeps the sections as you left them, and a new search starts from the defaults again.
 
 ### Reading the results
 
@@ -567,6 +569,7 @@ The results table has the columns **Station**, **System**, **Type**, **Planetary
 - **Planetary: Yes** means a base on a planet's surface, so you have to descend to land (planetary ports and outposts, settlements).
 - **Planetary: No** means an orbital station, asteroid base, megaship or fleet carrier, which you dock at in space.
 - Click a heading to sort by it.
+- The window has two tabs under the options: **Suggested route** (first) and **Closest stations**. A Find all that makes a route opens the first; a Find nearest opens the second.
 - **Click a result row** (a station, or a stop in the suggested trip) to copy its system name, ready to paste into the galaxy map's search. The note under the buttons says what was copied. Headings and the "buy" lines under a trip stop copy nothing.
 - **Copy System** does the same for the row already selected (it asks you to select a result row first if none is).
 - **Copy Route** needs a **Find all** first. It copies the trip as plain lines, with each jump and the total.
