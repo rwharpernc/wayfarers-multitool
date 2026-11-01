@@ -5,6 +5,8 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ## Unreleased
 
+## 1.4.2 (2026-11-01)
+
 ### Changed
 
 - **Where to Buy: each stop shows its body and how old its data is.** The **Notes** of a stop on the route (and the lines of **Copy Route**) now give the body the station is at, as Spansh names it with the system's name left off (`body A 6`), and the age of its market data (`data today`, `data 12 days old`), so a stale or doubtful record is easy to spot before you fly there. Both come with the Spansh search already made; nothing more is asked of Spansh or Raven Colonial.

@@ -207,7 +207,7 @@ Use them for anything the passes did not reach.
 
 1. Install the plugin: the zip from the [releases page](https://github.com/rwharpernc/wayfarers-multitool/releases/latest), or `npm run deploy` (step 4 below).
    - Restart EDMC.
-   - The line under the mode buttons should read `Plugin: v1.4.1`.
+   - The line under the mode buttons should read `Plugin: v1.4.2`.
    - Work through sections 0 and 1 below first.
 2. To get the checklist and the test suite, fetch the repository and use `master`:
    - `git fetch --all --tags`, then `git switch master`, then `git pull --rebase`.
@@ -972,6 +972,16 @@ Keyboard shortcuts are Windows only; the chat commands are the same on both syst
   - **Clear rigs** forgets them.
   - With a rig gap set in Settings → Mining, a band of that radius appears round each rig (filled while you are inside it, an outline when you are clear).
 - [ ] `!wf rig` typed in Elite's chat does the same (with chat commands switched on); the sound plays when it worked.
+
+## 7q. 1.4.2: Where to Buy tabs and the Colony page (new, not run on Linux)
+
+- [ ] **Tabs:** the Where to Buy window has **Suggested route** (first) and **Closest stations**; **Find all** with a route opens the first, **Find nearest** the second.
+- [ ] **Search is underway:** a large message fills the content area while a search runs and goes when it ends.
+- [ ] **Route order:** **Smallest purchase first**, **Largest purchase first**, **Farthest stop first** and **Default (shortest flight)** reorder the same stops; nothing is searched again.
+- [ ] **Sections:** only the first section on each tab starts open; **Expand all** and **Minimize all** work, and a sort keeps what you opened.
+- [ ] **Stops:** each stop's Notes give its body and the age of its market data; the trip has no final row for the site.
+- [ ] **Colony page:** a **Body** line for the highlighted site, **Commodities** as `N done - N partly - N working on it`, three **Biggest gaps**.
+- [ ] **Mode buttons:** the row reads Powerplay, BGS, Explore, Mine, Trade, Mission, Operations, Colony, and the whole row still fits the panel's width.
 
 ## Reporting
 

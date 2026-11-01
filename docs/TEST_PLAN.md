@@ -1,6 +1,6 @@
-# Test plan: 1.4.1
+# Test plan: 1.4.2
 
-What to check in EDMC after the 1.4.1 release (and before any later one), on **Windows** first and then on **Linux**.
+What to check in EDMC after the 1.4.2 release (and before any later one), on **Windows** first and then on **Linux**.
 
 - This is the quick pass over the whole release:
   - the Rare Goods Finder
@@ -16,7 +16,7 @@ What to check in EDMC after the 1.4.1 release (and before any later one), on **W
 | Platform | Automated tests | Checks in the game |
 |---|---|---|
 | **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is proved only by the in-game pass. | Not yet recorded for 1.3.0. Sections 1 to 7 below are open. |
-| **Linux** | 3,850 tests pass in the Docker container (Xvfb and a window manager), 13 skipped, run on 2026-11-01 for the 1.4.1 release (3,805 for the unpublished 1.4.0, 3,731 for 1.3.3, 3,687 for 1.3.2, 3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
+| **Linux** | 3,857 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-11-01 for the 1.4.2 release (3,850 and 13 skipped for 1.4.1, 3,805 for the unpublished 1.4.0, 3,731 for 1.3.3, 3,687 for 1.3.2, 3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
 
 - 1.0.0 was released on 2026-10-26 (tag `v1.0.0`). 1.1.0 was released on 2026-10-27 (tag `v1.1.0`). 1.2.0 was released on 2026-10-28 (tag `v1.2.0`). 1.3.0 was released on 2026-10-29 (tag `v1.3.0`), 1.3.1 the same day (tag `v1.3.1`) and 1.3.2 the same day (tag `v1.3.2`), and 1.3.3 on 2026-10-30 (tag `v1.3.3`). These passes are the checks to run on the released build, and a failure goes to a fix on a short bugfix branch (`bugfix/1.3.2` is open).
 - Tick a box in the sections below only when you have seen it pass; nothing here has been ticked from the automated run.
@@ -191,3 +191,13 @@ The same checks apply. The points that differ:
 - The screen size falls back to `xrandr` (through the host from a Flatpak) when the game's files and the overlay's log cannot be read.
 
 Report the distro, desktop, X11 or Wayland, and native or Flatpak EDMC.
+
+## 11. Added in 1.4.2 (2026-11-01)
+
+- [ ] **Where to Buy: tabs.** The window has **Suggested route** (first, the default) and **Closest stations**. A **Find all** that makes a route opens the route tab; a **Find nearest** opens the stations tab. Before any route, the route tab says to press Find all.
+- [ ] **Where to Buy: Search is underway.** While a search runs, **Search is underway...** fills the content area in large type (the tab bar still works); it goes when the search ends or is stopped.
+- [ ] **Where to Buy: route order.** The **Route order** list on the route tab: **Smallest purchase first** and **Largest purchase first** put the stops in order of the tons to buy at each; **Farthest stop first** starts at the stop farthest from the search system; **Default (shortest flight)** restores the usual order. The stops are the same in every order and nothing is searched again.
+- [ ] **Where to Buy: sections start minimized.** On both tabs only the first section is open; **Expand all** and **Minimize all** open or close every section, and sorting a column keeps what you opened. A new search starts from the defaults again.
+- [ ] **Where to Buy: body and data age.** A stop's **Notes** and the **Copy Route** lines give the body (without the system's name) and `data today` or `data N days old`. The trip no longer ends with a row for delivering at the site.
+- [ ] **The Colony page.** The highlighted site shows a **Body** line (looked up once from Raven Colonial's plan; left out when Raven has none). **Commodities** reads `N done - N partly - N working on it (of N commodities)` and **Biggest gaps** names three commodities.
+- [ ] **Mode buttons.** The row reads Powerplay, BGS, Explore, **Mine**, Trade, **Mission**, Operations, Colony; the tooltips and the Settings choices for hiding a mode use the same names.

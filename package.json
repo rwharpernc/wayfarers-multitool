@@ -1,7 +1,7 @@
 {
   "name": "wfmt",
   "private": true,
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Wayfarer's Multitool \u2014 EDMC plugin",
   "license": "GPL-3.0-only",
   "scripts": {
