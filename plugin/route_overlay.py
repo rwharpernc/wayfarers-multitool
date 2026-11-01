@@ -33,7 +33,7 @@ import tkinter as tk
 import myNotebook as nb
 from config import appname, config
 
-from . import fuel_alerts, journal_files, route_planner, overlay, overlay_appearance, overlay_link, overlay_placement, restore, route_edsm, route_plan
+from . import diag_log, fuel_alerts, journal_files, route_planner, overlay, overlay_appearance, overlay_link, overlay_placement, restore, route_edsm, route_plan
 from .overlay import OverlayClient
 from .overlay_card import Card, CardLayout, Line, Row, cut
 from .overlay_style import LEGACY, Look
@@ -322,9 +322,14 @@ class RouteOverlay:
     def _load_route(self) -> None:
         stamp = self._stamp()
         data = self._read()
-        if data is not None:
-            self.tracker.set_route(route_plan.parse_route(data))
-            self._file_stamp = stamp
+        if data is None:
+            diag_log.log("route", "NavRoute.json could not be read", stamp=stamp)
+            return
+        hops = route_plan.parse_route(data)
+        self.tracker.set_route(hops)
+        self._file_stamp = stamp
+        diag_log.log("route", "NavRoute.json read", hops=len(hops), first=hops[0].name if hops else "", last=hops[-1].name if hops else "",
+                     here=self.tracker.system, on_route=self.tracker.on_route(), stamp=stamp)
 
     def sync_file(self) -> bool:
         """Read `NavRoute.json` again if the game rewrote it since it was last read. The `NavRoute` journal event can arrive before the file is
@@ -420,6 +425,7 @@ class RouteOverlay:
             self._last = card
             return
         self._last, self._last_sent = card, now
+        diag_log.log("route", "card drawn" if card else "card cleared", destination=card.header[1][0] if len(card.header) > 1 else "", rows=len(card.rows))
         self._draw(card)
 
     def showing(self) -> bool:
