@@ -1,6 +1,7 @@
 """Where-to-buy search for colonization commodities (colonization_sources.py), with Spansh replaced by a stand-in."""
 from __future__ import annotations
 
+import dataclasses
 import os
 import sys
 import types
@@ -33,6 +34,43 @@ class FakeSpansh:
     def __call__(self, system, commodity, transaction, radius, **kwargs):
         self.calls.append((system, commodity, transaction, radius, kwargs))
         return list(self.carriers if kwargs.get("station_types") == ["Drake-Class Carrier"] else self.stations)
+
+
+class LocalSpansh:
+    """Answers a this-system-only search from `local`, and any other from `outside`."""
+
+    def __init__(self, local, outside):
+        self.local, self.outside, self.calls = list(local), list(outside), []
+
+    def __call__(self, system, commodity, transaction, radius, **kwargs):
+        self.calls.append((system, kwargs))
+        return list(self.local if kwargs.get("this_system_only") else self.outside)
+
+
+def local_item(name, system, price=900):
+    return dataclasses.replace(item(name, 0.0, price=price), system=system)
+
+
+class CurrentSystemFirstTests(unittest.TestCase):
+    def setUp(self):
+        src.clear_cache()
+
+    def test_stock_in_the_current_system_is_the_answer_and_nothing_outside_is_searched(self):
+        fake = LocalSpansh([local_item("Home Port", "Home")], [item("Far", 30, price=100)])
+        result = src.find("Elsewhere", "Steel", sort=src.SORT_PRICE, search=fake, here="Home")
+        self.assertEqual([s.station for s in result.stations], ["Home Port"])
+        self.assertEqual(len(fake.calls), 1)
+        self.assertTrue(fake.calls[0][1]["this_system_only"])
+
+    def test_with_none_in_the_current_system_the_search_goes_out_closest_first(self):
+        fake = LocalSpansh([], [item("Far", 30), item("Near", 5)])
+        result = src.find("Home", "Steel", search=fake, here="Home")
+        self.assertEqual([s.station for s in result.stations], ["Near", "Far"])
+
+    def test_a_station_from_another_system_is_not_taken_for_the_current_one(self):
+        fake = LocalSpansh([local_item("Other Port", "Other")], [item("Near", 5)])
+        result = src.find("Home", "Steel", search=fake, here="Home")
+        self.assertEqual([s.station for s in result.stations], ["Near"])
 
 
 class CacheTests(unittest.TestCase):

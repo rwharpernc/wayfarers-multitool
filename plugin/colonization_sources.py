@@ -103,16 +103,17 @@ def order(sources: Sequence[Source], sort: str = SORT_DISTANCE) -> List[Source]:
 
 
 def _cache_key(reference_system: str, commodity: str, radius_ly: Optional[float], pad: str, include_carriers: bool,
-               sort: str, search: SearchFn, orbital_only: bool = False) -> tuple:
-    return (reference_system.strip().casefold(), commodity.casefold(), radius_ly, pad, include_carriers, sort, search, orbital_only)
+               sort: str, search: SearchFn, orbital_only: bool = False, here: str = "") -> tuple:
+    return (reference_system.strip().casefold(), commodity.casefold(), radius_ly, pad, include_carriers, sort, search, orbital_only,
+            here.strip().casefold())
 
 
 def is_cached(reference_system: str, commodity: str, *, radius_ly: Optional[float] = DEFAULT_RADIUS_LY,
               pad: str = PAD_ANY, include_carriers: bool = False, sort: str = SORT_DISTANCE,
               search: SearchFn = search_best_price_stations, now: Callable[[], float] = time.monotonic,
-              orbital_only: bool = False) -> bool:
+              orbital_only: bool = False, here: str = "") -> bool:
     """Whether `find` with these arguments would be answered from memory (so it sends no request)."""
-    cached = _cache.get(_cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search, orbital_only))
+    cached = _cache.get(_cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search, orbital_only, here))
     return cached is not None and now() - cached[0] < CACHE_SECONDS
 
 
@@ -123,19 +124,26 @@ def clear_cache() -> None:
 def find(reference_system: str, commodity: str, *, radius_ly: Optional[float] = DEFAULT_RADIUS_LY,
          pad: str = PAD_ANY, include_carriers: bool = False, sort: str = SORT_DISTANCE,
          search: SearchFn = search_best_price_stations, now: Callable[[], float] = time.monotonic,
-         orbital_only: bool = False) -> SearchResult:
-    """Stations (and optionally fleet carriers) near `reference_system` with `commodity` in stock. `search` is the
+         orbital_only: bool = False, here: str = "") -> SearchResult:
+    """Stations (and optionally fleet carriers) near `reference_system` with `commodity` in stock. With `here` (the system the commander is in),
+    that system is searched first: if any station in it has the commodity in stock, those are the answer and nothing outside is searched; only when
+    none does, the search goes out around `reference_system`, ordered by `sort` (closest first by default). `search` is the
     Spansh call; it raises on a network or parse failure, which the caller reports. Stations are asked for apart from
     carriers so the volatile carrier prices cannot crowd the real stations out of the first page. `orbital_only` asks
     for orbital stations alone (no surface ports), so a commodity whose nearest sellers are all on planets still shows
     the orbital ports that have it."""
     if not reference_system.strip():
         raise ValueError("Enter a system to search around.")
-    key = _cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search, orbital_only)
+    key = _cache_key(reference_system, commodity, radius_ly, pad, include_carriers, sort, search, orbital_only, here)
     cached = _cache.get(key)
     if cached is not None and now() - cached[0] < CACHE_SECONDS:
         return cached[1]
     required = None if pad == PAD_ANY else pad
+    if here.strip():
+        local = _in_system(here.strip(), commodity, pad, required, include_carriers, orbital_only, sort, search)
+        if local.stations or local.carriers:
+            _cache[key] = (now(), local)
+            return local
     spansh_sort = SORT_DISTANCE if sort == SORT_DISTANCE else SORT_PRICE
     stations = search(reference_system.strip(), commodity, "Buy", radius_ly, max_results=STATION_RESULTS,
                       market_days_old=MAX_AGE_DAYS, station_types=trade_prices.station_types(not orbital_only),
@@ -150,6 +158,20 @@ def find(reference_system: str, commodity: str, *, radius_ly: Optional[float] = 
         carriers=order([to_source(i) for i in carriers if _fits(i, pad)], sort))
     _cache[key] = (now(), result)   # a failed search raised above, so a failure is never remembered
     return result
+
+
+def _in_system(here: str, commodity: str, pad: str, required: Optional[str], include_carriers: bool, orbital_only: bool, sort: str,
+               search: SearchFn) -> SearchResult:
+    """The stations (and carriers, if asked) in the system `here` that have `commodity` in stock. Spansh is asked for that system alone, so a
+    price-sorted search elsewhere cannot push it off the page."""
+    def ask(types: List[str], count: int) -> List[Source]:
+        found = search(here, commodity, "Buy", None, max_results=count, market_days_old=MAX_AGE_DAYS, station_types=types,
+                       sort_by=SORT_DISTANCE, required_pad=required, this_system_only=True)
+        return [to_source(i) for i in found if _fits(i, pad) and i.system.strip().casefold() == here.casefold()]
+
+    stations = ask(trade_prices.station_types(not orbital_only), STATION_RESULTS)
+    carriers = ask(trade_prices.CARRIER_TYPES, CARRIER_RESULTS) if include_carriers else []
+    return SearchResult(stations=order(stations, sort), carriers=order(carriers, sort))
 
 
 # --- the whole list at once ----------------------------------------------------------------------------------------

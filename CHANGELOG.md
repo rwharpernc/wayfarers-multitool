@@ -7,6 +7,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Changed
 
+- **Where to Buy: your own system first.** **Find nearest** now searches the system you are in before anywhere else. If a station there has the commodity in stock, those stations (and fleet carriers, unless excluded) are the answer; only when none does, the search goes out around the search system, in the order you chose (closest first by default).
 - **Engineers: what each engineer works on.** The Engineers table's **Offers** column (a count of blueprints) is now **Works on**: the module types the engineer engineers, each with the top grade they offer (`Frame Shift Drive 5, Thrusters 3`), or `Suit, Weapon` for an on-foot engineer. The details pane has a **Works on** section that lists every type with its top grade and experimental effects, or an on-foot engineer's suit and weapon upgrades.
 
 ## 1.4.0 (2026-10-31)

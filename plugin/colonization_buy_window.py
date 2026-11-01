@@ -322,6 +322,7 @@ class BuyWindow:
             return
         commodity, radius, pad = wanted, self._radius_ly(), self._pad_choice()
         carriers, order = not self._no_carriers_var.get(), self._sort_choice()
+        here = self.host.current_system()
         self._save_prefs()
         self._search_id += 1
         job: Dict[str, Any] = {"id": self._search_id, "done": False, "result": None, "error": ""}
@@ -333,7 +334,7 @@ class BuyWindow:
         def work() -> None:
             try:
                 job["result"] = sources.find(system, commodity, radius_ly=radius, pad=pad,
-                                             include_carriers=carriers, sort=order)
+                                             include_carriers=carriers, sort=order, here=here)
             except Exception as exc:   # network, parse or bad input: shown, not raised into the main thread
                 logger.exception("Colonization where-to-buy search failed")
                 job["error"] = str(exc) or exc.__class__.__name__
