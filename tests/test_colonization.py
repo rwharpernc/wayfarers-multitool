@@ -124,6 +124,13 @@ class RoundTripTests(unittest.TestCase):
         again = Site.from_dict(site.to_dict())
         self.assertEqual(again.to_dict(), site.to_dict())
 
+    def test_the_body_name_is_kept_and_defaults_to_blank(self) -> None:
+        site = apply_depot_event(_DEPOT, None, name="X", system="Sol")
+        assert site is not None
+        self.assertEqual(site.body_name, "")
+        site.body_name = "Sol 3"
+        self.assertEqual(Site.from_dict(site.to_dict()).body_name, "Sol 3")
+
 
 class DisplayNameTests(unittest.TestCase):
     """A finished build keeps the game's "Construction Site:" prefix in the depot's saved name; the shown name drops it."""

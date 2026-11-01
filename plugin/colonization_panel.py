@@ -106,7 +106,7 @@ def overlay_rows() -> int:
 
 _NO_CMDR_TEXT = "Waiting for commander login"
 _RECENT = 5    # finished sites listed when none is under construction
-_PAGE_ROWS = ("delivered", "needed", "hold", "carrier", "to_get", "coverage", "trips", "gaps", "more")   # the project rows below its name
+_PAGE_ROWS = ("body", "delivered", "needed", "hold", "carrier", "to_get", "coverage", "trips", "gaps", "more")   # the project rows below its name
 _DONE_ROWS = tuple(f"done{i}" for i in range(_RECENT))                                                  # the finished sites
 _PAGE_SECTIONS = {"have": ("hold", "carrier", "to_get"), "finish": ("coverage", "trips", "gaps"), "recent": _DONE_ROWS}   # heading -> the rows it heads
 _NAME_MAX = 64   # a safety bound on a site or system name; the labels wrap anything long, so nothing is cut short of this
@@ -144,6 +144,8 @@ class ColonizationController:
         self._rcc = rcc_sync.RccSync(rcc_share_progress, rcc_share_carrier, rcc_keys.keys.get, on_no_project=self._note_no_project)
         # A site Raven has no project for, found on the sync's worker thread, offered on the Tk thread: (commander, market id, name).
         self._offers: "queue.Queue[Tuple[str, int, str]]" = queue.Queue()
+        self._body_found: "queue.Queue[Tuple[str, int, str]]" = queue.Queue()   # (commander, market id, body name) found on a worker thread
+        self._body_tried: set = set()                                          # (commander, market id) already looked up this session
         self._offer: Optional[Tuple[str, int, str]] = None
         self._offer_frame: Optional[tk.Frame] = None
 
@@ -567,6 +569,8 @@ class ColonizationController:
             where = f"{_clip(p.name, _NAME_MAX)}" + (f"\n{_clip(p.system, _NAME_MAX)}" if p.system else "")
             self._set("project", where)
             self._draw_bar(p.progress, p.complete)
+            self._set("body", _clip(current.body_name, _NAME_MAX), show=bool(current.body_name))
+            self._look_up_body(current)
             self._set("delivered", stats.delivered_text(p))
             for name in _DONE_ROWS:
                 self._set(name, "", show=False)
@@ -640,6 +644,7 @@ class ColonizationController:
         self._bar = tk.Canvas(parent, width=_BAR_WIDTH, height=_BAR_HEIGHT, highlightthickness=0, bd=0)
         self._bar.grid(row=row, column=0, columnspan=3, sticky=tk.W, pady=(4, 2))
         row += 1
+        line("body", "Body")
         line("delivered", "Delivered")
         line("needed", "Still needed")
         heading("What you have", top=6, key="have")
@@ -685,9 +690,43 @@ class ColonizationController:
         if self._cmdr:
             self._offers.put((self._cmdr, market_id, name or system))
 
+    def _look_up_body(self, site: colonization.Site) -> None:
+        """Find the body the highlighted site is at, once per site and session: the game's journal does not say, but Raven Colonial's plan
+        for the system does (a body number per site, and the system's bodies). Runs on a worker thread; a failure is silent and the line stays out."""
+        key = (self._cmdr or "", site.market_id)
+        if site.body_name or not site.system or not self._cmdr or key in self._body_tried:
+            return
+        self._body_tried.add(key)
+        cmdr, market_id, system = key[0], site.market_id, site.system
+
+        def worker() -> None:
+            try:
+                plan = rcc_client.fetch_system(system)
+            except Exception:
+                return
+            match = next((s for s in plan.sites if s.market_id == market_id and s.body_num is not None), None)
+            body = next((b for b in plan.bodies if match is not None and b.num == match.body_num), None)
+            if body is not None:
+                self._body_found.put((cmdr, market_id, body.name))
+
+        threading.Thread(target=worker, name="WFMT-colonization-body", daemon=True).start()
+
+    def _poll_bodies(self) -> None:
+        """On the Tk thread: save a body name the worker found, which refreshes the page."""
+        try:
+            while True:
+                cmdr, market_id, name = self._body_found.get_nowait()
+                site = self._repository.get(cmdr, market_id)
+                if site is not None and not site.body_name:
+                    site.body_name = name
+                    self._repository.upsert(cmdr, site)
+        except queue.Empty:
+            pass
+
     def _poll_offers(self) -> None:
         if self._parent is None:
             return
+        self._poll_bodies()
         try:
             while True:
                 cmdr, market_id, name = self._offers.get_nowait()

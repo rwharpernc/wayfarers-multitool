@@ -27,7 +27,7 @@ from .mining_spansh_client import search_stations_selling_all
 from .uikit import palette as P, style
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
-from .uikit.widgets import Combobox, FlatButton
+from .uikit.widgets import Combobox, FlatButton, Tabs
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -62,7 +62,7 @@ _PAD_ORDER = {"Large": 0, "Medium": 1, "Small": 2, "?": 3}
 _NO_LIMIT = "No limit"
 _SORT_CHOICES = (("Closest first", sources.SORT_DISTANCE), ("Cheapest first", sources.SORT_PRICE))
 _POLL_MS = 150
-_PLAN_ROWS = 6     # the shopping plan block is this many rows tall at most, then it scrolls
+_NO_ROUTE = "No suggested route yet: press Find all to search for everything still to buy and plan a trip."
 _ERROR_MAX = 90   # a failure message from outside is clipped to this
 _NAME_MAX = 60     # a system or commodity name is clipped to this in a note
 _HINT = "Pick a commodity row in the Sites window, then Find nearest - or Find all to search everything still to buy."
@@ -253,9 +253,16 @@ class BuyWindow:
         self._sources_note = tk.Label(host, text=_HINT, fg=P.MUTED, bg=P.PANE, anchor="w", justify="left", padx=P.PAD)
         self._sources_note.pack(fill="x")
         host.bind("<Configure>", lambda e: [label.configure(wraplength=max(e.width - 2 * P.PAD, 100)) for label in (self._sources_note, self._picked, self._steps)])
-        # The shopping plan (the suggested route) has a block of its own above the per-commodity
-        # lists, so it is not lost among them. It is shown only after a Find all that produced one.
-        self._plan_frame = tk.Frame(host, bg=P.CARD, padx=P.PAD_SM, pady=P.PAD_SM)
+        # The suggested route and the per-commodity station lists each have a tab: the route (the default) and the closest stations.
+        # The route is filled in only after a Find all that produced one; until then its tab says so.
+        self._tabs = Tabs(host)
+        route_tab = self._tabs.add("Suggested route")
+        lists_tab = self._tabs.add("Closest stations")
+        self._plan_shown = False
+        self._plan_empty = tk.Label(route_tab, text=_NO_ROUTE, fg=P.MUTED, bg=P.PANE, anchor="w", justify="left", padx=P.PAD, pady=P.PAD)
+        self._plan_empty.pack(fill="x")
+        self._tabs.pack(fill="both", expand=True)
+        self._plan_frame = tk.Frame(route_tab, bg=P.CARD, padx=P.PAD_SM, pady=P.PAD_SM)
         tk.Label(self._plan_frame, text="Suggested route to buy what you need...", fg=P.ACCENT, bg=P.CARD, anchor="w",
                  font=style.font(P.FONT_SECTION)).pack(fill="x", padx=P.PAD_SM)
         # The next stop, in words: where to go, what to buy there, and the button that copies its system.
@@ -280,47 +287,30 @@ class BuyWindow:
         host.bind("<Configure>", lambda e: [label.configure(wraplength=max(e.width - 2 * P.PAD - 6 * P.PAD_SM - 16, 100))
                                             for label in (self._next_where, self._next_buy, self._next_hint)], add="+")
         self._plan_table = DataTable(self._plan_frame, _PLAN_COLUMNS, sortable=False, on_select=self._on_plan_pick,
-                                     select_groups=True, visible_rows=_PLAN_ROWS)
+                                     select_groups=True)
         self._plan_table.tag_configure("carrier", foreground=P.INFO)
         self._plan_table.tag_configure("warn", foreground=P.WARN)
         self._plan_table.tag_configure("done", foreground=P.MUTED)
         self._plan_table.tag_configure("next", foreground=P.ACCENT)
-        self._plan_table.pack(fill="x")
-        # The heading row carries a minimize control: the per-commodity lists can be long, and folding them away
-        # leaves the suggested route the room.
-        self._list_heading = tk.Frame(host, bg=P.PANE)
-        tk.Label(self._list_heading, text="Closest stations for each commodity", fg=P.HEADING, bg=P.PANE, anchor="w",
-                 font=style.font(P.FONT_SECTION), padx=P.PAD, pady=P.PAD_SM).pack(side="left")
-        self._lists_minimized = False
-        self._lists_toggle = FlatButton(self._list_heading, "Minimize", self._on_toggle_lists,
-                                        tip="Minimize - fold the per-commodity station lists away to leave more room for the suggested route")
-        self._lists_toggle.pack(side="right", padx=P.PAD)
-        self._source_table = DataTable(host, _SOURCE_COLUMNS, sortable=False, on_header=self._on_source_sort,
+        self._plan_table.pack(fill="both", expand=True)
+        self._source_table = DataTable(lists_tab, _SOURCE_COLUMNS, sortable=False, on_header=self._on_source_sort,
                                        on_select=self._on_source_pick, select_groups=True, empty_text="No search yet.")
         self._source_table.tag_configure("carrier", foreground=P.INFO)
         self._source_table.tag_configure("warn", foreground=P.WARN)
         self._source_table.pack(fill="both", expand=True)
 
-    def _on_toggle_lists(self) -> None:
-        """Fold the per-commodity station lists away (or bring them back), so the suggested route has the room."""
-        self._lists_minimized = not self._lists_minimized
-        if self._lists_minimized:
-            self._source_table.pack_forget()
-            self._lists_toggle.configure(text="Restore")
-        else:
-            self._source_table.pack(fill="both", expand=True)
-            self._lists_toggle.configure(text="Minimize")
-
     def _show_plan(self, show: bool) -> None:
-        """Show or hide the shopping plan block (and the heading that tells the commodity lists apart from it)."""
+        """Show or hide the shopping plan in its tab. A new route brings its tab forward; a plain Find nearest has no route, so it shows the stations."""
         if show:
-            # the commodity table is not packed while the lists are minimized, so it cannot anchor the order then
-            anchor = {} if self._lists_minimized else {"before": self._source_table}
-            self._plan_frame.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, P.PAD_SM), **anchor)
-            self._list_heading.pack(fill="x", **anchor)
+            self._plan_empty.pack_forget()
+            self._plan_frame.pack(fill="both", expand=True, padx=P.PAD, pady=(P.PAD_SM, P.PAD_SM))
+            if not self._plan_shown:
+                self._tabs.select(0)
         else:
             self._plan_frame.pack_forget()
-            self._list_heading.pack_forget()
+            self._plan_empty.pack(fill="x")
+            self._tabs.select(1)
+        self._plan_shown = show
 
     # --- state ------------------------------------------------------------
 

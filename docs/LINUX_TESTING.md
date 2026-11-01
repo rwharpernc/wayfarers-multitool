@@ -759,7 +759,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, but th
   - Clicking a row names its biggest commodities.
   - **Refresh** works.
   - With no network it says it could not reach Raven Colonial.
-- [ ] **Suggested route:** after Find all, a shaded "Suggested route to buy what you need..." block sits above the per-commodity lists, with a "Suggested trip" group of numbered stops (a **Next stop** card above them, and a jump distance on each) and, under each, the commodities to buy with their price and supply; **Copy Route** puts plain lines on the clipboard. A plain Find nearest shows no such block.
+- [ ] **Suggested route:** after Find all, a "Suggested route to buy what you need..." block fills the Suggested route tab (the first tab; Closest stations holds the per-commodity lists), with a "Suggested trip" group of numbered stops (a **Next stop** card above them, and a jump distance on each) and, under each, the commodities to buy with their price and supply; **Copy Route** puts plain lines on the clipboard. A plain Find nearest shows no such block.
 - [ ] **Remembered choices**: change the Preset, Within, Sort, Landing pad, Exclude fleet carriers and Exclude surface ports, run a search, close and reopen
       the window: the same choices are back.
 - [ ] **Only what [station] sells**: grayed out until you open a station's commodity market; then it names the station and

@@ -7,7 +7,8 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Changed
 
-- **Where to Buy: minimize the station lists.** The heading **Closest stations for each commodity** has a **Minimize** button that folds the per-commodity lists away, leaving more room for the route; **Restore** brings them back. The route block is renamed **Suggested route to buy what you need...** (it was Closest way to buy everything).
+- **Colony page: the body.** The highlighted construction site now shows a **Body** line, the body it is at as Raven Colonial's plan names it. The game's journal does not say, so WFMT looks it up in Raven's plan for the system the first time the site is highlighted, saves it with the site and asks nothing more; if Raven has no body for the site, or cannot be reached, the line is left out.
+- **Where to Buy: the route and the stations have a tab each.** The window now has two tabs under the options: **Suggested route** (the default; it opens after a Find all that makes a route) and **Closest stations** (the per-commodity lists; a plain Find nearest opens it). The route block is renamed **Suggested route to buy what you need...** (it was Closest way to buy everything), and its table now uses the whole tab instead of stopping at 6 rows.
 - **Where to Buy: surface port requirements.** The **Only at surface ports** group on the route is gone when surface ports are included, since those commodities are just legs of the trip, the stop noted as a surface port (the **surface ports only** tag on the purchase line is gone too). With **Exclude surface ports** ticked, the commodities sold only at surface ports are named in a collapsed group, **IMPORTANT: Surface Port Requirements**, one per row.
 
 ## 1.4.1 (2026-11-01)

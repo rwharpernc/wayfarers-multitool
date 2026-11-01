@@ -106,6 +106,8 @@ class Site:
     """When this tool first saw the site ("" for one saved before this was kept); for the history's build times."""
     completed_at: str = ""
     """When the depot first reported the build complete ("" while it is not, or for one finished before this was kept)."""
+    body_name: str = ""
+    """The body the site is at, as Raven Colonial's plan names it ("" until looked up, or when Raven does not say); shown on the Colony panel."""
     archived: bool = False
     """Put away by the commander: a finished site kept for reference, out of the Sites window's list but still counted in the history."""
 
@@ -133,7 +135,7 @@ class Site:
             "market_id": self.market_id, "name": self.name, "system": self.system,
             "progress": self.progress, "complete": self.complete, "failed": self.failed,
             "updated": self.updated, "journal_at": self.journal_at,
-            "first_seen": self.first_seen, "completed_at": self.completed_at, "archived": self.archived,
+            "first_seen": self.first_seen, "completed_at": self.completed_at, "archived": self.archived, "body_name": self.body_name,
             "resources": [
                 {"key": r.key, "label": r.label, "required": r.required,
                  "provided": r.provided, "payment": r.payment}
@@ -153,7 +155,7 @@ class Site:
             updated=str(raw.get("updated") or _now_iso()),
             journal_at=str(raw.get("journal_at") or ""),
             first_seen=str(raw.get("first_seen") or ""), completed_at=str(raw.get("completed_at") or ""),
-            archived=bool(raw.get("archived")),
+            archived=bool(raw.get("archived")), body_name=str(raw.get("body_name") or "")[:80],
             resources=[
                 Resource(
                     key=str(r.get("key") or ""), label=str(r.get("label") or ""),

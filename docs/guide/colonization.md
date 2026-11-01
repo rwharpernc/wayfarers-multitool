@@ -103,6 +103,7 @@ See [The shopping list on the overlay](#the-shopping-list-on-the-overlay).
 | Section and line | What it says |
 |---|---|
 | Name, system and a bar | The site, and how far its build has come (the bar turns green when the build is complete) |
+| Body | The body the site is at, as Raven Colonial's plan names it (looked up once per site, the first time it is the highlighted one, and then kept; the line is left out when Raven does not say or cannot be reached) |
 | Delivered | The tons handed over by everyone against the tons it needs, with the build's percentage (`1,200 of 8,000 t (15%)`) |
 | Still needed | What is left to deliver. Once nothing is, it says whether the build is complete or only waits for you to dock and finish it |
 | **What you have** | |
@@ -544,7 +545,7 @@ search system is not: it starts as the site's system again.
 
 ### Suggested route
 
-Find all also works out a shopping trip and shows it in a shaded block of its own, **Suggested route to buy what you need...**, above the per-commodity lists (the block scrolls if it is long): the few stops (at most 6) that between them supply the most of what you still have to get. The **Minimize** button on the **Closest stations for each commodity** heading below it folds those lists away to leave more room for the route; **Restore** brings them back.
+Find all also works out a shopping trip and shows it on its own tab, **Suggested route** (the first tab; the **Closest stations** tab beside it holds the per-commodity lists; the route scrolls if it is long), headed **Suggested route to buy what you need...**: the few stops (at most 6) that between them supply the most of what you still have to get.
 
 - **The Next stop card.** At the top of the block: the stop's position in the trip (`Next stop: 2 of 4`), the station and system with the jump distance and its notes (pad, surface port, fleet carrier), and `Buy: Steel 120 t, Titanium 80 t`. When you are already in that system it says so. **Copy next system** copies the system name; **Skip this stop** leaves the stop out and plans the trip again without it (its goods go to other stops, or are named as not covered).
 - **Done stops stay.** A stop you have bought at, or whose goods you now hold, is ticked and grayed (**done**; **skipped** if you skipped it) instead of vanishing, and the heading counts them (`1 of 4 done`). When every stop is done the card says to deliver at the site. Changing a filter plans the trip afresh, so the ticks start again.

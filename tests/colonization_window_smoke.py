@@ -344,13 +344,10 @@ check(headings == ["Suggested trip", "1. Near Port"], f"the route sits in its ow
 check([row.values[0] for row in buy._source_table._rows.values() if row.group] == ["Aluminium", "Steel"],
       "the commodity lists keep one heading per commodity, apart from the plan")
 check(buy._plan_frame.winfo_manager() == "pack", "the plan block is shown after a Find all that made one")
-buy._on_toggle_lists()
-check(buy._source_table.winfo_manager() == "" and buy._lists_toggle.cget("text") == "Restore", "Minimize folds the per-commodity lists away")
-buy._show_plan(False)
-buy._show_plan(True)
-check(buy._plan_frame.winfo_manager() == "pack", "the plan block can be shown again while the lists are minimized")
-buy._on_toggle_lists()
-check(buy._source_table.winfo_manager() == "pack" and buy._lists_toggle.cget("text") == "Minimize", "Restore brings the lists back")
+check(buy._tabs.selected == 0, "a Find all that made a route opens the Suggested route tab")
+buy._tabs.select(1)
+check(buy._source_table.winfo_ismapped() or buy._source_table.winfo_manager() == "pack", "the Closest stations tab holds the per-commodity lists")
+buy._tabs.select(0)
 detail = {row.values[0]: row.values[1:3] for row in list(buy._plan_table._rows.values()) + list(buy._source_table._rows.values()) if row.group}
 check(detail["Aluminium"] == ["80 t to get", ""] and detail["Steel"] == ["400 t to get", "no source found"],
       f"the detail sits in later columns so the label is not clipped: {detail}")
