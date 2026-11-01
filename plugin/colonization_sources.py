@@ -480,6 +480,25 @@ def _jump(a: Tuple[float, float, float], b: Tuple[float, float, float]) -> float
     return math.dist(a, b)
 
 
+ROUTE_DEFAULT, ROUTE_SMALL_FIRST, ROUTE_LARGE_FIRST, ROUTE_FAR_FIRST = "default", "small_first", "large_first", "far_first"
+ROUTE_ORDERS = (("Default (shortest flight)", ROUTE_DEFAULT), ("Smallest purchase first", ROUTE_SMALL_FIRST),
+                ("Largest purchase first", ROUTE_LARGE_FIRST), ("Farthest stop first", ROUTE_FAR_FIRST))
+
+
+def _ordered(stops: Sequence[Stop], order: str) -> Tuple[List[Stop], Optional[float]]:
+    """The stops in the order the commander asked for instead of the shortest flight: the smallest or the largest purchase (tons to buy at
+    the stop) first, or the farthest from the search's system first. Ties go nearest first, then by name. The legs are still measured stop to
+    stop, so the trip's length can be read off (None when a stop's position is not known)."""
+    keys = {ROUTE_SMALL_FIRST: lambda s: (s.tons, s.distance_ly, s.station.casefold()),
+            ROUTE_LARGE_FIRST: lambda s: (-s.tons, s.distance_ly, s.station.casefold()),
+            ROUTE_FAR_FIRST: lambda s: (-s.distance_ly, s.station.casefold())}
+    ranked = sorted(stops, key=keys[order])
+    if any(s.position is None for s in ranked):
+        return ranked, None
+    legs = [ranked[0].distance_ly] + [_jump(a.position, b.position) for a, b in zip(ranked, ranked[1:])] if ranked else []   # type: ignore[arg-type]
+    return [replace(s, leg_ly=leg) for s, leg in zip(ranked, legs)], sum(legs)
+
+
 def _fly_order(stops: Sequence[Stop]) -> Tuple[List[Stop], Optional[float]]:
     """Put the stops in the order to fly them: the shortest trip that starts from the search's system (each stop knows its own distance from
     it) and visits every stop, each leg measured from the stop before. Every order is tried (a route has six stops at most). When a
@@ -502,7 +521,8 @@ def _fly_order(stops: Sequence[Stop]) -> Tuple[List[Stop], Optional[float]]:
     return [replace(s, leg_ly=leg) for s, leg in zip(perm, legs)], sum(legs)
 
 
-def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int], max_stops: int = ROUTE_MAX_STOPS) -> RoutePlan:
+def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int], max_stops: int = ROUTE_MAX_STOPS,
+               order: str = ROUTE_DEFAULT) -> RoutePlan:
     """Pick the few stops that between them supply the most of what is still needed, from the per-commodity answers of a
     whole-list search. `needs` is the tons still to get for each commodity (by label).
 
@@ -510,7 +530,8 @@ def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int
     commodity it sells, so one that sells several wins), take that off the needs, and repeat until nothing is left, nothing more
     can be covered, or `max_stops` is reached. Ties go to the nearer station, then the cheaper one. The stops are then put in
     order of distance from the search's reference system (the nearest first), which is the order to fly them. Only the stations
-    the searches returned are considered, so a commodity with none in range is reported as not covered rather than guessed."""
+    the searches returned are considered, so a commodity with none in range is reported as not covered rather than guessed.
+    `order` can ask for another order than the shortest flight (see `_ordered`); the stops chosen are the same."""
     remaining = {label: int(tons) for label, tons in needs.items() if tons and tons > 0}
     needed = sum(remaining.values())
     # (station, system) -> {commodity: (supply, price)} plus the details of the station
@@ -547,7 +568,7 @@ def plan_route(found: Sequence[Tuple[str, "SearchResult"]], needs: Dict[str, int
         chosen.append(Stop(source.station, source.system, source.kind, source.is_carrier, source.distance_ly, tuple(buys), source.is_planetary,
                            source.pad, source.position))
         del candidates[best]
-    ordered, total = _fly_order(chosen)
+    ordered, total = _fly_order(chosen) if order == ROUTE_DEFAULT or order not in dict(ROUTE_ORDERS).values() else _ordered(chosen, order)
     uncovered = tuple(sorted(left.items(), key=lambda kv: kv[0].casefold()))
     return RoutePlan(stops=tuple(ordered), needed=needed, covered=needed - sum(left.values()), uncovered=uncovered, total_ly=total)
 

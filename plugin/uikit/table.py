@@ -223,6 +223,19 @@ class DataTable(tk.Frame):
             self._fit_cell(row, 0)
             self._schedule_layout()
 
+    def group_states(self) -> dict[str, bool]:
+        """Every group row's id with whether it is open, so a caller that draws the table again can keep what the commander opened."""
+        return {iid: row.opened for iid, row in self._rows.items() if row.group}
+
+    def set_all_open(self, opened: bool) -> None:
+        """Open (expand) or close (minimize) every group row at once."""
+        for row in self._rows.values():
+            if row.group and row.opened != opened:
+                row.opened = opened
+                row.cells[0].configure(text=self._cell_text(row, 0))
+                self._fit_cell(row, 0)
+        self._schedule_layout()
+
     def __len__(self) -> int:
         return len(self._rows)
 

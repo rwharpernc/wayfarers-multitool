@@ -55,6 +55,21 @@ class PlanTests(unittest.TestCase):
         plan = S.plan_route(found, {"Steel": 500, "Water": 50})
         self.assertEqual([s.station for s in plan.stops], ["Near", "Far"])
 
+    def test_the_route_can_start_with_the_smallest_or_the_largest_purchase_or_the_farthest_stop(self):
+        found = [("Steel", result(src("Mid", 10, 400, 1000))), ("Water", result(src("Small", 30, 90, 100))),
+                 ("Copper", result(src("Big", 20, 300, 900)))]
+        needs = {"Steel": 500, "Water": 50, "Copper": 800}
+        names = lambda order: [s.station for s in S.plan_route(found, needs, order=order).stops]
+        self.assertEqual(names(S.ROUTE_SMALL_FIRST), ["Small", "Mid", "Big"])
+        self.assertEqual(names(S.ROUTE_LARGE_FIRST), ["Big", "Mid", "Small"])
+        self.assertEqual(names(S.ROUTE_FAR_FIRST), ["Small", "Big", "Mid"])
+        self.assertEqual(sorted(names(S.ROUTE_DEFAULT)), sorted(names(S.ROUTE_FAR_FIRST)))    # the same stops, only the order differs
+
+    def test_an_unknown_order_falls_back_to_the_default(self):
+        found = [("Steel", result(src("Far", 40, 400, 1000))), ("Water", result(src("Near", 3, 90, 100)))]
+        plan = S.plan_route(found, {"Steel": 500, "Water": 50}, order="bogus")
+        self.assertEqual([s.station for s in plan.stops], ["Near", "Far"])
+
     def test_what_nobody_in_range_sells_is_reported_not_guessed(self):
         found = [("Steel", result(src("A", 5, 400, 900))), ("Titanium", result())]
         plan = S.plan_route(found, {"Steel": 100, "Titanium": 80})

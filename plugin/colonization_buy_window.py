@@ -62,6 +62,7 @@ _PAD_ORDER = {"Large": 0, "Medium": 1, "Small": 2, "?": 3}
 _NO_LIMIT = "No limit"
 _SORT_CHOICES = (("Closest first", sources.SORT_DISTANCE), ("Cheapest first", sources.SORT_PRICE))
 _POLL_MS = 150
+_WORKING = "Search is underway…"
 _NO_ROUTE = "No suggested route yet: press Find all to search for everything still to buy and plan a trip."
 _ERROR_MAX = 90   # a failure message from outside is clipped to this
 _NAME_MAX = 60     # a system or commodity name is clipped to this in a note
@@ -259,6 +260,26 @@ class BuyWindow:
         route_tab = self._tabs.add("Suggested route")
         lists_tab = self._tabs.add("Closest stations")
         self._plan_shown = False
+        # While a search runs, a large message covers the empty content area (the tab bar stays usable): the note under the buttons is easy to miss.
+        self._working = tk.Label(self._tabs._stage, text=_WORKING, fg=P.STATUS, bg=P.PANE, font=style.font(P.FONT_TITLE))
+        self._open_memory: Dict[str, Dict[str, bool]] = {}    # which sections the commander opened or closed, kept across a redraw of the same answer
+        route_bar = tk.Frame(route_tab, bg=P.PANE)
+        route_bar.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, 0))
+        tk.Label(route_bar, text="Route order", fg=P.MUTED, bg=P.PANE).pack(side="left")
+        self._route_order_box = Combobox(route_bar, state="readonly", width=26, values=[label for label, _ in sources.ROUTE_ORDERS])
+        self._route_order_box.set(sources.ROUTE_ORDERS[0][0])
+        self._route_order_box.pack(side="left", padx=(P.PAD_SM, P.PAD))
+        self._route_order_box.bind("<<ComboboxSelected>>", lambda _e: self._on_route_order_change())
+        FlatButton(route_bar, "Minimize all", lambda: self._plan_table.set_all_open(False),
+                   tip="Minimize all - close every section of the route").pack(side="right")
+        FlatButton(route_bar, "Expand all", lambda: self._plan_table.set_all_open(True),
+                   tip="Expand all - open every section of the route").pack(side="right", padx=(0, 6))
+        lists_bar = tk.Frame(lists_tab, bg=P.PANE)
+        lists_bar.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, 0))
+        FlatButton(lists_bar, "Minimize all", lambda: self._source_table.set_all_open(False),
+                   tip="Minimize all - close every commodity's list").pack(side="right")
+        FlatButton(lists_bar, "Expand all", lambda: self._source_table.set_all_open(True),
+                   tip="Expand all - open every commodity's list").pack(side="right", padx=(0, 6))
         self._plan_empty = tk.Label(route_tab, text=_NO_ROUTE, fg=P.MUTED, bg=P.PANE, anchor="w", justify="left", padx=P.PAD, pady=P.PAD)
         self._plan_empty.pack(fill="x")
         self._tabs.pack(fill="both", expand=True)
@@ -419,6 +440,41 @@ class BuyWindow:
             sort=self._sort_choice(), no_surface=bool(self._no_surface_var.get()), max_arrival_ls=self._arrival_ls(),
             enough_stock=bool(self._enough_var.get()), shipyard_only=bool(self._shipyard_var.get()), preset=key)))
 
+    def _remember_open(self) -> None:
+        """Before a table is drawn again: note which of its sections are open, so a sort or filter does not close what the commander opened."""
+        self._open_memory["plan"] = self._plan_table.group_states()
+        self._open_memory["source"] = self._source_table.group_states()
+
+    def _forget_open(self) -> None:
+        """A new answer (or a new route order): its sections start from the defaults again."""
+        self._plan_table.clear()
+        self._source_table.clear()
+        self._open_memory.clear()
+
+    def _opened(self, which: str, iid: str, default: bool) -> bool:
+        """Whether a section starts open: as the commander left it, else `default` (only the first section is open to begin with)."""
+        return self._open_memory.get(which, {}).get(iid, default)
+
+    def _on_route_order_change(self) -> None:
+        """The route order changed: the same stops, put in the new order (nothing is asked of Spansh)."""
+        if self._whole is None:
+            return
+        self._plan = self._make_plan()
+        self._plan_table.clear()      # the stops change places, so their open or closed state starts afresh
+        self._render_whole(self._whole_system)
+
+    def _route_order(self) -> str:
+        label = self._route_order_box.get()
+        return next((key for text, key in sources.ROUTE_ORDERS if text == label), sources.ROUTE_DEFAULT)
+
+    def _set_working(self, working: bool) -> None:
+        """Show or hide the big "Search is underway" message over the content area."""
+        if working:
+            self._working.place(relx=0, rely=0, relwidth=1, relheight=1)
+            self._working.lift()
+        else:
+            self._working.place_forget()
+
     def _say(self, text: str, busy: bool = False) -> None:
         """The note under the buttons. A search in progress is shown in the status color so it stands out; anything else in the plain text one."""
         self._sources_note.configure(text=text, fg=P.STATUS if busy else P.TEXT)
@@ -443,6 +499,7 @@ class BuyWindow:
         self._search_id += 1
         job: Dict[str, Any] = {"id": self._search_id, "done": False, "result": None, "error": ""}
         self._find_button.set_enabled(False)
+        self._set_working(True)
         self._say(f"Searching for {commodity} around {_clip(system, _NAME_MAX)}…", busy=True)
         finished = diag_log.timed("search", "Find nearest", commodity=commodity, system=system, radius_ly=radius, pad=pad, carriers=carriers, sort=order)
         job["finished"] = finished
@@ -466,12 +523,14 @@ class BuyWindow:
             self._toplevel.after(_POLL_MS, self._poll_search, job, commodity, system)
             return
         self._find_button.set_enabled(True)
+        self._set_working(False)
         if job["error"]:
             job["finished"](outcome="failed", error=job["error"])
             self._say(f"The search failed: {_clip(job['error'], _ERROR_MAX)}. Spansh may be busy; try again shortly.")
             return
         self._result, self._result_label, self._whole, self._plan = job["result"], commodity, None, None
         job["finished"](outcome="ok", stations=len(job["result"].stations), carriers=len(job["result"].carriers))
+        self._forget_open()
         self._render_sources(system)
 
     def _on_find_all(self) -> None:
@@ -506,6 +565,7 @@ class BuyWindow:
         self._whole_job = job
         self._find_button.set_enabled(False)
         self._find_all_button.configure(text="Stop")
+        self._set_working(True)
         self._say(f"Searching for {len(labels)} commodities around {_clip(system, _NAME_MAX)}…", busy=True)
         job["finished"] = diag_log.timed("search", "Find all", commodities=len(labels), system=system, radius_ly=radius, pad=pad, carriers=carriers, sort=order)
 
@@ -534,6 +594,7 @@ class BuyWindow:
         self._whole_job = None
         self._find_button.set_enabled(True)
         self._find_all_button.configure(text="Find all")
+        self._set_working(False)
         if job["error"]:
             job["finished"](outcome="failed", error=job["error"])
             self._say(f"The search failed: {_clip(job['error'], _ERROR_MAX)}.")
@@ -542,6 +603,7 @@ class BuyWindow:
         self._trip_seen, self._skipped = [], set()
         job["finished"](outcome="stopped" if job["result"].stopped else "ok", searched=len(job["result"].found), failed=len(job["result"].failed),
                         without_sources=len(job["result"].without_sources()))
+        self._forget_open()
         self._plan = self._make_plan()
         self._render_whole(system)
 
@@ -564,6 +626,7 @@ class BuyWindow:
         if result is None or not self.alive:
             return
         key, descending = self._source_sort
+        self._remember_open()
         self._source_table.clear()
         self._source_table.mark_sorted(key, descending)
         self._source_rows.clear()
@@ -588,7 +651,7 @@ class BuyWindow:
         add(shown_stations, "s", None, None)
         if shown_carriers:
             self._source_table.insert("carriers", (f"Fleet carriers ({len(shown_carriers)})", "", "", "", "", "", "", "", ""),
-                                      tag="carrier", group=True, open=True)
+                                      tag="carrier", group=True, open=self._opened("source", "carriers", False))
             add(shown_carriers, "c", "carrier", "carriers")
         stations, carriers = len(shown_stations), len(shown_carriers)
         if not stations and not carriers:
@@ -632,7 +695,7 @@ class BuyWindow:
         if self._skipped:   # a skipped stop is not offered again
             found = [(label, replace(result, stations=[x for x in result.stations if _stop_key(x) not in self._skipped],
                                      carriers=[x for x in result.carriers if _stop_key(x) not in self._skipped])) for label, result in found]
-        plan = sources.plan_route(found, self._whole_to_get)
+        plan = sources.plan_route(found, self._whole_to_get, order=self._route_order())
         seen = {_stop_key(stop) for stop in self._trip_seen}
         for stop in plan.stops:
             if _stop_key(stop) not in seen:
@@ -684,6 +747,7 @@ class BuyWindow:
         if whole is None or not self.alive:
             return
         key, descending = self._source_sort
+        self._remember_open()
         self._source_table.clear()
         self._source_table.mark_sorted(key, descending)
         self._source_rows.clear()
@@ -711,6 +775,7 @@ class BuyWindow:
         else:
             self._next_card.pack_forget()
         raw_counts = {label: len(result.stations) + len(result.carriers) for label, result in whole.found}
+        first_group = True      # only the first commodity's list starts open; the rest start minimized
         for g, (label, result) in enumerate(self._found_view()):
             need = self._whole_to_get.get(label)
             if not need:
@@ -724,7 +789,8 @@ class BuyWindow:
                 gid, (label, f"{need:,} t to get" if need else "",
                       "" if stations or carriers else ("surface ports only (left out)" if label in surface_only and not include_surface
                                                        else "left out by the filters" if raw_counts.get(label) else "no source found"),
-                      "", "", "", "", "", ""), group=True, open=True)
+                      "", "", "", "", "", ""), group=True, open=self._opened("source", gid, first_group))
+            first_group = False
             for prefix, group, tag in (("s", stations, None), ("c", carriers, "carrier")):
                 for index, item in enumerate(sorted(group, key=lambda s: self._source_value(s, key), reverse=descending)):
                     iid = f"{gid}{prefix}{index}"
@@ -776,7 +842,7 @@ class BuyWindow:
             stop_id = f"route{number}"
             self._source_rows[stop_id] = stop.system
             table.insert(stop_id, (f"{number}. {stop.station}", stop.system, f"+{stop.leg_ly:,.1f} ly" if stop.leg_ly is not None else "",
-                                   _stop_notes(stop), ""), group=True, open=True, parent="route",
+                                   _stop_notes(stop), ""), group=True, open=self._opened("plan", stop_id, index == 0), parent="route",
                          tag="carrier" if stop.is_carrier else "next" if index == 0 else None)
             for b, buy in enumerate(stop.buys):
                 table.insert(f"{stop_id}b{b}", (f"{buy.commodity} x {buy.tons:,} t", "", "",
