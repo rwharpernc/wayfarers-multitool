@@ -234,19 +234,29 @@ check(buy._system_var.get() == "Sol", "the search should default to the site's s
 buy._on_find()
 wait_for_search()
 check(len(asked) == 1 and asked[0][1] == "Steel", "the search should ask for Steel")
-check(asked[0][2]["pad"] == "any", "the pad size must default to ANY")
-check(asked[0][2]["include_carriers"] is True, "fleet carriers must be included by default")
-check(len(buy._source_table) == 4, "two stations, the carrier group row and one carrier should be listed")
+check(asked[0][2]["pad"] == "large_then_medium", "the pad size must default to Large, then Medium")
+check(asked[0][2]["include_carriers"] is False, "fleet carriers must be left out by default")
+check(buy._preset.get() == "Large, then Medium (default)", f"the default preset should be shown, got {buy._preset.get()}")
+check(len(buy._source_table) == 2, "the two stations should be listed, with no carrier group")
 planetary = {row.values[0]: row.values[3] for row in buy._source_table._rows.values() if not row.group}
-check(planetary == {"Near Port": "No", "Small Post": "Yes", "K7X-LLL": "No"},
+check(planetary == {"Near Port": "No", "Small Post": "Yes"},
       f"the Planetary column should say whether landing on a surface is needed, got {planetary}")
 
 buy._pad.set("Large only")
-buy._no_carriers_var.set(True)
+buy._no_carriers_var.set(False)
 buy._on_find()
 wait_for_search()
-check(asked[1][2]["pad"] == "large" and asked[1][2]["include_carriers"] is False, "the options should reach the search")
-check(len(buy._source_table) == 2, "with fleet carriers excluded only the two stations are listed")
+check(asked[1][2]["pad"] == "large" and asked[1][2]["include_carriers"] is True, "the options should reach the search")
+check(len(buy._source_table) == 4, "with fleet carriers on, the two stations, the carrier group row and one carrier are listed")
+buy._on_filter_change()
+check(buy._preset.get() == "Custom", f"a hand-changed option should show as Custom, got {buy._preset.get()}")
+buy._preset.set("Large ship")
+buy._on_preset()
+check(buy._pad.get() == "Large only" and buy._no_carriers_var.get() is True and buy._preset.get() == "Large ship",
+      "choosing a preset should set the options")
+buy._on_find()
+wait_for_search()
+check(asked[2][2]["pad"] == "large" and asked[2][2]["include_carriers"] is False, "the preset's options should reach the search")
 buy._source_table.select("s0")
 buy._on_copy_system()
 check("Copied" in buy._sources_note.cget("text"), "Copy System should confirm")
@@ -262,9 +272,9 @@ check("failed" in buy._sources_note.cget("text"), "a failed search should say so
 check(buy._find_button._enabled, "the button must come back after a failure")
 BW.sources.find = S_find
 
-# The search choices are remembered: the two searches above used "Large only" and carriers on.
+# The search choices are remembered: the two searches above used "Large only"; the last one the Large ship preset.
 saved_prefs = S.load_prefs(saved.get(BW.CONFIG_SEARCH))
-check(saved_prefs.pad == "large" and saved_prefs.no_carriers is True and saved_prefs.radius_ly == 50.0,
+check(saved_prefs.pad == "large" and saved_prefs.no_carriers is True and saved_prefs.radius_ly == 50.0 and saved_prefs.preset == "large",
       f"the search choices should be saved when a search starts, got {saved_prefs}")
 BW.close()
 check(not buy.alive, "closing the Where to Buy window closes it")

@@ -469,10 +469,30 @@ It asks [Spansh](https://spansh.co.uk) (a community-run map of the game), so it 
 **Example: finding Steel for a site (made-up).** The site is in a system you are not in.
 
 1. Click the **Steel** row in the Sites window, then press **Where to Buy**. The note reads `Ready to search for Steel. Press Find nearest.`
-2. Leave **Around** as the site's system (or press **Here** to measure from where you are), keep **Within** at 50 ly, and choose **Large only** under **Landing pad** if you fly a large ship.
+2. Leave **Around** as the site's system (or press **Here** to measure from where you are), keep **Within** at 50 ly, and leave **Preset** on the default (or pick **Large ship**).
 3. Press **Find nearest**. The table lists stations with Distance, Arrival, Price and Supply.
 4. Click the first row you like. The note says the system name was copied; paste it into the galaxy map's search.
 5. If nothing came back, raise **Within** or set **Landing pad** to **Any size**, and search again.
+
+### Your own system first
+
+This is the default way Where to Buy finds commodities for colonization, and it applies only here (Trade, Missions, Mining and the other finders do not use it). Before looking anywhere else it searches **the system you are in** (the system WFMT last saw you in, whatever is in **Around**). If a station there has the commodity in stock, those stations are the answer and nothing outside is searched. If none does, it searches outside, around the **Around** system, and your **Sort** and filters decide the order (closest first by default). **Find all** does the same for each commodity, at the cost of one more Spansh request per commodity.
+
+### Presets
+
+The **Preset** list sets the options below in one step. Every preset sorts closest first and leaves fleet carriers out. You can still change any option afterward; the list then reads **Custom**.
+
+| Preset | What it sets |
+|---|---|
+| Large, then Medium (default) | Landing pad **Large, then Medium** |
+| Large ship | Landing pad **Large only** |
+| Medium ship | Landing pad **Medium or larger** |
+| One trip (enough stock) | **Large only**, and only stations with enough stock |
+| Quick top-up (25 ly, orbital) | **Large only**, within 25 ly, no surface ports, arrival within 2,500 ls |
+| Orbital only (near arrival) | **Large, then Medium**, no surface ports, arrival within 1,000 ls |
+| Shipyard stops | **Large, then Medium**, only stations with a shipyard |
+
+**Large, then Medium** looks for stations with a Large pad first (your own system, then outside). Only when no Large-pad station in range has the commodity does it look at stations with a Medium pad or larger, and the note then says so.
 
 ### The options
 
@@ -481,14 +501,14 @@ It asks [Spansh](https://spansh.co.uk) (a community-run map of the game), so it 
 | Around | The system to measure from. It starts as the site's system (and follows the site you pick until you type your own); type another (system names autocomplete), or press **Here** for the system you are in now. **Here** says so if WFMT has not seen which system you are in yet |
 | Within | How far to look: 25, 50, 100, 200 or 500 ly, or no limit. Default 50 |
 | Sort | **Closest first** (default) or **Cheapest first**. This decides which stations Spansh returns, not just their order. Click a result heading to re-sort what came back |
-| Landing pad | **Any size** (default), **Medium or larger**, or **Large only**. Any size lists stations whose biggest pad is small, so you can swap to a smaller cargo ship when a commodity isn't sold at a large-pad station. The **Pad** column shows each station's largest pad |
-| Exclude fleet carriers | Off by default, so carriers are included: they are searched separately and listed under their own **Fleet carriers** heading after the stations. Tick it to leave them out (and save one request per commodity) |
+| Landing pad | **Large, then Medium** (default), **Large only**, **Medium or larger** or **Any size**. Any size lists stations whose biggest pad is small, so you can swap to a smaller cargo ship when a commodity isn't sold at a large-pad station. The **Pad** column shows each station's largest pad |
+| Exclude fleet carriers | On by default, so carriers are left out. Untick it to include them: they are searched separately and listed under their own **Fleet carriers** heading after the stations (one more request per commodity) |
 | Exclude surface ports | Off by default, so surface ports are included. Tick it to leave out stations on a planet's surface (planetary ports), from the lists and from the route. It changes what is shown, not what is asked of Spansh, so ticking or unticking it after a search redraws the results at once. The stock, shipyard and arrival choices below work the same way |
 | Only stations with enough stock | Off by default. Leaves out any station holding less of a commodity than you still have to get (the Sites window's **Acquire** figure), so every station listed can fill that commodity in one visit. It follows your purchases as the need shrinks |
 | Only stations with a shipyard | Off by default. Keeps only stations with a shipyard, handy when you want to keep a smaller cargo ship close by. Spansh reports it for each station, so it costs no extra request |
 | Arrival within | **No limit** by default, or 500, 1,000, 2,500, 5,000, 10,000 or 25,000 ls. Leaves out stations farther than this from their arrival star, since a station far out is a long supercruise even when it is close in light years. A station whose distance is not known is kept |
 
-The options are **remembered** (within, sort, landing pad, and the exclude, stock, shipyard and arrival choices) for the next time you open the window. The
+The options are **remembered** (preset, within, sort, landing pad, and the exclude, stock, shipyard and arrival choices) for the next time you open the window; choices saved by an earlier version give way to the new defaults, keeping only **Within**. The
 search system is not: it starts as the site's system again.
 
 ### Find all

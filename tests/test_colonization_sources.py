@@ -73,6 +73,85 @@ class CurrentSystemFirstTests(unittest.TestCase):
         self.assertEqual([s.station for s in result.stations], ["Near"])
 
 
+class WholeListCurrentSystemTests(unittest.TestCase):
+    def setUp(self):
+        src.clear_cache()
+
+    def run_list(self, fake, one_stop=None, **kwargs):
+        return src.find_whole_list("Sol", ["Steel", "Water"], search=fake, sleep=lambda _s: None, here="Home", one_stop=one_stop, **kwargs)
+
+    def test_a_commodity_in_stock_at_home_is_answered_from_home_alone(self):
+        fake = LocalSpansh([local_item("Home Port", "Home")], [item("Far", 30)])
+        result = self.run_list(fake)
+        for _label, found in result.found:
+            self.assertEqual([s.station for s in found.stations], ["Home Port"])
+            self.assertTrue(found.local)
+
+    def test_a_one_stop_station_elsewhere_is_not_added_to_a_home_answer(self):
+        fake = LocalSpansh([local_item("Home Port", "Home")], [])
+        elsewhere = item("Hub", 10)
+        one_stop = lambda *_a, **_k: [(elsewhere, {"Steel": (500, 900), "Water": (400, 900)})]   # noqa: E731
+        result = self.run_list(fake, one_stop=one_stop)
+        for _label, found in result.found:
+            self.assertEqual([s.station for s in found.stations], ["Home Port"])
+
+    def test_without_stock_at_home_it_goes_out_as_before(self):
+        fake = LocalSpansh([], [item("Far", 30), item("Near", 5)])
+        result = self.run_list(fake)
+        for _label, found in result.found:
+            self.assertEqual([s.station for s in found.stations], ["Near", "Far"])
+            self.assertFalse(found.local)
+
+
+class PresetTests(unittest.TestCase):
+    def setUp(self):
+        src.clear_cache()
+
+    def test_the_default_is_large_then_medium_with_carriers_left_out_and_closest_first(self):
+        default = src.SearchPrefs()
+        self.assertEqual((default.pad, default.no_carriers, default.sort, default.preset),
+                         (src.PAD_LARGE_FIRST, True, src.SORT_DISTANCE, src.DEFAULT_PRESET))
+        self.assertEqual(src.PRESETS[0].key, src.DEFAULT_PRESET)
+
+    def test_every_preset_sorts_closest_first_and_is_recognized_by_its_options(self):
+        for preset in src.PRESETS:
+            key = src.preset_for(pad=preset.pad, sort=src.SORT_DISTANCE, no_carriers=preset.no_carriers, no_surface=preset.no_surface,
+                                 max_arrival_ls=preset.max_arrival_ls, enough_stock=preset.enough_stock, shipyard_only=preset.shipyard_only,
+                                 radius_ly=preset.radius_ly or 50.0)
+            self.assertEqual(key, preset.key)
+
+    def test_a_changed_option_is_custom(self):
+        self.assertEqual(src.preset_for(pad=src.PAD_ANY, sort=src.SORT_DISTANCE, no_carriers=True, no_surface=False, max_arrival_ls=None,
+                                        enough_stock=False, shipyard_only=False, radius_ly=50.0), src.PRESET_CUSTOM)
+        self.assertEqual(src.preset_for(pad=src.PAD_LARGE_FIRST, sort=src.SORT_PRICE, no_carriers=True, no_surface=False, max_arrival_ls=None,
+                                        enough_stock=False, shipyard_only=False, radius_ly=50.0), src.PRESET_CUSTOM)
+
+    def test_choices_saved_before_presets_existed_give_way_to_the_new_defaults_but_keep_the_radius(self):
+        loaded = src.load_prefs('{"radius": 100, "pad": "any", "no_carriers": false, "sort": "price"}')
+        self.assertEqual(loaded, src.SearchPrefs(radius_ly=100.0))
+
+    def test_large_then_medium_tries_large_first_and_says_when_it_fell_back(self):
+        def search(system, commodity, transaction, radius, **kwargs):
+            return [item("Mid", 5, pads=(4, 4, 0))] if kwargs.get("required_pad") == "medium" else []
+        result = src.find("Sol", "Steel", pad=src.PAD_LARGE_FIRST, search=search)
+        self.assertEqual([s.station for s in result.stations], ["Mid"])
+        self.assertEqual(result.note, src.MEDIUM_NOTE)
+
+    def test_a_large_pad_answer_has_no_fall_back_note(self):
+        def search(system, commodity, transaction, radius, **kwargs):
+            return [item("Big", 9)] if kwargs.get("required_pad") == "large" else [item("Mid", 5)]
+        result = src.find("Sol", "Steel", pad=src.PAD_LARGE_FIRST, search=search)
+        self.assertEqual(([s.station for s in result.stations], result.note), (["Big"], ""))
+
+    def test_large_elsewhere_beats_medium_at_home(self):
+        def search(system, commodity, transaction, radius, **kwargs):
+            if kwargs.get("this_system_only"):
+                return [local_item("Home Mid", "Home")] if kwargs.get("required_pad") == "medium" else []
+            return [item("Far Big", 30)] if kwargs.get("required_pad") == "large" else []
+        result = src.find("Home", "Steel", pad=src.PAD_LARGE_FIRST, search=search, here="Home")
+        self.assertEqual([s.station for s in result.stations], ["Far Big"])
+
+
 class CacheTests(unittest.TestCase):
     def setUp(self):
         src.clear_cache()
@@ -317,8 +396,8 @@ class PrefsTests(unittest.TestCase):
         self.assertEqual(src.load_prefs("[1, 2]"), src.SearchPrefs())
         loaded = src.load_prefs('{"radius": 7, "pad": "huge", "no_carriers": "yes", "sort": "newest"}')
         self.assertEqual(loaded, src.SearchPrefs())
-        self.assertEqual(src.load_prefs('{"radius": 25, "pad": "medium"}'),
-                         src.SearchPrefs(radius_ly=25.0, pad=src.PAD_MEDIUM))
+        self.assertEqual(src.load_prefs('{"radius": 25, "pad": "medium", "preset": "custom"}'),
+                         src.SearchPrefs(radius_ly=25.0, pad=src.PAD_MEDIUM, preset=src.PRESET_CUSTOM))
         self.assertEqual(src.load_prefs('{"radius": true}').radius_ly, src.DEFAULT_RADIUS_LY)
 
 
@@ -517,7 +596,7 @@ class SurfacePortTests(unittest.TestCase):
         self.assertFalse(src.SearchPrefs().shipyard_only)
 
     def test_the_choice_is_remembered(self):
-        self.assertEqual((src.SearchPrefs().no_surface, src.SearchPrefs().no_carriers), (False, False))
+        self.assertEqual((src.SearchPrefs().no_surface, src.SearchPrefs().no_carriers), (False, True))
         self.assertTrue(src.load_prefs(src.dump_prefs(src.SearchPrefs(no_surface=True))).no_surface)
         self.assertFalse(src.load_prefs("{}").no_surface)
 

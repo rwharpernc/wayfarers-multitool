@@ -172,17 +172,28 @@ class BuyWindow:
                                 values=[f"{r} ly" for r in sources.RADIUS_CHOICES] + [_NO_LIMIT])
         self._radius.set(_NO_LIMIT if self._prefs.radius_ly is None else f"{int(self._prefs.radius_ly)} ly")
         self._radius.pack(side="left", padx=(P.PAD_SM, P.PAD))
+        self._radius.bind("<<ComboboxSelected>>", lambda _e: self._on_filter_change())
         tk.Label(first, text="Sort", fg=P.MUTED, bg=P.PANE).pack(side="left")
         self._sort = Combobox(first, state="readonly", width=14, values=[label for label, _ in _SORT_CHOICES])
         self._sort.set(next((text for text, key in _SORT_CHOICES if key == self._prefs.sort), _SORT_CHOICES[0][0]))
         self._sort.pack(side="left", padx=(P.PAD_SM, 0))
+        self._sort.bind("<<ComboboxSelected>>", lambda _e: self._on_filter_change())
 
+        presets = tk.Frame(options, bg=P.PANE, pady=P.PAD_SM)
+        presets.pack(fill="x")
         second = tk.Frame(options, bg=P.PANE, pady=P.PAD_SM)
         second.pack(fill="x")
+        tk.Label(presets, text="Preset", fg=P.MUTED, bg=P.PANE).pack(side="left")
+        self._preset = Combobox(presets, state="readonly", width=30, values=[p.label for p in sources.PRESETS] + [sources.PRESET_LABELS[sources.PRESET_CUSTOM]])
+        self._preset.set(sources.PRESET_LABELS.get(self._prefs.preset, sources.PRESET_LABELS[sources.DEFAULT_PRESET]))
+        self._preset.pack(side="left", padx=(P.PAD_SM, P.PAD))
+        tk.Label(presets, text="Your own system is always searched first.", fg=P.MUTED, bg=P.PANE).pack(side="left")
+        self._preset.bind("<<ComboboxSelected>>", lambda _e: self._on_preset())
         tk.Label(second, text="Landing pad", fg=P.MUTED, bg=P.PANE).pack(side="left")
         self._pad = Combobox(second, state="readonly", width=17, values=[label for _, label in sources.PAD_CHOICES])
         self._pad.set(next((text for key, text in sources.PAD_CHOICES if key == self._prefs.pad), sources.PAD_CHOICES[0][1]))
         self._pad.pack(side="left", padx=(P.PAD_SM, P.PAD))
+        self._pad.bind("<<ComboboxSelected>>", lambda _e: self._on_filter_change())
         self._find_button = FlatButton(second, "Find nearest", self._on_find, kind="accent",
                                        tip="Find nearest - search for the nearest stations selling the selected commodity (Spansh)")
         self._find_button.pack(side="right")
@@ -196,7 +207,7 @@ class BuyWindow:
 
         third = tk.Frame(options, bg=P.PANE)
         third.pack(fill="x")
-        tk.Checkbutton(third, text="Exclude fleet carriers", variable=self._no_carriers_var).pack(side="left", padx=(0, P.PAD))
+        tk.Checkbutton(third, text="Exclude fleet carriers", variable=self._no_carriers_var, command=self._on_filter_change).pack(side="left", padx=(0, P.PAD))
         tk.Checkbutton(third, text="Exclude surface ports", variable=self._no_surface_var, command=self._on_filter_change).pack(side="left", padx=(0, P.PAD))
         fourth = tk.Frame(options, bg=P.PANE)
         fourth.pack(fill="x")
@@ -294,17 +305,41 @@ class BuyWindow:
 
     def _pad_choice(self) -> str:
         label = self._pad.get()
-        return next((key for key, text in sources.PAD_CHOICES if text == label), sources.PAD_ANY)
+        return next((key for key, text in sources.PAD_CHOICES if text == label), sources.PAD_LARGE_FIRST)
 
     def _sort_choice(self) -> str:
         label = self._sort.get()
         return next((key for text, key in _SORT_CHOICES if text == label), sources.SORT_DISTANCE)
 
+    def _preset_key(self) -> str:
+        """The preset the options on screen match, or custom."""
+        return sources.preset_for(pad=self._pad_choice(), sort=self._sort_choice(), no_carriers=bool(self._no_carriers_var.get()),
+                                  no_surface=bool(self._no_surface_var.get()), max_arrival_ls=self._arrival_ls(),
+                                  enough_stock=bool(self._enough_var.get()), shipyard_only=bool(self._shipyard_var.get()),
+                                  radius_ly=self._radius_ly())
+
+    def _on_preset(self) -> None:
+        """A preset was chosen: set the options to it (Custom changes nothing), then draw again from what was already found."""
+        preset = next((p for p in sources.PRESETS if p.label == self._preset.get()), None)
+        if preset is not None:
+            self._pad.set(next(text for key, text in sources.PAD_CHOICES if key == preset.pad))
+            self._sort.set(next(text for text, key in _SORT_CHOICES if key == sources.SORT_DISTANCE))
+            self._no_carriers_var.set(preset.no_carriers)
+            self._no_surface_var.set(preset.no_surface)
+            self._enough_var.set(preset.enough_stock)
+            self._shipyard_var.set(preset.shipyard_only)
+            self._arrival.set(_NO_LIMIT if preset.max_arrival_ls is None else f"{preset.max_arrival_ls:,} ls")
+            if preset.radius_ly is not None:
+                self._radius.set(f"{int(preset.radius_ly)} ly")
+        self._on_filter_change()
+
     def _save_prefs(self) -> None:
+        key = self._preset_key()
+        self._preset.set(sources.PRESET_LABELS[key])
         config.set(CONFIG_SEARCH, sources.dump_prefs(sources.SearchPrefs(
             radius_ly=self._radius_ly(), pad=self._pad_choice(), no_carriers=bool(self._no_carriers_var.get()),
             sort=self._sort_choice(), no_surface=bool(self._no_surface_var.get()), max_arrival_ls=self._arrival_ls(),
-            enough_stock=bool(self._enough_var.get()), shipyard_only=bool(self._shipyard_var.get()))))
+            enough_stock=bool(self._enough_var.get()), shipyard_only=bool(self._shipyard_var.get()), preset=key)))
 
     def _say(self, text: str, busy: bool = False) -> None:
         """The note under the buttons. A search in progress is shown in the status color so it stands out; anything else in the plain text one."""
@@ -380,6 +415,7 @@ class BuyWindow:
         labels = [r.label for r in rows]
         to_get = {r.label: r.to_get for r in rows}
         radius, pad, carriers, order = self._radius_ly(), self._pad_choice(), not self._no_carriers_var.get(), self._sort_choice()
+        here = self.host.current_system()
         self._save_prefs()
         self._search_id += 1
         job: Dict[str, Any] = {"id": self._search_id, "done": False, "result": None, "error": "", "cancel": False,
@@ -395,7 +431,7 @@ class BuyWindow:
                 job["result"] = sources.find_whole_list(
                     system, labels, radius_ly=radius, pad=pad, include_carriers=carriers, sort=order,
                     progress=lambda done, total, label: job.__setitem__("progress", (done, total, label)),
-                    cancelled=lambda: job["cancel"], one_stop=search_stations_selling_all, needs=to_get)
+                    cancelled=lambda: job["cancel"], one_stop=search_stations_selling_all, needs=to_get, here=here)
             except Exception as exc:   # bad input or an unexpected failure: shown, not raised into the main thread
                 logger.exception("Colonization whole-list search failed")
                 job["error"] = str(exc) or exc.__class__.__name__
@@ -481,7 +517,9 @@ class BuyWindow:
         extra = f" and {carriers} fleet carrier{'s' if carriers != 1 else ''}" if carriers else ""
         around = f" around {_clip(system, _NAME_MAX)}" if system else ""
         left_out = f" {hidden} left out by the filters." if hidden else ""
-        self._say(f"{self._result_label}: {stations} station{'s' if stations != 1 else ''}{extra}{around}.{left_out} Price is per "
+        where = " Your own system was searched first." if result.local else ""
+        fallback = f" {result.note}" if result.note else ""
+        self._say(f"{self._result_label}: {stations} station{'s' if stations != 1 else ''}{extra}{around}.{left_out}{where}{fallback} Price is per "
                   f"ton; the data is from players' own market updates, so confirm on arrival.")
 
     def _need_for_single(self) -> Optional[Dict[str, int]]:
