@@ -1,6 +1,6 @@
-# Test plan: 1.4.0
+# Test plan: 1.4.1
 
-What to check in EDMC after the 1.4.0 release (and before any later one), on **Windows** first and then on **Linux**.
+What to check in EDMC after the 1.4.1 release (and before any later one), on **Windows** first and then on **Linux**.
 
 - This is the quick pass over the whole release:
   - the Rare Goods Finder
@@ -16,7 +16,7 @@ What to check in EDMC after the 1.4.0 release (and before any later one), on **W
 | Platform | Automated tests | Checks in the game |
 |---|---|---|
 | **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is proved only by the in-game pass. | Not yet recorded for 1.3.0. Sections 1 to 7 below are open. |
-| **Linux** | 3,805 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-10-31 for the 1.4.0 release (3,731 for 1.3.3, 3,687 for 1.3.2, 3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
+| **Linux** | 3,840 tests pass in the Docker container (Xvfb and a window manager), 13 skipped, run on 2026-11-01 for the 1.4.1 release (3,805 for the unpublished 1.4.0, 3,731 for 1.3.3, 3,687 for 1.3.2, 3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
 
 - 1.0.0 was released on 2026-10-26 (tag `v1.0.0`). 1.1.0 was released on 2026-10-27 (tag `v1.1.0`). 1.2.0 was released on 2026-10-28 (tag `v1.2.0`). 1.3.0 was released on 2026-10-29 (tag `v1.3.0`), 1.3.1 the same day (tag `v1.3.1`) and 1.3.2 the same day (tag `v1.3.2`), and 1.3.3 on 2026-10-30 (tag `v1.3.3`). These passes are the checks to run on the released build, and a failure goes to a fix on a short bugfix branch (`bugfix/1.3.2` is open).
 - Tick a box in the sections below only when you have seen it pass; nothing here has been ticked from the automated run.
@@ -148,7 +148,14 @@ The longer wording for each is in [TODO.md](TODO.md). Tick a box only when you h
 - [ ] **Loop route:** with the look-ahead on, fly a loop of Powerplay systems twice: the second lap's destinations show at once, with no `Looking up…`, and the log shows no new Spansh request for them (only systems you have not arrived in within the hour are asked about). A destination's percentage is gone ten minutes after the card first showed it.
 
 
-## 10. Added in 1.4.0 (2026-10-31)
+## 10. Added in 1.4.1 (2026-11-01)
+
+- [ ] **Where to Buy: your own system first.** With the diagnostic log on, press **Find nearest** for a commodity a station in your current system sells: the table lists only your system's stations, the note says `Your own system was searched first.`, and the log shows no search outside. Then search for one nothing in your system sells: the search goes outside, closest first.
+- [ ] **Where to Buy: exclusions at home.** Tick **Only stations with a shipyard** (or **Exclude surface ports**) where your system's only seller has none: the search goes on outside instead of reporting everything filtered out.
+- [ ] **Where to Buy: presets.** The **Preset** list opens on **Large, then Medium (default)** with fleet carriers excluded. Choosing **Large ship**, **Quick top-up** and the others sets the pad, radius and ticks; changing one by hand reads **Custom**. After a search, changing the preset, pad, within, sort or carriers shows `Options changed: press Find nearest or Find all to search again.` until the next search. Find all answers a commodity your system sells from your system alone.
+- [ ] **Where to Buy: Large, then Medium.** For a commodity no Large-pad station in range sells, the note says `No Large-pad station in range had it, so these have a Medium pad or larger.`
+- [ ] **Interdiction Warning.** Hunter, Hitman and pirate-scan lines raise the warning; a distress call from an ambushed pilot does not. With the diagnostic log on, an interdiction that came with no warning logs the NPC lines before it.
+- [ ] **Route overlay: a recalculated route.** Plot a route in the galaxy map and plot another over it: the card follows the new route within a second. With the diagnostic log on, `NavRoute.json read` lines show each read.
 
 - [ ] **Closest way to buy everything.** After **Find all** with two or more commodities, a shaded block above the lists shows the suggested route: stops nearest first, and under each the commodities to buy with price and supply. **Copy Route** copies it, and **Stop** keeps what was found.
 - [ ] **Where to Buy filters.** **Only stations with enough stock**, **Only stations with a shipyard** and **Arrival within** each narrow the lists and route without a new search; all are off by default and remembered.

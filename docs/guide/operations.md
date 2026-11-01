@@ -219,7 +219,7 @@ On Linux, the pickup sound needs `canberra-gtk-play` or `paplay`; see [Windows a
 
 What you hold of each engineering material: **Raw** (mined and scanned), **Manufactured** and **Encoded**, with each one's grade (1 very common to 5 very rare) and the most the game lets you hold of it.
 
-A collapsible **Engineering** row (it was called Materials before 1.4.0, and is first in Operations mode, which lists its sections A to Z) shows (click its title to fold it; the title says just **Engineering**, and everything below is in the section):
+A collapsible **Engineering** row (it was called Materials before 1.4.1, and is first in Operations mode, which lists its sections A to Z) shows (click its title to fold it; the title says just **Engineering**, and everything below is in the section):
 
 - the pieces held of each type (`Materials held: Raw 400 · Manufactured 350 · Encoded 300`, plus `Other` for a material the table does not know),
 - the last pick-up or discard (`Last change: +3 Carbon (now 123)`),
