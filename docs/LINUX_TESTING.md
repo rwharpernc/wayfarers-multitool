@@ -581,7 +581,7 @@ Windows was checked as Trade was built. The boxes below are unticked so the list
   - The window opens like the BGS and Powerplay ones, with the session in the drop-down.
   - Visit every tab: the tables fit the window with no column cut off at the right, and the numbers look right.
   - **Route** lists the stations in the order you flew them.
-  - **Trades** pages with Earlier / Later.
+  - **Trades** opens on the newest 200, and **Show older trades** adds 200 older ones.
   - Press **Save session** again after another trade: the entry updates (no duplicate).
   - **Copy summary** pastes into another app.
   - **Export log (CSV)** opens a file dialog and writes the file.

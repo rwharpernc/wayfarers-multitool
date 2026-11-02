@@ -45,7 +45,7 @@ CONFIG_GEOMETRY = "wfmt_trade_history_window_geometry"
 MIN_WIDTH = 1120
 MIN_HEIGHT = 520
 DEFAULT_SIZE = (1180, 700)
-PAGE_SIZE = 200          # rows of the trade log shown at once
+PAGE_SIZE = 200          # rows of the trade log shown at first, and added by each press of Show older trades
 ALL_COMMANDERS = "All commanders"
 
 HELP = (
@@ -220,46 +220,40 @@ class _TableTab:
 
 
 class _TradesTab:
-    """The trade log, a page at a time (a long session has thousands of rows, and each is a set of widgets)."""
+    """The trade log, newest at the end. A long session has thousands of rows and each is a set of widgets, so it opens on the newest PAGE_SIZE
+    and the button adds that many older ones above them each time; the table scrolls up and down."""
 
     def __init__(self, parent: tk.Frame) -> None:
         bar = tk.Frame(parent, bg=P.PANE)
         bar.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, 0))
-        self._older = FlatButton(bar, "◀ Earlier", lambda: self._go(-1), kind="normal",
-                                tip="Earlier - show the previous page of trades in this session")
-        self._older.pack(side="left")
-        self._newer = FlatButton(bar, "Later ▶", lambda: self._go(1), kind="normal",
-                                tip="Later - show the next page of trades in this session")
-        self._newer.pack(side="left", padx=(6, 0))
+        self._more = FlatButton(bar, "Show older trades", self._show_more, kind="normal",
+                                tip="Show older trades - add the next 200 older trades of this session above the ones shown")
+        self._more.pack(side="left")
         self._where = tk.Label(bar, text="", fg=P.MUTED, bg=P.PANE)
         self._where.pack(side="left", padx=P.PAD)
         self._table = _table(parent, _TRADE_COLUMNS, "No trades were logged for this session.")
         self._table.pack(fill="both", expand=True, padx=P.PAD, pady=P.PAD)
         self._rows: List[Tuple[str, ...]] = []
-        self._page = 0
+        self._shown = PAGE_SIZE
         self._record_id: Optional[str] = None
 
     def fill(self, record: Dict[str, Any]) -> None:
         if record.get("id") != self._record_id:
             self._record_id = record.get("id")
             self._rows = stats.log_rows(record)
-            self._page = max(0, (len(self._rows) - 1) // PAGE_SIZE)   # open on the newest page
+            self._shown = PAGE_SIZE      # open on the newest rows
         self._show()
 
-    def _go(self, step: int) -> None:
-        last = max(0, (len(self._rows) - 1) // PAGE_SIZE)
-        self._page = max(0, min(last, self._page + step))
+    def _show_more(self) -> None:
+        self._shown += PAGE_SIZE
         self._show()
 
     def _show(self) -> None:
-        start = self._page * PAGE_SIZE
-        chunk = self._rows[start:start + PAGE_SIZE]
-        self._table.set_rows(chunk)
         total = len(self._rows)
-        self._where.configure(text=f"{start + 1:,}–{start + len(chunk):,} of {total:,}" if total else "")
-        last = max(0, (total - 1) // PAGE_SIZE)
-        self._older.set_enabled(self._page > 0)
-        self._newer.set_enabled(self._page < last)
+        chunk = self._rows[max(0, total - self._shown):]
+        self._table.set_rows(chunk)
+        self._where.configure(text=f"Newest {len(chunk):,} of {total:,}" if total > len(chunk) else (f"All {total:,}" if total else ""))
+        self._more.set_enabled(total > len(chunk))
 
 
 class _StockTab:

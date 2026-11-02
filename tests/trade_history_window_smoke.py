@@ -139,6 +139,21 @@ for index in range(7):
 # The picker lists both sessions, newest first.
 check(len(window._session_box._values) == 2, "the picker should list both sessions")
 check("Bocheaux" in window._session_box._values[0], "the newest session should be first")
+# the Trades tab: newest rows first, older ones added by a button (no paging arrows)
+from plugin import trade_history_window as thw  # noqa: E402
+trades = thw._TradesTab(tk.Frame(root))
+many = [(str(n), "Sale", "Gold", "1", "1", "1", "1", "S", "Sol") for n in range(thw.PAGE_SIZE * 2 + 50)]
+trades._rows = many
+trades._shown = thw.PAGE_SIZE
+trades._show()
+check(len(trades._table) == thw.PAGE_SIZE, f"the Trades tab opens on {thw.PAGE_SIZE} rows: {len(trades._table)}")
+trades._show_more()
+check(len(trades._table) == thw.PAGE_SIZE * 2, "Show older trades adds a page of rows")
+trades._show_more()
+check(len(trades._table) == len(many), "and again until all are shown")
+check(trades._more._enabled is False, "the button is off once everything is shown")
+check("◀" not in str(trades._more.cget("text")) and "▶" not in str(trades._where.cget("text")), "no paging arrows")
+
 window._tabs.select(1)
 root.update()
 shown = [t for t in tables(window._tabs) if t.winfo_ismapped()]

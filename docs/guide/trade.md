@@ -182,7 +182,7 @@ the others are one drop-down choice away (or **All commanders**). The tabs:
 | **Commodities** | For each one: Bought t, Spent, Avg buy, Sold t, Revenue, Avg sell, Profit, Margin, Profit/t and Unsold t. |
 | **Stations** | The same, added up for each station you traded at: Visits, Bought t, Spent, Sold t, Revenue, Profit, Costs and Net. |
 | **Route** | The stations in the order you flew them (#, Time, Station, System, What happened, Net and Running, the running total of the net). Going back to a station later is a new visit. |
-| **Trades** | Every purchase, sale and cost with its Time, Type, Commodity, t, Unit, Total, Profit, Station and System, 200 at a time (**◀ Earlier** and **Later ▶** change page; it opens on the newest). |
+| **Trades** | Every purchase, sale and cost with its Time, Type, Commodity, t, Unit, Total, Profit, Station and System, the newest 200 first (**Show older trades** adds 200 older ones each press; the table scrolls up and down). |
 | **Stock & carrier** | What was bought but not sold (a journal **estimate**, with its cost and average cost per ton), the ship hold when you saved, and your carrier's used and free cargo space and the space reserved for orders when you saved. |
 | **Lookups** | Two tables of what you asked Spansh during the session: **Spansh routes searched** (Time (UTC), Started from, Hops, Total profit (cr) and the Route) and **Market searches** (Time (UTC), Side, Commodity, Tons, Scope, Best result, System, cr/t and ly). |
 
