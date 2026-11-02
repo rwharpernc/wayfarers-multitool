@@ -133,6 +133,29 @@ routes = trade_windows._windows[trade_pages.ROUTES]
 captions = [str(b.cget("text")) for b in routes._shell.actions.winfo_children()]
 check(captions[0] == "Find routes" and captions[-1] == "Round trip", f"the Routes window's header buttons: {captions}")
 
+# Routes: the requirements are in the window and save to the same settings Settings holds
+fields = routes._fields
+check({"wfmt_trade_max_hops", "wfmt_trade_max_arrival_ls", "wfmt_trade_jump_range_override", "wfmt_trade_route_price_age_h",
+       "wfmt_trade_route_permit", "wfmt_trade_include_carriers", "wfmt_trade_include_ground", "wfmt_trade_large_pad",
+       "wfmt_trade_min_supply", "wfmt_trade_min_demand", "wfmt_trade_round_radius_ly", "wfmt_trade_roundtrip_commodity"} <= set(fields),
+      f"the Routes window has every requirement: {sorted(fields)}")
+var, entry = fields["wfmt_trade_max_hops"]
+var.set("7")
+entry.event_generate("<FocusOut>")
+pump()
+check(saved.get("wfmt_trade_max_hops") == 7, f"a typed number is saved: {saved.get('wfmt_trade_max_hops')}")
+check(controller.set_requirement("wfmt_trade_max_hops", "99") == "10", "a number is kept inside its range")
+check(controller.set_requirement("wfmt_trade_jump_range_override", "abc") == "", "a jump range that is not a number is blank")
+check(controller.set_requirement("wfmt_trade_jump_range_override", "24.5") == "24.5", "a jump range is kept")
+check(controller.set_requirement("wfmt_trade_roundtrip_commodity", " Gold ") == "Gold", "a commodity is trimmed")
+tick, _none = fields["wfmt_trade_route_permit"]
+tick.set(True)
+controller.set_requirement("wfmt_trade_route_permit", tick.get())
+check(saved.get("wfmt_trade_route_permit") is True, "a tick is saved")
+controller._cycle_hops()
+pump()
+check(fields["wfmt_trade_max_hops"][0].get() == str(controller.requirement_value("wfmt_trade_max_hops")), "the Hops button's change shows in the window")
+
 # the Market window: the box is the controller's, and Sell / Buy repaint
 market = trade_windows._windows[trade_pages.MARKET]
 captions = [str(b.cget("text")) for b in market._button_bar.winfo_children()]

@@ -16,11 +16,14 @@ from . import trade_pages, trade_prices
 from .trade_commodity_entry import CommodityEntry
 from .trade_view import BlockView
 from .uikit import palette as P
+from .uikit import style
+from .uikit.tooltip import add_tooltip
 from .uikit.shell import WindowShell
 from .uikit.widgets import FlatButton, ScrollFrame
 
-DEFAULT_SIZE = (760, 680)
+DEFAULT_SIZE = (780, 780)
 MIN_SIZE = (520, 420)
+_TEXT_KEY = "wfmt_trade_roundtrip_commodity"       # its box is wider than the number boxes
 _SUBTITLES = {
     trade_pages.SESSION: "What you have traded this session, your hold and your carrier",
     trade_pages.ROUTES: "The best trade routes from where you are (Spansh)",
@@ -86,8 +89,11 @@ class TradePageWindow:
             save_geometry=lambda geometry: config.set(geometry_key(page), geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
 
+        self._fields: Dict[str, Any] = {}          # Routes: requirement key -> (variable, entry or None)
         if page == trade_pages.MARKET:
             self._build_search_bar()
+        elif page == trade_pages.ROUTES:
+            self._build_requirements()
 
         scroll = ScrollFrame(self._shell.body, bg=P.PANE)
         scroll.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
@@ -119,6 +125,7 @@ class TradePageWindow:
         self._set_buttons(specs)
         if self._side_row is not None:
             self._paint_side()
+        self._sync_requirements()
 
     # --- the header buttons -------------------------------------------------------------------------------------------
 
@@ -137,6 +144,63 @@ class TradePageWindow:
             button = FlatButton(host, text, command, kind=kind, tip=self._controller.button_tip(text))
             button.pack(side="left", padx=(0 if self._button_bar is not None and number == 0 else 6, 0))
             button.set_enabled(enabled)
+
+    # --- Routes: the requirements ---------------------------------------------------------------------------------------------
+
+    def _build_requirements(self) -> None:
+        """What the search asks Spansh for, where the search is run. Each box or tick saves at once to the same setting Settings → WFMT → Trade holds."""
+        panel = tk.Frame(self._shell.body, bg=P.CARD, padx=P.PAD, pady=P.PAD_SM)
+        panel.pack(fill="x", pady=(0, P.PAD_SM))
+        current = None
+        row = 0
+        ticks = None
+        for group, label, key, kind, _default, _low, _high, tip in self._controller.requirement_specs():
+            if group != current:
+                current = group
+                tk.Label(panel, text=group, fg=P.HEADING, bg=P.CARD, font=style.font(P.FONT_BOLD)).grid(row=row, column=0, columnspan=4, sticky="w", pady=(6 if row else 0, 2))
+                row += 1
+                column = 0
+                ticks = None
+            value = self._controller.requirement_value(key)
+            if kind == "bool":
+                if ticks is None:
+                    ticks = tk.Frame(panel, bg=P.CARD)
+                    ticks.grid(row=row, column=0, columnspan=4, sticky="w")
+                    row += 1
+                var = tk.BooleanVar(value=bool(value))
+                box = tk.Checkbutton(ticks, text=label, variable=var, bg=P.CARD, fg=P.TEXT, activebackground=P.CARD, activeforeground=P.TEXT,
+                                     selectcolor=P.BUTTON, highlightthickness=0, command=lambda k=key, v=var: self._controller.set_requirement(k, v.get()))
+                box.pack(side="left", padx=(0, P.PAD))
+                add_tooltip(box, tip)
+                self._fields[key] = (var, None)
+                continue
+            var = tk.StringVar(value=str(value))
+            tk.Label(panel, text=label, fg=P.MUTED, bg=P.CARD).grid(row=row, column=column * 2, sticky="w", padx=(0, P.PAD_SM), pady=2)
+            entry = tk.Entry(panel, textvariable=var, width=14 if key == _TEXT_KEY else 8)
+            entry.grid(row=row, column=column * 2 + 1, sticky="w", padx=(0, P.PAD * 2), pady=2)
+            add_tooltip(entry, tip)
+            for event in ("<Return>", "<FocusOut>"):
+                entry.bind(event, lambda _e, k=key, v=var: v.set(self._controller.set_requirement(k, v.get())), add="+")
+            self._fields[key] = (var, entry)
+            column += 1
+            if column == 2:
+                column, row = 0, row + 1
+            ticks = None
+        tk.Label(panel, text="These are the same settings as Settings → WFMT → Trade. The start, cargo size, budget and ship come from the game.",
+                 fg=P.FAINT, bg=P.CARD, font=style.font(P.FONT_SMALL), anchor="w", justify="left", wraplength=640).grid(
+            row=row + 1, column=0, columnspan=4, sticky="w", pady=(6, 0))
+
+    def _sync_requirements(self) -> None:
+        """Show what the controller holds (the Hops button, or Settings, may have changed it), leaving a box alone while it is being typed in."""
+        for key, (var, entry) in self._fields.items():
+            try:
+                if entry is not None and entry == entry.focus_get():
+                    continue
+            except KeyError:
+                pass                      # focus is in a pop-up list Tk has no name for
+            held = self._controller.requirement_value(key)
+            if var.get() != held:
+                var.set(held)
 
     # --- Market: the commodity box and the Sell / Buy choice ------------------------------------------------------------
 

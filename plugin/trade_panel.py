@@ -134,6 +134,28 @@ _NAME_MAX = 64  # a safety bound on station / system / commodity names; the view
 _PERSIST_EVERY_S = 30.0
 _POLL_MS = 500
 
+# What the Routes window lets you set, in the order shown: (group, label, setting key, kind, default, low, high, hover tip). The same settings Settings → WFMT → Trade
+# holds, so the two always agree. kind is "int" (clamped to low..high), "text" (the jump range override: a number above 0 or blank; the commodity for Round trip: any
+# name) or "bool".
+REQUIREMENTS = (
+    ("Routes", "Hops", _CFG_MAX_HOPS, "int", _DEFAULT_MAX_HOPS, 1, 10, "Hops - how many stations the route may visit (1 to 10)"),
+    ("Routes", "Furthest from the star (ls)", _CFG_MAX_ARRIVAL_LS, "int", _DEFAULT_MAX_ARRIVAL_LS, 1, 1_000_000, "Furthest from the star - leave out stations further than this from their star"),
+    ("Routes", "Jump range (ly, blank = my ship's)", _CFG_JUMP_RANGE, "text", "", 0, 0, "Jump range - how far one hop may be; blank uses your ship's unladen range, which a full hold falls short of"),
+    ("Routes", "Ignore prices older than (hours)", _CFG_PRICE_AGE_H, "int", _DEFAULT_PRICE_AGE_H, 0, 24 * 365, "Ignore prices older than - leave out markets not updated within this many hours (0 = any age)"),
+    ("Routes", "Systems that need a permit", _CFG_PERMIT, "bool", False, 0, 0, "Permit systems - let routes use systems that need a permit"),
+    ("Routes", "Fleet carriers", _CFG_CARRIERS, "bool", True, 0, 0, "Fleet carriers - let routes use fleet and squadron carriers (they can jump away)"),
+    ("Routes", "Ground facilities", _CFG_GROUND, "bool", True, 0, 0, "Ground facilities - let routes use surface ports, outposts and settlements"),
+    ("Routes", "Large landing pad only", _CFG_LARGE_PAD, "bool", False, 0, 0, "Large landing pad only - only stations with a large pad (a large ship always asks for one)"),
+    ("Round trip", "Least supply to buy (t)", _CFG_MIN_SUPPLY, "int", _DEFAULT_MIN_STOCK, 0, 1_000_000, "Least supply - the buying station must have at least this many tons"),
+    ("Round trip", "Least demand to sell (t)", _CFG_MIN_DEMAND, "int", _DEFAULT_MIN_STOCK, 0, 1_000_000, "Least demand - the selling station must want at least this many tons"),
+    ("Round trip", "Search radius (ly, 0 = from jump range)", _CFG_ROUND_RADIUS, "int", 0, 0, 100_000, "Search radius - how far around the start to look for the other station (0 uses twice your jump range)"),
+    ("Round trip", "Carry only this commodity", _CFG_ROUND_ONLY, "text", "", 0, 0, "Carry only - both legs carry only this commodity (blank = anything)"),
+)
+# The Settings tab's variable for each, so a change made here shows there at once.
+_SETTINGS_VARS = {_CFG_MAX_HOPS: "_hops_var", _CFG_MAX_ARRIVAL_LS: "_arrival_var", _CFG_JUMP_RANGE: "_range_var", _CFG_PRICE_AGE_H: "_age_var",
+                  _CFG_PERMIT: "_permit_var", _CFG_CARRIERS: "_carriers_var", _CFG_GROUND: "_ground_var", _CFG_LARGE_PAD: "_pad_var",
+                  _CFG_MIN_SUPPLY: "_supply_var", _CFG_MIN_DEMAND: "_demand_var", _CFG_ROUND_RADIUS: "_round_radius_var", _CFG_ROUND_ONLY: "_only_var"}
+
 
 def _clip(text: Any, limit: int = _NAME_MAX) -> str:
     value = str(text)
@@ -648,6 +670,58 @@ class TradePanelController:
             ("Galaxy", lambda: self._find_prices("galaxy"), can_search),
             ("Best picks", self._find_picks, can_search),
             ("Price finder", self._open_price_finder, lookups_enabled() and not busy)]
+
+    # --- the Routes window's requirements ---------------------------------------------------------------------------------------
+
+    @staticmethod
+    def requirement_specs() -> tuple:
+        return REQUIREMENTS
+
+    @staticmethod
+    def requirement_value(key: str) -> Any:
+        """What a requirement is now: a bool, or the text a box shows."""
+        for _group, _label, name, kind, default, low, high, _tip in REQUIREMENTS:
+            if name != key:
+                continue
+            if kind == "bool":
+                return config.get_bool(name, default=default)
+            if kind == "int":
+                return str(_cfg_int(name, default, low, high))
+            return config.get_str(name) or ""
+        return ""
+
+    def set_requirement(self, key: str, value: Any) -> Any:
+        """Save a requirement the way Settings does (a number is kept inside its range, the jump range must be above 0) and return what is now held, for the
+        box to show. The Settings tab's own box follows, and the windows are redrawn."""
+        for _group, _label, name, kind, default, low, high, _tip in REQUIREMENTS:
+            if name != key:
+                continue
+            if kind == "bool":
+                config.set(name, bool(value))
+            elif kind == "int":
+                try:
+                    number = int(str(value).strip())
+                except ValueError:
+                    number = default
+                config.set(name, max(low, min(high, number)))
+            else:
+                text = str(value).strip()
+                if name == _CFG_JUMP_RANGE:
+                    try:
+                        text = text if text and float(text) > 0 else ""
+                    except ValueError:
+                        text = ""
+                config.set(name, text)
+            held = self.requirement_value(name)
+            var = getattr(self, _SETTINGS_VARS.get(name, ""), None)
+            if var is not None:
+                try:
+                    var.set(held)
+                except tk.TclError:
+                    pass
+            self._refresh()
+            return held
+        return value
 
     @staticmethod
     def button_tip(text: str) -> str:

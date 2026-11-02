@@ -39,6 +39,8 @@ threading, persistence), see [TECHNICAL.md](TECHNICAL.md).
 Trade mode is one of the panel's modes (`PANEL_PLACEMENT = "trade"`). It has three pages. The panel shows a short summary (net profit and the hold) over a button for each, and each button opens that
 page in its own window (`trade_windows.py`, built on the window kit; the History button opens Trade History):
 
+The Routes window also holds the requirements (`trade_panel.REQUIREMENTS`: hops, arrival distance, jump range, price age, permit, carriers, ground, large pad, and Round trip's least supply and demand, radius and commodity). `requirement_value` / `set_requirement` read and save them with the same clamping Settings uses and update the Settings tab's variable; a box saves on Enter or when it loses focus.
+
 | Page | Works offline? | Purpose |
 |---|---|---|
 | Session | Yes | What you have bought and sold this session (until Reset), your ship and hold, and your carrier's cargo space |
