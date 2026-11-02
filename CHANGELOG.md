@@ -24,7 +24,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Added
 
-- **Round trip: carry only one commodity.** A **Carry only this commodity** box (in the Routes window) limits both legs of a round trip to that commodity; a pair counts only when it pays both ways.
+- **Round trip: carry only one commodity.** A **Carry only this commodity** box (in the Routes window, suggesting commodity names as you type) limits both legs of a round trip to that commodity; a pair counts only when it pays both ways.
 - **Mission types window,** with the missions of each type (the massacre kill stacks, the mission cards, Community Goals) picked from a list with counts.
 
 ### Fixed

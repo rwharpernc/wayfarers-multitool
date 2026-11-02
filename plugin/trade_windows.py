@@ -188,9 +188,27 @@ class TradePageWindow:
                 add_tooltip(box, tip)
                 self._fields[key] = (var, None)
                 continue
-            var = tk.StringVar(value=str(value))
             tk.Label(panel, text=label, fg=P.MUTED, bg=P.CARD).grid(row=row, column=column * 2, sticky="w", padx=(0, P.PAD_SM), pady=2)
-            entry = tk.Entry(panel, textvariable=var, width=14 if key == _TEXT_KEY else 8)
+            if key == _TEXT_KEY:
+                # The commodity box suggests names as you type, as the Market window's box does; picking one (or Enter) saves it.
+                def commit(k=key) -> None:
+                    box_var.set(self._controller.set_requirement(k, box_var.get()))
+
+                box = CommodityEntry(panel, self._controller.preferred_commodities, on_submit=commit, on_pick=commit, width=22)
+                box.set(str(value))
+                box.grid(row=row, column=column * 2 + 1, sticky="w", padx=(0, P.PAD * 2), pady=2)
+                var, entry = box._var, box._entry
+                box_var = var
+                entry.bind("<FocusOut>", lambda _e: commit(), add="+")
+                add_tooltip(entry, tip)
+                self._fields[key] = (var, entry)
+                column += 1
+                if column == 2:
+                    column, row = 0, row + 1
+                ticks = None
+                continue
+            var = tk.StringVar(value=str(value))
+            entry = tk.Entry(panel, textvariable=var, width=8)
             entry.grid(row=row, column=column * 2 + 1, sticky="w", padx=(0, P.PAD * 2), pady=2)
             add_tooltip(entry, tip)
             for event in ("<Return>", "<FocusOut>"):

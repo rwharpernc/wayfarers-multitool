@@ -22,15 +22,18 @@ _WIDTH = 24
 
 class CommodityEntry(tk.Frame):
     def __init__(self, parent: tk.Misc, preferred: Callable[[], Iterable[str]],
-                 on_submit: Optional[Callable[[], None]] = None) -> None:
+                 on_submit: Optional[Callable[[], None]] = None, on_pick: Optional[Callable[[], None]] = None,
+                 width: int = _WIDTH) -> None:
+        """`on_submit` runs when Enter is pressed with nothing picked from the list; `on_pick` when a suggestion is picked (by Enter or a click)."""
         super().__init__(parent)
         self._preferred = preferred
         self._on_submit = on_submit
+        self._on_pick = on_pick
         self._var = tk.StringVar()
         self._popup: Optional[tk.Toplevel] = None
         self._list: Optional[tk.Listbox] = None
         self._matches: List[str] = []
-        self._entry = tk.Entry(self, textvariable=self._var, width=_WIDTH)
+        self._entry = tk.Entry(self, textvariable=self._var, width=width)
         self._entry.pack(side=tk.LEFT)
         self._entry.bind("<KeyRelease>", self._on_key)
         self._entry.bind("<FocusIn>", lambda _e: self._show())
@@ -97,6 +100,8 @@ class CommodityEntry(tk.Frame):
             self._var.set(self._matches[selection[0]])
         self._close()
         self._entry.icursor(tk.END)
+        if self._on_pick is not None:
+            self._on_pick()
 
     def _on_return(self, _event: tk.Event) -> str:
         if self._list is not None and self._list.curselection():

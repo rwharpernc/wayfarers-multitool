@@ -156,6 +156,24 @@ controller._cycle_hops()
 pump()
 check(fields["wfmt_trade_max_hops"][0].get() == str(controller.requirement_value("wfmt_trade_max_hops")), "the Hops button's change shows in the window")
 
+# the Carry only box suggests commodity names as you type, and picking one saves it
+cvar, centry = fields["wfmt_trade_roundtrip_commodity"]
+cbox = centry.master
+check(type(cbox).__name__ == "CommodityEntry", "the Carry only box is a type-ahead box")
+cvar.set("Trit")
+cbox._show()
+pump()
+check("Tritium" in cbox._matches and cbox._popup is not None, f"typing Trit suggests Tritium: {cbox._matches}")
+cbox._list.selection_set(cbox._matches.index("Tritium"))
+cbox._pick()
+pump()
+check(saved.get("wfmt_trade_roundtrip_commodity") == "Tritium" and cvar.get() == "Tritium", f"picking a suggestion saves it: {saved.get('wfmt_trade_roundtrip_commodity')!r}")
+cvar.set("  ")
+cbox._on_return(None)
+check(saved.get("wfmt_trade_roundtrip_commodity") == "", "Enter on a blank box clears it")
+centry.event_generate("<FocusOut>")
+pump()
+
 # the rest of Trade's settings: the pad in Routes and Market, the Near me radius in Market, fines in Session
 check("wfmt_trade_ship_pad_override" in routes._fields, "Routes has the ship size")
 mk = trade_windows._windows[trade_pages.MARKET]
