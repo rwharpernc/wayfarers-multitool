@@ -26,7 +26,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from config import appname, config
 
-from . import edsm_client, expedition, exploration_settings, expedition_plan_dialog, journal_files, panelkit, spansh_planners, system_autocomplete
+from . import edsm_client, expedition, exploration_settings, name_suggestions, expedition_plan_dialog, journal_files, panelkit, spansh_planners, system_autocomplete
 from .uikit import palette as P
 from .uikit import style
 from .uikit.shell import WindowShell
@@ -197,7 +197,9 @@ class ExpeditionWindow:
         system_entry.bind("<Return>", lambda _e: self._add_stop())
         FlatButton(editor, "Here", self._fill_here, tip="Here - fill in the system you are in now").grid(row=0, column=2, sticky="w", pady=2)
         tk.Label(editor, text="Body (optional)", fg=P.MUTED, bg=P.PANE).grid(row=1, column=0, sticky="w", pady=2)
-        tk.Entry(editor, textvariable=self._body_var, width=40).grid(row=1, column=1, sticky="w", padx=P.PAD_SM, pady=2)
+        body_entry = tk.Entry(editor, textvariable=self._body_var, width=40)
+        body_entry.grid(row=1, column=1, sticky="w", padx=P.PAD_SM, pady=2)
+        name_suggestions.attach_bodies(body_entry, self._body_var, lambda: self._system.get())      # the bodies known in the stop's system
         tk.Label(editor, text="Note (optional)", fg=P.MUTED, bg=P.PANE).grid(row=2, column=0, sticky="w", pady=2)
         tk.Entry(editor, textvariable=self._note, width=80).grid(row=2, column=1, columnspan=2, sticky="w", padx=P.PAD_SM, pady=2)
         stop_buttons = tk.Frame(editor, bg=P.PANE)

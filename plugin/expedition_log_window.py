@@ -23,7 +23,7 @@ from typing import Any, Callable, Optional
 
 from config import appname, config
 
-from . import expedition_log, journal_files
+from . import expedition_log, journal_files, system_autocomplete
 from .uikit import palette as P
 from .uikit import style
 from .uikit.shell import WindowShell
@@ -166,7 +166,10 @@ class LogWindow:
         for row, (key, label) in enumerate((("name", "Name"), ("started", "Started (UTC)"), ("ended", "Ended (UTC)"),
                                             ("start_system", "Start location"), ("end_system", "End location"))):
             tk.Label(editor, text=label, fg=P.MUTED, bg=P.PANE).grid(row=row, column=0, sticky="w", pady=2)
-            tk.Entry(editor, textvariable=self._fields[key], width=34).grid(row=row, column=1, sticky="we", padx=P.PAD_SM, pady=2)
+            box = tk.Entry(editor, textvariable=self._fields[key], width=34)
+            box.grid(row=row, column=1, sticky="we", padx=P.PAD_SM, pady=2)
+            if key in ("start_system", "end_system"):
+                system_autocomplete.attach(box, self._fields[key])      # the locations are systems
         tk.Label(editor, text="Ships used (one per line)", fg=P.MUTED, bg=P.PANE).grid(row=5, column=0, columnspan=2, sticky="w", pady=(P.PAD_SM, 0))
         self._ships = tk.Text(editor, width=34, height=3, wrap="word")
         self._ships.grid(row=6, column=0, columnspan=2, sticky="we", pady=2)

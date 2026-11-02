@@ -3,7 +3,7 @@
 The old add/edit dialogs were plain Toplevels with a fixed grid; this replaces them with one shared layout. A field is a `Field`:
 
 - `kind="text"`: a one-line entry. `kind="system"`: the same, with system-name suggestions. `kind="choice"`: a dropdown that only offers `values` (and an empty choice when `allow_blank`).
-  `kind="combo"`: a dropdown that offers `values` but takes any typed text. `kind="commodity"`: a one-line entry with commodity-name suggestions as you type (`values` are the names to lead with). `kind="section"`: no input, a heading that groups the fields under it (`label` is its text).
+  `kind="combo"`: a dropdown that offers `values` but takes any typed text. `kind="commodity"`: a one-line entry with commodity-name suggestions as you type (`values` are the names to lead with). `kind="body"`: the same, with the body and ring names known in the system typed in a field with the key `system` above it. `kind="ship"`: the same, with ship names. `kind="section"`: no input, a heading that groups the fields under it (`label` is its text).
 - `required` puts a mark after the label; the check itself is the submit function's, so its message can say what is wrong.
 
 `submit(values)` gets every field's text by key and returns an error message to show, or None when it took the values, which closes the window. Enter submits, Escape closes. The window hangs off the
@@ -65,7 +65,7 @@ class FormDialog:
             tk.Label(body, text=label, fg=P.MUTED, bg=P.BG, anchor="w", width=LABEL_PX // 8).grid(row=row, column=0, sticky="w", padx=(0, P.PAD), pady=3)
             var = tk.StringVar(value=field.value)
             self._vars[field.key] = var
-            widget = self._input(body, field, var)
+            widget = self._input(body, field, var, self._vars)
             widget.grid(row=row, column=1, sticky="ew", pady=3)
             if first is None:
                 first = widget
@@ -85,7 +85,7 @@ class FormDialog:
             window.after(60, first.focus_set)
 
     @staticmethod
-    def _input(parent: tk.Misc, field: Field, var: tk.StringVar) -> tk.Widget:
+    def _input(parent: tk.Misc, field: Field, var: tk.StringVar, vars_: "dict[str, tk.StringVar] | None" = None) -> tk.Widget:
         if field.kind == "choice":
             values = ([""] if field.allow_blank else []) + list(field.values)
             return Combobox(parent, textvariable=var, values=values, state="readonly", width=24)
@@ -98,6 +98,13 @@ class FormDialog:
         elif field.kind == "commodity":
             from .. import commodity_autocomplete
             commodity_autocomplete.attach(entry, var, lambda: field.values)
+        elif field.kind == "body":
+            from .. import name_suggestions
+            system_var = (vars_ or {}).get("system")
+            name_suggestions.attach_bodies(entry, var, lambda: system_var.get() if system_var is not None else "")
+        elif field.kind == "ship":
+            from .. import name_suggestions
+            name_suggestions.attach_ships(entry, var)
         return entry
 
     # --- the window ---------------------------------------------------------------------------------------------------

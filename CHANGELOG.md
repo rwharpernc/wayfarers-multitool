@@ -24,6 +24,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Added
 
+- **Type-ahead in every box that takes a name WFMT can list.** Systems already suggested systems and a single commodity suggested commodities; the rest now do too: the **Body** boxes (Add hotspot, Expedition stops, Surface marks, Notes) and the **Ring** and **Body or ring** boxes suggest the bodies and rings WFMT knows in the system typed beside them; the **Ship** box of a ship build suggests ships; the **Also check** boxes of the mining price lookups and the **Hotspots** box of Add a ring suggest the commodity being typed in a comma-separated list; and the Add a ring **System** and the Expedition Log's start and end locations suggest systems. The **Carry only this commodity** box in Routes suggests commodities. Everything is local, nothing is fetched.
 - **Round trip: carry only one commodity.** A **Carry only this commodity** box (in the Routes window, suggesting commodity names as you type) limits both legs of a round trip to that commodity; a pair counts only when it pays both ways.
 - **Mission types window,** with the missions of each type (the massacre kill stacks, the mission cards, Community Goals) picked from a list with counts.
 

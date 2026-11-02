@@ -31,7 +31,7 @@ def fields_for(existing: Optional[Hotspot], prefill_system: str = "", prefill_bo
     return [
         Field("", "Where", "section"),
         Field("system", "System", "system", existing.system if existing else prefill_system, required=True),
-        Field("body", "Body", "text", existing.body if existing else prefill_body, required=True),
+        Field("body", "Body", "body", existing.body if existing else prefill_body, required=True),
         Field("latitude", "Latitude", "text", text(latitude)),
         Field("longitude", "Longitude", "text", text(longitude)),
         Field("", "Deposit", "section"),

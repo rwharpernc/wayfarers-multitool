@@ -185,6 +185,7 @@ Spec: [ORGANIC_SCANNING_TECH_SPEC.md](ORGANIC_SCANNING_TECH_SPEC.md), [SCREENSHO
 | `expedition_log_panel.py` | The Expedition Log's journal hook: hooks the Expedition section up to the Log (`build_into`, no buttons) and words the Log's extra figures; remembers the system and ship so a new expedition starts with them |
 | `expedition_log_window.py` | The Expedition Log window: the archive table, what each expedition recorded, an editor for its details, and Start, Stop, Resume, Reset, Rescan, Delete, Copy summary and Export CSV |
 | `expedition_log_overlay.py` | Expedition Log overlay: one card with the running expedition's exploration and exobiology totals and what was earned; Settings → Overlays → Expedition Log, one Overlay Placement slot |
+| `name_suggestions.py` | Type-ahead for the boxes that take a body or ring name (from the system survey, saved hotspots and body lookups), a ship name, or several commodities separated by commas, on the same list as the system and commodity type-ahead |
 | `notes_data.py` | The commander's notes on a system or body, kept per commander in `notes.json`: validation and limits, search, and an add, change and delete that save at once; no Tk |
 | `notes_panel.py` | The Notes row in Exploration mode: how many notes the system you are in has and the newest, a one-line quick add, and the button that opens the window |
 | `notes_window.py` | The Notes window: search, a list of every note, and an editor with a Here button for the system and body you are at |

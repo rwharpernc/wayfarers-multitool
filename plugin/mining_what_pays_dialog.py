@@ -19,6 +19,7 @@ from typing import Any, List, Optional, Sequence, Tuple
 from config import appname, config
 
 from . import mining_alerts
+from . import name_suggestions
 from . import mining_ground
 from . import mining_hotspots as hotspots
 from . import mining_location as location
@@ -145,6 +146,7 @@ class WhatPaysWindow:
         self._extra = tk.StringVar()
         extra = tk.Entry(second, textvariable=self._extra, width=44)
         extra.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
+        name_suggestions.attach_commodity_list(extra, self._extra)          # several commodities, separated by commas: the one being typed is suggested
         extra.bind("<Return>", lambda _e: self.search())
         tk.Label(second, text="Commodities, separated by commas.", fg=P.MUTED, bg=P.BG).pack(side="left")
         self._heading = tk.Label(body, text="Your commodities, best price first", fg=P.MUTED, bg=P.BG, anchor="w", font=style.font(P.FONT_BOLD))

@@ -17,6 +17,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 from config import appname, config
 
 from . import mining_ground
+from . import name_suggestions
 from . import mining_hotspots as hotspots
 from . import mining_market_research as research
 from . import mining_spansh_client as spansh_client
@@ -157,6 +158,7 @@ class MarketResearchWindow:
         self._extra = tk.StringVar()
         entry = tk.Entry(row, textvariable=self._extra, width=44)
         entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
+        name_suggestions.attach_commodity_list(entry, self._extra)          # several commodities, separated by commas: the one being typed is suggested
         entry.bind("<Return>", lambda _e: self.search())
         self._search_button = FlatButton(row, "Search", self.search, kind="accent", tip="Search - find markets that buy what you could mine here (Spansh)")
         self._search_button.pack(side="left")

@@ -102,3 +102,14 @@ def fits(ship_pad: Optional[str], small: Optional[int], medium: Optional[int], l
 
 def label(ship_pad: Optional[str]) -> str:
     return f"{ship_pad} pad" if ship_pad else "pad size unknown"
+
+
+def known_ships() -> list:
+    """Every ship name WFMT knows, as the game shows it (Imperial Clipper, Fer-de-Lance...), A to Z: for the boxes that take a ship."""
+    names = set(_INTERNAL_TO_DISPLAY.values())
+    try:
+        from edmc_data import ship_name_map  # EDMC's own table; absent in unit tests
+        names.update(str(name) for name in ship_name_map.values())
+    except ImportError:
+        pass
+    return sorted(names, key=str.casefold)

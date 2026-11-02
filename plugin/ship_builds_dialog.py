@@ -13,7 +13,7 @@ from .uikit.form import Field, FormDialog
 def fields_for(existing: Optional[ShipBuild], prefill_ship: str = "") -> List[Field]:
     return [
         Field("name", "Name", "text", existing.name if existing else "", required=True),
-        Field("ship", "Ship", "text", existing.ship if existing else prefill_ship, required=True),
+        Field("ship", "Ship", "ship", existing.ship if existing else prefill_ship, required=True),
         Field("role", "Role", "text", existing.role if existing else "", hint="What the build is for, for example Exploration or Mining."),
         # Editable: the common build sites are offered, but a commander using another can type its name.
         Field("site", "Site", "combo", existing.site if existing else KNOWN_SITES[0], values=list(KNOWN_SITES), required=True),

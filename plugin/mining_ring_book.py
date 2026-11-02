@@ -14,7 +14,7 @@ from typing import List, Optional
 
 from config import appname, config
 
-from . import mining_history, mining_location, mining_rings, mining_rings_data as RD
+from . import mining_history, mining_location, mining_rings, mining_rings_data as RD, name_suggestions, system_autocomplete
 from .uikit import palette as P
 from .uikit import style
 from .uikit.shell import WindowShell
@@ -279,8 +279,15 @@ class RingBook:
         for row, (label, key) in enumerate((("Ring (as the game names it)", "ring"), ("System", "system"), ("Hotspots, e.g. Painite 3, Platinum 2", "hotspots"))):
             tk.Label(dialog, text=label, fg=P.MUTED, bg=P.BG, anchor="w").grid(row=row, column=0, sticky="w", padx=P.PAD, pady=(P.PAD_SM, 0))
             var = tk.StringVar()
-            tk.Entry(dialog, textvariable=var, width=40).grid(row=row, column=1, padx=P.PAD, pady=(P.PAD_SM, 0))
+            box = tk.Entry(dialog, textvariable=var, width=40)
+            box.grid(row=row, column=1, padx=P.PAD, pady=(P.PAD_SM, 0))
             fields[key] = var
+            if key == "system":
+                system_autocomplete.attach(box, var)
+            elif key == "ring":
+                name_suggestions.attach_bodies(box, var, lambda: fields["system"].get() if "system" in fields else "")      # the rings and bodies known in that system
+            elif key == "hotspots":
+                name_suggestions.attach_commodity_list(box, var)               # "Painite 3, Platinum 2": the commodity being typed is suggested
         class_var, reserve_var = tk.StringVar(value=""), tk.StringVar(value="")
         tk.Label(dialog, text="Class", fg=P.MUTED, bg=P.BG, anchor="w").grid(row=3, column=0, sticky="w", padx=P.PAD, pady=(P.PAD_SM, 0))
         Combobox(dialog, textvariable=class_var, values=list(CLASS_CHOICES), state="readonly", width=14).grid(row=3, column=1, sticky="w", padx=P.PAD, pady=(P.PAD_SM, 0))

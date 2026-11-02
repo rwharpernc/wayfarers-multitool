@@ -52,7 +52,7 @@ A consequence:
   - `DataTable` is striped, sortable and optionally grouped, with an API like Treeview's, and header and body columns kept aligned.
   - A `DataTable` tag can set a row's text color and a whole-row background tint, which is lightened while hovered or selected.
   - `DataTable.set_rows` refills it and does nothing when the rows haven't changed, for windows that refresh often.
-- **Forms** (`form.py`): `FormDialog` is the one add/edit form (hotspots, ship builds): labeled fields (text, system, choice, combo, commodity) under section headings, an error line, Save and Cancel, with `parse_optional_int` and `parse_optional_float` for the typed numbers.
+- **Forms** (`form.py`): `FormDialog` is the one add/edit form (hotspots, ship builds): labeled fields (text, system, body, ship, choice, combo, commodity; system, body, ship and commodity fields suggest as you type, from `system_autocomplete`, `name_suggestions` and `commodity_autocomplete`) under section headings, an error line, Save and Cancel, with `parse_optional_int` and `parse_optional_float` for the typed numbers.
 - **Dialogs** (`dialogs.py`): `confirm` (Yes/No), `choose` (a row of buttons, for three-way questions), `prompt` (one line of text, optionally hidden as it is typed) and `info`, `warning` and `error`.
   - They are used instead of the operating system's own boxes so confirmations look and behave the same on Windows and Linux.
   - Each is modal over its parent window, opens centered over it, wraps its text at a fixed width and scrolls a very long message instead of growing.

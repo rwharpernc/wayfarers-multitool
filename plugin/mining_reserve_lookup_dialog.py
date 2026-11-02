@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from config import appname, config
 
-from . import edsm_client, panelkit, system_autocomplete
+from . import edsm_client, name_suggestions, panelkit, system_autocomplete
 from . import mining_location as location
 from . import mining_rings_data
 from . import mining_space as space_mining
@@ -172,6 +172,7 @@ class ReserveWindow:
         self._name = tk.StringVar(value=tracked[1] if tracked else "")
         name_entry = tk.Entry(second, textvariable=self._name, width=38)
         name_entry.pack(side="left", padx=(P.PAD_SM, P.PAD_SM))
+        name_suggestions.attach_bodies(name_entry, self._name, lambda: self._system.get())      # the rings and bodies known in the system typed above
         name_entry.bind("<Return>", lambda _e: self._search())
         self._search_button = FlatButton(second, "Search", self._search, kind="accent", tip="Search - look up the reserve level and type of the system's rings (EDSM)")
         self._search_button.pack(side="left", padx=(0, P.PAD))

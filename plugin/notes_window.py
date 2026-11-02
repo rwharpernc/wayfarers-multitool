@@ -11,7 +11,7 @@ from typing import Callable, List, Optional, Tuple
 
 from config import appname, config
 
-from . import notes_data, system_autocomplete
+from . import name_suggestions, notes_data, system_autocomplete
 from .uikit import palette as P
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
@@ -110,6 +110,8 @@ class NotesWindow:
             box.grid(row=row, column=1, sticky="w", padx=P.PAD_SM, pady=2)
             if row == 0:
                 system_autocomplete.attach(box, variable)
+            else:
+                name_suggestions.attach_bodies(box, variable, lambda: self._system.get())      # the bodies known in the note's system
             FlatButton(editor, "Here", lambda r=row: self._fill_here(r),
                        tip="Here - fill in the " + ("system" if row == 0 else "body") + " you are at now").grid(row=row, column=2, sticky="w", pady=2)
         tk.Label(editor, text="Note", fg=P.MUTED, bg=P.PANE).grid(row=2, column=0, sticky="nw", pady=2)

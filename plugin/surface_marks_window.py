@@ -12,7 +12,7 @@ from typing import Callable, Optional
 from config import appname, config
 
 from . import mining_bearing as bearing
-from . import surface_marks
+from . import name_suggestions, surface_marks
 from .uikit import palette as P
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
@@ -112,7 +112,10 @@ class MarksWindow:
         fields = (("Name", self._name, 30), ("Body", self._body, 44), ("Latitude", self._lat, 14), ("Longitude", self._lon, 14))
         for row, (label, variable, width) in enumerate(fields):
             tk.Label(editor, text=label, fg=P.MUTED, bg=P.PANE).grid(row=row, column=0, sticky="w", pady=2)
-            tk.Entry(editor, textvariable=variable, width=width).grid(row=row, column=1, sticky="w", padx=P.PAD_SM, pady=2)
+            box = tk.Entry(editor, textvariable=variable, width=width)
+            box.grid(row=row, column=1, sticky="w", padx=P.PAD_SM, pady=2)
+            if label == "Body":
+                name_suggestions.attach_bodies(box, variable, lambda: "")      # the bodies of the system you are in
         FlatButton(editor, "Here", self._fill_here, tip="Here - fill in the body and the latitude and longitude where you are now").grid(row=1, column=2, rowspan=3, sticky="nw", pady=2)
         editor.columnconfigure(1, weight=1)
         NoteLabel(editor, "Here fills in the body and your position now. Latitude and longitude are in degrees "
