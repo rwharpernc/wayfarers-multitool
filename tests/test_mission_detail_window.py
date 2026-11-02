@@ -61,7 +61,7 @@ def _sections(summary, event):
 class SectionsTests(unittest.TestCase):
     def test_overview_is_always_there_even_without_the_journal_record(self):
         found = _sections(_summary(), None)
-        self.assertEqual(list(found), ["Overview", "Reward and standing", "Journal"])
+        self.assertEqual(list(found), ["Overview", "Journal"])
         self.assertIn(("Mission", "Deliver Gold"), found["Overview"])
 
     def test_objective_lists_the_target_kills_and_passengers(self):
@@ -77,7 +77,7 @@ class SectionsTests(unittest.TestCase):
         event = {"MissionID": 7, "Target": "", "Influence": "", "Reputation": None}
         found = _sections(_summary(), event)
         self.assertNotIn("Objective", found)
-        self.assertNotIn("Influence gained", dict(found["Reward and standing"]))
+        self.assertNotIn("Reward and standing", found)
 
     def test_unlabelled_journal_fields_are_listed_not_dropped(self):
         found = _sections(_summary(), {"MissionID": 7, "Influence": "++", "SomethingNew": ["a", "b"]})
@@ -92,6 +92,41 @@ class SectionsTests(unittest.TestCase):
         found = _sections(_summary(pickup_commodity="Gold", pickup_count=30, pickup_station="Dock", pickup_pad="Large"), {"MissionID": 7})
         cargo = dict(found["Cargo"])
         self.assertEqual((cargo["Still to pick up"], cargo["Pick up at"], cargo["Largest pad there"]), ("30 t of Gold", "Dock", "Large"))
+
+    def test_odd_journal_numbers_are_shown_as_they_are_not_a_crash(self):
+        event = {"MissionID": 7, "KillCount": "forty", "PassengerCount": 6.0, "Commodity": "Gold", "Count": "12x", "Donation": "lots"}
+        found = _sections(_summary(), event)
+        objective = dict(found["Objective"])
+        self.assertEqual((objective["Kills required"], objective["Passengers"], objective["Units"]), ("forty", "6", "12x"))
+        self.assertEqual(dict(found["Reward and standing"])["Donation"], "lots")
+
+    def test_a_numeric_string_count_is_formatted(self):
+        self.assertEqual(W._whole("1200"), "1,200")
+        self.assertEqual(W._whole(None), "None")
+
+    def test_the_overview_facts_are_not_repeated_in_other_groups(self):
+        found = _sections(_summary(commodity="Gold", pickup_commodity="Gold", pickup_count=3, pickup_station="Dock", pickup_pad="Large"),
+                          {"MissionID": 7, "Commodity": "Gold", "Count": 3, "Influence": "+"})
+        self.assertNotIn("Commodity", dict(found["Objective"]))
+        self.assertNotIn("Cargo progress", dict(found.get("Cargo", [])))
+        self.assertNotIn("Reward", dict(found["Reward and standing"]))
+        self.assertIn(("Reward", "1,000,000 cr"), found["Overview"])
+
+
+class SubtitleTests(unittest.TestCase):
+    def _row(self, hours):
+        expiry = (NOW + timedelta(hours=hours)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        return B.rows_from({7: _summary(expiry=expiry)})[0]
+
+    def test_time_left(self):
+        self.assertEqual(W._subtitle(self._row(5), NOW), "Deliver Gold - 5h00m left")
+
+    def test_an_expired_mission_says_expired_not_expired_left(self):
+        self.assertEqual(W._subtitle(self._row(-2), NOW), "Deliver Gold - expired")
+
+    def test_no_expiry_is_just_the_title(self):
+        row = B.rows_from({7: _summary(expiry="")})[0]
+        self.assertEqual(W._subtitle(row, NOW), "Deliver Gold")
 
 
 if __name__ == "__main__":

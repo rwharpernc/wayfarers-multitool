@@ -1011,7 +1011,10 @@ class MissionsUI:
         if self.__window is not None:
             self.__window.refresh()
         if self.__detail is not None and self.__detail.alive:
-            self.__detail.refresh()
+            try:
+                self.__detail.refresh()
+            except Exception:  # one odd mission must not stop the rest of the panel refreshing
+                logger.exception("Mission description window refresh failed")
         missions_types_window.refresh()
 
     # --- the Mission types window draws the category pages -----------------------------------------------------------
@@ -1051,8 +1054,8 @@ class MissionsUI:
         return missions_board.rows_from(self.__all_missions_data or {}, redirected=redirected, redirects=redirects, kills=kills,
                                         held=current_cargo.held(), pinned=mission_pins.book.pinned(cmdr))
 
-    def __show_missions_window(self, mission_id: Optional[int] = None):
-        """Opens (or raises) the Missions window, on the mission whose card was clicked if there was one. It stays live: redraw() refreshes it."""
+    def __show_missions_window(self):
+        """Opens (or raises) the Missions window. It stays live: redraw() refreshes it."""
         if self.__window is not None and self.__window.alive:
             self.__window.lift()
         else:
@@ -1060,19 +1063,20 @@ class MissionsUI:
             self.__window = MissionsWindow(
                 self.__parent.winfo_toplevel(), self.__live_rows, lambda: kill_tracker.current_cmdr,
                 lambda: current_system.find(state.here), lambda: state.next_system, on_pins_changed=state.refresh, open_sources=self.__show_sources_window)
-        if mission_id is not None:
-            self.__window.select(mission_id)
+
+    def __detail_lookup(self, mission_id: int):
+        return (self.__all_missions_data or {}).get(mission_id), (active_missions.tracker.snapshot() or {}).get(mission_id)
 
     def __show_mission_detail(self, mission_id: int):
         """Opens (or reuses) the Mission description window on the mission whose card was clicked."""
-        def lookup(mid: int):
-            return (self.__all_missions_data or {}).get(mid), (active_missions.tracker.snapshot() or {}).get(mid)
+        if self.__parent is None:
+            return
 
         if self.__detail is not None and self.__detail.alive:
             self.__detail.show(mission_id)
             self.__detail.lift()
             return
-        self.__detail = MissionDetailWindow(self.__parent.winfo_toplevel(), mission_id, self.__live_rows, lookup)
+        self.__detail = MissionDetailWindow(self.__parent.winfo_toplevel(), mission_id, self.__live_rows, self.__detail_lookup)
 
     def __show_sources_window(self):
         """Opens (or raises) the Source commodities window: where to get what the Collect and Mining missions still need."""
