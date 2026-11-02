@@ -107,7 +107,7 @@ def check(condition, message):
 
 
 try:
-    from plugin import mining_history, mining_history_window as WIN, mining_panel
+    from plugin import mining_history, mining_history_window as WIN, mining_pages, mining_panel
     mining_history.history.start(state)
     mining_history.history.pause = 0
     mining_history.history.set_commander("Smoke Cmdr")
@@ -117,7 +117,7 @@ try:
     controller = mining_panel.MiningPanelController()
     controller.build_panel(parent)
     root.update()
-    controller._buttons.history.invoke()
+    controller._page_actions(mining_pages.SPACE_MINING)[1][1]()          # the Dashboard button in the Space Mining window's header
     for _ in range(10):
         root.update()
     window = WIN._windows.get(WIN.D.SPACE)            # the panel opens on the Space page

@@ -6,7 +6,7 @@ Mine mode tracks two kinds of mining, keeps a book for each, and adds up everyth
 - **Surface Mining**, in the Rhino SRV, with the **Surface Mining Book**: your catalog of deposits, and the bodies your journals show mining on.
 - **Mining History**: every run in your journals, added up.
 
-The panel has a **Space Mining** button and a **Surface Mining** button at the top. Each opens that page's own window (the live numbers, and for the Rhino the radar and controls), with **Book** and **Dashboard** in its header. Under the buttons, the panel itself shows the live stats for the page that fits what you are doing: Surface Mining while an SRV is out or a Rhino run is on, Space Mining otherwise. There is nothing to switch by hand. The panel's own **Book** and **Dashboard** buttons act on the page it is showing.
+The Mining panel is a short summary and a row of buttons. It shows a few lines for your ring run and a few for the Rhino, both at once, then **Space Mining** and **Surface Mining**, which each open that page's own window: the live numbers (for the Rhino also the radar and the controls), with **Book** and **Dashboard** in its header. **Hotspots**, **Prices** and **Reserves** are there too once you switch those lookups on. There are no pages to switch between.
 
 **On this page:** [How to](#how-to) · [What each page shows](#what-each-page-shows) · [The buttons](#the-buttons) · [A typical run](#a-typical-run) · [Mining History](#mining-history) · [The live window](#the-live-window) · [Marking a mining location](#marking-a-mining-location) · [The Space Mining Book](#the-space-mining-book) · [The Surface Mining Book](#the-surface-mining-book) · [Mining alerts](#mining-alerts) · [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) · [Settings](#settings)
 
@@ -29,30 +29,30 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 **Start a Surface Mining run.** Details: [Surface Mining](#surface-mining).
 
-1. Press **Surface Mining** for its window, or just launch the Rhino: the panel switches to the Surface Mining page by itself.
+1. Launch the Rhino. The panel's Rhino lines change from `Rhino: not deployed.` to `Rhino deployed`, and **Surface Mining** opens the full page.
 2. Launch the Rhino. The page changes from `No active Rhino deployment. Launch the Rhino to start tracking a new run.` to the live numbers.
 3. Stow the Rhino to end the run. The numbers stay on the page, marked `Rhino stowed (last deployment)`, until the next launch.
 
 **Read the radar.** Details: [Surface Mining Live](#surface-mining-live).
 
-1. Press **Surface Mining** on the panel (or **Live** while the panel shows the Surface Mining page).
+1. Press **Surface Mining** on the panel.
 2. Land, or drive, so you are on or just above the ground. Until then the window says `The radar draws when you are on or just above the ground.`
 3. Pick a reach with the **Radar reaches** buttons (50 m to 2 km) and press **Help** in the window's header to see what each mark means.
 
 **Log a ring.** Details: [The Space Mining Book](#the-space-mining-book).
 
-1. Press **Book** on the Space Mining page. Rings you DSS-scanned or mined at are added by themselves.
+1. Press **Space Mining**, then **Book** in its header. Rings you DSS-scanned or mined at are added by themselves.
 2. For a ring the journals have not shown, press **Add ring** and fill in the form.
 3. Select a ring, type in **Your note**, press **Save note**, and use **Favorite** to star it.
 
 **Log a surface deposit.** Details: [Adding or editing a hotspot](#adding-or-editing-a-hotspot).
 
-1. Stand at the deposit in the Rhino and press **Add hotspot** in the **Live** window (the Surface Mining Book has one too).
+1. Stand at the deposit in the Rhino and press **Add hotspot** in the Surface Mining window (the Surface Mining Book has one too).
 2. Check the **Contains**, **Rigs**, **Amount** and **Density** fields, and save.
 
 **Use Mining History.** Details: [Mining History](#mining-history).
 
-1. Press **Dashboard** on the page you are on (rings on the Space page, the Rhino on the Surface page).
+1. Press **Space Mining** or **Surface Mining**, then **Dashboard** in its header (rings from the Space Mining window, the Rhino from the Surface Mining window).
 2. Read the **Overview** tab first, then open **Rings**, **Commodities** or **Runs** and click a heading to sort.
 3. Press **Refresh** to read the newest journal now.
 
@@ -171,9 +171,9 @@ Settings. Hover over a button for a tip that gives its name and what it does.
 
 | Button | What it does | Shown when |
 |---|---|---|
-| **Book** | Opens the book for the page you are on: the **Space Mining Book** (your rings) on the Space Mining page, the **Surface Mining Book** (Rhino deposits) on the Surface Mining page. | Always |
-| **Dashboard** (Mining History) | Opens every mining run found in your journals, added up (see below). | Always |
-| **Live** | Opens the live window for the page you are on: a radar and the controls on the Surface page, the live numbers on the Space page. Meant for a second screen ([the live window](#the-live-window)). | Always |
+| **Book** (in the Space Mining and Surface Mining windows) | Opens the book for that window: the **Space Mining Book** (your rings) from Space Mining, the **Surface Mining Book** (Rhino deposits) from Surface Mining. | Always |
+| **Dashboard** (Mining History; in both windows) | Opens every mining run found in your journals, added up (see below). | Always |
+| **Space Mining** / **Surface Mining** (on the panel) | Each opens that page's window: a radar and the controls on Surface Mining, the live numbers on Space Mining. Meant for a second screen ([the live window](#the-live-window)). | Always |
 | **Hotspots** (find nearby hotspots) | Opens the Find Nearby Hotspots window (see below). | Space Mining page, once *Enable Spansh nearby hotspot finder* is ticked |
 | **Prices** (find best price) | Opens the Find Best Price window (see below). | Once *Enable Spansh best price finder* is ticked (the same switch also turns on Market research and What pays in the Surface Mining Book) |
 | **Reserves** (check ring reserve level) | Opens the Check Ring Reserve Level window (see below). | Space Mining page, once *Enable EDSM ring reserve lookup* is ticked |
@@ -249,7 +249,7 @@ The table gives each ring with its **Body**, **Reserve level**, **Ring type** an
 **On the surface:**
 
 1. Launch the Rhino and mine. The Surface Mining page fills in live stats.
-2. Found a good deposit? Press **Add hotspot** in the **Live** window to save the spot.
+2. Found a good deposit? Press **Add hotspot** in the Surface Mining window to save the spot.
 3. Open **Book** on the Surface Mining page to see everything you've saved, including tons mined and an estimate of tons left; **Mark depleted** when one runs out.
 4. Next time you're in the system, the Surface Mining Book lists the bodies you've scanned and your hotspots there, and its **From your journals** group lists other bodies your journals show mining on.
 
@@ -291,7 +291,7 @@ The window's header has **Refresh**, **Rebuild from journals** and **Help** (it 
 
 ### Surface Mining History
 
-**Dashboard** follows the page you are on. On the Space page it is the ring history above. On the Surface page it opens **Surface Mining History**: the same window for the Rhino.
+**Dashboard** follows the window you press it in. In Space Mining it is the ring history above. In Surface Mining it opens **Surface Mining History**: the same window for the Rhino.
 
 - Runs are counted from launch to stowing.
 - It shows tons refined by the Rhino (and what they sold for).
@@ -349,7 +349,7 @@ Commodity names are suggested as you type in the Find Best Price window, the Add
 
 ## The live window
 
-Press **Live** on either Mining page to open a window made to stay on a second screen, or in a corner of the first.
+Press **Space Mining** or **Surface Mining** to open a window made to stay on a second screen, or in a corner of the first.
 
 - It needs no overlay: everything is drawn in the window.
 - It redraws once a second, and it remembers its size and place.
@@ -445,7 +445,7 @@ With it set:
 - It shows the same lines as the Space Mining page in a larger window, with **Hotspots**, **Prices** and **Reserves** in the header when you have switched those lookups on in Settings.
 - It has no radar: the journal does not say where a ring's hotspots are, so there is nothing to place on one.
 
-The panel keeps **Book**, **Dashboard**, **Live** and the lookups. **Mark center**, **Mark border**, **Add hotspot** and **Import/export** are in the live window only.
+The panel keeps the summary and the **Space Mining**, **Surface Mining** and lookup buttons. **Book**, **Dashboard**, **Mark center**, **Mark border**, **Add hotspot** and **Import/export** are in the windows only.
 
 ### Trying the live window without the game
 
@@ -470,7 +470,7 @@ Nothing it shows is real and nothing you press in it is saved.
 
 A surface mining signal is a circle of ground with the deposits scattered inside it, and a few just outside its edge. The journal says a body has mining locations but not where they are or how big, so you mark them yourself:
 
-1. Open **Live**. Land and drive to the **middle** of the signal and press **Mark center** (in the live window's header).
+1. Open **Surface Mining**. Land and drive to the **middle** of the signal and press **Mark center** (in the live window's header).
    - Pressing it again within 100 m of the same center moves it.
    - Pressing it anywhere else starts another location (up to 12 per body; past that the oldest is dropped).
 2. Drive to the **edge** of the signal and press **Mark border** (also in the live window). The radius is the distance from the center, shown on the page (`Border marked: the signal is 1.50 km in radius`). **Mark border** works on the marked center nearest you. If you are within 100 m of that center, it tells you how close you are and asks you to drive to the edge first. With no center marked on the body it asks you to press **Mark center** first. Pressing **Mark border** again somewhere else resets the border.
@@ -486,7 +486,7 @@ Drive around the edge, with your scanner overlapping it a little, to bring it to
 
 **Worked example.** You land near a surface mining signal and want to map it.
 
-1. Press **Live** and drive to the middle of the signal. Press **Mark center**. The minimap draws a cross at the center.
+1. Press **Surface Mining** and drive to the middle of the signal. Press **Mark center**. The minimap draws a cross at the center.
 2. Drive out to the edge of the signal and press **Mark border**. The page says, for example, `Border marked: the signal is 1.50 km in radius`.
 3. Drive around the edge. **Nearest marked location** shows the radius, which way and how far the center is, and `edge driven 64%`. Keep driving, with the scanner overlapping the ground you have already covered, until it reads 100%.
 4. Later, the line says `you are inside it, 410 m from the edge` or `you are outside it by 150 m`, so you always know where you stand.

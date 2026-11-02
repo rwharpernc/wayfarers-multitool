@@ -1,9 +1,8 @@
 """
 Mine mode's feature-module contract entry point. Owns the panel's
-persistent chrome (page nav between Space Mining/Surface Mining, the
-scrollable Canvas/Scrollbar frame mirroring missions_ui.py's own
-pattern, and the six persistent buttons (HOTSPOTS, PRICES, RESERVES, BOOK, DASHBOARD,
-LIVE) - see their own docstring below for why they're never destroyed/recreated), the
+persistent chrome (the scrollable Canvas/Scrollbar frame mirroring missions_ui.py's own
+pattern, and the five persistent buttons (SPACE MINING, SURFACE MINING, HOTSPOTS, PRICES,
+RESERVES) - see their own docstring below for why they're never destroyed/recreated), the
 Settings tab, and the full journal/dashboard dispatch. Per-page content
 rendering lives in `mining_render.py`; HUD-overlay pushes live in
 `mining_overlay.py`; the data models live in `mining_space.py`/
@@ -129,7 +128,7 @@ def _settings() -> render.PanelSettings:
     )
 
 
-# Hover text for the page buttons at the top of the Mining panel.
+# Hover text for the page buttons on the Mining panel.
 PAGE_BUTTON_TIPS = {
     mining_pages.SPACE_MINING: "Space Mining - open the Space Mining window: the live numbers for ring mining, with Book and Dashboard",
     mining_pages.SURFACE_MINING: "Surface Mining - open the Surface Mining window: the radar, the live numbers and the controls for the Rhino, with Book and Dashboard",
@@ -140,15 +139,13 @@ class MiningPanelController:
     def __init__(self) -> None:
         self._plugin_dir: Optional[str] = None
         self._parent: Optional[tk.Frame] = None
-        self._nav: Optional[tk.Frame] = None
-        self._page_label: Optional[tk.Label] = None
         self._canvas: Optional[tk.Canvas] = None
         self._scrollbar: Optional[tk.Scrollbar] = None
         self._content: Optional[tk.Frame] = None
         self._content_window: Optional[int] = None
         self._wrap = _WRAP_FALLBACK
         self._buttons: Optional[render.PanelButtons] = None
-        self._current_page = mining_pages.SPACE_MINING     # the page the panel is showing: chosen by what you are doing (_page_for_panel), not by hand
+        self._current_page = mining_pages.SPACE_MINING     # the side the overlay and the Prices suggestions follow: chosen by what you are doing (_page_for_panel), not by hand
 
         self._srv_out = False            # an SRV is out, from the journal's Cargo events (Vessel SRV) and their end: covers a Rhino launched before the journal in view began
         self._backfilling = False
@@ -238,29 +235,19 @@ class MiningPanelController:
         parent.columnconfigure(1, weight=0)  # the scrollbar column keeps its natural width
         self._parent = parent
 
-        # One button for each page, each opening that page's window; under them, the page the panel itself is showing right now.
-        self._nav = tk.Frame(parent)
-        self._nav.grid(column=0, row=0, columnspan=2, sticky="ew")
-        for column, page in enumerate(mining_pages.PAGE_ORDER):
-            button = tk.Button(self._nav, text=page, command=lambda p=page: self._open_live(p))
-            button.grid(row=0, column=column, sticky="w", padx=(0 if column == 0 else 6, 0))
-            panelkit.add_tooltip(button, PAGE_BUTTON_TIPS[page])
-        self._page_label = tk.Label(self._nav, anchor=tk.W, font=panelkit.view_fonts()["bold"])
-        self._page_label.grid(row=1, column=0, columnspan=len(mining_pages.PAGE_ORDER), sticky="w", pady=(2, 0))
-
         # width=1: a bare Canvas requests 10 cm of width, which would widen EDMC's window; it
         # stretches to the panel's width instead (sticky="ew").
         self._canvas = tk.Canvas(parent, width=1, highlightthickness=0, borderwidth=0, yscrollincrement=24)
-        self._canvas.grid(column=0, row=1, sticky="ew")
+        self._canvas.grid(column=0, row=0, sticky="ew")
         self._scrollbar = tk.Scrollbar(parent, orient="vertical", command=self._canvas.yview)
-        self._scrollbar.grid(column=1, row=1, sticky="ns")
+        self._scrollbar.grid(column=1, row=0, sticky="ns")
         self._canvas.configure(yscrollcommand=self._scrollbar.set)
 
         self._content = tk.Frame(self._canvas)
         self._content.columnconfigure(0, weight=1)
         self._content_window = self._canvas.create_window((0, 0), window=self._content, anchor="nw")
 
-        # These six buttons are created once and kept alive for the life
+        # These five buttons are created once and kept alive for the life
         # of the panel, unlike every other widget in self._content
         # (destroyed and rebuilt on every _redraw() call, including once
         # a second from the periodic tick). A plain tk.Button uses
@@ -268,11 +255,13 @@ class MiningPanelController:
         # produces a visible flicker on Windows even when theme colors
         # come out right each time - see mining_render.py's
         # place_button_bar().
-        # All six live in one frame (the "bar"), so a page can show them side by
+        # All five live in one frame (the "bar"), so a page can show them side by
         # side in a single row instead of one per row (render.place_button_bar).
         button_bar = tk.Frame(self._content)
         self._buttons = render.PanelButtons(
             bar=button_bar,
+            space=tk.Button(button_bar, text="Space Mining", command=lambda: self._open_live(mining_pages.SPACE_MINING)),
+            surface=tk.Button(button_bar, text="Surface Mining", command=lambda: self._open_live(mining_pages.SURFACE_MINING)),
             hotspot_finder=tk.Button(
                 button_bar, text="Hotspots",
                 command=lambda: hotspot_finder_dialog.open_hotspot_finder_dialog(self._window_parent())),
@@ -283,26 +272,16 @@ class MiningPanelController:
             reserve_lookup=tk.Button(
                 button_bar, text="Reserves",
                 command=lambda: reserve_lookup_dialog.open_reserve_lookup_dialog(self._window_parent())),
-            ledger=tk.Button(
-                button_bar, text="Book",
-                command=self._open_book),
-            history=tk.Button(
-                button_bar, text="Dashboard",
-                command=lambda: history_window.show(self._window_parent(), self._history_mode())),
-            live=tk.Button(
-                button_bar, text="Live",
-                command=self._open_live),
         )
         for button, tip in (
                 (self._buttons.hotspot_finder, "Hotspots - find rings with a confirmed hotspot for a commodity (Spansh)"),
                 (self._buttons.price_finder, "Prices - find the best-paying station for a commodity (Spansh)"),
                 (self._buttons.reserve_lookup, "Reserves - look up a ring's reserve level"),
-                (self._buttons.ledger, "Mining Book - the Space Mining Book (your rings) on the Space page, the Surface Mining Book (Rhino deposits) on the Surface page"),
-                (self._buttons.live, "Live view - a window to keep on a second screen: the radar, the live numbers and the controls (Mark center, Mark border, Add hotspot, Import/export) for this page"),
-                (self._buttons.history, "Mining History - the runs found in your journals, added up for this page: ring mining on the Space page (tons, rates, commodities, rings and what the sales paid), the Rhino on the Surface page (by body)")):
+                (self._buttons.space, PAGE_BUTTON_TIPS[mining_pages.SPACE_MINING]),
+                (self._buttons.surface, PAGE_BUTTON_TIPS[mining_pages.SURFACE_MINING])):
             panelkit.add_tooltip(button, tip)
-        for button in (self._buttons.hotspot_finder, self._buttons.price_finder, self._buttons.reserve_lookup,
-                      self._buttons.ledger, self._buttons.history, self._buttons.live):
+        for button in (self._buttons.space, self._buttons.surface, self._buttons.hotspot_finder, self._buttons.price_finder,
+                       self._buttons.reserve_lookup):
             button.grid_remove()
 
         self._content.bind("<Configure>", self._sync_scroll_region)
@@ -422,14 +401,10 @@ class MiningPanelController:
                 continue
             child.destroy()
 
-        self._page_label.configure(text=self._current_page)
         settings = _settings()
 
         try:
-            if self._current_page == mining_pages.SPACE_MINING:
-                render.render_space_mining(self._content, self._wrap, self._buttons, settings)
-            elif self._current_page == mining_pages.SURFACE_MINING:
-                render.render_surface_mining(self._content, self._wrap, self._buttons, settings)
+            render.render_summary(self._content, self._wrap, self._buttons, settings)
         finally:
             render.end_lines(self._content)
 

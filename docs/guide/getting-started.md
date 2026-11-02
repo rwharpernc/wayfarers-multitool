@@ -419,10 +419,10 @@ Switch to the mode first, then use the button listed here.
 | Colonization History (tabs: Overview, By day, Commodities, Sites) | Colonization | **History** button |
 | My Projects (your projects on Raven Colonial) | Colonization | **Projects** button, or **Raven Colonial → My Projects** in the Colonization Sites window |
 | Planned Builds, Raven Progress and Create Project on Raven | Colonization | **Raven Colonial** menu in the Colonization Sites window |
-| Space Mining Book | Mining | **Book** button on the Space Mining page |
-| Surface Mining Book | Mining | **Book** button on the Surface Mining page |
-| Mining History | Mining | **Dashboard** button, on both mining pages |
-| Mining live window (Surface and Space) | Mining | **Live** button, on each mining page |
+| Space Mining Book | Mining | **Book** button in the Space Mining window |
+| Surface Mining Book | Mining | **Book** button in the Surface Mining window |
+| Mining History | Mining | **Dashboard** button, in both mining windows |
+| Mining live window (Surface and Space) | Mining | **Space Mining** and **Surface Mining** buttons |
 | Trade History (tabs: Overview, Commodities, Stations, Route, Trades, Stock & carrier, Lookups) | Trade | **History** button on the Session page |
 
 Notes:
@@ -489,9 +489,8 @@ a moment and a tooltip shows its name and what it does.** The same goes for the 
 | **Import/export** | Import/export hotspots | Mine (the live window's header) |
 | **Mark center** | Mark the center of a surface mining location | Mine (the live window's header) |
 | **Mark border** | Mark the border of a surface mining location | Mine (the live window's header) |
-| **Live** | Open the live window for the Mining page you are on (a radar and the controls on Surface, the live numbers on Space) | Mine |
-| **Book** | Space Mining Book (Space page) or Surface Mining Book (Surface page) | Mine |
-| **Dashboard** | Open Mining History (the Mine mode's own button) | Mine |
+| **Book** | Space Mining Book (in the Space Mining window) or Surface Mining Book (in the Surface Mining window) | Mine (window headers) |
+| **Dashboard** | Open Mining History | Mine (window headers) |
 | **Reset** | End this session and start a new tally (offers to save first) | Trade (Session page) |
 | **Save session** | Keep this session in Trade History (the tally keeps running; press Reset to start a new one) | Trade (Session page) |
 | **History** | Open the Trade History window | Trade (Session page) |

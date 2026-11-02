@@ -71,12 +71,11 @@ class PanelButtons:
     rather than destroyed/recreated every render - the same native-widget-
     flicker lesson every WFMT feature with a persistent button follows)."""
     bar: tk.Frame
+    space: tk.Button
+    surface: tk.Button
     hotspot_finder: tk.Button
     price_finder: tk.Button
     reserve_lookup: tk.Button
-    ledger: tk.Button
-    history: tk.Button
-    live: tk.Button
 
 
 def format_counts(counts: Dict[str, int], with_mine_via: bool = False) -> str:
@@ -317,9 +316,9 @@ def render_ring_caution(content: tk.Frame, wrap: int, row: int, enabled: bool) -
     return row + 1
 
 
-BUTTON_ORDER = ("ledger", "history", "live", "hotspot_finder", "price_finder", "reserve_lookup")
-"""Left-to-right order of the panel's buttons in their one row: Book, Dashboard, Live, Hotspots, Prices, Reserves. A button not offered on the current page, or switched off in Settings, is
-simply left out. The controls that act on the ground (Mark center, Mark border, Add hotspot, Import/export) live in the live window (`mining_live_window.py`), not on the panel."""
+BUTTON_ORDER = ("space", "surface", "hotspot_finder", "price_finder", "reserve_lookup")
+"""Left-to-right order of the panel's buttons: Space Mining and Surface Mining (each opens that page's window), then Hotspots, Prices and Reserves. A lookup that is switched off in Settings is
+simply left out. Book and Dashboard, and the controls that act on the ground (Mark center, Mark border, Add hotspot, Import/export), live in the windows (`mining_live_window.py`), not on the panel."""
 
 
 def place_button_bar(buttons: Optional[PanelButtons], row: int, shown: Iterable[str]) -> None:
@@ -347,9 +346,8 @@ def place_button_bar(buttons: Optional[PanelButtons], row: int, shown: Iterable[
 
 
 def _shown_buttons(settings: PanelSettings, *, hotspot_finder: bool = False, price_finder: bool = False, reserve_lookup: bool = False) -> List[str]:
-    """Names of the buttons to show on this page: the Mining Book, the Mining History (Dashboard) and the live window (Live) always, plus the opt-in lookups (Spansh hotspot
-    finder, Spansh price finder, EDSM reserve lookup) the page offers, only when switched on in Settings."""
-    shown = ["ledger", "history", "live"]
+    """Names of the buttons to show: the two page windows always, plus the opt-in lookups (Spansh hotspot finder, Spansh price finder, EDSM reserve lookup) only when switched on in Settings."""
+    shown = ["space", "surface"]
     if hotspot_finder and settings.spansh_hotspot_finder_enabled:
         shown.append("hotspot_finder")
     if price_finder and settings.spansh_price_finder_enabled:
@@ -371,6 +369,57 @@ def mission_need_lines() -> list[str]:
     except Exception:
         logger.debug("Could not work out what the mining missions need", exc_info=True)
         return []
+
+
+def render_summary(content: tk.Frame, wrap: int, buttons: Optional[PanelButtons], settings: PanelSettings) -> None:
+    """The Mining panel: a few lines for the ring run and a few for the Rhino, both always, then the buttons. There are no pages; each side has a window
+    with everything (`mining_live_window`)."""
+    row = 0
+    space_run = space_mining.space_mining_repository.current_run()
+    surface_repo = surface_mining.surface_mining_repository
+    surface_run = surface_repo.current_run()
+
+    if space_run is None and surface_run is None:
+        add_line(content, row, wrap, "No commander detected yet.")
+        row += 1
+    else:
+        if space_run is None or not space_run.has_data():
+            add_line(content, row, wrap, "Ring mining: no active run. Undock to start one.")
+            row += 1
+            for text in mission_need_lines():
+                add_line(content, row, wrap, text)
+                row += 1
+        else:
+            add_line(content, row, wrap, "Ring mining (paused in supercruise)" if space_run.is_paused else "Ring mining")
+            row += 1
+            if settings.display_cargo_bar:
+                add_line(content, row, wrap, format_ship_cargo(space_run.cargo))
+                row += 1
+            for text in mission_need_lines():
+                add_line(content, row, wrap, text)
+                row += 1
+            if settings.display_session_totals:
+                add_line(content, row, wrap, f"Refined: {format_counts(space_run.refined)}")
+                row += 1
+                add_line(content, row, wrap, format_rate_now(space_run))
+                row += 1
+        row = render_ring_caution(content, wrap, row, settings.edsm_reserve_lookup_enabled)
+
+        is_active = surface_repo.is_active
+        if surface_run is not None and (is_active or surface_run.has_data()):
+            add_line(content, row, wrap, "Rhino deployed" if is_active else "Rhino stowed (last deployment)")
+            row += 1
+            if is_active and settings.display_cargo_bar:
+                add_line(content, row, wrap, format_srv_cargo(surface_run.cargo))
+                row += 1
+            if settings.display_session_totals:
+                add_line(content, row, wrap, f"Refined: {format_counts(surface_run.refined)}")
+                row += 1
+        else:
+            add_line(content, row, wrap, "Rhino: not deployed.")
+            row += 1
+
+    place_button_bar(buttons, row, _shown_buttons(settings, hotspot_finder=True, price_finder=True, reserve_lookup=True))
 
 
 def render_space_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelButtons], settings: PanelSettings) -> None:

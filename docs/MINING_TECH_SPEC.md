@@ -540,9 +540,9 @@ Two details shared with [Trade mode](TRADE_TECH_SPEC.md):
 - `search_best_price_stations` accepts `max_distance_ly=None` for "no distance limit", which Trade's
   Galaxy search uses (the Mining dialog still always passes a distance).
 
-The Mining panel has no page arrows. It has a button for each page (`mining_pages.PAGE_ORDER`) that opens that page's Live window (`mining_live_window`, which also takes `actions`: the page's Book and Dashboard buttons), and shows the page `_page_for_panel` picks: Surface Mining while the surface repository is active or an SRV is out (`_srv_out`), Space Mining otherwise.
+The Mining panel has no pages and no arrows. `mining_render.render_summary` draws a few lines for the ring run and a few for the Rhino, both at once, then the buttons; a button for each page (`mining_pages.PAGE_ORDER`) opens that page's Live window (`mining_live_window`, which also takes `actions`: the page's Book and Dashboard buttons). `_page_for_panel` (Surface Mining while the surface repository is active or an SRV is out, Space Mining otherwise) only chooses which side the overlay and the Prices suggestions follow.
 
-The panel's buttons (`mining_render.BUTTON_ORDER`: Book, Dashboard, Live, Hotspots, Prices, Reserves) carry their full names and are laid out by `panelkit.flow_buttons`, which wraps them onto a second line rather than widen the window. Every button on the panel and in the windows has a hover tip in the form "Name - what it does".
+The panel's buttons (`mining_render.BUTTON_ORDER`: Space Mining, Surface Mining, Hotspots, Prices, Reserves) carry their full names and are laid out by `panelkit.flow_buttons`, which wraps them onto a second line rather than widen the window. Every button on the panel and in the windows has a hover tip in the form "Name - what it does".
 
 ## 9. Optional extras
 

@@ -55,10 +55,10 @@ What to check in EDMC after the 1.4.2 release (and before any later one), on **W
   - None shows while you are not mining.
   - The sound plays if ticked.
 - [ ] **Mining History** (the Dashboard button): the Overview, Commodities, Rings and Runs tabs fill from your journals and sort; the totals look right against what you remember.
-- [ ] **Book** on the Space Mining page opens the **Space Mining Book**.
+- [ ] **Book** in the Space Mining window opens the **Space Mining Book**.
   - It lists rings from your journals with hotspots per mineral, class, reserve level, tons mined and last mined.
   - Try a note, a favorite, **Find**, **Add ring** and **Copy system**. Restart EDMC and the notes remain.
-  - **Book** on the Surface Mining page opens the **Surface Mining Book**, with a **From your journals** group (bodies with mining locations and the tons refined on them).
+  - **Book** in the Surface Mining window opens the **Surface Mining Book**, with a **From your journals** group (bodies with mining locations and the tons refined on them).
 - [ ] **This system** (in both books):
   - In a system you have mined it goes to the ring or body. In one you have not it says `You have not worked this system yet.`
   - On the first open of each book a notice says the journals are being read, and the list does not flicker while it grows.

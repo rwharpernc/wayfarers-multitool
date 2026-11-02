@@ -113,7 +113,8 @@ def _do(action_id: str) -> Tuple[str, bool]:
         parent = _tk_widget.winfo_toplevel() if _tk_widget is not None else None
         if parent is None:
             return "The Live window needs EDMC's main window.", False
-        mining_live_window.show(parent, mining_pages.SURFACE_MINING, mining_panel._settings)
+        mining_live_window.show(parent, mining_pages.SURFACE_MINING, mining_panel._settings,
+                                actions=mining_panel.controller._page_actions(mining_pages.SURFACE_MINING))    # with the page's Book and Dashboard, as the panel's button opens it
         return "Opened the Surface Mining Live window.", True
     if action_id == "overlays":
         hidden = overlay.toggle_all_hidden()
