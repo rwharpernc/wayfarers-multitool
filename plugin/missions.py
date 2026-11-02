@@ -43,6 +43,7 @@ from config import appname, config
 
 from . import active_missions, community_goal_state, kill_tracker, missions_ui
 from . import current_cargo, mission_cargo, mission_types
+from . import missions_display_settings as display_settings
 from .journal_scan import read_backlog
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
@@ -50,12 +51,12 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 PANEL_PLACEMENT = "missions"
 
-_CFG_REMAINING = "wfmt_missions_show_remaining_column"
-_CFG_PROGRESS = "wfmt_missions_display_progress"
-_CFG_TOTALS = "wfmt_missions_show_totals_row"
-_CFG_MISSION_COUNT = "wfmt_missions_show_mission_count"
-_CFG_SETTLEMENT = "wfmt_missions_display_settlement"
-_CFG_COMMODITIES_NEEDED = "wfmt_missions_display_commodities_needed"
+_CFG_REMAINING = display_settings.CFG_REMAINING
+_CFG_PROGRESS = display_settings.CFG_PROGRESS
+_CFG_TOTALS = display_settings.CFG_TOTALS
+_CFG_MISSION_COUNT = display_settings.CFG_MISSION_COUNT
+_CFG_SETTLEMENT = display_settings.CFG_SETTLEMENT
+_CFG_COMMODITIES_NEEDED = display_settings.CFG_COMMODITIES_NEEDED
 
 _JOURNAL_SCAN_LOOKBACK = dt.timedelta(weeks=2)
 
@@ -103,8 +104,23 @@ def _to_display_settings(cfg: MissionsConfig) -> missions_ui.DisplaySettings:
 
 class MissionsController:
     def __init__(self) -> None:
+        display_settings.add_listener(self._on_display_setting)
         self._enabled_vars: Dict[str, tk.BooleanVar] = {}
         self._pad = ""          # the largest landing pad at the station the commander is docked at ("" when not docked or not told)
+
+    def _on_display_setting(self) -> None:
+        """A switch was changed in the Mission types window: show it on the Settings tab too (if that tab is built) and redraw the panel."""
+        cfg = load_config()
+        for name, held in (("display_progress", cfg.display_progress), ("show_remaining_column", cfg.show_remaining_column),
+                           ("show_totals_row", cfg.show_totals_row), ("show_mission_count", cfg.show_mission_count),
+                           ("display_settlement", cfg.display_settlement), ("display_commodities_needed", cfg.display_commodities_needed)):
+            var = self._enabled_vars.get(name)
+            if var is not None:
+                try:
+                    var.set(held)
+                except tk.TclError:
+                    pass
+        missions_ui.ui.apply_display_settings(_to_display_settings(cfg))
 
     # --- lifecycle ----------------------------------------------------------
 

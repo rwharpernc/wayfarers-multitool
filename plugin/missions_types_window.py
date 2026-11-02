@@ -12,14 +12,15 @@ from typing import Any, Dict, Optional
 
 from config import config
 
+from . import missions_display_settings as display_settings
 from .uikit import palette as P
 from .uikit.shell import WindowShell
 from .uikit.widgets import FlatButton, ScrollFrame
 
 CONFIG_GEOMETRY = "wfmt_missions_types_window_geometry"
 CONFIG_CATEGORY = "wfmt_missions_types_window_category"
-DEFAULT_SIZE = (780, 640)
-MIN_SIZE = (560, 380)
+DEFAULT_SIZE = (780, 720)
+MIN_SIZE = (560, 480)
 _WIDTH_STEP = 40       # the page is drawn again when the window's width changes by more than this
 
 _window: Optional["MissionTypesWindow"] = None
@@ -65,11 +66,13 @@ class MissionTypesWindow:
 
         body = self._shell.body
         body.columnconfigure(1, weight=1)
-        body.rowconfigure(0, weight=1)
+        body.rowconfigure(1, weight=1)
+        self._display = display_settings.DisplayCard(body)
+        self._display.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, P.PAD_SM))
         self._list = tk.Frame(body, bg=P.BG)
-        self._list.grid(row=0, column=0, sticky="ns", padx=(0, P.PAD))
+        self._list.grid(row=1, column=0, sticky="ns", padx=(0, P.PAD))
         self._scroll = ScrollFrame(body, bg=P.PANE)
-        self._scroll.grid(row=0, column=1, sticky="nsew")
+        self._scroll.grid(row=1, column=1, sticky="nsew")
         self._scroll.body.columnconfigure(0, weight=1)
         self._scroll.bind("<Configure>", self._on_resize)
         self.refresh()
@@ -101,6 +104,7 @@ class MissionTypesWindow:
     def refresh(self) -> None:
         if not self.alive:
             return
+        self._display.sync()
         counts = self._ui.category_counts()
         self._fill_list(counts)
         self._draw_page()

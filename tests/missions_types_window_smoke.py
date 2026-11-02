@@ -161,6 +161,22 @@ pump()
 check(window._window is win and win.category == "community_goal", "asking again for a type brings the same window to it")
 check(len(window._window._scroll.body.winfo_children()) == 1, "only the chosen page is in the window")
 
+# the Display card: the six switches, saved to the keys Settings holds, and in step with a change made elsewhere
+from plugin import missions_display_settings as D  # noqa: E402
+card = window._window._display
+check(set(card._vars) == {key for key, _n, _l, _t in D.FIELDS} and len(card._vars) == 6, f"the six switches: {sorted(card._vars)}")
+heard = []
+D.add_listener(lambda: heard.append(1))
+card._vars[D.CFG_TOTALS].set(False)
+D.set_value(D.CFG_TOTALS, card._vars[D.CFG_TOTALS].get())
+pump()
+check(saved.get(D.CFG_TOTALS) is False and heard, f"a switch is saved and the listeners hear of it: {saved.get(D.CFG_TOTALS)} {heard}")
+saved[D.CFG_SETTLEMENT] = False                  # changed on the Settings tab
+window.refresh()
+pump()
+check(card._vars[D.CFG_SETTLEMENT].get() is False, "a change made elsewhere shows on the card")
+check(all(D.value(k) for k in (D.CFG_PROGRESS, D.CFG_REMAINING, D.CFG_MISSION_COUNT, D.CFG_COMMODITIES_NEEDED)), "the rest are still on (every switch starts on)")
+
 window.close()
 pump()
 check(not win.alive, "close closes it")

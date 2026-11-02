@@ -113,6 +113,8 @@ Press **Mission** in the mode bar. At the top a line reads `Missions: 7/20` (how
 - The **Community Goals** page has one card per goal: its title, the system and market, a bar and the tier reached against the top tier (with `✓ Complete`), `Your contribution`, the bonus, `🏆 Top rank` when you are in the top rank, and the expiry. Under the goals, **Paid out** lists the latest three payouts.
 - Three buttons at the very bottom of the panel: **Missions window** (every active mission across every category), **Mission types** (the pages above, in their own window) and **Find sources** (where to buy the cargo your missions need).
 
+The **Mission types** window has a **Display** card at the top with the six display switches: *Show kill progress*, *Show remaining-kills column*, *Show totals row*, *Show mission count*, *Show target settlement (ground missions)* and *Show commodities needed (trade and mining)*. They are the same switches as Settings → WFMT → Missions (see [Settings](#settings)): a tick saves when you click it, and the panel and the pages in the window change at once. A change made in Settings shows on the card too.
+
 ## The Missions window
 
 Opens from the **Missions window** button at the bottom of the panel (or by clicking a mission's card in the Mission types window). It stays live while you play: times left count down, progress moves, and missions

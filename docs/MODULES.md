@@ -314,6 +314,7 @@ Spec: [TRADE_TECH_SPEC.md](TRADE_TECH_SPEC.md) (has its own module table with mo
 | `current_cargo.py` | The commander's hold by commodity, from EDMC's state, for "held" mission progress |
 | `mission_pins.py` | The missions a commander pinned (ids only), kept per commander in `mission_pins.json`; pins go with their mission |
 | `missions_board.py` | The Missions window's data: a row per active mission (progress, reward, time left, ready, pinned), the totals line, grouping by place, the detail lines; no Tk |
+| `missions_display_settings.py` | Missions' six display switches as a Display card in the Mission types window, on the same saved values as Settings → WFMT → Missions |
 | `missions_types_window.py` | The Mission types window: Missions mode's category pages (massacre stacks, mission cards, Community Goals), one at a time, picked from a list with counts; drawn by `missions_ui` |
 | `missions_window.py` | The Missions window (Active and By place tabs, detail strip, Pin / Unpin, Pin all here, Unpin all, Copy system, Sources) |
 | `mission_sources.py` | The commodities your Collect and Mining missions still need (with the four source picks looked up for each) and the Delivery cargo still to pick up, with the station |
