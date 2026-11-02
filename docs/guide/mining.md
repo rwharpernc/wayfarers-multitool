@@ -789,6 +789,14 @@ WFMT, like every third-party tool, only knows what Elite Dangerous writes to its
 
 The in-game Mining displays are set on **Settings → WFMT → Overlays → Mining** (see below).
 
+**Also in the windows.** The display and tuning settings below are in the **Settings** card at the top of the **Space Mining** and **Surface Mining** windows too, and they are the same saved values: a change in either place shows in the other at once.
+
+- Both windows: *Show session totals*, *Show the cargo bar*, *Show prospector hints*.
+- Space Mining: *Target commodities* with *worth cracking at* (and the line under them that says how many targets are set, or what is wrong).
+- Surface Mining: *Show coverage minimap*, *Stop radius*, *Too close for another rig*, and *Deposit refills after (days)*.
+
+A tick saves when you click it; a box saves when you press Enter or click away, and a number is kept inside its range. The switches that let WFMT ask Spansh or EDSM (the hotspot finder, the price finder, the ring reserve lookup and body lookup) and *Archive completed mining runs* stay on the Settings tab only, because they are permissions and file choices, not display choices. The Surface Live simulation window has no Settings card.
+
 **Checkboxes.** The first three are on by default. The rest are off.
 
 - *Show session totals*, *Show the cargo bar* and *Show prospector hints* (on by default). See [What each page shows](#what-each-page-shows) for the lines each one controls.

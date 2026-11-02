@@ -35,6 +35,7 @@ from . import mining_render as render
 from . import mining_sources
 from . import mining_reserve_lookup_dialog as reserve_lookup_dialog
 from . import mining_space as space_mining
+from . import mining_window_settings as window_settings
 from .uikit import palette as P
 from .uikit import style
 from .uikit.shell import WindowShell
@@ -46,8 +47,8 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 CONFIG_GEOMETRY = {mining_pages.SURFACE_MINING: "wfmt_mining_live_surface_geometry", mining_pages.SPACE_MINING: "wfmt_mining_live_space_geometry"}
 CONFIG_RANGE = mining_radar_view.CONFIG_RANGE            # the range is shared with the radar card over the game
 saved_range = mining_radar_view.saved_range
-DEFAULT_SIZE = {mining_pages.SURFACE_MINING: (1180, 700), mining_pages.SPACE_MINING: (620, 640)}
-MIN_SIZE = {mining_pages.SURFACE_MINING: (1120, 520), mining_pages.SPACE_MINING: (520, 420)}
+DEFAULT_SIZE = {mining_pages.SURFACE_MINING: (1180, 780), mining_pages.SPACE_MINING: (700, 780)}
+MIN_SIZE = {mining_pages.SURFACE_MINING: (1120, 600), mining_pages.SPACE_MINING: (600, 560)}
 TICK_MS = 1000
 RADAR_MIN_PX, RADAR_MAX_PX = 240, 1200
 WRAP_MIN, WRAP_MAX = 240, 700
@@ -203,13 +204,16 @@ class LiveWindow:
         body = self._shell.body
         body.columnconfigure(0, weight=3 if surface else 0)
         body.columnconfigure(1, weight=2 if surface else 1)
-        body.rowconfigure(0, weight=1)
+        body.rowconfigure(1, weight=1)
+        if not self._simulated:        # the pretend Rhino never touches your settings
+            self._settings_card = window_settings.SettingsCard(body, page, on_change=self._on_setting_changed)
+            self._settings_card.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, P.PAD_SM))
 
         self._radar_label: Optional[tk.Label] = None
         self._radar_box: Optional[tk.Frame] = None
         if surface:
             left = tk.Frame(body, bg=P.BG)
-            left.grid(row=0, column=0, sticky="nsew", padx=(0, P.PAD))
+            left.grid(row=1, column=0, sticky="nsew", padx=(0, P.PAD))
             self._radar_box = tk.Frame(left, bg=P.MAP_BG)
             self._radar_box.pack(fill="both", expand=True)
             self._radar_box.pack_propagate(False)       # sized by the window, never by the picture in it
@@ -227,13 +231,18 @@ class LiveWindow:
             self._show_zoom()
 
         self._info = ScrollFrame(body)
-        self._info.grid(row=0, column=1, sticky="nsew")
+        self._info.grid(row=1, column=1, sticky="nsew")
         self._info.body.columnconfigure(0, weight=1)
         self._info.bind("<Configure>", self._on_info_resize)
         self.refresh()
         self._shell.window.after(TICK_MS, self._tick)
 
     # --- the window ---------------------------------------------------------------------------------------------------
+
+    def _on_setting_changed(self) -> None:
+        """A setting on the card was changed: draw the page again so it shows at once."""
+        if self.alive:
+            self.refresh()
 
     @property
     def alive(self) -> bool:

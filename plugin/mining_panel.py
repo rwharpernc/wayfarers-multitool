@@ -55,6 +55,7 @@ from . import mining_body_lookup
 from . import mining_session_archive as session_archive
 from . import mining_simulation
 from . import mining_stops
+from . import mining_window_settings as window_settings
 from . import mining_targets
 from . import mining_space as space_mining
 from . import mining_surface as surface_mining
@@ -69,18 +70,18 @@ PANEL_PLACEMENT = "mining"
 
 # --- Config keys (wfmt_mining_*) -------------------------------------------
 
-_CFG_DISPLAY_SESSION_TOTALS = "wfmt_mining_display_session_totals"
-_CFG_DISPLAY_CARGO_BAR = "wfmt_mining_display_cargo_bar"
-_CFG_DISPLAY_PROSPECTOR_HINTS = "wfmt_mining_display_prospector_hints"
+_CFG_DISPLAY_SESSION_TOTALS = window_settings.CFG_DISPLAY_SESSION_TOTALS
+_CFG_DISPLAY_CARGO_BAR = window_settings.CFG_DISPLAY_CARGO_BAR
+_CFG_DISPLAY_PROSPECTOR_HINTS = window_settings.CFG_DISPLAY_PROSPECTOR_HINTS
 _CFG_SPANSH_HOTSPOT_FINDER_ENABLED = "wfmt_mining_spansh_hotspot_finder_enabled"
 _CFG_SPANSH_PRICE_FINDER_ENABLED = "wfmt_mining_spansh_price_finder_enabled"
 _CFG_EDSM_RESERVE_LOOKUP_ENABLED = "wfmt_mining_edsm_reserve_lookup_enabled"
 _CFG_OVERLAY_ENABLED = "wfmt_mining_overlay_enabled"
-_CFG_DISPLAY_COVERAGE_MINIMAP = "wfmt_mining_display_coverage_minimap"
+_CFG_DISPLAY_COVERAGE_MINIMAP = window_settings.CFG_DISPLAY_COVERAGE_MINIMAP
 _CFG_ARCHIVE_SESSIONS = "wfmt_mining_archive_sessions"
-_CFG_STOP_RADIUS = "wfmt_mining_stop_radius_m"
-_CFG_RIG_GAP = "wfmt_mining_rig_gap_m"
-_CFG_REFILL_DAYS = "wfmt_mining_refill_days"
+_CFG_STOP_RADIUS = window_settings.CFG_STOP_RADIUS
+_CFG_RIG_GAP = window_settings.CFG_RIG_GAP
+_CFG_REFILL_DAYS = window_settings.CFG_REFILL_DAYS
 
 _MAX_PANEL_HEIGHT = 760
 """Hard cap on the scrollable content area's rendered height, in pixels
@@ -104,11 +105,7 @@ def _cfg_bool(key: str, default: bool) -> bool:
     return config.get_bool(key, default=default)
 
 
-def _clamp_refill_days(value: object) -> int:
-    try:
-        return min(depletion.MAX_REGEN_DAYS, max(0, int(round(float(value)))))   # type: ignore[arg-type]
-    except (TypeError, ValueError):
-        return 0
+_clamp_refill_days = window_settings.clamp_refill_days
 
 
 def _refill_days() -> int:
@@ -187,6 +184,30 @@ class MiningPanelController:
         self._target_status: Optional[tk.Label] = None
         self._refill_days_var: Optional[tk.StringVar] = None
 
+    def _on_window_setting(self) -> None:
+        """A display or tuning setting was changed in a mining window: show it on the Settings tab too (if that tab is built) and redraw the panel."""
+        for var, key in ((self._display_session_totals_var, _CFG_DISPLAY_SESSION_TOTALS), (self._display_cargo_bar_var, _CFG_DISPLAY_CARGO_BAR),
+                         (self._display_prospector_hints_var, _CFG_DISPLAY_PROSPECTOR_HINTS), (self._display_coverage_minimap_var, _CFG_DISPLAY_COVERAGE_MINIMAP)):
+            if var is not None:
+                try:
+                    var.set(window_settings.value(key))
+                except tk.TclError:
+                    pass
+        for var, key in ((self._stop_radius_var, _CFG_STOP_RADIUS), (self._rig_gap_var, _CFG_RIG_GAP), (self._refill_days_var, _CFG_REFILL_DAYS)):
+            if var is not None:
+                try:
+                    var.set(window_settings.value(key))
+                except tk.TclError:
+                    pass
+        if self._target_var is not None and self._target_percent_var is not None:
+            text, percent = window_settings.target_text()
+            try:
+                self._target_var.set(text)
+                self._target_percent_var.set(str(percent))
+            except tk.TclError:
+                pass
+        self._redraw_if_alive()
+
     # --- lifecycle -----------------------------------------------------
 
     def start(self, plugin_dir: str) -> None:
@@ -197,6 +218,7 @@ class MiningPanelController:
         mining_body_cache.cache.load(plugin_dir)
         mining_history.history.start(plugin_dir)
         mining_rings.notes.start(plugin_dir)
+        window_settings.add_listener(self._on_window_setting)
         space_mining.space_mining_repository.add_listener(lambda _run: self._redraw_if_alive())
         surface_mining.surface_mining_repository.add_listener(lambda _run: self._redraw_if_alive())
         hotspots.hotspot_repository.add_listener(self._redraw_if_alive)

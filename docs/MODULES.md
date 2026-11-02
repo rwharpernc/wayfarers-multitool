@@ -241,6 +241,7 @@ Spec: [MINING_TECH_SPEC.md](MINING_TECH_SPEC.md)
 | `mining_ground.py` | Ground type of a body and your own base rates of deposits on it |
 | `mining_history.py` | The commander's mining runs, read from their journals in the background and saved per commander (`mining_history.json`); the newest journal is read afresh and never saved; no Tk |
 | `mining_history_data.py` | The Mining History window's tiles, fields and tables, worked out from the saved runs; no Tk |
+| `mining_window_settings.py` | Mining's display and tuning settings (session totals, cargo bar, prospector hints, coverage minimap, stop radius, rig gap, refill time, target commodities) as a Settings card in the Space Mining and Surface Mining windows, on the same saved values as Settings → WFMT → Mining |
 | `mining_live_window.py` | The Mining live window (the Live button on each Mining page): on the Surface page a radar centered on the Rhino, the panel's lines and the Mark center, Mark border, Add hotspot and Import/export controls; on the Space page the panel's lines and the lookups; drawn by the same code as the panel, no overlay needed |
 | `mining_history_window.py` | The Mining History window (the Dashboard button in Mine mode) |
 | `mining_market.py` | The open station market set against the galactic average: a line for each commodity the run refined that the station buys; no network |
