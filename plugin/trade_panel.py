@@ -1279,6 +1279,7 @@ class TradePanelController:
                                       f"~{trip.per_hour:,} cr/hr"))
             for arrow, load, dest in (("Out", trip.out, trip.b), ("Back", trip.back, trip.a)):
                 blocks.extend(trade_roundtrip.leg_blocks(arrow, load, dest.name, _clip))
+            blocks.append(Note(f"Both legs: {trip.out.profit:+,} + {trip.back.profit:+,} = {trip.profit:+,} cr per loop", strong=True))
         self._route_blocks = blocks
         best = trips[0]
         self._next_system = best.b.system
@@ -1319,6 +1320,10 @@ class TradePanelController:
                     detail += f" \u00b7 supply {best.supply:,} / demand {best.demand:,}"
             blocks.append(Item(f"{number}. {_clip(hop.source_station)} \u2192 {_clip(hop.dest_station)}",
                                (f"{hop.profit:+,}", f"{running:+,}", f"{hop.distance_ly:.1f}"), detail=detail))
+        distance = sum(hop.distance_ly for hop in hops)
+        blocks.append(Heading(f"All {len(hops)} hop{'s' if len(hops) != 1 else ''}", minor=True))
+        blocks.append(Item("Whole route", (f"{total:+,}", f"{total:+,}", f"{distance:.1f}"),
+                           detail=f"{total:+,} cr over {distance:.1f} ly, ~{spansh_routes.estimate_profit_per_hour(hops, self._jump_range_ly()):,} cr an hour"))
         if empty_leg:
             blocks.append(Note("One leg of this route carries no cargo.", warn=True))
         elif loop:
