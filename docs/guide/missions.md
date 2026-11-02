@@ -97,7 +97,7 @@ The numbers and names below are made up to show how the screens read. The wordin
 
 ## Using it
 
-Press **Mission** in the mode bar. At the top a line reads `Missions: 7/20` (how many missions you hold of the game's limit of 20; switch it off with *Show mission count* in Settings). Under it the panel lists each type that holds something, with how many (`Combat 3`). Click a line, or press **Mission types** at the bottom, to open the **Mission types** window: a list of the types down the left, each with its count, and the chosen type's page on the right. There is no paging with arrows. The types, in order, are:
+Press **Mission** in the mode bar. At the top a line reads `Missions: 7/20` (how many missions you hold of the game's limit of 20; switch it off with *Show mission count* on the Mission types window's Display card). Under it the panel lists each type that holds something, with how many (`Combat 3`). Click a line, or press **Mission types** at the bottom, to open the **Mission types** window: a list of the types down the left, each with its count, and the chosen type's page on the right. There is no paging with arrows. The types, in order, are:
 
 **Massacre (Space) · Settlement Raids (Ground) · Combat · Trade & Mining · Passenger · Covert / On-Foot Ops · Other · Community Goals**
 
@@ -113,7 +113,7 @@ Press **Mission** in the mode bar. At the top a line reads `Missions: 7/20` (how
 - The **Community Goals** page has one card per goal: its title, the system and market, a bar and the tier reached against the top tier (with `✓ Complete`), `Your contribution`, the bonus, `🏆 Top rank` when you are in the top rank, and the expiry. Under the goals, **Paid out** lists the latest three payouts.
 - Three buttons at the very bottom of the panel: **Missions window** (every active mission across every category), **Mission types** (the pages above, in their own window) and **Find sources** (where to buy the cargo your missions need).
 
-The **Mission types** window has a **Display** card at the top with the six display switches: *Show kill progress*, *Show remaining-kills column*, *Show totals row*, *Show mission count*, *Show target settlement (ground missions)* and *Show commodities needed (trade and mining)*. They are the same switches as Settings → WFMT → Missions (see [Settings](#settings)): a tick saves when you click it, and the panel and the pages in the window change at once. A change made in Settings shows on the card too.
+The **Mission types** window has a **Display** card at the top with the six display switches: *Show kill progress*, *Show remaining-kills column*, *Show totals row*, *Show mission count*, *Show target settlement (ground missions)* and *Show commodities needed (trade and mining)*. They are only here, not in Settings → WFMT → Missions (see [Settings](#settings)): a tick saves when you click it, and the panel and the pages in the window change at once.
 
 ## The Missions window
 
@@ -286,7 +286,7 @@ Not covered: the nearest ring hotspot for a Mining mission (use Mining's hotspot
 
 ## Settings
 
-**Settings → WFMT → Missions** (all on by default):
+The six display switches are on the **Display** card at the top of the **Mission types** window (all on by default). **Settings → WFMT → Missions** only points there.
 
 - **Show kill progress**: the `done/required` count and the bars on the massacre pages. Off, only the required count shows.
 - **Show remaining-kills column**: the `Δ` figure.
@@ -295,6 +295,6 @@ Not covered: the nearest ring hotspot for a Mining mission (use Mining's hotspot
 - **Show target settlement (ground missions)**: the `Settlements:` line.
 - **Show commodities needed (trade and mining)**: the **Commodities needed:** summary.
 
-The overlay card has its own settings under Settings → WFMT → Overlays → Missions (see above). Settings take effect when you close the Settings window.
+The overlay card has its own settings under Settings → WFMT → Overlays → Missions (see above). The Display switches take effect as soon as you click them.
 
 More detail: [Missions specification](../MISSIONS_TECH_SPEC.md).

@@ -89,28 +89,18 @@ X.set_value(X.EXPEDITION_AUTOCOPY, False)
 check(X.set_value("wfmt_something_else", True) is True and "wfmt_something_else" not in saved, "an unknown key is not written")
 check(expedition_panel.autocopy_enabled() is False and expedition_panel.start_log_enabled() is True, "the panel reads the same values")
 
-# --- the Settings tabs and the panel's own tick follow a window ------------------------------------------------------------------------
+# --- the panel's own tick follows a window --------------------------------------------------------------------------------------------------
 exp = expedition_panel.controller
 exp._autocopy_var = tk.BooleanVar(value=False)
-exp._settings_autocopy = tk.BooleanVar(value=False)
-exp._settings_start_log = tk.BooleanVar(value=True)
 X.set_value(X.EXPEDITION_AUTOCOPY, True)
-X.set_value(X.EXPEDITION_START_LOG, False)
-check(exp._autocopy_var.get() is True and exp._settings_autocopy.get() is True, "the panel's Copy on arrival tick and the Settings tab follow")
-check(exp._settings_start_log.get() is False, "and the start-the-log tick")
+check(exp._autocopy_var.get() is True, "the panel's Copy on arrival tick follows a change made in the Expedition window")
 X.set_value(X.EXPEDITION_AUTOCOPY, False)
-X.set_value(X.EXPEDITION_START_LOG, True)
-
-org = organic_scan_panel.controller
-org._observe_var = tk.BooleanVar(value=True)
+check(exp._autocopy_var.get() is False, "and turning it off")
+check(organic_scan_panel.observing() is True and codex_completionist_panel.enabled() is True, "the other two read the same saved values")
 X.set_value(X.EXO_OBSERVE, False)
-check(org._observe_var.get() is False and organic_scan_panel.observing() is False, "the record switch follows on the Settings tab and in the panel")
-X.set_value(X.EXO_OBSERVE, True)
-
-cod = codex_completionist_panel.controller
-cod._enabled_var = tk.BooleanVar(value=True)
 X.set_value(X.CODEX_TRACK, False)
-check(cod._enabled_var.get() is False and codex_completionist_panel.enabled() is False, "Track codex entries follows on the Settings tab and in the panel")
+check(organic_scan_panel.observing() is False and codex_completionist_panel.enabled() is False, "and follow a change made in their windows")
+X.set_value(X.EXO_OBSERVE, True)
 X.set_value(X.CODEX_TRACK, True)
 
 # --- the strip --------------------------------------------------------------------------------------------------------------------------------
@@ -122,7 +112,7 @@ pump()
 check(set(strip._vars) == {X.EXPEDITION_AUTOCOPY, X.EXPEDITION_START_LOG}, "the strip has one tick for each field")
 strip._vars[X.EXPEDITION_AUTOCOPY].set(True)
 X.set_value(X.EXPEDITION_AUTOCOPY, strip._vars[X.EXPEDITION_AUTOCOPY].get())
-saved[X.EXPEDITION_START_LOG] = False                                  # changed on the Settings tab
+saved[X.EXPEDITION_START_LOG] = False                                  # changed elsewhere
 X.announce()
 pump()
 check(strip._vars[X.EXPEDITION_START_LOG].get() is False, "a change made elsewhere shows on the strip")
@@ -150,7 +140,6 @@ check(book.count() == 0, "clearing an empty record does nothing")
 here = scan.BodyConditions(body_name="Sol 3", planet_class="Rocky body", atmosphere="CarbonDioxide", gravity_g=0.2, temperature_k=180.0, pressure_atm=0.05,
                            volcanism="", star_type="K", system_name="Sol", system_body_types=("Rocky body",))
 book.record(here, [BACTERIUM], BACTERIUM, AURASUS, "Bacterium Aurasus", "Teal", exo_observations.predicted_keys(BACTERIUM, here), when="2026-10-17T10:00:00Z")
-org._observed_var = tk.StringVar(value="")
 win.refresh()
 pump()
 check("1 find on 1 body" in win._recorded.cget("text"), f"a find is counted: {win._recorded.cget('text')!r}")
@@ -161,7 +150,6 @@ with _mock.patch.object(ER.dialogs, "confirm", lambda *a, **k: True):
     win._clear_record()
 pump()
 check(book.count() == 0 and "0 finds on 0 bodies" in win._recorded.cget("text"), "saying yes clears it and the count follows")
-check(org._observed_var.get().startswith("0 finds"), f"and the Settings tab's count follows: {org._observed_var.get()!r}")
 win.close()
 pump()
 check(win._show_recorded not in X._listeners, "closing the review window removes its listener")

@@ -366,12 +366,15 @@ almost always why.
 
 In **Settings → WFMT → Colonization → Raven Colonial**:
 
-1. Tick **Allow WFMT to write to Raven Colonial (master switch)**. The options under it stay grayed out until you do.
-2. Tick **Report my construction progress and deliveries to Raven Colonial**.
-3. Tick **Also report cargo I move to and from my fleet carrier** if you want that too.
-4. Paste your key from [ravencolonial.com/user](https://ravencolonial.com/user) and press **Test key**. Raven answers with your name
+1. Tick **Allow WFMT to write to Raven Colonial (master switch)**.
+2. Paste your key from [ravencolonial.com/user](https://ravencolonial.com/user) and press **Test key**. Raven answers with your name
    for you when the key is accepted. With no key, nothing is sent.
-5. Press **OK** in Settings.
+3. Press **OK** in Settings.
+
+Then open the **Colonization Sites** window (the **Dashboard** button in Colony mode). On the **Raven Colonial** strip across the top:
+
+4. Tick **Report my construction progress and deliveries**.
+5. Tick **Also report cargo I move to and from my fleet carrier** if you want that too. (The two ticks are grayed out until the master switch is on.)
 
 Only deliveries made while sharing is on are sent. WFMT does not backfill earlier ones.
 

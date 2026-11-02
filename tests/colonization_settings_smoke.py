@@ -85,10 +85,6 @@ check(C.set_carrier(True) is False and saved.get(C.CFG_RCC_CARRIER) is None, "fo
 check(rcc_keys.CFG_ENABLED not in saved, "and the window never touches the master switch")
 
 # --- the strip ---------------------------------------------------------------------------------------------------------------------------------
-panel = colonization_panel.controller
-panel._rcc_progress_var = tk.BooleanVar(value=False)                     # what the Settings tab would hold
-panel._rcc_carrier_var = tk.BooleanVar(value=False)
-C.add_listener(panel._on_window_setting)
 frame = tk.Frame(root)
 frame.pack(fill="x")
 cmdr = ["Bocheaux"]
@@ -98,7 +94,7 @@ pump()
 check(str(strip._progress_box.cget("state")) == "disabled" and str(strip._carrier_box.cget("state")) == "disabled", "with the master switch off the ticks are grayed out")
 check("Settings" in strip._state.cget("text") and "Nothing is sent" in strip._state.cget("text"), f"and the strip says nothing is sent and where to change it: {strip._state.cget('text')!r}")
 
-saved[rcc_keys.CFG_ENABLED] = True                                          # the master switch turned on in Settings
+saved[rcc_keys.CFG_ENABLED] = True                                          # the master switch turned on in Settings (which keeps it)
 C.announce()
 pump()
 check(str(strip._progress_box.cget("state")) == "normal", "turning the master switch on in Settings enables the ticks")
@@ -108,17 +104,16 @@ check("no key yet" in strip._state.cget("text"), "and that there is no key yet")
 strip._progress.set(True)
 check(C.set_progress(True) is True and saved.get(C.CFG_RCC_PROGRESS) is True, "with the master switch on a tick is saved")
 pump()
-check(panel._rcc_progress_var.get() is True, "and shown on the Settings tab")
 check("progress and deliveries" in strip._state.cget("text"), f"the strip says what is reported: {strip._state.cget('text')!r}")
 C.set_carrier(True)
 pump()
-check("fleet carrier cargo" in strip._state.cget("text") and panel._rcc_carrier_var.get() is True, "the carrier choice too")
+check("fleet carrier cargo" in strip._state.cget("text"), "the carrier choice too")
 check(colonization_panel.rcc_share_progress() and colonization_panel.rcc_share_carrier(), "and the panel's reporting reads the same values")
 
-saved[C.CFG_RCC_PROGRESS] = False                                           # changed on the Settings tab
+saved[C.CFG_RCC_PROGRESS] = False                                           # changed elsewhere
 C.announce()
 pump()
-check(strip._progress.get() is False, "a change made on the Settings tab shows on the strip")
+check(strip._progress.get() is False, "a change made elsewhere shows on the strip")
 
 saved[rcc_keys.CFG_ENABLED] = False                                         # the master switch off again: choices kept, reporting stops
 C.announce()

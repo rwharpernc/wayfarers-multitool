@@ -100,20 +100,12 @@ class BgsController:
         self._current_system_var: Optional[tk.StringVar] = None
         self._tick_status_var: Optional[tk.StringVar] = None
         bgs_settings.add_listener(self._on_window_setting)
-        self._enabled_var: Optional[tk.BooleanVar] = None
         self._tick_enabled_var: Optional[tk.BooleanVar] = None
-        self._archive_days_var: Optional[tk.StringVar] = None
 
     # --- lifecycle / persistence -----------------------------------------
 
     def _on_window_setting(self) -> None:
-        """A setting was changed in the BGS Report window: show it on the Settings tab too (if that tab is built) and apply it."""
-        for var, held in ((self._enabled_var, enabled()), (self._archive_days_var, str(archive_days()))):
-            if var is not None:
-                try:
-                    var.set(held)
-                except tk.TclError:
-                    pass
+        """A setting was changed in the BGS Report window: apply it (prune the archive, save, redraw)."""
         self._apply_setting_change()
 
     def _apply_setting_change(self) -> None:
@@ -485,9 +477,7 @@ class BgsController:
         frame.columnconfigure(1, weight=1)
         notebook.add(frame, text="BGS")
 
-        self._enabled_var = tk.BooleanVar(value=enabled())
         self._tick_enabled_var = tk.BooleanVar(value=tick_enabled())
-        self._archive_days_var = tk.StringVar(value=str(archive_days()))
 
         nb.Label(frame, text="BGS Tracking", font=("TkDefaultFont", 9, "bold")).grid(
             row=0, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(10, 4),
@@ -509,9 +499,9 @@ class BgsController:
             ),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=1, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 6))
-        nb.Checkbutton(
-            frame, text="Show BGS faction states and activity", variable=self._enabled_var,
-        ).grid(row=2, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 4))
+        nb.Label(frame, text=("Whether BGS shows faction states and activity, and how many days of closed ticks it keeps, are on the Settings card at the top of the BGS "
+                              "Report window (press Report on the BGS panel to open it)."),
+                 wraplength=440, justify=tk.LEFT).grid(row=2, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 4))
         nb.Checkbutton(
             frame, text="Detect BGS ticks (polls tick.infomancer.uk every 60s)",
             variable=self._tick_enabled_var,
@@ -535,26 +525,10 @@ class BgsController:
                 nb.Label(frame, text=advice, wraplength=440, justify=tk.LEFT, foreground="#c07000").grid(
                     row=6, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 8))
 
-        archive_row = nb.Frame(frame)
-        archive_row.grid(row=5, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 4))
-        nb.Label(archive_row, text="Keep previous ticks for").grid(row=0, column=0)
-        tk.Spinbox(
-            archive_row, from_=1, to=MAX_ARCHIVE_DAYS, width=4, textvariable=self._archive_days_var,
-        ).grid(row=0, column=1, padx=6)
-        nb.Label(archive_row, text=f"days (1-{MAX_ARCHIVE_DAYS})").grid(row=0, column=2)
-
     def save_settings(self) -> None:
-        if self._enabled_var is None:
+        if self._tick_enabled_var is None:
             return
-        config.set(_CFG_ENABLED, self._enabled_var.get())
-        if self._tick_enabled_var is not None:
-            config.set(_CFG_TICK_ENABLED, self._tick_enabled_var.get())
-        if self._archive_days_var is not None:
-            try:
-                days = int(self._archive_days_var.get())
-            except ValueError:
-                days = DEFAULT_ARCHIVE_DAYS
-            config.set(_CFG_ARCHIVE_DAYS, str(max(1, min(MAX_ARCHIVE_DAYS, days))))
+        config.set(_CFG_TICK_ENABLED, self._tick_enabled_var.get())
         self._apply_setting_change()
 
 

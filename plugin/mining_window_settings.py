@@ -1,6 +1,6 @@
-"""Mining's display and tuning settings, set in the Space Mining and Surface Mining windows as well as in Settings → WFMT → Mining.
+"""Mining's display and tuning settings, set in the Space Mining and Surface Mining windows (and nowhere else: the Settings → WFMT → Mining tab says where they went).
 
-Both places read and write the same saved values, so a change in either shows in the other: the windows build a **Settings** card from `FIELDS` below, each box or
+The windows build a **Settings** card from `FIELDS` below, each box or
 tick saves at once (a box when you press Enter or click away), and the panel and every open window redraw. The panel registers a listener that also updates the Settings tab's
 own variables (`add_listener`). The opt-in lookups (the switches that let WFMT ask Spansh or EDSM) stay in Settings only: they are permissions, not display choices.
 

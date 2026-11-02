@@ -190,6 +190,7 @@ class ExpeditionController:
 
     # --- Settings tab (the same switch as the panel's "Copy on arrival" tick) ---------------------------------------
     def build_settings(self, notebook: nb.Notebook) -> None:
+        """The Expedition settings are on the Settings strip at the top of the Expedition window; this tab only says so."""
         frame = nb.Frame(notebook)
         frame.columnconfigure(0, weight=1)
         notebook.add(frame, text="Expedition")
@@ -197,42 +198,21 @@ class ExpeditionController:
         nb.Label(
             frame,
             text=("The Expedition planner (the Expedition window, opened with Expedition on the Exploration panel) keeps a list of stops and tracks your progress "
-                  "along it. Everything comes from your journal; nothing is sent anywhere."),
+                  "along it. Everything comes from your journal; nothing is sent anywhere. Copying the next stop on every arrival, and starting the Expedition Log "
+                  "with an expedition, are on the Settings strip at the top of that window (the first is also the Copy on arrival tick on the Exploration panel)."),
             wraplength=440, justify=tk.LEFT,
-        ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-        self._settings_autocopy = tk.BooleanVar(value=autocopy_enabled())
-        nb.Checkbutton(frame, text="Copy the next stop's system name to the clipboard every time I arrive anywhere",
-                       variable=self._settings_autocopy).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-        nb.Label(frame, text="This is the same switch as the Copy on arrival tick on the Exploration panel. Off by default.",
-                 wraplength=440, justify=tk.LEFT).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(0, 10))
-        self._settings_start_log = tk.BooleanVar(value=start_log_enabled())
-        nb.Checkbutton(frame, text="Start the Expedition Log when I start an expedition",
-                       variable=self._settings_start_log).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-        nb.Label(frame, text=("The expedition and its Expedition Log run then start, pause and stop together, and the expedition shows the run's time. "
-                              "On by default."),
-                 wraplength=440, justify=tk.LEFT).grid(row=5, column=0, sticky=tk.W, padx=10, pady=(0, 10))
-
-    def _on_window_setting(self) -> None:
-        """A tick was changed in the Expedition window: show it on the panel and on the Settings tab (if that tab is built)."""
-        held = {"_autocopy_var": autocopy_enabled(), "_settings_autocopy": autocopy_enabled(), "_settings_start_log": start_log_enabled()}
-        for name, state in held.items():
-            var = getattr(self, name, None)
-            if var is not None:
-                try:
-                    var.set(state)
-                except tk.TclError:
-                    pass
+        ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 10))
 
     def save_settings(self) -> None:
-        settings_var = getattr(self, "_settings_autocopy", None)
-        if settings_var is None:
-            return
-        log_var = getattr(self, "_settings_start_log", None)
-        if log_var is not None:
-            config.set(_CFG_START_LOG, bool(log_var.get()))
-        config.set(_CFG_AUTOCOPY, bool(settings_var.get()))
+        """Nothing to save: the ticks are saved as they are changed."""
+
+    def _on_window_setting(self) -> None:
+        """A tick was changed in the Expedition window: show it on the panel's Copy on arrival tick."""
         if self._autocopy_var is not None:
-            self._autocopy_var.set(bool(settings_var.get()))        # the panel's tick follows at once
+            try:
+                self._autocopy_var.set(autocopy_enabled())
+            except tk.TclError:
+                pass
 
     def system(self) -> str:
         """The system the commander is in, or an empty string when it is not known yet."""

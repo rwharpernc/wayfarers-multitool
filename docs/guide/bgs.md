@@ -6,7 +6,7 @@ tracks faction states, and the effect of your own missions, bounties, trade, exp
 **Work in progress.** BGS tracking is still being built, and I'd really appreciate your feedback. If something
 looks wrong, or you have a suggestion, please [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
-There is nothing to set up: it records wherever you act. BGS is on by default (**Settings → WFMT → BGS**); with it turned off the panel says `BGS tracking is disabled — see Settings.`
+There is nothing to set up: it records wherever you act. BGS is on by default (the Settings card at the top of the BGS Report window); with it turned off the panel says `BGS tracking is disabled — see Settings.`
 
 **On this page:** [How to](#how-to) · [The panel](#the-panel) · [What it counts](#what-it-counts) ·
 [The BGS Report window](#the-bgs-report-window) · [Resets and history](#resets-and-history) ·
@@ -156,7 +156,7 @@ Tabs show the last 6 systems you've been in (the one you're in first), each with
 ## Resets and history
 
 - The totals **reset at each tick**, and the closed tick is archived: the panel starts over and the closed tick moves into the TICK drop-down.
-- The archive keeps **7 days** of closed ticks by default (1 to 90 in Settings); older ones are dropped.
+- The archive keeps **7 days** of closed ticks by default (1 to 90 on the Report window's Settings card); older ones are dropped.
 - When EDMC starts, WFMT re-reads your last few journals, so the totals are cumulative since the tick even if EDMC
   wasn't running the whole time.
 - **Play made while EDMC was closed still reaches the history.**
@@ -198,14 +198,9 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 ## Settings
 
-**Settings → WFMT → BGS**:
+BGS has two places for settings:
 
-- **Show BGS faction states and activity**: BGS on or off (on by default),
-- **Detect BGS ticks (polls tick.infomancer.uk every 60s)**: tick detection on or off (on by default). Without it the totals never reset on their own and the journals are not replayed,
-- **Keep previous ticks for N days (1-90)**: how long closed ticks stay in the archive (default 7).
-
-Settings take effect when you close the Settings window.
-
-**Also in the BGS Report window.** A **Settings** card at the top of the report holds *Show BGS faction states and activity* and *Keep previous ticks for (days)*, the same saved values: a change in either place shows in the other, and in the report a tick saves when you click it and the days when you press Enter or click away. Tick detection is not on the card, because it is the one lookup BGS makes; it stays in Settings → WFMT → BGS.
+- **The Settings card at the top of the BGS Report window** (press **Report** on the BGS panel): *Show BGS faction states and activity* (BGS on or off, on by default) and *Keep previous ticks for (days)* (1 to 90, how long closed ticks stay in the archive, default 7). A tick saves when you click it and the days when you press Enter or click away.
+- **Settings → WFMT → BGS**: *Detect BGS ticks (polls tick.infomancer.uk every 60s)*, tick detection on or off (on by default). Without it the totals never reset on their own and the journals are not replayed. It stays in Settings because it is the one lookup BGS makes.
 
 More detail: [BGS specification](../BGS_TECH_SPEC.md).

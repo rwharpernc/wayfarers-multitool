@@ -122,14 +122,14 @@ first trade to last trade). Under it are **Bought** and **Sold** (tons and credi
   own line)
 - **Rearm** (ammunition, and restocking an SRV or fighter)
 - **Limpets** (bought, less any sold back)
-- **Fines and bounties paid** (only if you turn it on in Settings; see below)
+- **Fines and bounties paid** (only if you turn it on in the Session window; see below)
 
 Once you've spent anything, the headline becomes **Net profit**: trade profit less those costs. The credits per hour is the net. The trade profit and each cost are listed under it.
 
 What is not counted as a cost:
 
 - Insurance rebuys.
-- Fines and bounties you pay off, because a fine usually has nothing to do with your trading. Tick **Count fines and bounties I pay as a running cost** in Settings to count them. Turning it on counts payments from then on, not ones already made.
+- Fines and bounties you pay off, because a fine usually has nothing to do with your trading. Tick **Count fines and bounties I pay as a running cost** in the Session window to count them. Turning it on counts payments from then on, not ones already made.
 
 A cost only counts once WFMT has seen it.
 
@@ -218,7 +218,7 @@ You spent the evening hauling Tritium and finished at the carrier.
   saved, so it survives switching commander and restarting EDMC, and it is brought up to date from journals written
   while EDMC was closed. A commander who has never docked has none, and the page says so.
 - *Cargo size and credits:* from the game.
-- *Jump range:* your ship's **unladen** range. Lower it in Settings if a full hold jumps shorter.
+- *Jump range:* your ship's **unladen** range. Lower it with **Jump range** in the Routes window if a full hold jumps shorter.
 - *Pad size:* if your ship needs a large pad, only stations with one are considered.
 
 Before you search, the page shows what it will use (start, ship, cargo, jump range, budget), so you can check it.
@@ -245,12 +245,12 @@ If the first destination is Example System, that is the name now on your clipboa
 
 ### Hops
 
-The Routes window has a **Routes** box at the top with what the search asks Spansh for: **Hops**, **Furthest from the star (ls)**, **Jump range (ly, blank = my ship's)**, **Ignore prices older than (hours)**, and ticks for **Systems that need a permit**, **Fleet carriers**, **Ground facilities** and **Large landing pad only**. Under **Round trip** are **Least supply to buy**, **Least demand to sell**, **Search radius** and **Carry only this commodity**. A box saves when you press Enter or click away; a tick saves at once. They are the same settings as Settings → WFMT → Trade, so a change in either shows in the other.
+The Routes window has a **Routes** box at the top with what the search asks Spansh for: **Hops**, **Furthest from the star (ls)**, **Jump range (ly, blank = my ship's)**, **Ignore prices older than (hours)**, and ticks for **Systems that need a permit**, **Fleet carriers**, **Ground facilities** and **Large landing pad only**. Under **Round trip** are **Least supply to buy**, **Least demand to sell**, **Search radius** and **Carry only this commodity**. A box saves when you press Enter or click away; a tick saves at once. These settings are only in the window, not in Settings → WFMT → Trade (see [Trade settings](#trade-settings) for the whole list and where each one is).
 
-The other Trade settings are in the windows they belong to, again the same as Settings → WFMT → Trade: **Ship size (landing pad)** in both the Routes and Market windows, the **'Near me' search radius (ly)** in the Market window, and **Count fines and bounties I pay as a running cost** in the Session window. Only the Spansh lookups switch, the carrier choice for each commander and the other checkboxes in Settings stay there.
+The other Trade settings are in the windows they belong to too: **Ship size (landing pad)** in both the Routes and Market windows, **Fleet carriers** and **Ground facilities** also in Market, the **'Near me' search radius (ly)** in the Market window, and **Count fines and bounties I pay as a running cost** in the Session window.
 
 The **Hops** button shows the current length (for example `Hops: 3`). Each press cycles it from 2 up to 10 and then back to 2. It
-is the same setting as *Route hops* in Settings, which accepts 1 to 10.
+is the same value as the **Hops** box in the Routes window, which accepts 1 to 10.
 
 **2 hops** is the choice for a back-and-forth pair. When the route ends at the station it started from and every leg
 carries cargo, the result is headed "repeatable loop" and says you can fly it again. With 2 hops that do not make a pair, the page says
@@ -264,7 +264,7 @@ back-and-forth pair itself.
 How it works, in plain terms:
 
 1. It asks Spansh for the markets of the nearest stations (up to 300, within twice your jump range, but never less
-   than 20 ly or more than 100 ly, unless you set a search radius in Settings).
+   than 20 ly or more than 100 ly, unless you set a search radius in the Routes window).
 2. For each neighbor, it works out what to carry out and what to bring back.
 3. A pair only counts when **both legs make a profit, so you never fly empty**.
 4. Each leg fills the hold with the most profitable commodity first and tops up with the next, limited by the supply
@@ -299,7 +299,7 @@ calculated, so you can tell a busy Spansh from a stalled search. **Cancel** stop
 
 Finds where to **sell** or where to **buy** a commodity.
 
-The **Commodity** box, the **Sell** / **Buy** buttons beside **I want to** and the search buttons under them (**Near me**, **Galaxy**, **Best picks**, **Price finder**, after **Then search**) work only once the Spansh lookups are switched on. Without them the buttons are grayed out and the window tells you to turn them on in Settings → WFMT → Trade.
+The **Commodity** box, the **Sell** / **Buy** buttons beside **I want to** and the search buttons under them (**Near me**, **Galaxy**, **Best picks**, **Price finder**, after **Then search**) work only once the Spansh lookups are switched on. Without them the buttons are grayed out and the window tells you to turn them on in Settings → WFMT → Trade (the Spansh lookups switch, which stays there).
 
 1. **Choose Sell or Buy** with the **I want to** buttons under the Commodity box (the lit one is chosen). It is remembered.
 2. **Pick a commodity.** Click the **Commodity** box and start typing. Enter in the box runs **Near me**. Suggestions fill in as you type: first what
@@ -337,7 +337,7 @@ with no landing pad your ship fits are left out.
 you arrive. They are asked for separately and weighted about one carrier to every three stations, so cheap carriers
 never crowd the real stations out of the list. A line says when a carrier would beat the best station.
 
-In **Settings → WFMT → Trade** you can stop searching for fleet carriers, for **ground facilities** (planetary ports
+In the Routes and Market windows you can stop searching for **Fleet carriers**, for **Ground facilities** (planetary ports
 and outposts, and settlements), or both, which leaves only stations in space.
 
 ### Best picks
@@ -520,12 +520,12 @@ it goes away.
   Markets older than 30 days are ignored; check the market when you arrive.
 - **Spansh doesn't know fleet carriers as route starts**, so a route never starts from your carrier. Dock at a real
   station first, or accept the last station you docked at.
-- **Fleet carriers in results can jump away**, so they are listed apart and marked. Switch them off in Settings if you
+- **Fleet carriers in results can jump away**, so they are listed apart and marked. Switch them off in the Routes or Market window if you
   only want fixed stations.
-- **Jump range is your ship's unladen range.** A full hold jumps shorter, so lower it in Settings if routes are too
+- **Jump range is your ship's unladen range.** A full hold jumps shorter, so lower **Jump range** in the Routes window if routes are too
   long.
 - **Commodity names must match the game exactly** ("Void Opal", not "Void Opals"). Pick from the suggestion list.
-- **The landing pad size is worked out from your ship** and can be wrong for unusual ships. Override it in Settings.
+- **The landing pad size is worked out from your ship** and can be wrong for unusual ships. Override it with **Ship size** in the Routes or Market window.
 - **Spansh can be slow or refuse a search.** Cancel and try again later; the page shows its reason. WFMT retries a busy answer a few times, and after repeated failures stops asking Spansh for five minutes and says so.
 
 ### Watch list
@@ -542,7 +542,7 @@ it goes away.
 - **Squadron carriers.** We assume a squadron carrier's space report matches a fleet carrier's. No real one was
   available to check, so treat its figures with care and report anything odd.
 - **Ship pad sizes** come from Coriolis data and a partly hand-written name map. A ship that doesn't match shows
-  **Landing pad: Unknown** and is not filtered. Set the size yourself in Settings.
+  **Landing pad: Unknown** and is not filtered. Set the size yourself with **Ship size** in the Routes or Market window.
 - **Spansh's route planner can filter for large pads but not medium ones.** If your ship needs a medium pad, check
   the pad at each stop.
 - **A price can't be shown as current**, only that the market was updated in the last 30 days.
@@ -608,25 +608,32 @@ Copying these between computers is not needed and not recommended.
 
 ## Trade settings
 
-**Settings → WFMT → Trade** (the number settings are grouped under **Routes**, **Round trips** and **Market** headings; a number typed outside its range snaps back inside it when you leave the box):
+Trade's settings are in two places. A number typed outside its range snaps back inside it, a box saves when you press Enter or click away, and a tick saves at once.
+
+**In Settings → WFMT → Trade:**
 
 | Setting | Default | Notes |
 |---|---|---|
-| Enable Spansh trade lookups | Off | The Routes and Market pages do nothing without it. |
-| Route hops | 3 (range 1 to 10) | Also set by the **Hops** button. |
-| Max distance from the star | 5,000 ls (1 to 1,000,000) | For Routes. |
-| Jump range override | blank | Blank uses your ship's unladen range. |
-| Only stations with a large landing pad | Off | Leaves out stations without a large pad, in Routes. |
-| Round trips: least supply / least demand | 200 t each | Leaves thin markets out. |
-| Round trips: carry only this commodity | blank (anything) | Type a commodity name (case does not matter) and both legs of a round trip carry only that. A pair counts only if it trades that commodity at a profit in both directions, so expect fewer results. |
-| Round trips: search radius | 0 (from my jump range) | How far around your start to look, in light years. 0 uses twice your ship's jump range, between 20 and 100 ly. Any number from 5 to 500 is used as given; the search reads at most the nearest 300 stations. |
-| Routes: **Ignore prices older than** | 72 hours (0 = any age, up to 8,760) | |
-| Routes may use systems that need a permit | Off | |
-| "Near me" price search radius | 100 ly (1 to 100,000) | Also the Watch list refresh radius (limited to 5 to 5,000 ly there). |
-| Include fleet carriers / ground facilities | On / On | Applies to prices **and routes**. |
-| Ship size (landing pad) | From my ship | Or Small, Medium or Large if it guesses wrong. |
-| Count fines and bounties I pay as a running cost | Off | Adds a **Fines and bounties paid** line to the costs; only payments made after you tick it. |
+| Enable Spansh trade lookups | Off | The Routes and Market windows do nothing without it. It is the permission to contact Spansh, so it stays in Settings. |
 | Carrier choice, per commander | Auto | See above. |
+
+**In the windows**, where you use them:
+
+| Window | Setting | Default | Notes |
+|---|---|---|---|
+| Routes | Hops | 3 (range 1 to 10) | Also set by the **Hops** button. |
+| Routes | Furthest from the star (ls) | 5,000 (1 to 1,000,000) | |
+| Routes | Jump range (ly, blank = my ship's) | blank | Blank uses your ship's unladen range. |
+| Routes | Ignore prices older than (hours) | 72 (0 = any age, up to 8,760) | |
+| Routes | Systems that need a permit | Off | |
+| Routes and Market | Fleet carriers, Ground facilities | On, On | In Routes they apply to routes; in Market to price results and Best picks. Both windows hold the same setting. |
+| Routes | Large landing pad only | Off | Leaves out stations without a large pad, in Routes. |
+| Routes and Market | Ship size (landing pad) | From my ship | Or Small, Medium or Large if it guesses wrong. |
+| Routes, Round trip | Least supply to buy, Least demand to sell | 200 t each | Leaves thin markets out. |
+| Routes, Round trip | Search radius (ly, 0 = from jump range) | 0 | How far around your start to look. 0 uses twice your ship's jump range, between 20 and 100 ly. Any number from 5 to 500 is used as given; the search reads at most the nearest 300 stations. |
+| Routes, Round trip | Carry only this commodity | blank (anything) | Type a commodity name (case does not matter) and both legs of a round trip carry only that. A pair counts only if it trades that commodity at a profit in both directions, so expect fewer results. |
+| Market | 'Near me' search radius (ly) | 100 (1 to 100,000) | Also the Watch list refresh radius (limited to 5 to 5,000 ly there). |
+| Session | Count fines and bounties I pay as a running cost | Off | Adds a **Fines and bounties paid** line to the costs; only payments made after you tick it. |
 
 See [what goes on the internet](internet-and-privacy.md) for exactly what is contacted, and the
 [Trade specification](../TRADE_TECH_SPEC.md) for how it all works.

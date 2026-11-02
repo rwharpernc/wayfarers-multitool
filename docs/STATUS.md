@@ -3,11 +3,12 @@
 Read this first when picking the project up on a machine that has not seen the recent work (for example the Linux test machine).
 
 - It is kept in Git because Git is the only thing shared between the two test machines, one Windows and one Linux.
-- Last updated 2026-10-31.
+- Last updated 2026-11-02.
 
 ## Release
 
-- **1.4.2** is the version number in `plugin/__init__.py` and `package.json`. It is prepared and not yet tagged or published. It is a patch on 1.4.1: Where to Buy gets a Suggested route tab and a Closest stations tab, a route order list (shortest flight, smallest or largest purchase first, farthest first), sections that start minimized with Expand all and Minimize all, a large message while a search runs, and a body and data age on each stop; the Colony page gets a Body line, a Commodities line in done, partly and working on it, and three biggest gaps; the Mining and Missions mode buttons are now Mine and Mission.
+- **1.5.0** is the version number in `plugin/__init__.py` and `package.json` on the branch `feature/ux-improvements`, which is built for testing on Windows and Linux and is not merged, tagged or published. It replaces the ◀ ▶ pages with windows (Trade, Mining, Missions), moves the display and tuning settings of Trade, Mining, Missions, Powerplay, BGS, Inventory, Colonization (the reporting choices) and Exploration (three windows) out of File → Settings into the windows that use them, adds running and whole-route totals and the average per leg to Routes, and forgets a scrapped fleet carrier. The changelog has the full list. Until it is published, anyone on 1.4.2 is not offered it by the updater.
+- **1.4.2** was tagged and published (tag `v1.4.2`). It is a patch on 1.4.1: Where to Buy gets a Suggested route tab and a Closest stations tab, a route order list (shortest flight, smallest or largest purchase first, farthest first), sections that start minimized with Expand all and Minimize all, a large message while a search runs, and a body and data age on each stop; the Colony page gets a Body line, a Commodities line in done, partly and working on it, and three biggest gaps; the Mining and Missions mode buttons are now Mine and Mission.
 - **1.4.1** was tagged and published on 2026-11-01. It is the next release after 1.3.3: the 1.4.0 version number was prepared but never published, so its changes are part of 1.4.1. It adds Where to Buy's own-system-first search and presets, the Engineers tab's path to unlock, status colors, formatted details, a Works on column and requirement checks against your journal, the Engineers button, Where to Buy's shopping trip (flying order, next-stop card) and filters, copying overlay choices from another commander, a separate diagnostic log and window tooltips, recognizes more NPC lines in the Interdiction Warning, makes the Route overlay follow a recalculated route, and brings three engineer requirements (Wellington Beck, Kit Fowler, Hero Ferrari) in line with Frontier's update 18.08. The full list is in [CHANGELOG.md](../CHANGELOG.md). It has had the Docker tests on Linux (3,850 pass, 13 skipped) and no in-game pass yet.
 - **1.3.3** was released on 2026-10-30 (tag `v1.3.3`) from the `bugfix/1.3.3` branch, which was merged into `master` and deleted.
   - 1.3.3 adds the Powerplay overlay card (Settings → Overlays → Powerplay): your Power, rank and merits, the cycle's merits, the system's state and holder, what merits there count as, and the merits and estimated Control Points earned there this session, with **No Powerplay Detected in system** where the game gives no Powerplay data.
@@ -25,12 +26,12 @@ Read this first when picking the project up on a machine that has not seen the r
   - The project was renamed Wayfarer's Multitool (WFMT) and its version history restarted at 1.0.0 on 2026-10-21.
   - Everything built up to 2026-10-26 is the first release, published as 1.0.0.
   - The checks to run first are in [TEST_PLAN.md](TEST_PLAN.md), and the open in-game checks are in [TODO.md](TODO.md).
-- The latest published release is 1.4.1, published on 2026-11-01 (1.4.2 is prepared; 1.3.3 was published on 2026-10-30, 1.3.2, 1.3.1 and 1.3.0 were published on 2026-10-29, 1.2.0 was published on 2026-10-28, 1.1.0 on 2026-10-27 and 1.0.0 on 2026-10-26), and the repository is public.
+- The latest published release is 1.4.2 (1.4.1 was published on 2026-11-01; 1.3.3 was published on 2026-10-30, 1.3.2, 1.3.1 and 1.3.0 were published on 2026-10-29, 1.2.0 was published on 2026-10-28, 1.1.0 on 2026-10-27 and 1.0.0 on 2026-10-26), and the repository is public.
   - The in-app updater and the README's "latest release" link read GitHub's public releases API.
 
 ## Branches
 
-There is one long-lived branch, `master`.
+There is one long-lived branch, `master`, and the feature branch `feature/ux-improvements` (version 1.5.0), which is ahead of `master` and waits for testing.
 
 - A release is built on a branch named for it (`release/1.3.0` was the last; 1.3.1, 1.3.2 and 1.3.3 were fixes on `bugfix/1.3.1`, `bugfix/1.3.2` and `bugfix/1.3.3`), merged fast-forward into `master` and deleted after it is tagged.
 - For a fix to a released version, cut a short branch from `master` (for example `bugfix/1.3.4`), and merge it back.

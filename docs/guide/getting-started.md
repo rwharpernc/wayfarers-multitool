@@ -87,9 +87,9 @@ releases (a draft or a pre-release is ignored). The **Release notes** link on th
 4. **When it takes effect.** The new files are staged now and run when EDMC starts again; nothing is swapped into a running program. Restart EDMC when you are ready.
 5. **If it fails.** A failed check or download is written to EDMC's log and tried again at the next start. The panel is unchanged. Extracting the ZIP by hand always works.
 
-The first line under the mode buttons always says which version you are running (**Plugin: v1.4.2**).
+The first line under the mode buttons always says which version you are running (**Plugin: v1.5.0**).
 
-- While an update is coming it says, for example, **Plugin: v1.4.2 (downloading v1.4.3...)**.
+- While an update is coming it says, for example, **Plugin: v1.5.0 (downloading v1.4.3...)**.
 - Once the update is downloaded it turns bold black on **orange** and reads **the new version's number, then download - Restart EDMC**.
 - The update only takes effect when EDMC starts again; nothing is swapped in while it runs.
 - After the restart the line shows the new version with **(updated)** after it, in green for 15 seconds.
@@ -136,7 +136,7 @@ mining and flip to Trade to check a price, your mining stats keep counting.
 
 Just under the mode buttons, above the page itself, WFMT shows these lines, on every mode:
 
-- **Plugin**: the version you are running, for example `Plugin: v1.4.2` (see "Updating" for what it says during an update). Click it to open the latest release's page.
+- **Plugin**: the version you are running, for example `Plugin: v1.5.0` (see "Updating" for what it says during an update). Click it to open the latest release's page.
 - **Game mode**: `You are in Open mode.`, `You are in Solo mode.` or `You are in Private Group mode (the group's name).` Until the game has logged in it reads `Game mode: waiting for login…`.
 - **Credits this session**: what you've earned or lost since you logged in, for example `Credits this session: +1,234,567 cr earned (+411,522 cr/hr)`, `Credits this session: -5,000 cr lost` or `Credits this session: no change yet`. It is your balance now minus your balance at login (`waiting for your balance…` until EDMC has told WFMT the balance).
   - The hourly rate appears once the session is about three minutes old.
@@ -237,20 +237,20 @@ adds what is new, so nothing is counted twice:
 
 | Feature | What it catches up on | How far back |
 |---|---|---|
-| **Trade** | Session tally, stock, carrier figures, route start | New or grown journal files, every minute |
-| **Powerplay** | Merits and Control Points | The gap since EDMC last saw the journal (up to the scan depth in Settings) |
-| **BGS** | Your effect on factions this tick | From the start of the tick |
-| **Missions** | Active missions, kill progress, cargo progress, Community Goals | The last 2 weeks |
-| **Colonization** | Deliveries (also counted into your history) and sites docked at, and transfers to your fleet carrier (its FC column) | 14 days, or back to your oldest site (30 days at most); the delivery history is also rebuilt once from every journal |
+| **Trade** | *Enable Spansh trade lookups* (off) and the carrier choice for each commander. The search numbers, the ticks (large pad, fleet carriers, ground facilities, permits), the ship size, *Count fines and bounties* and the Round trip settings are in the Routes, Market and Session windows | [Trade settings](trade.md#trade-settings) |
+| **Powerplay** | Nothing to set: a note pointing to the Settings tab of the Powerplay Sessions window, which holds *CP Ratios* (merits for 1 Control Point: Acquisition 4.0, Reinforcement 2.5, Undermining 4.2), the *Copy Progress* format and *Cycles to scan* (1 to 12, 4 by default) | [Powerplay settings](powerplay.md#settings) |
+| **BGS** | *Detect BGS ticks (polls tick.infomancer.uk every 60s)* (on). *Show BGS faction states and activity* and *Keep previous ticks for [n] days* are on the Settings card of the BGS Report window | [BGS settings](bgs.md#settings) |
+| **Missions** | Nothing to set: a note pointing to the Display card of the Mission types window, which holds the six display switches (all on by default) | [Missions settings](missions.md#settings) |
+| **Colonization** | The Raven Colonial group: *Allow WFMT to write to Raven Colonial (master switch)* (off), and your *Raven Colonial key* (hidden as you type) with **Test key**, and a link to the page where the key is made. What is reported once the switch is on (*Report my construction progress and deliveries*, *Also report cargo I move to and from my fleet carrier*) is chosen on the Raven Colonial strip of the Colonization Sites window, where its two ticks stay grayed out until the master switch is on | [Colonization](colonization.md#sharing-your-progress-with-raven-colonial) |
 | **Codex Completionist** | Codex finds, for the active commander | Everything since the last find it counted |
 | **System targets, Body info and the Exploration Dashboard** | The survey of the system you are in: the bodies you scanned, mapped and analyzed there, including a system you scanned while EDMC was closed | The journals that hold your visits to that system, when you log in or when EDMC starts |
 | **Your ship** (Route Planner, fuel percentage, jump range, landing-pad size) | The ship you are flying, from the last `Loadout` in your newest journal | When EDMC starts with the game already running |
-| **Organic Scanning** | The progress of each species you logged, sampled or analyzed (the stage, not the position of a sample), and the conditions, genera and first-footfall flag of bodies scanned with EDMC closed, so the prediction works when you land | The last 14 days; a sample is skipped if its body is not named in them |
+| **Organic Scanning** | *Show predicted species and scan progress* (on). *Keep a record of what I find, to check the prediction* (on) and **Clear the record...** are on the Settings strip of the Prediction review window. See [Exobiology](exobiology.md) |
 | **Boxel Survey** | Systems you arrived at, and the notable bodies and biological signals you scanned (systems new to the survey log; a system it already had keeps its scanned count) | The last 14 days |
-| **Mining** | The run in progress (the pages); every earlier run (the Mining History window); the rings (the Space Mining Book) and the bodies with mining locations or Rhino mining (the Surface Mining Book's *From your journals* group) | The current journal file for the pages; every journal for the history and the two books, read once in the background (a notice says so) and then only the new ones |
+| **Mining** | The three opt-in lookups, *Enable body lookup*, *Archive completed mining runs*, the Surface Live simulation and the saved Known Surface Hotspots list. The display switches, target commodities, minimap, stop radius, rig gap and refill time are on the Settings card of the Space Mining and Surface Mining windows | [Mining settings](mining.md#settings) |
 | **Carrier Route** | Your carrier's place, the tritium in its tank and the space it uses | The last 30 days, when the Carrier Route window first opens |
 | **Exploration Value** | Region, system scan progress, last data sales | The current journal file |
-| **Inventory** | Backpack and ship locker | Taken from EDMC's own rebuilt state |
+| **Inventory** | Nothing to set: a note pointing to the Settings tab of the Inventory window (the *Pillage message*, *Play a sound on pickup*, *Announce pickups for* and the per-loadout backpack capacities). The overlay switches are on the Overlays tab. See [Inventory](operations.md#inventory) |
 | **Credits line** | The session, if it is the same journal file | The saved session |
 | **Credits Ledger** | Sales, data, mission rewards and vouchers earned while EDMC was closed; the first time a commander is seen it is rebuilt once from every journal | Every journal once, then only what is newer than the last event it counted |
 
@@ -282,7 +282,7 @@ To tell that a catch-up ran, look in EDMC's log (`EDMarketConnector-debug.log`, 
 
 ## Settings
 
-All of WFMT's settings live in EDMC's Settings window: **File → Settings → WFMT**. This section lists every tab, what is on it and what it starts as. The mode guides describe what each setting does in use (their "Settings" sections), and [Setting up the overlay](../OVERLAY_SETUP.md) goes through every Overlays tab.
+Most of WFMT's settings live in EDMC's Settings window: **File → Settings → WFMT**. The display and tuning settings of the modes that have windows (Trade, Mining, Missions, Powerplay, BGS, Inventory, Colonization's reporting choices, and three Exploration windows) are on a Settings card, strip or tab inside those windows instead, and a tab here that used to hold them now says where they went. What stays here are the switches that let WFMT contact another service, the keys and per-commander choices, the overlay tabs, and everything in General. This section lists every tab, what is on it and what it starts as. The mode guides describe what each setting does in use (their "Settings" sections), and [Setting up the overlay](../OVERLAY_SETUP.md) goes through every Overlays tab.
 
 **How Settings behaves**
 
@@ -335,11 +335,11 @@ All of WFMT's settings live in EDMC's Settings window: **File → Settings → W
 |---|---|
 | **Auto-Honk** | *Enable Auto-Honk* (off); *Fire button* Primary or Secondary (Secondary); *Hold (sec)* (10); *Focus game window first* (on); *Skip systems already visited* (on); on Linux, *Elite Wine/Proton prefix* (blank means auto-detect Steam); **Rescan** and **Test Honk Now**, which work even while Auto-Honk is off. See [Auto-Honk](exploration.md#auto-honk) |
 | **Boxel Survey** | *Auto-copy next target to clipboard on jump* (on); *Skip systems already visited this session* (on); *Skip systems already visited by anyone (EDSM)* (off); *Skip systems already fully scanned in EDSM* (off); *Confirm off-sequence arrivals against EDSM* (off); **Export Survey Log**; and for the Random button, **Clear Visited Systems Log** and *Systems to request from Spansh* (10 to 100, 25 by default) |
-| **Expedition** | *Copy the next stop's system name to the clipboard every time I arrive anywhere* (off; the same switch as **Copy on arrival** on the panel); *Start the Expedition Log when I start an expedition* (on) |
+| **Expedition** | Nothing to set: a note pointing to the Settings strip across the top of the Expedition window (*Copy the next stop on every arrival*, off, the same as **Copy on arrival** on the panel; *Start the Expedition Log with an expedition*, on) |
 | **Exploration Value** | *Show estimated scan value, system age, and current region* (on); *Show ELW rarity comparison when you scan an Earthlike World (Spansh)* (off); *Show EDSM upload status when you select a system on the galaxy map (EDSM)* (off) |
 | **Nearest place to land** | *Allow this lookup: pressing Find sends Spansh my position, the pad size and my choices, nothing else* (off; the same switch as the tick in the window) |
 | **Organic Scanning** | *Show predicted species and scan progress* (on); *Keep a record of what I find, to check the prediction* (on) and **Clear the record...** (both are also at the top of the Prediction review window, as the same settings). See [Exobiology](exobiology.md) |
-| **POI Reference** | Three groups on one page: edastro GEC (information only), Canonn (*Include Thargoid sites* on, *Include Guardian sites* on, *Skip sites already logged in Codex Completionist* on) and Codex Completionist (*Track codex entries*, on) |
+| **POI Reference** | Three groups on one page: edastro GEC (information only), Canonn (*Include Thargoid sites* on, *Include Guardian sites* on, *Skip sites already logged in Codex Completionist* on) and Codex Completionist (a *View Canonn Codex* link; *Track codex entries*, on, is on the Settings strip of the My Codex window) |
 | **Region Sweep** | *Auto-copy next target to clipboard on jump* (on); *Skip systems already visited this session* (on); *Skip systems already visited by anyone (EDSM)* (off); *Require a full FSS scan (not just arrival) to mark a system complete* (off); *Auto-discover more nearby cubes (EDSM) when the queue is running low* (off) |
 | **Waypoint Route** | *Auto-copy next waypoint to clipboard on jump* (on) |
 

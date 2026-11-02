@@ -109,7 +109,7 @@ Spec: [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md)
 | `megaship_scans.py` | Megaship scans for the Powerplay cycle: reads the journal (`DataScanned` uplink, `SupercruiseDestinationDrop`, the FSS megaship list, `PowerplayMerits`) to say which megaship was scanned, where, and what it earned; no Tk |
 | `powerplay_ledger.py` | The per-commander, per-system, per-cycle ledger of what you did and how each system moved, and the megaships scanned each cycle (`live_view()` feeds the panel's cycle tally) |
 | `powerplay_megaships_tab.py` | The Megaships tab of the Powerplay Sessions window: one row per megaship scanned, cycle by cycle |
-| `powerplay_settings_tab.py` | The Settings tab of the Powerplay Sessions window: merits per CP, the Copy Progress format and the cycles to scan, on the same saved values as Settings → WFMT → Powerplay |
+| `powerplay_settings_tab.py` | The Settings tab of the Powerplay Sessions window: merits per CP, the Copy Progress format and the cycles to scan (set only there) |
 | `powerplay_state.py` | JSON persistence for that ledger |
 | `powerplay_systems_tab.py` | The Systems tab of the Powerplay Sessions window |
 | `powerplay_window.py` | The Powerplay Sessions window (current session, systems, cycles, daily, megaships, history) |
@@ -243,7 +243,7 @@ Spec: [MINING_TECH_SPEC.md](MINING_TECH_SPEC.md)
 | `mining_ground.py` | Ground type of a body and your own base rates of deposits on it |
 | `mining_history.py` | The commander's mining runs, read from their journals in the background and saved per commander (`mining_history.json`); the newest journal is read afresh and never saved; no Tk |
 | `mining_history_data.py` | The Mining History window's tiles, fields and tables, worked out from the saved runs; no Tk |
-| `mining_window_settings.py` | Mining's display and tuning settings (session totals, cargo bar, prospector hints, coverage minimap, stop radius, rig gap, refill time, target commodities) as a Settings card in the Space Mining and Surface Mining windows, on the same saved values as Settings → WFMT → Mining |
+| `mining_window_settings.py` | Mining's display and tuning settings (session totals, cargo bar, prospector hints, coverage minimap, stop radius, rig gap, refill time, target commodities) as a Settings card in the Space Mining and Surface Mining windows (set only there) |
 | `mining_live_window.py` | The Mining live window (the Live button on each Mining page): on the Surface page a radar centered on the Rhino, the panel's lines and the Mark center, Mark border, Add hotspot and Import/export controls; on the Space page the panel's lines and the lookups; drawn by the same code as the panel, no overlay needed |
 | `mining_history_window.py` | The Mining History window (the Dashboard button in Mine mode) |
 | `mining_market.py` | The open station market set against the galactic average: a line for each commodity the run refined that the station buys; no network |
@@ -316,7 +316,7 @@ Spec: [TRADE_TECH_SPEC.md](TRADE_TECH_SPEC.md) (has its own module table with mo
 | `current_cargo.py` | The commander's hold by commodity, from EDMC's state, for "held" mission progress |
 | `mission_pins.py` | The missions a commander pinned (ids only), kept per commander in `mission_pins.json`; pins go with their mission |
 | `missions_board.py` | The Missions window's data: a row per active mission (progress, reward, time left, ready, pinned), the totals line, grouping by place, the detail lines; no Tk |
-| `missions_display_settings.py` | Missions' six display switches as a Display card in the Mission types window, on the same saved values as Settings → WFMT → Missions |
+| `missions_display_settings.py` | Missions' six display switches as a Display card in the Mission types window (set only there) |
 | `missions_types_window.py` | The Mission types window: Missions mode's category pages (massacre stacks, mission cards, Community Goals), one at a time, picked from a list with counts; drawn by `missions_ui` |
 | `missions_window.py` | The Missions window (Active and By place tabs, detail strip, Pin / Unpin, Pin all here, Unpin all, Copy system, Sources) |
 | `mission_sources.py` | The commodities your Collect and Mining missions still need (with the four source picks looked up for each) and the Delivery cargo still to pick up, with the station |
@@ -382,7 +382,7 @@ Guide: [Colonization](guide/colonization.md)
 | `colonization_builds_window.py` | The Planned Builds window: Raven Colonial's sites for the picked site's system, fetched on a worker thread when opened or refreshed |
 | `colonization_buy_window.py` | The Where to Buy window (a Suggested route tab and a Closest stations tab, a route order list, sections that start minimized with Expand all and Minimize all, and a large message while a search runs): Spansh searches for the picked commodity or the whole list, with a Preset list (Large then Medium by default), a search of the commander's own system first, a shopping trip in flying order (a next-stop card, jump distances, done and skipped stops) that shows the stock at each stop, the Exclude fleet carriers (on by default) and Exclude surface ports ticks and the stock, shipyard and arrival filters (all applied to what was found, so changing one asks Spansh for nothing), and a route that follows purchases; told the picked commodity, the rows to buy and the site's system by the Sites window |
 | `colonization_sources.py` | Where to buy a colonization commodity: the commander's own system first, then the closest stations (and optionally fleet carriers) with it in stock, Large pads then Medium by default, via Spansh; the whole-list search (one request per commodity, and one orbital-only request for a commodity sold only at surface ports), the display filters (`filter_found`), the presets and the remembered search choices; pure shaping around an injected search |
-| `colonization_settings.py` | The two things WFMT may report to Raven Colonial once the master switch is on (construction progress and deliveries; fleet carrier cargo): their config keys and savers, and the strip in the Colonization Sites window that shows and sets them on the same saved values as Settings → WFMT → Colonization. The master switch and the key stay in Settings |
+| `colonization_settings.py` | The two things WFMT may report to Raven Colonial once the master switch is on (construction progress and deliveries; fleet carrier cargo): their config keys and savers, and the strip in the Colonization Sites window that shows and sets them. The master switch and the key stay in Settings |
 | `colonization_stats.py` | The figures and wording of the Colonization page: the current project and the history, worded for a commander with or without a fleet carrier, and the last completed sites; pure, no Tk |
 | `colonization_view.py` | What the Colonization Sites window shows for a site: the commodity rows after the filters, and the totals (still to get, on the carrier, in the ship, buy and haul trips); pure, no Tk |
 | `colonization_window.py` | The Colonization Sites window: sites on the left; the picked site's progress, totals, filters and sortable commodity table, and the Where to buy search, on the right |
@@ -399,7 +399,7 @@ Spec: [SCREENSHOTS_AND_INPUT_TECH_SPEC.md](SCREENSHOTS_AND_INPUT_TECH_SPEC.md), 
 | `inventory_names_fdevids.py` | The microresource names, imported from a public list |
 | `inventory_panel.py` | The Inventory section of Operations (bars and overlay) |
 | `inventory_settings.py` | Inventory's pickup settings (pillage message, sound, which categories announce, suit backpack capacities): their config keys and readers, the savers, and the listeners that keep the Settings tab and the Inventory window in step |
-| `inventory_settings_tab.py` | The Settings tab of the Inventory window, on the same saved values as Settings → WFMT → Inventory |
+| `inventory_settings_tab.py` | The Settings tab of the Inventory window (set only there) |
 | `inventory_sound.py` | The optional pickup sound |
 | `inventory_suit.py` | Current suit and backpack capacity |
 | `inventory_window.py` | The tabbed inventory window |
@@ -425,7 +425,7 @@ Spec: [BGS_TECH_SPEC.md](BGS_TECH_SPEC.md)
 | `bgs_journal.py` | Rebuilds the current tick's totals from journal files |
 | `bgs_ledger.py` | The per-tick ledger (live events and replay share one path), and the rebuild of a period that just closed from the journals (`repair_record`, `merge_records`) |
 | `bgs_panel.py` | BGS mode's entry point |
-| `bgs_settings.py` | BGS's switch for showing faction states and activity and its days of ticks to keep, read and saved here, with a Settings card in the BGS Report window on the same saved values as Settings → WFMT → BGS |
+| `bgs_settings.py` | BGS's switch for showing faction states and activity and its days of ticks to keep, read and saved here, with a Settings card in the BGS Report window |
 | `bgs_state.py` | JSON persistence for BGS tracking |
 | `bgs_tick_client.py` | The community galaxy-tick time API client |
 | `bgs_tracker.py` | Pure parsing of BGS-relevant journal events |

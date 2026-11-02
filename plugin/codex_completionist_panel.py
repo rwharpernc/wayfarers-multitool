@@ -67,13 +67,7 @@ def _summary_text(tally: CodexTally, rebuilding: bool = False) -> str:
 
 class CodexCompletionistController:
     def _on_window_setting(self) -> None:
-        """Track codex entries was changed in the My Codex window: show it on the Settings tab too (if that tab is built) and on the panel."""
-        var = getattr(self, "_enabled_var", None)
-        if var is not None:
-            try:
-                var.set(enabled())
-            except tk.TclError:
-                pass
+        """Track codex entries was changed in the My Codex window: update the panel."""
         try:
             self._refresh_enabled_display()
         except Exception:        # the panel is not built yet, or has gone
@@ -93,7 +87,6 @@ class CodexCompletionistController:
         self._parent: Optional[tk.Frame] = None
         self._summary_var: Optional[tk.StringVar] = None
         self._status_var: Optional[tk.StringVar] = None
-        self._enabled_var: Optional[tk.BooleanVar] = None
 
     @property
     def tally(self) -> CodexTally:
@@ -292,7 +285,6 @@ class CodexCompletionistController:
         frame.columnconfigure(0, weight=1)
         notebook.add(frame, text="Codex Completionist")
 
-        self._enabled_var = tk.BooleanVar(value=enabled())
 
         nb.Label(frame, text="Codex Completionist", font=("TkDefaultFont", 9, "bold")).grid(
             row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4),
@@ -307,9 +299,9 @@ class CodexCompletionistController:
             ),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-        nb.Checkbutton(
-            frame, text="Track codex entries", variable=self._enabled_var,
-        ).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(0, 4))
+        nb.Label(frame, text=("Whether to track codex entries is on the Settings strip at the top of the My Codex window (press My Codex on the Codex "
+                              "Completionist panel to open it)."),
+                 wraplength=440, justify=tk.LEFT).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(0, 4))
 
         HyperlinkLabel(
             frame, text="View Canonn Codex", background=nb.Label().cget("background"),
@@ -317,10 +309,7 @@ class CodexCompletionistController:
         ).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(0, 10))
 
     def save_settings(self) -> None:
-        if self._enabled_var is None:
-            return
-        config.set(_CFG_ENABLED, self._enabled_var.get())
-        self._refresh_enabled_display()
+        """Nothing to save: Track codex entries is saved as it is changed in the My Codex window."""
 
 
 controller = CodexCompletionistController()

@@ -256,11 +256,6 @@ class InventoryPanelController:
         self._overlay_var: Optional[tk.BooleanVar] = None
         self._overlay_result_label: Optional[tk.Misc] = None
         self._overlay_bar_vars: Dict[str, tk.BooleanVar] = {}
-        self._sound_var: Optional[tk.BooleanVar] = None
-        self._message_format_var: Optional[tk.StringVar] = None
-        self._announce_vars: Dict[str, tk.BooleanVar] = {}
-        self._override_vars: Dict[Tuple[str, str], tk.StringVar] = {}
-        self._override_defaults: Dict[Tuple[str, str], Optional[int]] = {}
 
     def set_overlay_client(self, client: overlay.OverlayClient) -> None:
         self._overlay_client = client
@@ -268,20 +263,8 @@ class InventoryPanelController:
     # --- lifecycle ----------------------------------------------------------
 
     def _on_window_setting(self) -> None:
-        """A pickup setting was changed in the Inventory window: switch the sound, show it on the Settings tab too (if that tab is built) and redraw the bars."""
+        """A pickup setting was changed in the Inventory window: switch the sound and redraw the bars."""
         self._sound.set_enabled(sound_enabled())
-        if self._message_format_var is not None:
-            self._message_format_var.set(message_format())
-        if self._sound_var is not None:
-            self._sound_var.set(sound_enabled())
-        chosen = announced_categories()
-        for category, var in self._announce_vars.items():
-            var.set(category in chosen)
-        loadouts = suit.known_loadouts_for(self._tracker.commander or "")
-        for (loadout_id, category), var in self._override_vars.items():
-            record = loadouts.get(loadout_id)
-            if record is not None:
-                var.set(inventory_settings.capacity_text(record, category))
         try:
             self._refresh_bars(self._last_state)
         except Exception:        # the panel is not built yet, or has gone
@@ -905,23 +888,16 @@ class InventoryPanelController:
     # --- Settings tab --------------------------------------------------------
 
     def build_settings(self, notebook: nb.Notebook) -> None:
+        """The pickup settings are on the Settings tab of the Inventory window; this tab only says so."""
         frame = nb.Frame(notebook)
         frame.columnconfigure(0, weight=1)
         notebook.add(frame, text="Inventory")
-        row = 0
-
-        row = self._build_output_format(frame, start_row=row)
-        row = self._build_sound_pref(frame, start_row=row)
         nb.Label(
-            frame, text="The in-game overlay for pickups and bars is set up on the Overlays tab.",
+            frame,
+            text=("The pillage message, the pickup sound, which categories announce a pickup, and the suit backpack capacities are on the Settings tab of the Inventory "
+                  "window (press Inventory on the Operations panel to open it). The in-game overlay for pickups and bars is set up on the Overlays tab."),
             wraplength=440, justify=tk.LEFT,
-        ).grid(row=row, column=0, sticky=tk.W, padx=10, pady=(0, 10))
-        row += 1
-        row = self._build_announce_categories(frame, start_row=row)
-
-        self._override_vars = {}
-        self._override_defaults = {}
-        self._build_capacity_overrides(frame, start_row=row)
+        ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=10)
 
     def build_overlay_settings(self, notebook: nb.Notebook) -> None:
         """The pickup notifications and bars on the in-game overlay, on the Overlays tab."""
@@ -943,41 +919,6 @@ class InventoryPanelController:
 
         row = self._build_overlay_bars(frame, start_row=row)
         self._build_overlay_position(frame, start_row=row)
-
-    def _build_output_format(self, frame: nb.Frame, *, start_row: int) -> int:
-        row = start_row
-        nb.Label(frame, text="Pillage message:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=(0, 2))
-        row += 1
-
-        self._message_format_var = tk.StringVar(value=message_format())
-        nb.EntryMenu(frame, textvariable=self._message_format_var, width=55).grid(
-            row=row, column=0, sticky=tk.W, padx=10,
-        )
-        row += 1
-
-        nb.Label(
-            frame,
-            text="Placeholders: {item} (resource name), {total} (new combined total). Leave blank to reset to the default.",
-            wraplength=440, justify=tk.LEFT,
-        ).grid(row=row, column=0, sticky=tk.W, padx=10, pady=(2, 10))
-        return row + 1
-
-    def _build_sound_pref(self, frame: nb.Frame, *, start_row: int) -> int:
-        row = start_row
-        sound_available = self._sound.available
-        self._sound_var = tk.BooleanVar(value=sound_enabled())
-        nb.Checkbutton(
-            frame, text="Play a sound on pickup", variable=self._sound_var,
-            state=tk.NORMAL if sound_available else tk.DISABLED,
-        ).grid(row=row, column=0, sticky=tk.W, padx=10, pady=(0, 0))
-        row += 1
-
-        note, supported = platform_support.sound_support_note()
-        nb.Label(
-            frame, text=note, wraplength=440, justify=tk.LEFT, foreground="#2e7d32" if supported else "#c07000",
-        ).grid(row=row, column=0, sticky=tk.W, padx=10, pady=(2, 10))
-        row += 1
-        return row
 
     def _build_overlay_bars(self, frame: nb.Frame, *, start_row: int) -> int:
         row = start_row
@@ -1049,149 +990,14 @@ class InventoryPanelController:
 
         threading.Thread(target=worker, name="WFMT-inventory-overlay-test", daemon=True).start()
 
-    def _build_announce_categories(self, frame: nb.Frame, *, start_row: int) -> int:
-        row = start_row
-        nb.Label(frame, text="Announce pickups for:").grid(row=row, column=0, sticky=tk.W, padx=10, pady=(0, 2))
-        row += 1
-
-        enabled = announced_categories()
-        self._announce_vars = {}
-
-        categories_row = tk.Frame(frame)
-        categories_row.grid(row=row, column=0, sticky=tk.W, padx=10, pady=(0, 10))
-        for category in TRACKED_CATEGORIES:
-            var = tk.BooleanVar(value=category in enabled)
-            self._announce_vars[category] = var
-            nb.Checkbutton(categories_row, text=CATEGORY_SHORT[category], variable=var).pack(side=tk.LEFT, padx=(0, 12))
-        row += 1
-
-        nb.Label(
-            frame,
-            text="Unchecked categories are still tracked and counted — only their log/overlay/panel pickup notification is muted.",
-            wraplength=440, justify=tk.LEFT,
-        ).grid(row=row, column=0, sticky=tk.W, padx=10, pady=(0, 10))
-        return row + 1
-
-    def _build_capacity_overrides(self, frame: nb.Frame, *, start_row: int) -> int:
-        """Per-loadout backpack capacity override section. Each row is a
-        suit loadout the commander has been seen wearing. Fields are pre-
-        filled with the unengineered default for that suit; update a field
-        only if that specific loadout is engineered (or otherwise holds a
-        different amount than the default). Saving a value that matches
-        the default is treated the same as leaving it alone — it does not
-        fossilize into a stored override."""
-        row = start_row
-        nb.Label(frame, text="Suit Backpack Capacity").grid(row=row, column=0, sticky=tk.W, padx=10, pady=(14, 2))
-        row += 1
-
-        cmdr = self._tracker.commander or ""
-        loadouts = suit.known_loadouts_for(cmdr) if cmdr else {}
-
-        if not loadouts:
-            nb.Label(
-                frame,
-                text="No suits recorded yet for this commander — wear a suit in-game, then reopen Settings.",
-            ).grid(row=row, column=0, sticky=tk.W, padx=10, pady=(0, 10))
-            return row + 1
-
-        nb.Label(
-            frame,
-            text=(
-                "Pre-filled with the unengineered default. If a suit is engineered — or otherwise "
-                "holds a different amount — update the number to what you observe in-game."
-            ),
-            wraplength=440, justify=tk.LEFT,
-        ).grid(row=row, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 6))
-        row += 1
-
-        for loadout_id, record in sorted(loadouts.items(), key=lambda kv: kv[1].get("name") or kv[0]):
-            row = self._add_loadout_row(frame, row, loadout_id, record)
-
-        return row
-
-    def _add_loadout_row(self, frame: nb.Frame, row: int, loadout_id: str, record: dict) -> int:
-        suit_key = record.get("suit_key", "")
-        suit_name = suit.SUIT_DISPLAY_NAMES.get(suit_key, suit_key or "Unknown suit")
-        loadout_name = record.get("name") or ""
-        label = f'{suit_name} — "{loadout_name}"' if loadout_name else suit_name
-
-        nb.Label(frame, text=label).grid(row=row, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(6, 0))
-        row += 1
-
-        defaults = suit.default_capacity(suit_key, bool(record.get("has_capacity_mod")))
-        overrides = record.get("overrides", {})
-
-        fields = tk.Frame(frame)
-        fields.grid(row=row, column=0, columnspan=2, sticky=tk.W, padx=20, pady=(0, 6))
-
-        for col, category in enumerate(TRACKED_CATEGORIES):
-            nb.Label(fields, text=f"{CATEGORY_SHORT[category]}:").grid(
-                row=0, column=col * 3, sticky=tk.W, padx=(0 if col == 0 else 12, 4),
-            )
-
-            default_value = defaults.get(category)
-            if category in overrides:
-                initial = str(overrides[category])
-            elif default_value is not None:
-                initial = str(default_value)
-            else:
-                initial = ""
-
-            var = tk.StringVar(value=initial)
-            self._override_vars[(loadout_id, category)] = var
-            self._override_defaults[(loadout_id, category)] = default_value
-            nb.EntryMenu(fields, textvariable=var, width=6).grid(row=0, column=col * 3 + 1, sticky=tk.W)
-
-            if default_value is None:
-                nb.Label(fields, text="(no default — enter observed value)").grid(
-                    row=0, column=col * 3 + 2, sticky=tk.W, padx=(4, 0),
-                )
-
-        return row + 1
-
     def save_settings(self) -> None:
+        """Saves the overlay choices on the Overlays tab. The pickup settings are saved as they are changed in the Inventory window."""
         if self._overlay_var is None:
             return
-
-        cmdr = self._tracker.commander or ""
-
         config.set(_CFG_OVERLAY_ENABLED, self._overlay_var.get())
-        if self._sound_var is not None:
-            config.set(_CFG_SOUND_ENABLED, self._sound_var.get())
-        if self._message_format_var is not None:
-            config.set(_CFG_MESSAGE_FORMAT, self._message_format_var.get().strip())
         for key, var in self._overlay_bar_vars.items():
             config.set(f"{_CFG_OVERLAY_BAR_PREFIX}{key}", var.get())
-
-        self._save_announce_categories()
-
-        for (loadout_id, category), var in self._override_vars.items():
-            text = var.get().strip()
-            if not text:
-                suit.set_override(cmdr, loadout_id, category, None)
-                continue
-            try:
-                value = int(text)
-            except ValueError:
-                continue
-            if value <= 0:
-                continue
-            default_value = self._override_defaults.get((loadout_id, category))
-            if value == default_value:
-                suit.set_override(cmdr, loadout_id, category, None)
-            else:
-                suit.set_override(cmdr, loadout_id, category, value)
-
-        suit.save_overrides()
-
-        self._sound.set_enabled(sound_enabled())
         self._refresh_bars(self._last_state)
-
-    def _save_announce_categories(self) -> None:
-        if not self._announce_vars:
-            return
-        selected = [category for category, var in self._announce_vars.items() if var.get()]
-        config.set(_CFG_ANNOUNCE_CATEGORIES, json.dumps(selected))
 
 
 controller = InventoryPanelController()

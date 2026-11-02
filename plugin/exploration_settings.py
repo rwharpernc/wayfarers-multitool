@@ -1,13 +1,13 @@
-"""Exploration settings that belong to a window of their own, set in that window as well as in Settings → WFMT → Exploration.
+"""Exploration settings that belong to a window of their own, set in that window (the Settings → WFMT → Exploration tabs say where they went).
 
-Three small groups, each the same saved values in both places, so a change in either shows in the other:
+Three small groups:
 
 - the **Expedition** window: *Copy the next stop's system name to the clipboard every time I arrive anywhere* (also the Copy on arrival tick on the panel) and *Start the Expedition Log
   when I start an expedition*;
 - the **Prediction review** window: *Keep a record of what I find, to check the prediction*, with how much is recorded and **Clear the record...**;
 - the **My Codex** window: *Track codex entries*.
 
-`TickStrip` draws a group as a strip of ticks. The panels register a listener (`add_listener`) that updates the Settings tab's own variables (and, for the expedition, the panel's tick).
+`TickStrip` draws a group as a strip of ticks. The panels register a listener (`add_listener`) that updates what depends on a change (the expedition panel's Copy on arrival tick, the codex panel).
 What stays in Settings: Auto-Honk (it presses the fire button for you), the Boxel Survey and Region Sweep options and Exploration Value (panel sections, several of them lookups of EDSM or
 Spansh), the Canonn site filters, and the Nearest place to land switch, which is already in its own window.
 

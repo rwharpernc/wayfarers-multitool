@@ -1,12 +1,10 @@
-"""What WFMT reports to Raven Colonial, set in the Colonization Sites window as well as in Settings → WFMT → Colonization.
+"""What WFMT reports to Raven Colonial, set in the Colonization Sites window.
 
-Two choices sit inside the master switch: *Report my construction progress and deliveries* and *Also report cargo I move to and from my fleet carrier*. They are the same saved
-values in both places, so a change in either shows in the other. The window draws them as a strip (`RavenStrip`) that says plainly what is on.
+Two choices sit inside the master switch: *Report my construction progress and deliveries* and *Also report cargo I move to and from my fleet carrier*. They are set only here. The window draws them as a strip (`RavenStrip`) that says plainly what is on.
 
 What stays in Settings: **the master switch** ("Allow WFMT to write to Raven Colonial") and **the key**. The master switch is the consent to send anything to a third-party site,
 so it is given only where that is explained in full; the strip's two ticks are grayed out while it is off and cannot turn it on. The key is a secret; the window already asks for it
-the first time a write needs it. `colonization_panel` registers a listener (`add_listener`) that updates the Settings tab's own variables.
-
+the first time a write needs it. 
 The config keys live here so `colonization_window` can use them without importing `colonization_panel`, which imports the window."""
 from __future__ import annotations
 

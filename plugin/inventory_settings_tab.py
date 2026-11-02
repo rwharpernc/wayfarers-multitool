@@ -1,6 +1,6 @@
 """The Settings tab of the Inventory window: the pillage message, the pickup sound, which categories announce a pickup, and each suit loadout's backpack capacity.
 
-The same saved values as Settings → WFMT → Inventory (see inventory_settings.py). A box saves when you press Enter or click away; a tick saves at once."""
+Set only here; the Settings tab says where they went (see inventory_settings.py). A box saves when you press Enter or click away; a tick saves at once."""
 from __future__ import annotations
 
 import tkinter as tk

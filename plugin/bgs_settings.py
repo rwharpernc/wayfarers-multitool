@@ -1,6 +1,4 @@
-"""BGS's display and tuning settings, set in the BGS Report window as well as in Settings → WFMT → BGS.
-
-Both places read and write the same saved values, so a change in either shows in the other. The window builds a **Settings** card (`SettingsCard`): the switch that
+"""BGS's display and tuning settings, set in the BGS Report window (the Settings → WFMT → BGS tab keeps tick detection and says where the rest went). The window builds a **Settings** card (`SettingsCard`): the switch that
 shows faction states and activity, and how many days of closed ticks to keep. `bgs_panel` registers a listener (`add_listener`) that applies a change (prunes the archive,
 saves, redraws) and updates the Settings tab's own variables. Tick detection, the one network call BGS makes, stays in Settings only: it is a permission.
 

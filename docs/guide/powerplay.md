@@ -68,7 +68,7 @@ Resets change the session only. Cycle totals come from your journal and are not 
 1. Open **Report** and press **Copy Progress**. The button changes to a confirmation for a moment.
 2. Paste into Discord or a forum post. With the default format each system is one line, for example
    `[Nervi](link) - 120 merits (~48 CP) - Exploited`.
-3. To change the layout, edit the **Clipboard** format under **Settings → WFMT → Powerplay**.
+3. To change the layout, edit the **Copy Progress** format on the **Settings** tab of the Powerplay Sessions window.
 
 **Share to Discord.** Above the tabs in the same window are **Copy for Discord** and **Post to Discord**.
 
@@ -168,13 +168,13 @@ scan, and counts them for the cycle.
   game gave none. WFMT counts the scan either way.
 - **A scan without the drop.** If you approach a megaship some other way (for example from a different supercruise destination) and scan it, the
   journal never named it, so WFMT cannot count it. Drop out of supercruise at the megaship first.
-- **Old cycles.** The first time WFMT starts, it reads your journals back as far as the Settings scan depth (4 cycles by
+- **Old cycles.** The first time WFMT starts, it reads your journals back as far as the scan depth on the Sessions window's Settings tab (4 cycles by
   default) and fills in the earlier cycles too. Each commander has their own list.
 
 ### The buttons at the top
 
 - **Refresh** redraws the window.
-- **Copy Progress** copies one line per system you have visited this session to the clipboard (format in Settings; the default is `[system](link) - N merits (~N CP) - state`, with a link to the system on Inara; the button changes to a confirmation for a moment).
+- **Copy Progress** copies one line per system you have visited this session to the clipboard (format on the Sessions window's Settings tab; the default is `[system](link) - N merits (~N CP) - state`, with a link to the system on Inara; the button changes to a confirmation for a moment).
 - **Reset Current System** zeroes the merits earned in the system you are in during this session, and takes them off the
   session totals too. It asks first and can't be undone (with no current system it says so).
 - **Reset Session** zeroes this session's merit totals (every system and activity) without ending the session. It asks first
@@ -208,7 +208,7 @@ Pins and hidden tabs are remembered for each commander.
 ## Catching up from your journals
 
 The first time WFMT sees a commander, it reads their journals to fill in the last few cycles (4 by default; change
-it under **Settings → WFMT → Powerplay → Journal scan**, from 1 to 12). After that it reads only what happened while EDMC
+it as **Cycles to scan** on the Sessions window's Settings tab, from 1 to 12). After that it reads only what happened while EDMC
 was closed, so **playing without EDMC running doesn't lose a cycle**.
 
 It works out what cycle it is, which cycles aren't in that commander's history yet and how many days back to read,
@@ -229,7 +229,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 | What you might expect | What the game gives | What to do |
 |---|---|---|
 | Each merit tagged with the activity that earned it | The journal does not say. WFMT **infers** the activity from the state of the system you are in; an unusual situation can be misattributed. This also applies to the per-system and daily numbers. | Trust the merit totals. Treat the activity split as a good guess. |
-| Control Points reported | The game reports merits only. CP is **estimated** with ratios you can edit in Settings. | Only change the ratios if Frontier changes them. |
+| Control Points reported | The game reports merits only. CP is **estimated** with ratios you can edit on the Sessions window's Settings tab. | Only change the ratios if Frontier changes them. |
 | The name of a megaship you scanned | The scan event does not name it. WFMT uses the megaship you dropped to just before ([Megaships](#megaships)). | Drop out of supercruise at the megaship, then scan. |
 | Deliveries counted as CP | The game writes a `PowerplayDeliver` event (what and how many) just before the merits a hand-in earns, but it does not say which kind you chose (Acquisition, Reinforcement or Undermining). WFMT labels the merit events that follow a hand-in *Delivery*: the first one within 10 minutes, and any within 10 seconds of the last. It counts **merits only**. Unattributed merits are the same. A merit from something else that lands inside that window can be mislabeled. | Expect Delivery and Unattributed to add merits but no CP. Hand in as a separate step, away from other merit work, if the split matters. |
 | Live standing for any system | Whole-system figures update only when you **jump into or log in** at that system, so they are as fresh as your last visit. | Visit the system again for a fresh reading. |
@@ -289,13 +289,9 @@ you restart EDMC (a failed lookup is also kept, so it isn't retried until then).
 
 ## Settings
 
-**Settings → WFMT → Powerplay**:
+The Powerplay settings are on the **Settings** tab of the **Powerplay Sessions** window (press **Report** on the Powerplay panel). **Settings → WFMT → Powerplay** only points there. A box saves when you press Enter or click away.
 
-- **CP Ratios**: the merits needed for 1 Control Point, per activity. The defaults are Acquisition 4.0, Reinforcement 2.5 and Undermining 4.2, community-sourced estimates. Only change these if Frontier changes them or your in-game totals disagree. System strength, ethos and squadron bonuses are already inside the merits the journal reports, so there is nothing separate to enter for them. Delivery and Unattributed have no ratio.
-- **Clipboard**: the format of the lines **Copy Progress** copies. That button is in the Sessions window; it puts a summary on
-  your clipboard to paste into Discord or a forum post. The placeholders are `{system}`, `{system_url}`, `{merits}`, `{cp}` and `{state}`. A **Reset to default** button restores the standard format.
+- **CP Ratios**: the merits needed for 1 Control Point, per activity. The defaults are Acquisition 4.0, Reinforcement 2.5 and Undermining 4.2, community-sourced estimates. Only change these if Frontier changes them or your in-game totals disagree. A ratio must be above 0; anything else leaves the saved one.
+- **Copy Progress**: the format of the lines **Copy Progress** copies, which puts a summary on your clipboard to paste into Discord or a forum post. The placeholders are `{system}`, `{system_url}`, `{merits}`, `{cp}` and `{state}`. A **Reset to default** button restores the standard format, and a blank format is the default too.
 - **Journal scan**: **Cycles to scan**, how many cycles back (this one included, 1 to 12; default 4) the start-up scan covers for a commander WFMT has not seen before.
 
-Ratios, clipboard format and scan depth are saved when you close Settings.
-
-**Also in the Sessions window.** The same three settings are on the **Settings** tab of the Powerplay Sessions window, saved as the same values: a change in either place shows in the other. There a box saves when you press Enter or click away, **Reset to default** restores the Copy Progress format at once, a ratio must be above 0, and the cycles are kept between 1 and 12 (a value that is not valid leaves the saved one).

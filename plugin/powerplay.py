@@ -30,7 +30,6 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Tuple
 
 import tkinter as tk
-from tkinter import ttk
 
 import myNotebook as nb
 from config import appname, config
@@ -717,25 +716,10 @@ class PowerplayController:
         self._last_event_label: Optional[tk.Label] = None
         self._panel_parent: Optional[tk.Frame] = None
 
-        # Settings-tab state.
-        self._ratio_vars: Dict[str, tk.StringVar] = {}
-        self._clipboard_format_var: Optional[tk.StringVar] = None
-        self._backfill_var: Optional[tk.StringVar] = None
         add_settings_listener(self._on_window_setting)
 
     def _on_window_setting(self) -> None:
-        """A setting was changed in the Sessions window: show it on the Settings tab too (if that tab is built) and redraw the panel."""
-        for activity, var in self._ratio_vars.items():
-            try:
-                var.set(_format_ratio(ratio_for(activity)))
-            except tk.TclError:
-                pass
-        for var, held in ((self._clipboard_format_var, clipboard_template()), (self._backfill_var, str(backfill_cycles()))):
-            if var is not None:
-                try:
-                    var.set(held)
-                except tk.TclError:
-                    pass
+        """A setting was changed in the Sessions window: redraw the panel (the CP figures follow the ratios)."""
         try:
             self._refresh_panel()
         except Exception:        # the panel is not built yet, or has gone
@@ -1378,139 +1362,22 @@ class PowerplayController:
     # --- Settings tab --------------------------------------------------------
 
     def build_settings(self, notebook: nb.Notebook) -> None:
+        """The Powerplay settings are on the Settings tab of the Powerplay Sessions window; this tab only says so."""
         tab = nb.Frame(notebook)
         tab.columnconfigure(0, weight=1)
         notebook.add(tab, text="Powerplay")
-
-        nb.Label(tab, text="CP Ratios", font=("TkDefaultFont", 9, "bold")).grid(
-            row=0, column=0, sticky=tk.W, padx=10, pady=(10, 2),
-        )
-        ratios_section = nb.Frame(tab)
-        ratios_section.grid(row=1, column=0, sticky=tk.NSEW)
-        self._build_ratios_section(ratios_section)
-
-        ttk.Separator(tab, orient=tk.HORIZONTAL).grid(row=2, column=0, sticky=tk.EW, padx=10, pady=(8, 0))
-        nb.Label(tab, text="Clipboard", font=("TkDefaultFont", 9, "bold")).grid(
-            row=3, column=0, sticky=tk.W, padx=10, pady=(10, 2),
-        )
-        clipboard_section = nb.Frame(tab)
-        clipboard_section.grid(row=4, column=0, sticky=tk.NSEW)
-        self._build_clipboard_section(clipboard_section)
-
-        ttk.Separator(tab, orient=tk.HORIZONTAL).grid(row=5, column=0, sticky=tk.EW, padx=10, pady=(8, 0))
-        nb.Label(tab, text="Journal scan", font=("TkDefaultFont", 9, "bold")).grid(
-            row=6, column=0, sticky=tk.W, padx=10, pady=(10, 2),
-        )
-        scan_section = nb.Frame(tab)
-        scan_section.grid(row=7, column=0, sticky=tk.NSEW)
-        self._build_scan_section(scan_section)
-
+        nb.Label(
+            tab,
+            text=("The merits-per-Control-Point ratios, the Copy Progress format and the cycles to scan are on the Settings tab of the Powerplay Sessions "
+                  "window (press Report on the Powerplay panel to open it). The Powerplay card on the in-game overlay is set up on the Overlays tab."),
+            wraplength=440, justify=tk.LEFT,
+        ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=10)
         nb.Label(
             tab, text=panelkit.WORK_IN_PROGRESS_NOTE, wraplength=440, justify=tk.LEFT, foreground="#c07000",
-        ).grid(row=8, column=0, sticky=tk.W, padx=10, pady=(14, 10))
-
-    def _build_scan_section(self, frame: nb.Frame) -> None:
-        nb.Label(
-            frame,
-            text=(
-                "When a commander is first seen, WFMT reads their journals to fill in Powerplay cycles it "
-                "missed. After that it only reads what happened while EDMC was closed. This is how many "
-                f"cycles back (this one included, 1-{MAX_BACKFILL_CYCLES}) to look when a commander is new; "
-                "journals older than you have kept can't be read."
-            ),
-            wraplength=440, justify=tk.LEFT,
-        ).grid(row=0, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(10, 6))
-        nb.Label(frame, text="Cycles to scan:").grid(row=1, column=0, sticky=tk.W, padx=10, pady=2)
-        self._backfill_var = tk.StringVar(value=str(backfill_cycles()))
-        nb.EntryMenu(frame, textvariable=self._backfill_var, width=8).grid(
-            row=1, column=1, sticky=tk.W, padx=(0, 10), pady=2,
-        )
-
-    def _build_ratios_section(self, frame: nb.Frame) -> None:
-        nb.Label(
-            frame,
-            text=(
-                "Frontier doesn't publish these in the journal — the defaults are "
-                "community-sourced best estimates. If your in-game CP totals don't "
-                "line up, correct the ratio here (merits required for 1 CP)."
-            ),
-            wraplength=440, justify=tk.LEFT,
-        ).grid(row=0, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(10, 8))
-
-        nb.Label(
-            frame,
-            text=(
-                "Note: system strength/frontline penalties, ethos bonuses, and your "
-                "Squadron's PP bonus are already baked into the merit amount the "
-                "journal reports — these ratios only convert that final merit total "
-                "into CP, so there's no separate bonus to account for here."
-            ),
-            wraplength=440, justify=tk.LEFT, foreground="#c07000",
-        ).grid(row=1, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 10))
-
-        self._ratio_vars = {}
-        row = 2
-        for activity in ACTIVITIES:
-            default = DEFAULT_RATIOS.get(activity)
-            if default is None:
-                continue
-            nb.Label(frame, text=f"{ACTIVITY_LABELS[activity]}:").grid(
-                row=row, column=0, sticky=tk.W, padx=10, pady=2,
-            )
-            var = tk.StringVar(value=_format_ratio(ratio_for(activity)))
-            self._ratio_vars[activity] = var
-            nb.EntryMenu(frame, textvariable=var, width=8).grid(
-                row=row, column=1, sticky=tk.W, padx=(0, 10), pady=2,
-            )
-            row += 1
-
-    def _build_clipboard_section(self, frame: nb.Frame) -> None:
-        nb.Label(
-            frame,
-            text='Format for each system\'s line when "Copy Progress" (Sessions window) copies to the clipboard.',
-            wraplength=440, justify=tk.LEFT,
-        ).grid(row=0, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(10, 6))
-
-        nb.Label(
-            frame, text="Placeholders: " + "  ".join(CLIPBOARD_PLACEHOLDERS),
-            wraplength=440, justify=tk.LEFT, foreground=_INFO_COLOR,
-        ).grid(row=1, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 8))
-
-        self._clipboard_format_var = tk.StringVar(value=clipboard_template())
-        nb.EntryMenu(frame, textvariable=self._clipboard_format_var, width=60).grid(
-            row=2, column=0, sticky=tk.W, padx=10, pady=2,
-        )
-
-        def _reset_default() -> None:
-            if self._clipboard_format_var is not None:
-                self._clipboard_format_var.set(DEFAULT_CLIPBOARD_TEMPLATE)
-
-        tk.Button(frame, text="Reset to default", command=_reset_default).grid(
-            row=2, column=1, sticky=tk.W, padx=(6, 10), pady=2,
-        )
+        ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(4, 10))
 
     def save_settings(self) -> None:
-        for activity, var in self._ratio_vars.items():
-            text = var.get().strip()
-            try:
-                value = float(text)
-            except ValueError:
-                continue
-            if value <= 0:
-                continue
-            config.set(f"{CONFIG_RATIO_PREFIX}{activity}", str(value))
-
-        if self._backfill_var is not None:
-            try:
-                depth = int(self._backfill_var.get().strip())
-            except ValueError:
-                depth = 0
-            if depth >= 1:
-                config.set(CONFIG_BACKFILL_CYCLES, str(min(MAX_BACKFILL_CYCLES, depth)))
-
-        if self._clipboard_format_var is not None:
-            text = self._clipboard_format_var.get()
-            config.set(CONFIG_CLIPBOARD_FORMAT, text if text.strip() else DEFAULT_CLIPBOARD_TEMPLATE)
+        """Nothing to save: the settings are saved as they are changed in the Sessions window."""
 
 
 controller = PowerplayController()

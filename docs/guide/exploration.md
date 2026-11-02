@@ -518,7 +518,7 @@ Thargoid finds. It is built from the `CodexEntry` events in your journal.
 
 - The section shows one summary line, for example `120 distinct entries, 340 total finds`, followed by your three biggest categories.
 - It has one button: **My Codex**, which opens the [My Codex window](#the-my-codex-window).
-- It is on by default. Switch it off with *Track codex entries* in **Settings → WFMT → Exploration → POI Reference** or in the **Settings** strip at the top of the My Codex window (the same setting), where there is also a *View Canonn Codex* link.
+- It is on by default. Switch it off with *Track codex entries* in the **Settings** strip at the top of the My Codex window. **Settings → WFMT → Exploration → POI Reference** has the *View Canonn Codex* link.
 
 **Each commander has their own tally.** Switching commander switches the tally (the window's subtitle names whose it is), and one commander's finds never appear in another's.
 
@@ -711,7 +711,7 @@ Whichever you use, the same buttons manage it afterwards, on either tab:
 Buttons:
 
 - **Copy Next** puts the next stop's system name on the clipboard to paste into the galaxy map.
-- **Copy on arrival** does it for you every time you arrive anywhere. It is off until ticked. The same switch is in Settings → WFMT → Exploration → Expedition, and in the **Settings** strip across the top of the Expedition window, together with *Start the Expedition Log with an expedition* (on): a tick in any of those places shows in the others.
+- **Copy on arrival** does it for you every time you arrive anywhere. It is off until ticked. The same switch is in the **Settings** strip across the top of the Expedition window, together with *Start the Expedition Log with an expedition* (on); a tick there shows on the panel's tick at once.
 - **Expedition** opens the window.
 
 **One window, three tabs.** The Expedition window has a tab for each part of a trip:

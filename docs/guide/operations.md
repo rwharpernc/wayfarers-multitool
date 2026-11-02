@@ -191,25 +191,25 @@ hold you are using (ship or SRV).
 
 **Correcting a backpack limit.** The Backpack bar shows a limit that differs from the number you see in the game, because the built-in table cannot see engineering grade.
 
-1. Open **Settings → WFMT → Operations → Inventory**.
-2. Find your suit loadout under *Suit Backpack Capacity* and type the number the game shows. If the tab says `No suits recorded yet for this commander`, wear a suit in the game, then reopen Settings.
+1. Open the **Inventory** window and go to its **Settings** tab.
+2. Find your suit loadout under *Suit Backpack Capacity* and type the number the game shows. If the tab says `No suits recorded yet for this commander`, wear a suit in the game, then reopen the Settings tab.
 
 ### Settings
 
-The Operations tab (**Settings → WFMT → Operations → Inventory**) holds the pillage message, the sound, which categories are announced and the suit backpack capacities. The overlay switches are on **Settings → WFMT → Overlays → Inventory**.
+The pillage message, the sound, which categories are announced and the suit backpack capacities are on the **Settings** tab of the Inventory window (press **Inventory** on the Operations panel). **Settings → WFMT → Operations → Inventory** only points there. The overlay switches are on **Settings → WFMT → Overlays → Inventory**.
 
 | Setting | Where | Default |
 |---|---|---|
 | Show pillage notifications on the in-game overlay | Overlays → Inventory | Off |
-| Pillage message (placeholders `{item}`, `{total}`) | Operations → Inventory | `[{item}] pillaged! New Inventory Total: {total}` |
-| Play a sound on pickup | Operations → Inventory | Off |
+| Pillage message (placeholders `{item}`, `{total}`) | Inventory window → Settings | `[{item}] pillaged! New Inventory Total: {total}` |
+| Play a sound on pickup | Inventory window → Settings | Off |
 | Show these inventory bars on the overlay (one tick per bar) | Overlays → Inventory | All off |
 | Where it sits on screen | Overlays → Overlay Placement | Top right area |
-| Announce pickups for (Assets, Goods, Data) | Operations → Inventory | All three |
-| Suit Backpack Capacity (per suit loadout) | Operations → Inventory | The built-in table. One row per suit loadout WFMT has seen for the commander, pre-filled with the unengineered default; change the number to what you see in the game. Until a suit has been seen the tab says `No suits recorded yet for this commander` - wear a suit in the game, then reopen Settings |
+| Announce pickups for (Assets, Goods, Data) | Inventory window → Settings | All three |
+| Suit Backpack Capacity (per suit loadout) | Inventory window → Settings | The built-in table. One row per suit loadout WFMT has seen for the commander, pre-filled with the unengineered default; change the number to what you see in the game. Until a suit has been seen the tab says `No suits recorded yet for this commander` - wear a suit in the game, then reopen Settings |
 | Test pickup (button) | Overlays → Inventory | Sends a sample pickup to the overlay and says whether the overlay could be reached, even while notifications are off |
 
-**Also in the Inventory window.** The pillage message, the pickup sound, *Announce pickups for* and the suit backpack capacities are on the **Settings** tab of the Inventory window as well, as the same saved values: a change in either place shows in the other. There a tick saves when you click it, and a box when you press Enter or click away. A blank message restores the default; a capacity left blank, or set to the unengineered default, clears your number; a capacity that is not a number above 0 leaves the saved one. A suit you wear after opening the window appears as a new row. The overlay switches and the Test pickup button stay on the Overlays tab.
+On that tab a tick saves when you click it and a box when you press Enter or click away. A blank message restores the default; a capacity left blank, or set to the unengineered default, clears your number; a capacity that is not a number above 0 leaves the saved one. A suit you wear after opening the window appears as a new row. There a tick saves when you click it, and a box when you press Enter or click away. A blank message restores the default; a capacity left blank, or set to the unengineered default, clears your number; a capacity that is not a number above 0 leaves the saved one. A suit you wear after opening the window appears as a new row. The overlay switches and the Test pickup button stay on the Overlays tab.
 
 Unticking a category in *Announce pickups for* only mutes its notifications. It is still counted.
 The overlay settings need an overlay running; see

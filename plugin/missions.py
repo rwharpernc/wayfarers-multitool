@@ -82,15 +82,6 @@ def load_config() -> MissionsConfig:
     )
 
 
-def save_config(cfg: MissionsConfig) -> None:
-    config.set(_CFG_REMAINING, cfg.show_remaining_column)
-    config.set(_CFG_PROGRESS, cfg.display_progress)
-    config.set(_CFG_TOTALS, cfg.show_totals_row)
-    config.set(_CFG_MISSION_COUNT, cfg.show_mission_count)
-    config.set(_CFG_SETTLEMENT, cfg.display_settlement)
-    config.set(_CFG_COMMODITIES_NEEDED, cfg.display_commodities_needed)
-
-
 def _to_display_settings(cfg: MissionsConfig) -> missions_ui.DisplaySettings:
     return missions_ui.DisplaySettings(
         remaining=cfg.show_remaining_column,
@@ -105,22 +96,11 @@ def _to_display_settings(cfg: MissionsConfig) -> missions_ui.DisplaySettings:
 class MissionsController:
     def __init__(self) -> None:
         display_settings.add_listener(self._on_display_setting)
-        self._enabled_vars: Dict[str, tk.BooleanVar] = {}
         self._pad = ""          # the largest landing pad at the station the commander is docked at ("" when not docked or not told)
 
     def _on_display_setting(self) -> None:
-        """A switch was changed in the Mission types window: show it on the Settings tab too (if that tab is built) and redraw the panel."""
-        cfg = load_config()
-        for name, held in (("display_progress", cfg.display_progress), ("show_remaining_column", cfg.show_remaining_column),
-                           ("show_totals_row", cfg.show_totals_row), ("show_mission_count", cfg.show_mission_count),
-                           ("display_settlement", cfg.display_settlement), ("display_commodities_needed", cfg.display_commodities_needed)):
-            var = self._enabled_vars.get(name)
-            if var is not None:
-                try:
-                    var.set(held)
-                except tk.TclError:
-                    pass
-        missions_ui.ui.apply_display_settings(_to_display_settings(cfg))
+        """A switch was changed in the Mission types window: redraw the panel."""
+        missions_ui.ui.apply_display_settings(_to_display_settings(load_config()))
 
     # --- lifecycle ----------------------------------------------------------
 
@@ -220,48 +200,20 @@ class MissionsController:
     # --- Settings tab --------------------------------------------------------
 
     def build_settings(self, notebook: nb.Notebook) -> None:
+        """Missions has no settings here any more: its six display switches are on the Display card of the Mission types window."""
         frame = nb.Frame(notebook)
         frame.columnconfigure(0, weight=1)
         notebook.add(frame, text="Missions")
-
-        cfg = load_config()
-
-        nb.Label(frame, text="UI settings", font=("TkDefaultFont", 9, "bold")).grid(
-            row=0, column=0, sticky=tk.W, padx=10, pady=(10, 2),
-        )
-
-        checkboxes = (
-            ("display_progress", "Show kill progress", cfg.display_progress),
-            ("show_remaining_column", "Show remaining-kills column", cfg.show_remaining_column),
-            ("show_totals_row", "Show totals row", cfg.show_totals_row),
-            ("show_mission_count", "Show mission count", cfg.show_mission_count),
-            ("display_settlement", "Show target settlement (ground missions)", cfg.display_settlement),
-            (
-                "display_commodities_needed", "Show commodities needed (trade and mining)",
-                cfg.display_commodities_needed,
-            ),
-        )
-        self._enabled_vars = {}
-        for row, (key, label, default) in enumerate(checkboxes, start=1):
-            var = tk.BooleanVar(value=default)
-            self._enabled_vars[key] = var
-            nb.Checkbutton(frame, text=label, variable=var).grid(
-                row=row, column=0, sticky=tk.W, padx=10, pady=2,
-            )
+        nb.Label(
+            frame,
+            text=("The Missions display switches (kill progress, remaining-kills column, totals row, mission count, target settlement and "
+                  "commodities needed) are on the Display card at the top of the Mission types window. Press Mission types on the Missions "
+                  "panel to open it."),
+            wraplength=440, justify=tk.LEFT,
+        ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=10)
 
     def save_settings(self) -> None:
-        if not self._enabled_vars:
-            return
-        cfg = MissionsConfig(
-            show_remaining_column=bool(self._enabled_vars["show_remaining_column"].get()),
-            display_progress=bool(self._enabled_vars["display_progress"].get()),
-            show_totals_row=bool(self._enabled_vars["show_totals_row"].get()),
-            show_mission_count=bool(self._enabled_vars["show_mission_count"].get()),
-            display_settlement=bool(self._enabled_vars["display_settlement"].get()),
-            display_commodities_needed=bool(self._enabled_vars["display_commodities_needed"].get()),
-        )
-        save_config(cfg)
-        missions_ui.ui.apply_display_settings(_to_display_settings(cfg))
+        """Nothing to save: the switches are saved as they are changed."""
 
 
 controller = MissionsController()

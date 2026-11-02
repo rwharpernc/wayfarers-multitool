@@ -1,8 +1,7 @@
-"""Missions' six display switches, set in the Mission types window as well as in Settings → WFMT → Missions.
+"""Missions' six display switches, set in the Mission types window (and nowhere else: the Settings → WFMT → Missions tab says where they went).
 
-Both places read and write the same saved values, so a change in either shows in the other: the window builds a **Display** card from `FIELDS`, each tick saves at
-once, and the panel and the open window redraw. `missions.py` registers a listener (`add_listener`) that applies the new values to the panel and updates the Settings tab's own
-variables. The config keys live here so `missions_types_window` can use them without importing `missions` (which imports the panel, which imports that window)."""
+The window builds a **Display** card from `FIELDS`, each tick saves at
+once, and the panel and the open window redraw. `missions.py` registers a listener (`add_listener`) that applies the new values to the panel. The config keys live here so `missions_types_window` can use them without importing `missions` (which imports the panel, which imports that window)."""
 from __future__ import annotations
 
 import tkinter as tk

@@ -60,7 +60,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 1. Open **Settings → WFMT → Overlays → Flight Alerts** and tick *Enable Flight Alerts*.
 2. Make sure *Mining alerts* is ticked, then set the limpet number and the hold percentage.
-3. For rich-rock cards, type your commodities in **Settings → WFMT → Mining → Target commodities** ([how](#target-commodities)).
+3. For rich-rock cards, type your commodities in the **Target commodities** box on the Settings card of the Space Mining window ([how](#target-commodities)).
 
 **Find a hotspot.** Details: [Hotspots: Find Nearby Hotspots](#hotspots-find-nearby-hotspots).
 
@@ -70,7 +70,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 ## What each page shows
 
-Lines come and go with the settings listed at the end of this page. Three switches under **Settings → WFMT → Mining** decide which lines you see (all three are on by default):
+Lines come and go with the settings listed at the end of this page. Three switches on the Settings card of the Space Mining and Surface Mining windows decide which lines you see (all three are on by default):
 
 | Setting | Lines it controls |
 |---|---|
@@ -94,7 +94,7 @@ In your ship, from undocking. A run is one trip from `Undocked` to `Docked`: the
   - Each material in **Materials seen** is listed on its own line with how many rocks held it, the lowest, average and highest percentage seen this run in square brackets, and `Mine via` with the method that usually suits it (core, laser surface or sub-surface deposit; laser surface when no other is known). The method hints are community-sourced.
 - **Last rock**: the latest rock's materials with their percentages and its grade, for example `Last rock: Painite 34%, Platinum 12% (High), target: Painite`.
   - A **core asteroid** (the game names a core mineral in the prospector's result) is counted by **Core asteroids found** (`Core asteroids found: 3 (last: Painite)`), which names the latest core. The **Last rock** line adds `core: Painite` only when its core is not that latest one.
-  - `target:` names each target commodity the rock holds at least its percentage of (Settings → WFMT → Mining; several can be set).
+  - `target:` names each target commodity the rock holds at least its percentage of (the Space Mining window's Settings card; several can be set).
 - **Mission needs**: for each commodity your active mining missions still ask for, how many tons you already hold, for example `Mission needs: Painite 50 of 120 t held (2 missions)`. It is worked out the way the Missions window does it and shows even before you start mining. Up to three commodities get a line; more are summed up as `+2 more commodities`. A commodity asked for by several missions says how many (`(2 missions)`).
 - **Asteroids cracked** (core mining).
 - **Limpets launched** by type, with the count still on board. The count is exact once EDMC has told WFMT the cargo. Otherwise it is bought less launched, marked with ~. The HUD overlay's *Limpets remaining* line shows the same number.
@@ -144,7 +144,7 @@ In the Rhino SRV. A run runs from launching the Rhino to stowing it. The page ke
 - What was **Transferred to ship** and the **Raw materials** picked up.
 - The **Last DSS scan**: how many mining locations the scan found on which body (`Last DSS scan: 4 Planetary Mining Location(s) on <body>`). It shows only when that count differs from the number of **Known hotspots here**, which says the same thing otherwise.
 - **Known hotspots here (N)**: the ones you have saved on the body you are on, one per line with the material, rigs, signal number, position, the tons-left estimate in square brackets and your note.
-- The **coverage minimap** (if ticked in Settings): ground the Rhino has driven over, with your position, your saved hotspots and the mining locations you marked with **Mark center** and **Mark border**. In your ship it appears only close to the ground (under about 2 km).
+- The **coverage minimap** (if ticked on the Surface Mining window's Settings card): ground the Rhino has driven over, with your position, your saved hotspots and the mining locations you marked with **Mark center** and **Mark border**. In your ship it appears only close to the ground (under about 2 km).
 - **Nearest marked location**: the size of the mining location you marked nearest you, which way its center is and how much of its edge you have driven (see [Marking a mining location](#marking-a-mining-location)).
 - **Nearest saved deposit**: the closest deposit you saved, its material, how far and which way, with your rig-gap verdict when one is set.
 - **Rigs noted**: how many rigs you noted with **Rig placed** and how far the nearest is (see [Rig bands](#rig-bands)). Nothing until you note one.
@@ -303,7 +303,7 @@ The window's header has **Refresh**, **Rebuild from journals** and **Help** (it 
 
 ### Commodity names
 
-Commodity names are suggested as you type in the Find Best Price window, the Add/Edit Hotspot form's *Contains* box and Settings → WFMT → Mining → *Target commodities*.
+Commodity names are suggested as you type in the Find Best Price window, the Add/Edit Hotspot form's *Contains* box and the Space Mining window's *Target commodities*.
 
 - A short list appears under the box. Use Down and Up to move, Enter or a click to take one, and Escape to close.
 - In the target box the list follows the item you are typing, after the last comma, and taking a name replaces only that item.
@@ -373,8 +373,8 @@ Three more things appear when they apply:
   - The first is at 2 km from the center, and the rest a little under 4 km further out.
   - The last is on the border or, before a border is marked, as far out as you have driven.
   - They come from the 2 km scanner reach, which is a community estimate, so treat them as a guide.
-- **Stop circles**: violet, round the best stops from the Book, using the stop radius in Settings.
-- When you have set a **target commodity** in Settings → WFMT → Mining: a bright line to the nearest saved deposit of it, with the nearest deposit of any kind dotted.
+- **Stop circles**: violet, round the best stops from the Book, using the stop radius on the Surface Mining window's Settings card.
+- When you have set a **target commodity** in the Space Mining window: a bright line to the nearest saved deposit of it, with the nearest deposit of any kind dotted.
 
 Other controls and lines:
 
@@ -427,7 +427,7 @@ With one screen you cannot keep the Live window beside the game. **Settings → 
 
 ### Rig bands
 
-The game does not publish how close two mining rigs may be, so WFMT uses the figure you measured: *Too close to place another rig* in Settings → WFMT → Mining.
+The game does not publish how close two mining rigs may be, so WFMT uses the figure you measured: *Too close for another rig* on the Surface Mining window's Settings card.
 
 To measure it: stand at one rig, press Mark center, drive until the game lets you place the next, press Mark border, and enter that distance.
 
@@ -498,7 +498,7 @@ Once the border is marked, the **Nearest marked location** line says `you are in
 
 The game does not publish how close two rigs may be, so WFMT has no number of its own. You can set your own.
 
-- Set **Too close to place another rig** (Settings → WFMT → Mining, 0 to 2000 m, off at 0).
+- Set **Too close for another rig** (the Surface Mining window's Settings card, 0 to 2000 m, off at 0).
 - The line then also says whether that deposit is closer than your distance ("too close to place another rig") or farther ("far enough").
 - To find your number, stand at one rig and press **Mark center**, drive until the game lets you place the next, press **Mark border**, and read the distance.
 - This compares against deposits you saved, not rigs you placed: the journal does not report where a rig is.
@@ -621,14 +621,14 @@ An edit keeps the tons mined and the kind of ground that WFMT recorded. A form w
 A hotspot marked depleted is dated, and its card says how long ago.
 
 - Nobody knows when a mined-out deposit refills (the game gives no date and it may differ from system to system). So by default the mark stays until you change it: read the deposit's Amount again and edit the hotspot.
-- If you have seen a refill time, set it in **Settings → WFMT → Mining → Assume a depleted deposit has refilled after (days)** (0 = unknown, up to 90 days). With a time set, the mark comes off that long after it was set, and the hotspot has no Amount until you read it again.
+- If you have seen a refill time, set it in **Deposit refills after (days)** on the Surface Mining window's Settings card (0 = unknown, up to 90 days). With a time set, the mark comes off that long after it was set, and the hotspot has no Amount until you read it again.
 - If you then press **Mark depleted** on it and have not refined anything there since, WFMT takes that as a look at a deposit that is still empty. It keeps the first date and looks again 7 days later (`Still depleted at 15 d; look again in 7 d`).
 - Tons refined since make it a fresh depletion.
 
 **Worked example.** You have mined a deposit empty.
 
 1. Stand at it. The Book marks it `you are here` and selects it, so open **Book** and press **Mark depleted**.
-2. The card shows the date and how long ago. The mark stays until you change it, unless you set a refill time in **Settings → WFMT → Mining**.
+2. The card shows the date and how long ago. The mark stays until you change it, unless you set a refill time on the Surface Mining window's Settings card.
 3. Come back after a few days, read the Amount again, and press **Edit** to set the new reading if it has refilled.
 4. If a refill time you set has taken the mark off and you press **Mark depleted** again having refined nothing there since, WFMT keeps the first date and looks again 7 days later.
 
@@ -636,7 +636,7 @@ A hotspot marked depleted is dated, and its card says how long ago.
 
 Rigs sit around the Rhino, so deposits close together can be worked from one place.
 
-- For the body you are on, the Book takes the saved deposit with the most rigs and every other one within the **stop radius** of it as one stop. The stop radius is in Settings → WFMT → Mining (500 to 2500 m, default 1250 m).
+- For the body you are on, the Book takes the saved deposit with the most rigs and every other one within the **stop radius** of it as one stop. The stop radius is on the Surface Mining window's Settings card (500 to 2500 m, default 1250 m).
 - The best three are listed above the hotspots, with the tons left added up. They are circled on the map and tagged `stop 1` to `stop 3` on each row.
 - The best three are led by a deposit of 5 or more rigs (4 or more if the body has none).
 - Deposits that are depleted, or have no position or rig count, are left out.
@@ -789,31 +789,20 @@ WFMT, like every third-party tool, only knows what Elite Dangerous writes to its
 
 The in-game Mining displays are set on **Settings → WFMT → Overlays → Mining** (see below).
 
-**Also in the windows.** The display and tuning settings below are in the **Settings** card at the top of the **Space Mining** and **Surface Mining** windows too, and they are the same saved values: a change in either place shows in the other at once.
+**In the windows.** The display and tuning settings are in the **Settings** card at the top of the **Space Mining** and **Surface Mining** windows, and nowhere else. A tick saves when you click it; a box saves when you press Enter or click away, and a number is kept inside its range.
 
-- Both windows: *Show session totals*, *Show the cargo bar*, *Show prospector hints*.
-- Space Mining: *Target commodities* with *worth cracking at* (and the line under them that says how many targets are set, or what is wrong).
-- Surface Mining: *Show coverage minimap*, *Stop radius*, *Too close for another rig*, and *Deposit refills after (days)*.
+- Both windows: *Show session totals*, *Show the cargo bar* and *Show prospector hints* (on by default). See [What each page shows](#what-each-page-shows) for the lines each one controls.
+- Space Mining: *Target commodities* with *worth cracking at* (and the line under them that says how many targets are set, or what is wrong). See [Target commodities](#target-commodities).
+- Surface Mining: *Show coverage minimap* (a small map of ground the Rhino has driven over on the current body, redrawn once a second while the Rhino is deployed); *Stop radius* (how close deposits must be to the lead deposit to share a stop in the Surface Mining Book: 500 to 2500 m in steps of 250, default 1250); *Too close for another rig* (your own distance for the Surface Mining page's "far enough" note and the radar's rig bands; 0 turns it off; 0 to 2000 m, steps of 5); and *Deposit refills after (days)* (0, the default, means unknown and marks stay; a number from 1 to 90 takes a Depleted mark off that long after it was set).
 
-A tick saves when you click it; a box saves when you press Enter or click away, and a number is kept inside its range. The switches that let WFMT ask Spansh or EDSM (the hotspot finder, the price finder, the ring reserve lookup and body lookup) and *Archive completed mining runs* stay on the Settings tab only, because they are permissions and file choices, not display choices. The Surface Live simulation window has no Settings card.
+**Settings → WFMT → Mining** keeps the switches that let WFMT contact other services, the archive option and the simulation:
 
-**Checkboxes.** The first three are on by default. The rest are off.
-
-- *Show session totals*, *Show the cargo bar* and *Show prospector hints* (on by default). See [What each page shows](#what-each-page-shows) for the lines each one controls.
 - *Enable Spansh nearby hotspot finder* (Space Mining page): shows **Hotspots**
 - *Enable Spansh best price finder and Market research in the Surface Mining Book*: shows **Prices** and turns on **Market research** and **What pays**.
 - *Enable EDSM ring reserve lookup* (Space Mining page): shows **Reserves** and looks up each ring you drop into automatically.
 - *Enable body lookup*: turns on **Get body info** in the Surface Mining Book (asks edsm.net and spansh.co.uk for the bodies of your system, sending only its name or id).
-- *Show coverage minimap* (Surface Mining page): a small map of ground the Rhino has driven over on the current body, redrawn once a second while the Rhino is deployed.
 - *Archive completed mining runs*: writes a JSON file per run to `mining_sessions/`. A trip with nothing in it writes nothing.
-
-**Other settings.**
-
-- *Target commodities* and a percentage (Space Mining page). See below.
-- *Assume a depleted deposit has refilled after (days)*: 0 (the default) means unknown and marks stay. A number from 1 to 90 takes a Depleted mark off that long after it was set.
-- *Too close to place another rig (m, 0 = off)*: your own distance for the Surface Mining page's "far enough" note and the radar's rig bands. 0 turns it off (0 to 2000 m, steps of 5).
-- *Stop radius in the Surface Mining Book (m)*: how close deposits must be to the lead deposit to share a stop (500 to 2500 m in steps of 250, default 1250).
-- **Simulation: Surface Live (pretend Rhino)**: opens the Live window on made-up data (see [Trying the live window without the game](#trying-the-live-window-without-the-game)).
+- **Simulation: Surface Live (pretend Rhino)**: opens the Live window on made-up data (see [Trying the live window without the game](#trying-the-live-window-without-the-game)). The simulation window has no Settings card.
 
 **Known Surface Hotspots.** At the bottom of the same page is a list of every hotspot you have saved, grouped by folder (`Unfiled` last), one line each with the system, body, material, rigs, signal number and tons-left estimate. Select a line and use **Add**, **Edit**, **Delete** (a folder heading cannot be edited or deleted), **Import...** and **Export...**. These open the same form and the same import and export as the Surface Mining Book and the Live window's **Import/export** button. **Import...** reads a hotspot file exported by WFMT and asks whether to merge with your list (Yes) or replace it (No). **Export...** writes your saved hotspots to a JSON file you choose. A list belongs to the commander you are playing, and an export holds only that commander's list.
 

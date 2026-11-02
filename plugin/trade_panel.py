@@ -154,16 +154,13 @@ REQUIREMENTS = (
     ("Round trip", "Search radius (ly, 0 = from jump range)", _CFG_ROUND_RADIUS, "int", 0, 0, 100_000, "Search radius - how far around the start to look for the other station (0 uses twice your jump range)"),
     ("Round trip", "Carry only this commodity", _CFG_ROUND_ONLY, "text", "", 0, 0, "Carry only - both legs carry only this commodity (blank = anything)"),
     ("Market", "'Near me' search radius (ly)", _CFG_NEAR_RADIUS, "int", _DEFAULT_NEAR_RADIUS_LY, 1, 100_000, "Near me radius - how far from your system the Near me search looks, in light years"),
+    ("Market", "Fleet carriers", _CFG_CARRIERS, "bool", True, 0, 0, "Fleet carriers - include fleet and squadron carriers in price results and Best picks (they can jump away)"),
+    ("Market", "Ground facilities", _CFG_GROUND, "bool", True, 0, 0, "Ground facilities - include surface ports, outposts and settlements in price results and Best picks"),
     ("Market", "Ship size (landing pad)", _CFG_SHIP_PAD, "choice", "auto", 0, _PAD_CHOICES, "Ship size - the pad size prices plan for; From my ship reads it from the game, so pick a size only if it guesses wrong"),
     ("Session", "Count fines and bounties I pay as a running cost", _CFG_COUNT_FINES, "bool", False, 0, 0, "Count fines - take the fines and bounties you pay off the session's net profit, from now on"),
 )
 # Which groups of REQUIREMENTS each window shows.
 PAGE_GROUPS = {trade_pages.SESSION: ("Session",), trade_pages.ROUTES: ("Routes", "Round trip"), trade_pages.MARKET: ("Market",)}
-# The Settings tab's variable for each, so a change made here shows there at once.
-_SETTINGS_VARS = {_CFG_MAX_HOPS: "_hops_var", _CFG_MAX_ARRIVAL_LS: "_arrival_var", _CFG_JUMP_RANGE: "_range_var", _CFG_PRICE_AGE_H: "_age_var",
-                  _CFG_PERMIT: "_permit_var", _CFG_CARRIERS: "_carriers_var", _CFG_GROUND: "_ground_var", _CFG_LARGE_PAD: "_pad_var",
-                  _CFG_MIN_SUPPLY: "_supply_var", _CFG_MIN_DEMAND: "_demand_var", _CFG_ROUND_RADIUS: "_round_radius_var", _CFG_ROUND_ONLY: "_only_var",
-                  _CFG_NEAR_RADIUS: "_near_var", _CFG_SHIP_PAD: "_pad_override_var", _CFG_COUNT_FINES: "_fines_var"}
 
 
 def _clip(text: Any, limit: int = _NAME_MAX) -> str:
@@ -282,22 +279,7 @@ class TradePanelController:
 
         # Settings variables
         self._lookups_var: Optional[tk.BooleanVar] = None
-        self._hops_var: Optional[tk.StringVar] = None
-        self._age_var: Optional[tk.StringVar] = None
-        self._supply_var: Optional[tk.StringVar] = None
-        self._demand_var: Optional[tk.StringVar] = None
-        self._permit_var: Optional[tk.BooleanVar] = None
-        self._arrival_var: Optional[tk.StringVar] = None
-        self._pad_var: Optional[tk.BooleanVar] = None
-        self._range_var: Optional[tk.StringVar] = None
-        self._near_var: Optional[tk.StringVar] = None
-        self._carriers_var: Optional[tk.BooleanVar] = None
-        self._ground_var: Optional[tk.BooleanVar] = None
-        self._fines_var: Optional[tk.BooleanVar] = None
-        self._round_radius_var: Optional[tk.StringVar] = None
-        self._only_var: Optional[tk.StringVar] = None
         self._carrier_mode_vars: Dict[str, tk.StringVar] = {}  # commander -> their carrier choice
-        self._pad_override_var: Optional[tk.StringVar] = None
 
     # --- lifecycle -----------------------------------------------------------
 
@@ -732,12 +714,6 @@ class TradePanelController:
             if name == _CFG_COUNT_FINES:
                 ledger_mod.set_count_fines(bool(value))
             held = self.requirement_value(name)
-            var = getattr(self, _SETTINGS_VARS.get(name, ""), None)
-            if var is not None:
-                try:
-                    var.set(held)
-                except tk.TclError:
-                    pass
             self._refresh()
             return held
         return value
@@ -1129,12 +1105,10 @@ class TradePanelController:
         return _cfg_int(_CFG_MAX_HOPS, _DEFAULT_MAX_HOPS, 1, 10)
 
     def _cycle_hops(self) -> None:
-        """Hops button: 2 (a back-and-forth pair) up to 10, then round to 2 again. Shares the Settings value."""
+        """Hops button: 2 (a back-and-forth pair) up to 10, then round to 2 again. The Routes window shows the same value."""
         current = self._route_hops()
         following = next((n for n in _HOP_CHOICES if n > current), _HOP_CHOICES[0])
         config.set(_CFG_MAX_HOPS, following)
-        if self._hops_var is not None:
-            self._hops_var.set(str(following))
         self._refresh()
 
     def _copy_next_system(self) -> None:
@@ -1480,79 +1454,15 @@ class TradePanelController:
         nb.Checkbutton(frame, text="Enable Spansh trade lookups", variable=self._lookups_var).grid(
             row=1, column=0, sticky=tk.W, padx=10, pady=2)
 
-        self._hops_var = tk.StringVar(value=str(_cfg_int(_CFG_MAX_HOPS, _DEFAULT_MAX_HOPS, 1, 10)))
-        self._arrival_var = tk.StringVar(value=str(_cfg_int(_CFG_MAX_ARRIVAL_LS, _DEFAULT_MAX_ARRIVAL_LS, 1, 1_000_000)))
-        self._range_var = tk.StringVar(value=config.get_str(_CFG_JUMP_RANGE) or "")
-        self._age_var = tk.StringVar(value=str(_cfg_int(_CFG_PRICE_AGE_H, _DEFAULT_PRICE_AGE_H, 0, 24 * 365)))
-        self._supply_var = tk.StringVar(value=str(_cfg_int(_CFG_MIN_SUPPLY, _DEFAULT_MIN_STOCK, 0, 1_000_000)))
-        self._demand_var = tk.StringVar(value=str(_cfg_int(_CFG_MIN_DEMAND, _DEFAULT_MIN_STOCK, 0, 1_000_000)))
-        self._only_var = tk.StringVar(value=config.get_str(_CFG_ROUND_ONLY) or "")
-        self._permit_var = tk.BooleanVar(value=config.get_bool(_CFG_PERMIT, default=False))
-        self._pad_var = tk.BooleanVar(value=config.get_bool(_CFG_LARGE_PAD, default=False))
-        self._near_var = tk.StringVar(value=str(self._near_radius()))
-        self._round_radius_var = tk.StringVar(value=str(_cfg_int(_CFG_ROUND_RADIUS, 0, 0, 100_000)))
-        self._carriers_var = tk.BooleanVar(value=config.get_bool(_CFG_CARRIERS, default=True))
-        self._ground_var = tk.BooleanVar(value=config.get_bool(_CFG_GROUND, default=True))
-        self._fines_var = tk.BooleanVar(value=count_fines_enabled())
-        self._pad_override_var = tk.StringVar(value=(config.get_str(_CFG_SHIP_PAD) or "auto").lower())
-
-        form = tk.Frame(frame)
-        form.grid(row=2, column=0, sticky=tk.W, padx=10, pady=(6, 2))
-        # (label, variable, lowest, highest): a number box with a range snaps a typed value back inside it; the jump range override has none (blank means the ship's own).
-        sections = (
-            ("Routes", (
-                ("Route hops", self._hops_var, 1, 10),
-                ("Max distance from the star (ls)", self._arrival_var, 1, 1_000_000),
-                ("Jump range override (ly, blank = use my ship's)", self._range_var, None, None),
-                ("Ignore prices older than (hours, 0 = any)", self._age_var, 0, 24 * 365))),
-            ("Round trips", (
-                ("Least supply at the buying station (t)", self._supply_var, 0, 1_000_000),
-                ("Least demand at the selling station (t)", self._demand_var, 0, 1_000_000),
-                ("Search radius (ly, 0 = from my jump range)", self._round_radius_var, 0, 100_000),
-                ("Carry only this commodity (blank = anything)", self._only_var, None, None))),
-            ("Market", (
-                ("'Near me' price search radius (ly)", self._near_var, 1, 100_000),)),
-        )
-        for section_row, (title, fields) in enumerate(sections):
-            box = tk.LabelFrame(form, text=title, padx=8, pady=4)
-            box.grid(row=section_row, column=0, sticky=tk.EW, pady=(0, 6))
-            for row, (label, var, low, high) in enumerate(fields):
-                nb.Label(box, text=label).grid(row=row, column=0, sticky=tk.W, pady=2)
-                if low is None:
-                    tk.Entry(box, textvariable=var, width=8).grid(row=row, column=1, sticky=tk.W, padx=(8, 0), pady=2)
-                else:
-                    tk.Spinbox(box, from_=low, to=high, width=9, textvariable=var).grid(row=row, column=1, sticky=tk.W, padx=(8, 0), pady=2)
-        nb.Checkbutton(frame, text="Only stations with a large landing pad", variable=self._pad_var).grid(
-            row=3, column=0, sticky=tk.W, padx=10, pady=2)
-        where = tk.Frame(frame)
-        where.grid(row=4, column=0, sticky=tk.W, padx=10, pady=2)
-        nb.Checkbutton(where, text="Include fleet carriers in prices and routes (they can jump away)",
-                       variable=self._carriers_var).grid(row=0, column=0, sticky=tk.W)
-        nb.Checkbutton(where, text="Include ground facilities in prices and routes (ports, outposts, settlements)",
-                       variable=self._ground_var).grid(row=1, column=0, sticky=tk.W)
-        nb.Checkbutton(where, text="Routes may use systems that need a permit",
-                       variable=self._permit_var).grid(row=2, column=0, sticky=tk.W)
-        nb.Checkbutton(where, text="Count fines and bounties I pay as a running cost (from now on)",
-                       variable=self._fines_var).grid(row=3, column=0, sticky=tk.W)
-        pad_row = tk.Frame(frame)
-        pad_row.grid(row=6, column=0, sticky=tk.W, padx=10, pady=(6, 2))
-        nb.Label(pad_row, text="Ship size (landing pad):").pack(side=tk.LEFT, padx=(0, 6))
-        for value, text in (("auto", "From my ship"), ("small", "Small"), ("medium", "Medium"), ("large", "Large")):
-            nb.Radiobutton(pad_row, text=text, variable=self._pad_override_var, value=value).pack(side=tk.LEFT, padx=(0, 6))
         nb.Label(
             frame,
-            text=("Prices and routes leave out stations without a pad your ship fits. 'From my ship' reads your "
-                  "ship from the game; pick a size only if it guesses wrong."),
+            text=("The rest of Trade's settings are in the windows they belong to: the Routes window (hops, distance from the star, jump range, price age, "
+                  "permit systems, fleet carriers, ground facilities, large pad, ship size, and the Round trip settings), the Market window ('Near me' radius, ship size, "
+                  "fleet carriers and ground facilities) and the Session window (count fines and bounties)."),
             wraplength=440, justify=tk.LEFT,
-        ).grid(row=7, column=0, sticky=tk.W, padx=10, pady=(0, 10))
-        nb.Label(
-            frame,
-            text=("The ship's unladen jump range is used unless you override it; a full hold jumps shorter, so "
-                  "lower the override if routes are too long for you. Budget and cargo size come from the game."),
-            wraplength=440, justify=tk.LEFT,
-        ).grid(row=5, column=0, sticky=tk.W, padx=10, pady=(4, 10))
+        ).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(8, 4))
 
-        self._build_carrier_settings(frame, first_row=8)
+        self._build_carrier_settings(frame, first_row=3)
 
     def _build_carrier_settings(self, frame: tk.Misc, first_row: int) -> None:
         """One choice per commander WFMT has met: which carriers they own. Auto shows whatever the journal
@@ -1589,34 +1499,6 @@ class TradePanelController:
         config.set(_CFG_LOOKUPS_ENABLED, bool(self._lookups_var.get()))
         for name, var in self._carrier_mode_vars.items():
             config.set(self._carrier_cfg_key(name), var.get() if var.get() in trade_carrier.MODES else trade_carrier.AUTO)
-        config.set(_CFG_LARGE_PAD, bool(self._pad_var.get()) if self._pad_var is not None else False)
-        config.set(_CFG_CARRIERS, bool(self._carriers_var.get()) if self._carriers_var is not None else True)
-        config.set(_CFG_PERMIT, bool(self._permit_var.get()) if self._permit_var is not None else False)
-        config.set(_CFG_GROUND, bool(self._ground_var.get()) if self._ground_var is not None else True)
-        if self._fines_var is not None:
-            config.set(_CFG_COUNT_FINES, bool(self._fines_var.get()))
-            ledger_mod.set_count_fines(bool(self._fines_var.get()))
-        pad_choice = (self._pad_override_var.get() if self._pad_override_var is not None else "auto").lower()
-        config.set(_CFG_SHIP_PAD, pad_choice if pad_choice in (trade_ship.SMALL, trade_ship.MEDIUM, trade_ship.LARGE) else "")
-        for key, var, default, low, high in (
-                (_CFG_MAX_HOPS, self._hops_var, _DEFAULT_MAX_HOPS, 1, 10),
-                (_CFG_MAX_ARRIVAL_LS, self._arrival_var, _DEFAULT_MAX_ARRIVAL_LS, 1, 1_000_000),
-                (_CFG_NEAR_RADIUS, self._near_var, _DEFAULT_NEAR_RADIUS_LY, 1, 100_000),
-                (_CFG_ROUND_RADIUS, self._round_radius_var, 0, 0, 100_000),
-                (_CFG_PRICE_AGE_H, self._age_var, _DEFAULT_PRICE_AGE_H, 0, 24 * 365),
-                (_CFG_MIN_SUPPLY, self._supply_var, _DEFAULT_MIN_STOCK, 0, 1_000_000),
-                (_CFG_MIN_DEMAND, self._demand_var, _DEFAULT_MIN_STOCK, 0, 1_000_000)):
-            try:
-                value = int((var.get() if var is not None else "").strip())
-            except ValueError:
-                value = default
-            config.set(key, max(low, min(high, value)))
-        config.set(_CFG_ROUND_ONLY, (self._only_var.get() if self._only_var is not None else "").strip())
-        jump = (self._range_var.get() if self._range_var is not None else "").strip()
-        try:
-            config.set(_CFG_JUMP_RANGE, jump if jump and float(jump) > 0 else "")
-        except ValueError:
-            config.set(_CFG_JUMP_RANGE, "")
         self._refresh()
 
 

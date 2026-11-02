@@ -48,7 +48,6 @@ from . import mining_pages
 from . import mining_price_finder_dialog as price_finder_dialog
 from . import mining_render as render
 from . import mining_reserve_lookup_dialog as reserve_lookup_dialog
-from . import commodity_autocomplete
 from . import mining_body_cache
 from . import mining_spansh_client
 from . import mining_body_lookup
@@ -56,7 +55,6 @@ from . import mining_session_archive as session_archive
 from . import mining_simulation
 from . import mining_stops
 from . import mining_window_settings as window_settings
-from . import mining_targets
 from . import mining_space as space_mining
 from . import mining_surface as surface_mining
 from . import overlay
@@ -162,9 +160,6 @@ class MiningPanelController:
         re-querying edsm.net every time."""
 
         # Settings-tab variables, populated in build_settings().
-        self._display_session_totals_var: Optional[tk.BooleanVar] = None
-        self._display_cargo_bar_var: Optional[tk.BooleanVar] = None
-        self._display_prospector_hints_var: Optional[tk.BooleanVar] = None
         self._spansh_hotspot_finder_var: Optional[tk.BooleanVar] = None
         self._spansh_price_finder_var: Optional[tk.BooleanVar] = None
         self._edsm_reserve_lookup_var: Optional[tk.BooleanVar] = None
@@ -175,37 +170,10 @@ class MiningPanelController:
         self._radar_opacity_var: Optional[tk.StringVar] = None
         self._radar_result_label: Optional[tk.Label] = None
         self._overlay_result_label: Optional[tk.Misc] = None
-        self._display_coverage_minimap_var: Optional[tk.BooleanVar] = None
         self._archive_sessions_var: Optional[tk.BooleanVar] = None
-        self._stop_radius_var: Optional[tk.StringVar] = None
-        self._rig_gap_var: Optional[tk.StringVar] = None
-        self._target_var: Optional[tk.StringVar] = None
-        self._target_percent_var: Optional[tk.StringVar] = None
-        self._target_status: Optional[tk.Label] = None
-        self._refill_days_var: Optional[tk.StringVar] = None
 
     def _on_window_setting(self) -> None:
-        """A display or tuning setting was changed in a mining window: show it on the Settings tab too (if that tab is built) and redraw the panel."""
-        for var, key in ((self._display_session_totals_var, _CFG_DISPLAY_SESSION_TOTALS), (self._display_cargo_bar_var, _CFG_DISPLAY_CARGO_BAR),
-                         (self._display_prospector_hints_var, _CFG_DISPLAY_PROSPECTOR_HINTS), (self._display_coverage_minimap_var, _CFG_DISPLAY_COVERAGE_MINIMAP)):
-            if var is not None:
-                try:
-                    var.set(window_settings.value(key))
-                except tk.TclError:
-                    pass
-        for var, key in ((self._stop_radius_var, _CFG_STOP_RADIUS), (self._rig_gap_var, _CFG_RIG_GAP), (self._refill_days_var, _CFG_REFILL_DAYS)):
-            if var is not None:
-                try:
-                    var.set(window_settings.value(key))
-                except tk.TclError:
-                    pass
-        if self._target_var is not None and self._target_percent_var is not None:
-            text, percent = window_settings.target_text()
-            try:
-                self._target_var.set(text)
-                self._target_percent_var.set(str(percent))
-            except tk.TclError:
-                pass
+        """A display or tuning setting was changed in a mining window: redraw the panel."""
         self._redraw_if_alive()
 
     # --- lifecycle -----------------------------------------------------
@@ -760,30 +728,16 @@ class MiningPanelController:
         frame.columnconfigure(0, weight=1)
         notebook.add(frame, text="Mining")
 
-        self._display_session_totals_var = tk.BooleanVar(value=_cfg_bool(_CFG_DISPLAY_SESSION_TOTALS, True))
-        self._display_cargo_bar_var = tk.BooleanVar(value=_cfg_bool(_CFG_DISPLAY_CARGO_BAR, True))
-        self._display_prospector_hints_var = tk.BooleanVar(value=_cfg_bool(_CFG_DISPLAY_PROSPECTOR_HINTS, True))
         self._spansh_hotspot_finder_var = tk.BooleanVar(value=_cfg_bool(_CFG_SPANSH_HOTSPOT_FINDER_ENABLED, False))
         self._spansh_price_finder_var = tk.BooleanVar(value=_cfg_bool(_CFG_SPANSH_PRICE_FINDER_ENABLED, False))
         self._edsm_reserve_lookup_var = tk.BooleanVar(value=_cfg_bool(_CFG_EDSM_RESERVE_LOOKUP_ENABLED, False))
         self._edsm_body_lookup_var = tk.BooleanVar(value=_cfg_bool(mining_body_lookup.CONFIG_ENABLED, False))
-        self._display_coverage_minimap_var = tk.BooleanVar(value=_cfg_bool(_CFG_DISPLAY_COVERAGE_MINIMAP, False))
         self._archive_sessions_var = tk.BooleanVar(value=_cfg_bool(_CFG_ARCHIVE_SESSIONS, False))
-        self._stop_radius_var = tk.StringVar(value=str(mining_stops.clamp_radius(
-            config.get_int(_CFG_STOP_RADIUS, default=mining_stops.DEFAULT_RADIUS_M))))
-        self._rig_gap_var = tk.StringVar(value=str(mining_stops.clamp_rig_gap(config.get_int(_CFG_RIG_GAP, default=0))))
-        self._refill_days_var = tk.StringVar(value=str(_refill_days()))
-        target, target_percent = mining_alerts.load_target()
-        self._target_var = tk.StringVar(value=target)
-        self._target_percent_var = tk.StringVar(value=str(target_percent))
 
-        nb.Label(frame, text="UI settings").grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 2))
-        nb.Checkbutton(frame, text="Show session totals",
-                       variable=self._display_session_totals_var).grid(row=1, column=0, sticky=tk.W, padx=10)
-        nb.Checkbutton(frame, text="Show the cargo bar",
-                       variable=self._display_cargo_bar_var).grid(row=2, column=0, sticky=tk.W, padx=10)
-        nb.Checkbutton(frame, text="Show prospector hints",
-                       variable=self._display_prospector_hints_var).grid(row=3, column=0, sticky=tk.W, padx=10)
+        nb.Label(frame, text=("The display and tuning settings are in the Space Mining and Surface Mining windows (press Space Mining or Surface Mining on the panel): "
+                              "session totals, the cargo bar and prospector hints in both; the target commodities in Space Mining; the coverage minimap, stop radius, rig gap "
+                              "and refill time in Surface Mining. This tab keeps the lookups that contact other services, the archive option and the simulation."),
+                 wraplength=440, justify=tk.LEFT).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
 
         nb.Checkbutton(
             frame, text="Enable Spansh nearby hotspot finder (Space Mining page - contacts spansh.co.uk)",
@@ -806,65 +760,9 @@ class MiningPanelController:
             variable=self._edsm_body_lookup_var,
         ).grid(row=8, column=0, sticky=tk.W, padx=10)
         nb.Checkbutton(
-            frame, text=("Show coverage minimap (Surface Mining page - a small map of ground the "
-                        "Rhino has driven over on the current body; redrawn once a second while "
-                        "deployed)"),
-            variable=self._display_coverage_minimap_var,
-        ).grid(row=9, column=0, sticky=tk.W, padx=10)
-        nb.Checkbutton(
             frame, text="Archive completed mining runs (writes a JSON file per run)",
             variable=self._archive_sessions_var,
         ).grid(row=10, column=0, sticky=tk.W, padx=10)
-
-        radius_row = tk.Frame(frame)
-        radius_row.grid(row=11, column=0, sticky=tk.W, padx=10, pady=(6, 0))
-        nb.Label(radius_row, text="Stop radius in the Surface Mining Book (m):").pack(side=tk.LEFT)
-        tk.Spinbox(radius_row, from_=mining_stops.MIN_RADIUS_M, to=mining_stops.MAX_RADIUS_M,
-                   increment=mining_stops.STEP_RADIUS_M, width=6, textvariable=self._stop_radius_var).pack(side=tk.LEFT, padx=6)
-        nb.Label(frame, text=("Deposits within this distance of the one with the most rigs count as one Rhino stop. "
-                              "500 to 2500 in steps of 250."), wraplength=440, justify=tk.LEFT).grid(
-            row=12, column=0, sticky=tk.W, padx=10)
-
-        refill_row = tk.Frame(frame)
-        refill_row.grid(row=13, column=0, sticky=tk.W, padx=10, pady=(6, 0))
-        nb.Label(refill_row, text="Assume a depleted deposit has refilled after (days):").pack(side=tk.LEFT)
-        tk.Spinbox(refill_row, from_=0, to=depletion.MAX_REGEN_DAYS, increment=1, width=5,
-                   textvariable=self._refill_days_var).pack(side=tk.LEFT, padx=6)
-        nb.Label(frame, text=("0 means unknown: a Depleted mark stays until you change it. The game gives no refill time and it may "
-                              "differ from system to system, so set a number only if you have seen one."),
-                 wraplength=440, justify=tk.LEFT).grid(row=14, column=0, sticky=tk.W, padx=10)
-
-        target_row = tk.Frame(frame)
-        target_row.grid(row=15, column=0, sticky=tk.W, padx=10, pady=(6, 0))
-        nb.Label(target_row, text="Target commodities:").pack(side=tk.LEFT)
-        target_entry = tk.Entry(target_row, width=30, textvariable=self._target_var)
-        target_entry.pack(side=tk.LEFT, padx=6)
-        # The type-ahead follows the item being typed (after the last comma) and replaces only that item.
-        commodity_autocomplete.attach(target_entry, mining_targets.LastItemVar(self._target_var), lambda: mining_spansh_client.KNOWN_MINING_COMMODITIES)
-        nb.Label(target_row, text="worth cracking at").pack(side=tk.LEFT)
-        tk.Spinbox(target_row, from_=mining_alerts.TARGET_PERCENT_RANGE[0], to=mining_alerts.TARGET_PERCENT_RANGE[1], width=4,
-                   textvariable=self._target_percent_var).pack(side=tk.LEFT, padx=4)
-        nb.Label(target_row, text="% or more").pack(side=tk.LEFT)
-        nb.Label(frame, text=("Type a commodity as the game names it (for example Painite), or several separated by commas, each with its own percentage after the name "
-                              "if you like: Painite 30, Platinum 25, Void Opals (up to %d; a name with no number uses the percentage above). The Space Mining page marks a prospected "
-                              "rock that holds at least that much of one, naming which, and Flight Alerts (Settings → Flight Alerts) can put a card on the overlay for each. Leave it "
-                              "empty for none. A core asteroid is always flagged." % mining_targets.MAX_TARGETS), wraplength=440, justify=tk.LEFT).grid(
-            row=16, column=0, sticky=tk.W, padx=10)
-        self._target_status = nb.Label(frame, text="", wraplength=440, justify=tk.LEFT)
-        self._target_status.grid(row=17, column=0, sticky=tk.W, padx=10)
-        self._target_var.trace_add("write", self._update_target_status)
-        self._target_percent_var.trace_add("write", self._update_target_status)
-        self._update_target_status()
-
-        gap_row = tk.Frame(frame)
-        gap_row.grid(row=18, column=0, sticky=tk.W, padx=10, pady=(6, 0))
-        nb.Label(gap_row, text="Too close to place another rig (m, 0 = off):").pack(side=tk.LEFT)
-        tk.Spinbox(gap_row, from_=0, to=mining_stops.MAX_RIG_GAP_M, increment=mining_stops.STEP_RIG_GAP_M, width=6,
-                   textvariable=self._rig_gap_var).pack(side=tk.LEFT, padx=6)
-        nb.Label(frame, text=("The game does not publish how close rigs may be. Measure it with Mark center and Mark border (stand at one rig, press Mark center, "
-                              "drive until the game lets you place the next, press Mark border) and enter it; the Surface Mining page then says whether "
-                              "your nearest saved deposit is far enough away. 0 turns it off."), wraplength=440, justify=tk.LEFT).grid(
-            row=19, column=0, sticky=tk.W, padx=10)
 
         sim_row = tk.Frame(frame)
         sim_row.grid(row=20, column=0, sticky=tk.W, padx=10, pady=(14, 0))
@@ -875,22 +773,6 @@ class MiningPanelController:
                               "changes your own deposits, marks or runs."), wraplength=440, justify=tk.LEFT).grid(row=21, column=0, sticky=tk.W, padx=10)
 
         mining_hotspot_settings.build(frame, start_row=22)
-
-    def _update_target_status(self, *_args: object) -> None:
-        """The line under the target box: what is wrong with what is typed (a percentage that is not 1 to 100, a name twice, too many names), else how many targets it holds."""
-        label = self._target_status
-        if label is None or self._target_var is None or self._target_percent_var is None:
-            return
-        percent = mining_alerts.clamp(self._target_percent_var.get(), *mining_alerts.TARGET_PERCENT_RANGE, mining_alerts.DEFAULT_TARGET_PERCENT)
-        parsed = mining_targets.parse_targets(self._target_var.get(), percent)
-        if parsed.problems:
-            text, color = " ".join(parsed.problems[:3]), "#c07000"
-        else:
-            text, color = (f"{len(parsed.targets)} target{'s' if len(parsed.targets) != 1 else ''} set." if parsed.targets else ""), "#2e7d32"
-        try:
-            label.configure(text=text, foreground=color)
-        except tk.TclError:
-            pass
 
     def build_overlay_settings(self, notebook: nb.Notebook) -> None:
         """The mining stats HUD, on the Overlays tab."""
@@ -983,11 +865,8 @@ class MiningPanelController:
         threading.Thread(target=worker, name="WFMT-mining-overlay-test", daemon=True).start()
 
     def save_settings(self) -> None:
-        if self._display_session_totals_var is None:
+        if self._spansh_hotspot_finder_var is None:
             return
-        config.set(_CFG_DISPLAY_SESSION_TOTALS, bool(self._display_session_totals_var.get()))
-        config.set(_CFG_DISPLAY_CARGO_BAR, bool(self._display_cargo_bar_var.get()))
-        config.set(_CFG_DISPLAY_PROSPECTOR_HINTS, bool(self._display_prospector_hints_var.get()))
         config.set(_CFG_SPANSH_HOTSPOT_FINDER_ENABLED, bool(self._spansh_hotspot_finder_var.get()))
         config.set(_CFG_SPANSH_PRICE_FINDER_ENABLED, bool(self._spansh_price_finder_var.get()))
         config.set(_CFG_EDSM_RESERVE_LOOKUP_ENABLED, bool(self._edsm_reserve_lookup_var.get()))
@@ -998,15 +877,7 @@ class MiningPanelController:
             config.set(mining_radar_overlay.CFG_ENABLED, bool(self._radar_card_var.get()))
             config.set(mining_radar_overlay.CFG_SIZE, mining_alerts.clamp(self._radar_size_var.get(), *mining_radar_overlay.SIZE_RANGE, mining_radar_overlay.SIZE_DEFAULT))
             config.set(mining_radar_overlay.CFG_OPACITY, mining_alerts.clamp(self._radar_opacity_var.get(), *mining_radar_overlay.OPACITY_RANGE, mining_radar_overlay.OPACITY_DEFAULT))
-        config.set(_CFG_DISPLAY_COVERAGE_MINIMAP, bool(self._display_coverage_minimap_var.get()))
         config.set(_CFG_ARCHIVE_SESSIONS, bool(self._archive_sessions_var.get()))
-        config.set(_CFG_STOP_RADIUS, mining_stops.clamp_radius(self._stop_radius_var.get()))
-        config.set(_CFG_RIG_GAP, mining_stops.clamp_rig_gap(self._rig_gap_var.get()))
-        config.set(_CFG_REFILL_DAYS, _clamp_refill_days(self._refill_days_var.get()))
-        config.set(mining_alerts.CFG_TARGET, " ".join(self._target_var.get().split()))
-        config.set(mining_alerts.CFG_TARGET_PERCENT, str(mining_alerts.clamp(self._target_percent_var.get(), *mining_alerts.TARGET_PERCENT_RANGE,
-                                                                             mining_alerts.DEFAULT_TARGET_PERCENT)))
-        hotspots.hotspot_repository.refill_days = _refill_days()
         self._redraw_if_alive()
 
 

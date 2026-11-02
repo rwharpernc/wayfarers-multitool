@@ -394,7 +394,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Nothing you press changes your own deposits or marks.
   - The window closes with its close button while Settings is still open.
 - [ ] **Surface Mining Book: refilling marks, stops, you are here.** In the Rhino on a body with several saved deposits (some with rigs and positions):
-  - Check the **Stops** lines above the hotspots, the dashed rings on the map at 1x/2x/4x and the `stop N` tags. Changing Settings → Mining → Stop radius changes them.
+  - Check the **Stops** lines above the hotspots, the dashed rings on the map at 1x/2x/4x and the `stop N` tags. Changing the Stop radius on the Surface Mining window's Settings card changes them.
   - Standing within 175 m of a deposit selects it and marks `you are here`, and Mark depleted there is one click.
   - Mark a deposit depleted. Check the card says `Depleted N d ago. When it refills is unknown` and that the mark stays.
   - Set Settings → Mining → *Assume a depleted deposit has refilled after (days)* to 14, edit `depleted_at` in `mining_hotspots.json` to 15 days ago, reopen the Book. Check the mark is gone and the card says `Assumed refilled`.

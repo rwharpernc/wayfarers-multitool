@@ -169,10 +169,6 @@ class ColonizationController:
         self._overlay_lock = threading.Lock()
         self._overlay_enabled_var: Optional[tk.BooleanVar] = None
         self._rcc_enabled_var: Optional[tk.BooleanVar] = None
-        self._rcc_progress_box: Any = None
-        self._rcc_carrier_box: Any = None
-        self._rcc_progress_var: Optional[tk.BooleanVar] = None
-        self._rcc_carrier_var: Optional[tk.BooleanVar] = None
         self._rcc_key_var: Optional[tk.StringVar] = None
         self._rcc_key_result: Optional[tk.Label] = None
         self._right_panel_var: Optional[tk.BooleanVar] = None
@@ -186,17 +182,7 @@ class ColonizationController:
 
     # --- lifecycle ----------------------------------------------------------
 
-    def _on_window_setting(self) -> None:
-        """A Raven choice was changed in the Sites window: show it on the Settings tab too (if that tab is built)."""
-        for var, held in ((self._rcc_progress_var, colonization_settings.progress_chosen()), (self._rcc_carrier_var, colonization_settings.carrier_chosen())):
-            if var is not None:
-                try:
-                    var.set(held)
-                except tk.TclError:
-                    pass
-
     def start(self, plugin_dir: str) -> None:
-        colonization_settings.add_listener(self._on_window_setting)
         self._repository.load(plugin_dir)
         self._carrier_cargo.set_external_check(trade_panel.fleet_carrier)   # the same answer Trade gives
         # EDMC does not replay old events at start-up, so the commander would stay unknown until the next one.
@@ -842,16 +828,10 @@ class ColonizationController:
         ).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(0, 4))
         self._rcc_enabled_var = tk.BooleanVar(value=rcc_keys.enabled())
         nb.Checkbutton(frame, text="Allow WFMT to write to Raven Colonial (master switch)",
-                       variable=self._rcc_enabled_var, command=self._rcc_sync_state).grid(
-            row=5, column=0, sticky=tk.W, padx=10, pady=(0, 2))
-        self._rcc_progress_var = tk.BooleanVar(value=config.get_bool(_CFG_RCC_PROGRESS, default=False))
-        self._rcc_progress_box = nb.Checkbutton(frame, text="Report my construction progress and deliveries to Raven Colonial (needs the key below)",
-                                                variable=self._rcc_progress_var)
-        self._rcc_progress_box.grid(row=6, column=0, sticky=tk.W, padx=(30, 10), pady=(0, 2))
-        self._rcc_carrier_var = tk.BooleanVar(value=config.get_bool(_CFG_RCC_CARRIER, default=False))
-        self._rcc_carrier_box = nb.Checkbutton(frame, text="Also report cargo I move to and from my fleet carrier (needs the key below)",
-                                               variable=self._rcc_carrier_var)
-        self._rcc_carrier_box.grid(row=7, column=0, sticky=tk.W, padx=(30, 10), pady=(0, 2))
+                       variable=self._rcc_enabled_var).grid(row=5, column=0, sticky=tk.W, padx=10, pady=(0, 2))
+        nb.Label(frame, text=("What is reported once this is on (construction progress and deliveries, and fleet carrier cargo) is chosen on the Raven Colonial "
+                              "strip at the top of the Colonization Sites window, which also says what is being reported."),
+                 wraplength=440, justify=tk.LEFT).grid(row=6, column=0, sticky=tk.W, padx=(30, 10), pady=(0, 2))
         key_row = tk.Frame(frame)
         key_row.grid(row=8, column=0, sticky=tk.W, padx=10, pady=(0, 2))
         nb.Label(key_row, text="Raven Colonial key:").pack(side=tk.LEFT)
@@ -872,7 +852,6 @@ class ColonizationController:
                   "nothing); it works before you save."),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=10, column=0, sticky=tk.W, padx=10, pady=(0, 10))
-        self._rcc_sync_state()
 
     def _on_test_rcc_key(self) -> None:
         """Ask Raven Colonial whether the key in the box is accepted (a read that changes nothing). It tests what is typed, so it
@@ -898,16 +877,6 @@ class ColonizationController:
                 pass
 
         threading.Thread(target=worker, name="WFMT-rcc-key-check", daemon=True).start()
-
-    def _rcc_sync_state(self) -> None:
-        """Gray out the two Raven options while the master switch is off (their choices are kept)."""
-        state = tk.NORMAL if self._rcc_enabled_var is not None and self._rcc_enabled_var.get() else tk.DISABLED
-        for box in (self._rcc_progress_box, self._rcc_carrier_box):
-            if box is not None:
-                try:
-                    box.configure(state=state)
-                except tk.TclError:
-                    pass
 
     def build_overlay_settings(self, notebook: nb.Notebook) -> None:
         """The shopping-list card's options, on the Overlays tab."""
@@ -1000,11 +969,8 @@ class ColonizationController:
     def save_settings(self) -> None:
         if self._rcc_enabled_var is not None:
             config.set(rcc_keys.CFG_ENABLED, self._rcc_enabled_var.get())
-        if self._rcc_progress_var is not None:
-            config.set(_CFG_RCC_PROGRESS, self._rcc_progress_var.get())
-            config.set(_CFG_RCC_CARRIER, self._rcc_carrier_var.get() if self._rcc_carrier_var is not None else False)
-            if self._rcc_key_var is not None and self._cmdr:
-                rcc_keys.keys.set(self._cmdr, self._rcc_key_var.get())
+        if self._rcc_key_var is not None and self._cmdr:
+            rcc_keys.keys.set(self._cmdr, self._rcc_key_var.get())
         colonization_settings.announce()        # an open Sites window shows the Raven choices now saved
         if self._overlay_enabled_var is None:
             return

@@ -36,7 +36,6 @@ from config import appname, config
 
 from . import exo_observations, exo_review_window, exploration_settings, organic_catchup, organic_scan, organic_scan_state, panelkit
 from .organic_scan import BodyConditions, OrganicTracker
-from .uikit import dialogs
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -66,23 +65,7 @@ def _format_credits(value: Optional[int]) -> str:
 
 
 class OrganicScanController:
-    def _on_window_setting(self) -> None:
-        """The record switch (or the record itself) was changed in the Prediction review window: show it on the Settings tab too, if that tab is built."""
-        observe = getattr(self, "_observe_var", None)
-        if observe is not None:
-            try:
-                observe.set(observing())
-            except tk.TclError:
-                pass
-        text = getattr(self, "_observed_var", None)
-        if text is not None:
-            try:
-                text.set(self._observed_text())
-            except tk.TclError:
-                pass
-
     def __init__(self) -> None:
-        exploration_settings.add_listener(self._on_window_setting)
         self._plugin_dir: Optional[str] = None
         self._parent: Optional[tk.Frame] = None
         self._cmdr: Optional[str] = None
@@ -116,9 +99,6 @@ class OrganicScanController:
         self._tracker = OrganicTracker()
         # Samples taken while EDMC was closed, read from the journals on a worker thread and merged into the saved progress on the Tk thread (_poll_catchup).
         self._catchup_queue: "queue.Queue[tuple]" = queue.Queue()
-        self._observe_var: Optional[tk.BooleanVar] = None
-        self._settings_frame: Optional[tk.Misc] = None
-        self._observed_var: Optional[tk.StringVar] = None
         self._observations = exo_observations.ObservationBook()      # what lived where, for checking the prediction later; global, not per commander
 
         self._predictions_var: Optional[tk.StringVar] = None
@@ -706,45 +686,16 @@ class OrganicScanController:
         nb.Label(frame, text="Prediction review", font=("TkDefaultFont", 9, "bold")).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(6, 4))
         nb.Label(
             frame,
-            text=(
-                "Each sample that names a species is kept, with the body's conditions and the species the prediction listed, so the prediction can be "
-                "checked against what you really find (Review on the Organic Scanning panel). The record is one file shared by every commander on this "
-                "install and names none of them; nothing is sent anywhere."
-            ),
+            text=("Whether to keep a record of what you find, to check the prediction, how much is recorded, and Clear the record are on the Settings strip at the top of the "
+                  "Prediction review window (press Review on the Organic Scanning panel to open it). The record is one file shared by every commander on this install "
+                  "and names none of them; nothing is sent anywhere."),
             wraplength=440, justify=tk.LEFT,
-        ).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-        self._settings_frame = frame
-        self._observe_var = tk.BooleanVar(value=observing())
-        nb.Checkbutton(frame, text="Keep a record of what I find, to check the prediction", variable=self._observe_var).grid(
-            row=5, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-        self._observed_var = tk.StringVar(value=self._observed_text())
-        nb.Label(frame, textvariable=self._observed_var).grid(row=6, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-        nb.Button(frame, text="Clear the record...", command=self._clear_observations).grid(row=7, column=0, sticky=tk.W, padx=10, pady=(0, 10))
-
-    def _observed_text(self) -> str:
-        finds, bodies = self._observations.count(), len(self._observations.bodies())
-        return f"{finds} find{'s' if finds != 1 else ''} on {bodies} bod{'ies' if bodies != 1 else 'y'} recorded so far."
-
-    def _clear_observations(self) -> None:
-        count = self._observations.count()
-        if not count:
-            return
-        if not dialogs.confirm(
-                self._settings_frame, "Clear the record",
-                f"Delete all {count} recorded finds, and any reviews you wrote on them? The record is shared by every commander on this install, "
-                "so it clears for all of them. The biology WFMT remembers for each body is not touched, and the record starts again with your next sample."):
-            return
-        self._observations.clear()
-        exo_review_window.refresh()
-        if self._observed_var is not None:
-            self._observed_var.set(self._observed_text())
+        ).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(0, 10))
 
     def save_settings(self) -> None:
         if self._enabled_var is None:
             return
         config.set(_CFG_ENABLED, self._enabled_var.get())
-        if self._observe_var is not None:
-            config.set(_CFG_OBSERVE, self._observe_var.get())
         self._refresh_enabled_display()
 
 

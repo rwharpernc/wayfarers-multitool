@@ -39,7 +39,7 @@ threading, persistence), see [TECHNICAL.md](TECHNICAL.md).
 Trade mode is one of the panel's modes (`PANEL_PLACEMENT = "trade"`). It has three pages. The panel shows a short summary (net profit and the hold) over a button for each, and each button opens that
 page in its own window (`trade_windows.py`, built on the window kit; the History button opens Trade History):
 
-Each Trade window shows the requirements of its `PAGE_GROUPS` entry: Routes the Routes and Round trip groups (with the ship size), Market the Near me radius and the ship size, Session the count-fines switch. A requirement's kind can also be `choice` (the ship size: `auto`, `small`, `medium`, `large`; `auto` is saved as blank, as Settings does). The Routes window also holds the requirements (`trade_panel.REQUIREMENTS`: hops, arrival distance, jump range, price age, permit, carriers, ground, large pad, and Round trip's least supply and demand, radius and commodity). `requirement_value` / `set_requirement` read and save them with the same clamping Settings uses and update the Settings tab's variable; a box saves on Enter or when it loses focus.
+Each Trade window shows the requirements of its `PAGE_GROUPS` entry: Routes the Routes and Round trip groups (with the ship size), Market the Near me radius and the ship size, Session the count-fines switch. A requirement's kind can also be `choice` (the ship size: `auto`, `small`, `medium`, `large`; `auto` is saved as blank, as Settings does). The Routes window also holds the requirements (`trade_panel.REQUIREMENTS`: hops, arrival distance, jump range, price age, permit, carriers, ground, large pad, and Round trip's least supply and demand, radius and commodity). `requirement_value` / `set_requirement` read and save them (a number is clamped to its range, the jump range must be above 0); a box saves on Enter or when it loses focus. These settings are only in the windows: the Settings → WFMT → Trade tab keeps the Spansh lookups switch and the carrier choice per commander, and says where the rest went. Fleet carriers and Ground facilities are in both the Routes and Market windows, because they drive routes and also the price results and Best picks.
 
 | Page | Works offline? | Purpose |
 |---|---|---|
@@ -658,6 +658,8 @@ The **Best picks** button on the Market page runs `source_picks.find` for the co
   needs; see `MISSIONS_TECH_SPEC.md` 10c and `TECHNICAL.md`.
 
 ## 10. Settings, config keys and files
+
+The keys below are set in the windows named in the guide's Trade settings table (`docs/guide/trade.md`), except `wfmt_trade_lookups_enabled` and the carrier choice, which are on the Settings tab.
 
 Settings > WFMT > Trade (a top-level tab; the top-level tabs are in alphabetical order).
 

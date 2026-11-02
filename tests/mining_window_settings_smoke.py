@@ -102,10 +102,6 @@ frame.pack()
 controller = mining_panel.controller
 controller.build_panel(frame)
 controller.start("/nonexistent") if False else None
-controller._display_cargo_bar_var = tk.BooleanVar(value=True)           # what the Settings tab would hold
-controller._stop_radius_var = tk.StringVar(value="1500")
-controller._target_var = tk.StringVar(value="")
-controller._target_percent_var = tk.StringVar(value="25")
 W.add_listener(controller._on_window_setting)
 
 space = mining_live_window.show(root, mining_pages.SPACE_MINING, mining_panel._settings)
@@ -125,7 +121,6 @@ W.set_value(W.CFG_DISPLAY_CARGO_BAR, tick.get())
 pump()
 check(saved.get(W.CFG_DISPLAY_CARGO_BAR) is False, "the tick is saved")
 check(surface._settings_card._vars[W.CFG_DISPLAY_CARGO_BAR][0].get() is False, "and shown in the other window")
-check(controller._display_cargo_bar_var.get() is False, "and on the Settings tab")
 check(mining_panel._settings().display_cargo_bar is False, "and the panel's settings follow")
 
 # a typed number in the Surface window
@@ -134,7 +129,6 @@ var.set("2000")
 entry.event_generate("<FocusOut>")
 pump()
 check(saved.get(W.CFG_STOP_RADIUS) == 2000, f"a typed stop radius is saved: {saved.get(W.CFG_STOP_RADIUS)}")
-check(controller._stop_radius_var.get() == "2000", "and shown on the Settings tab")
 
 # the targets typed in the Space window
 card = space._settings_card
@@ -143,11 +137,10 @@ card._percent_var.set("40")
 card._target_entry.event_generate("<FocusOut>")
 pump()
 check(saved.get("wfmt_mining_target") is not None or any("Painite" in str(v) for v in saved.values()), f"the targets are saved: {saved}")
-check(controller._target_var.get() == "Painite 30" and controller._target_percent_var.get() == "40", "and shown on the Settings tab")
 card._target_var.set("Painite 300")
 check(card._status.cget("text") != "" and str(card._status.cget("fg")) == W.P.WARN, "a problem with the targets is said, in the warning color")
 
-# a change made on the Settings tab shows in the windows
+# a change made in the other window shows here
 saved[W.CFG_RIG_GAP] = 50
 W._announce()
 pump()

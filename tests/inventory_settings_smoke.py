@@ -104,10 +104,6 @@ check(json.loads(saved[suit.CONFIG_SUIT_OVERRIDES]).get(CMDR, {}).get("7") is no
 
 # --- the tab ---------------------------------------------------------------------------------------------------------------------------------
 panel = inventory_panel.controller
-panel._message_format_var = tk.StringVar(value="")
-panel._sound_var = tk.BooleanVar(value=False)
-panel._announce_vars = {c: tk.BooleanVar(value=True) for c in TRACKED_CATEGORIES}
-panel._override_vars = {("7", "Item"): tk.StringVar(value="40")}
 panel._tracker.set_commander(CMDR)
 S.add_listener(panel._on_window_setting)
 frame = tk.Frame(root)
@@ -118,20 +114,20 @@ check(("7", "Item") in tab._capacity_vars and ("7", "Data") in tab._capacity_var
 tab._format.set("Picked {item}")
 tab._format_entry.event_generate("<FocusOut>")
 pump()
-check(panel._message_format_var.get() == "Picked {item}", "a typed message shows on the Settings tab")
+check(S.message_format() == "Picked {item}", "a typed message is saved")
 tab._announce[first].set(False)
 S.set_announced(first, tab._announce[first].get())
 pump()
-check(panel._announce_vars[first].get() is False, "a muted category shows on the Settings tab")
+check(first not in S.announced_categories(), "a muted category is saved")
 var = tab._capacity_vars[("7", "Item")]
 var.set("65")
 tab._capacity_entries[("7", "Item")].event_generate("<FocusOut>")
 pump()
-check(record["overrides"].get("Item") == 65 and panel._override_vars[("7", "Item")].get() == "65", "a typed capacity is saved and shown on the Settings tab")
-saved[S.CFG_MESSAGE_FORMAT] = "From Settings {item}"                         # changed on the Settings tab
+check(record["overrides"].get("Item") == 65, "a typed capacity is saved")
+saved[S.CFG_MESSAGE_FORMAT] = "Changed elsewhere {item}"                     # changed elsewhere
 S.announce()
 pump()
-check(tab._format.get() == "From Settings {item}", "a change made elsewhere shows in the tab")
+check(tab._format.get() == "Changed elsewhere {item}", "a change made elsewhere shows in the tab")
 suit.record_loadout(CMDR, "8", name="Fight", suit_key="tacticalsuit", grade=1, has_capacity_mod=True)
 tab.sync()
 pump()

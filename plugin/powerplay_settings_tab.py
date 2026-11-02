@@ -1,6 +1,6 @@
 """The Settings tab of the Powerplay Sessions window: the merits-per-CP ratios, the Copy Progress line format and how many cycles the start-up journal scan covers.
 
-They are the same saved values as Settings → WFMT → Powerplay, so a change in either place shows in the other. A box saves when you press Enter or click away (a ratio
+They are set only here; the Settings → WFMT → Powerplay tab says where they went. A box saves when you press Enter or click away (a ratio
 must be above 0, the cycles 1 to MAX_BACKFILL_CYCLES; anything else leaves the saved value). `powerplay.py` holds the readers and the savers (`set_ratio`,
 `set_clipboard_template`, `set_backfill_cycles`) and the listeners; this tab only draws them."""
 from __future__ import annotations

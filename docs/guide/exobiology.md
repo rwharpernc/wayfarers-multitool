@@ -328,7 +328,7 @@ It is used to check the prediction over time: how often the species was on the l
 
 - Unlike everything else WFMT saves about your play, this file is **shared by every commander on the install and names none of them**. It holds facts about bodies, not about who found them.
 - Nothing is sent anywhere.
-- Turn the record off, or clear it, under **Settings → WFMT → Exploration → Organic Scanning → Prediction review**. Clearing deletes every recorded find and review, for every commander on the install.
+- Turn the record off, or clear it, with the **Settings** strip at the top of the Prediction review window (*Keep a record of what I find* and **Clear the record...**). Clearing deletes every recorded find and review, for every commander on the install.
 
 ### The Prediction review window
 

@@ -1,8 +1,7 @@
-"""Inventory's pickup settings, set in the Inventory window as well as in Settings → WFMT → Inventory.
+"""Inventory's pickup settings, set in the Inventory window (the Settings → WFMT → Operations → Inventory tab says where they went).
 
-The pillage message format, the pickup sound, which categories announce a pickup, and each suit loadout's backpack capacity are the same saved values in both places, so a change in
-either shows in the other. The window's **Settings** tab (`inventory_settings_tab.SettingsTab`) draws them; this module reads and saves them and tells listeners (`add_listener`):
-the panel's listener switches the sound, redraws the bars and updates the Settings tab's own variables. The overlay choices (the pillage notifications and bars on the in-game
+The pillage message format, the pickup sound, which categories announce a pickup, and each suit loadout's backpack capacity are set only there. The window's **Settings** tab (`inventory_settings_tab.SettingsTab`) draws them; this module reads and saves them and tells listeners (`add_listener`):
+the panel's listener switches the sound and redraws the bars. The overlay choices (the pillage notifications and bars on the in-game
 overlay, and where they sit) stay on the Overlays tab.
 
 The config keys and readers live here so `inventory_window` can use them without importing `inventory_panel`, which imports the window."""
