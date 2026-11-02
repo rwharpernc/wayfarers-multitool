@@ -19,7 +19,7 @@ import os
 import re
 import tkinter as tk
 from tkinter import filedialog
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Optional, Sequence
 
 from config import appname, config
 
@@ -86,10 +86,10 @@ _windows: Dict[str, "LiveWindow"] = {}
 
 
 def show(parent: tk.Misc, page: str, settings_factory: Callable[[], render.PanelSettings],
-         sources: Optional[mining_sources.Sources] = None) -> Optional["LiveWindow"]:
+         sources: Optional[mining_sources.Sources] = None, actions: Sequence[tuple] = ()) -> Optional["LiveWindow"]:
     """Open the live window for `page`, or raise it if it is open. Parented on the main window's toplevel: the panel rebuilds its own content frame, which would take a window parented there
     with it. `settings_factory` gives the panel's current settings, so what the window shows follows Settings. `sources` is where it reads its data from: WFMT's own state, or the
-    simulation's (which opens as its own window, so it never replaces one showing real data)."""
+    simulation's (which opens as its own window, so it never replaces one showing real data). `actions` are extra header buttons, (caption, command, tip)."""
     if page not in CONFIG_GEOMETRY:
         return None
     key = page + (SIMULATION_SUFFIX if sources is not None and sources.simulated else "")
@@ -98,7 +98,7 @@ def show(parent: tk.Misc, page: str, settings_factory: Callable[[], render.Panel
         held.refresh()
         held.lift()
         return held
-    _windows[key] = LiveWindow(parent.winfo_toplevel(), page, settings_factory, sources)
+    _windows[key] = LiveWindow(parent.winfo_toplevel(), page, settings_factory, sources, actions)
     return _windows[key]
 
 
@@ -156,7 +156,7 @@ def close() -> None:
 
 class LiveWindow:
     def __init__(self, parent: tk.Misc, page: str, settings_factory: Callable[[], render.PanelSettings],
-                 sources: Optional[mining_sources.Sources] = None) -> None:
+                 sources: Optional[mining_sources.Sources] = None, actions: Sequence[tuple] = ()) -> None:
         self._page = page
         self._src = sources or mining_sources.real()
         self._simulated = self._src.simulated
@@ -198,6 +198,8 @@ class LiveWindow:
                 "reserve_lookup": self._shell.add_action("Reserves", lambda: reserve_lookup_dialog.open_reserve_lookup_dialog(self._shell.window),
                     tip="Reserves - check the reserve level and type of a system's rings (EDSM)"),
             }
+        for caption, command, tip in actions:
+            self._shell.add_action(caption, command, tip=tip)
         body = self._shell.body
         body.columnconfigure(0, weight=3 if surface else 0)
         body.columnconfigure(1, weight=2 if surface else 1)

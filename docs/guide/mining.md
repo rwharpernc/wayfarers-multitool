@@ -6,8 +6,7 @@ Mine mode tracks two kinds of mining, keeps a book for each, and adds up everyth
 - **Surface Mining**, in the Rhino SRV, with the **Surface Mining Book**: your catalog of deposits, and the bodies your journals show mining on.
 - **Mining History**: every run in your journals, added up.
 
-Use the **◀** and **▶** buttons at the top of the panel to switch between the two pages. Each page shows live stats
-for your current run, and its **Book** button opens the book for that page.
+The panel has a **Space Mining** button and a **Surface Mining** button at the top. Each opens that page's own window (the live numbers, and for the Rhino the radar and controls), with **Book** and **Dashboard** in its header. Under the buttons, the panel itself shows the live stats for the page that fits what you are doing: Surface Mining while an SRV is out or a Rhino run is on, Space Mining otherwise. There is nothing to switch by hand. The panel's own **Book** and **Dashboard** buttons act on the page it is showing.
 
 **On this page:** [How to](#how-to) · [What each page shows](#what-each-page-shows) · [The buttons](#the-buttons) · [A typical run](#a-typical-run) · [Mining History](#mining-history) · [The live window](#the-live-window) · [Marking a mining location](#marking-a-mining-location) · [The Space Mining Book](#the-space-mining-book) · [The Surface Mining Book](#the-surface-mining-book) · [Mining alerts](#mining-alerts) · [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) · [Settings](#settings)
 
@@ -24,19 +23,19 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 **Start a Space Mining run.** Details: [Space Mining](#space-mining).
 
-1. Use the **◀** and **▶** buttons at the top of the panel until the Space Mining page shows.
+1. Look at the panel when you are in your ship: it shows the Space Mining page (or press **Space Mining** for its window).
 2. Undock. A new run begins. The page keeps saying `No active mining run. Undock to start tracking a new run.` until the run has something to show (tons in the hold, a prospected rock, a launched limpet or a refined ton), then the live numbers of the run appear.
 3. Fly to the ring and start mining. The **Hold**, **Asteroids prospected** and **Refined** lines fill in as you work.
 
 **Start a Surface Mining run.** Details: [Surface Mining](#surface-mining).
 
-1. Switch to the Surface Mining page with **◀** or **▶**.
+1. Press **Surface Mining** for its window, or just launch the Rhino: the panel switches to the Surface Mining page by itself.
 2. Launch the Rhino. The page changes from `No active Rhino deployment. Launch the Rhino to start tracking a new run.` to the live numbers.
 3. Stow the Rhino to end the run. The numbers stay on the page, marked `Rhino stowed (last deployment)`, until the next launch.
 
 **Read the radar.** Details: [Surface Mining Live](#surface-mining-live).
 
-1. On the Surface Mining page, press **Live**.
+1. Press **Surface Mining** on the panel (or **Live** while the panel shows the Surface Mining page).
 2. Land, or drive, so you are on or just above the ground. Until then the window says `The radar draws when you are on or just above the ground.`
 3. Pick a reach with the **Radar reaches** buttons (50 m to 2 km) and press **Help** in the window's header to see what each mark means.
 

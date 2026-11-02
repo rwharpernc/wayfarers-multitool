@@ -79,7 +79,6 @@ _CFG_EDSM_RESERVE_LOOKUP_ENABLED = "wfmt_mining_edsm_reserve_lookup_enabled"
 _CFG_OVERLAY_ENABLED = "wfmt_mining_overlay_enabled"
 _CFG_DISPLAY_COVERAGE_MINIMAP = "wfmt_mining_display_coverage_minimap"
 _CFG_ARCHIVE_SESSIONS = "wfmt_mining_archive_sessions"
-_CFG_CURRENT_PAGE = "wfmt_mining_current_page"
 _CFG_STOP_RADIUS = "wfmt_mining_stop_radius_m"
 _CFG_RIG_GAP = "wfmt_mining_rig_gap_m"
 _CFG_REFILL_DAYS = "wfmt_mining_refill_days"
@@ -130,6 +129,13 @@ def _settings() -> render.PanelSettings:
     )
 
 
+# Hover text for the page buttons at the top of the Mining panel.
+PAGE_BUTTON_TIPS = {
+    mining_pages.SPACE_MINING: "Space Mining - open the Space Mining window: the live numbers for ring mining, with Book and Dashboard",
+    mining_pages.SURFACE_MINING: "Surface Mining - open the Surface Mining window: the radar, the live numbers and the controls for the Rhino, with Book and Dashboard",
+}
+
+
 class MiningPanelController:
     def __init__(self) -> None:
         self._plugin_dir: Optional[str] = None
@@ -142,9 +148,7 @@ class MiningPanelController:
         self._content_window: Optional[int] = None
         self._wrap = _WRAP_FALLBACK
         self._buttons: Optional[render.PanelButtons] = None
-        self._current_page = config.get_str(_CFG_CURRENT_PAGE) or mining_pages.PAGE_ORDER[0]
-        if self._current_page not in mining_pages.PAGE_ORDER:
-            self._current_page = mining_pages.PAGE_ORDER[0]
+        self._current_page = mining_pages.SPACE_MINING     # the page the panel is showing: chosen by what you are doing (_page_for_panel), not by hand
 
         self._srv_out = False            # an SRV is out, from the journal's Cargo events (Vessel SRV) and their end: covers a Rhino launched before the journal in view began
         self._backfilling = False
@@ -234,12 +238,15 @@ class MiningPanelController:
         parent.columnconfigure(1, weight=0)  # the scrollbar column keeps its natural width
         self._parent = parent
 
+        # One button for each page, each opening that page's window; under them, the page the panel itself is showing right now.
         self._nav = tk.Frame(parent)
         self._nav.grid(column=0, row=0, columnspan=2, sticky="ew")
-        panelkit.nav_arrow(self._nav, -1, lambda: self._step_page(-1)).pack(side=tk.LEFT)
-        self._page_label = tk.Label(self._nav, anchor=tk.CENTER, font=panelkit.view_fonts()["bold"])
-        self._page_label.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        panelkit.nav_arrow(self._nav, 1, lambda: self._step_page(1)).pack(side=tk.LEFT)
+        for column, page in enumerate(mining_pages.PAGE_ORDER):
+            button = tk.Button(self._nav, text=page, command=lambda p=page: self._open_live(p))
+            button.grid(row=0, column=column, sticky="w", padx=(0 if column == 0 else 6, 0))
+            panelkit.add_tooltip(button, PAGE_BUTTON_TIPS[page])
+        self._page_label = tk.Label(self._nav, anchor=tk.W, font=panelkit.view_fonts()["bold"])
+        self._page_label.grid(row=1, column=0, columnspan=len(mining_pages.PAGE_ORDER), sticky="w", pady=(2, 0))
 
         # width=1: a bare Canvas requests 10 cm of width, which would widen EDMC's window; it
         # stretches to the panel's width instead (sticky="ew").
@@ -311,21 +318,35 @@ class MiningPanelController:
         """Settings → Mining → Simulation: the Surface Live window on pretend data."""
         mining_simulation.open_surface_live(self._window_parent(), _settings)
 
-    def _open_live(self) -> None:
-        """Live opens the live window for the page you are on: the radar and controls for the Rhino on the Surface page, the live numbers on the Space page."""
-        live_window.show(self._window_parent(), self._current_page, _settings)
+    def _open_live(self, page: Optional[str] = None) -> None:
+        """Opens a page's window: the radar and controls for the Rhino for Surface Mining, the live numbers for Space Mining. With no page, the one the panel is showing (the Live button)."""
+        page = page or self._current_page
+        live_window.show(self._window_parent(), page, _settings, actions=self._page_actions(page))
+
+    def _page_actions(self, page: str) -> list:
+        """The page's own Book and Dashboard buttons, for its window's header: (caption, command, tip)."""
+        return [("Book", lambda: self._open_book(page),
+                 "Book - the Surface Mining Book (Rhino deposits)" if page == mining_pages.SURFACE_MINING else "Book - the Space Mining Book (your rings)"),
+                ("Dashboard", lambda: history_window.show(self._window_parent(), self._history_mode(page)),
+                 "Dashboard - the mining history for this page (the Rhino by body, or ring mining)")]
+
+    def _page_for_panel(self) -> str:
+        """Which page the panel shows: Surface Mining while an SRV is out or a surface run is on, otherwise Space Mining."""
+        if surface_mining.surface_mining_repository.is_active or self._srv_out:
+            return mining_pages.SURFACE_MINING
+        return mining_pages.SPACE_MINING
 
     def _window_parent(self) -> tk.Misc:
         """Where the panel's windows and dialogs hang from. Not `_content`: `_redraw` destroys every child of it, which would close an open window the moment the panel redraws."""
         return self._content.winfo_toplevel() if self._content is not None else self._parent
 
-    def _history_mode(self) -> str:
+    def _history_mode(self, page: Optional[str] = None) -> str:
         """Which half of the mining history Dashboard opens: the Rhino's on the Surface page, the rings' otherwise."""
-        return mining_history_data.SURFACE if self._current_page == mining_pages.SURFACE_MINING else mining_history_data.SPACE
+        return mining_history_data.SURFACE if (page or self._current_page) == mining_pages.SURFACE_MINING else mining_history_data.SPACE
 
-    def _open_book(self) -> None:
-        """Book opens the book for the page you are on: rings on the Space Mining page, the Rhino's deposits on the Surface Mining page."""
-        if self._current_page == mining_pages.SURFACE_MINING:
+    def _open_book(self, page: Optional[str] = None) -> None:
+        """Book opens the book for a page (the one the panel shows, by default): rings on the Space Mining page, the Rhino's deposits on the Surface Mining page."""
+        if (page or self._current_page) == mining_pages.SURFACE_MINING:
             ledger.show(self._window_parent())
         else:
             mining_ring_book.show(self._window_parent())
@@ -376,13 +397,6 @@ class MiningPanelController:
         elif event.delta:
             self._canvas.yview_scroll(-3 if event.delta > 0 else 3, "units")
 
-    def _step_page(self, direction: int) -> None:
-        order = mining_pages.PAGE_ORDER
-        idx = order.index(self._current_page)
-        self._current_page = order[(idx + direction) % len(order)]
-        config.set(_CFG_CURRENT_PAGE, self._current_page)
-        self._redraw()
-
     def _current_run_refined_commodities(self) -> list:
         """Whichever page is showing when "Find Best Price..." is
         clicked, suggest commodities from *that* page's own current run
@@ -400,6 +414,7 @@ class MiningPanelController:
             return
 
         frame_bg = self._parent.cget("background")
+        self._current_page = self._page_for_panel()
 
         kept = render.begin_lines(self._content)      # last time's text lines are reused where they have not changed, so the text does not flicker every second
         for child in self._content.winfo_children():

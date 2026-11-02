@@ -79,7 +79,7 @@ controller = mining_panel.MiningPanelController()
 controller.build_panel(frame)
 problems = []
 for page in (mining_pages.SURFACE_MINING, mining_pages.SPACE_MINING):
-    controller._current_page = page
+    controller._page_for_panel = lambda page=page: page
     controller._redraw()
     root.update()
     controller._content.update_idletasks()
@@ -90,6 +90,19 @@ for page in (mining_pages.SURFACE_MINING, mining_pages.SPACE_MINING):
         problems.append(f"{page}: the button bar ends at {bar_bottom} px, below the {mining_panel._MAX_PANEL_HEIGHT} px cap, so the buttons need scrolling")
     if int(controller._canvas.cget("height")) != min(bbox[3] - bbox[1], mining_panel._MAX_PANEL_HEIGHT):
         problems.append(f"{page}: the panel is not as tall as its content or the cap")
+# the panel pages itself by what you are doing, and has a button for each page's window instead of arrows
+del controller._page_for_panel                       # back to the real rule
+controller._srv_out = True
+if controller._page_for_panel() != mining_pages.SURFACE_MINING:
+    problems.append("with an SRV out the panel should show Surface Mining")
+captions = [str(b.cget("text")) for b in controller._nav.winfo_children() if isinstance(b, tk.Button)]
+if captions != list(mining_pages.PAGE_ORDER):
+    problems.append(f"the page buttons are {captions}")
+if any("\u25c0" in c or "\u25b6" in c for c in captions):
+    problems.append("page arrows are still there")
+actions = controller._page_actions(mining_pages.SURFACE_MINING)
+if [a[0] for a in actions] != ["Book", "Dashboard"]:
+    problems.append(f"the page windows' extra buttons are {[a[0] for a in actions]}")
 root.destroy()
 if problems:
     print("PROBLEMS:")

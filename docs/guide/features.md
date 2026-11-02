@@ -124,7 +124,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 **Controls:**
 
-- **◀ ▶** switch between the Space Mining and Surface Mining pages.
+- **Space Mining** and **Surface Mining** open each page's window; the panel itself shows the page that fits what you are doing (the Rhino while an SRV is out).
 - **Book** opens the Space Mining Book on the Space page and the Surface Mining Book on the Surface page.
 - **Dashboard** opens Mining History.
 - **Live** opens the second-screen live window (**Mark center**, **Mark border**, **Add hotspot** and **Import/export** are in it).
