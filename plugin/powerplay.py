@@ -27,7 +27,7 @@ import queue
 import threading
 import time
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Tuple
 
 import tkinter as tk
 from tkinter import ttk
@@ -501,6 +501,61 @@ def backfill_cycles() -> int:
     return max(1, min(MAX_BACKFILL_CYCLES, value))
 
 
+_settings_listeners: List[Callable[[], None]] = []
+
+
+def add_settings_listener(callback: Callable[[], None]) -> None:
+    """`callback()` runs after a setting is changed from the Sessions window (the Settings tab follows it)."""
+    if callback not in _settings_listeners:
+        _settings_listeners.append(callback)
+
+
+def remove_settings_listener(callback: Callable[[], None]) -> None:
+    if callback in _settings_listeners:
+        _settings_listeners.remove(callback)
+
+
+def _announce_settings() -> None:
+    for callback in list(_settings_listeners):
+        try:
+            callback()
+        except Exception:        # one listener failing must not stop the others
+            pass
+
+
+def set_ratio(activity: str, text: object) -> str:
+    """Save the merits-per-CP ratio for an activity (a number above 0; anything else leaves it as it was) and return what is now held, as the box shows it."""
+    if activity in DEFAULT_RATIOS:
+        try:
+            value = float(str(text).strip())
+        except ValueError:
+            value = 0.0
+        if value > 0:
+            config.set(f"{CONFIG_RATIO_PREFIX}{activity}", str(value))
+            _announce_settings()
+    return _format_ratio(ratio_for(activity))
+
+
+def set_clipboard_template(text: object) -> str:
+    """Save the Copy Progress line format (blank means the default) and return what is now held."""
+    value = str(text)
+    config.set(CONFIG_CLIPBOARD_FORMAT, value if value.strip() else DEFAULT_CLIPBOARD_TEMPLATE)
+    _announce_settings()
+    return clipboard_template()
+
+
+def set_backfill_cycles(text: object) -> str:
+    """Save how many cycles the start-up journal scan covers (1 to MAX_BACKFILL_CYCLES; anything unreadable leaves it as it was) and return what is now held."""
+    try:
+        depth = int(str(text).strip())
+    except ValueError:
+        depth = 0
+    if depth >= 1:
+        config.set(CONFIG_BACKFILL_CYCLES, str(min(MAX_BACKFILL_CYCLES, depth)))
+        _announce_settings()
+    return str(backfill_cycles())
+
+
 def ratio_for(activity: str) -> float:
     """Current merits-per-CP ratio for an activity, from Settings or the default."""
     default = DEFAULT_RATIOS.get(activity)
@@ -666,6 +721,25 @@ class PowerplayController:
         self._ratio_vars: Dict[str, tk.StringVar] = {}
         self._clipboard_format_var: Optional[tk.StringVar] = None
         self._backfill_var: Optional[tk.StringVar] = None
+        add_settings_listener(self._on_window_setting)
+
+    def _on_window_setting(self) -> None:
+        """A setting was changed in the Sessions window: show it on the Settings tab too (if that tab is built) and redraw the panel."""
+        for activity, var in self._ratio_vars.items():
+            try:
+                var.set(_format_ratio(ratio_for(activity)))
+            except tk.TclError:
+                pass
+        for var, held in ((self._clipboard_format_var, clipboard_template()), (self._backfill_var, str(backfill_cycles()))):
+            if var is not None:
+                try:
+                    var.set(held)
+                except tk.TclError:
+                    pass
+        try:
+            self._refresh_panel()
+        except Exception:        # the panel is not built yet, or has gone
+            pass
 
     # --- lifecycle --------------------------------------------------------
 

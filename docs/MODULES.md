@@ -109,6 +109,7 @@ Spec: [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md)
 | `megaship_scans.py` | Megaship scans for the Powerplay cycle: reads the journal (`DataScanned` uplink, `SupercruiseDestinationDrop`, the FSS megaship list, `PowerplayMerits`) to say which megaship was scanned, where, and what it earned; no Tk |
 | `powerplay_ledger.py` | The per-commander, per-system, per-cycle ledger of what you did and how each system moved, and the megaships scanned each cycle (`live_view()` feeds the panel's cycle tally) |
 | `powerplay_megaships_tab.py` | The Megaships tab of the Powerplay Sessions window: one row per megaship scanned, cycle by cycle |
+| `powerplay_settings_tab.py` | The Settings tab of the Powerplay Sessions window: merits per CP, the Copy Progress format and the cycles to scan, on the same saved values as Settings → WFMT → Powerplay |
 | `powerplay_state.py` | JSON persistence for that ledger |
 | `powerplay_systems_tab.py` | The Systems tab of the Powerplay Sessions window |
 | `powerplay_window.py` | The Powerplay Sessions window (current session, systems, cycles, daily, megaships, history) |
@@ -420,6 +421,7 @@ Spec: [BGS_TECH_SPEC.md](BGS_TECH_SPEC.md)
 | `bgs_journal.py` | Rebuilds the current tick's totals from journal files |
 | `bgs_ledger.py` | The per-tick ledger (live events and replay share one path), and the rebuild of a period that just closed from the journals (`repair_record`, `merge_records`) |
 | `bgs_panel.py` | BGS mode's entry point |
+| `bgs_settings.py` | BGS's switch for showing faction states and activity and its days of ticks to keep, read and saved here, with a Settings card in the BGS Report window on the same saved values as Settings → WFMT → BGS |
 | `bgs_state.py` | JSON persistence for BGS tracking |
 | `bgs_tick_client.py` | The community galaxy-tick time API client |
 | `bgs_tracker.py` | Pure parsing of BGS-relevant journal events |

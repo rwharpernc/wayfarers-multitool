@@ -30,7 +30,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 from config import appname, config
 
-from . import bgs_discord, bgs_format, discord_customize, discord_share, discord_templates, panelkit
+from . import bgs_discord, bgs_format, bgs_settings, discord_customize, discord_share, discord_templates, panelkit
 from .bgs_ledger import RECENT_SYSTEMS, FactionTrack, PeriodView
 from .bgs_tracker import FactionActivity
 from .uikit import palette as P
@@ -216,6 +216,9 @@ class BgsWindow:
                                          ("Customize post…", self._on_customize_discord)],
                                 tip="Discord - copy the BGS report for Discord, post it to your webhook (Discord), or customize the post")
         discord_customize.register_data(discord_templates.BGS, self._customize_data)      # the dialog's preview uses the tick shown here
+
+        self._settings_card = bgs_settings.SettingsCard(self._shell.body)
+        self._settings_card.pack(fill="x", pady=(P.PAD_SM, 0))
 
         picker = tk.Frame(self._shell.body, bg=P.BG)
         picker.pack(fill="x", padx=P.PAD, pady=(P.PAD_SM, P.PAD_SM))

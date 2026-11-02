@@ -38,7 +38,7 @@ import tkinter as tk
 import myNotebook as nb
 from config import appname, config
 
-from . import catchup_status, bgs_format, bgs_journal, bgs_ledger, bgs_state, bgs_tick_client, bgs_window, panelkit, platform_support
+from . import catchup_status, bgs_format, bgs_journal, bgs_ledger, bgs_settings, bgs_state, bgs_tick_client, bgs_window, panelkit, platform_support
 from .bgs_ledger import PeriodView, TickLedger
 from .bgs_tracker import snapshot_key
 
@@ -47,12 +47,12 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 PANEL_PLACEMENT = "bgs"
 
-_CFG_ENABLED = "wfmt_bgs_enabled"
-_CFG_TICK_ENABLED = "wfmt_bgs_tick_enabled"
-_CFG_ARCHIVE_DAYS = "wfmt_bgs_archive_days"
+_CFG_ENABLED = bgs_settings.CFG_ENABLED
+_CFG_TICK_ENABLED = bgs_settings.CFG_TICK_ENABLED
+_CFG_ARCHIVE_DAYS = bgs_settings.CFG_ARCHIVE_DAYS
 
-DEFAULT_ARCHIVE_DAYS = 7
-MAX_ARCHIVE_DAYS = 90
+DEFAULT_ARCHIVE_DAYS = bgs_settings.DEFAULT_ARCHIVE_DAYS
+MAX_ARCHIVE_DAYS = bgs_settings.MAX_ARCHIVE_DAYS
 MAX_FACTIONS_SHOWN = 8  # a system holds at most 7; the cap is a width/height backstop
 
 _DISABLED_TEXT = "BGS tracking is disabled — see Settings."
@@ -62,28 +62,9 @@ _TICK_FIRST_CHECK_DELAY_MS = 3_000  # let Tk/EDMC settle before the first networ
 _TICK_QUEUE_POLL_MS = 300
 
 
-def enabled() -> bool:
-    # On by default - pure journal parsing, no network calls, same
-    # reasoning as organic_scan_panel.py's own default.
-    return config.get_bool(_CFG_ENABLED, default=True)
-
-
-def tick_enabled() -> bool:
-    """Gates the one network call this mode makes (the tick-time poll) -
-    separate from `enabled()` so a commander can keep faction-state/activity
-    tracking fully local if they'd rather not have WFMT talk to a third-party
-    community service at all. On by default because detecting ticks is the
-    point of this mode."""
-    return config.get_bool(_CFG_TICK_ENABLED, default=True)
-
-
-def archive_days() -> int:
-    """How many days of closed ticks to keep (Settings), clamped to 1-90."""
-    try:
-        value = int(config.get_str(_CFG_ARCHIVE_DAYS) or DEFAULT_ARCHIVE_DAYS)
-    except ValueError:
-        value = DEFAULT_ARCHIVE_DAYS
-    return max(1, min(MAX_ARCHIVE_DAYS, value))
+enabled = bgs_settings.enabled
+tick_enabled = bgs_settings.tick_enabled
+archive_days = bgs_settings.archive_days
 
 
 class BgsController:
@@ -118,11 +99,28 @@ class BgsController:
         self._parent: Optional[tk.Frame] = None
         self._current_system_var: Optional[tk.StringVar] = None
         self._tick_status_var: Optional[tk.StringVar] = None
+        bgs_settings.add_listener(self._on_window_setting)
         self._enabled_var: Optional[tk.BooleanVar] = None
         self._tick_enabled_var: Optional[tk.BooleanVar] = None
         self._archive_days_var: Optional[tk.StringVar] = None
 
     # --- lifecycle / persistence -----------------------------------------
+
+    def _on_window_setting(self) -> None:
+        """A setting was changed in the BGS Report window: show it on the Settings tab too (if that tab is built) and apply it."""
+        for var, held in ((self._enabled_var, enabled()), (self._archive_days_var, str(archive_days()))):
+            if var is not None:
+                try:
+                    var.set(held)
+                except tk.TclError:
+                    pass
+        self._apply_setting_change()
+
+    def _apply_setting_change(self) -> None:
+        self._archive = bgs_ledger.prune_archive(self._archive, datetime.now(timezone.utc), archive_days())
+        self._persist()
+        self._refresh_display()
+        self._reconcile_tick()
 
     def start(self, plugin_dir: str) -> None:
         self._plugin_dir = plugin_dir
@@ -557,10 +555,7 @@ class BgsController:
             except ValueError:
                 days = DEFAULT_ARCHIVE_DAYS
             config.set(_CFG_ARCHIVE_DAYS, str(max(1, min(MAX_ARCHIVE_DAYS, days))))
-        self._archive = bgs_ledger.prune_archive(self._archive, datetime.now(timezone.utc), archive_days())
-        self._persist()
-        self._refresh_display()
-        self._reconcile_tick()
+        self._apply_setting_change()
 
 
 controller = BgsController()

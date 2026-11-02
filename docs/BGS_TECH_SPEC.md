@@ -227,3 +227,7 @@ with `%Y-%m-%dT%H:%M:%S.%fZ`.
   *redemption* is tracked, not CZ presence/wins directly).
 - Thargoid war states.
 - Discord webhook export: built for the selected tick as a shared Discord feature (see [DISCORD_SHARING_RESEARCH.md](DISCORD_SHARING_RESEARCH.md)); posting every tick at once is not offered, since a long report would be many messages.
+
+## Settings in the report window
+
+The switch that shows faction states and activity and the days of ticks to keep are also a **Settings** card at the top of the BGS Report window (`bgs_settings.SettingsCard`). The config keys and readers live in `bgs_settings` (`bgs_panel` imports them), `set_enabled` / `set_archive_days` save with the same clamping the Settings tab uses (1 to 90 days), and every change is announced to listeners: the card follows a change made on the Settings tab, and `BgsController._on_window_setting` updates the Settings tab's variables and applies it (prunes the archive, saves, redraws, reconciles the tick poll). Tick detection stays in Settings only.

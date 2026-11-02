@@ -28,6 +28,7 @@ from .session import (
     visited_systems,
 )
 from .powerplay_megaships_tab import MegaShipsTab
+from .powerplay_settings_tab import SettingsTab
 from .powerplay_systems_tab import CyclesTab, DailyTab, SystemsPane, SystemsTab
 from .uikit import dialogs
 from .uikit import palette as P
@@ -143,6 +144,7 @@ class SessionWindow:
         self._daily_tab = DailyTab(tabs.add("Daily"))
         self._megaships_tab = MegaShipsTab(tabs.add("Megaships"))
         self._history_tab = _HistoryTab(tabs.add("History"))
+        self._settings_tab = SettingsTab(tabs.add("Settings"))
 
         # Journal events arrive in bursts and every tab is a table of widgets, so a refresh is
         # coalesced into one pass a moment later and only the tab on screen is redrawn; the
@@ -154,6 +156,7 @@ class SessionWindow:
             lambda: self._daily_tab.update(self._systems),
             lambda: self._megaships_tab.update(self._systems),
             lambda: self._history_tab.update(self._sessions.history, self._sessions.current),
+            lambda: self._settings_tab.sync(),
         ]
         self._stale = set(range(len(self._updaters)))
         self._flush_job: Optional[str] = None

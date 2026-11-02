@@ -206,4 +206,6 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 Settings take effect when you close the Settings window.
 
+**Also in the BGS Report window.** A **Settings** card at the top of the report holds *Show BGS faction states and activity* and *Keep previous ticks for (days)*, the same saved values: a change in either place shows in the other, and in the report a tick saves when you click it and the days when you press Enter or click away. Tick detection is not on the card, because it is the one lookup BGS makes; it stays in Settings → WFMT → BGS.
+
 More detail: [BGS specification](../BGS_TECH_SPEC.md).

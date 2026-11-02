@@ -297,3 +297,5 @@ you restart EDMC (a failed lookup is also kept, so it isn't retried until then).
 - **Journal scan**: **Cycles to scan**, how many cycles back (this one included, 1 to 12; default 4) the start-up scan covers for a commander WFMT has not seen before.
 
 Ratios, clipboard format and scan depth are saved when you close Settings.
+
+**Also in the Sessions window.** The same three settings are on the **Settings** tab of the Powerplay Sessions window, saved as the same values: a change in either place shows in the other. There a box saves when you press Enter or click away, **Reset to default** restores the Copy Progress format at once, a ratio must be above 0, and the cycles are kept between 1 and 12 (a value that is not valid leaves the saved one).

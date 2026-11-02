@@ -28,6 +28,12 @@ class Cfg:
     def get_str(self, key, default=""):
         return saved.get(key, default) or ""
 
+    def get_bool(self, key, default=False):
+        return saved.get(key, default)
+
+    def get_int(self, key, default=0):
+        return saved.get(key, default)
+
     def set(self, key, value):
         saved[key] = value
 
