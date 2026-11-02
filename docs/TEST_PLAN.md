@@ -1,6 +1,6 @@
 # Test plan: 1.5.0
 
-What to check in EDMC on the 1.5.0 build (the `feature/ux-improvements` branch; section 12 is new for it), and after any release, on **Windows** first and then on **Linux**.
+What to check in EDMC on the 1.5.0 build (released 2026-11-02; section 12 is new for it), and after any release, on **Windows** first and then on **Linux**.
 
 - This is the quick pass over the whole release:
   - the Rare Goods Finder
@@ -18,7 +18,7 @@ What to check in EDMC on the 1.5.0 build (the `feature/ux-improvements` branch; 
 | **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is proved only by the in-game pass. | Not yet recorded for 1.3.0. Sections 1 to 7 below are open. |
 | **Linux** | 3,894 tests pass in the Docker container (Xvfb and a window manager), 13 skipped, run on 2026-11-02 for the 1.5.0 build (3,857 and 12 skipped on 2026-11-01 for the 1.4.2 release, 3,850 and 13 skipped for 1.4.1, 3,805 for the unpublished 1.4.0, 3,731 for 1.3.3, 3,687 for 1.3.2, 3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
 
-- 1.5.0 is on the branch `feature/ux-improvements` and is prepared for release but not released; the Docker tests pass on Linux (3,894, 13 skipped, 2026-11-02) and no in-game result is recorded for it yet (section 12 is its pass).
+- 1.5.0 was released on 2026-11-02; the Docker tests pass on Linux (3,894, 13 skipped) and no in-game result is recorded for it yet (section 12 is its pass).
 - 1.0.0 was released on 2026-10-26 (tag `v1.0.0`). 1.1.0 was released on 2026-10-27 (tag `v1.1.0`). 1.2.0 was released on 2026-10-28 (tag `v1.2.0`). 1.3.0 was released on 2026-10-29 (tag `v1.3.0`), 1.3.1 the same day (tag `v1.3.1`) and 1.3.2 the same day (tag `v1.3.2`), and 1.3.3 on 2026-10-30 (tag `v1.3.3`). These passes are the checks to run on the released build, and a failure goes to a fix on a short bugfix branch (`bugfix/1.3.2` is open).
 - Tick a box in the sections below only when you have seen it pass; nothing here has been ticked from the automated run.
 
@@ -203,9 +203,9 @@ Report the distro, desktop, X11 or Wayland, and native or Flatpak EDMC.
 - [ ] **The Colony page.** The highlighted site shows a **Body** line (looked up once from Raven Colonial's plan; left out when Raven has none). **Commodities** reads `N done - N partly - N working on it (of N commodities)` and **Biggest gaps** names three commodities.
 - [ ] **Mode buttons.** The row reads Powerplay, BGS, Explore, **Mine**, Trade, **Mission**, Operations, Colony; the tooltips and the Settings choices for hiding a mode use the same names.
 
-## 12. Added in 1.5.0 (feature/ux-improvements, for testing)
+## 12. Added in 1.5.0
 
-Run `npm run deploy` from the branch and restart EDMC. The changelog's 1.5.0 entry has the full list; the checks below are the ones that need the game, a real display or EDMC's themes.
+Run `npm run deploy` and restart EDMC. The changelog's 1.5.0 entry has the full list; the checks below are the ones that need the game, a real display or EDMC's themes.
 
 - [ ] **Start-up and EDMC's window.** After a restart the line under the mode buttons reads `Plugin: v1.5.0`; your saved values (hops, ship size, ticks, targets) are as they were; opening the Trade, Mine and Mission panels does not make EDMC's main window wider than before.
 - [ ] **No page arrows.** Trade, Mine and Mission show no ◀ ▶ anywhere. The Trade panel is a short summary (net profit and the hold) over one row of **Session**, **Routes**, **Market** and **History**; the Mine panel shows a few lines for the ring run and the Rhino with **Space Mining** and **Surface Mining**; the Mission panel lists each type with its count and a **Mission types** button.
