@@ -496,7 +496,7 @@ a moment and a tooltip shows its name and what it does.** The same goes for the 
 | **History** | Open the Trade History window | Trade (Session page) |
 | **Rebuild** | Recount the session from the journals from a start time you give (UTC); for a session that began on another computer | Trade (Session page) |
 | **Find routes** / **Cancel** | Ask Spansh for trade routes / stop waiting | Trade (Routes page) |
-| **Hops** | Cycle the route length through 2, 3, 4 and 5 hops | Trade (Routes page) |
+| **Hops** | Cycle the route length from 2 up to 10 hops | Trade (Routes page) |
 | **Round trip** | Find the best back-and-forth pair of stations, loaded both ways | Trade (Routes page) |
 | **Copy next system** | Copy the first destination to the clipboard | Trade (Routes page) |
 | **Sell** / **Buy** | Choose whether the search is for selling or buying | Trade (Market page) |

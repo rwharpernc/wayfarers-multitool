@@ -161,7 +161,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 |---|---|---|---|
 | Session profit | Profit after fuel, repairs and running costs, credits per hour, your hold, the carrier's space, what was bought but not sold (an estimate) and the game's lifetime totals | Just trade; **Reset** ends the session | [The Session page](trade.md#the-session-page) |
 | Trade History | Saved sessions, with a CSV export | **Save session**, then **History** | [Trade History](trade.md#trade-history-saving-sessions) |
-| Routes | The best trade routes from where you are, and a round trip | **Find routes**; **Hops** cycles 2 to 5; **Round trip** | [Routes](trade.md#routes) |
+| Routes | The best trade routes from where you are, and a round trip | **Find routes**; **Hops** cycles 2 to 10; **Round trip** | [Routes](trade.md#routes) |
 | Market and Best picks | Where to sell or buy a commodity; the closest, best local and cheapest station | Pick **Sell** or **Buy**, type a commodity, **Near me** or **Galaxy**; **Best picks** | [Market](trade.md#market), [Best picks](trade.md#best-picks) |
 | Watch list | The commodities you care about with the best buy and sell price | **Watch**; add a commodity; **Refresh** | [Watch list](trade.md#watch-list) |
 | Fleet and squadron carrier | Cargo and tritium kept up to date from the journal | Open Carrier Management once in the game | [Your fleet carrier](trade.md#your-fleet-carrier-and-squadron-carrier) |

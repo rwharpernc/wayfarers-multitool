@@ -65,7 +65,8 @@ _MODE_TYPES = {NONE: (), FLEET_ONLY: (FLEET,), SQUADRON_ONLY: (SQUADRON,), BOTH:
 
 # Cheap test for "could this journal line matter?" before paying to parse it; tolerant of spacing.
 _WANTED = re.compile(r'"event"\s*:\s*"(?:CarrierStats|CarrierBuy|CargoTransfer|LoadGame|Commander|Docked|Undocked|Location|'
-                     r'CarrierDepositFuel|CarrierLocation|CarrierJumpRequest|CarrierJumpCancelled|CarrierTradeOrder|CarrierFinance)"')
+                     r'CarrierDepositFuel|CarrierLocation|CarrierJumpRequest|CarrierJumpCancelled|CarrierTradeOrder|CarrierFinance|'
+                     r'CarrierDecommission|CarrierCancelDecommission)"')
 
 CarrierRecord = Dict[str, Any]
 Records = Dict[str, Dict[str, CarrierRecord]]  # commander key -> carrier type -> record
@@ -258,6 +259,19 @@ class CarrierTracker:
                 return mine[self._docked_type]  # a purchase noted without its id
             return None
         return next(iter(mine.values())) if len(mine) == 1 else None
+
+
+def prune(records: Records, now: Optional[float] = None) -> bool:
+    """Drop every carrier that has been scrapped (see `trade_carrier_ops.is_scrapped`), and a commander left with none. Returns True if anything went."""
+    gone = False
+    for key in list(records):
+        for ctype in list(records[key]):
+            if ops.is_scrapped(records[key][ctype], now):
+                del records[key][ctype]
+                gone = True
+        if not records[key]:
+            del records[key]
+    return gone
 
 
 def replay(events: Iterable[Dict[str, Any]], tracker: Optional[CarrierTracker] = None) -> Records:

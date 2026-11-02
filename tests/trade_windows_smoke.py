@@ -177,6 +177,9 @@ mock.patch.object(trade_panel, "lookups_enabled", lambda: True).start()
 route_items = [b for b in controller._route_blocks if type(b).__name__ == "Item"]
 check([i.cells[1] for i in route_items] == ["+1,000", "+3,500", "+3,200"], f"running totals: {[i.cells for i in route_items]}")
 check(len(route_items) == 3, "every hop is listed, not just the first few")
+kinds = [(type(b).__name__, getattr(b, "text", "")) for b in controller._route_blocks]
+check(("Heading", "Hop by hop") in kinds and kinds.index(("Heading", "Hop by hop")) < kinds.index(("Columns", "")) if ("Columns", "") in kinds else ("Heading", "Hop by hop") in kinds,
+      f"the hops are set apart from the totals by their own heading: {kinds[:6]}")
 cols = [b for b in controller._route_blocks if type(b).__name__ == "Columns"][0]
 check(cols.labels == ("Profit", "Total", "ly"), f"the column headings: {cols.labels}")
 routes.refresh()

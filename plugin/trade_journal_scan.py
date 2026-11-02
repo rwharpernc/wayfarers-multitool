@@ -47,7 +47,8 @@ Registry = Dict[str, Any]   # {"files": {name: {"size": int, "scanned": iso}}, "
 _WANTED = re.compile(
     r'"event"\s*:\s*"(?:MarketBuy|MarketSell|RefuelAll|RefuelPartial|Repair|RepairAll|BuyAmmo|RestockVehicle|BuyDrones|'
     r'SellDrones|PayFines|PayBounties|PayLegacyFines|FSDJump|CarrierJump|Docked|Undocked|Location|LoadGame|Commander|CarrierStats|CarrierBuy|CargoTransfer|'
-    r'CarrierDepositFuel|CarrierLocation|CarrierJumpRequest|CarrierJumpCancelled|CarrierTradeOrder|CarrierFinance)"')
+    r'CarrierDepositFuel|CarrierLocation|CarrierJumpRequest|CarrierJumpCancelled|CarrierTradeOrder|CarrierFinance|'
+    r'CarrierDecommission|CarrierCancelDecommission)"')
 
 
 def _now() -> str:

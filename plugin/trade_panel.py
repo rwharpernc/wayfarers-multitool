@@ -99,7 +99,7 @@ BUTTON_TIPS = {
     "Find routes": "Find routes - plan trade routes from your station (Spansh)",
     "Cancel": "Cancel - stop the search that is running",
     "Copy next system": "Copy next system - copy the next system on the route to the clipboard",
-    "Hops": "Hops - click to cycle how many hops the route planner may use",
+    "Hops": "Hops - click to cycle how many hops (2 to 10) the route planner may use",
     "Round trip": "Round trip - find the best back-and-forth pair from your station (Spansh)",
     "Near me": "Near me - find the best prices within the search radius (Spansh)",
     "Galaxy": "Galaxy - find the best prices anywhere in the galaxy (Spansh)",
@@ -116,7 +116,7 @@ PAGE_BUTTON_TIPS = {
 }
 
 _PANEL_ROW_PX = 216   # the default main-panel width, used until the window reports its own
-_HOP_CHOICES = (2, 3, 4, 5)  # the Hops button on the Routes page cycles through these
+_HOP_CHOICES = tuple(range(2, 11))  # the Hops button on the Routes window cycles through these (Settings allows 1 to 10)
 _DEFAULT_MAX_ARRIVAL_LS = 5000
 _FALLBACK_JUMP_RANGE_LY = 30.0
 _DEFAULT_NEAR_RADIUS_LY = 100
@@ -476,6 +476,7 @@ class TradePanelController:
         (not known yet - it is not the same as "has none")."""
         if not cmdr:
             return None
+        self._prune_carriers()
         mode = self._carrier_mode(cmdr)
         if mode in (trade_carrier.NONE, trade_carrier.SQUADRON_ONLY):
             return False
@@ -602,7 +603,13 @@ class TradePanelController:
 
     # --- rendering ----------------------------------------------------------------
 
+    def _prune_carriers(self) -> None:
+        """Forget a carrier that has been scrapped: a decommissioned carrier writes no last event, so its record would otherwise stay for good."""
+        if trade_carrier.prune(self._carrier.records) and self._plugin_dir is not None:
+            trade_carrier.save_all(self._plugin_dir, self._carrier.records)
+
     def _refresh(self) -> None:
+        self._prune_carriers()
         if not self._alive() or self._view is None:
             return
         self._view.show(self._summary_blocks())
@@ -1029,7 +1036,7 @@ class TradePanelController:
         return _cfg_int(_CFG_MAX_HOPS, _DEFAULT_MAX_HOPS, 1, 10)
 
     def _cycle_hops(self) -> None:
-        """Hops button: 2 (a back-and-forth pair), 3, 4 or 5. Shares the Settings value."""
+        """Hops button: 2 (a back-and-forth pair) up to 10, then round to 2 again. Shares the Settings value."""
         current = self._route_hops()
         following = next((n for n in _HOP_CHOICES if n > current), _HOP_CHOICES[0])
         config.set(_CFG_MAX_HOPS, following)
@@ -1263,7 +1270,8 @@ class TradePanelController:
                                Pair("From", _clip(self._route_label)),
                                *([Pair("Carrying only", _clip(self._round_only))] if self._round_only else []),
                                Note(f"Best of {found.get('searched', 0)} stations within {found.get('radius', 0):.0f} ly, "
-                                    "ranked by estimated profit per hour."), Columns(("Per loop", "ly"))]
+                                    "ranked by estimated profit per hour."), Heading("Pairs, best first", minor=True),
+                               Columns(("Per loop", "ly"))]
         for number, trip in enumerate(trips, start=1):
             blocks.append(Item(f"{number}. {_clip(trip.a.name)} \u21c4 {_clip(trip.b.name)}",
                                (f"{trip.profit:+,}", f"{trip.distance_ly:.1f}"),
@@ -1299,7 +1307,7 @@ class TradePanelController:
                                Pair("Total profit", f"{total:+,} cr", bold=True),
                                Pair("Est. profit / hour",
                                     f"~{spansh_routes.estimate_profit_per_hour(hops, self._jump_range_ly()):,} cr"),
-                               Pair("Hops", str(len(hops))), Columns(("Profit", "Total", "ly"))]
+                               Pair("Hops", str(len(hops))), Heading("Hop by hop", minor=True), Columns(("Profit", "Total", "ly"))]
         running = 0
         for number, hop in enumerate(hops, start=1):
             running += hop.profit

@@ -245,7 +245,7 @@ If the first destination is Example System, that is the name now on your clipboa
 
 ### Hops
 
-The **Hops** button shows the current length (for example `Hops: 3`). Each press cycles it through 2, 3, 4 and 5. It
+The **Hops** button shows the current length (for example `Hops: 3`). Each press cycles it from 2 up to 10 and then back to 2. It
 is the same setting as *Route hops* in Settings, which accepts 1 to 10.
 
 **2 hops** is the choice for a back-and-forth pair. When the route ends at the station it started from and every leg
@@ -421,7 +421,7 @@ Nothing is shown for a carrier you haven't chosen. For each one, the Session pag
 - when the journal has told WFMT: **Carrier tritium**, **Carrier is at**, **Carrier jump planned**, **Carrier balance**,
 - one line per order you have set (**Carrier selling Gold** 300 t @ 12,000 cr, **Carrier buying Tritium**).
 
-A carrier being decommissioned is flagged.
+A carrier being decommissioned is flagged. Once the game scraps it (the scrap time in the journal, or seven days after the last report that said it was pending, if the journal gave no date) WFMT forgets it, so a commander who has scrapped their carrier stops showing one on Auto.
 
 **Example.** You load 20,000 t of cargo onto your carrier over an evening.
 

@@ -152,7 +152,7 @@ class BlockView(tk.Frame):
             if isinstance(block, Heading):
                 if not first:
                     rule = tk.Frame(self, height=1, borderwidth=0)
-                    rule.grid(row=row, column=0, columnspan=span, sticky="ew", pady=((14 if look else 7) if not block.minor else 6, 3))
+                    rule.grid(row=row, column=0, columnspan=span, sticky="ew", pady=((14 if look else 7) if not block.minor else (12 if look else 4), 3))
                     rules.append(rule)
                     row += 1
                 if look:

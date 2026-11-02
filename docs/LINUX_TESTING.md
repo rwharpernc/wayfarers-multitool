@@ -626,7 +626,7 @@ Windows was checked as Trade was built. The boxes below are unticked so the list
   - Stations without a pad for your ship are missing.
 - [ ] **Routes**: **Find routes** shows "Asking Spansh..." with a counting timer, and a route within a couple of
       minutes. **Cancel** stops it. **Copy next system** puts the system name on the clipboard.
-- [ ] **Hops** button cycles 2, 3, 4, 5.
+- [ ] **Hops** button cycles 2 up to 10.
   - **Round trip** (docked at a normal station, not a carrier) answers in about 20 seconds with up to three pairs, each showing what to carry out and back. Both legs are loaded.
   - A route's page shows an estimated profit per hour and supply/demand per hop.
 - [ ] Settings → Trade route filters: set **ignore prices older than** to a small number of hours and tick **Routes may use

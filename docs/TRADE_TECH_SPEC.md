@@ -109,7 +109,7 @@ Save does not end or restart the session: tracking is always on, the label never
 **Reset** begins a new session.
 
 **Routes.** Idle text shows the start station, ship, cargo size, jump range and budget the search will use.
-Buttons: **Find routes** (becomes **Cancel** while searching), **Copy next system**, **Hops: N** (cycles 2 to 5, section 8.1)
+Buttons: **Find routes** (becomes **Cancel** while searching), **Copy next system**, **Hops: N** (cycles 2 to 10, section 8.1)
 and **Round trip** (section 8.2).
 
 **Market.** A commodity box (type-ahead), a **Sell** / **Buy** toggle, then **Near me**, **Galaxy**, **Best picks** and
@@ -190,7 +190,7 @@ Journal events and EDMC state read by `trade_panel.handle_event` (every handler 
 | `Loadout` (`Ship`, `MaxJumpRange`) | Your ship and its pad size; jump range for routes |
 | `LoadGame`, `StartUp`, `Commander` | Session boundaries; which commander the events belong to |
 | `CarrierStats`, `CarrierBuy`, `CargoTransfer` | Carrier cargo space |
-| `CarrierDepositFuel`, `CarrierLocation`, `CarrierJumpRequest`, `CarrierJumpCancelled`, `CarrierTradeOrder`, `CarrierFinance` (and `FuelLevel`, `Finance` and `PendingDecommission` on `CarrierStats`) | Running the carrier: tritium, location, planned jump, orders, balance (`trade_carrier_ops.py`) |
+| `CarrierDepositFuel`, `CarrierLocation`, `CarrierJumpRequest`, `CarrierJumpCancelled`, `CarrierTradeOrder`, `CarrierFinance`, `CarrierDecommission`, `CarrierCancelDecommission` (and `FuelLevel`, `Finance` and `PendingDecommission` on `CarrierStats`) | Running the carrier: tritium, location, planned jump, orders, balance (`trade_carrier_ops.py`) |
 | `Statistics` | Not used by Trade. The lifetime totals (trading, mining, exobiology, fleet carrier) belong to no mode, so `credits_ledger.py` reads them for the Credits Ledger window's Lifetime tab (`lifetime_stats.py`); the Session page shows no history |
 | `Cargo` (its `Inventory`, else `Cargo.json` in the journal folder) | Mission and stolen tons in the hold (`trade_hold.py`) |
 | `state["Cargo"]`, `["CargoCapacity"]`, `["Credits"]`, `["ShipType"]` | Hold, capacity, route budget, ship fallback |
@@ -430,6 +430,7 @@ the Settings checkbox does). There is no medium-pad option in that API.
 
 - `id` (CarrierID), `name`, `callsign`, `total`, `capacity`, `cargo`, `reserved`, `free`, `crew`,
   `packs`, `updated`.
+- A scrapped carrier is dropped: `CarrierDecommission` stores `ScrapTime` as `scrap_at`, `CarrierCancelDecommission` clears it, and `trade_carrier.prune` (run on every refresh and on `fleet_carrier`) removes a record once `ops.is_scrapped` says its time has passed (a `CarrierStats` pending report with no date gets seven days).
 - The running-the-carrier facts (`fuel`, `system`, `jump`, `orders`, `balance`, `decommission`), each
   with its own `<name>_at` time (section 7a).
 
@@ -546,7 +547,7 @@ the first hop's destination system for **Copy next system**.
 the jump range, rounded up), 30 s plus 0.03 s per ls of supercruise to the destination, and 120 s at the station. These are
 fixed allowances for comparing routes, not measurements.
 
-The **Hops** button cycles 2, 3, 4, 5 and writes the Settings value. `_finish_routes` marks a result a repeatable loop when
+The **Hops** button cycles 2 to 10 and writes the Settings value. `_finish_routes` marks a result a repeatable loop when
 the last hop ends at the first hop's start and every hop has cargo.
 
 ### 8.2 Round trip (`trade_roundtrip.py`)

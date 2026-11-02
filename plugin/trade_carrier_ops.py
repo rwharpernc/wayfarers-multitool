@@ -12,6 +12,9 @@ The journal records these as separate events, each of which names the carrier (`
   `BlackMarket`, `CancelTrade`). This records the order, not each ton it later moves: a sale order names a commodity
   that is in the bay, a purchase order one that will arrive, but the amounts left on them are only known to the game.
 - `CarrierFinance`: `CarrierBalance`.
+- `CarrierDecommission`: the carrier is being scrapped; `ScrapTime` (epoch seconds) is when it goes. `CarrierCancelDecommission` withdraws it. Once
+  `ScrapTime` has passed the carrier no longer exists, so `is_scrapped` / `prune` drop its record. A `CarrierStats` that says `PendingDecommission` without a
+  `ScrapTime` gets the game's own seven days (`DECOMMISSION_DAYS`) from the report.
 
 Every fact carries the time of the event it came from (`<name>_at`) and only a newer event replaces it, so journals
 read late or twice, in any order, give the right answer (the same rule `trade_route_start` uses). `merge_facts` applies
@@ -26,11 +29,12 @@ from typing import Any, Dict, List, Optional
 from .trade_blocks import Block, Note, Pair
 
 OPS_EVENTS = ("CarrierDepositFuel", "CarrierLocation", "CarrierJumpRequest", "CarrierJumpCancelled",
-              "CarrierTradeOrder", "CarrierFinance")
+              "CarrierTradeOrder", "CarrierFinance", "CarrierDecommission", "CarrierCancelDecommission")
 # These name their carrier by type as well as id, so they may start a record for a carrier first met through them.
 # CarrierDepositFuel names only the id, so it can only update a carrier already on record.
 CREATES_RECORD = ("CarrierLocation", "CarrierJumpRequest", "CarrierTradeOrder", "CarrierFinance")
 
+DECOMMISSION_DAYS = 7    # how long the game gives a carrier between asking to scrap it and it going
 _SCALARS = (("fuel", "fuel_at"), ("system", "system_at"), ("balance", "balance_at"))
 ORDERS_SHOWN = 6
 _NAME_MAX = 28
@@ -100,6 +104,20 @@ def apply_event(record: Dict[str, Any], entry: Dict[str, Any]) -> bool:
         if at >= str((record.get("jump") or {}).get("at") or ""):
             changed = record.get("jump") != {"cancelled": True, "at": at}
             record["jump"] = {"cancelled": True, "at": at}
+    elif event == "CarrierDecommission":
+        if "decommission_at" not in record or at >= str(record["decommission_at"]):
+            scrap = _int(entry.get("ScrapTime"))
+            changed = not record.get("decommission") or record.get("scrap_at") != (scrap or None)
+            record["decommission"], record["decommission_at"] = True, at
+            if scrap:
+                record["scrap_at"] = scrap
+            else:
+                record.pop("scrap_at", None)
+    elif event == "CarrierCancelDecommission":
+        if "decommission_at" not in record or at >= str(record["decommission_at"]):
+            changed = bool(record.get("decommission")) or "scrap_at" in record
+            record["decommission"], record["decommission_at"] = False, at
+            record.pop("scrap_at", None)
     elif event == "CarrierTradeOrder" and entry.get("Commodity"):
         orders = record.setdefault("orders", {})
         key = str(entry["Commodity"]).lower()
@@ -119,7 +137,15 @@ def merge_facts(target: Dict[str, Any], other: Dict[str, Any]) -> bool:
     for value_key, at_key in (*_SCALARS, ("decommission", "decommission_at")):
         if at_key in other and (at_key not in target or str(other[at_key]) > str(target[at_key])):
             target[value_key], target[at_key] = other.get(value_key), other[at_key]
+            if value_key == "decommission":
+                if other.get("scrap_at"):
+                    target["scrap_at"] = other["scrap_at"]
+                else:
+                    target.pop("scrap_at", None)
             changed = True
+    if other.get("decommission") and target.get("decommission") and other.get("scrap_at") and not target.get("scrap_at"):
+        target["scrap_at"] = other["scrap_at"]      # the same pending scrapping, now with its date
+        changed = True
     mine, theirs = target.get("jump"), other.get("jump")
     if theirs and (not mine or str(theirs.get("at")) > str(mine.get("at"))):
         target["jump"] = dict(theirs)
@@ -130,6 +156,28 @@ def merge_facts(target: Dict[str, Any], other: Dict[str, Any]) -> bool:
             target.setdefault("orders", {})[key] = dict(order)
             changed = True
     return changed
+
+
+# --- a scrapped carrier is gone -------------------------------------------------------------------
+
+def is_scrapped(record: Dict[str, Any], now: Optional[float] = None) -> bool:
+    """True once a carrier that was being decommissioned has been scrapped: the event's `ScrapTime` has passed, or, from a `CarrierStats` that
+    gave no date, `DECOMMISSION_DAYS` have passed since the report. A carrier whose decommission was cancelled is not."""
+    if not record.get("decommission"):
+        return False
+    now = time.time() if now is None else now
+    scrap = _int(record.get("scrap_at"))
+    if scrap:
+        return now >= scrap
+    at = _epoch(str(record.get("decommission_at") or ""))
+    return at is not None and now >= at + DECOMMISSION_DAYS * 86400
+
+
+def _epoch(stamp: str) -> Optional[float]:
+    try:
+        return float(calendar.timegm(time.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ")))
+    except ValueError:
+        return None
 
 
 # --- what to show --------------------------------------------------------------------------------
