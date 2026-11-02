@@ -15,6 +15,7 @@ from config import appname, config
 
 from .inventory import SHIP_LOCKER_CAPACITY, WARNING_THRESHOLD, InventoryTracker, TRACKED_CATEGORIES
 from .inventory_names import display_name
+from .inventory_settings_tab import SettingsTab
 from .inventory_suit import SuitState
 from .uikit import palette as P
 from .uikit import style
@@ -137,6 +138,7 @@ class InventoryWindow:
         # Cargo is a different game system from the microresource stores above
         # (tonnage, not item counts), so it gets its own tab type, last in order.
         self._cargo_tab = _CargoTab(self._tab_bar.add("Cargo"))
+        self._settings_tab = SettingsTab(self._tab_bar.add("Settings"), lambda: self._tracker.commander)
 
         self.refresh()
 

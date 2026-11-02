@@ -38,6 +38,7 @@ from . import inventory_names as names
 from . import inventory_suit as suit
 from . import overlay, overlay_appearance, overlay_placement, panelkit
 from .overlay_style import LEGACY, ROLES, Look
+from . import inventory_settings
 from .inventory import CATEGORY_SHORT, InventoryTracker, SHIP_LOCKER_CAPACITY, TRACKED_CATEGORIES
 from .inventory_cargo import VehicleState
 from . import platform_support
@@ -111,11 +112,11 @@ LOCKER_WARNING_TTL = 20
 
 _CFG_OVERLAY_ENABLED = "wfmt_inventory_overlay_enabled"
 _CFG_OVERLAY_BAR_PREFIX = "wfmt_inventory_overlay_bar_"
-_CFG_SOUND_ENABLED = "wfmt_inventory_sound_enabled"
-_CFG_MESSAGE_FORMAT = "wfmt_inventory_message_format"
-_CFG_ANNOUNCE_CATEGORIES = "wfmt_inventory_announce_categories"
+_CFG_SOUND_ENABLED = inventory_settings.CFG_SOUND_ENABLED
+_CFG_MESSAGE_FORMAT = inventory_settings.CFG_MESSAGE_FORMAT
+_CFG_ANNOUNCE_CATEGORIES = inventory_settings.CFG_ANNOUNCE_CATEGORIES
 
-DEFAULT_MESSAGE_FORMAT = "[{item}] pillaged! New Inventory Total: {total}"
+DEFAULT_MESSAGE_FORMAT = inventory_settings.DEFAULT_MESSAGE_FORMAT
 
 # --- Main-panel bar widget geometry (fixed so a long label/large count can
 # never widen EDMC's main window) ------------------------------------------
@@ -139,12 +140,8 @@ def overlay_enabled() -> bool:
     return config.get_bool(_CFG_OVERLAY_ENABLED, default=False) and not overlay_placement.is_hidden("inventory")
 
 
-def sound_enabled() -> bool:
-    return config.get_bool(_CFG_SOUND_ENABLED, default=False)
-
-
-def message_format() -> str:
-    return config.get_str(_CFG_MESSAGE_FORMAT) or DEFAULT_MESSAGE_FORMAT
+sound_enabled = inventory_settings.sound_enabled
+message_format = inventory_settings.message_format
 
 
 def format_pillage_message(item: str, total: int) -> str:
@@ -227,20 +224,7 @@ def _resolve(look: Look, spec: str) -> str:
 CATEGORY_SPECS: Dict[str, str] = {"Component": "series:0", "Item": "series:1", "Data": "series:2"}
 
 
-def announced_categories() -> FrozenSet[str]:
-    """Categories whose pickups get a pillage notification (log line,
-    overlay, panel status). Counts are always tracked regardless of this
-    setting — it only gates the notification."""
-    raw = config.get_str(_CFG_ANNOUNCE_CATEGORIES)
-    if not raw:
-        return frozenset(TRACKED_CATEGORIES)
-    try:
-        selected = json.loads(raw)
-    except (TypeError, ValueError):
-        return frozenset(TRACKED_CATEGORIES)
-    if not isinstance(selected, list):
-        return frozenset(TRACKED_CATEGORIES)
-    return frozenset(category for category in selected if category in TRACKED_CATEGORIES)
+announced_categories = inventory_settings.announced_categories
 
 
 class InventoryPanelController:
@@ -283,7 +267,28 @@ class InventoryPanelController:
 
     # --- lifecycle ----------------------------------------------------------
 
+    def _on_window_setting(self) -> None:
+        """A pickup setting was changed in the Inventory window: switch the sound, show it on the Settings tab too (if that tab is built) and redraw the bars."""
+        self._sound.set_enabled(sound_enabled())
+        if self._message_format_var is not None:
+            self._message_format_var.set(message_format())
+        if self._sound_var is not None:
+            self._sound_var.set(sound_enabled())
+        chosen = announced_categories()
+        for category, var in self._announce_vars.items():
+            var.set(category in chosen)
+        loadouts = suit.known_loadouts_for(self._tracker.commander or "")
+        for (loadout_id, category), var in self._override_vars.items():
+            record = loadouts.get(loadout_id)
+            if record is not None:
+                var.set(inventory_settings.capacity_text(record, category))
+        try:
+            self._refresh_bars(self._last_state)
+        except Exception:        # the panel is not built yet, or has gone
+            pass
+
     def start(self, plugin_dir: str) -> None:
+        inventory_settings.add_listener(self._on_window_setting)
         self._plugin_dir = plugin_dir
         names.load_learned_names()
         suit.load_overrides()

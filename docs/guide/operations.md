@@ -209,6 +209,8 @@ The Operations tab (**Settings → WFMT → Operations → Inventory**) holds th
 | Suit Backpack Capacity (per suit loadout) | Operations → Inventory | The built-in table. One row per suit loadout WFMT has seen for the commander, pre-filled with the unengineered default; change the number to what you see in the game. Until a suit has been seen the tab says `No suits recorded yet for this commander` - wear a suit in the game, then reopen Settings |
 | Test pickup (button) | Overlays → Inventory | Sends a sample pickup to the overlay and says whether the overlay could be reached, even while notifications are off |
 
+**Also in the Inventory window.** The pillage message, the pickup sound, *Announce pickups for* and the suit backpack capacities are on the **Settings** tab of the Inventory window as well, as the same saved values: a change in either place shows in the other. There a tick saves when you click it, and a box when you press Enter or click away. A blank message restores the default; a capacity left blank, or set to the unengineered default, clears your number; a capacity that is not a number above 0 leaves the saved one. A suit you wear after opening the window appears as a new row. The overlay switches and the Test pickup button stay on the Overlays tab.
+
 Unticking a category in *Announce pickups for* only mutes its notifications. It is still counted.
 The overlay settings need an overlay running; see
 [Setting up the overlay](../OVERLAY_SETUP.md).

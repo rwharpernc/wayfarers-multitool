@@ -396,6 +396,8 @@ Spec: [SCREENSHOTS_AND_INPUT_TECH_SPEC.md](SCREENSHOTS_AND_INPUT_TECH_SPEC.md), 
 | `inventory_names.py` | Microresource ID to display name |
 | `inventory_names_fdevids.py` | The microresource names, imported from a public list |
 | `inventory_panel.py` | The Inventory section of Operations (bars and overlay) |
+| `inventory_settings.py` | Inventory's pickup settings (pillage message, sound, which categories announce, suit backpack capacities): their config keys and readers, the savers, and the listeners that keep the Settings tab and the Inventory window in step |
+| `inventory_settings_tab.py` | The Settings tab of the Inventory window, on the same saved values as Settings → WFMT → Inventory |
 | `inventory_sound.py` | The optional pickup sound |
 | `inventory_suit.py` | Current suit and backpack capacity |
 | `inventory_window.py` | The tabbed inventory window |
