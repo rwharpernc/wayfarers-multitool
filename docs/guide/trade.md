@@ -247,6 +247,8 @@ If the first destination is Example System, that is the name now on your clipboa
 
 The Routes window has a **Routes** box at the top with what the search asks Spansh for: **Hops**, **Furthest from the star (ls)**, **Jump range (ly, blank = my ship's)**, **Ignore prices older than (hours)**, and ticks for **Systems that need a permit**, **Fleet carriers**, **Ground facilities** and **Large landing pad only**. Under **Round trip** are **Least supply to buy**, **Least demand to sell**, **Search radius** and **Carry only this commodity**. A box saves when you press Enter or click away; a tick saves at once. They are the same settings as Settings → WFMT → Trade, so a change in either shows in the other.
 
+The other Trade settings are in the windows they belong to, again the same as Settings → WFMT → Trade: **Ship size (landing pad)** in both the Routes and Market windows, the **'Near me' search radius (ly)** in the Market window, and **Count fines and bounties I pay as a running cost** in the Session window. Only the Spansh lookups switch, the carrier choice for each commander and the other checkboxes in Settings stay there.
+
 The **Hops** button shows the current length (for example `Hops: 3`). Each press cycles it from 2 up to 10 and then back to 2. It
 is the same setting as *Route hops* in Settings, which accepts 1 to 10.
 

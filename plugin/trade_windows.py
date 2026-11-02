@@ -89,11 +89,10 @@ class TradePageWindow:
             save_geometry=lambda geometry: config.set(geometry_key(page), geometry))
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
 
-        self._fields: Dict[str, Any] = {}          # Routes: requirement key -> (variable, entry or None)
+        self._fields: Dict[str, Any] = {}          # requirement key -> (variable, entry or None)
         if page == trade_pages.MARKET:
             self._build_search_bar()
-        elif page == trade_pages.ROUTES:
-            self._build_requirements()
+        self._build_requirements()
 
         scroll = ScrollFrame(self._shell.body, bg=P.PANE)
         scroll.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
@@ -154,7 +153,7 @@ class TradePageWindow:
         current = None
         row = 0
         ticks = None
-        for group, label, key, kind, _default, _low, _high, tip in self._controller.requirement_specs():
+        for group, label, key, kind, _default, _low, high, tip in self._controller.requirement_specs(self._page):
             if group != current:
                 current = group
                 tk.Label(panel, text=group, fg=P.HEADING, bg=P.CARD, font=style.font(P.FONT_BOLD)).grid(row=row, column=0, columnspan=4, sticky="w", pady=(6 if row else 0, 2))
@@ -162,6 +161,21 @@ class TradePageWindow:
                 column = 0
                 ticks = None
             value = self._controller.requirement_value(key)
+            if kind == "choice":
+                line = tk.Frame(panel, bg=P.CARD)
+                line.grid(row=row, column=0, columnspan=4, sticky="w", pady=2)
+                row += 1
+                column = 0
+                ticks = None
+                tk.Label(line, text=label, fg=P.MUTED, bg=P.CARD).pack(side="left", padx=(0, P.PAD_SM))
+                var = tk.StringVar(value=str(value))
+                for option, text in high:
+                    pick = tk.Radiobutton(line, text=text, variable=var, value=option, bg=P.CARD, fg=P.TEXT, activebackground=P.CARD, activeforeground=P.TEXT,
+                                          selectcolor=P.BUTTON, highlightthickness=0, command=lambda k=key, v=var: self._controller.set_requirement(k, v.get()))
+                    pick.pack(side="left", padx=(0, P.PAD_SM))
+                    add_tooltip(pick, tip)
+                self._fields[key] = (var, None)
+                continue
             if kind == "bool":
                 if ticks is None:
                     ticks = tk.Frame(panel, bg=P.CARD)
@@ -186,7 +200,8 @@ class TradePageWindow:
             if column == 2:
                 column, row = 0, row + 1
             ticks = None
-        tk.Label(panel, text="These are the same settings as Settings → WFMT → Trade. The start, cargo size, budget and ship come from the game.",
+        tk.Label(panel, text="These are the same settings as Settings → WFMT → Trade."
+                 + (" The start, cargo size, budget and ship come from the game." if self._page == trade_pages.ROUTES else ""),
                  fg=P.FAINT, bg=P.CARD, font=style.font(P.FONT_SMALL), anchor="w", justify="left", wraplength=640).grid(
             row=row + 1, column=0, columnspan=4, sticky="w", pady=(6, 0))
 

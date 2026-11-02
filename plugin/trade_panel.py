@@ -134,7 +134,9 @@ _NAME_MAX = 64  # a safety bound on station / system / commodity names; the view
 _PERSIST_EVERY_S = 30.0
 _POLL_MS = 500
 
-# What the Routes window lets you set, in the order shown: (group, label, setting key, kind, default, low, high, hover tip). The same settings Settings → WFMT → Trade
+_PAD_CHOICES = (("auto", "From my ship"), ("small", "Small"), ("medium", "Medium"), ("large", "Large"))
+
+# What the windows let you set, in the order shown: (group, label, setting key, kind, default, low, high, hover tip). The same settings Settings → WFMT → Trade
 # holds, so the two always agree. kind is "int" (clamped to low..high), "text" (the jump range override: a number above 0 or blank; the commodity for Round trip: any
 # name) or "bool".
 REQUIREMENTS = (
@@ -146,15 +148,22 @@ REQUIREMENTS = (
     ("Routes", "Fleet carriers", _CFG_CARRIERS, "bool", True, 0, 0, "Fleet carriers - let routes use fleet and squadron carriers (they can jump away)"),
     ("Routes", "Ground facilities", _CFG_GROUND, "bool", True, 0, 0, "Ground facilities - let routes use surface ports, outposts and settlements"),
     ("Routes", "Large landing pad only", _CFG_LARGE_PAD, "bool", False, 0, 0, "Large landing pad only - only stations with a large pad (a large ship always asks for one)"),
+    ("Routes", "Ship size (landing pad)", _CFG_SHIP_PAD, "choice", "auto", 0, _PAD_CHOICES, "Ship size - the pad size routes and prices plan for; From my ship reads it from the game, so pick a size only if it guesses wrong"),
     ("Round trip", "Least supply to buy (t)", _CFG_MIN_SUPPLY, "int", _DEFAULT_MIN_STOCK, 0, 1_000_000, "Least supply - the buying station must have at least this many tons"),
     ("Round trip", "Least demand to sell (t)", _CFG_MIN_DEMAND, "int", _DEFAULT_MIN_STOCK, 0, 1_000_000, "Least demand - the selling station must want at least this many tons"),
     ("Round trip", "Search radius (ly, 0 = from jump range)", _CFG_ROUND_RADIUS, "int", 0, 0, 100_000, "Search radius - how far around the start to look for the other station (0 uses twice your jump range)"),
     ("Round trip", "Carry only this commodity", _CFG_ROUND_ONLY, "text", "", 0, 0, "Carry only - both legs carry only this commodity (blank = anything)"),
+    ("Market", "'Near me' search radius (ly)", _CFG_NEAR_RADIUS, "int", _DEFAULT_NEAR_RADIUS_LY, 1, 100_000, "Near me radius - how far from your system the Near me search looks, in light years"),
+    ("Market", "Ship size (landing pad)", _CFG_SHIP_PAD, "choice", "auto", 0, _PAD_CHOICES, "Ship size - the pad size prices plan for; From my ship reads it from the game, so pick a size only if it guesses wrong"),
+    ("Session", "Count fines and bounties I pay as a running cost", _CFG_COUNT_FINES, "bool", False, 0, 0, "Count fines - take the fines and bounties you pay off the session's net profit, from now on"),
 )
+# Which groups of REQUIREMENTS each window shows.
+PAGE_GROUPS = {trade_pages.SESSION: ("Session",), trade_pages.ROUTES: ("Routes", "Round trip"), trade_pages.MARKET: ("Market",)}
 # The Settings tab's variable for each, so a change made here shows there at once.
 _SETTINGS_VARS = {_CFG_MAX_HOPS: "_hops_var", _CFG_MAX_ARRIVAL_LS: "_arrival_var", _CFG_JUMP_RANGE: "_range_var", _CFG_PRICE_AGE_H: "_age_var",
                   _CFG_PERMIT: "_permit_var", _CFG_CARRIERS: "_carriers_var", _CFG_GROUND: "_ground_var", _CFG_LARGE_PAD: "_pad_var",
-                  _CFG_MIN_SUPPLY: "_supply_var", _CFG_MIN_DEMAND: "_demand_var", _CFG_ROUND_RADIUS: "_round_radius_var", _CFG_ROUND_ONLY: "_only_var"}
+                  _CFG_MIN_SUPPLY: "_supply_var", _CFG_MIN_DEMAND: "_demand_var", _CFG_ROUND_RADIUS: "_round_radius_var", _CFG_ROUND_ONLY: "_only_var",
+                  _CFG_NEAR_RADIUS: "_near_var", _CFG_SHIP_PAD: "_pad_override_var", _CFG_COUNT_FINES: "_fines_var"}
 
 
 def _clip(text: Any, limit: int = _NAME_MAX) -> str:
@@ -674,8 +683,10 @@ class TradePanelController:
     # --- the Routes window's requirements ---------------------------------------------------------------------------------------
 
     @staticmethod
-    def requirement_specs() -> tuple:
-        return REQUIREMENTS
+    def requirement_specs(page: str) -> tuple:
+        """The requirements a page's window shows, in order."""
+        groups = PAGE_GROUPS.get(page, ())
+        return tuple(spec for spec in REQUIREMENTS if spec[0] in groups)
 
     @staticmethod
     def requirement_value(key: str) -> Any:
@@ -687,6 +698,9 @@ class TradePanelController:
                 return config.get_bool(name, default=default)
             if kind == "int":
                 return str(_cfg_int(name, default, low, high))
+            if kind == "choice":
+                held = (config.get_str(name) or "").strip().lower()
+                return held if held in {value for value, _text in high} else "auto"
             return config.get_str(name) or ""
         return ""
 
@@ -704,6 +718,9 @@ class TradePanelController:
                 except ValueError:
                     number = default
                 config.set(name, max(low, min(high, number)))
+            elif kind == "choice":
+                chosen = str(value).strip().lower()
+                config.set(name, chosen if chosen in {v for v, _t in high} and chosen != "auto" else "")     # "" is From my ship, as Settings stores it
             else:
                 text = str(value).strip()
                 if name == _CFG_JUMP_RANGE:
@@ -712,6 +729,8 @@ class TradePanelController:
                     except ValueError:
                         text = ""
                 config.set(name, text)
+            if name == _CFG_COUNT_FINES:
+                ledger_mod.set_count_fines(bool(value))
             held = self.requirement_value(name)
             var = getattr(self, _SETTINGS_VARS.get(name, ""), None)
             if var is not None:

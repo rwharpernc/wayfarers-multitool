@@ -156,6 +156,25 @@ controller._cycle_hops()
 pump()
 check(fields["wfmt_trade_max_hops"][0].get() == str(controller.requirement_value("wfmt_trade_max_hops")), "the Hops button's change shows in the window")
 
+# the rest of Trade's settings: the pad in Routes and Market, the Near me radius in Market, fines in Session
+check("wfmt_trade_ship_pad_override" in routes._fields, "Routes has the ship size")
+mk = trade_windows._windows[trade_pages.MARKET]
+check({"wfmt_trade_near_radius_ly", "wfmt_trade_ship_pad_override"} <= set(mk._fields), f"Market has the Near me radius and the ship size: {sorted(mk._fields)}")
+check("wfmt_trade_count_fines" in session._fields, f"Session has the fines switch: {sorted(session._fields)}")
+check(controller.requirement_value("wfmt_trade_ship_pad_override") == "auto", "the ship size starts as From my ship")
+check(controller.set_requirement("wfmt_trade_ship_pad_override", "large") == "large" and saved.get("wfmt_trade_ship_pad_override") == "large", "a pad size is saved")
+check(controller._ship_pad() == "large", "and the controller plans for it")
+check(controller.set_requirement("wfmt_trade_ship_pad_override", "auto") == "auto" and saved.get("wfmt_trade_ship_pad_override") == "", "From my ship is saved as blank, as Settings does")
+check(controller.set_requirement("wfmt_trade_ship_pad_override", "huge") == "auto", "an unknown size is From my ship")
+check(controller.set_requirement("wfmt_trade_near_radius_ly", "250") == "250" and controller._near_radius() == 250, "the Near me radius is saved and used")
+check(controller.set_requirement("wfmt_trade_near_radius_ly", "0") == "1", "the Near me radius stays inside its range")
+controller.set_requirement("wfmt_trade_count_fines", True)
+check(saved.get("wfmt_trade_count_fines") is True and trade_panel.count_fines_enabled(), "the fines switch is saved and read back")
+pad_var = mk._fields["wfmt_trade_ship_pad_override"][0]
+controller.set_requirement("wfmt_trade_ship_pad_override", "medium")
+pump()
+check(pad_var.get() == "medium", "a pad size picked in one window shows in the other")
+
 # the Market window: the box is the controller's, and Sell / Buy repaint
 market = trade_windows._windows[trade_pages.MARKET]
 captions = [str(b.cget("text")) for b in market._button_bar.winfo_children()]
