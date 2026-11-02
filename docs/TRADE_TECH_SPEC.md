@@ -36,8 +36,8 @@ threading, persistence), see [TECHNICAL.md](TECHNICAL.md).
 
 ## 1. What it is
 
-Trade mode is one of the panel's modes (`PANEL_PLACEMENT = "trade"`). It has three pages, switched with the
-◀ ▶ arrows at the top:
+Trade mode is one of the panel's modes (`PANEL_PLACEMENT = "trade"`). It has three pages. The panel shows a short summary (net profit and the hold) over a button for each, and each button opens that
+page in its own window (`trade_windows.py`, built on the window kit; the History button opens Trade History):
 
 | Page | Works offline? | Purpose |
 |---|---|---|
@@ -138,8 +138,12 @@ The builders (`ledger.summary_blocks`, `trade_carrier.cargo_blocks`, and the pan
 - `BlockView.show(blocks)` draws them and skips the redraw when the blocks (frozen dataclasses, so equal
   by value) and the width haven't changed.
 
-**Layout.** The controls come first, then the page: nav arrows, then (Market only) the Commodity box and the
-Sell / Buy toggle, then the page's buttons, then the `BlockView`. A page is one grid of four columns: column 0 is
+**Layout.** The panel is a `BlockView` of `_summary_blocks` (the first line of the session summary, the hold, and a note while a
+Spansh search runs) over the four buttons Session, Routes, Market and History. Each page's window has the page's buttons in its
+header, then (Market only) the Commodity box and the Sell / Buy choice, then the page's blocks in a `BlockView(themed=False)`, which
+takes the window theme's colors instead of EDMC's. The controller keeps all the state: `page_content(page)` returns a page's blocks
+and header buttons, `trade_windows.refresh_all()` redraws the open windows on every `_refresh`, and the Market window binds its box
+to the controller while it is open (what was typed is kept when it closes). A page is one grid of four columns: column 0 is
 flexible (titles and labels) and columns 1 to 3 hold numbers.
 
 **Sizing rule** (TECHNICAL.md section 5). Nothing can widen EDMC's main window.
@@ -673,7 +677,9 @@ Settings > WFMT > Trade (a top-level tab; the top-level tabs are in alphabetical
 | `wfmt_trade_ship_pad_override` | small / medium / large ("" = from the ship) | "" |
 | `wfmt_trade_count_fines` | Count fines and bounties paid as a running cost (only payments made after it is ticked) | off |
 | `wfmt_trade_watch_collapsed`, `wfmt_trade_watch_window_geometry` | The Watch list row's fold state and its window's size and position | folded, "" |
-| `wfmt_trade_current_page` | Last page shown | Session |
+| `wfmt_trade_window_geometry_session` | Where the Session window was left | "" |
+| `wfmt_trade_window_geometry_routes` | Where the Routes window was left | "" |
+| `wfmt_trade_window_geometry_market` | Where the Market window was left | "" |
 | `wfmt_trade_market_side` | Market search side: sell or buy | sell |
 | `wfmt_trade_commanders` | Commanders seen, `\|`-separated, so Settings can list them | "" |
 | `wfmt_trade_carriers_<commander>` | auto / none / fleet / squadron / both | auto |

@@ -51,6 +51,7 @@ from . import trade_pages
 from . import trade_prices
 from . import trade_roundtrip
 from . import trade_ship
+from . import trade_windows
 from . import trade_spansh_client as spansh_routes
 from . import trade_stock
 from .trade_blocks import Block, Columns, Heading, Item, Note, Pair
@@ -73,7 +74,6 @@ _CFG_PERMIT = "wfmt_trade_route_permit"            # routes: allow systems that 
 _CFG_MIN_SUPPLY = "wfmt_trade_min_supply"          # round trip: least tons the buying station must have
 _CFG_MIN_DEMAND = "wfmt_trade_min_demand"          # round trip: least tons the selling station must want
 _CFG_ROUND_ONLY = "wfmt_trade_roundtrip_commodity"  # round trip: carry only this commodity (blank = anything)
-_CFG_CURRENT_PAGE = "wfmt_trade_current_page"
 _CFG_NEAR_RADIUS = "wfmt_trade_near_radius_ly"
 _CFG_ROUND_RADIUS = "wfmt_trade_round_radius_ly"   # round trip: how far to look (0 = from the jump range)
 _SCAN_FIRST_MS = 4000      # first look for unread journals, a few seconds after the panel appears
@@ -105,6 +105,14 @@ BUTTON_TIPS = {
     "Galaxy": "Galaxy - find the best prices anywhere in the galaxy (Spansh)",
     "Best picks": "Best picks - closest, best nearby, cheapest and recommended stations (Spansh)",
     "Price finder": "Price finder - open the commodity price search window",
+}
+
+# Hover text for the page buttons on the Trade panel.
+PAGE_BUTTON_TIPS = {
+    "Session": "Session - open the session window: profit, costs, your hold and your carrier",
+    "Routes": "Routes - open the trade routes window (Spansh)",
+    "Market": "Market - open the window that finds where to sell or buy a commodity (Spansh)",
+    "History": BUTTON_TIPS["History"],
 }
 
 _HOP_CHOICES = (2, 3, 4, 5)  # the Hops button on the Routes page cycles through these
@@ -235,24 +243,11 @@ class TradePanelController:
         self._pad_dropped: Dict[str, int] = {}                  # scope -> stations left out for pad size
         self._job: Optional[_Job] = None
 
-        self._page = config.get_str(_CFG_CURRENT_PAGE) or trade_pages.PAGE_ORDER[0]
-        if self._page not in trade_pages.PAGE_ORDER:
-            self._page = trade_pages.PAGE_ORDER[0]
-
         # Widgets
         self._parent: Optional[tk.Frame] = None
-        self._page_label: Optional[tk.Label] = None
-        self._view: Optional[BlockView] = None
-        self._button_a: Optional[tk.Button] = None
-        self._button_b: Optional[tk.Button] = None
-        self._button_c: Optional[tk.Button] = None
-        self._button_d: Optional[tk.Button] = None
-        self._button_e: Optional[tk.Button] = None
-        self._search_row: Optional[tk.Frame] = None
-        self._side_row: Optional[tk.Frame] = None
-        self._side_buttons: Dict[str, tk.Button] = {}
-        self._side_off_colors: Optional[tuple] = None
-        self._commodity_entry: Optional[CommodityEntry] = None
+        self._view: Optional[BlockView] = None           # the short summary on the panel
+        self._commodity_entry: Optional[CommodityEntry] = None   # the Market window's box, while that window is open
+        self._typed = ""                                  # what was in it when the window was closed
 
         # Settings variables
         self._lookups_var: Optional[tk.BooleanVar] = None
@@ -315,6 +310,7 @@ class TradePanelController:
     def stop(self) -> None:
         if self._job is not None:
             self._job.cancel.set()
+        trade_windows.close_all()
         trade_history_window.close()
         self._save(force=True)
         self._save_stock(force=True)
@@ -501,61 +497,32 @@ class TradePanelController:
     # --- panel chrome ----------------------------------------------------------
 
     def build_panel(self, parent: tk.Frame) -> None:
+        """A short summary (net profit and the hold) over one button for each of Trade's pages, each of which opens its own window."""
         parent.columnconfigure(0, weight=1)
         self._parent = parent
 
-        nav = tk.Frame(parent)
-        nav.grid(row=0, column=0, columnspan=3, sticky="ew")
-        panelkit.nav_arrow(nav, -1, lambda: self._step_page(-1)).pack(side=tk.LEFT)
-        panelkit.nav_arrow(nav, 1, lambda: self._step_page(1)).pack(side=tk.RIGHT)
-        self._page_label = tk.Label(nav, anchor=tk.CENTER, font=panelkit.view_fonts()["bold"])
-        self._page_label.pack(side=tk.LEFT, fill=tk.X, expand=True)
-
         self._view = BlockView(parent)
-        self._view.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(4, 2))
-
-        self._search_row = tk.Frame(parent)
-        self._search_row.grid(row=1, column=0, columnspan=3, sticky="w", pady=(2, 2))
-        tk.Label(self._search_row, text="Commodity:").pack(side=tk.LEFT, padx=(0, 4))
-        self._commodity_entry = CommodityEntry(self._search_row, self._preferred_commodities,
-                                               on_submit=lambda: self._find_prices("near"))
-        self._commodity_entry.pack(side=tk.LEFT)
-
-        # Which side of the market the search is for. Two toggle buttons (the same on/off look as the mode
-        # buttons) rather than radio buttons, which EDMC's theme doesn't color reliably.
-        self._side_row = tk.Frame(parent)
-        self._side_row.grid(row=2, column=0, columnspan=3, sticky="w", pady=(0, 2))
-        tk.Label(self._side_row, text="I want to:").pack(side=tk.LEFT, padx=(0, 4))
-        for value, text in ((trade_prices.SELL, "Sell"), (trade_prices.BUY, "Buy")):
-            button = tk.Button(self._side_row, text=text, command=lambda v=value: self._set_side(v))
-            button.pack(side=tk.LEFT, padx=(0, 6))
-            panelkit.add_tooltip(button, BUTTON_TIPS[text])
-            self._side_buttons[value] = button
-        self._side_off_colors = panelkit.capture_toggle_off_colors(self._side_buttons[trade_prices.SELL])
-        self._paint_side_buttons()
+        self._view.grid(row=0, column=0, columnspan=3, sticky="ew", pady=(0, 2))
 
         rows = tk.Frame(parent)
-        rows.grid(row=3, column=0, columnspan=3, sticky="w")
-        buttons = tk.Frame(rows)
-        buttons.pack(side=tk.TOP, anchor="w")
-        extra = tk.Frame(rows)    # a second row, so a fifth button never widens the panel
-        extra.pack(side=tk.TOP, anchor="w")
-        self._button_a = tk.Button(buttons, text="")
-        self._button_a.pack(side=tk.LEFT)
-        self._button_b = tk.Button(buttons, text="")
-        self._button_b.pack(side=tk.LEFT, padx=(6, 0))
-        self._button_c = tk.Button(buttons, text="")
-        self._button_c.pack(side=tk.LEFT, padx=(6, 0))
-        self._button_d = tk.Button(buttons, text="")
-        self._button_d.pack(side=tk.LEFT, padx=(6, 0))
-        self._button_e = tk.Button(extra, text="")
-        self._button_e.pack(side=tk.LEFT, pady=(3, 0))
-        for button in (self._button_a, self._button_b, self._button_c, self._button_d, self._button_e):
-            panelkit.add_tooltip(button, lambda b=button: BUTTON_TIPS.get(str(b.cget("text")).split(":")[0], ""))
+        rows.grid(row=1, column=0, columnspan=3, sticky="w")
+        # Two buttons to a line: four in one would be wider than EDMC's main window, which clips whatever does not fit.
+        for number, (text, command) in enumerate(((trade_pages.SESSION, lambda: self._open_page(trade_pages.SESSION)),
+                                                  (trade_pages.ROUTES, lambda: self._open_page(trade_pages.ROUTES)),
+                                                  (trade_pages.MARKET, lambda: self._open_page(trade_pages.MARKET)),
+                                                  ("History", self._open_history))):
+            button = tk.Button(rows, text=text, command=command)
+            button.grid(row=number // 2, column=number % 2, sticky="w", padx=(0 if number % 2 == 0 else 6, 0),
+                        pady=(0 if number < 2 else 3, 0))
+            panelkit.add_tooltip(button, PAGE_BUTTON_TIPS[text])
 
         self._refresh()
         parent.after(2000, self._poll_carrier_history)
         parent.after(_SCAN_FIRST_MS, self._scan_tick)
+
+    def _open_page(self, page: str) -> None:
+        if self._parent is not None:
+            trade_windows.show(self._parent, self, page)
 
     # --- reading journals that arrive from elsewhere ---------------------------------
 
@@ -628,67 +595,82 @@ class TradePanelController:
     def _backfill_thread_done(self) -> bool:
         return not any(t.name == "WFMT-trade-carrier" and t.is_alive() for t in threading.enumerate())
 
-    def _step_page(self, direction: int) -> None:
-        order = trade_pages.PAGE_ORDER
-        self._page = order[(order.index(self._page) + direction) % len(order)]
-        config.set(_CFG_CURRENT_PAGE, self._page)
-        self._refresh()
-
     def _alive(self) -> bool:
         return self._parent is not None and bool(self._parent.winfo_exists())
 
     # --- rendering ----------------------------------------------------------------
 
     def _refresh(self) -> None:
-        if not self._alive() or self._view is None or self._page_label is None:
+        if not self._alive() or self._view is None:
             return
-        index = trade_pages.PAGE_ORDER.index(self._page) + 1
-        self._page_label.configure(text=f"{self._page} ({index}/{len(trade_pages.PAGE_ORDER)})")
+        self._view.show(self._summary_blocks())
+        trade_windows.refresh_all()
+
+    def _summary_blocks(self) -> List[Block]:
+        """The panel's glance: net profit, the hold, and a note while a Spansh search is running."""
+        blocks: List[Block] = ledger_mod.summary_blocks(self._ledger)[:1]
+        used = sum(self._cargo.values())
+        if self._capacity or used:
+            blocks.append(Pair("Ship hold", f"{used:,} / {self._capacity:,} t" if self._capacity else f"{used:,} t"))
+        if self._job is not None and not self._job.done:
+            blocks.append(Note(f"Asking Spansh... {int(time.monotonic() - self._job.started)} s"))
+        return blocks
+
+    def page_content(self, page: str) -> tuple:
+        """(blocks, header buttons) for a page's window. A button is (caption, command, enabled)."""
         busy = self._job is not None and not self._job.done
-        if self._page == trade_pages.SESSION:
-            blocks = self._session_blocks()
-            self._set_buttons(("Reset", self._reset_ledger, True),
-                              ("Save session", self._save_session, trade_history.has_content(self._ledger)),
-                              ("History", self._open_history, True),
-                              ("Rebuild", self._rebuild_ledger, bool(self._cmdr)))
-        elif self._page == trade_pages.ROUTES:
-            blocks = self._routes_blocks(busy)
-            self._set_buttons(
+        if page == trade_pages.SESSION:
+            return self._session_blocks(), [
+                ("Reset", self._reset_ledger, True),
+                ("Save session", self._save_session, trade_history.has_content(self._ledger)),
+                ("History", self._open_history, True),
+                ("Rebuild", self._rebuild_ledger, bool(self._cmdr))]
+        if page == trade_pages.ROUTES:
+            return self._routes_blocks(busy), [
                 ("Cancel" if busy else "Find routes", self._cancel_job if busy else self._find_routes,
                  busy or lookups_enabled()),
                 ("Copy next system", self._copy_next_system, bool(self._next_system) and not busy),
                 (f"Hops: {self._route_hops()}", self._cycle_hops, lookups_enabled() and not busy),
-                ("Round trip", self._find_round_trip, lookups_enabled() and not busy))
-        else:
-            blocks = self._market_blocks(busy)
-            can_search = lookups_enabled() and not busy
-            self._set_buttons(
-                ("Cancel" if busy else "Near me", self._cancel_job if busy else lambda: self._find_prices("near"),
-                 busy or can_search),
-                ("Galaxy", lambda: self._find_prices("galaxy"), can_search),
-                ("Best picks", self._find_picks, can_search),
-                ("Price finder", self._open_price_finder, lookups_enabled() and not busy))
-        self._view.show(blocks)
-        for row in (self._search_row, self._side_row):
-            if row is not None:
-                if self._page == trade_pages.MARKET and lookups_enabled():
-                    row.grid()
-                else:
-                    row.grid_remove()
+                ("Round trip", self._find_round_trip, lookups_enabled() and not busy)]
+        can_search = lookups_enabled() and not busy
+        return self._market_blocks(busy), [
+            ("Cancel" if busy else "Near me", self._cancel_job if busy else lambda: self._find_prices("near"),
+             busy or can_search),
+            ("Galaxy", lambda: self._find_prices("galaxy"), can_search),
+            ("Best picks", self._find_picks, can_search),
+            ("Price finder", self._open_price_finder, lookups_enabled() and not busy)]
 
-    def _set_buttons(self, first, second, third, fourth=None, fifth=None) -> None:
-        # Unpack all, then pack in order, so the left-to-right order can never swap.
-        for button in (self._button_a, self._button_b, self._button_c, self._button_d, self._button_e):
-            if button is not None:
-                button.pack_forget()
-        for button, spec, padx in ((self._button_a, first, (0, 0)), (self._button_b, second, (6, 0)),
-                                   (self._button_c, third, (6, 0)), (self._button_d, fourth, (6, 0)),
-                                   (self._button_e, fifth, (0, 0))):
-            if button is None or spec is None:
-                continue
-            text, command, enabled = spec
-            button.configure(text=text, command=command, state=tk.NORMAL if enabled else tk.DISABLED)
-            button.pack(side=tk.LEFT, padx=padx)
+    @staticmethod
+    def button_tip(text: str) -> str:
+        return BUTTON_TIPS.get(str(text).split(":")[0], "")
+
+    # --- what the Market window asks of the controller ---------------------------------------------------------------
+
+    @property
+    def side(self) -> str:
+        return self._side
+
+    def set_side(self, side: str) -> None:
+        self._set_side(side)
+
+    def find_prices(self, scope: str) -> None:
+        self._find_prices(scope)
+
+    def preferred_commodities(self) -> List[str]:
+        return self._preferred_commodities()
+
+    def bind_commodity_entry(self, entry: CommodityEntry) -> None:
+        self._commodity_entry = entry
+        if self._typed:
+            entry.set(self._typed)
+
+    def unbind_commodity_entry(self, entry: CommodityEntry) -> None:
+        if self._commodity_entry is entry:
+            try:
+                self._typed = entry.get()
+            except tk.TclError:
+                pass
+            self._commodity_entry = None
 
     def _session_blocks(self) -> List[Block]:
         blocks: List[Block] = []
@@ -802,14 +784,7 @@ class TradePanelController:
         self._side = side
         config.set(_CFG_MARKET_SIDE, side)
         self._sell, self._sell_for, self._sell_error, self._pad_dropped, self._picks = {}, None, None, {}, None
-        self._paint_side_buttons()
         self._refresh()
-
-    def _paint_side_buttons(self) -> None:
-        if self._side_off_colors is None:
-            return
-        for value, button in self._side_buttons.items():
-            panelkit.apply_toggle_button_state(button, value == self._side, self._side_off_colors)
 
     def _market_blocks(self, busy: bool) -> List[Block]:
         if not lookups_enabled():
@@ -854,7 +829,7 @@ class TradePanelController:
         """(commodity, tons to value the trade for, recognized). Selling: what is typed, else your largest
         load; the tons are what you carry of it, or a full hold if you carry none. Buying: only what is
         typed; the tons are your free hold space (a full hold's worth if the hold is already full)."""
-        typed = self._commodity_entry.get() if self._commodity_entry is not None else ""
+        typed = self._commodity_entry.get() if self._commodity_entry is not None else self._typed
         carried = self._carried()
         if self._side == trade_prices.BUY:
             if not typed:

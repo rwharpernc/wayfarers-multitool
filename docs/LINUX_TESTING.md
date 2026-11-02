@@ -572,8 +572,8 @@ Use them for anything the passes did not reach.
 
 Windows was checked as Trade was built. The boxes below are unticked so the list can be run again. Settings → WFMT → Trade first: tick **Enable Spansh trade lookups**.
 
-- [ ] The **Trade** button appears with the others, and the **◀** / **▶** buttons at the top of the Trade panel are
-      large and show their arrow glyphs (not empty boxes). The same buttons on Mining and Missions look right.
+- [ ] The **Trade** button appears with the others, and the Trade panel shows its summary over the **Session**, **Routes**, **Market** and
+      **History** buttons. Each of the first three opens its own window, and pressing it again brings that window forward.
 - [ ] **Session**: after docking, the ship and its pad size show; the hold line shows used, capacity and free
       tons. Buy and sell something: the profit lines appear. Refuel and repair: a **Net profit** headline appears
       with Fuel and Repairs lines under it. **Reset** clears it.
@@ -611,7 +611,7 @@ Windows was checked as Trade was built. The boxes below are unticked so the list
   - Typing narrows it.
   - Up/Down/Enter/Esc work.
   - Clicking a name fills the box.
-- [ ] Layout: the Session, Routes and Market pages show orange section headings with a rule between them where a page has more than one list (a page with a single list has no heading above it), values on the right, and aligned number columns.
+- [ ] Layout: the Session, Routes and Market windows show orange section headings with a rule between them where a page has more than one list (a page with a single list has no heading above it), values on the right, and aligned number columns.
   - Long station names wrap instead of being cut off.
   - Nothing is clipped on the right edge or makes the EDMC window wider.
   - The buttons and (on Market) the Commodity box and **Sell** / **Buy** are **above** the results.

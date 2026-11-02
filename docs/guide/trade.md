@@ -3,7 +3,7 @@
 Trade is about buying and selling: what you've earned after fuel and repairs, how much of your cargo is still
 unsold, your ship hold and your carrier's space, and where to find the best routes and prices.
 
-It has three pages. Use the large orange **◀** and **▶** buttons at the top of the panel to move between them. The title between them shows where you are, for example `Session (1/3)`, and WFMT remembers the page you were on:
+The Trade panel shows a short summary (your net profit and your hold) and four buttons: **Session**, **Routes**, **Market** and **History**. The first three each open a window of their own, and WFMT remembers where you left each one. **History** opens the Trade History window:
 
 | Page | What it's for | Needs internet? |
 |---|---|---|
@@ -14,8 +14,7 @@ It has three pages. Use the large orange **◀** and **▶** buttons at the top 
 A pop-out **Trade History** window keeps the sessions you choose to save.
 
 Each page is laid out in sections (orange headings with a rule between them), with label-and-value rows and tables
-whose numbers line up in columns. Long station names wrap instead of being cut off. A page's buttons are at the top,
-under the page arrows.
+whose numbers line up in columns. Long station names wrap instead of being cut off. A page's buttons are at the top of its window.
 
 **On this page:** [How to](#how-to) · [How a trading session works](#how-a-trading-session-works) ·
 [The Session page](#the-session-page) · [Trade History](#trade-history-saving-sessions) · [Routes](#routes) ·
@@ -30,7 +29,7 @@ Quick steps for the most common jobs. Each links to the section with the detail.
 **See your profit after fuel and repairs**
 
 1. Trade as you normally do. WFMT counts every purchase, sale and running cost it sees in the journal.
-2. Open the **Session** page (use the **◀** and **▶** buttons until the title reads `Session (1/3)`).
+2. Press **Session** on the Trade panel to open the Session window.
 3. Read **Net profit**: trade profit less fuel, repairs, advanced maintenance, rearm and limpets. The costs are listed under it.
 
 More: [Profit](#the-session-page) and [Worked example: profit after costs](#worked-example-profit-after-costs).

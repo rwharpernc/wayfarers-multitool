@@ -328,6 +328,7 @@ Spec: [TRADE_TECH_SPEC.md](TRADE_TECH_SPEC.md) (has its own module table with mo
 | `trade_watch_data.py` | The market watch list: a commander's watched commodities and the prices seen for them at the markets they opened (`Market.json`), kept per commander in `trade_watch.json`, with the Spansh answers held in memory; best buy and sell across both; no Tk |
 | `trade_watch_lookup.py` | The watch list's Spansh refresh: the cheapest station to buy and the dearest to sell each watched commodity near a system, stations only, paused between requests and cancellable; the search is passed in, so it is tested offline |
 | `trade_watch_panel.py` | The Watch list row in Trade mode: a few short best-price lines, Refresh (Spansh, on a worker thread; needs Trade's lookups on) and Watch (the window); reads `Market.json` on the `Market` event |
+| `trade_windows.py` | Trade's three pages as windows (Session, Routes, Market), opened by the Trade panel's buttons; they draw what `trade_panel` hands them |
 | `trade_watch_window.py` | The Watch list window: add a commodity with the type-ahead box, remove one, the best buy and sell with where and how old, and every market a commodity was seen at |
 
 ## Missions

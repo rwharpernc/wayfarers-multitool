@@ -150,7 +150,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 **Controls:**
 
-- **◀ ▶** switch pages (Session, Routes, Market).
+- **Session**, **Routes**, **Market** and **History** buttons each open a window.
 - Session: **Reset**, **Save session**, **History**, **Rebuild**.
 - Routes: **Find routes**, **Cancel**, **Hops**, **Round trip**, **Copy next system**.
 - Market: **Sell**/**Buy**, **Near me**/**Galaxy**, **Best picks**, **Price finder**.

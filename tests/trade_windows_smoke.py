@@ -1,0 +1,172 @@
+"""Opens Trade's panel and its Session, Routes and Market windows (plugin/trade_panel.py, plugin/trade_windows.py) with EDMC stubbed, and
+checks that each button opens its window once, that the windows show what the controller hands them and follow its refreshes, that the
+Market window's box and Sell / Buy choice reach the controller (and what was typed survives closing it), and that the panel stays narrow.
+Run by test_trade_windows_smoke.py in a subprocess so the stand-ins never leak into other tests. Exits 0 if everything holds, 1 if not,
+77 if Tk is unavailable."""
+import quiet_tk  # noqa: F401  (keeps the test windows from taking focus)
+import json
+import os
+import sys
+import tempfile
+import time
+import types
+from unittest import mock
+
+repo = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+sys.path.insert(0, repo)
+import tkinter as tk
+
+
+class Any(types.ModuleType):
+    def __getattr__(self, n):
+        if n.startswith("__"):
+            raise AttributeError(n)
+        return mock.MagicMock()
+
+
+for n in ("monitor", "plug", "EDMCLogging", "l10n", "killswitch", "requests", "win32api", "win32con", "win32gui",
+          "win32process", "win32clipboard", "pywintypes", "psutil", "ttkHyperlinkLabel"):
+    sys.modules[n] = Any(n)
+nbmod = Any("myNotebook")
+nbmod.Frame, nbmod.Label, nbmod.Button, nbmod.Checkbutton = tk.Frame, tk.Label, tk.Button, tk.Checkbutton
+sys.modules["myNotebook"] = nbmod
+theme = Any("theme")
+theme.theme = mock.MagicMock()
+theme.theme.active = None
+theme.theme.THEME_DEFAULT = 0
+sys.modules["theme"] = theme
+saved = {}
+
+
+class Cfg:
+    default_journal_dir = ""
+
+    def get_str(self, key, default=""):
+        return saved.get(key, default) or ""
+
+    def get_bool(self, key, default=False):
+        return saved.get(key, default)
+
+    def get_int(self, key, default=0):
+        return saved.get(key, default)
+
+    def get(self, key, default=None):
+        return saved.get(key, default)
+
+    def set(self, key, value):
+        saved[key] = value
+
+
+cfgmod = types.ModuleType("config")
+cfgmod.appname = "EDMarketConnector"
+cfgmod.config = Cfg()
+cfgmod.user_agent = "WFMT-test"
+cfgmod.appversion = lambda: "5.13.0"
+sys.modules["config"] = cfgmod
+
+try:
+    root = tk.Tk()
+except tk.TclError:
+    print("no display available")
+    sys.exit(77)
+root.withdraw()
+
+
+try:
+    root = tk.Tk()
+except tk.TclError:
+    print("no display available")
+    sys.exit(77)
+root.withdraw()
+
+
+from plugin import trade_pages, trade_panel, trade_prices, trade_windows  # noqa: E402
+
+problems = []
+
+
+def check(condition, message):
+    if not condition:
+        problems.append(message)
+
+
+def pump():
+    root.update_idletasks()
+    root.update()
+
+
+def buttons_of(frame):
+    found = []
+    for child in frame.winfo_children():
+        if isinstance(child, tk.Button):
+            found.append(child)
+        found.extend(buttons_of(child))
+    return found
+
+
+controller = trade_panel.TradePanelController()
+host = tk.Frame(root)
+host.pack()
+controller.build_panel(host)
+pump()
+panel_buttons = {str(b.cget("text")): b for b in buttons_of(host)}
+check(set(panel_buttons) == {"Session", "Routes", "Market", "History"}, f"the panel's buttons: {sorted(panel_buttons)}")
+check(not any("\u25c0" in str(b.cget("text")) or "\u25b6" in str(b.cget("text")) for b in buttons_of(host)), "no page arrows are left")
+check(host.winfo_reqwidth() <= 260, f"the panel asks for {host.winfo_reqwidth()} px")
+
+for page in (trade_pages.SESSION, trade_pages.ROUTES, trade_pages.MARKET):
+    check(not trade_windows.is_open(page), f"{page} starts closed")
+    panel_buttons[page].invoke()
+    pump()
+    check(trade_windows.is_open(page), f"the {page} button opens its window")
+    first = trade_windows._windows[page]
+    panel_buttons[page].invoke()
+    pump()
+    check(trade_windows._windows[page] is first, f"pressing {page} again brings the same window forward")
+
+session = trade_windows._windows[trade_pages.SESSION]
+captions = [str(b.cget("text")) for b in session._shell.actions.winfo_children()]
+check(captions == ["Reset", "Save session", "History", "Rebuild"], f"the Session window's header buttons: {captions}")
+routes = trade_windows._windows[trade_pages.ROUTES]
+captions = [str(b.cget("text")) for b in routes._shell.actions.winfo_children()]
+check(captions[0] == "Find routes" and captions[-1] == "Round trip", f"the Routes window's header buttons: {captions}")
+
+# the Market window: the box is the controller's, and Sell / Buy repaint
+market = trade_windows._windows[trade_pages.MARKET]
+check(controller._commodity_entry is market._entry and market._entry is not None, "the Market box is bound to the controller")
+market._entry.set("Tritium")
+check(controller._search_target() is not None and controller._search_target()[0] == "Tritium", f"the typed commodity is searched: {controller._search_target()}")
+controller.set_side(trade_prices.BUY)
+pump()
+check(controller.side == trade_prices.BUY and market._painted_side == trade_prices.BUY, "choosing Buy reaches the controller and repaints")
+check(market._view._blocks is not None, "the Market window shows blocks")
+
+# lookups off: the search windows say so instead of failing
+from plugin import trade_panel as tp  # noqa: E402
+text = " ".join(str(getattr(b, "text", "")) for b in market._view._blocks)
+check("lookups" in text.lower(), f"with lookups off the Market window says so: {text!r}")
+
+market.close()
+pump()
+check(controller._commodity_entry is None and controller._typed == "Tritium", "closing Market unbinds the box and keeps what was typed")
+trade_windows.show(root, controller, trade_pages.MARKET)
+pump()
+reopened = trade_windows._windows[trade_pages.MARKET]
+check(reopened._entry.get() == "Tritium", f"reopening Market restores the text: {reopened._entry.get()!r}")
+
+# a refresh reaches the open windows
+controller._cargo = {"Gold": 10}
+controller._capacity = 100
+controller._refresh()
+pump()
+check(any("10 / 100" in str(getattr(b, "value", "")) for b in controller._summary_blocks()), "the panel summary shows the hold")
+check("In your ship" in " ".join(str(getattr(b, "text", "")) for b in session._view._blocks), "the Session window follows the refresh")
+
+trade_windows.close_all()
+pump()
+check(not any(trade_windows.is_open(p) for p in trade_pages.PAGE_ORDER), "close_all closes every window")
+
+if problems:
+    print("\n".join(problems))
+    sys.exit(1)
+print("TRADE WINDOWS OK")

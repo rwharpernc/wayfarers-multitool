@@ -7,6 +7,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Changed
 
+- **Trade: the pages are windows, not ◀ ▶ pages.** The Trade panel now shows a short summary (net profit and the hold) over four buttons: **Session**, **Routes**, **Market** and **History**. Session, Routes and Market each open their own window (with the page's buttons in its header; Market has the Commodity box and the Sell / Buy choice at its top), and pressing a button again brings that window forward. Each window remembers where you left it. What you typed in Market's box is kept when you close it. The setting that remembered the last page is gone.
 - **Main panel: orange text is readable on EDMC's light Default theme.** The bright orange used for headings, warnings and the page arrows was only about 1.7 to 2.3:1 against the Default theme's light backgrounds. On that theme these now use a darker orange (4.5:1 or better); the Dark and Transparent themes keep the bright orange.
 
 ### Added

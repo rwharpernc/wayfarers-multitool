@@ -36,7 +36,10 @@ _VALUE_SHARE = 0.56
 class BlockView(tk.Frame):
     """A frame that shows a list of blocks and redraws only when they (or its width) change."""
 
-    def __init__(self, parent: tk.Misc) -> None:
+    def __init__(self, parent: tk.Misc, themed: bool = True) -> None:
+        """`themed` True follows EDMC's theme (the main panel). False is for a WFMT window, whose own colors the window kit applies: the
+        headings use the window theme's heading color and the rules its line color, and EDMC's theme is left out of it."""
+        self._themed = themed
         options = {}
         try:
             options["background"] = parent.cget("background")
@@ -48,6 +51,12 @@ class BlockView(tk.Frame):
         self._pending: Optional[str] = None
         self.columnconfigure(0, weight=1)
         self.bind("<Configure>", self._on_configure)
+
+    def _accent(self) -> str:
+        if self._themed:
+            return panelkit.accent_color()
+        from .uikit import palette as P
+        return P.HEADING
 
     # --- public --------------------------------------------------------------------------
 
@@ -120,7 +129,7 @@ class BlockView(tk.Frame):
                     rule.grid(row=row, column=0, columnspan=span, sticky="ew", pady=(7 if not block.minor else 4, 2))
                     rules.append(rule)
                     row += 1
-                options = {} if block.minor else {"fg": panelkit.accent_color()}
+                options = {} if block.minor else {"fg": self._accent()}
                 label = tk.Label(self, text=block.text, anchor="w", justify="left", wraplength=total - 4,
                                  font=fonts["bold"], **options)
                 label.grid(row=row, column=0, columnspan=span, sticky="w")
@@ -159,14 +168,14 @@ class BlockView(tk.Frame):
                         padx=(block.indent * _INDENT + _INDENT, 0))
                     row += 1
                 if block.warn:
-                    warn = tk.Label(self, text=block.warn, anchor="w", justify="left", font=fonts["small"], fg=panelkit.accent_color(),
+                    warn = tk.Label(self, text=block.warn, anchor="w", justify="left", font=fonts["small"], fg=self._accent(),
                                     wraplength=total - 8 - block.indent * _INDENT - _INDENT)
                     warn.grid(row=row, column=0, columnspan=span, sticky="w",
                               padx=(block.indent * _INDENT + _INDENT, 0))
                     accents.append(warn)
                     row += 1
             elif isinstance(block, Note):
-                options = {"fg": panelkit.accent_color()} if block.warn else {}
+                options = {"fg": self._accent()} if block.warn else {}
                 label = tk.Label(self, text=block.text, anchor="w", justify="left", wraplength=total - 4,
                                  font=fonts["bold"] if block.strong else fonts["normal"], **options)
                 label.grid(row=row, column=0, columnspan=span, sticky="w", pady=(2, 0))
@@ -176,10 +185,15 @@ class BlockView(tk.Frame):
             first = False
 
         # EDMC's theme colors the labels; the accent, the rules and the frames' own background are set after it.
-        panelkit.apply_theme_deep(self)
-        accent = panelkit.accent_color()
+        if self._themed:
+            panelkit.apply_theme_deep(self)
+        accent = self._accent()
         for widget in accents:
             widget.configure(fg=accent)
-        color = panelkit.separator_color()
+        if self._themed:
+            color = panelkit.separator_color()
+        else:
+            from .uikit import palette as P
+            color = P.LINE
         for rule in rules:
             rule.configure(background=color)
