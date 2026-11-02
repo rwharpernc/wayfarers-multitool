@@ -216,6 +216,9 @@ class CarrierTracker:
             return target is not None and ops.apply_event(target, entry)
         if event == "CarrierBuy":
             note = note_purchase(entry)
+            held = self._mine().get(note["type"])
+            if held is not None and held.get("id") and note["id"] and held["id"] != note["id"]:
+                del self.records[self.cmdr][note["type"]]   # a commander has one carrier of each type, so a different one bought means the old one is gone
             return self.records.setdefault(self.cmdr, {}).setdefault(note["type"], note) is note
         if event == "CargoTransfer":
             target = self._transfer_target()
@@ -238,6 +241,9 @@ class CarrierTracker:
         if ctype not in TYPE_ORDER:
             return None
         record = mine.get(ctype)
+        if record is not None and not (not record.get("id") or not carrier_id) and ops.is_scrapped(record, ops.epoch_of(entry.get("timestamp"))):
+            del self.records[self.cmdr][ctype]   # the old carrier of this type was scrapped before this event; this one is its successor
+            record = None
         if record is not None:
             return record if (not record.get("id") or not carrier_id) else None   # a different carrier of the same type
         if entry.get("event") not in ops.CREATES_RECORD:

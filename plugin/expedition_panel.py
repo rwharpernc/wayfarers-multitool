@@ -187,6 +187,7 @@ class ExpeditionController:
     def _save_autocopy(self) -> None:
         if self._autocopy_var is not None:
             config.set(_CFG_AUTOCOPY, self._autocopy_var.get())
+            exploration_settings.announce()      # an open Expedition window's Settings strip shows the new tick
 
     # --- Settings tab (the same switch as the panel's "Copy on arrival" tick) ---------------------------------------
     def build_settings(self, notebook: nb.Notebook) -> None:

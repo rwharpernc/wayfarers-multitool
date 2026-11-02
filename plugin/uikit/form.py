@@ -100,8 +100,12 @@ class FormDialog:
             commodity_autocomplete.attach(entry, var, lambda: field.values)
         elif field.kind == "body":
             from .. import name_suggestions
-            system_var = (vars_ or {}).get("system")
-            name_suggestions.attach_bodies(entry, var, lambda: system_var.get() if system_var is not None else "")
+            def system() -> str:
+                """Looked up when the box is used, so the System field may come before or after this one in the form (its key is `system`)."""
+                system_var = (vars_ or {}).get("system")
+                return system_var.get() if system_var is not None else ""
+
+            name_suggestions.attach_bodies(entry, var, system)
         elif field.kind == "ship":
             from .. import name_suggestions
             name_suggestions.attach_ships(entry, var)

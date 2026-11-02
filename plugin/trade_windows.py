@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from config import config
 
-from . import trade_pages, trade_prices
+from . import commit_entry, trade_pages, trade_prices
 from .trade_commodity_entry import CommodityEntry
 from .trade_view import BlockView
 from .uikit import palette as P
@@ -211,8 +211,7 @@ class TradePageWindow:
             entry = tk.Entry(panel, textvariable=var, width=8)
             entry.grid(row=row, column=column * 2 + 1, sticky="w", padx=(0, P.PAD * 2), pady=2)
             add_tooltip(entry, tip)
-            for event in ("<Return>", "<FocusOut>"):
-                entry.bind(event, lambda _e, k=key, v=var: v.set(self._controller.set_requirement(k, v.get())), add="+")
+            commit_entry.bind_commit(entry, var, lambda raw, k=key: str(self._controller.set_requirement(k, raw)))
             self._fields[key] = (var, entry)
             column += 1
             if column == 2:

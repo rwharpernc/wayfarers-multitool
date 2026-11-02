@@ -8,7 +8,7 @@ from __future__ import annotations
 import tkinter as tk
 from typing import Dict, Optional
 
-from . import powerplay
+from . import commit_entry, powerplay
 from .formulas import ACTIVITIES, ACTIVITY_LABELS, DEFAULT_RATIOS
 from .powerplay_ledger import MAX_BACKFILL_CYCLES
 from .uikit import palette as P
@@ -40,8 +40,7 @@ class SettingsTab:
             entry = tk.Entry(row, textvariable=var, width=7)
             entry.pack(side="left", padx=(0, P.PAD * 2))
             add_tooltip(entry, f"{ACTIVITY_LABELS[activity]} - merits that make 1 Control Point (must be above 0)")
-            for event in ("<Return>", "<FocusOut>"):
-                entry.bind(event, lambda _e, a=activity, v=var: v.set(powerplay.set_ratio(a, v.get())), add="+")
+            commit_entry.bind_commit(entry, var, lambda raw, a=activity: str(powerplay.set_ratio(a, raw)))
             self._ratios[activity] = var
             self._ratio_entries[activity] = entry
 
@@ -53,8 +52,7 @@ class SettingsTab:
         self._format_entry = tk.Entry(line, textvariable=self._format, width=_FORMAT_WIDTH)
         self._format_entry.pack(side="left", fill="x", expand=True)
         add_tooltip(self._format_entry, "Copy Progress format - one line per system; blank restores the default")
-        for event in ("<Return>", "<FocusOut>"):
-            self._format_entry.bind(event, lambda _e: self._format.set(powerplay.set_clipboard_template(self._format.get())), add="+")
+        commit_entry.bind_commit(self._format_entry, self._format, lambda raw: str(powerplay.set_clipboard_template(raw)))
         FlatButton(line, "Reset to default", lambda: self._format.set(powerplay.set_clipboard_template(powerplay.DEFAULT_CLIPBOARD_TEMPLATE)),
                    tip="Reset to default - put the Copy Progress line back to the original format").pack(side="left", padx=(P.PAD_SM, 0))
 
@@ -68,8 +66,7 @@ class SettingsTab:
         self._cycles_entry = tk.Entry(scan, textvariable=self._cycles, width=6)
         self._cycles_entry.pack(side="left")
         add_tooltip(self._cycles_entry, f"Cycles to scan - how far back to read journals for a new commander (1 to {MAX_BACKFILL_CYCLES})")
-        for event in ("<Return>", "<FocusOut>"):
-            self._cycles_entry.bind(event, lambda _e: self._cycles.set(powerplay.set_backfill_cycles(self._cycles.get())), add="+")
+        commit_entry.bind_commit(self._cycles_entry, self._cycles, lambda raw: str(powerplay.set_backfill_cycles(raw)))
 
         NoteLabel(parent, text="These are the same settings as Settings → WFMT → Powerplay.", fg=P.FAINT).pack(fill="x", pady=(P.PAD, 0))
         powerplay.add_settings_listener(self.sync)

@@ -56,6 +56,7 @@ class MissionTypesWindow:
         order = ui.category_order()
         self._category = category if category in order else saved if saved in order else order[0]
         self._drawn_width = 0
+        self._drawn_category = ""       # the type the page on show is for; a redraw of the same type keeps its scroll position
         self._buttons: Dict[str, FlatButton] = {}
 
         self._shell = WindowShell(
@@ -107,11 +108,11 @@ class MissionTypesWindow:
         self._display.sync()
         counts = self._ui.category_counts()
         self._fill_list(counts)
-        self._draw_page()
+        self._draw_page(keep_position=True)
 
     def _on_resize(self, event: tk.Event) -> None:
         if abs(event.width - self._drawn_width) > _WIDTH_STEP:
-            self._draw_page()
+            self._draw_page(keep_position=True)
 
     # --- the list of types ----------------------------------------------------------------------------------------------
 
@@ -132,8 +133,14 @@ class MissionTypesWindow:
 
     # --- the page ---------------------------------------------------------------------------------------------------
 
-    def _draw_page(self) -> None:
+    def _draw_page(self, keep_position: bool = False) -> None:
+        """Draw the chosen type's page. A redraw of the same type (a journal event, the timer, a resize) keeps where you had scrolled to; a different type starts at the top."""
         width = self._scroll.winfo_width()
         self._drawn_width = width
+        keep = keep_position and self._drawn_category == self._category
+        where = self._scroll.position() if keep else 0.0
         self._scroll.clear()
+        self._drawn_category = self._category
         self._ui.render_category(self._scroll.body, self._category, max(width, 300))
+        if keep:
+            self._scroll.restore_position(where)

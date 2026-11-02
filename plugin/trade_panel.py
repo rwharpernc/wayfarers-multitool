@@ -628,9 +628,18 @@ class TradePanelController:
         self._view.show(self._summary_blocks())
         trade_windows.refresh_all()
 
+    def _headline_blocks(self) -> List[Block]:
+        """The Session page's first block; before the first trade, with running costs (fines, fuel), its first block is only the 'No trades yet' note, so the Net figure comes with it."""
+        full = ledger_mod.summary_blocks(self._ledger)
+        if full and isinstance(full[0], Note):
+            nets = [b for b in full if isinstance(b, Pair) and b.label == "Net"]
+            if nets:
+                return [full[0], nets[0]]
+        return full[:1]
+
     def _summary_blocks(self) -> List[Block]:
         """The panel's glance: net profit, the hold, and a note while a Spansh search is running."""
-        blocks: List[Block] = ledger_mod.summary_blocks(self._ledger)[:1]
+        blocks: List[Block] = self._headline_blocks()
         used = sum(self._cargo.values())
         if self._capacity or used:
             blocks.append(Pair("Ship hold", f"{used:,} / {self._capacity:,} t" if self._capacity else f"{used:,} t"))

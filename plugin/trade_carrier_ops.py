@@ -162,7 +162,7 @@ def merge_facts(target: Dict[str, Any], other: Dict[str, Any]) -> bool:
 
 def is_scrapped(record: Dict[str, Any], now: Optional[float] = None) -> bool:
     """True once a carrier that was being decommissioned has been scrapped: the event's `ScrapTime` has passed, or, from a `CarrierStats` that
-    gave no date, `DECOMMISSION_DAYS` have passed since the report. A carrier whose decommission was cancelled is not."""
+    gave no date, `DECOMMISSION_DAYS` have passed since the report. A carrier whose decommission was canceled is not."""
     if not record.get("decommission"):
         return False
     now = time.time() if now is None else now
@@ -178,6 +178,11 @@ def _epoch(stamp: str) -> Optional[float]:
         return float(calendar.timegm(time.strptime(stamp, "%Y-%m-%dT%H:%M:%SZ")))
     except ValueError:
         return None
+
+
+def epoch_of(stamp: Any) -> Optional[float]:
+    """The time of a journal timestamp, or None when it is missing or malformed (`is_scrapped` then uses the clock)."""
+    return _epoch(str(stamp or ""))
 
 
 # --- what to show --------------------------------------------------------------------------------

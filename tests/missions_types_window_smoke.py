@@ -161,6 +161,28 @@ pump()
 check(window._window is win and win.category == "community_goal", "asking again for a type brings the same window to it")
 check(len(window._window._scroll.body.winfo_children()) == 1, "only the chosen page is in the window")
 
+# a redraw of the same type keeps the scroll position; picking another type starts at the top
+class TallUI(FakeUI):
+    def render_category(self, frame, category, width):
+        self.drawn.append((category, width))
+        for n in range(80):
+            tk.Label(frame, text=f"{category} line {n}").grid(row=n, column=0, sticky="w")
+
+
+tall = TallUI()
+window.show(root, tall, "massacre_space")
+pump()
+scroll = window._window._scroll
+scroll._canvas.yview_moveto(0.5)
+pump()
+before = scroll.position()
+window.refresh()
+pump()
+check(before > 0.3 and abs(scroll.position() - before) < 0.05, f"a redraw of the same type keeps the scroll position: {before} -> {scroll.position()}")
+window._window.pick("combat")
+pump()
+check(scroll.position() == 0.0, f"another type starts at the top: {scroll.position()}")
+
 # the Display card: the six switches, saved to the keys Settings holds, and in step with a change made elsewhere
 from plugin import missions_display_settings as D  # noqa: E402
 card = window._window._display

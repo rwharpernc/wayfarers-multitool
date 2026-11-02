@@ -24,7 +24,7 @@ def match(names: Sequence[str], text: str, limit: int = MAX_SUGGESTIONS) -> List
     seen = set()
     starts: List[str] = []
     contains: List[str] = []
-    for name in sorted({str(n).strip() for n in names if str(n).strip()}, key=lambda n: (n.casefold(), n)):      # a tie in case goes to the capitalised name, every time
+    for name in sorted({str(n).strip() for n in names if str(n).strip()}, key=lambda n: (n.casefold(), n)):      # a tie in case goes to the capitalized name, every time
         key = name.casefold()
         if key in seen:
             continue

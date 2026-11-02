@@ -1,4 +1,4 @@
-"""A decommissioned carrier goes when the game scraps it: its record is dropped, a cancelled decommission keeps it, and a `CarrierStats` that only says
+"""A decommissioned carrier goes when the game scraps it: its record is dropped, a canceled decommission keeps it, and a `CarrierStats` that only says
 "pending" (no date) is trusted for the game's seven days. No EDMC runtime and no network needed."""
 from __future__ import annotations
 
@@ -47,7 +47,7 @@ class ScrappedCarrierTests(unittest.TestCase):
         self.assertTrue(carrier.prune(tracker.records, scrap))
         self.assertNotIn("bocheaux", tracker.records)                           # and the commander is left with none
 
-    def test_cancelling_keeps_the_carrier(self) -> None:
+    def test_canceling_keeps_the_carrier(self) -> None:
         tracker = tracker_with_carrier()
         scrap = epoch("2026-10-29T07:00:00Z")
         feed(tracker, event="CarrierDecommission", CarrierType=FLEET, CarrierID=111, ScrapTime=scrap, timestamp="2026-10-24T16:06:17Z")
@@ -82,6 +82,33 @@ class ScrappedCarrierTests(unittest.TestCase):
         feed(tracker, event="Commander", Name="Bocheaux")
         feed(tracker, event="CarrierBuy", CarrierType=FLEET, CarrierID=222, timestamp="2026-10-31T10:00:00Z", Callsign="XYZ-999")
         self.assertEqual(tracker.records["bocheaux"][FLEET]["id"], 222)
+
+    def test_a_replay_with_a_new_purchase_replaces_the_scrapped_carrier_without_a_prune(self) -> None:
+        tracker = tracker_with_carrier()
+        feed(tracker, event="CarrierDecommission", CarrierType=FLEET, CarrierID=111, ScrapTime=epoch("2026-10-29T07:00:00Z"),
+             timestamp="2026-10-24T16:06:17Z")
+        feed(tracker, event="CarrierBuy", CarrierType=FLEET, CarrierID=222, timestamp="2026-10-31T10:00:00Z", Callsign="XYZ-999")
+        self.assertEqual(tracker.records["bocheaux"][FLEET]["id"], 222)
+        feed(tracker, event="CarrierDepositFuel", CarrierType=FLEET, CarrierID=222, Total=300, timestamp="2026-10-31T11:00:00Z")
+        self.assertEqual(tracker.records["bocheaux"][FLEET].get("fuel"), 300)       # the new carrier's events are kept
+
+    def test_the_same_purchase_read_twice_changes_nothing(self) -> None:
+        tracker = tracker_with_carrier()
+        before = dict(tracker.records["bocheaux"][FLEET])
+        feed(tracker, event="CarrierBuy", CarrierType=FLEET, CarrierID=111, timestamp="2026-10-09T10:00:00Z", Callsign="ABC-123")
+        self.assertEqual(tracker.records["bocheaux"][FLEET], before)
+
+    def test_an_event_of_a_new_carrier_replaces_a_scrapped_one_when_the_purchase_was_not_seen(self) -> None:
+        tracker = tracker_with_carrier()
+        feed(tracker, event="CarrierDecommission", CarrierType=FLEET, CarrierID=111, ScrapTime=epoch("2026-10-29T07:00:00Z"),
+             timestamp="2026-10-24T16:06:17Z")
+        feed(tracker, event="CarrierLocation", CarrierType=FLEET, CarrierID=222, StarSystem="Sol", SystemAddress=1, timestamp="2026-10-31T11:00:00Z")
+        self.assertEqual(tracker.records["bocheaux"][FLEET]["id"], 222)
+
+    def test_an_event_of_another_carrier_keeps_a_carrier_that_is_not_scrapped(self) -> None:
+        tracker = tracker_with_carrier()
+        feed(tracker, event="CarrierLocation", CarrierType=FLEET, CarrierID=222, StarSystem="Sol", SystemAddress=1, timestamp="2026-10-31T11:00:00Z")
+        self.assertEqual(tracker.records["bocheaux"][FLEET]["id"], 111)
 
     def test_the_journal_lines_are_picked_up(self) -> None:
         for event in ("CarrierDecommission", "CarrierCancelDecommission"):

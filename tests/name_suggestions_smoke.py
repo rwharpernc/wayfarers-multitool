@@ -135,6 +135,18 @@ sys_var = tk.StringVar(value="Sol")
 for kind in ("body", "ship", "system", "commodity"):
     widget = FormDialog._input(frame, Field("x", "X", kind, "", values=["Gold"]), tk.StringVar(), {"system": sys_var})
     check(any(str(tag).startswith("WfmtSystemSuggest") for tag in widget.bindtags()), f"a {kind} field in a form has the type-ahead")
+# a Body field built before the System field still follows it (the system is looked up when the box is used)
+from plugin import name_suggestions as _names  # noqa: E402
+seen = {}
+real_bodies = _names.attach_bodies
+_names.attach_bodies = lambda entry, var, system, on_pick=None: seen.update(system=system) or real_bodies(entry, var, system, on_pick)
+try:
+    later = {}
+    FormDialog._input(frame, Field("body", "Body", "body", ""), tk.StringVar(), later)
+    later["system"] = tk.StringVar(value="Sol")
+finally:
+    _names.attach_bodies = real_bodies
+check(seen["system"]() == "Sol", f"a Body field placed before the System field follows it: {seen['system']()!r}")
 plain = FormDialog._input(frame, Field("x", "X", "text", ""), tk.StringVar(), {"system": sys_var})
 check(not any(str(tag).startswith("WfmtSystemSuggest") for tag in plain.bindtags()), "a plain text field has none")
 

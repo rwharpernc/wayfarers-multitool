@@ -137,6 +137,15 @@ card._percent_var.set("40")
 card._target_entry.event_generate("<FocusOut>")
 pump()
 check(saved.get("wfmt_mining_target") is not None or any("Painite" in str(v) for v in saved.values()), f"the targets are saved: {saved}")
+picked = {}
+real_attach = W.commodity_autocomplete.attach
+W.commodity_autocomplete.attach = lambda entry, var=None, preferred=lambda: (), on_pick=None: picked.update(on_pick=on_pick) or real_attach(entry, var, preferred, on_pick)
+try:
+    probe = W.SettingsCard(root, W.SPACE)
+finally:
+    W.commodity_autocomplete.attach = real_attach
+check(picked.get("on_pick") == probe._save_target, "picking a suggestion in the targets box saves the targets")
+probe.destroy()
 card._target_var.set("Painite 300")
 check(card._status.cget("text") != "" and str(card._status.cget("fg")) == W.P.WARN, "a problem with the targets is said, in the warning color")
 

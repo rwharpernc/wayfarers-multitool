@@ -6,6 +6,7 @@ from __future__ import annotations
 import tkinter as tk
 from typing import Callable, Dict, Optional, Tuple
 
+from . import commit_entry
 from . import inventory_settings as S
 from . import inventory_suit as suit
 from . import platform_support
@@ -37,8 +38,7 @@ class SettingsTab:
         self._format_entry = tk.Entry(line, textvariable=self._format, width=60)
         self._format_entry.pack(side="left", fill="x", expand=True)
         add_tooltip(self._format_entry, "Pillage message - what a pickup says; blank restores the default")
-        for event in ("<Return>", "<FocusOut>"):
-            self._format_entry.bind(event, lambda _e: self._format.set(S.set_message_format(self._format.get())), add="+")
+        commit_entry.bind_commit(self._format_entry, self._format, lambda raw: str(S.set_message_format(raw)))
         NoteLabel(body, text="Placeholders: {item} (resource name), {total} (new combined total). Leave blank to reset to the default.").pack(fill="x")
 
         section_header(body, "Sound").pack(fill="x", pady=(P.PAD, 0))
@@ -83,7 +83,7 @@ class SettingsTab:
         if frame is None:
             return
         loadouts = self._loadouts()
-        shown = tuple(sorted(loadouts))
+        shown = (self._commander() or "", *sorted(loadouts))        # the commander too: the boxes save against the commander they were built for
         if shown == self._loadouts_shown:
             return
         self._loadouts_shown = shown
@@ -107,8 +107,7 @@ class SettingsTab:
                 entry = tk.Entry(fields, textvariable=var, width=6)
                 entry.grid(row=0, column=column * 2 + 1, sticky="w")
                 add_tooltip(entry, f"{CATEGORY_SHORT[category]} capacity - how many this suit holds; blank or the default clears your number")
-                for event in ("<Return>", "<FocusOut>"):
-                    entry.bind(event, lambda _e, l=loadout_id, c=category, v=var: v.set(S.set_capacity(cmdr, l, c, v.get())), add="+")
+                commit_entry.bind_commit(entry, var, lambda raw, l=loadout_id, c=category: str(S.set_capacity(cmdr, l, c, raw)))
                 self._capacity_vars[(loadout_id, category)] = var
                 self._capacity_entries[(loadout_id, category)] = entry
 

@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from config import config
 
-from . import commodity_autocomplete, mining_alerts, mining_depletion as depletion, mining_spansh_client, mining_stops, mining_targets
+from . import commit_entry, commodity_autocomplete, mining_alerts, mining_depletion as depletion, mining_spansh_client, mining_stops, mining_targets
 from . import mining_hotspots as hotspots
 from . import mining_pages
 from .uikit import palette as P
@@ -167,8 +167,7 @@ class SettingsCard(tk.Frame):
             entry = tk.Entry(self, textvariable=text, width=7)
             entry.grid(row=row, column=column * 2 + 1, sticky="w", padx=(0, P.PAD * 2), pady=2)
             add_tooltip(entry, tip)
-            for event in ("<Return>", "<FocusOut>"):
-                entry.bind(event, lambda _e, k=key, v=text: v.set(set_value(k, v.get())), add="+")
+            commit_entry.bind_commit(entry, text, lambda raw, k=key: str(set_value(k, raw)))
             self._vars[key] = (text, entry)
             column += 1
             if column == 2:
@@ -186,7 +185,8 @@ class SettingsCard(tk.Frame):
         line.grid(row=row + 1, column=0, columnspan=4, sticky="w")
         row += 1
         # The type-ahead follows the item being typed (after the last comma) and replaces only that item.
-        commodity_autocomplete.attach(self._target_entry, mining_targets.LastItemVar(self._target_var), lambda: mining_spansh_client.KNOWN_MINING_COMMODITIES)
+        commodity_autocomplete.attach(self._target_entry, mining_targets.LastItemVar(self._target_var), lambda: mining_spansh_client.KNOWN_MINING_COMMODITIES,
+                                      on_pick=self._save_target)
         tk.Label(line, text="worth cracking at", fg=P.MUTED, bg=P.CARD).pack(side="left", padx=(0, P.PAD_SM))
         percent = tk.Entry(line, textvariable=self._percent_var, width=4)
         percent.pack(side="left")

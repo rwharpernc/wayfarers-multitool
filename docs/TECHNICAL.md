@@ -628,7 +628,8 @@ Spansh planners:
 
 - Systems have `system_autocomplete` and a single commodity has `commodity_autocomplete`; `name_suggestions` is the rest, on the same popup list and keys. `attach_bodies` (the bodies and rings of the system typed beside the box: the system survey, the system's saved hotspots and an earlier body lookup), `attach_ships` (the ship names the game uses) and `attach_commodity_list` (a comma-separated box; the suggestions are for the entry being typed) are the entry points, and `FormDialog` fields of type body, ship and commodity use them.
 - It is local only: the names come from data WFMT already holds, and nothing is fetched. The boxes that take it: the Body boxes (Add hotspot, Expedition stops, Surface marks, Notes), the Ring and Body or ring boxes, the Ship box of a ship build, the Also check boxes of the mining price lookups, the Hotspots box of Add a ring, the Add a ring and Expedition Log location system boxes, and the Carry only this commodity box in Routes.
-- `tests/test_name_suggestions.py` (with `tests/name_suggestions_smoke.py`) covers the matching and the attached boxes.
+- `tests/test_name_suggestions.py` (with `tests/name_suggestions_smoke.py`) covers the matching and the attached boxes. A Body field in a form looks its System field up when the box is used, so the order of the two does not matter.
+- **Boxes in a window that save a setting** (`commit_entry.bind_commit`) commit on Return or leaving the box only when the text differs from what it held on entering, so tabbing through unedited boxes and Return followed by leaving each save at most once (`tests/test_commit_entry.py`). A window that redraws on a journal event or the timer (Mission types) keeps its scroll position when the same type is redrawn (`ScrollFrame.position` / `restore_position`).
 
 **Missions card** (`missions_overlay.py`)
 

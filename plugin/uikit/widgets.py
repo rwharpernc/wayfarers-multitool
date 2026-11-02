@@ -158,6 +158,16 @@ class ScrollFrame(tk.Frame):
             child.destroy()
         self._canvas.yview_moveto(0)
 
+    def position(self) -> float:
+        """How far down the content is scrolled (0 at the top, up to 1)."""
+        return float(self._canvas.yview()[0])
+
+    def restore_position(self, fraction: float) -> None:
+        """Scroll back to `position()` after the content was cleared and drawn again (a shorter page ends up at its own bottom)."""
+        self.update_idletasks()
+        self._canvas.configure(scrollregion=self._canvas.bbox("all"))
+        self._canvas.yview_moveto(max(0.0, min(1.0, fraction)))
+
 
 class NoteLabel(tk.Label):
     """A wrapped note that spans the full width of its parent and re-wraps as the

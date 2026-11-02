@@ -225,6 +225,16 @@ controller._capacity = 100
 controller._refresh()
 pump()
 check(any("10 / 100" in str(getattr(b, "value", "")) for b in controller._summary_blocks()), "the panel summary shows the hold")
+# before the first trade, with running costs, the panel still shows the Net figure under the note
+from plugin import trade_panel as trade_panel_mod  # noqa: E402
+from plugin.trade_blocks import Note as _Note, Pair as _Pair  # noqa: E402
+real_summary = trade_panel_mod.ledger_mod.summary_blocks
+trade_panel_mod.ledger_mod.summary_blocks = lambda _l: [_Note("No trades yet this session."), _Pair("Fines", "-500 cr"), _Pair("Net", "-500 cr", bold=True)]
+try:
+    headline = controller._headline_blocks()
+finally:
+    trade_panel_mod.ledger_mod.summary_blocks = real_summary
+check([getattr(b, "label", getattr(b, "text", "")) for b in headline] == ["No trades yet this session.", "Net"], f"the Net figure is not dropped before the first trade: {headline}")
 check("In your ship" in " ".join(str(getattr(b, "text", "")) for b in session._view._blocks), "the Session window follows the refresh")
 
 # Routes: a running total beside each hop's profit

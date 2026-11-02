@@ -10,6 +10,7 @@ from typing import Callable, List, Optional
 
 from config import config
 
+from . import commit_entry
 from .uikit import palette as P
 from .uikit import style
 from .uikit.tooltip import add_tooltip
@@ -93,8 +94,7 @@ class SettingsCard(tk.Frame):
         self._entry = tk.Entry(self, textvariable=self._days, width=5)
         self._entry.grid(row=1, column=3, sticky="w")
         add_tooltip(self._entry, "Keep previous ticks - how many days of closed ticks the report keeps (1 to 90)")
-        for event in ("<Return>", "<FocusOut>"):
-            self._entry.bind(event, lambda _e: self._days.set(set_archive_days(self._days.get())), add="+")
+        commit_entry.bind_commit(self._entry, self._days, lambda raw: str(set_archive_days(raw)))
         tk.Label(self, text="Tick detection (the one lookup BGS makes) is switched on or off in Settings → WFMT → BGS.", fg=P.FAINT, bg=P.CARD,
                  font=style.font(P.FONT_SMALL), anchor="w").grid(row=2, column=0, columnspan=4, sticky="w", pady=(4, 0))
         add_listener(self.sync)
