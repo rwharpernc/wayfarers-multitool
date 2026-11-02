@@ -48,7 +48,7 @@ For anyone testing WFMT on Linux with Elite Dangerous under Steam Proton (or Win
 
 Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 under "Getting set up") and work through these. They are the work added since the earlier passes; each has its longer wording in `docs/TODO.md` under "Verification in the game".
 
-- **Added in 1.5.0 (not yet run on Linux).** The pages-as-windows layout, the settings that moved into their windows, the type-ahead boxes and the darker orange on the light theme: section 7r.
+- **Added in 1.5.0 (run on Linux on 2026-11-02, before the release; no failures).** The pages-as-windows layout, the settings that moved into their windows, the type-ahead boxes and the darker orange on the light theme: section 7r.
 - **Added in 1.3.3 (not yet run on Linux).**
   - **Powerplay card.** Needs EDMCModernOverlay. Tick *Enable the Powerplay card* (Settings → WFMT → Overlays → Powerplay) and press **Test Card**: a card appears at the top right. Jump into a Powerplay system and then one without Powerplay data (it says **No Powerplay Detected in system**).
   - **Look-ahead.** Tick *Look up the system I am jumping to* and start a hyperspace jump: the card turns to the destination (marked *jumping*) and then to the system you arrive in. Fly a loop twice: the second lap should not look anything up. The steps are in [TEST_PLAN.md](TEST_PLAN.md) section 9.
@@ -983,17 +983,17 @@ Keyboard shortcuts are Windows only; the chat commands are the same on both syst
 - [ ] **Colony page:** a **Body** line for the highlighted site, **Commodities** as `N done - N partly - N working on it`, three **Biggest gaps**.
 - [ ] **Mode buttons:** the row reads Powerplay, BGS, Explore, Mine, Trade, Mission, Operations, Colony, and the whole row still fits the panel's width.
 
-## 7r. 1.5.0: pages as windows, settings in their windows, type-ahead (new, not run on Linux)
+## 7r. 1.5.0: pages as windows, settings in their windows, type-ahead (run on Linux 2026-11-02)
 
-- [ ] **No page arrows:** Trade shows a short summary over **Session**, **Routes**, **Market** and **History** in one row; Mining shows a few lines for both sides over **Space Mining** and **Surface Mining**; Missions lists each type with its count over **Mission types**. Each button opens its window; check each opens in front, fits its text and does not widen EDMC's window.
-- [ ] **Trade History:** the Trades tab opens on the newest 200 trades and **Show older trades** adds 200 more each press.
-- [ ] **Mining windows:** **Book** and **Dashboard** are in each window's header and open the right windows; the `!wf live` command and its Windows shortcut open the Surface Mining window with them.
-- [ ] **Routes:** every hop shows **Profit**, the running **Total** and the distance; a **Whole route** row and a bold average-per-leg line follow; **Hops** cycles 2 to 10; a **Round trip** pair ends with *Both legs*. **Carry only this commodity** limits both legs and suggests commodity names as you type.
-- [ ] **Settings in their windows:** each of these saves as you change it (no **OK**) and shows the same value in File → Settings → WFMT where the tab keeps a copy: Routes and Market (Trade), Session (*Count fines and bounties*), the Settings card of Space Mining and Surface Mining, the Display card of Mission types, the Settings tab of Powerplay Sessions and of Inventory, the Settings card of BGS Report, the Raven Colonial strip of Sites (its ticks grayed out while the master switch is off), and the Settings strips of Expedition, Prediction review and My Codex.
-- [ ] **Settings tabs say where things went:** the Trade, Mining, Missions, Powerplay, BGS, Inventory, Colonization, Expedition and Organic Scanning tabs each carry a note that matches what you found.
-- [ ] **Type-ahead:** the Body and Ring boxes (Add hotspot, Expedition stops, Surface marks, Notes, the ring reserve lookup), the Ship box of a ship build, the Also check and Hotspots boxes (after a comma) and the Add a ring and Expedition Log system boxes suggest names; Down, Up, Enter and Escape work, and the list does not steal the keyboard.
-- [ ] **Light theme:** with EDMC on its Default (light) theme the panel's headings, warnings and buttons are a darker orange and readable; on Dark they keep the bright orange.
-- [ ] **Scrapped carrier:** after decommissioning a fleet carrier in the game (or with a journal containing `CarrierDecommission`), its record goes once the scrap time passes.
+- [x] **No page arrows:** Trade shows a short summary over **Session**, **Routes**, **Market** and **History** in one row; Mining shows a few lines for both sides over **Space Mining** and **Surface Mining**; Missions lists each type with its count over **Mission types**. Each button opens its window; check each opens in front, fits its text and does not widen EDMC's window.
+- [x] **Trade History:** the Trades tab opens on the newest 200 trades and **Show older trades** adds 200 more each press.
+- [x] **Mining windows:** **Book** and **Dashboard** are in each window's header and open the right windows; the `!wf live` command and its Windows shortcut open the Surface Mining window with them.
+- [x] **Routes:** every hop shows **Profit**, the running **Total** and the distance; a **Whole route** row and a bold average-per-leg line follow; **Hops** cycles 2 to 10; a **Round trip** pair ends with *Both legs*. **Carry only this commodity** limits both legs and suggests commodity names as you type.
+- [x] **Settings in their windows:** each of these saves as you change it (no **OK**) and shows the same value in File → Settings → WFMT where the tab keeps a copy: Routes and Market (Trade), Session (*Count fines and bounties*), the Settings card of Space Mining and Surface Mining, the Display card of Mission types, the Settings tab of Powerplay Sessions and of Inventory, the Settings card of BGS Report, the Raven Colonial strip of Sites (its ticks grayed out while the master switch is off), and the Settings strips of Expedition, Prediction review and My Codex.
+- [x] **Settings tabs say where things went:** the Trade, Mining, Missions, Powerplay, BGS, Inventory, Colonization, Expedition and Organic Scanning tabs each carry a note that matches what you found.
+- [x] **Type-ahead:** the Body and Ring boxes (Add hotspot, Expedition stops, Surface marks, Notes, the ring reserve lookup), the Ship box of a ship build, the Also check and Hotspots boxes (after a comma) and the Add a ring and Expedition Log system boxes suggest names; Down, Up, Enter and Escape work, and the list does not steal the keyboard.
+- [x] **Light theme:** with EDMC on its Default (light) theme the panel's headings, warnings and buttons are a darker orange and readable; on Dark they keep the bright orange.
+- [x] **Scrapped carrier:** after decommissioning a fleet carrier in the game (or with a journal containing `CarrierDecommission`), its record goes once the scrap time passes.
 
 ## Reporting
 

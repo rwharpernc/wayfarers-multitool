@@ -305,13 +305,17 @@ The checker cannot judge whether a sentence is still true, so when you change be
 
 ## Releasing
 
-A release is cut from a clean `master`:
+A release is cut from a clean `master`. **The docs are brought up to date before anything is tagged or published, and nothing is released until the
+owner says they are ready.**
 
 1. Set the version in `plugin/__init__.py` and `package.json`.
 2. In `CHANGELOG.md`, add a dated section for the version and move the "Unreleased" entries under it.
-3. Run the tests (`npm run test:docker`), then `npm run package` to build `dist/Wayfarers-Multitool.zip`.
-4. Commit, then tag `v<version>` and push the commit and the tag.
-5. Publish the release with the zip as its asset:
+3. Run the tests (`npm run test:docker`) and do the in-game passes (`docs/TEST_PLAN.md`, `docs/LINUX_TESTING.md`).
+4. Update the docs to the state they will have once the release is out: `docs/STATUS.md` (the current release, which branches exist, what is
+   still unreleased), `docs/TEST_PLAN.md` and `docs/LINUX_TESTING.md` (the test counts and the passes done), `docs/TODO.md`, `README.md` (the latest
+   release), `docs/guide/known-issues.md` (what is known to go wrong in the new release) and the version examples in `docs/guide/getting-started.md`.
+5. Run `npm run package` to build `dist/Wayfarers-Multitool.zip`. Commit, then tag `v<version>` and push the commit and the tag.
+6. Publish the release with the zip as its asset:
 
    ```bash
    gh release create v<version> dist/Wayfarers-Multitool.zip --title "WFMT <version>" --notes-file <the changelog section for the version>
@@ -320,8 +324,6 @@ A release is cut from a clean `master`:
    The title is `WFMT <version>` with no `v`; the tag keeps the `v` (`v1.0.0`, for example), and the in-app updater reads the tag, not the title.
    Publish it as a normal release, not a draft or a pre-release: the in-app updater and the README's "latest release" link only
    follow official GitHub releases, and they can read them only while the repository is public.
-6. Update `docs/guide/known-issues.md` (what is known to go wrong in the new release) and `docs/STATUS.md` (the current release,
-   which branches exist, what is still unreleased), and the version examples in `docs/guide/getting-started.md`.
 
 Users download the zip, not the repository. A fix to a released version is made on a short `bugfix/<version>` branch cut from
 `master`, merged back with the release, and the branch is then deleted.
