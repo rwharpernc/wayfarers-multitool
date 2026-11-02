@@ -20,7 +20,7 @@ from typing import Any, Callable, Dict, FrozenSet, List, Mapping, Optional, Tupl
 
 from config import appname, config
 
-from . import colonization, diag_log, colonization_archive_window, colonization_builds_window, colonization_buy_window, colonization_carrier, colonization_catchup, colonization_create_dialog, colonization_projects_window, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys
+from . import colonization, diag_log, colonization_archive_window, colonization_builds_window, colonization_buy_window, colonization_carrier, colonization_catchup, colonization_create_dialog, colonization_projects_window, colonization_settings, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys
 from .colonization_carrier import CarrierCargo
 from .colonization import Site
 from .colonization_data import SiteRepository
@@ -198,6 +198,9 @@ class ColonizationWindow:
         self._station_only = tk.BooleanVar(master=self._toplevel, value=False)
         self._group_by_category = tk.BooleanVar(master=self._toplevel, value=config.get_bool(CONFIG_GROUP, default=True))
 
+        self._raven_strip = colonization_settings.RavenStrip(self._shell.body, lambda: self._cmdr)
+        self._raven_strip.pack(fill="x", pady=(0, P.PAD_SM))
+
         panes = tk.PanedWindow(self._shell.body, orient="horizontal", bg=P.BG, bd=0, sashwidth=6,
                                sashrelief="flat", opaqueresize=True)
         panes.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
@@ -354,6 +357,7 @@ class ColonizationWindow:
     def _refresh(self) -> None:
         if not self.alive:
             return
+        self._raven_strip.refresh()        # the commander may have changed, or a key been saved
         sites = [s for s in self._repository.for_cmdr(self._cmdr) if not s.archived]   # archived ones are in the Archive window
         self._sites = {s.market_id: s for s in sites}
         active = sum(1 for s in sites if s.active)

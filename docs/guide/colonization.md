@@ -693,6 +693,10 @@ Optional and **off by default**.
 | **Also report cargo I move to and from my fleet carrier** | When you transfer cargo at your own fleet carrier: the tons moved, to the carrier as plus and back to the ship as minus. It adds to Raven's carrier record; it never replaces it, because WFMT's own tally is only what it saw you move. Needs the key below. |
 | **Raven Colonial key** | Needed for every write: progress, deliveries, carrier cargo, **Create Project on Raven**, **Report Complete to Raven**, **Mark Plan Entry Demolished**, and **Set as My Primary** and **Save Counted List** in My Projects. With no key WFMT sends nothing (Raven's published API description does not say which writes work without one, so none is tried). Saved per commander on your computer, shown masked, and sent only to Raven Colonial. |
 
+**In the Sites window.** The **Colonization Sites** window has a **Raven Colonial** strip across the top. It says what is being reported right now (for example "Reporting progress and deliveries; a key is saved for this commander") and holds the two reporting ticks, **Report my construction progress and deliveries** and **Also report cargo I move to and from my fleet carrier**. They are the same saved choices as in Settings, so a change in either place shows in the other. The ticks are grayed out, and a click on them does nothing, while the master switch is off.
+
+**What stays in Settings.** The **master switch** and the **Raven Colonial key** are only in Settings. The master switch is your permission for WFMT to send anything to a third-party site, so the window cannot turn it on for you. (The first time a write needs the key, the window asks you to paste it, as before.)
+
 **Where to get the key.** The settings page has a link to [ravencolonial.com/user](https://ravencolonial.com/user), where you sign in and Raven shows your key (it is also the page that can reset it). WFMT does not fetch it for you.
 
 **Test key.** The **Test key** button beside the **Raven Colonial key** box in Settings asks Raven Colonial whether the key you typed is accepted for your commander. The key is saved for the current commander when you close Settings.

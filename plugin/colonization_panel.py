@@ -25,7 +25,7 @@ import tkinter as tk
 import myNotebook as nb
 from config import appname, config
 
-from . import (overlay_appearance, overlay_layout, overlay_placement, colonization, colonization_carrier, colonization_catchup, colonization_history, colonization_overlay as card, colonization_view as view, rcc_client, rcc_keys, rcc_sync,
+from . import (overlay_appearance, overlay_layout, overlay_placement, colonization, colonization_carrier, colonization_catchup, colonization_history, colonization_settings, colonization_overlay as card, colonization_view as view, rcc_client, rcc_keys, rcc_sync,
                colonization_history_window, colonization_projects_window, colonization_stats as stats, colonization_window, journal_files, overlay, panelkit, restore, trade_market, trade_panel)
 from .colonization import Site
 from . import commander_data
@@ -41,8 +41,8 @@ _CFG_OVERLAY_ROWS = "wfmt_colonization_overlay_row_limit"   # 0 = all; the older
 _CFG_OVERLAY_RIGHT_PANEL = "wfmt_colonization_overlay_right_panel"
 _CFG_OVERLAY_SHOW = colonization_window.CONFIG_SHOW   # which stage of the work the card lists: "all", "buy" or "haul" (colonization_view.SHOW_*); the Sites window's Show dropdown sets it too
 _CFG_OVERLAY_FORCED = "wfmt_colonization_overlay_forced"   # "Always show the shopping list" (Settings): the card stays on, whatever screen, across restarts
-_CFG_RCC_PROGRESS = "wfmt_rcc_share_progress"      # report depot progress and deliveries to Raven Colonial (off by default)
-_CFG_RCC_CARRIER = "wfmt_rcc_share_carrier"        # report fleet carrier cargo changes to Raven Colonial (off by default)
+_CFG_RCC_PROGRESS = colonization_settings.CFG_RCC_PROGRESS      # report depot progress and deliveries to Raven Colonial (off by default)
+_CFG_RCC_CARRIER = colonization_settings.CFG_RCC_CARRIER        # report fleet carrier cargo changes to Raven Colonial (off by default)
 
 # Events after which the ship's hold may have changed; the game rewrites Cargo.json for each, so it is read again shortly after.
 _CARGO_EVENTS = frozenset({"Cargo", "MarketBuy", "MarketSell", "CargoTransfer", "CollectCargo", "EjectCargo", "MiningRefined",
@@ -186,7 +186,17 @@ class ColonizationController:
 
     # --- lifecycle ----------------------------------------------------------
 
+    def _on_window_setting(self) -> None:
+        """A Raven choice was changed in the Sites window: show it on the Settings tab too (if that tab is built)."""
+        for var, held in ((self._rcc_progress_var, colonization_settings.progress_chosen()), (self._rcc_carrier_var, colonization_settings.carrier_chosen())):
+            if var is not None:
+                try:
+                    var.set(held)
+                except tk.TclError:
+                    pass
+
     def start(self, plugin_dir: str) -> None:
+        colonization_settings.add_listener(self._on_window_setting)
         self._repository.load(plugin_dir)
         self._carrier_cargo.set_external_check(trade_panel.fleet_carrier)   # the same answer Trade gives
         # EDMC does not replay old events at start-up, so the commander would stay unknown until the next one.
@@ -995,6 +1005,7 @@ class ColonizationController:
             config.set(_CFG_RCC_CARRIER, self._rcc_carrier_var.get() if self._rcc_carrier_var is not None else False)
             if self._rcc_key_var is not None and self._cmdr:
                 rcc_keys.keys.set(self._cmdr, self._rcc_key_var.get())
+        colonization_settings.announce()        # an open Sites window shows the Raven choices now saved
         if self._overlay_enabled_var is None:
             return
         config.set(_CFG_OVERLAY_ENABLED, self._overlay_enabled_var.get())
