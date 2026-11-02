@@ -30,7 +30,7 @@ import myNotebook as nb
 from config import appname, config
 from ttkHyperlinkLabel import HyperlinkLabel
 
-from . import catchup_status, codex_backfill, codex_completionist_state, codex_completionist_window, commander_data, panelkit
+from . import catchup_status, codex_backfill, codex_completionist_state, codex_completionist_window, commander_data, exploration_settings, panelkit
 from .codex_completionist import CodexTally
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
@@ -38,7 +38,7 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 PANEL_PLACEMENT = "exploration"
 
-_CFG_ENABLED = "wfmt_codex_completionist_enabled"
+_CFG_ENABLED = exploration_settings.CODEX_TRACK
 
 CANONN_CODEX_URL = "https://canonn.science/codex/"
 
@@ -66,7 +66,21 @@ def _summary_text(tally: CodexTally, rebuilding: bool = False) -> str:
 
 
 class CodexCompletionistController:
+    def _on_window_setting(self) -> None:
+        """Track codex entries was changed in the My Codex window: show it on the Settings tab too (if that tab is built) and on the panel."""
+        var = getattr(self, "_enabled_var", None)
+        if var is not None:
+            try:
+                var.set(enabled())
+            except tk.TclError:
+                pass
+        try:
+            self._refresh_enabled_display()
+        except Exception:        # the panel is not built yet, or has gone
+            pass
+
     def __init__(self) -> None:
+        exploration_settings.add_listener(self._on_window_setting)
         self._plugin_dir: Optional[str] = None
         self._tally = CodexTally()   # the active commander's; swapped in place when the commander changes
         self._rebuild_pending = False

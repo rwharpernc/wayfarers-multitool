@@ -34,7 +34,7 @@ import tkinter as tk
 import myNotebook as nb
 from config import appname, config
 
-from . import exo_observations, exo_review_window, organic_catchup, organic_scan, organic_scan_state, panelkit
+from . import exo_observations, exo_review_window, exploration_settings, organic_catchup, organic_scan, organic_scan_state, panelkit
 from .organic_scan import BodyConditions, OrganicTracker
 from .uikit import dialogs
 
@@ -44,7 +44,7 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 PANEL_PLACEMENT = "exploration"
 
 _CFG_ENABLED = "wfmt_organic_enabled"
-_CFG_OBSERVE = "wfmt_exo_observations_enabled"     # keep the record of finds that the Prediction review reads (exo_observations.py)
+_CFG_OBSERVE = exploration_settings.EXO_OBSERVE     # keep the record of finds that the Prediction review reads (exo_observations.py)
 
 _NO_BODY_TEXT = "Predicted species: (land on a body with biological signals)"
 _DISABLED_TEXT = "Organic Scanning is disabled — see Settings."
@@ -66,7 +66,23 @@ def _format_credits(value: Optional[int]) -> str:
 
 
 class OrganicScanController:
+    def _on_window_setting(self) -> None:
+        """The record switch (or the record itself) was changed in the Prediction review window: show it on the Settings tab too, if that tab is built."""
+        observe = getattr(self, "_observe_var", None)
+        if observe is not None:
+            try:
+                observe.set(observing())
+            except tk.TclError:
+                pass
+        text = getattr(self, "_observed_var", None)
+        if text is not None:
+            try:
+                text.set(self._observed_text())
+            except tk.TclError:
+                pass
+
     def __init__(self) -> None:
+        exploration_settings.add_listener(self._on_window_setting)
         self._plugin_dir: Optional[str] = None
         self._parent: Optional[tk.Frame] = None
         self._cmdr: Optional[str] = None

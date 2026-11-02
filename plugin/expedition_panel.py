@@ -17,15 +17,15 @@ from typing import Any, Dict, Mapping, Optional, Tuple
 import myNotebook as nb
 from config import appname, config
 
-from . import expedition, expedition_hub, expedition_link, expedition_log_panel, expedition_window, panelkit, system_names
+from . import exploration_settings, expedition, expedition_hub, expedition_link, expedition_log_panel, expedition_window, panelkit, system_names
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 PANEL_PLACEMENT = "exploration"
 
-_CFG_AUTOCOPY = "wfmt_expedition_autocopy"
-_CFG_START_LOG = "wfmt_expedition_start_log"      # starting an expedition also starts an Expedition Log run (on unless turned off)
+_CFG_AUTOCOPY = exploration_settings.EXPEDITION_AUTOCOPY
+_CFG_START_LOG = exploration_settings.EXPEDITION_START_LOG      # starting an expedition also starts an Expedition Log run (on unless turned off)
 _NAME_SHOWN = 60       # characters of an expedition name shown in the panel
 _SYSTEM_SHOWN = 64     # characters of a system name shown in the panel
 _NOTE_SHOWN = 160      # characters of a note shown in the panel
@@ -86,6 +86,7 @@ class ExpeditionController:
         self._arrival = ""
         self._summary_var: Optional[tk.StringVar] = None
         self._autocopy_var: Optional[tk.BooleanVar] = None
+        exploration_settings.add_listener(self._on_window_setting)
         self._section: Optional[tk.Frame] = None
         self._parent: Optional[tk.Frame] = None
         book.add_listener(self._update_summary)
@@ -210,6 +211,17 @@ class ExpeditionController:
         nb.Label(frame, text=("The expedition and its Expedition Log run then start, pause and stop together, and the expedition shows the run's time. "
                               "On by default."),
                  wraplength=440, justify=tk.LEFT).grid(row=5, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+
+    def _on_window_setting(self) -> None:
+        """A tick was changed in the Expedition window: show it on the panel and on the Settings tab (if that tab is built)."""
+        held = {"_autocopy_var": autocopy_enabled(), "_settings_autocopy": autocopy_enabled(), "_settings_start_log": start_log_enabled()}
+        for name, state in held.items():
+            var = getattr(self, name, None)
+            if var is not None:
+                try:
+                    var.set(state)
+                except tk.TclError:
+                    pass
 
     def save_settings(self) -> None:
         settings_var = getattr(self, "_settings_autocopy", None)

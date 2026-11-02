@@ -18,7 +18,8 @@ from typing import Callable, Dict, List, Optional, Sequence, Tuple
 from config import appname, config
 
 from . import exo_analysis as A
-from . import exo_observations, panelkit
+from . import exo_observations, exploration_settings, panelkit
+from .uikit import dialogs
 from .uikit import palette as P
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
@@ -125,6 +126,14 @@ class ExoReviewWindow:
         self._shell.add_action("Copy report", self._copy_report,
                                 tip="Copy report - copy the exobiology prediction report for every recorded body to the clipboard")
 
+        self._settings_strip = exploration_settings.TickStrip(self._shell.body, "Settings", exploration_settings.EXO_FIELDS,
+                                                              note="The same setting as Settings → WFMT → Exploration → Organic Scanning. The record is one file shared by every commander on this install and names none of them; nothing is sent anywhere.")
+        self._settings_strip.pack(fill="x", pady=(0, P.PAD_SM))
+        self._recorded = tk.Label(self._settings_strip.body, text="", fg=P.MUTED, bg=P.CARD, anchor="w")
+        self._recorded.pack(side="left", pady=(P.PAD_SM, 0))
+        FlatButton(self._settings_strip.body, "Clear the record...", self._clear_record, kind="danger",
+                   tip="Clear the record - delete every recorded find, and any reviews you wrote on them, for every commander on this install (asks first)").pack(side="right", pady=(P.PAD_SM, 0))
+        exploration_settings.add_listener(self._show_recorded)
         self._tabs = tabs = Tabs(self._shell.body)
         tabs.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
         self._build_finds(tabs.add("Finds"))
@@ -191,11 +200,33 @@ class ExoReviewWindow:
         self._shell.window.lift()
 
     def close(self) -> None:
+        exploration_settings.remove_listener(self._show_recorded)
         self._shell.close()
+
+    def _show_recorded(self) -> None:
+        """How much is recorded, beside the record switch (and refreshed when it is cleared or the Settings tab changes anything)."""
+        if not self.alive:
+            return
+        finds, bodies = self._book.count(), len(self._book.bodies())
+        self._recorded.configure(text=f"{finds} find{'s' if finds != 1 else ''} on {bodies} bod{'ies' if bodies != 1 else 'y'} recorded so far.")
+
+    def _clear_record(self) -> None:
+        count = self._book.count()
+        if not count:
+            return
+        if not dialogs.confirm(
+                self._shell.window, "Clear the record",
+                f"Delete all {count} recorded finds, and any reviews you wrote on them? The record is shared by every commander on this install, "
+                "so it clears for all of them. The biology WFMT remembers for each body is not touched, and the record starts again with your next sample."):
+            return
+        self._book.clear()
+        self.refresh()
+        exploration_settings.announce()          # the Settings tab's count follows
 
     def refresh(self) -> None:
         if not self.alive:
             return
+        self._show_recorded()
         bodies = self._book.bodies()
         rows = A.finds(bodies)
         self._finds = {row_id(f): f for f in rows}

@@ -26,7 +26,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from config import appname, config
 
-from . import edsm_client, expedition, expedition_plan_dialog, journal_files, panelkit, spansh_planners, system_autocomplete
+from . import edsm_client, expedition, exploration_settings, expedition_plan_dialog, journal_files, panelkit, spansh_planners, system_autocomplete
 from .uikit import palette as P
 from .uikit import style
 from .uikit.shell import WindowShell
@@ -156,6 +156,8 @@ class ExpeditionWindow:
         self._shell.add_action("Stop", self._stop, tip="Stop - end the chosen expedition")
 
         body = self._shell.body
+        self._settings_strip = exploration_settings.TickStrip(body, "Settings", exploration_settings.EXPEDITION_FIELDS, inline=True)    # the same settings as Settings → WFMT → Exploration → Expedition
+        self._settings_strip.pack(fill="x", pady=(0, P.PAD_SM))
         picker = tk.Frame(body, bg=P.BG)
         picker.pack(fill="x", pady=(0, P.PAD_SM))
         tk.Label(picker, text="Expedition", fg=P.MUTED, bg=P.BG).pack(side="left")

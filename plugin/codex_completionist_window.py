@@ -27,7 +27,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 from config import appname, config
 
-from . import codex_catalog, codex_hints
+from . import codex_catalog, codex_hints, exploration_settings
 from .codex_catalog import CatalogEntry
 from .codex_completionist import CodexEntryRecord, CodexTally
 from .uikit import palette as P
@@ -160,6 +160,10 @@ class CodexCompletionistWindow:
             self._shell.add_action("Backfill Journals", on_backfill,
                                     tip="Backfill Journals - read your old journals for codex entries you have already found")
 
+        self._settings_strip = exploration_settings.TickStrip(
+            self._shell.body, "Settings", exploration_settings.CODEX_FIELDS,
+            note="The same setting as Settings → WFMT → Exploration → POI Reference. Off, nothing new is added to the tally (what is already counted stays).")
+        self._settings_strip.pack(fill="x", pady=(0, P.PAD_SM))
         self._tabs = Tabs(self._shell.body)
         self._tabs.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
         self._overview_table = DataTable(
