@@ -285,7 +285,7 @@ calculated, so you can tell a busy Spansh from a stalled search. **Cancel** stop
 
 - **Total profit** and **Est. profit / hour** (a rough figure worked out from your jump range), then **Hops**,
 - each hop, numbered: the two stations, then three figures: the hop's **Profit**, the **Total** so far (the running total, so the last hop's Total is the route's profit) and the distance in light years; under them the destination system and its distance from the star, the best commodity with its tons, and the supply at the buying station and the
-  demand at the selling one. Every hop is listed, and a **Whole route** row under the last hop adds them up: the profit of all the hops, the same figure again under **Total**, and the distance flown. In a **Round trip**, each pair ends with `Both legs: out + back = per loop`. Gains are green and losses red.
+  demand at the selling one. Every hop is listed, and a **Whole route** row under the last hop adds them up: the profit of all the hops, the same figure again under **Total**, and the distance flown. Under it a bold line reads `Average per leg: +1,067 cr × 3 legs = +3,200 cr estimated total earnings`. In a **Round trip**, each pair ends with `Both legs: out + back = per loop` and the same kind of average line for its two legs. Gains are green and losses red.
 
 **Copy next system** puts the first destination on your clipboard so you can paste it into the galaxy map.
 

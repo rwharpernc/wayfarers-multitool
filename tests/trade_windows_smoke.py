@@ -176,6 +176,9 @@ controller._finish_routes(job)
 mock.patch.object(trade_panel, "lookups_enabled", lambda: True).start()
 route_items = [b for b in controller._route_blocks if type(b).__name__ == "Item"]
 check([i.cells[1] for i in route_items[:3]] == ["+1,000", "+3,500", "+3,200"], f"running totals: {[i.cells for i in route_items]}")
+notes = [b.text for b in controller._route_blocks if type(b).__name__ == "Note"]
+check(any(n.startswith("Average per leg: +1,067 cr") and "\u00d7 3 legs = +3,200 cr estimated total earnings" in n for n in notes),
+      f"the average per leg and the estimated total, on a line of their own: {notes}")
 check(len(route_items) == 3 + 1, "every hop is listed, then one row for the whole route")
 whole = route_items[-1]
 check(whole.title == "Whole route" and whole.cells[0] == "+3,200" and whole.cells[2] == f"{sum(h.distance_ly for h in hops):.1f}",
