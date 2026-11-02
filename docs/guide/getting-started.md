@@ -157,8 +157,7 @@ Just under the mode buttons, above the page itself, WFMT shows these lines, on e
 
 ### Pages
 
-Mining, Trade and Missions have more than one page. Click the large orange **◀** and **▶** buttons at the top of
-the panel to move between them. For example, Trade has **Session**, **Routes** and **Market** pages.
+Mining, Trade and Missions have more than one page, and each page is a window. There are no page arrows: the panel shows a short summary and a button for each page, and the button opens that page's window. Trade has **Session**, **Routes** and **Market**; Mining has **Space Mining** and **Surface Mining**; Missions has **Mission types**.
 
 ### Collapsing the panel
 
@@ -507,9 +506,11 @@ a moment and a tooltip shows its name and what it does.** The same goes for the 
 | **Price finder** | The finder behind Mining's **Prices** button, for any commodity | Trade (Market page) |
 | **Refresh** | Ask Spansh for the best buy and sell price of each watched commodity near you (needs Trade lookups on) | Trade (Watch list section) |
 | **Watch** | Open the Watch list window | Trade (Watch list section) |
-| **◀** / **▶** | Previous / next page | Mining, Trade, Missions |
-| **Missions window** | Open the window listing every active mission, with progress and pinning | Mission (bottom of every page) |
-| **Find sources** | Where to buy the cargo your Collect and Mining missions need, and where to pick up a Delivery mission's cargo (needs Trade lookups on) | Mission (bottom of every page) |
+| **Session** / **Routes** / **Market** | Open that page of Trade in its own window | Trade |
+| **Space Mining** / **Surface Mining** | Open that page of Mining in its own window | Mining |
+| **Mission types** | Open the mission types (massacre stacks, cards, Community Goals) in a window | Mission |
+| **Missions window** | Open the window listing every active mission, with progress and pinning | Mission (bottom of the panel) |
+| **Find sources** | Where to buy the cargo your Collect and Mining missions need, and where to pick up a Delivery mission's cargo (needs Trade lookups on) | Mission (bottom of the panel) |
 | **Ships** | Manage ship builds | Operations |
 | **Dashboard** | Colonization sites (the Colonization mode's own button) | Colonization |
 | **Projects** | Open My Projects, every active project you have on Raven Colonial | Colonization |

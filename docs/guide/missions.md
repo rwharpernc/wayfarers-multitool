@@ -97,8 +97,7 @@ The numbers and names below are made up to show how the screens read. The wordin
 
 ## Using it
 
-Press **Mission** in the mode bar. At the top a line reads `Missions: 7/20` (how many missions you hold of the game's limit of 20; switch it off with *Show mission count* in Settings). Under it the panel shows one category at a time, with a line like `◀  Combat (3)  ▶`. Click the **◀** or **▶** arrow to
-page between categories; the number is how many missions are in that category (left off when the count line above is shown and every mission is in that one category, since it would repeat `Missions: N/20`). The pages, in order, are:
+Press **Mission** in the mode bar. At the top a line reads `Missions: 7/20` (how many missions you hold of the game's limit of 20; switch it off with *Show mission count* in Settings). Under it the panel lists each type that holds something, with how many (`Combat 3`). Click a line, or press **Mission types** at the bottom, to open the **Mission types** window: a list of the types down the left, each with its count, and the chosen type's page on the right. There is no paging with arrows. The types, in order, are:
 
 **Massacre (Space) · Settlement Raids (Ground) · Combat · Trade & Mining · Passenger · Covert / On-Foot Ops · Other · Community Goals**
 
@@ -112,11 +111,11 @@ page between categories; the number is how many missions are in that category (l
 - Everything else shows **one card per mission**, soonest to expire first. A card has the mission's name (with `⚠ Illegal` or `🤝 Wing` badges), the issuing faction, `Mine via: ...` for a mining mission, its status (`Pending` or `✓ Complete`) and reward, a `Cargo: 120/200 collected, 80 delivered` line for cargo missions, `→ <system> / <station>` (where to go now: the hand-in place once the mission is done) and `Expires: 2d 4h` (`⚠` when under two hours remain). Click a card to open the Missions window on that mission.
 - The **Trade & Mining** page starts with **Commodities needed:** a total per commodity (`Gold (2 missions)  x150`) of the cargo you still have to find (switch it off with *Show commodities needed*).
 - The **Community Goals** page has one card per goal: its title, the system and market, a bar and the tier reached against the top tier (with `✓ Complete`), `Your contribution`, the bonus, `🏆 Top rank` when you are in the top rank, and the expiry. Under the goals, **Paid out** lists the latest three payouts.
-- Two buttons at the very bottom of the panel, on every page: **Missions window** (every active mission across every category) and **Find sources** (where to buy the cargo your missions need).
+- Three buttons at the very bottom of the panel: **Missions window** (every active mission across every category), **Mission types** (the pages above, in their own window) and **Find sources** (where to buy the cargo your missions need).
 
 ## The Missions window
 
-Opens from the **Missions window** button at the bottom of the panel (or by clicking a mission's card). It stays live while you play: times left count down, progress moves, and missions
+Opens from the **Missions window** button at the bottom of the panel (or by clicking a mission's card in the Mission types window). It stays live while you play: times left count down, progress moves, and missions
 come and go as you accept and hand them in.
 
 - **Active** tab: one row per mission, ready ones (✓, green) first, then the soonest to expire.

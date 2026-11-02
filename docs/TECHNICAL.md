@@ -1340,9 +1340,9 @@ Full detail is in the [Trade spec](TRADE_TECH_SPEC.md); the decisions worth know
 - **The page is blocks, not text.** Each page is a list of typed blocks (`trade_blocks.py`) drawn by `BlockView`
   (`trade_view.py`), so headings, label/value rows and number columns are real layout instead of text padded with spaces.
   The builders are pure and testable, and an unchanged page isn't redrawn. See the Trade spec for the sizing rules.
-- **The page arrows** are the shared `panelkit.nav_arrow` (a raised, bordered, padded label with a large bold
-  glyph), also used by Mining and Missions, because the bare triangles they replaced were too small to see in
-  EDMC's small window.
+- **There are no page arrows.** Trade's three pages are windows (`trade_windows.py`) opened from buttons under the
+  panel's summary, Mining's pages are its Live windows with the panel picking its own page, and Missions' category
+  pages are the Mission types window. The page-arrow helper is gone.
 
 ### Missions (`missions*.py`, `mission_*.py`, `active_missions.py`, `kill_missions.py`, `all_missions.py`, `kill_tracker.py`)
 
@@ -2055,7 +2055,6 @@ Nothing in Trade is OS-specific.
 The parts that depend on the platform:
 
 - The type-ahead popup (a borderless `Toplevel`, so it depends on the window manager for stacking and focus).
-- The ◀ ▶ glyphs in the page arrows with Linux fonts.
 - The backfill finding a Proton journal folder.
 
 `LINUX_TESTING.md` section 6d holds the checks and their status.

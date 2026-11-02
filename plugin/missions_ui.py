@@ -50,6 +50,7 @@ from theme import theme
 
 from . import all_missions, community_goal_state, current_cargo, current_system, kill_missions, kill_tracker, mining_methods, mission_pins, mission_progress, mission_sources, mission_types, missions_board, missions_overlay, panelkit
 from .mission_sources_window import MissionSourcesWindow
+from . import missions_types_window
 from .missions_window import MissionsWindow
 from .community_goal_state import CommunityGoal
 from .kill_missions import KillMission, estimate_progress
@@ -61,8 +62,6 @@ MISSION_CAP = 20
 REFRESH_INTERVAL_MS = 60_000
 """How often the panel re-renders on its own, so mission expiry countdowns
 stay live without waiting for a journal event."""
-
-CONFIG_CURRENT_CATEGORY = "wfmt_missions_current_category"
 
 # Elite-style accent palette, tuned to read fine on both EDMC's Default
 # (light, system-colored) and Dark/Transparent themes. Text colors are
@@ -158,15 +157,6 @@ table would) would force the whole EDMC window past screen height - see
 the project rule that anything able to size the main window is
 bounded. Below the cap the panel still just sizes to its
 content - the scrollbar only appears once it's actually needed."""
-
-
-def _load_current_category() -> str:
-    value = config.get_str(CONFIG_CURRENT_CATEGORY)
-    return value if value in _PAGE_ORDER else _PAGE_ORDER[0]
-
-
-def _save_current_category(value: str) -> None:
-    config.set(CONFIG_CURRENT_CATEGORY, value)
 
 
 _content_bg = ""
@@ -301,10 +291,7 @@ def _get_fonts() -> dict[str, tkfont.Font]:
         small.configure(size=max(abs(size) - 2, 7) * (-1 if size < 0 else 1))
         small_bold = small.copy()
         small_bold.configure(weight="bold")
-        nav_arrow = base.copy()
-        nav_arrow.configure(size=(abs(size) + 4) * (-1 if size < 0 else 1), weight="bold")
-        _fonts.update(base=base, bold=bold, small=small, small_bold=small_bold,
-                     nav_arrow=nav_arrow)
+        _fonts.update(base=base, bold=bold, small=small, small_bold=small_bold)
     return _fonts
 
 
@@ -477,33 +464,19 @@ def _display_cmdr_header(frame: tk.Frame, count: Optional[int],
     return row
 
 
-def _nav_title(current: str, counts: dict[str, int], total: int, header_shown: bool) -> str:
-    """The category page's title. The count is left off when the header's "Missions: N/20" already says it: the header is
-    shown and this is the only category holding missions (so its count is the total)."""
-    count = counts.get(current, 0)
-    only_page = header_shown and count == total and sum(1 for n in counts.values() if n > 0) == 1
-    return _PAGE_LABELS[current] if only_page else f"{_PAGE_LABELS[current]} ({count})"
-
-
-def _display_category_nav(frame: tk.Frame, current: str, counts: dict[str, int],
-                          row: int, on_prev, on_next, title_text: Optional[str] = None) -> int:
-    """◂ Category Name (count) ▸ - click either arrow to page between the
-    panel's category pages. The Missions window and Find sources are the
-    buttons at the bottom of the panel."""
-    nav = _line(frame, row, pady=(0, 4))
-
-    fonts = _get_fonts()
-
-    panelkit.nav_arrow(nav, -1, on_prev).pack(side=tk.LEFT)
-
-    panelkit.nav_arrow(nav, 1, on_next).pack(side=tk.RIGHT)
-
-    if title_text is None:
-        title_text = f"{_PAGE_LABELS[current]} ({counts.get(current, 0)})"
-    title_label = tk.Label(nav, text=title_text, font=fonts["bold"])
-    title_label.pack(side=tk.LEFT, expand=True)
-
-    return row + 1
+def _display_category_summary(frame: tk.Frame, counts: dict[str, int], row: int,
+                              on_open: Callable[[str], None]) -> int:
+    """One line for each type that holds something: its name and how many. Click a line to open the Mission types window on it. The pages
+    themselves are in that window, not here."""
+    for key in _PAGE_ORDER:
+        if counts.get(key, 0) <= 0:
+            continue
+        line = _line(frame, row)
+        tk.Label(line, text=_PAGE_LABELS[key], anchor=tk.W).pack(side=tk.LEFT)
+        tk.Label(line, text=str(counts[key]), anchor=tk.E).pack(side=tk.RIGHT)
+        _bind_mission_click(line, key, on_open)
+        row += 1
+    return row
 
 
 def _display_row(frame: tk.Frame, faction: str, data: GiverTally, mission_data: MassacreData,
@@ -828,7 +801,6 @@ class MissionsUI:
         self.__window: Optional[MissionsWindow] = None
         self.__sources: Optional[MissionSourcesWindow] = None
         self.__settings = DisplaySettings()
-        self.__current_category = _load_current_category()
 
     def apply_display_settings(self, settings: DisplaySettings):
         self.__settings = settings
@@ -865,8 +837,10 @@ class MissionsUI:
         # The two buttons at the very bottom of the panel, always there whichever page is showing.
         buttons = tk.Frame(parent)
         buttons.grid(column=0, row=1, columnspan=2, sticky="w", pady=(4, 0))
-        tk.Button(buttons, text="Missions window", command=self.__show_missions_window).pack(side=tk.LEFT)
-        tk.Button(buttons, text="Find sources", command=self.__show_sources_window).pack(side=tk.LEFT, padx=(6, 0))
+        panelkit.flow_buttons(buttons, [
+            tk.Button(buttons, text="Missions window", command=self.__show_missions_window),
+            tk.Button(buttons, text="Mission types", command=self.show_types_window),
+            tk.Button(buttons, text="Find sources", command=self.__show_sources_window)])
 
         parent.bind("<<Refresh>>", lambda _e: self.redraw())
         self.redraw()
@@ -946,7 +920,7 @@ class MissionsUI:
         elif event.delta:
             self.__canvas.yview_scroll(-3 if event.delta > 0 else 3, "units")
 
-    def __category_counts(self) -> dict[str, int]:
+    def category_counts(self) -> dict[str, int]:
         counts = {key: 0 for key in _PAGE_ORDER}
         for mission in (self.__massacre_missions or {}).values():
             key = mission_types.MASSACRE_GROUND if mission.is_ground else mission_types.MASSACRE_SPACE
@@ -957,38 +931,6 @@ class MissionsUI:
         counts[_COMMUNITY_GOAL_PAGE] = sum(
             1 for g in self.__community_goals.values() if not _is_expired(g.expiry))
         return counts
-
-    def __ensure_valid_category(self, counts: dict[str, int]):
-        """If the persisted/current category has no active missions but
-        another one does, jump to the first category (in display order)
-        that does, so the nav never lands on an empty page."""
-        if counts.get(self.__current_category, 0) > 0:
-            return
-        for key in _PAGE_ORDER:
-            if counts[key] > 0:
-                self.__current_category = key
-                _save_current_category(key)
-                return
-
-    def __step_category(self, direction: int):
-        counts = self.__category_counts()
-        order = _PAGE_ORDER
-        if not any(counts.values()):
-            return  # nothing anywhere to page to - stay put
-        idx = order.index(self.__current_category)
-        for _ in range(len(order)):
-            idx = (idx + direction) % len(order)
-            if counts[order[idx]] > 0:
-                break
-        self.__current_category = order[idx]
-        _save_current_category(self.__current_category)
-        self.redraw()
-
-    def __prev_category(self):
-        self.__step_category(-1)
-
-    def __next_category(self):
-        self.__step_category(1)
 
     def on_kill_missions(self, data: Optional[dict[int, KillMission]]):
         self.__massacre_missions = data
@@ -1007,8 +949,7 @@ class MissionsUI:
         self.__community_goals = data
         self.redraw()
 
-    def __render_current_page(self, frame: tk.Frame, row: int) -> int:
-        category = self.__current_category
+    def __render_category(self, frame: tk.Frame, row: int, category: str) -> int:
 
         if category == _COMMUNITY_GOAL_PAGE:
             active = {cg_id: g for cg_id, g in self.__community_goals.items()
@@ -1051,19 +992,13 @@ class MissionsUI:
         if self.__all_missions_data is None:
             _display_waiting_notice(self.__content, kill_tracker.current_cmdr, row)
         else:
-            counts = self.__category_counts()
+            counts = self.category_counts()
             total = len(self.__all_missions_data)
             row = _display_cmdr_header(self.__content, total, self.__settings, row)
             if sum(counts.values()) == 0:
                 _display_no_missions(self.__content, row, random.choice(_NO_MISSIONS_MESSAGES))
             else:
-                self.__ensure_valid_category(counts)
-                row = _display_category_nav(self.__content, self.__current_category,
-                                            counts, row,
-                                            self.__prev_category, self.__next_category,
-                                            _nav_title(self.__current_category, counts, total,
-                                                       self.__settings.mission_count))
-                self.__render_current_page(self.__content, row)
+                _display_category_summary(self.__content, counts, row, self.show_types_window)
 
         theme.update(self.__parent)
         _apply_theme(self.__content)
@@ -1073,6 +1008,35 @@ class MissionsUI:
         self.__canvas.yview_moveto(0)
         if self.__window is not None:
             self.__window.refresh()
+        missions_types_window.refresh()
+
+    # --- the Mission types window draws the category pages -----------------------------------------------------------
+
+    @staticmethod
+    def category_order() -> list[str]:
+        return list(_PAGE_ORDER)
+
+    @staticmethod
+    def category_label(category: str) -> str:
+        return _PAGE_LABELS[category]
+
+    def render_category(self, frame: tk.Frame, category: str, width: int) -> None:
+        """Draws a category's page into `frame`, a window's rather than the panel's: with that window's background and wrap width (these are module
+        settings the panel sets for itself, so they are put back afterwards) and without EDMC's theme, which the window kit's colors replace."""
+        from .uikit import palette as P
+        saved = (_content_bg, _WRAP, _WRAP_NAME)
+        try:
+            _set_content_bg(P.PANE)
+            _recompute_wrap_widths(width)
+            self.__render_category(frame, 0, category)
+        finally:
+            _set_content_bg(saved[0])
+            globals()["_WRAP"], globals()["_WRAP_NAME"] = saved[1], saved[2]
+
+    def show_types_window(self, category: Optional[str] = None) -> None:
+        """Opens (or raises) the Mission types window, on `category` if one was clicked."""
+        if self.__parent is not None:
+            missions_types_window.show(self.__parent.winfo_toplevel(), self, category)
 
     def __live_rows(self) -> list[missions_board.Row]:
         """The window's rows from the live Missions data: the kill progress estimate, the redirected missions and the pinned ids."""

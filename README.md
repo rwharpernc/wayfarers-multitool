@@ -109,7 +109,7 @@ The modes differ, but the habits carry over. Learn these once and they work ever
 |---|---|
 | Switch modes | Click a **mode button** at the top. The panel remembers where you were |
 | Learn what a button does | **Hover** over it for its name and what it does ([button names](docs/guide/getting-started.md#button-names)) |
-| Move around a mode | **◀ ▶** page between a mode's pages. **Click a section's title** to fold or unfold it |
+| Move around a mode | Press a page's button to open it in its own window. **Click a section's title** to fold or unfold it |
 | Open a pop-out window | Press its panel button. Windows remember their size and place, and close with **Esc** ([the list](docs/guide/getting-started.md#opening-the-pop-out-windows)) |
 | Search the galaxy map | Use a **copy button** to put a system name on the clipboard. System-name boxes suggest as you type |
 | Change a setting | **File → Settings → WFMT**, one tab per feature |

@@ -84,7 +84,7 @@ All in `plugin/`. Pure modules have no Tk and no EDMC-only imports, so they are 
 
 Reused from elsewhere: `mining_spansh_client.search_best_price_stations` (the station price search, shared
 with Mining's Prices button), `mining_price_finder_dialog` (the **Price finder** button), `inventory_names`
-(display-name fallback), `panelkit` (wrapping labels, tooltips, the page arrows, clipboard).
+(display-name fallback), `panelkit` (wrapping labels, tooltips, clipboard).
 
 ## 3. The three pages
 
@@ -842,5 +842,4 @@ The parts that depend on the platform, with their checks and status in `LINUX_TE
 are:
 
 - the suggestion popup (a borderless `Toplevel`) under each Linux window manager;
-- the page arrows' glyphs (◀ ▶) with Linux fonts;
 - the journal backfill finding the Proton journal folder.

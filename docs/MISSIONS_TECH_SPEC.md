@@ -46,7 +46,8 @@ all_missions.py        A generic summary of every active mission (the "All Missi
 mission_cargo.py       Collect / delivery progress of cargo missions (CargoDepot events).
 community_goal_state.py Community Goal snapshots and the commander's contribution.
 mission_types.py       The rules that decide a mission's category. Pure, no dependencies.
-missions_ui.py         The panel (category pages); opens the Missions window.
+missions_ui.py         The panel (a count for each type) and the drawing of the category pages; opens the Missions window.
+missions_types_window.py The Mission types window: the category pages, picked from a list with counts.
 missions_board.py      The Missions window's data: a Row per active mission, totals, grouping by place, detail lines. Pure.
 missions_window.py     The Missions window (Active and By place tabs, detail strip, pinning).
 mission_pins.py        The commander's pinned mission ids (per commander, mission_pins.json).
@@ -174,7 +175,7 @@ shows that commander's data and never leaks another's.
 - The active set comes from the login `Missions` event when one arrives.
 - Otherwise (EDMC restarted mid-game) it comes from the journals: the newest `Missions` list plus every
   `MissionAccepted` after it, less every `MissionCompleted`, `MissionAbandoned` and `MissionFailed`.
-- Apart from the checkboxes, the saved settings are the last category page you were on (`CONFIG_CURRENT_CATEGORY`) and the overlay card's options (rows, red limit, next jump, on or off).
+- Apart from the checkboxes, the saved settings are the Mission types window's place and last type (`wfmt_missions_types_window_geometry`, `wfmt_missions_types_window_category`) and the overlay card's options (rows, red limit, next jump, on or off).
 
 ## 9. Settings
 
@@ -237,7 +238,7 @@ The rest of the board:
 - `MissionsUI.__live_rows` supplies the live data.
 - The panel's two buttons (Missions window, Find sources) are built once in `build_panel`, in grid row 1
   below the canvas, so they show on every page.
-- The category page's title is `Name (N)`; `missions_ui._nav_title` leaves the count off when the header's `Missions: N/20` line is shown and this is the only category holding missions, since it would repeat that line.
+- The panel has no category paging: `missions_ui._display_category_summary` lists each type that holds missions with its count (clicking a line opens the Mission types window on it). `MissionsUI.render_category` draws a type's page into a window's frame, with that window's background and wrap width (the module's `_content_bg`, `_WRAP` and `_WRAP_NAME` are put back afterwards) and without EDMC's theme.
 
 Pins:
 

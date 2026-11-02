@@ -1,0 +1,185 @@
+"""Opens the Mission types window (plugin/missions_types_window.py) with EDMC stubbed and a stand-in for the Missions panel's drawing, and checks the
+list of types with their counts, that picking one draws that page at the window's width and is remembered, that asking for a type opens on it, and
+that the real MissionsUI.render_category draws a page into a frame and leaves the panel's own wrap width and background as they were. Run by
+test_missions_types_window.py in a subprocess so the stand-ins never leak into other tests. Exits 0 if everything holds, 1 if not, 77 if Tk is
+unavailable."""
+import quiet_tk  # noqa: F401  (keeps the test windows from taking focus)
+import json
+import os
+import sys
+import tempfile
+import time
+import types
+from unittest import mock
+
+repo = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+sys.path.insert(0, repo)
+import tkinter as tk
+
+
+class Any(types.ModuleType):
+    def __getattr__(self, n):
+        if n.startswith("__"):
+            raise AttributeError(n)
+        return mock.MagicMock()
+
+
+for n in ("monitor", "plug", "EDMCLogging", "l10n", "killswitch", "requests", "win32api", "win32con", "win32gui",
+          "win32process", "win32clipboard", "pywintypes", "psutil", "ttkHyperlinkLabel"):
+    sys.modules[n] = Any(n)
+nbmod = Any("myNotebook")
+nbmod.Frame, nbmod.Label, nbmod.Button, nbmod.Checkbutton = tk.Frame, tk.Label, tk.Button, tk.Checkbutton
+sys.modules["myNotebook"] = nbmod
+theme = Any("theme")
+theme.theme = mock.MagicMock()
+theme.theme.active = None
+theme.theme.THEME_DEFAULT = 0
+sys.modules["theme"] = theme
+saved = {}
+
+
+class Cfg:
+    default_journal_dir = ""
+
+    def get_str(self, key, default=""):
+        return saved.get(key, default) or ""
+
+    def get_bool(self, key, default=False):
+        return saved.get(key, default)
+
+    def get_int(self, key, default=0):
+        return saved.get(key, default)
+
+    def get(self, key, default=None):
+        return saved.get(key, default)
+
+    def set(self, key, value):
+        saved[key] = value
+
+
+cfgmod = types.ModuleType("config")
+cfgmod.appname = "EDMarketConnector"
+cfgmod.config = Cfg()
+cfgmod.user_agent = "WFMT-test"
+cfgmod.appversion = lambda: "5.13.0"
+sys.modules["config"] = cfgmod
+
+try:
+    root = tk.Tk()
+except tk.TclError:
+    print("no display available")
+    sys.exit(77)
+root.withdraw()
+
+
+try:
+    root = tk.Tk()
+except tk.TclError:
+    print("no display available")
+    sys.exit(77)
+root.withdraw()
+
+
+
+try:
+    root = tk.Tk()
+except tk.TclError:
+    print("no display available")
+    sys.exit(77)
+root.withdraw()
+
+
+try:
+    root = tk.Tk()
+except tk.TclError:
+    print("no display available")
+    sys.exit(77)
+root.withdraw()
+
+
+
+from plugin import missions_types_window as window, missions_ui  # noqa: E402
+
+problems = []
+
+
+def check(condition, message):
+    if not condition:
+        problems.append(message)
+
+
+def pump():
+    root.update_idletasks()
+    root.update()
+
+
+class FakeUI:
+    ORDER = ["massacre_space", "combat", "community_goal"]
+    LABELS = {"massacre_space": "Massacre (Space)", "combat": "Combat", "community_goal": "Community Goals"}
+
+    def __init__(self):
+        self.drawn = []
+        self.counts = {"massacre_space": 3, "combat": 0, "community_goal": 1}
+
+    def category_order(self):
+        return list(self.ORDER)
+
+    def category_label(self, key):
+        return self.LABELS[key]
+
+    def category_counts(self):
+        return dict(self.counts)
+
+    def render_category(self, frame, category, width):
+        self.drawn.append((category, width))
+        tk.Label(frame, text=f"page {category}").grid(row=0, column=0)
+
+
+ui = FakeUI()
+window.show(root, ui)
+pump()
+win = window._window
+check(win is not None and win.alive, "the window opens")
+check(win.category == "massacre_space", f"it opens on the first type: {win.category}")
+captions = [str(b.cget("text")) for b in win._buttons.values()]
+check(captions == ["Massacre (Space) (3)", "Combat (0)", "Community Goals (1)"], f"the list of types with counts: {captions}")
+check(ui.drawn and ui.drawn[-1][0] == "massacre_space", f"the chosen page is drawn: {ui.drawn}")
+check(ui.drawn[-1][1] >= 300, f"at a usable width: {ui.drawn[-1]}")
+
+win.pick("combat")
+pump()
+check(win.category == "combat" and ui.drawn[-1][0] == "combat", "picking a type draws it")
+check(saved.get(window.CONFIG_CATEGORY) == "combat", "and is remembered")
+
+ui.counts["combat"] = 2
+window.refresh()
+pump()
+check("Combat (2)" in [str(b.cget("text")) for b in win._buttons.values()], "a refresh updates the counts")
+
+window.show(root, ui, "community_goal")
+pump()
+check(window._window is win and win.category == "community_goal", "asking again for a type brings the same window to it")
+check(len(window._window._scroll.body.winfo_children()) == 1, "only the chosen page is in the window")
+
+window.close()
+pump()
+check(not win.alive, "close closes it")
+
+# the real panel's drawing: into any frame, leaving its own settings alone
+before = (missions_ui._content_bg, missions_ui._WRAP, missions_ui._WRAP_NAME)
+frame = tk.Frame(root)
+frame.pack()
+missions_ui.ui.render_category(frame, "community_goal", 640)
+pump()
+check(len(frame.winfo_children()) > 0, "the Community Goals page draws something")
+check((missions_ui._content_bg, missions_ui._WRAP, missions_ui._WRAP_NAME) == before,
+      f"the panel's wrap width and background are put back: {before} -> {(missions_ui._content_bg, missions_ui._WRAP, missions_ui._WRAP_NAME)}")
+for key in missions_ui.ui.category_order():
+    inner = tk.Frame(root)
+    missions_ui.ui.render_category(inner, key, 500)       # every type draws, with or without missions
+    inner.destroy()
+
+if problems:
+    print("\n".join(problems))
+    sys.exit(1)
+print("MISSION TYPES OK")
