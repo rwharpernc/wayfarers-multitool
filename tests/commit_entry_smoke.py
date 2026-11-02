@@ -12,7 +12,8 @@ try:
 except tk.TclError:
     print("no display available")
     sys.exit(77)
-root.withdraw()
+root.geometry("300x100")      # shown: a withdrawn window does not deliver the focus events the boxes listen for
+root.update()
 
 from plugin import commit_entry  # noqa: E402
 
@@ -41,6 +42,8 @@ var = tk.StringVar(value="5")
 entry = tk.Entry(root, textvariable=var)
 entry.pack()
 commit_entry.bind_commit(entry, var, commit)
+pump()
+entry.focus_force()      # Return is a key event: it goes to the box that has the focus
 pump()
 entry.event_generate("<FocusOut>")
 entry.event_generate("<Return>")

@@ -169,10 +169,15 @@ class TallUI(FakeUI):
             tk.Label(frame, text=f"{category} line {n}").grid(row=n, column=0, sticky="w")
 
 
+window._window.close()
+pump()
 tall = TallUI()
 window.show(root, tall, "massacre_space")
 pump()
 scroll = window._window._scroll
+scroll.set_viewport(300, 200)
+pump()
+scroll._canvas.configure(scrollregion=scroll._canvas.bbox("all"))
 scroll._canvas.yview_moveto(0.5)
 pump()
 before = scroll.position()
