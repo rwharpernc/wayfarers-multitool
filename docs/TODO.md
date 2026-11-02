@@ -1,121 +1,100 @@
-# To do
+# Open Work
 
-Open work and open questions.
+Scope: open work items and open in-game checks. Items are listed once.
 
 - Completed work is recorded in [CHANGELOG.md](../CHANGELOG.md).
-- Current test status and working rules are in [STATUS.md](STATUS.md).
-- Step-by-step Linux checks are in [LINUX_TESTING.md](LINUX_TESTING.md).
-- Bug reports and suggestions are welcome on the [Issues page](https://github.com/rwharpernc/wayfarers-multitool/issues).
+- Current test status and working rules: [STATUS.md](STATUS.md).
+- Step-by-step Linux checks: [LINUX_TESTING.md](LINUX_TESTING.md).
+- Bug reports and suggestions: the [Issues page](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
 ## In progress
 
-Work that is under way, being researched, or waiting on a decision. Items are listed once, here, and not again below.
-
-### Local star index: neutron stars built, the rest open
+### Local star index: neutron stars
 
 - Built: the Online lookups page has a Local star index group.
-  - It downloads Spansh's `systems_neutron.json.gz` when the player asks.
-  - It builds a local index (about 110 MB) and uses it for Neutron Star, falling back to the Spansh search.
-  - Update now fetches the small 1-day or 1-week file and merges it in (the full file only when the index is more than a week behind, after 20 updates, or when the base file is more than 60 days old).
-- Still open:
-  - Out of scope: a white dwarf local index. White Dwarf keeps asking Spansh, which publishes no white dwarf dump (checked 2026-10-23) and offers only the whole galaxy, far too large to download.
-  - Keeping the secondary-star check's per-system lookups, since the dumps list only a system's main star.
+  - It downloads Spansh's `systems_neutron.json.gz` on request.
+  - It builds a local index (about 110 MB) used by Neutron Star, with the Spansh search as fallback.
+  - Update fetches the 1-day or 1-week file and merges it. The full file is fetched only when the index is more than a week behind, after 20 updates, or when the base file is more than 60 days old.
+- Open:
+  - The secondary-star check keeps its per-system lookups, because the dumps list only a system's main star.
+- Recorded limit: no white dwarf local index exists. Spansh publishes no white dwarf dump (checked 2026-10-23); it offers only the whole galaxy. White Dwarf queries Spansh.
 
-### Ship Builds and Coriolis / EDSY: first step built, next steps open
-
-- Built: the Ship planner reads a pasted Coriolis import link or EDSY `#/I=` link as well as SLEF.
-  - It copies or opens a link that shows the selected build on either site (`ship_links.py`; offline, the browser makes the request).
-- Still open:
-  - Confirm in a browser that EDSY opens a link WFMT makes.
-  - Whether to also read EDSY's `#/L=` and Coriolis's `/outfit` links (they need the sites' own identifier tables).
-  - Built: the Ship planner has an In storage column. A stored module matches on the same module; it is Yes with the planned engineering at the level or above, and Partly otherwise. Only storage counts, not modules fitted to a ship.
-  - Open: whether the plan should also subtract the engineering of a matching stored module, as the current-ship option does.
-
-### Expedition page and its workflow: built, to try in the game
+### Ship Builds and Coriolis / EDSY
 
 - Built:
-  - The Route Planner window's **Start expedition** makes an expedition from the route, starts it and starts a linked Expedition Log run (a setting).
+  - The Ship planner reads a pasted Coriolis import link or EDSY `#/I=` link as well as SLEF.
+  - It copies or opens a link that shows the selected build on either site (`ship_links.py`; offline, the browser makes the request).
+  - The Ship planner has an In storage column. A stored module matches on the same module. The column reads Yes with the planned engineering at the level or above, and Partly otherwise. Only storage counts, not modules fitted to a ship.
+- Open:
+  - Confirm in a browser that EDSY opens a link made by WFMT.
+- Not implemented: reading EDSY `#/L=` links and Coriolis `/outfit` links (they require the sites' own identifier tables); subtracting the engineering of a matching stored module from the plan.
+
+### Expedition page and workflow
+
+- Built:
+  - The Route Planner window's **Start expedition** creates an expedition from the route, starts it and starts a linked Expedition Log run (a setting).
   - **Review expedition** opens the Expedition window on it.
   - Pause, Resume and Stop agree between the planner and the Log.
   - **Road to Riches** and **Exomastery** can start the plan at once.
-  - The Expedition window, the Route Planner and the Expedition Log are the Plan, Route and Log tabs of one window (`expedition_hub.py`), and the panel's two rows are one Expedition section.
-- Settled: **Start expedition** does not switch tabs.
-  - It is pressed on the Route tab of the open window.
-  - The status line says what happened, and **Review expedition** goes to the Plan tab.
-- Decided 2026-10-23: reopening a stopped expedition (the Route tab's Start, or the Log's Resume) picks the clock up from the time it stopped at, so the time stopped is not counted. To try: stop an expedition, wait a minute, start it again, and check the clock carries on from where it stopped.
+  - The Expedition window, the Route Planner and the Expedition Log are the Plan, Route and Log tabs of one window (`expedition_hub.py`). The panel's two rows are one Expedition section.
+- **Start expedition** does not switch tabs. It is pressed on the Route tab of the open window, the status line reports the result, and **Review expedition** goes to the Plan tab.
+- Recorded 2026-10-23: reopening a stopped expedition (the Route tab's Start, or the Log's Resume) continues the clock from the time at which it stopped; the stopped time is not counted.
+- Open check: stop an expedition, wait a minute, start it again and confirm that the clock continues from where it stopped.
 
-### Next area of work: Mining, including surface mining
+### Mining, including surface mining
 
-- A desk review (2026-10-21) compared the following against what the journal offers:
-  - the Space and Surface Mining windows
-  - Mining History
-  - the Mining Books
-  - the live window
-  - the guide
-- It found the coverage broad. The run's ore, limpets, rates, hold, targets, missions, sales, history, hotspots, prices and reserve lookups are all there.
-- It found some candidates, none confirmed by play. Profit, the time until the hold is full and the price against the galactic average are built (see their steps in the checklist below).
-- **Not assessed without playing:** the Surface (Rhino) tools and the radar over the game, the overlay layouts, and whether the Space and Surface Mining windows (and the panel's summary) show too much or too little at a glance.
-  - Those need your impressions from a play-through (the checklist below covers them).
-- Not subtracted from *After limpets*: fuel, repairs and ammunition. The journal records them; they are not tied to a run the way launches are.
+- A desk review (2026-10-21) compared the Space and Surface Mining windows, Mining History, the Mining Books, the live window and the guide with what the journal offers. Coverage found: the run's ore, limpets, rates, hold, targets, missions, sales, history, hotspots, prices and reserve lookups. Profit, the time until the hold is full and the price against the galactic average are built (checks below).
+- Not assessed without play: the Surface (Rhino) tools, the radar over the game, the overlay layouts, and the amount of information in the Space and Surface Mining windows and the panel summary. The checklist below covers these.
+- *After limpets* does not subtract fuel, repairs or ammunition. The journal records them, but they are not tied to a run as launches are.
 
-### To review: window layout on real screens, and the table text caps
+### Window layout on real screens, and table text caps
 
-- Done: every pop-out window, dialog and the screenshot preview is on the shared window kit.
-  - Each has been opened headless at its minimum and at a wide size with long names (`tests/window_fit_check.py` and the `window_fit_*` smoke tests).
-  - The clipped, squeezed or overflowing cases that found are fixed.
-- Still to do by eye: the windows at 100, 150 and 200 percent display scaling, and on Linux. The cases to look at:
+- Done: every pop-out window, dialog and the screenshot preview uses the shared window kit. Each was opened headless at its minimum and at a wide size with long names (`tests/window_fit_check.py` and the `window_fit_*` smoke tests), and the clipped, squeezed or overflowing cases found are fixed.
+- Open, by eye: the windows at 100, 150 and 200 percent display scaling, and on Linux. Cases to inspect:
   - the wrapped stat tiles in Mining History, the Surface Mining Book and the Exploration Dashboard
   - the Add/Edit forms that grow to fit their hints
   - the Plan dialog's height on a 768 px screen
   - the screenshot preview header
-- Decided 2026-10-23: table text caps.
-  - A stretch column is clipped to the width it gets (up to 300 characters), so its own cap no longer matters, and that covers most of the columns that were listed.
-  - The caps were raised to 60 on the remaining name columns that do not stretch: Missions (Faction, Go to, Station), Source commodities (System, Note), Ship Builds (Ship, Role, Site) and My Codex (First found in).
-  - To check by eye: a long faction or station name in those windows at a narrow size.
-- These stay as they are:
-  - The tooltip, the system name suggestions and the commodity type-ahead are small pop-ups drawn in EDMC's own theme because they sit on its main window.
-  - The EDMC Settings pages follow EDMC's look.
+- Recorded 2026-10-23: a stretch column is clipped to the width it gets (up to 300 characters), so its own cap is not used. The caps are 60 on the remaining non-stretch name columns: Missions (Faction, Go to, Station), Source commodities (System, Note), Ship Builds (Ship, Role, Site) and My Codex (First found in). Open check: a long faction or station name in those windows at a narrow size.
+- Unchanged by design: the tooltip, the system name suggestions and the commodity type-ahead are small pop-ups drawn in EDMC's own theme because they sit on its main window. The EDMC Settings pages follow EDMC's look.
 
-### Shortcuts: built, to try in the game
+### Shortcuts
 
-- Settings → General → Shortcuts has six actions: Mark the center, Mark the border, Rig placed, radar range, the Live window and hide overlays.
+- Built: Settings → General → Shortcuts has six actions: Mark the center, Mark the border, Rig placed, radar range, the Live window and hide overlays.
   - Each has a Windows key combination (Ctrl+Alt+Shift plus one key, checked against Elite's own controls).
   - Each has a chat command (`!wf center` and so on, Windows and Linux; see [Shortcuts](guide/shortcuts.md)).
-- Still to decide or check:
-  - Whether more actions deserve one (start or pause an expedition, copy the next system), and whether a Linux desktop binding that runs a command WFMT listens for is worth adding beside the chat commands.
-  - On Windows, in the game: each combination works while Elite has the focus, the sound plays, and nothing else reacts to the keys.
-  - On Linux: the chat commands work with a Flatpak and a native EDMC, and the journal's `SendText` line arrives in time (steps in `docs/LINUX_TESTING.md`).
+- Open checks:
+  - Windows, in the game: each combination works while Elite has the focus, the sound plays, and nothing else reacts to the keys.
+  - Linux: the chat commands work with a Flatpak and a native EDMC, and the journal's `SendText` line arrives in time (steps in `docs/LINUX_TESTING.md`).
+- Not implemented: a Linux key binding (the key choices are disabled on Linux).
 
 ### Data verification
 
-- [ ] **Data verification.** Work through [data_verification/verification_checklist.csv](data_verification/verification_checklist.csv) (356 rows, for a spreadsheet): what is missing and what is carried from other authors' work but not yet checked in the game.
-  - Checked against journals: the carrier jump fields, the Status.json Destination and (2026-10-23) the Route Planner's supercharge multipliers (V-0351) are Verified - journal.
+- [ ] Work through [data_verification/verification_checklist.csv](data_verification/verification_checklist.csv) (356 rows, for a spreadsheet): rows for what is missing and for data carried from other authors' work and not yet checked in the game.
+  - Verified against journals: the carrier jump fields, the Status.json Destination and (2026-10-23) the Route Planner's supercharge multipliers (V-0351) are Verified - journal.
   - V-0076, V-0077, V-0092, V-0093 and V-0097 carry what the journals showed.
-  - The open findings are V-0350 (two costs for one synthesis), V-0352 (the drive table: matches Coriolis, and the fuel formula reproduces recorded jumps, but unengineered optimal mass and maximum fuel need the outfitting screen) and V-0353 (a flown route).
-  - What is left needs the game: 233 Odyssey stat rows, the Engineers panel rows and the static-data spot checks.
-  - Mark each row as it is verified. Change the method statement in [ATTRIBUTIONS.md](ATTRIBUTIONS.md) to the past tense only when none are left.
+  - Open findings: V-0350 (two costs for one synthesis); V-0352 (the drive table matches Coriolis and the fuel formula reproduces recorded jumps, but unengineered optimal mass and maximum fuel need the outfitting screen); V-0353 (a flown route).
+  - The remaining rows need the game: 233 Odyssey stat rows, the Engineers panel rows and the static-data spot checks.
+  - Mark each row as it is verified. Change the method statement in [ATTRIBUTIONS.md](ATTRIBUTIONS.md) to the past tense only when no rows are left.
 
 ### Odyssey upgrade planner
 
-- [ ] **Odyssey upgrade planner, next step:** a stat preview.
-  - The stat tables are not available as open data, so they are being gathered and checked in the game ([ODYSSEY_STAT_COLLECTION.md](ODYSSEY_STAT_COLLECTION.md); the sources looked at, with their licenses, are in [ODYSSEY_STAT_DATA.md](ODYSSEY_STAT_DATA.md)).
-  - The preview itself waits for that data.
-  - Another possible shortcut is a request to the owner of an existing data set.
+- [ ] Stat preview. The stat tables are not available as open data. They are being gathered and checked in the game ([ODYSSEY_STAT_COLLECTION.md](ODYSSEY_STAT_COLLECTION.md)); the sources examined, with their licenses, are in [ODYSSEY_STAT_DATA.md](ODYSSEY_STAT_DATA.md). The preview is not built.
 
 ## Verification in the game
 
-The items below are implemented and covered by unit tests, but have not all been verified in the game.
+The items below are implemented and covered by unit tests, and have not all been verified in the game.
 
-- Linux passes of earlier builds were made on 2026-10-18 and 2026-10-20 (see [STATUS.md](STATUS.md)), so items that do not end in "Then Linux" do not ask for a Linux check.
-- Items that end in "Then Linux" need the Linux checklist ([LINUX_TESTING.md](LINUX_TESTING.md)) as well.
-- [x] **1.5.0: pages are windows, settings are in their windows** (done on Windows and Linux 2026-11-02, before the release; steps in [TEST_PLAN.md](TEST_PLAN.md) section 12). Trade (Session, Routes, Market, History), Mining (Space Mining, Surface Mining) and Missions (Mission types) open from buttons; no ◀ ▶ is left. Each moved setting is set in its window and saved at once, File → Settings → WFMT shows where it went, and a change in a window shows on the panel. Type-ahead works in the Body, Ring, Ship and comma-separated commodity boxes. A scrapped fleet carrier disappears. The main panel's orange is readable on EDMC's Default theme.
+- Linux passes of earlier builds were made on 2026-10-18 and 2026-10-20 (see [STATUS.md](STATUS.md)). Items that do not end in "Then Linux" do not require a Linux check.
+- Items that end in "Then Linux" also require the Linux checklist ([LINUX_TESTING.md](LINUX_TESTING.md)).
+- [x] **1.5.0: pages are windows, settings are in their windows** (done on Windows and Linux 2026-11-02, before the release; steps in [TEST_PLAN.md](TEST_PLAN.md) section 12). Trade (Session, Routes, Market, History), Mining (Space Mining, Surface Mining) and Missions (Mission types) open from buttons; no ◀ ▶ remains. Each moved setting is set in its window and saved at once, File → Settings → WFMT shows where it moved, and a change in a window shows on the panel. Type-ahead works in the Body, Ring, Ship and comma-separated commodity boxes. A scrapped fleet carrier disappears. The main panel's orange is readable on EDMC's Default theme.
 - [ ] **Color themes, text size and column fit for WFMT's windows** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 6 and [LINUX_TESTING.md](LINUX_TESTING.md) 7k3 and 7k4).
-  - The theme name at the right end of a window's bottom line offers Navy, Cyan, Amber and Green; open windows recolor at once, nothing becomes hard to read, and the choice (and the same one under Settings → General → Window) is kept after a restart.
-  - **A-** and **A+** change the text of every window; the stat tiles and status chips keep their size; at the larger sizes no window loses its title, buttons or footer.
+  - The theme name at the right end of a window's bottom line offers Navy, Cyan, Amber and Green. Open windows recolor at once, all text stays legible, and the choice (and the same one under Settings → General → Window) is kept after a restart.
+  - **A-** and **A+** change the text of every window. The stat tiles and status chips keep their size. At the larger sizes no window loses its title, buttons or footer.
   - Short columns are narrow and a long name column takes the spare width.
 - [ ] **Colonization Archive** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 6): Archive Finished moves complete and failed sites into Show Archive, Restore and Remove Permanently work, and the archive survives a restart and is part of Back up my data.
-- [ ] **Raven project offer** (Windows): with Raven sharing on and a key saved, a new construction site with no Raven project shows *Raven Colonial has no project for ...* on the Colonization panel; **Create on Raven** opens the Sites window on that site and its dialog, **Not Now** hides it, and it is not offered again for that site.
-- [ ] **Colonization Show / List** (Windows, then Linux): with everything on the fleet carrier, **To buy** lists nothing and **To haul** lists every commodity; a commodity drops off **To haul** once it is aboard in full.
+- [ ] **Raven project offer** (Windows): with Raven sharing on and a key saved, a new construction site with no Raven project shows *Raven Colonial has no project for ...* on the Colonization panel. **Create on Raven** opens the Sites window on that site and its dialog. **Not Now** hides the line, and it is not offered again for that site.
+- [ ] **Colonization Show / List** (Windows, then Linux): with everything on the fleet carrier, **To buy** lists nothing and **To haul** lists every commodity. A commodity drops off **To haul** once it is aboard in full.
 
 ### Expedition and route planning
 
@@ -123,146 +102,143 @@ The items below are implemented and covered by unit tests, but have not all been
   - The status line names the expedition and its stop count.
   - The Expedition section, the Dashboard and the Expedition Log card show it running.
   - **Review expedition** opens the Expedition window with that expedition selected (also when another expedition is running or the window is already open).
-  - Press it again on the same route: no duplicate.
-  - Pause and Resume from the Expedition window, then from the Log tab. Check both agree and the time excludes the pause.
+  - Pressing it again on the same route creates no duplicate.
+  - Pause and Resume from the Expedition window, then from the Log tab. Both agree and the time excludes the pause.
   - Stop from either side.
-  - Restart EDMC while paused and check both stay paused.
+  - Restart EDMC while paused. Both stay paused.
   - With *Start the Expedition Log when I start an expedition* unticked (the Expedition window's Settings strip), starting an expedition starts no Log run.
-  - Road to Riches and Exomastery: tick **Start it now** and check the expedition starts.
-  - Check the Route Planner buttons and the plan dialog fit at a small window size.
+  - Road to Riches and Exomastery: tick **Start it now** and confirm that the expedition starts.
+  - Confirm that the Route Planner buttons and the plan dialog fit at a small window size.
   - Then Linux.
 - [ ] **One Expedition section on the panel.** The Exploration panel has an **Expedition** section and no separate Expedition Log section.
-  - With nothing running it says so.
-  - Press **Start** in the Expedition window's Log tab: the section shows the Log's own lines (name and time, systems, jumps and light-years, bodies and species, earned and unsold).
-  - **Pause** in the window becomes **Resume** and the section's lines gain `(paused)`. **Stop** ends it. The section itself has no Start, Pause or Stop.
-  - Start a planned expedition (Plan tab, **Start**): the section shows its stops, jumps, light-years, time and next stop and, under them, the systems, bodies, species and credits, with the name and jumps said once.
-  - Fold the section: the title says only whether one is running or paused (the name and figures are in the open section).
+  - With nothing running, the section states so.
+  - Press **Start** in the Expedition window's Log tab. The section shows the Log's own lines (name and time, systems, jumps and light-years, bodies and species, earned and unsold).
+  - **Pause** in the window becomes **Resume** and the section's lines gain `(paused)`. **Stop** ends it. The section has no Start, Pause or Stop.
+  - Start a planned expedition (Plan tab, **Start**). The section shows its stops, jumps, light-years, time and next stop and, under them, the systems, bodies, species and credits, with the name and jumps stated once.
+  - Fold the section. The title states only whether an expedition is running or paused (the name and figures are in the open section).
   - **Copy Next** and **Copy on arrival** work as before.
-  - The section must not widen EDMC's window.
+  - The section does not widen EDMC's window.
 - [ ] **One Expedition window with Plan, Route and Log tabs.**
   - Press **Expedition** and **Plot** on the panel in turn.
     - Each opens the same window (never a second one) on its tab.
     - The Log tab shows the archive.
-    - The window opens in a sensible place at a sensible size.
-    - Resize and move it, close it and open it again: size and position are remembered.
-  - On the Plan tab make an expedition and press **Start**. The **Log** tab shows its run.
-  - On the Route tab plot a route and press **Start expedition**.
+    - Resize and move the window, close it and open it again. Size and position are remembered.
+  - On the Plan tab, make an expedition and press **Start**. The **Log** tab shows its run.
+  - On the Route tab, plot a route and press **Start expedition**.
     - The Plan tab has the new expedition.
-    - The status line says so in green and the button reads **Started ✓** for a few seconds (then **Start expedition** again). A press that starts nothing, such as with no route, shows neither.
+    - The status line turns green and the button reads **Started ✓** for a few seconds (then **Start expedition** again). A press that starts nothing, such as with no route, shows neither.
     - **Review expedition** switches to the Plan tab on it.
   - **Neutron route** on the Plan tab switches to the Route tab.
-  - Close the window with a route plotted and open it again: the route is still there.
-  - Check each tab's buttons (Start, Pause, Stop, Help) and that nothing is cut off at the smallest size.
-  - Leave it open while playing: arriving in a stop's system ticks it off in the Plan tab, and the Route tab follows the route.
+  - Close the window with a route plotted and open it again. The route is still there.
+  - Confirm that each tab's buttons (Start, Pause, Stop, Help) work and that nothing is cut off at the smallest size.
+  - Leave the window open during play. Arriving in a stop's system ticks it off in the Plan tab, and the Route tab follows the route.
   - Then Linux.
-- [ ] **Expedition planner.** The planner was replayed against 132 recorded sessions (2,354 jumps) on 2026-10-13.
-  - Every stop was ticked in order and the jump and light-year totals were exact. `JumpDist` and `StarPos` are present in the real events.
-  - The user interface itself remains to be verified:
-    - Confirm that stop names are respelled and located through EDSM when added: type `sol`, expect `Sol`; try a mixed-case boxel name; an invented name should be kept with a note.
-    - Check the **Road to Riches** and **Exomastery** buttons: press Plot and compare the new expedition's stops and notes with spansh.co.uk/riches and /exobiology. Both endpoints were checked with live requests.
-    - Create an expedition and add stops manually, from a plotted route and from a CSV file.
-    - Press Start. Jump to a stop and confirm that it is ticked, the jump is counted and the next stop's distance is shown.
-    - Verify Copy Next and Copy on arrival pasting into the galaxy map.
-    - Verify **Locate and reorder (EDSM)** against EDSM.
-    - Check that the row does not widen the EDMC window.
+- [ ] **Expedition planner.** The planner was replayed against 132 recorded sessions (2,354 jumps) on 2026-10-13. Every stop was ticked in order and the jump and light-year totals were exact. `JumpDist` and `StarPos` are present in the real events. The user interface remains to be verified:
+  - Stop names are respelled and located through EDSM when added: type `sol` and expect `Sol`; try a mixed-case boxel name; an invented name is kept with a note.
+  - **Road to Riches** and **Exomastery**: press Plot and compare the new expedition's stops and notes with spansh.co.uk/riches and /exobiology. Both endpoints were checked with live requests.
+  - Create an expedition and add stops manually, from a plotted route and from a CSV file.
+  - Press Start. Jump to a stop and confirm that it is ticked, the jump is counted and the next stop's distance is shown.
+  - Copy Next and Copy on arrival paste into the galaxy map.
+  - **Locate and reorder (EDSM)** agrees with EDSM.
+  - The row does not widen the EDMC window.
 - [ ] **Expedition survey tracking.** Start an Expedition with two or three stops.
-  - Confirm that arriving in a stop updates its totals in the Expedition row (bodies scanned of the honk's count, first discoveries, maps).
-  - Confirm that a body scanned twice counts once.
+  - Arriving in a stop updates its totals in the Expedition row (bodies scanned of the honk's count, first discoveries, maps).
+  - A body scanned twice counts once.
 - [ ] **Expedition Log.** Press **Start** in the Expedition window, make a few jumps, scan and map a few bodies, analyze a species and sell the data.
-  - The section and the card (Settings → Overlays → Expedition Log) should count each.
-  - The earned figures should match what the game paid.
-  - Open the Expedition window's Log tab and try each of these:
-    - rename it, edit the dates, start location, ships and notes and save
-    - try a bad date
+  - The section and the card (Settings → Overlays → Expedition Log) count each.
+  - The earned figures match what the game paid.
+  - On the Expedition window's Log tab, test each of:
+    - rename, edit the dates, start location, ships and notes, and save
+    - a bad date
     - Stop and Resume
     - Reset and Delete (each asks twice)
-    - **Rescan** an expedition you gave an earlier start, and check the totals fill in from your journals
+    - **Rescan** of an expedition given an earlier start: the totals fill in from the journals
     - Copy summary and Export CSV
-    - **Start from my last** (sale, Discovery Data sale, Exobiology Data sale): each should start just after that kind of sale (a plain sale is the earlier of the two kinds), fill in the totals from your journals and carry on counting
-  - Check another commander sees none of it and that `expedition_log.json` survives an update.
-  - The earned figures assume the journal's sale events (`MultiSellExplorationData`, `SellExplorationData`, `SellOrganicData`) carry the totals as read here. Confirm against a real sale.
+    - **Start from my last** (sale, Discovery Data sale, Exobiology Data sale): each starts just after that kind of sale (a plain sale is the earlier of the two kinds), fills in the totals from the journals and continues counting
+  - Another commander sees none of it, and `expedition_log.json` survives an update.
+  - The earned figures assume that the journal's sale events (`MultiSellExplorationData`, `SellExplorationData`, `SellOrganicData`) carry the totals as read. Confirm against a real sale.
 - [ ] **Expedition Log: pause and stop.** Turn the Expedition Log overlay on, press **Start** in the Expedition window, jump or scan a little, then **Pause**.
-  - The card should keep its totals with `paused` in its heading and nothing more should count.
-  - Resume should carry on (check the clock did not run while paused).
-  - Restart EDMC while paused: it should still be paused.
-  - Then **Stop**: the card should reset to saying none is running, even after a pause.
+  - The card keeps its totals with `paused` in its heading and nothing more counts.
+  - Resume continues the count, and the clock did not run while paused.
+  - Restart EDMC while paused. The expedition is still paused.
+  - **Stop**: the card resets to stating that none is running, even after a pause.
 - [ ] **Expedition: restart a stopped one, and Rescan.** (Windows and Linux; steps also in [TEST_PLAN.md](TEST_PLAN.md) section 5.)
-  - Start an expedition, jump or scan, press **Stop**, wait a minute, then start it again from the Route tab: the clock carries on from where it stopped, not a minute later. The Log's **Resume** does the same.
-  - Pause one, make a few jumps while it is paused, **Resume**, then press **Rescan** in the Log window: the totals do not include those jumps. Stop one, play a little, start it again and Rescan: the same.
-  - An expedition that was paused before this build has no pause recorded, so its Rescan can still count that pause.
+  - Start an expedition, jump or scan, press **Stop**, wait a minute and start it again from the Route tab. The clock continues from where it stopped, not a minute later. The Log's **Resume** behaves the same.
+  - Pause an expedition, make a few jumps while it is paused, **Resume**, then press **Rescan** in the Log window. The totals exclude those jumps. Stop an expedition, play a little, start it again and Rescan: the same.
+  - An expedition paused before this build has no pause recorded, so its Rescan can still count that pause.
 - [ ] **Neutron route, Share line, Market.json.**
-  - Expedition window: press **Neutron route** and check it opens the Route Planner.
+  - Expedition window: **Neutron route** opens the Route Planner.
   - Mining Book: **Share line** on a positioned hotspot.
-    - Paste the line into a text editor to see it is one line with no name or notes.
+    - Paste the line into a text editor. It is one line with no name or notes.
     - **Paste spot** on a second commander: refused for a spot within 100 m of one saved, accepted otherwise after the prompt.
-    - Damage a line by deleting its last characters and check the message.
-  - Dock at a station and open the commodities market right after docking, several times, on a slow disk if possible. Check Trade Watch and Trade show that station's prices (the log has no read errors).
+    - Damage a line by deleting its last characters and read the message.
+  - Dock at a station and open the commodities market right after docking, several times, on a slow disk if possible. Trade Watch and Trade show that station's prices (the log has no read errors).
 - [ ] **Route Planner.** Press **Plot** (in the Route Planner section of the Exploration panel, which starts folded, and the Route Planner button in the Dashboard's header).
-  - Check the ship block against the game for the same ship (name, drive class and rating, booster, optimal mass, supercharge, cargo).
-    - It never changes while you fly (only a new loadout or cargo does).
-    - The source is the system you are in.
-  - Plot a long route (for example to Colonia). Compare the jump count, the neutron stops and the refuel points with Spansh's own exact plotter for the same ship (V-0351 to V-0353).
-  - Fly some of it:
-    - Check the fuel column against your fuel gauge.
-    - Systems turn green and the next is marked as you jump.
+  - Compare the ship block with the game for the same ship (name, drive class and rating, booster, optimal mass, supercharge, cargo).
+    - It changes only with a new loadout or cargo.
+    - The source is the current system.
+  - Plot a long route (for example to Colonia). Compare the jump count, the neutron stops and the refuel points with Spansh's exact plotter for the same ship (V-0351 to V-0353).
+  - Fly part of it:
+    - The fuel column agrees with the fuel gauge.
+    - Systems turn green and the next is marked as jumps are made.
     - **Copy next system** pastes into the galaxy map search.
-    - The **Copy the next system to the clipboard automatically** tickbox (on the panel and in the window, one setting) puts the first system on the clipboard when the route is ready and the next after every jump (the panel line says *copied*).
-    - **Start expedition** gives the neutron stars, the refuel stops and the destination ahead.
-  - With the Route overlay switched on:
-    - The plotted route replaces the game's route on its card: titled *Neutron route*, a neutron star picked out, a refuel marked, the jumps and light-years left and the next supercharge right, moving on after each jump.
+    - The **Copy the next system to the clipboard automatically** tickbox (on the panel and in the window, one setting) puts the first system on the clipboard when the route is ready and the next after every jump (the panel line reads *copied*).
+    - **Start expedition** provides the neutron stars, the refuel stops and the destination ahead.
+  - With the Route overlay on:
+    - The plotted route replaces the game's route on its card: titled *Neutron route*, a neutron star picked out, a refuel marked, the jumps and light-years left and the next supercharge on the right, moving on after each jump.
     - The game's route returns after the last jump.
-    - With Settings -> Overlays -> Route -> *Mark the systems ahead that EDSM does not know yet* ticked, a system EDSM lacks gets a star on the neutron card too. Most neutron-route systems will be known, since Spansh only routes through systems it has.
-  - Also try each option (injections, exclude secondary stars, refuel every scoopable, the algorithms) and a loadout change after plotting.
+    - With Settings -> Overlays -> Route -> *Mark the systems ahead that EDSM does not know yet* ticked, a system EDSM lacks gets a star on the neutron card too. Most neutron-route systems are known, because Spansh routes only through systems it has.
+  - Test each option (injections, exclude secondary stars, refuel every scoopable, the algorithms) and a loadout change after plotting.
   - Then Linux.
 - [ ] **Route Planner: white dwarfs and fuel scoop.**
   - Tick *Mark white dwarfs the route passes (asks EDSM)* and plot a route through the Bubble.
     - Systems with a white dwarf main star get *white dwarf: supercharge* in the table and a WHITE DWARF tag on the Route overlay.
-    - Unticking it removes them.
-  - Block the network to EDSM and check the status line says white dwarfs are not marked.
-  - Fit no fuel scoop (or use a ship without one). Check the ship block says NONE FITTED and a route with refuel stops warns.
+    - Unticking the option removes them.
+  - Block the network to EDSM. The status line states that white dwarfs are not marked.
+  - Fit no fuel scoop (or use a ship without one). The ship block reads NONE FITTED and a route with refuel stops warns.
   - Check the Canonn and GEC **Copy System** buttons and links (the fallback to Inara when no URL is given).
   - Then Linux.
 - [ ] **Ship known after an EDMC restart.** With the game running and logged in, restart EDMC without relogging.
-  - The Route Planner window's ship block should show your ship at once.
-  - The Route overlay's fuel percentage should appear.
-  - Generate route should not say the ship is not known.
-  - Check the wait line while plotting does not move, only its timer ticks.
+  - The Route Planner window's ship block shows the ship at once.
+  - The Route overlay's fuel percentage appears.
+  - Generate route does not state that the ship is not known.
+  - The wait line while plotting does not move; only its timer ticks.
 - [ ] **Route Planner: a neutron star that may be a secondary star.** Plot a route that passes Lalande 25224 (for example one through Jackson's Lighthouse).
-  - The stop should be marked `NEUTRON ?` in yellow on the Route overlay and say so in the table.
-  - The window should say to check the system map when the stop is next.
-  - Check an ordinary neutron stop is not marked.
-  - Check that a stop 20 or more jumps ahead is marked once you are within about a dozen neutron stops of it.
-- [ ] **Route Planner: the route survives a restart.** Plot a route, jump a system or two along it, restart EDMC (with the game running, and again with it closed).
-  - The panel line, the window's table and the Route overlay should show the same route from where you are on it.
-  - Press Clear Route and restart: it should stay gone.
-  - Check a second commander does not see the first one's route.
+  - The stop is marked `NEUTRON ?` in yellow on the Route overlay and the table states so.
+  - The window states to check the system map when the stop is next.
+  - An ordinary neutron stop is not marked.
+  - A stop 20 or more jumps ahead is marked once the commander is within about a dozen neutron stops of it.
+- [ ] **Route Planner: the route survives a restart.** Plot a route, jump a system or two along it, and restart EDMC (with the game running, and again with it closed).
+  - The panel line, the window's table and the Route overlay show the same route from the current position on it.
+  - Press Clear Route and restart. The route stays cleared.
+  - A second commander does not see the first one's route.
 - [ ] **Route Planner: clearing a route.** Plot a route, then press **Clear Route** on the Exploration panel and **Clear route** in the window (plot again between).
-  - The panel line, the window's table and the Route overlay's card should all go, and the card should close, even when the card was following a route from the galaxy map.
-  - The button should be there before any route is plotted (and say so when there is nothing to clear).
-  - Check the destination line on the card reads whole for a long procedural name.
+  - The panel line, the window's table and the Route overlay's card all go, and the card closes, even when the card was following a route from the galaxy map.
+  - The button is present before any route is plotted (and states so when there is nothing to clear).
+  - The destination line on the card reads whole for a long procedural name.
 - [ ] **Carrier Route.** Route Planner window → **Carrier route**.
-  - Check the carrier block and the boxes fill in from the journal (where it is, tritium in the tank, space used: open Carrier Management once if they say not known) and match Carrier Management.
-  - Type a destination, press **Generate route**, and compare the jumps and the tritium with Spansh's own Fleet Carrier Router page for the same carrier.
-  - Check the first-jump line says how much tritium to have.
-  - Schedule a jump in the game and copy the next system. Check the table moves on (green, next marked) when the carrier arrives, or **Mark next as reached** does it by hand.
-  - Restart EDMC: the route should come back. A second commander should see none.
-  - Try a squadron carrier if you have one.
+  - The carrier block and the boxes fill in from the journal (location, tritium in the tank, space used; open Carrier Management once if they read not known) and match Carrier Management.
+  - Enter a destination, press **Generate route**, and compare the jumps and the tritium with Spansh's Fleet Carrier Router page for the same carrier.
+  - The first-jump line states how much tritium to have.
+  - Schedule a jump in the game and copy the next system. The table moves on (green, next marked) when the carrier arrives, or **Mark next as reached** does it by hand.
+  - Restart EDMC. The route returns. A second commander sees none.
+  - Test a squadron carrier if one is available.
   - Then Linux.
 - [ ] **Route overlay EDSM check.** Tick the option and plot a route through uncharted systems.
-  - A system EDSM does not know gets a `*` after its name (and nothing else is added to the card).
+  - A system EDSM does not know gets a `*` after its name (nothing else is added to the card).
   - Nothing is marked when EDSM cannot be reached.
   - The Test Card shows the mark on the third and seventh systems.
 - [ ] **Route overlay.** Enable it (Settings → Overlays → Route), press **Test Card**, then plot a real route in the galaxy map.
-  - The card should read `You are navigating to:`, the destination, `You will be there in N jumps.`, a rule, the systems still to visit (names only, no numbers), a rule and `N LY left to jump.`.
-  - Confirm that the systems match the plotted route (`NavRoute.json`).
-  - Confirm that each one is taken off as you reach it, with the jump count and the light years following, and that the light years agree with the galaxy map.
-  - Confirm that the card clears at the end, when the route is cleared and when you jump to a system that is not on it.
-  - Check the star colors: green for a star you can scoop, yellow for one you cannot, blue for a neutron star, red for a white dwarf.
-  - Plot a route in the Route Planner too:
-    - It should take over the card until its last jump.
-    - The window should say it was sent to the Route overlay and which system is on the clipboard (and again at each system you reach).
-    - At the last system the card should say the route has ended and is being reset, then close after ten seconds.
-  - Restart EDMC mid-route and confirm the card comes back.
+  - The card reads `You are navigating to:`, the destination, `You will be there in N jumps.`, a rule, the systems still to visit (names only, no numbers), a rule and `N LY left to jump.`.
+  - The systems match the plotted route (`NavRoute.json`).
+  - Each system is taken off as it is reached, with the jump count and the light years following, and the light years agree with the galaxy map.
+  - The card clears at the end, when the route is cleared and when a jump goes to a system not on the route.
+  - Star colors: green for a star that can be scooped, yellow for one that cannot, blue for a neutron star, red for a white dwarf.
+  - Plot a route in the Route Planner as well:
+    - It takes over the card until its last jump.
+    - The window states that it was sent to the Route overlay and which system is on the clipboard (and again at each system reached).
+    - At the last system the card states that the route has ended and is being reset, then closes after ten seconds.
+  - Restart EDMC mid-route. The card returns.
   - Then Linux.
 
 ### Mining
@@ -273,10 +249,10 @@ The items below are implemented and covered by unit tests, but have not all been
     - *Run average* (over mining time; a gap of more than ten minutes is left out)
     - *Hold: N of M t*
   - The hold alert fires from the live hold without a Cargo event.
-  - Space Mining window → Settings card → Target commodities: type several names with their own percentages (`Painite 30, Platinum 25, Void Opals`).
+  - Space Mining window → Settings card → Target commodities: enter several names with their own percentages (`Painite 30, Platinum 25, Void Opals`).
     - Check the type-ahead after a comma, the status line under the box and a long list wrapping.
     - Last rock reads `target: <name>` and each target hit gets its own card.
-  - Open Mining History once: old runs are re-read in the background.
+  - Open Mining History once. Old runs are re-read in the background.
   - Then Linux.
 - [ ] **Mining History earned across stations, and the price finder.** Mine, dock and sell nothing, undock and sell at a different station.
   - Mining History's Earned, credits per hour and the Commodities *Sold* columns include the sale.
@@ -284,132 +260,132 @@ The items below are implemented and covered by unit tests, but have not all been
   - Rebuild from journals gives the same numbers.
   - In the price finder and What pays:
     - Fleet carriers are left out.
-    - The *Minimum demand (t)* box is prefilled with the tons of that commodity in your hold when selling.
+    - The *Minimum demand (t)* box is prefilled with the tons of that commodity in the hold when selling.
     - Compare a result with the in-game market for pad size and demand.
   - Then Linux.
 - [ ] **Mining History: credits after limpets.** Buy limpets (note the price), mine with some launched and sell.
   - Mining History's Overview shows a *credits after limpets* tile.
   - The Sales block shows what the limpets cost and the credits left.
-  - The Runs tab has an *After limpets* column equal to Earned less the number launched times the price you paid.
-  - Check a run before you bought any limpets in the journals WFMT has (the figure carries a `~`), and a run with nothing sold yet (`-`).
-  - Check that the first open after updating re-reads your journals once.
-  - Compare the cost with your own credit balance for a run you remember.
-  - Check the new column fits the window at its smallest size.
+  - The Runs tab has an *After limpets* column equal to Earned less the number launched times the price paid.
+  - A run before any limpets were bought in the journals WFMT has carries a `~` on the figure, and a run with nothing sold yet shows `-`.
+  - The first open after updating re-reads the journals once.
+  - Compare the cost with the credit balance for a remembered run.
+  - The new column fits the window at its smallest size.
 - [ ] **Mining History.** In Mine mode press **Dashboard**.
-  - The header shows the one-time read of your journals.
-  - The Overview should add up to what you remember (tons, hours, credits from sales).
+  - The header shows the one-time read of the journals.
+  - The Overview adds up to the remembered tons, hours and credits from sales.
   - Check **Commodities** against a few sales.
-  - Check that **Rings** groups the runs by ring.
-  - Check that **Runs** has the run you just finished (a run in progress appears within about 15 seconds, or press **Refresh**).
-  - Check that sorting a heading works.
-  - Check that **Rebuild from journals** ends with the same numbers.
-  - Mine for a few minutes with EDMC closed, start it, and confirm the run is there.
+  - **Rings** groups the runs by ring.
+  - **Runs** has the run just finished (a run in progress appears within about 15 seconds, or press **Refresh**).
+  - Sorting a heading works.
+  - **Rebuild from journals** ends with the same numbers.
+  - Mine for a few minutes with EDMC closed, start EDMC, and confirm that the run is present.
   - Then Linux.
-- [ ] **Station price against the galactic average.** Mine and dock, open the station's commodities market in the game.
+- [ ] **Station price against the galactic average.** Mine, dock and open the station's commodities market in the game.
   - The Space Mining window gains a line for each commodity the run refined that this station buys, such as `Painite here: 521,400 cr/t, 8% above the galactic average (482,000)`. Most tons first, at most three.
-  - Check the percentage against the market screen's own average.
-  - Check that a commodity the station lists without demand is skipped.
-  - Check that Low Temperature Diamonds and Void Opals are found (their internal names differ from the display names).
-  - Check that the lines go when you undock.
+  - Compare the percentage with the market screen's own average.
+  - A commodity the station lists without demand is skipped.
+  - Low Temperature Diamonds and Void Opals are found (their internal names differ from the display names).
+  - The lines go when the commander undocks.
   - Nothing is fetched.
   - Then Linux: the market is read from the journal folder where `Market.json` is written.
 - [ ] **Hold full in.** Mine a ring with the Space Mining window and the HUD overlay open.
-  - Once a minute of mining has passed, a line `Hold full in about N min` appears under *Run average* on both.
+  - After a minute of mining, a line `Hold full in about N min` appears under *Run average* on both.
   - N matches the free tons divided by the run average (for example 100 t free at 75 t/h is about 80 min).
-  - It drops as the hold fills, and it reads `Hold is full` when the hold is at capacity (in the Space Mining window only with *Show the cargo bar* off, since the Hold line already says it).
+  - It drops as the hold fills and reads `Hold is full` at capacity (in the Space Mining window only with *Show the cargo bar* off, because the Hold line already states it).
   - It does not show before a Loadout has been seen (no capacity), and not at all while nothing is being refined.
-  - Launch the Rhino and check `SRV hold full in about N min` in the Surface Mining window for the 72 t hold. It is gone once the Rhino is stowed.
-  - Check the extra line fits the panel width and the HUD panel.
+  - Launch the Rhino. `SRV hold full in about N min` appears in the Surface Mining window for the 72 t hold. It is gone once the Rhino is stowed.
+  - The extra line fits the panel width and the HUD panel.
 - [ ] **Mining: core asteroids, target rock, mission needs, alerts.** Mine at a ring.
   - Space Mining window:
     - The **Last rock** line follows each prospected rock.
     - A core asteroid adds `core: <mineral>` and the **Core asteroids found** count.
-    - The limpet figure reads `(N on board)` and matches your cargo.
-  - Space Mining window → Settings card: type a target commodity (for example Painite) and a percentage. Check a rock at or over it says `target`.
-  - Accept a mining mission and check **Mission needs** shows its tons against what you hold.
+    - The limpet figure reads `(N on board)` and matches the cargo.
+  - Space Mining window → Settings card: enter a target commodity (for example Painite) and a percentage. A rock at or above it reads `target`.
+  - Accept a mining mission. **Mission needs** shows its tons against the hold.
   - Flight Alerts (Settings → Overlays → Flight Alerts, Mining alerts ticked):
     - a green card for a core asteroid and for a rich rock (30 seconds)
-    - amber cards when the limpets aboard fall to the number you set and when the hold passes the percentage
-    - none while you are not mining
+    - amber cards when the limpets aboard fall to the configured number and when the hold passes the configured percentage
+    - none while the commander is not mining
     - the sound if ticked
   - Then Linux.
 - [ ] **Space Mining Book.** In the Space Mining window press **Book**.
-  - The window fills with the rings your journals show (it reads them once in the background, so give it a moment on the first open). It shows hotspots per mineral, class, reserve level, tons mined and last mined.
+  - The window fills with the rings the journals show (they are read once in the background, so the first open takes a moment). It shows hotspots per mineral, class, reserve level, tons mined and last mined.
   - Compare a few rings with the game (the hotspot counts, the reserve level).
-  - Type a note, press **Favorite**, **Find** by a mineral, **Add ring** by hand and remove it, and **Copy system**.
-  - Restart EDMC: notes and favorites remain. A second commander sees none.
-  - Check **Book** in the Surface Mining window opens the Surface Mining Book as before.
-  - Check its body list has a **From your journals** group of bodies with mining locations and tons refined (compare a body or two with what you remember).
+  - Test a note, **Favorite**, **Find** by a mineral, **Add ring** by hand and removal, and **Copy system**.
+  - Restart EDMC. Notes and favorites remain. A second commander sees none.
+  - **Book** in the Surface Mining window opens the Surface Mining Book as before.
+  - Its body list has a **From your journals** group of bodies with mining locations and tons refined (compare a body or two).
   - Then Linux.
 - [ ] **Surface Live radar: drive rings, stops, target line, Save map.** *Windows: tried on the simulation only.*
   - On a body with a marked location (Mark center, then Mark border) and several saved deposits, open the **Surface Mining** window.
-  - Check the orange dashed rings are drawn as described. The 2 km reach behind them is a community figure that will not be measured (see STATUS.md).
-  - Check that the first ring starts at the center and the last sits on the border, and that before a border is marked they reach as far as you have driven.
-  - Check that violet circles sit round the best stops (the radius is the Stop radius on the Surface Mining window's Settings card).
-  - Check that with a target commodity set (Space Mining window's Settings card) a bright line runs to the nearest saved deposit of it, and a far one is labeled at the edge.
-  - Check that **Help** matches what you see.
-  - Check that **Save map** writes a PNG that opens, reads well and holds no commander name.
+  - The orange dashed rings are drawn as described. The 2 km reach behind them is a community estimate that cannot be measured (see [STATUS.md](STATUS.md)).
+  - The first ring starts at the center and the last sits on the border. Before a border is marked, they reach as far as the commander has driven.
+  - Violet circles sit round the best stops (the radius is the Stop radius on the Surface Mining window's Settings card).
+  - With a target commodity set (Space Mining window's Settings card), a bright line runs to the nearest saved deposit of it, and a far one is labeled at the edge.
+  - **Help** matches the display.
+  - **Save map** writes a PNG that opens, is legible and holds no commander name.
 - [ ] **Shortcuts.** *Windows: the key combinations were registered and fired with simulated key presses; nothing was tried in the game.*
   - Settings → General → Shortcuts: pick keys, press OK, then in the game press each combination (Ctrl+Alt+Shift plus the key) with Elite in front.
-    - **Mark center** and **Mark border** mark and say so in the Live window's status line.
+    - **Mark center** and **Mark border** mark and report so in the Live window's status line.
     - The radar range steps.
     - The Live window opens.
     - The overlays hide and show.
-  - Check the sound plays.
-  - Check that nothing in Elite reacts to the same keys (the page reads your controls file and names a clash).
-  - Check that a combination another program holds is reported after OK.
-  - Tick **Chat commands**, type `!wf zoom` and `!wf overlays` in a chat channel with nobody else in it, and check they run within a second or two. This also confirms the journal's `SendText` line carries the text in a `Message` field.
-  - Linux steps are in `docs/LINUX_TESTING.md` section 7l.
-- [ ] **Rig placed and the rig bands.** Measure the game's rig gap: stand at one rig, press Mark center, drive until the game lets you place the next, press Mark border. Enter it on the Surface Mining window's Settings card (*Too close for another rig*).
-  - In the Rhino press **Rig placed** (or Ctrl+Alt+Shift+R, or type `!wf rig`) each time you put a rig down.
-  - A band of that radius should appear round it, filled while you are inside and an outline once you are clear.
-  - The lines on the right should say how far the nearest rig is.
-  - Check the gap you measured is the one at which the game refuses to place a rig.
-  - Check that stowing or launching the Rhino forgets the rigs.
-  - Check that the radar card over the game shows the bands too.
+  - The sound plays.
+  - Nothing in Elite reacts to the same keys (the page reads the controls file and names a clash).
+  - A combination another program holds is reported after OK.
+  - Tick **Chat commands**, type `!wf zoom` and `!wf overlays` in a chat channel with nobody else in it, and confirm that they run within a second or two. This also confirms that the journal's `SendText` line carries the text in a `Message` field.
+  - Linux steps: `docs/LINUX_TESTING.md` section 7l.
+- [ ] **Rig placed and the rig bands.** Measure the game's rig gap: stand at one rig, press Mark center, drive until the game allows the next rig, press Mark border. Enter the result on the Surface Mining window's Settings card (*Too close for another rig*).
+  - In the Rhino press **Rig placed** (or Ctrl+Alt+Shift+R, or type `!wf rig`) each time a rig is placed.
+  - A band of that radius appears round the rig, filled while the commander is inside and an outline once clear.
+  - The lines on the right state how far the nearest rig is.
+  - The measured gap is the one at which the game refuses to place a rig.
+  - Stowing or launching the Rhino forgets the rigs.
+  - The radar card over the game shows the bands too.
 - [ ] **The Mining radar over the game, Windows.** *Tried on the simulation's picture and in tests only.*
   - Choose WFMT's built-in overlay (Overlays → Overlay Connection), tick **Show the Mining radar over the game** (Overlays → Mining), press **Test radar**.
-  - Check the card appears for a few seconds where Overlay Placement says (Mining radar), the background and the green are see-through and the marks solid.
+  - The card appears for a few seconds where Overlay Placement states (Mining radar). The background and the green are see-through and the marks solid.
   - Launch the Rhino on a body with marked locations and saved deposits:
-    - The card should follow the Rhino about once a second.
-    - The radar range shortcut should change its reach.
-    - Stowing the Rhino should take it down.
-    - Hiding the overlays should hide it.
-  - Check the size and opacity settings, that it does not cost frames in the game, and where it sits against your other cards.
-- [ ] **Surface mining on a body you never scanned, and Get body info.** Land on a body with no `Scan` event in your journals and launch the Rhino.
-  - The ground trail should start on the Live radar.
-  - **Mark center** and **Mark border** should mark (the body's name and size come from `Status.json`).
+    - The card follows the Rhino about once a second.
+    - The radar range shortcut changes its reach.
+    - Stowing the Rhino takes it down.
+    - Hiding the overlays hides it.
+  - Check the size and opacity settings, that it costs no frames in the game, and where it sits relative to other cards.
+- [ ] **Surface mining on a body never scanned, and Get body info.** Land on a body with no `Scan` event in the journals and launch the Rhino.
+  - The ground trail starts on the Live radar.
+  - **Mark center** and **Mark border** mark (the body's name and size come from `Status.json`).
   - Tick *Enable body lookup* (Settings → Mining), open **Book** and press **Get body info**.
-    - The system's landable bodies appear in the list with their kinds, sizes and mining-location counts. The counts come from Spansh and need a jump or login since EDMC started.
-    - The status line says how many were added.
-  - Check a body your journals did give keeps its own data.
-  - Check that FSS-scanning a body fills its mining-location count.
-  - Restart EDMC (or jump away and back): the body list should return at once, and `mining_body_cache.json` should appear beside the plugin with no commander in its name.
+    - The system's landable bodies appear in the list with their kinds, sizes and mining-location counts. The counts come from Spansh and require a jump or login since EDMC started.
+    - The status line states how many were added.
+  - A body the journals did give keeps its own data.
+  - FSS-scanning a body fills its mining-location count.
+  - Restart EDMC (or jump away and back). The body list returns at once, and `mining_body_cache.json` appears beside the plugin with no commander in its name.
 - [ ] **What pays.** Tick *Enable Spansh best price finder*, save deposits of two or three materials, open **Book** then **What pays**.
-  - Check the ranking against Spansh's own price search for the same commodities.
-  - Check that a commodity nobody pays for says so.
-  - Check that *Near* and *Within* change the answer.
-  - Check that **Copy report** pastes a numbered list.
+  - Compare the ranking with Spansh's price search for the same commodities.
+  - A commodity nobody pays for is reported as such.
+  - *Near* and *Within* change the answer.
+  - **Copy report** pastes a numbered list.
 - [ ] **Surface Live simulation.** Settings → Mining → Simulation → **Surface Live (pretend Rhino)**.
   - The radar, its range buttons, **Mark center**, **Mark border**, **Add hotspot** and **Save map** work on the pretend ground.
-  - Nothing you press changes your own deposits or marks.
+  - Nothing pressed changes the commander's own deposits or marks.
   - The window closes with its close button while Settings is still open.
 - [ ] **Surface Mining Book: refilling marks, stops, you are here.** In the Rhino on a body with several saved deposits (some with rigs and positions):
   - Check the **Stops** lines above the hotspots, the dashed rings on the map at 1x/2x/4x and the `stop N` tags. Changing the Stop radius on the Surface Mining window's Settings card changes them.
-  - Standing within 175 m of a deposit selects it and marks `you are here`, and Mark depleted there is one click.
-  - Mark a deposit depleted. Check the card says `Depleted N d ago. When it refills is unknown` and that the mark stays.
-  - Set *Deposit refills after (days)* on the Surface Mining window's Settings card to 14, edit `depleted_at` in `mining_hotspots.json` to 15 days ago, reopen the Book. Check the mark is gone and the card says `Assumed refilled`.
-  - Press Mark depleted again with no mining and check `Still depleted at ...; look again in 7 d`.
-  - Check the dialog's Edit keeps these dates.
-- [ ] **Surface Mining Book: Market research.** Tick *Enable Spansh best price finder*, open the Book on a system where you have saved hotspots, press **Market research**.
-  - Check the buyers against the in-game market (price, demand, pad size).
-  - Try a system with no records (it should say so and suggest nothing).
-  - Try the *Also check* box with a misspelled name.
-  - Try a busy system (the note about the first 100 stations).
+  - Standing within 175 m of a deposit selects it and marks `you are here`, and Mark depleted there takes one click.
+  - Mark a deposit depleted. The card reads `Depleted N d ago. When it refills is unknown` and the mark stays.
+  - Set *Deposit refills after (days)* on the Surface Mining window's Settings card to 14, edit `depleted_at` in `mining_hotspots.json` to 15 days ago and reopen the Book. The mark is gone and the card reads `Assumed refilled`.
+  - Press Mark depleted again with no mining. The card reads `Still depleted at ...; look again in 7 d`.
+  - The dialog's Edit keeps these dates.
+- [ ] **Surface Mining Book: Market research.** Tick *Enable Spansh best price finder*, open the Book on a system with saved hotspots, press **Market research**.
+  - Compare the buyers with the in-game market (price, demand, pad size).
+  - A system with no records reports so and suggests nothing.
+  - Test the *Also check* box with a misspelled name.
+  - Test a busy system (the note about the first 100 stations).
 - [ ] **Surface Compass.** The compass replaces the Mining waypoint arrow. On a landable surface, verify:
   - **Test Compass**.
   - The arrow follows the nearest hotspot as the commander turns.
-  - **Mark** (the body name is taken from `Status.json`'s `BodyName`, which was seen in a real file on 2026-10-16, game 4.4.1.1).
+  - **Mark** (the body name is taken from `Status.json`'s `BodyName`, seen in a real file on 2026-10-16, game 4.4.1.1).
   - **Target**.
   - The Marks window.
   - The previous Mining tick and arrow are removed while the saved placement is kept.
@@ -418,54 +394,54 @@ The items below are implemented and covered by unit tests, but have not all been
 
 - [ ] **Built-in overlay.** Settings → Overlays → Overlay Connection → Which overlay draws → WFMT built-in overlay, OK, start Elite borderless or windowed (EDMCModernOverlay may stay running).
   - Check:
-    - Every card appears where Overlay Placement says (try the corners and edges).
-    - Text and panels look right at every text size and color scheme.
-    - The radar's circles and lines are the right size and place.
+    - Every card appears where Overlay Placement states (test the corners and edges).
+    - Text and panels render correctly at every text size and color scheme.
+    - The radar's circles and lines have the correct size and place.
     - The Sample popup shows and goes away.
-    - The Hide overlays shortcut (Ctrl+Alt+Shift+O by default) hides and shows it.
-    - The overlay follows the game window, hides on alt-tab and comes back above Elite.
+    - The Hide overlays shortcut (Ctrl+Alt+Shift+O by default) hides and shows the overlay.
+    - The overlay follows the game window, hides on alt-tab and returns above Elite.
     - Clicks reach the game, and there is no stutter.
-    - Win+Shift+S and Print Screen keep it up.
-    - The converted screenshot includes it when ticked.
+    - Win+Shift+S and Print Screen keep the overlay up.
+    - The converted screenshot includes the overlay when ticked.
     - Switching back to EDMCModernOverlay works.
   - **Fonts:**
     - Appearance → Overlay font lists Source Sans 3.
-    - Add font file... copies a font into WFMT's `fonts` folder and it is used at once.
+    - Add font file... copies a font into WFMT's `fonts` folder and the font is used at once.
     - A font stays after a WFMT update.
     - A deleted font falls back to Source Sans 3.
   - Not yet checked: the triple-screen span, ultrawide, other monitors.
-  - Details of what is left are in `docs/NATIVE_OVERLAY_SPEC.md`.
+  - Remaining details: `docs/NATIVE_OVERLAY_SPEC.md`.
 - [ ] **Per-commander overlay settings.** With two commanders (Mactavious is the second test commander):
-  - Switch the Expedition Log card on and move a card for the first.
-  - Log in as the second and confirm the second starts with a copy. Then turn the card off and move another card.
-  - Log back in as the first (without restarting EDMC, then again after a restart). Confirm each commander's cards, positions, Show ticks, text size, color scheme and font are their own and appear at once.
-  - Confirm the Overlay Placement tab names the commander.
-  - Confirm that `overlay_settings.json` appears beside the plugin and survives an update.
-  - Confirm that the overlay's connection (which overlay draws, host and port) stays the same for both.
-  - Check a card shown by one commander is cleared when the other logs in.
-- [ ] **Every overlay off after the reset.** (Windows and Linux.) Restart EDMC with this build. The log has `All WFMT overlays reset to disabled (one-time), including the saved choices of N commander(s)` once, and no card shows for any commander (log in as each one you have). Turn a card on, restart, and it is still on.
-- [ ] **Screen size from the operating system.** (Windows and Linux.) Overlay Placement names where the size came from.
-  - With the game's `DisplaySettings.xml` and the overlay's log out of the way, **Detect screen again** should say it is using the primary display, with your real resolution. Windows reads the hardware size (3840 x 2160 at 125% reads 3840 x 2160). Linux reads `xrandr`'s primary output, through the host from a Flatpak: report the session type and whether `xrandr` is installed.
-  - On an ultrawide (21:9 or 32:9) or a triple-screen span: the placement preview draws every box on the screen and none on another, and the cards sit where the preview put them in the game.
+  - Switch the Expedition Log card on and move a card for the first commander.
+  - Log in as the second commander and confirm that it starts with a copy. Then turn the card off and move another card.
+  - Log back in as the first commander (without restarting EDMC, then again after a restart). Each commander's cards, positions, Show ticks, text size, color scheme and font are their own and appear at once.
+  - The Overlay Placement tab names the commander.
+  - `overlay_settings.json` appears beside the plugin and survives an update.
+  - The overlay's connection (which overlay draws, host and port) is the same for both.
+  - A card shown by one commander is cleared when the other logs in.
+- [ ] **Every overlay off after the reset.** (Windows and Linux.) Restart EDMC with this build. The log has `All WFMT overlays reset to disabled (one-time), including the saved choices of N commander(s)` once, and no card shows for any commander (log in as each one). Turn a card on and restart. The card is still on.
+- [ ] **Screen size from the operating system.** (Windows and Linux.) Overlay Placement states where the size came from.
+  - With the game's `DisplaySettings.xml` and the overlay's log out of the way, **Detect screen again** states that the primary display is used, with the real resolution. Windows reads the hardware size (3840 x 2160 at 125% reads 3840 x 2160). Linux reads `xrandr`'s primary output, through the host from a Flatpak. Report the session type and whether `xrandr` is installed.
+  - On an ultrawide (21:9 or 32:9) or a triple-screen span: the placement preview draws every box on the screen and none on another, and the cards sit in the game where the preview placed them.
 - [ ] **Clearing lines and circles on the overlay.** With EDMCModernOverlay:
-  - Sample a plant with the Exobiology radar on and walk away or analyze it. The pointer and circle go at once, not after a few seconds, and no white dot is left where a circle was.
+  - Sample a plant with the Exobiology radar on and walk away or analyze it. The pointer and circle go at once, not after a few seconds, and no white dot remains where a circle was.
   - Land, then lift off with Landing's diagram on. The diagram goes.
   - Switch on the Surface Compass, then turn it off. The arrow goes.
   - Press **Hide overlays** with the radar showing. Lines and circles go.
-  - Open `EDMarketConnector.log` and check there are no `Dropping vect payload with insufficient points` lines for `wfmt_` ids.
-  - With the built-in overlay, check the same displays clear.
+  - Open `EDMarketConnector.log` and confirm that no `Dropping vect payload with insufficient points` lines for `wfmt_` ids appear.
+  - With the built-in overlay, confirm that the same displays clear.
   - Then Linux.
-- [ ] **Layout editor and card anchoring.** *Windows: the drag-and-drop editor confirmed working in the game, 2026-10-16; the flush-edge and circle-placement checks are still to confirm.*
-  - Open Overlay Placement. Drag a few boxes and check the table fills in and the boxes snap to the edges and grid.
+- [ ] **Layout editor and card anchoring.** *Windows: the drag-and-drop editor was confirmed working in the game on 2026-10-16. The flush-edge and circle-placement checks remain.*
+  - Open Overlay Placement. Drag a few boxes. The table fills in and the boxes snap to the edges and grid.
   - Press *Show placement preview* and compare with the picture.
   - Set a card to the bottom or right with offset 0 (for example Biology at the bottom left and System targets at the bottom right).
-    - Check each sits flush against the screen edge.
-    - Check that the Bio radar's circles and the Bio status dots sit inside their cards.
+    - Each sits flush against the screen edge.
+    - The Bio radar's circles and the Bio status dots sit inside their cards.
   - Report any card that is still off by a fixed amount.
 - [ ] **Alert widths.** Trigger a Notable Bodies alert (or **Test Notable**) and a Discovery alert for a body or system with a long capitalized catalog name.
-  - Confirm that the whole name fits inside the card at Default and Larger text sizes.
-  - On the Missions overlay card, check a mission with a long station or system name: the place should move to a second line under the title, in the same color.
-  - Report any text that still extends past an edge.
+  - The whole name fits inside the card at Default and Larger text sizes.
+  - On the Missions overlay card, test a mission with a long station or system name: the place moves to a second line under the title, in the same color.
+  - Report any text that extends past an edge.
 - [ ] **Overlay padding and alignment.** The overlay cards share one padding and left-justify their text.
   - Check these cards: Colonization, Discovery (system and body), Notable Bodies, Interdiction, Landing, Missions, Flight Alerts, Mining, Surface Compass and the Screenshot message.
   - On each, confirm:
@@ -473,233 +449,232 @@ The items below are implemented and covered by unit tests, but have not all been
     - Every line starts at the same left edge (no centered title or name).
     - The right edge has no extra blank strip.
     - No text runs past the border at Default and Larger text sizes.
-  - Also confirm the Text size menu offers only Default and Larger.
+  - The Text size menu offers only Default and Larger.
 - [ ] **Flight Alerts.**
   - Verify the Test Card.
   - Verify fuel warnings with a plotted neutron star and with a high fuel percentage.
-  - Verify the carrier jump countdown with a real scheduled jump. This is not yet verified: the feature reads `CarrierJumpRequest`, and its field names and flag bits come from the journal documentation rather than from a recorded event.
+  - Verify the carrier jump countdown with a real scheduled jump. This is not verified: the feature reads `CarrierJumpRequest`, and its field names and flag bits come from the journal documentation, not from a recorded event.
   - Verify the sound.
   - Verify the card position (right side, below the Inventory display).
 - [ ] **Body info symbols, Biology ranges and panel opacity.** On a landable body, check:
   - Body info writes the materials as symbols (`Fe`, `S`, `Na`) and the atmosphere and volcanism as formulas (`CO2`, `SO2`). The Body info tab's choice of full names switches it back.
   - The Biology card shows the range an open genus could pay with an even-share percentage for each candidate, and the footer range with the first footfall figure on its own line.
-  - Settings → Overlays → Appearance → Panel opacity changes every card's background (lower values let the game show through, the text stays solid).
+  - Settings → Overlays → Appearance → Panel opacity changes every card's background (lower values let the game show through; the text stays solid).
 - [ ] **System targets and Body info cards.** Enable both (Settings → Overlays), press **Test Card** on each, then explore a system.
   - After a honk and some scans, confirm:
-    - System targets lists the scanned planets and moons at or above the threshold with sensible values. Compare a few with the credits the game pays when you scan them; the estimate is the scan value, not the mapping value.
-    - A body drops off when you map it.
-    - Bodies with life appear with the right count and drop off when you analyze the last organism.
-    - It clears when you jump, and restarting EDMC mid-system brings it back.
-  - Target a body in the system map and fly close to one. Body info should show the body you targeted, then the one you are near.
-  - Check the default spots (lower middle of the right half) against your HUD and note any card that sits badly.
+    - System targets lists the scanned planets and moons at or above the threshold with plausible values. Compare a few with the credits the game pays for scanning them; the estimate is the scan value, not the mapping value.
+    - A body drops off when it is mapped.
+    - Bodies with life appear with the correct count and drop off when the last organism is analyzed.
+    - The card clears on a jump, and restarting EDMC mid-system brings it back.
+  - Target a body in the system map and fly close to one. Body info shows the targeted body, then the one nearby.
+  - Compare the default spots (lower middle of the right half) with the HUD and note any card that overlaps it.
   - The format of `Status.json`'s `Destination` is confirmed (2026-10-16: `System` is the system address, `Body` the body ID, `Name` the full name).
-- [ ] **Mapped value and the corrected scan value.** Compare the Scan value and Mapped value on Body info with what the game paid for a few bodies you scan and map (the estimates should be close, not exact). Check the Exploration Value readout and System targets read sensibly.
-- [ ] **Missions overlay card.** Enable the card (Settings → Overlays → Missions), press **Test Card**, and then fly with a real mission board.
-  - Verify that HERE and NEXT follow the current system and the targeted system.
-  - Verify that times count down.
-  - Verify that a finished mission shows a tick.
-  - Verify that the card keeps one width.
-  - Verify that it sits in the chosen corner without covering the HUD.
-  - Record which rows should be added or removed (the label for each kind of mission, and the row limit).
-
-- [ ] **Powerplay card:** Settings → WFMT → Overlays → Powerplay, tick *Enable the Powerplay card* and press **Test Card**: a card headed *Sample System* with *Rank 12* appears at the top right, showing **Your Power**, Total merits, the Cycle merits, System, Held by, *Merits here count as* and the Reinforcement and Delivery/Donation rows, and clears after a few seconds.
-- [ ] **Powerplay card in a Powerplay system:** jump into a system with a Powerplay state: the card shows your Power and rank, the system's state and holder, what merits there count as, and nothing under *Earned here* until you earn some; after earning merits it lists each type with merits and, except for Delivery and Unattributed, the estimated Control Points (they match the Powerplay panel).
-- [ ] **No Powerplay Detected:** jump to a system with no Powerplay state (a populated system with no Power presence, say): the card is headed with the system's name and says **No Powerplay Detected in system**. Right after starting EDMC mid-session, before your first jump, the card stays blank instead of saying so.
-- [ ] **Look-ahead:** tick *Look up the system I am jumping to* and start a hyperspace jump to a Powerplay system: the card turns to the destination as soon as the jump charges (marked *jumping*, `Looking up Powerplay…` for a moment, then its state, holder, what merits there count as and, when the lookup is fresh, a control progress percentage) and to the system you arrive in when the jump ends. A jump to a system with no Powerplay data says **No Powerplay Detected in system**. A jump you cancel or are interdicted out of puts the card back on the system you are in. With the tick off, the card never turns to the destination and nothing is sent to Spansh.
-- [ ] **Loop route:** with the look-ahead on, fly a loop of Powerplay systems twice: the second lap's destinations show at once, with no `Looking up…`, and the log shows no new Spansh request for them (only systems you have not arrived in within the hour are asked about). A destination's percentage is gone ten minutes after the card first showed it.
+- [ ] **Mapped value and the corrected scan value.** Compare the Scan value and Mapped value on Body info with what the game paid for a few bodies scanned and mapped (the estimates are close, not exact). Confirm that the Exploration Value readout and System targets read plausibly.
+- [ ] **Missions overlay card.** Enable the card (Settings → Overlays → Missions), press **Test Card**, then fly with a real mission board.
+  - HERE and NEXT follow the current system and the targeted system.
+  - Times count down.
+  - A finished mission shows a tick.
+  - The card keeps one width.
+  - It sits in the chosen corner without covering the HUD.
+  - Record which rows need to be added or removed (the label for each kind of mission, and the row limit).
+- [ ] **Powerplay card:** Settings → WFMT → Overlays → Powerplay, tick *Enable the Powerplay card* and press **Test Card**. A card headed *Sample System* with *Rank 12* appears at the top right, showing **Your Power**, Total merits, the Cycle merits, System, Held by, *Merits here count as* and the Reinforcement and Delivery/Donation rows, and clears after a few seconds.
+- [ ] **Powerplay card in a Powerplay system:** jump into a system with a Powerplay state. The card shows the commander's Power and rank, the system's state and holder, what merits there count as, and nothing under *Earned here* until merits are earned. After merits are earned, it lists each type with merits and, except for Delivery and Unattributed, the estimated Control Points (they match the Powerplay panel).
+- [ ] **No Powerplay Detected:** jump to a system with no Powerplay state (a populated system with no Power presence, for example). The card is headed with the system's name and reads **No Powerplay Detected in system**. After EDMC starts mid-session and before the first jump, the card stays blank.
+- [ ] **Look-ahead:** tick *Look up the system I am jumping to* and start a hyperspace jump to a Powerplay system. The card turns to the destination as soon as the jump charges (marked *jumping*, `Looking up Powerplay…` for a moment, then its state, holder, what merits there count as and, when the lookup is fresh, a control progress percentage) and to the arrival system when the jump ends. A jump to a system with no Powerplay data reads **No Powerplay Detected in system**. A cancelled jump, or an interdiction out of a jump, puts the card back on the current system. With the tick off, the card never turns to the destination and nothing is sent to Spansh.
+- [ ] **Loop route:** with the look-ahead on, fly a loop of Powerplay systems twice. The second lap's destinations show at once, without `Looking up…`, and the log shows no new Spansh request for them (only systems not arrived in within the hour are queried). A destination's percentage disappears ten minutes after the card first showed it.
 
 ### Exploration and survey
 
 - [ ] **Local star index.** Settings → WFMT → General → Online lookups → Local star index: press **Download and build**.
   - Check the progress.
-  - Check that **Cancel** stops it (a cancelled download resumes the next press).
-  - Check the free-space message with little disk left.
+  - **Cancel** stops the download (a cancelled download resumes at the next press).
+  - Check the free-space message with little disk space left.
   - Check the finished status (systems, size, date).
-  - Press **Neutron Star**: the status line reads `... local index` and the result matches Spansh's own search for the same position.
-  - Untick *Use the local index* and Neutron Star asks Spansh again.
-  - **Delete** removes it.
-  - Restart EDMC and the index is still there.
-  - After a WFMT update it is still there, and Back up my data leaves it out.
-  - Check the Neutron Star line fits the panel's wrap width.
+  - Press **Neutron Star**. The status line reads `... local index` and the result matches Spansh's search for the same position.
+  - Untick *Use the local index*. Neutron Star queries Spansh again.
+  - **Delete** removes the index.
+  - Restart EDMC. The index is still there.
+  - After a WFMT update the index is still there, and Back up my data leaves it out.
+  - The Neutron Star line fits the panel's wrap width.
   - Then **Update** the next day or later:
     - The status line reads `Updated from Spansh's 1-day file (about 3 MB)` with a count of systems changed.
-    - The line under Installed says `up to date as of` today's date and `1 update since`.
-    - Pressing **Update** again at once says it is already up to date without downloading.
+    - The line under Installed reads `up to date as of` the current date and `1 update since`.
+    - Pressing **Update** again at once reports that the index is already up to date, without downloading.
     - After a week or more without updating, **Update** uses the 1-week file (about 19 MB).
     - More than a week behind, it downloads the full 173 MB file again.
-    - Neutron Star still answers the same as Spansh's own search after an update.
+    - Neutron Star still answers as Spansh's search does after an update.
   - Then Linux:
     - The plugin folder of a Flatpak EDMC is writable and has room (about 300 MB free while building).
-    - Check the real build time on the real 173 MB file and on an update.
-- [ ] **Exploration Dashboard.** Press **Dashboard** on the Exploration panel in each of these places and check the window against the game and your overlays.
+    - Record the build time on the real 173 MB file and on an update.
+- [ ] **Exploration Dashboard.** Press **Dashboard** on the Exploration panel in each of these places and compare the window with the game and the overlays.
   - In a system with several bodies after a honk and some scans (Orbit):
-    - Orbit lists every body with sensible distance, gravity, atmosphere and values.
-    - Click a row for the details.
+    - Orbit lists every body with plausible distance, gravity, atmosphere and values.
+    - A click on a row shows the details.
     - The worth-mapping and life lists agree with the System targets card.
     - First discoveries and first footfalls are marked.
-  - Land. The window should switch to Surface by itself.
+  - Land. The window switches to Surface by itself.
     - The body's conditions and materials match Body info.
     - The genus table agrees with the Biology card.
     - Its Progress column reads `Collecting: 1/3` after a Log and `Analyzed: 3/3` once paid out.
     - It follows each sample with the distance from the last one.
     - The Specimens being tracked table's distance and direction match the Bio radar.
-    - Ship and SRV distances look right.
-  - Lift off (back to Orbit), and look at Overview and Exploration with an expedition running.
-  - Then the header buttons:
-    - **Exploration overlays** should clear Route, System targets, Body info, Expedition Log, Compass, Discovery and Notable cards and bring back exactly the ones you had switched on.
-    - **Exobiology overlays** the same for its four cards.
-    - Hiding both then **Hide overlays** and showing again must leave them hidden/shown as expected.
+    - Ship and SRV distances are plausible.
+  - Lift off (back to Orbit) and inspect Overview and Exploration with an expedition running.
+  - Header buttons:
+    - **Exploration overlays** clears the Route, System targets, Body info, Expedition Log, Compass, Discovery and Notable cards and restores exactly those that were switched on.
+    - **Exobiology overlays** does the same for its four cards.
+    - Hiding both, then **Hide overlays**, then showing again leaves the cards hidden and shown as expected.
     - Neither changes anything in Settings (open Settings and check the ticks).
-  - Check it with the built-in overlay and with EDMCModernOverlay.
-  - Check that leaving the window open does not slow the game or EDMC.
+  - Check with the built-in overlay and with EDMCModernOverlay.
+  - Leaving the window open does not slow the game or EDMC.
   - Then Linux.
 - [ ] **Random.** Press **Random** a few times near a procedurally named system.
-  - Check that each name plots on the galaxy map.
-  - Check that the status line gives a distance and says whether EDSM confirmed it.
-  - Check that a second press within 5 ly is much quicker (the Spansh list is cached for 10 minutes) and offers a different system.
-  - Check that **Settings → Exploration → Boxel Survey → Systems to request from Spansh** changes how many systems are requested.
+  - Each name plots on the galaxy map.
+  - The status line gives a distance and states whether EDSM confirmed it.
+  - A second press within 5 ly is much quicker (the Spansh list is cached for 10 minutes) and offers a different system.
+  - **Settings → Exploration → Boxel Survey → Systems to request from Spansh** changes how many systems are requested.
   - Then Linux.
 - [ ] **Region Sweep: skip systems EDSM knows.** Tick **Skip systems already visited by anyone (EDSM)** in Settings → Exploration → Region Sweep, add a cube and press **Next >** (or jump).
-  - The status line says `Checking EDSM...`, then `Skipped N systems already known to EDSM - next: <name>` when it stepped past some. A run of known systems stops at 20 and says so.
-  - Offline, it says `EDSM check unavailable - showing candidate anyway` and offers the candidate.
+  - The status line reads `Checking EDSM...`, then `Skipped N systems already known to EDSM - next: <name>` when it stepped past some. A run of known systems stops at 20 and states so.
+  - Offline, it reads `EDSM check unavailable - showing candidate anyway` and offers the candidate.
   - Then Linux.
 - [ ] **System targets, visit history.** Restart EDMC and watch the card.
-  - It should say `Reading your journals for a visit history (n%)` for the first read (about 40 seconds for thousands of journals).
-  - Then it should show `First visit here` in a system you have never entered, and `Been here N times before · last <date> · you scanned here` in one you have.
-  - A relog in the same system must not add a visit. Jumping away and back adds one.
-  - Check `system_history.json` appears and is not shared with a second commander.
+  - It reads `Reading your journals for a visit history (n%)` during the first read (about 40 seconds for thousands of journals).
+  - It then shows `First visit here` in a system never entered, and `Been here N times before · last <date> · you scanned here` in one that was.
+  - A relog in the same system adds no visit. Jumping away and back adds one.
+  - `system_history.json` appears and is not shared with a second commander.
 - [ ] **System targets, what others found (Spansh).** Tick the Spansh option under Settings → Overlays → System targets, then jump to a system others have surveyed (one with biology).
-  - Check the card shows a Known section and a `Known (Spansh)` line before you honk, with rewards that look right against the in-game signals.
-  - Check that scanning a body with life moves it to the Life list.
-  - Check that a system nobody has scanned shows no Known section and the usual `Nothing ... to map yet`.
-  - Check that unticking it clears the section on the next jump.
+  - The card shows a Known section and a `Known (Spansh)` line before a honk, with rewards that match the in-game signals.
+  - Scanning a body with life moves it to the Life list.
+  - A system nobody has scanned shows no Known section and the usual `Nothing ... to map yet`.
+  - Unticking the option clears the section on the next jump.
 - [ ] **A system scanned while EDMC was closed.** Close EDMC, play: jump to a system nobody has scanned, honk and scan several bodies, quit the game.
   - Start EDMC, then the game, and Continue into the same system (a relog into it, EDMC started before the game).
-  - System targets, Body info and the Dashboard's Orbit tab should list the bodies you scanned and what is worth mapping, within a few seconds.
-  - Check an EDMC start while already in the game too.
-  - Check that a system you scan with EDMC running is unchanged.
+  - System targets, Body info and the Dashboard's Orbit tab list the bodies scanned and what is worth mapping, within a few seconds.
+  - Check an EDMC start while already in the game as well.
+  - A system scanned with EDMC running is unchanged.
   - Then Linux.
-- [ ] **System survey memory (where you left off).** Survey a few bodies in a system, jump away and back (and log out and back in).
-  - The System targets card should show the same `N of M scanned`, the summary line (`1 mapped · life 1 of 3 done`), what is left to map and the life still to analyze, and the **Done** list of what you finished.
-  - For a system you were in before WFMT was installed, the first return should rebuild it from your journals within a second or two.
-  - Check that another commander sees none of it.
-  - Check that `system_surveys.json` appears beside the plugin, survives an update, and stays small.
+- [ ] **System survey memory (where the commander left off).** Survey a few bodies in a system, jump away and back (and log out and back in).
+  - The System targets card shows the same `N of M scanned`, the summary line (`1 mapped · life 1 of 3 done`), what is left to map, the life still to analyze, and the **Done** list of what was finished.
+  - For a system visited before WFMT was installed, the first return rebuilds it from the journals within a second or two.
+  - Another commander sees none of it.
+  - `system_surveys.json` appears beside the plugin, survives an update, and stays small.
 - [ ] **Nearest place to land.** In the game: press Find in Exploration, tick the box, press Find.
-  - Check your system, coordinates and ship's pad are right.
-  - Check the nearest stations and carriers look sensible against the galaxy map (for the carriers, the age shown).
-  - Check that a pad your ship cannot use never appears.
-  - Check that the fuel, repair, rearm and outfitting choices change the list.
-  - Try it from a system nobody has charted (a fresh discovery) and with a small, a medium and a large ship.
-- [ ] **Exobiology cards.** *Windows: used in the game on 2026-10-16 (status, biology, radar, circles, first footfall and the progress bar) and working; the sample popup and the red and green circles are still to confirm.*
-  - Enable them (Settings → Overlays → Exobiology), press **Test Cards**, then sample on a body you have mapped.
-  - Bio status shows the species, variant, three circles filling as you sample, the reward (with the first footfall bonus where it applies) and the distance to the last sample.
-  - Biology lists the genera with sensible candidates and values.
-  - The Bio radar's circles sit where you took the samples, turn red when you walk back inside them and show the ship and SRV. The circle shape's position and radius are drawn from the overlay's circle command and have not been seen in the game yet.
+  - The system, coordinates and ship's pad are correct.
+  - The nearest stations and carriers match the galaxy map (for the carriers, the age shown).
+  - A pad the ship cannot use never appears.
+  - The fuel, repair, rearm and outfitting choices change the list.
+  - Test from a system nobody has charted (a fresh discovery) and with a small, a medium and a large ship.
+- [ ] **Exobiology cards.** *Windows: used in the game on 2026-10-16 (status, biology, radar, circles, first footfall and the progress bar) and working. The sample popup and the red and green circles remain to be confirmed.*
+  - Enable them (Settings → Overlays → Exobiology), press **Test Cards**, then sample on a body that has been mapped.
+  - Bio status shows the species, variant, three circles filling as samples are taken, the reward (with the first footfall bonus where it applies) and the distance to the last sample.
+  - Biology lists the genera with plausible candidates and values.
+  - The Bio radar's circles sit where the samples were taken, turn red when the commander walks back inside them and show the ship and SRV. The circle shape's position and radius are drawn from the overlay's circle command and have not been seen in the game.
   - The Sample popup appears for each sample.
 - [ ] **Plant waypoints.**
-  - *Several genera at once:* identify plants of two or three genera. Check there is a colored pointer, ring and row for each, that sampling a plant removes its pointer and the genus moves to its next plant, and that analyzing a genus removes it.
-  - *Windows: confirmed working in the game with the little pointers, 2026-10-16; the persistence across a restart and the dropped-on-sample behavior are still to confirm.*
+  - *Several genera at once:* identify plants of two or three genera. Each has a colored pointer, ring and row. Sampling a plant removes its pointer and the genus moves to its next plant. Analyzing a genus removes it.
+  - *Windows: confirmed working in the game with the little pointers on 2026-10-16. The persistence across a restart and the dropped-on-sample behavior remain to be confirmed.*
   - Scan a plant with the Composition Scanner, walk off, and check:
-    - The Bio radar shows a ring with the genus letter, a pointer line toward it and `Tracking <species>` with the right distance and direction (it should read `ahead` when you face it and swap right and left if you turn around).
-    - The little pointers before each distance under the radar turn to face the ship, the SRV, your first samples and the tracked plant. A pointer that is up means straight ahead.
+    - The Bio radar shows a ring with the genus letter, a pointer line toward it and `Tracking <species>` with the correct distance and direction (it reads `ahead` when facing it and swaps right and left on turning around).
+    - The little pointers before each distance under the radar turn to face the ship, the SRV, the first samples and the tracked plant. A pointer that is up means straight ahead.
     - Bio status shows the same line.
     - Taking the first sample at the plant removes it from the list.
-    - It all survives restarting EDMC.
-  - The codex scan's latitude and longitude are assumed to be the plant's own position. Compare with where you stood.
-- [ ] **Tracked plant markers and likely colors.** Scan a plant from your ship, then from an SRV, then on foot.
-  - Check the marker's ring is widest for the ship and smallest on foot.
-  - Check the distance has a `~` unless on foot.
-  - Check a sample taken within the reach (about 450, 300 and 100 m) drops the marker.
-  - On a body with life, check the Biology card's `Likely color` matches the color a sample then names, and that a multi-star system can be wrong.
+    - All of this survives restarting EDMC.
+  - The codex scan's latitude and longitude are assumed to be the plant's own position. Compare with the position where the commander stood.
+- [ ] **Tracked plant markers and likely colors.** Scan a plant from the ship, then from an SRV, then on foot.
+  - The marker's ring is widest for the ship and smallest on foot.
+  - The distance has a `~` unless on foot.
+  - A sample taken within the reach (about 450, 300 and 100 m) drops the marker.
+  - On a body with life, the Biology card's `Likely color` matches the color a sample then names. A multi-star system can differ.
 - [ ] **Prediction review and the record of finds.** Sample a few species with WFMT running.
-  - Check that `exo_observations.json` gains a record for each.
+  - `exo_observations.json` gains a record for each.
   - Open **Review** on the Organic Scanning panel and check the Finds, By genus, Ranges and Together tabs, a review status and note, and Copy report.
   - Turn the record off and clear it in the Prediction review window.
 - [ ] **My Codex.** Press **My Codex** in the Codex Completionist section.
-  - Check the Overview totals against the Found tab.
-  - Check that Closest to complete lists types that are started but not finished.
-  - Check that a missing biological entry's **Where to look** names conditions and a star class or material you can check in the game.
-  - Check that sorting a heading works on each tab.
-  - Check that **Backfill Journals** reports in the window's status bar and the section.
+  - The Overview totals agree with the Found tab.
+  - Closest to complete lists types that are started but not finished.
+  - A missing biological entry's **Where to look** names conditions and a star class or material that can be checked in the game.
+  - Sorting a heading works on each tab.
+  - **Backfill Journals** reports in the window's status bar and the section.
   - Then Linux.
 - [ ] **Megaship scans.** In a Powerplay system, drop out of supercruise at a megaship and scan its datalink.
-  - Confirm that the panel line and the **Report → Megaships** row appear with the correct name and system.
-  - Confirm that the merits are filled in shortly afterward.
-  - Confirm that a second scan of the same megaship changes nothing, and that a scan at a station adds nothing.
-  - Restart EDMC and confirm that the list is retained.
+  - The panel line and the **Report → Megaships** row appear with the correct name and system.
+  - The merits are filled in shortly afterward.
+  - A second scan of the same megaship changes nothing, and a scan at a station adds nothing.
+  - Restart EDMC. The list is retained.
 
 ### Ships, materials and engineering
 
 - [ ] **Stored modules.** Open Module Storage at a station, then Ship Builds → **Stored modules**.
   - The list matches the game's Module Storage (module, class, engineering, system and station, transfer cost and time, hot, in transit).
   - The freshness line names the last visit.
-  - Store a module, retrieve one and swap one, and check the tab follows. A swapped-out module shows engineering as `?` until the next visit to Module Storage.
-  - Restart EDMC after a session with storage changes and check the list catches up from the journals.
-  - Check a second commander sees none of it, the filter box, and the tab at its minimum width.
+  - Store a module, retrieve one and swap one, and confirm that the tab follows. A swapped-out module shows engineering as `?` until the next visit to Module Storage.
+  - Restart EDMC after a session with storage changes. The list catches up from the journals.
+  - A second commander sees none of it. Check the filter box and the tab at its minimum width.
   - Then Linux.
 - [ ] **Ship planner links.** Paste a Coriolis link made with **Copy Coriolis link** and an EDSY link made with **Copy EDSY link** into the Ship planner.
-  - Check the same build is read.
-  - Press **Open in Coriolis** and **Open in EDSY** and check each site shows the ship with its modules and engineering. EDSY has not been tried with a link WFMT made.
-  - Try a very large engineered build for the Coriolis length message.
-  - Paste an EDSY `#/L=` address and a Coriolis `/outfit/` address and check the message explains why they cannot be read.
+  - The same build is read.
+  - Press **Open in Coriolis** and **Open in EDSY**. Each site shows the ship with its modules and engineering. EDSY has not been tried with a link made by WFMT.
+  - Test a very large engineered build for the Coriolis length message.
+  - Paste an EDSY `#/L=` address and a Coriolis `/outfit/` address. The message explains why they cannot be read.
 - [ ] **Ship planner.** Export a build from EDSY and from Coriolis as SLEF, paste it, and compare the modules, levels and experimental effects with the build.
   - Verify **Add plan to wishlist**, including the refusal when it would exceed 100 blueprints or 99 crafts.
   - Verify the **Rolls per grade** setting.
   - Verify a pre-engineered module, and a `Loadout` line copied from a journal.
   - Then verify **Subtract what my current ship already has** with a build for the ship currently flown (it reads the newest journal).
-  - Verify the **In storage** column: open Module Storage once at a station, then read a build that holds a module you have stored. It should say Yes for the same engineering at the level or above, Partly for other engineering, and nothing for a module fitted to a ship. Select the row for where it is.
+  - Verify the **In storage** column: open Module Storage once at a station, then read a build that holds a stored module. The column reads Yes for the same engineering at the level or above, Partly for other engineering, and nothing for a module fitted to a ship. Select the row for where the module is.
 - [ ] **Materials.** Compare the login `Materials` list with the in-game inventory.
-  - Verify that MaterialCollected, MaterialDiscarded, a trade, a synthesis and an engineer craft each change the correct counts.
+  - MaterialCollected, MaterialDiscarded, a trade, a synthesis and an engineer craft each change the correct counts.
   - Verify the display at a grade limit.
-  - Verify that the row does not widen the EDMC window.
+  - The row does not widen the EDMC window.
   - EDMC's state keys `Raw`, `Manufactured` and `Encoded` were checked against EDMC's `monitor.py` on 2026-10-13.
 - [ ] **Material trader finder.** Find a trader from the current system and compare a result with the galaxy map (the station has that trader type and the stated pad size).
   - Verify the Within and Pad filters, a typed system, copy on double-click, and that no other network request is made.
   - Spansh's `material_trader` filter was checked with live requests for all three values, but not through the window.
 - [ ] **Engineering blueprints, wishlist and Engineers tab.** Select several blueprints (a ship module, and an Odyssey suit or weapon blueprint).
   - Compare each ingredient's Have value with the in-game inventory.
-  - Confirm that an Odyssey ingredient counts the **ship locker**. The game's rule is unconfirmed: does an upgrade also draw on the backpack?
+  - Confirm that an Odyssey ingredient counts the **ship locker**. Unconfirmed: whether an upgrade also draws on the backpack.
   - Confirm that an unlock requiring trade goods states that they are not counted.
   - Confirm which engineer can complete each wishlist entry, that "ready" follows list order, and the Wishlist line on the Engineering section.
   - On the Engineers tab:
     - Compare status, rank and rank-ups (a rank-only event) with the in-game Engineers panel.
     - Verify the **Where** column, the detail text and the Bubble / Colonia filter.
   - The Colonia engineers' upgrades and locations come from a published table and a community list, not from the game.
-  - **Unlock paths** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 10): the numbered path for a selected engineer and which steps are marked done, the chain of engineers to deal with first, the **Next step** column, the on-foot hand-in steps, and the rank and lifetime-figure notes for the 18 engineers whose invitation can be checked against the journal. Compare each with the in-game Engineers panel and Commander statistics.
-  - Open: the other 20 engineers' invitation requirements (a faction's standing, missions of one kind, a bartender sale, a minor faction rank) are not in the journal as a total, so they stay as the table's words with no check. [ENGINEER_DATA_COLLECTION.md](ENGINEER_DATA_COLLECTION.md) lists what to gather for each engineer and the guide format. Their details say **Verification needed**, and **Report engineer data** collects what players see in the game.
-  - Also compare several recipes with the game: the table dates from March 2024 plus later corrections.
+  - **Unlock paths** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 10): the numbered path for a selected engineer and which steps are marked done, the chain of engineers to deal with first, the **Next step** column, the on-foot hand-in steps, and the rank and lifetime-figure notes for the engineers whose invitation can be checked against the journal. Compare each with the in-game Engineers panel and Commander statistics.
+  - Recorded limit: the invitation requirements of the other engineers (a faction's standing, missions of one kind, a bartender sale, a minor faction rank) are not in the journal as a total, so they appear as the table's words with no check. [ENGINEER_DATA_COLLECTION.md](ENGINEER_DATA_COLLECTION.md) lists what to gather for each engineer and the guide format. Their details read **Verification needed**, and **Report engineer data** collects what players see in the game.
+  - Compare several recipes with the game: the table dates from March 2024 plus later corrections.
 - [ ] **Upgrade planner.** Select an item, a class range and modifications and add them to the wishlist.
-  - Compare the materials with the in-game upgrade screen for an item other than the eight confirmed ones (Karma P-15, Manticore Intimidator and Oppressor, TK Aphelion, Eclipse and Zenith).
+  - Compare the materials with the in-game upgrade screen for an item that has no `CREDIT_UNIT` entry (Karma P-15, Manticore Intimidator, Manticore Oppressor, TK Aphelion, TK Eclipse, TK Zenith).
   - Test **Read my gear** and compare the result with the commander's loadouts.
   - Record the credits shown at the upgrade screen. Each confirmed value is a line in `odyssey_upgrade_plan.CREDIT_UNIT` (or submit the `UpgradeWeapon` journal line).
 
 ### Missions, trade and colonization
 
 - [ ] **Missions window and pinned missions.** With a real mission board, open the window from the **Missions window** button at the bottom of the panel.
-  - Check the Active and By place tabs, the summary line and the detail strip against the game's mission board.
+  - Compare the Active and By place tabs, the summary line and the detail strip with the game's mission board.
   - Pin two missions and confirm the PINNED section on the overlay card (and that a pinned mission is removed when it is handed in).
 - [ ] **Mission progress colors.** Take two source-and-return missions and buy part of the cargo.
-  - Confirm that the Missions window shows `N/total held` with a bar.
-  - Confirm that the row turns blue and then lime past halfway, and that the overlay line follows.
-  - Hand a mission in and confirm that it turns green.
-  - Confirm that a massacre stack's color changes as kills are recorded.
-  - Report whether the colors, or the held count (all of that commodity in the hold), do not match expected behavior.
+  - The Missions window shows `N/total held` with a bar.
+  - The row turns blue and then lime past halfway, and the overlay line follows.
+  - Hand a mission in. It turns green.
+  - A massacre stack's color changes as kills are recorded.
+  - Report any mismatch in the colors or in the held count (all of that commodity in the hold).
 - [ ] **Best picks and Source commodities.** With Trade lookups enabled: Market → enter a commodity → **Best picks** (buy and sell), and Missions → **Find sources** with several Collect or Mining missions active.
-  - Check the four picks against the market data for the same commodity, ship and system.
+  - Compare the four picks with the market data for the same commodity, ship and system.
   - Record any differences (the 10% band is measured against the cheapest station in the galaxy).
   - Not implemented: the nearest ring hotspot for Mining missions in the same window.
 - [ ] **Source commodities: Delivery pickups.** Accept a plain "Deliver N units of X" mission (for example Personal Weapons) at a station and open Source commodities.
-  - It should read `Pick up at <that station>` with the tonnage and no Spansh search.
-  - Collect the cargo at the station and check the row goes away.
-  - Accept a war-supplies delivery and check it drops off within seconds.
-  - Restart EDMC with an uncollected delivery active and check the station is still named.
-  - Check that a Collect or Mining mission still shows market picks.
+  - It reads `Pick up at <that station>` with the tonnage and no Spansh search.
+  - Collect the cargo at the station. The row goes away.
+  - Accept a war-supplies delivery. It drops off within seconds.
+  - Restart EDMC with an uncollected delivery active. The station is still named.
+  - A Collect or Mining mission still shows market picks.
 - [ ] **Trade Watch list.** Add several commodities and open real markets (the `Market` event and `Market.json` for a watched item).
   - Press **Refresh** against Spansh with Trade lookups enabled (two requests per commodity).
   - Verify the age and place columns and removal.
-  - Verify that the EDMC window does not become wider.
-- [ ] **Themed confirmations and prompts.** Open each from its place and check it is centered over its window, blocks that window until answered, wraps long text, and that Esc cancels and Enter takes the highlighted button.
-  - The dialogs to open:
+  - The EDMC window does not become wider.
+- [ ] **Themed confirmations and prompts.** Open each from its place and check that it is centered over its window, blocks that window until answered, wraps long text, and that Esc cancels and Enter takes the highlighted button.
+  - Dialogs to open:
     - Reset Session, Reset Current System and Delete session (Powerplay and Trade windows)
     - Reset trade session (three buttons) and Rebuild trade session (a prompt, then a warning for a bad date)
     - Paste spot and Delete hotspot (Surface Mining Book)
@@ -708,69 +683,71 @@ The items below are implemented and covered by unit tests, but have not all been
     - Turn on online lookups? (Missions)
     - Clear the record (Organic Scanning)
     - Restore my data (Settings → General → Backup, a dialog over a Settings page)
-  - Then Linux: the dialog really blocks its window, appears without a flash, and opens over a window on a second monitor.
+  - Then Linux: the dialog blocks its window, appears without a flash, and opens over a window on a second monitor.
 - [ ] **Credits Ledger and Colonization History windows.**
-  - Verify that clicking the Credits line opens the ledger.
-  - Verify that the Income, By day and Lifetime tabs fill for each commander.
-  - Verify that **Rebuild from journals** reports its progress and result.
-  - Verify that the History button on the Colonization panel opens its window.
-- [ ] **BGS** after a tick passes while EDMC is closed: the period that closed should contain the play made in the meantime. Also verify that a finished Colonization build is displayed without the "Construction Site:" prefix.
+  - Clicking the Credits line opens the ledger.
+  - The Income, By day and Lifetime tabs fill for each commander.
+  - **Rebuild from journals** reports its progress and result.
+  - The History button on the Colonization panel opens its window.
+- [ ] **BGS** after a tick passes while EDMC is closed: the period that closed contains the play made in the meantime. Also verify that a finished Colonization build is displayed without the "Construction Site:" prefix.
 - [ ] Colonization window: **Find all** against Spansh, **Only what [station] sells** with a real `Market.json`, and copying a system by clicking a result row.
 - [ ] **Colonization: hold and Acquire** (Windows, then Linux; steps in [LINUX_TESTING.md](LINUX_TESTING.md)).
-  - Buy a tracked commodity at a market: the **In Cargo** figures in the Sites window, on the Colony page and on the overlay card follow the hold within a couple of seconds (WFMT reads the game's `Cargo.json`).
-  - **Acquire** falls as you load the ship or the carrier and reaches 0 once the whole amount is acquired, wherever it is stored; **Haul Trips** still counts everything the site needs.
-  - The overlay card shows the same Acquire and no To buy column. With the card's *List* set to **To buy** (the default), the covered commodities are left out and the footer still counts them; **To haul** keeps the ones covered but not yet aboard in full, for when everything is on the carrier.
-  - **A lagging Frontier copy does not undo a transfer** (EDMC signed in to Frontier): unload cargo at your carrier, then open Carrier Management. The FC column keeps the unloaded stock and **Copy diagnostics** shows an `ignored` line from `Carrier cargo from Frontier`. After 15 minutes without a transfer, a changed Frontier figure replaces the tally and an unchanged one stays ignored. The rules and log lines are in [the Colonization guide](guide/colonization.md).
-  - After **Find all**, the **Closest way to buy everything** block shows the suggested route with price and stock at each stop; **Copy Route** copies it. The note under the buttons is in the accent color while a search runs.
+  - Buy a tracked commodity at a market. The **In Cargo** figures in the Sites window, on the Colony page and on the overlay card follow the hold within a couple of seconds (WFMT reads the game's `Cargo.json`).
+  - **Acquire** falls as the ship or the carrier is loaded and reaches 0 once the whole amount is acquired, wherever it is stored. **Haul Trips** still counts everything the site needs.
+  - The overlay card shows the same Acquire and no To buy column. With the card's *List* set to **To buy** (the default), the covered commodities are left out and the footer still counts them. **To haul** keeps the ones covered but not yet aboard in full, for when everything is on the carrier.
+  - **A lagging Frontier copy does not undo a transfer** (EDMC signed in to Frontier): unload cargo at the carrier, then open Carrier Management. The FC column keeps the unloaded stock and **Copy diagnostics** shows an `ignored` line from `Carrier cargo from Frontier`. After 15 minutes without a transfer, a changed Frontier figure replaces the tally and an unchanged one stays ignored. The rules and log lines are in [the Colonization guide](guide/colonization.md).
+  - After **Find all**, the **Closest way to buy everything** block shows the suggested route with price and stock at each stop. **Copy Route** copies it. The note under the buttons is in the accent color while a search runs.
 - [ ] **Where to Buy filters and the Colony page** (Windows, then Linux; steps in [LINUX_TESTING.md](LINUX_TESTING.md) and [TEST_PLAN.md](TEST_PLAN.md)): Exclude fleet carriers and Exclude surface ports, Only stations with enough stock, Only stations with a shipyard and Arrival within; a commodity sold only at surface ports named on the route after the orbital-only check; the route following purchases; the Colony page sections and the last 5 completed sites; copying overlay choices from another commander; and a window keeping its monitor when it is closed on the monitor left of the primary.
 - [ ] **Raven Colonial writes not yet observed:** Report Complete on a finished build, and carrier cargo sharing (the second switch).
-  - **Create Project on Raven** has worked against the live service (1.2.0 testing). Still to try: docked at a construction ship, once with a planned site and once with none, checking the project, the link, the primary project and the attached carrier on ravencolonial.com.
+  - **Create Project on Raven** has worked against the live service (1.2.0 testing). Not yet tried: docked at a construction ship, once with a planned site and once with none, checking the project, the link, the primary project and the attached carrier on ravencolonial.com.
   - **Mark Plan Entry Demolished** has not been observed against the live service.
   - **My Projects:** reading was checked against the live service (an empty list for a commander with no projects). With a real project, check the rows, the counted totals, **Set as My Primary** and **Save Counted List** on ravencolonial.com.
   - Carrier cargo sharing requires a transfer at the commander's own carrier with that option enabled, followed by a check of Raven's carrier record.
   - Depot progress and deliveries have been verified, and the Test key button accepts a valid key.
 - [ ] **Raven Progress and Open Selected Build on Raven** on real in-progress builds (the Raven Colonial menu).
   - These find a build from the system's plan (by name while it is being built) and, failing that, by the system's address and the site's market id. Check both routes, including a project named *Primary port* and one on a station the game has renamed.
-  - A renamed station therefore requires a new dock before WFMT uses the new name.
+  - A renamed station requires a new dock before WFMT uses the new name.
+- [ ] **Where to Buy: verify in the window.** The "sells everything" search runs first and skips per-commodity searches that it satisfies in full. A second request covers leftovers from the returned whole markets.
+  - Checked with a script against Spansh: a 6-commodity list required 1 request. A 14-commodity list required 1 + 12 searches + 1 leftover request, and the 2 commodities with no stock within 50 ly were reported as not covered.
+  - Verification in the window itself remains.
 
 ### Screenshots, settings and general
 
-- [ ] **Discord sharing (needs a real webhook in a private test channel of your own).** Follow [Sharing reports to Discord](guide/discord.md) from a fresh webhook.
-  - **Settings → WFMT → Discord:** tick **Allow Post to Discord**, name the first destination, paste the link, press **Test** (it says `Works: <name>.` and posts nothing), close Settings with **OK**.
-  - **Several destinations:** add a second destination (a second webhook in another channel) and **OK**. **Post to Discord** now shows a small menu of the two names; pick each in turn and check each channel got its own post, and that posting again edits only the chosen destination's message. With one destination there is no menu.
-  - **Two commanders:** log in as another commander: their Discord tab starts empty, **Copy their destinations** copies the first commander's, and each commander's post carries their own report.
-  - **BGS Report → Discord → Post to Discord:** the post appears in the channel with bold system names and bullets, and the window says `Posted to <destination name>.` Post again: the same message is edited (`Updated your earlier post in ...`).
-  - **Powerplay Sessions → Post to Discord:** the progress post appears with Inara links and the cycle line. Post again in the same session: edited. Log in again (a new session): a new post.
-  - **Copy for Discord** (both windows) puts formatted text on the clipboard; paste it into the channel and check it reads the same. A long report copies as several messages with a blank line between.
-  - **Thread:** save a Thread ID and post: it lands in the thread. A wrong ID says so.
-  - **Failures:** a bad link says `That is not a Discord webhook link`; delete the webhook in Discord and post: `Discord did not accept that webhook link` or `could not find`; turn off the network: `Could not reach Discord`.
+- [ ] **Discord sharing (requires a real webhook in a private test channel).** Follow [Sharing reports to Discord](guide/discord.md) from a fresh webhook.
+  - **Settings → WFMT → Discord:** tick **Allow Post to Discord**, name the first destination, paste the link, press **Test** (it reports `Works: <name>.` and posts nothing), close Settings with **OK**.
+  - **Several destinations:** add a second destination (a second webhook in another channel) and **OK**. **Post to Discord** shows a small menu of the two names. Pick each in turn: each channel gets its own post, and posting again edits only the chosen destination's message. With one destination there is no menu.
+  - **Two commanders:** log in as another commander. Their Discord tab starts empty, **Copy their destinations** copies the first commander's, and each commander's post carries their own report.
+  - **BGS Report → Discord → Post to Discord:** the post appears in the channel with bold system names and bullets, and the window reports `Posted to <destination name>.` Post again: the same message is edited (`Updated your earlier post in ...`).
+  - **Powerplay Sessions → Post to Discord:** the progress post appears with Inara links and the cycle line. Post again in the same session: the post is edited. Log in again (a new session): a new post is created.
+  - **Copy for Discord** (both windows) puts formatted text on the clipboard. Paste it into the channel and confirm that it reads the same. A long report copies as several messages with a blank line between.
+  - **Thread:** save a Thread ID and post. The post lands in the thread. A wrong ID is reported.
+  - **Failures:** a bad link reports `That is not a Discord webhook link`. After the webhook is deleted in Discord, posting reports `Discord did not accept that webhook link` or `could not find`. With the network off, posting reports `Could not reach Discord`.
   - **Names:** a faction or system with `*`, `_` or `@everyone` in its name shows as written and pings nobody.
-  - **Privacy:** the link does not appear in the EDMC log, **Copy diagnostics** or a **Back up my data** zip; each commander has their own saved link.
+  - **Privacy:** the link does not appear in the EDMC log, **Copy diagnostics** or a **Back up my data** zip. Each commander has their own saved link.
   - **Plain copy:** **Copy Summary** (BGS) and **Copy Progress** (Powerplay) still paste plain text.
-  - **Customize:** open **Customize post…** (BGS Report, Discord menu) and **Customize…** (Powerplay Sessions). Pick **Compact**, then **Detailed** and **Plain**; the preview changes and the next **Copy for Discord** and **Post to Discord** use the picked one. Change a checkbox, **Save as…** a name, restart EDMC and check the template is still there and chosen. **Rename…** and **Delete** it. Check a preset cannot be saved over, renamed or deleted. In the real channel check **Compact** and **Plain** look right, and that a second post to the same destination edits the earlier one in the new layout.
-
+  - **Customize:** open **Customize post…** (BGS Report, Discord menu) and **Customize…** (Powerplay Sessions). Pick **Compact**, then **Detailed** and **Plain**. The preview changes and the next **Copy for Discord** and **Post to Discord** use the picked template. Change a checkbox, **Save as…** a name, restart EDMC and confirm that the template is still there and chosen. **Rename…** and **Delete** it. A preset cannot be saved over, renamed or deleted. In the real channel check **Compact** and **Plain**, and confirm that a second post to the same destination edits the earlier one in the new layout.
 - [ ] **Screenshot preview window.** Take a screenshot with a preview shown, from a very wide source (a triple-screen or ultrawide capture) and a tall one.
   - The window stays on the screen and the picture is whole.
   - **Open Folder** opens the folder.
   - Esc and **Close** close it.
   - Resizing the window re-fits the picture.
-  - The size and place come back on the next preview.
+  - The size and place return on the next preview.
   - Then Linux.
 - [ ] **Back up my data.**
   - *Windows: confirmed 2026-10-18.* A backup of the real data was made, opened and checked: every data file present, no `rcc_keys.json` or Codex catalog, `backup-info.json` correct.
-  - *Still to try in the game* (both are covered by unit tests only):
-    - Pick a folder inside the plugin folder and check it is refused.
-    - Cancel the dialog and check nothing is written.
-  - **Restore and automatic backup (untried in the game):**
-    - Press **Restore my data...** and pick a backup (pick a non-WFMT zip and check it is refused), confirm, restart EDMC. Check the data is back and `backups/pre-restore-….zip` holds what it replaced.
+  - *Not yet tried in the game* (both covered by unit tests only):
+    - Pick a folder inside the plugin folder. It is refused.
+    - Cancel the dialog. Nothing is written.
+  - **Restore and automatic backup (not tried in the game):**
+    - Press **Restore my data...** and pick a backup (pick a non-WFMT zip: it is refused), confirm, restart EDMC. The data is back and `backups/pre-restore-….zip` holds what it replaced.
     - Stage a restore and press **Cancel the waiting restore**.
-    - Tick **Back up automatically**, choose a folder, set 1 day, restart EDMC. Check a `WFMT-data-auto-….zip` appears after about a minute, and that restarting again the same day makes none.
-    - Check one is made before an update installs.
-  - Then Linux (a Flatpak EDMC needs a writable folder).
+    - Tick **Back up automatically**, choose a folder, set 1 day, restart EDMC. A `WFMT-data-auto-….zip` appears after about a minute, and restarting again the same day makes none.
+    - One is made before an update installs.
+  - Then Linux (a Flatpak EDMC requires a writable folder).
 - [ ] **Compact storage.** Play for a while.
-  - Check that the per-commander files (`system_history.json`, `system_surveys.json`, `codex_completionist_state.json`, `organic_scan_state.json`, `survey_log.json`, `expedition_log.json`) are rewritten without indentation and shrink.
-  - Check that every feature still shows the same data after a restart.
-  - Check that a second commander's data is untouched.
+  - The per-commander files (`system_history.json`, `system_surveys.json`, `codex_completionist_state.json`, `organic_scan_state.json`, `survey_log.json`, `expedition_log.json`) are rewritten without indentation and shrink.
+  - Every feature shows the same data after a restart.
+  - A second commander's data is untouched.
   - Then Linux.
 - [ ] **Settings tabs.** Check:
   - With a narrow Settings window, the tab rows wrap and every label is whole (Overlays has twenty-one).
@@ -780,77 +757,36 @@ The items below are implemented and covered by unit tests, but have not all been
 - [ ] **System-name suggestions.** Test every box that accepts a system name: Expedition System, the planner's Start and End, the trader finder, Colonization Around, Notes, Waypoint Route, Boxel Survey seed.
   - Check the list below the box.
   - Check Down, Enter and Escape.
-  - Check Enter with nothing highlighted still acting.
-  - Check the list matching the EDMC theme in the main panel boxes.
+  - Enter with nothing highlighted still acts.
+  - The list matches the EDMC theme in the main panel boxes.
   - Then enable Settings → WFMT → General → Window → *Suggest system names from Spansh while typing* and type `outot`.
-- [ ] **Notes.** Verify quick add, the window, **Here**, deletion with confirmation, and the count shown when jumping into a system that has notes. Verify that the EDMC window does not become wider.
+- [ ] **Notes.** Verify quick add, the window, **Here**, deletion with confirmation, and the count shown when jumping into a system that has notes. The EDMC window does not become wider.
 - [ ] **Help tab** (Settings → General → Help).
-  - Verify that **Report an issue** opens the prefilled form (this requires the issue template on GitHub).
-  - Verify that **Copy diagnostics** places the versions and recent WFMT log lines on the clipboard with the commander name redacted.
+  - **Report an issue** opens the prefilled form (requires the issue template on GitHub).
+  - **Copy diagnostics** places the versions and recent WFMT log lines on the clipboard with the commander name redacted.
 - [ ] The Powerplay panel and the other mode panels (bold and small fonts, grouping rules) under the Default, Dark and Transparent EDMC themes.
 - [ ] In a running EDMC: the Inventory start-up synchronization from EDMC's rebuilt state, and whether the `Complete` ids in the login `Missions` event are a subset of `Active` (currently assumed).
 
 ## Colonization
 
-WFMT's own tracking is the reference, and reporting to Raven Colonial is **opt-in**: a finished build, depot progress, deliveries and (separately) carrier cargo changes.
+WFMT's own tracking is the reference. Reporting to Raven Colonial is opt-in: a finished build, depot progress, deliveries and (separately) carrier cargo changes.
 
 Not implemented:
 
-- **Rename Site** (Manage Sites menu): the game's name for a site replaces any name WFMT holds each time the commander docks, so a name of the commander's own would be a separate label, kept per commander and shown wherever the site's name appears, with **Reset to game name**.
-  - Optionally, a tickbox (off by default, enabled only for a site with a Raven project) also renames the project on Raven Colonial through the project update that carries `buildName`. It needs the master switch and the key, and asks first like every Raven write.
-  - Open: whether to rename the plan entry too (a separate call on Raven's system sites), and whether WFMT still finds the project after a rename (the name is only a fallback when Raven has no market id for the site, and the market id lookup should cover it; test against a live project).
-- **Multi-commander projects** (several commanders on one Raven project): planned in phases, see the next section. It covers assigning commodities, linking other commanders, ready flags and who delivered what. Showing other linked carriers' cargo is not part of it and stays open.
+- **Rename Site** (Manage Sites menu).
+- Multi-commander projects on one Raven project: assigning commodities, linking other commanders, ready flags and who delivered what. WFMT writes for one commander at a time: it links the commander, sends the depot snapshot and sends that commander's own `contribute` calls. Two commanders who each run WFMT with their own key are credited on the same project. Showing other linked carriers' cargo is not implemented.
 - A guided tool that fills in a system's whole plan on Raven (bodies, installations and statuses) from play.
-- Raven's `supply` call, which Raven's documentation describes as unsuitable for a tool that reads the journal.
+- Use of Raven's `supply` call, which Raven's documentation describes as unsuitable for a tool that reads the journal.
+- Read-only polling of tracked projects (remaining needs and other commanders' progress). Completion, progress, deliveries, carrier cargo, project creation and My Projects are implemented. Reads need no key.
+- Co-operative building and colony tracking.
+- History figures: tons per hour (the journal does not record time spent hauling) and credits earned from deliveries (the depot reports a `Payment` per commodity; that this is the amount paid out has not been verified).
+- Round trip: a Powerplay bonus filter.
+- Landing Assist pad layouts of the project's own. Settlement pad numbering has not been confirmed in the game.
+- Mining: the share of a rock that is left on the surface side.
 
-### Multi-commander projects: plan
-
-Today WFMT writes for one commander at a time: it links the commander, sends the depot snapshot and sends that commander's own `contribute` calls. Two commanders who each run WFMT with their own key are already credited on the same project. What is missing is the shared side: seeing who has claimed or delivered what, and joining a project.
-
-Rules for every phase:
-
-- Read-only first. Each write (claim, release, join, leave, ready) is a button or menu action, needs the commander's key and says plainly what it sent.
-- Nothing about other commanders is saved to disk. It is held in memory and read again, so everything WFMT stores stays per commander.
-- Every new label is capped in width (truncate names, show `+N`), so EDMC's window never widens.
-- Raven is read when a window opens or a button is pressed, never on a timer. The privacy guide lists what is read, including that other commanders' names appear.
-- WFMT's remaining figures keep coming from the game's depot snapshot. They are never recomputed from other commanders' deliveries.
-
-Phase 0, verify the API (no code). Read a live project with two or more linked commanders and record the exact shape of `commanders`, `ready` and the project's delivery history. The OpenAPI description has no payload details. Also confirm which of `link`, `assign` and `ready` need a key, and whether a commander who is not the architect can link and assign. Write the result in `TECHNICAL.md` beside the Raven notes. The other phases depend on it.
-
-Phase 1, read and display (no writes):
-
-- `rcc_client.py`: add `commanders` (name to commodity keys) and `ready` to `RccProject`, parsed with the same limits as the commodities (cap the count and the name length, casefold keys).
-- A pure helper that splits each needed commodity into mine, taken by others (names) or unclaimed.
-- Colonization Sites window: a narrow **Claimed** column (`you`, a truncated name with `+N`, or blank) and a summary line such as `3 commanders on this project`. The fetch already runs on a worker thread.
-- **Who delivered what:** a small panel or tab in the Sites window listing each commander's deliveries to the project, from Raven's project history (shape confirmed in Phase 0). This also answers the case where another commander delivers to your site: your depot figures and Raven's remaining update from the snapshot, but your own History counts only your deliveries, so this is the only place their share shows. If Raven keeps no per-commander history, say so in the window and the guide.
-- Optional: dim rows claimed by others in the overlay shopping list.
-- Docs: `colonization.md`, `internet-and-privacy.md`, `CHANGELOG.md`.
-
-Phase 2, claim and release: `assign` and `unassign` in `rcc_client.py` (`PUT` and `DELETE /api/project/<build>/assign/<cmdr>/<commodity>`), right-click **Claim for me** and **Release** (multi-select), then read the project again so the column shows Raven's answer. With no key saved it says so and sends nothing.
-
-Phase 3, join a project: **Join Project** in My Projects (`PUT /api/project/<build>/link/<cmdr>`) so a helper can attach before a first delivery, and **Leave Project** (`DELETE`, with a confirmation because it also drops that commander's claims).
-
-Phase 4, ready flags (optional, easiest to drop): **Mark loaded** and **Clear** (`PUT` and `DELETE /api/project/<build>/ready`), only if Phase 0 shows other commanders benefit.
-
-Tests (Docker only): parsing of `commanders`, `ready` and the history (missing, empty, oversized, malformed); the claim split including case differences in names; assign, unassign, link and ready with a fake opener, including the no-key path sending nothing; a window smoke test that the new column and panel stay inside their width caps.
-
-Order: Phase 0 and Phase 1 are one piece of work and safe to release alone. They are also the first step of stage 2 of the Discord sharing plan (see [DISCORD_SHARING_RESEARCH.md](DISCORD_SHARING_RESEARCH.md), section 10): the **who is hauling what** post reads the data Phase 1 adds, so Phases 0 and 1 are now wanted before the Discord colonization posts. Phases 2 and 3 follow, one commit per phase.
-
-Open questions: whether the overlay dimming is part of Phase 1; whether Phase 4 is in scope; whether shared fleet carriers count toward assignments (SrvSurvey handles the carrier separately through its own supply call).
-
-Reference: SrvSurvey (GPL-3.0) reads `commanders` the same way and splits needs into assigned to you and assigned to others. Ideas only; write WFMT's own code and credit it in `ATTRIBUTIONS.md` when built.
-
-Open check:
-
-- [ ] **Where to buy: verify in the window.** The "sells everything" search runs first and skips per-commodity searches that it satisfies in full; a second request covers leftovers from the returned whole markets.
-  - Checked with a script against Spansh:
-    - A 6-commodity list required 1 request.
-    - A 14-commodity list required 1 + 12 searches + 1 leftover request, and the 2 commodities with no stock within 50 ly were reported as not covered.
-  - Verification in the window itself remains.
+Recorded 2026-10-23: 1920 x 1080 is the smallest screen WFMT is laid out for, and ultrawide screens are supported. The default spots are tested not to overlap or leave the screen at 2560 x 1080, 3440 x 1440, 3840 x 1080, 5120 x 1440 and 5760 x 1080. When neither the game nor the overlay gives the screen size, WFMT reads the primary monitor from the operating system. Open check, by eye on a real ultrawide screen: the cards in the game and the layout picture on Overlay Placement.
 
 ## Implemented from earlier plans
-
-Implemented so far:
 
 - the fleet carrier jump countdown
 - low-fuel and next-star warnings
@@ -861,30 +797,7 @@ Implemented so far:
 - the material trader finder
 - expedition planning
 
-What remains of it is under "In progress" and "Verification in the game" above.
-
-## Low priority
-
-No work is planned on these items. They are retained so that the ideas are not lost.
-
-- [ ] Raven Colonial: read-only polling of tracked projects (remaining needs and other commanders' progress alongside WFMT's own), followed by opt-in writes.
-  - Completion, progress, deliveries, carrier cargo, creating a project and My Projects are implemented; the remainder is deferred.
-  - Reads need no key.
-  - The public documentation would need to list exactly what is sent and when.
-- [ ] **Team projects:** several commanders working on one project. The plan is under "Multi-commander projects: plan" in the Colonization section above.
-  - The depot event reports only the project's totals, so a per-commander breakdown would have to come from each member.
-  - All data is currently per commander and will remain so unless a commander opts in to sharing.
-- [ ] Co-operative building and colony tracking: not available yet.
-- [ ] History ideas:
-  - Tons per hour (the journal does not record time spent hauling, so this would be estimated from the gaps between deliveries).
-  - Credits earned from deliveries (the depot reports a `Payment` per commodity, but it has not been verified that this is the amount paid out).
-- [ ] Round trip: a Powerplay bonus filter (this depends on what the price service can report and on how "bonus" should be defined).
-- [ ] **Landing Assist: the project's own pad layouts,** with fore and aft cues and diagrams for facilities that have none today, settlements first.
-  - The pad numbering of settlements must be confirmed in the game before any layout is drawn.
-  - This differs from the "Landing-pad diagrams" item under Not planned, which is about reading a layout from the journal. The journal has none, so these would be the project's own.
-- [ ] **Mining: the share of a rock that is left** on the surface side.
-  - It is an idea only, and it has not been looked at.
-- Decided 2026-10-23: 1920 x 1080 is the smallest screen WFMT is laid out for, and ultrawide screens must work. The default spots are tested not to overlap or leave the screen at 2560 x 1080, 3440 x 1440, 3840 x 1080, 5120 x 1440 and 5760 x 1080. When nothing from the game or the overlay gives the screen size, WFMT reads the primary monitor from the operating system. Still to check by eye on a real ultrawide screen: the cards in the game, and the layout picture on Overlay Placement.
+What remains of these is under "In progress" and "Verification in the game".
 
 ## Not planned
 
@@ -892,5 +805,5 @@ The journal does not contain the data these features would require. Decisions ar
 
 - Guardian ruin and structure surveying: the journal does not record the structures' layout or contents.
 - Landing-pad diagrams: the journal provides no layout, orientation or positions.
-- Plotting routes through white dwarfs for their boost (decided 2026-10-28): Spansh's plotters know only neutron stars, and a router of WFMT's own is not worth building. The Route Planner's option to mark the white dwarfs a route passes stays as it is.
-- An FSS spectrum guide (which body types sit where on the scanner's band): the journal never records where a signal sits on the band and no open table of ranges exists, so the ranges would have to be measured in the game.
+- Plotting routes through white dwarfs for their boost (decided 2026-10-28): Spansh's plotters know only neutron stars. The Route Planner's option to mark the white dwarfs a route passes remains.
+- An FSS spectrum guide (which body types sit where on the scanner's band): the journal never records where a signal sits on the band, and no open table of ranges exists.

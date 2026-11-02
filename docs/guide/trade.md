@@ -1,20 +1,18 @@
 # Trade
 
-Trade is about buying and selling: what you've earned after fuel and repairs, how much of your cargo is still
-unsold, your ship hold and your carrier's space, and where to find the best routes and prices.
+This guide describes Trade mode: the running profit after fuel and repairs, unsold cargo, the ship hold and fleet carrier space, saved sessions, Spansh route and price lookups, and the commodity watch list.
 
-The Trade panel shows a short summary (your net profit and your hold) and four buttons: **Session**, **Routes**, **Market** and **History**. The first three each open a window of their own, and WFMT remembers where you left each one. **History** opens the Trade History window:
+The Trade panel shows a summary (net profit and hold) and four buttons: **Session**, **Routes**, **Market** and **History**. The first three each open a window of their own, and WFMT remembers where each was left. **History** opens the Trade History window.
 
-| Page | What it's for | Needs internet? |
+| Page | Purpose | Needs internet |
 |---|---|---|
-| **Session** | Your running profit, costs, hold and carrier cargo | No |
-| **Routes** | The best trade routes from where you are | Yes (Spansh, off until you tick it) |
-| **Market** | Where to sell or buy a commodity | Yes (Spansh, off until you tick it) |
+| **Session** | Running profit, costs, hold and carrier cargo | No |
+| **Routes** | The best trade routes from the current position | Yes (Spansh, off until enabled) |
+| **Market** | Where to sell or buy a commodity | Yes (Spansh, off until enabled) |
 
-A pop-out **Trade History** window keeps the sessions you choose to save.
+The **Trade History** window keeps the sessions that are saved.
 
-Each page is laid out in sections with large headings, with muted labels beside bright values, small muted details, and tables
-whose numbers line up in columns. Gains are green, losses red and warnings amber. Long station names wrap instead of being cut off. A page's buttons are at the top of its window (on Market, the Commodity box and the search buttons come first).
+Each page is laid out in sections with headings, muted labels beside bright values, and tables with aligned numbers. Gains are green, losses red and warnings amber. Long station names wrap. A page's buttons are at the top of its window (on Market, the Commodity box and the search buttons come first).
 
 **On this page:** [How to](#how-to) · [How a trading session works](#how-a-trading-session-works) ·
 [The Session page](#the-session-page) · [Trade History](#trade-history-saving-sessions) · [Routes](#routes) ·
@@ -22,545 +20,419 @@ whose numbers line up in columns. Gains are green, losses red and warnings amber
 [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) ·
 [Using Trade on two computers](#using-trade-on-two-computers) · [Settings](#trade-settings)
 
+**Data sources:**
+
+- Trades, costs and cargo come from the journal.
+- A carrier's space is written only when Carrier Management is opened.
+- A carrier's bay contents are not listed in the journal. WFMT shows the carrier's orders and an estimate marked `~`.
+- Routes and prices come from Spansh, a community database.
+
+See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
+
 ## How to
 
-Quick steps for the most common jobs. Each links to the section with the detail. The numbers in the examples are made up.
+The numbers in the examples are illustrative.
 
-**See your profit after fuel and repairs**
+**Read the profit after fuel and repairs**
 
-1. Trade as you normally do. WFMT counts every purchase, sale and running cost it sees in the journal.
-2. Press **Session** on the Trade panel to open the Session window.
+1. Trade in the game. WFMT counts each purchase, sale and running cost seen in the journal.
+2. Press **Session** on the Trade panel.
 3. Read **Net profit**: trade profit less fuel, repairs, advanced maintenance, rearm and limpets. The costs are listed under it.
 
-More: [Profit](#the-session-page) and [Worked example: profit after costs](#worked-example-profit-after-costs).
+See [The Session page](#the-session-page) and [Worked example: profit after costs](#worked-example-profit-after-costs).
 
 **Track a fleet carrier's cargo**
 
-1. In **Settings → WFMT → Trade**, set the carrier choice for your commander (**Auto** works if your journal has shown a carrier).
+1. In **Settings → WFMT → Trade**, set the carrier choice for the commander (**Auto** applies when the journal has shown a carrier).
 2. In the game, open **Carrier Management** once so the game writes the carrier's space.
-3. Look at **Carrier cargo** (used out of capacity, with the free tons) and **Carrier reserved for orders** on the Session page. A `~` before the figure means an estimate: open Carrier Management again to make it exact.
+3. Read **Carrier cargo** (used out of capacity, with free tons) and **Carrier reserved for orders** on the Session page. A `~` before the figure marks an estimate. Opening Carrier Management again makes it exact.
 
-More: [Your fleet carrier and squadron carrier](#your-fleet-carrier-and-squadron-carrier).
+See [Your fleet carrier and squadron carrier](#your-fleet-carrier-and-squadron-carrier).
 
 **Save and review a session**
 
-1. On the Session page press **Save session**. The message `Saved to Trade History.` appears.
-2. When the job is done, press **Reset** to start the next one.
-3. Press **History**, choose the session in the **SESSION** drop-down, and open the tabs (**Overview**, **Commodities**, **Stations**, and so on).
+1. On the Session page, press **Save session**. The message `Saved to Trade History.` appears.
+2. Press **Reset** to start the next session.
+3. Press **History**, select the session in the **SESSION** drop-down, and open the tabs (**Overview**, **Commodities**, **Stations** and others).
 
-More: [Trade History](#trade-history-saving-sessions) and [Worked example: review a saved session](#worked-example-review-a-saved-session).
+See [Trade History](#trade-history-saving-sessions) and [Worked example: review a saved session](#worked-example-review-a-saved-session).
 
 **Find the best route or price**
 
 1. Tick **Enable Spansh trade lookups** in **Settings → WFMT → Trade**.
-2. For a route, go to the **Routes** page and press **Find routes** (or **Round trip** for a back-and-forth pair).
-3. For a price, go to the **Market** page, choose **Sell** or **Buy**, pick a commodity, then press **Near me**, **Galaxy** or **Best picks**.
+2. For a route, open the **Routes** page and press **Find routes** (or **Round trip** for a back-and-forth pair).
+3. For a price, open the **Market** page, choose **Sell** or **Buy**, select a commodity, then press **Near me**, **Galaxy** or **Best picks**.
 
-More: [Routes](#routes) and [Market](#market).
+See [Routes](#routes) and [Market](#market).
 
 **Use the watch list**
 
 1. Open the **Watch list** row in Trade mode and press **Watch**.
-2. In the box beside **Add a commodity**, type a name, pick it from the suggestions, and press **Add**.
-3. Press **Refresh** to ask Spansh for prices, or open station markets in the game to record them.
+2. In the box beside **Add a commodity**, type a name, select it from the suggestions and press **Add**.
+3. Press **Refresh** to request prices from Spansh. Opening station markets in the game also records prices.
 
-More: [Watch list](#watch-list).
-
-**Where this comes from:**
-
-- Your trades, costs and cargo come from the journal.
-- Where it falls short, WFMT works around it:
-  - A carrier's space is only written when you open Carrier Management.
-  - A carrier's bay contents are not listed at all. WFMT shows the carrier's orders, and an estimate marked `~`.
-  - Routes and prices come from Spansh, a community database.
-
-See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
+See [Watch list](#watch-list).
 
 ## How a trading session works
 
-**A session is your running tally, and it belongs to a commander.** It starts the first time WFMT sees you and lasts
-**until you press Reset**, however many times you log in or restart EDMC. That is what makes a long job, such as
-loading a fleet carrier over several evenings, one session.
+A session is a running tally that belongs to a commander. It starts the first time WFMT sees the commander and lasts until **Reset** is pressed, across any number of logins and EDMC restarts.
 
-- **Each commander has their own.** Switching commander never loses anyone's tally.
-- **Playing with EDMC closed is fine.** The next time EDMC sees that commander, WFMT catches the session up from the
-  game's journal files and adds what it missed. It only adds what is new, so it can't count anything twice. (On
-  Linux this needs EDMC's **Journal directory** to be set; see [WFMT on Linux](linux.md#step-2-tell-edmc-where-elites-journals-are).)
-- **Only what WFMT has seen is counted.** Trades made before WFMT first ran, or in a session you reset, aren't
-  included.
-- **Nothing is kept for good unless you ask.** Press **Save session** to put it in Trade History.
+- Each commander has a separate session. Switching commander does not affect another commander's tally.
+- When EDMC is closed during play, WFMT catches the session up from the game's journal files the next time EDMC sees that commander. It adds only what is new, so nothing is counted twice. On Linux this requires EDMC's **Journal directory** to be set; see [WFMT on Linux](linux.md#step-2-tell-edmc-where-elites-journals-are).
+- Only what WFMT has seen is counted. Trades made before WFMT first ran, or in a session that was reset, are not included.
+- Nothing is kept permanently unless **Save session** is pressed.
 
 ### Finishing a session and starting the next
 
-There is no Start or Track button, because tracking never stops. Instead:
+There is no Start or Track button, because tracking does not stop.
 
-1. Press **Save session** to copy the tally into Trade History. The tally keeps running, and the button stays
-   **Save session** (saving again updates the same entry).
-2. Press **Reset** to begin a new session. If the current one has unsaved trades, it offers to save first.
+1. Press **Save session** to copy the tally into Trade History. The tally keeps running and the button stays **Save session**. Saving again updates the same entry.
+2. Press **Reset** to begin a new session. If the current session has unsaved trades, WFMT offers to save first.
 
-**If you skip Reset, your next trades are added to the old session.**
+If **Reset** is not pressed, later trades are added to the old session.
 
-**Example.** You spend Saturday hauling Tritium to your carrier. Saturday night: **Save session**, then **Reset**.
-Sunday you do a mining run and sell the lot: that's a fresh session with its own profit figure, and Saturday's is
-safe in History.
+Example: after hauling Tritium on Saturday, pressing **Save session** and then **Reset** keeps Saturday's session in History. A mining run sold on Sunday is a new session with its own profit figure.
 
 ## The Session page
 
-It reads your journal only. Nothing is sent anywhere. Top to bottom:
+The page reads the journal only and sends nothing anywhere.
 
-**Top of the page.** Before anything has been traded the page says `No trades yet this session.` and `Buy or sell at a market and they are counted here.` If you have only had running costs, it lists them with a **Net** figure.
+**Top of the page.** Before anything has been traded the page shows `No trades yet this session.` and `Buy or sell at a market and they are counted here.` When only running costs exist, they are listed with a **Net** figure.
 
-**Profit.** Trade profit is what you were paid minus what the sold tons cost you, as the game reports it. Stolen or
-black-market cargo counts the whole sale. Credits per hour (`+1,200,000 cr/hr`) appears once you've traded for about three minutes (it uses
-first trade to last trade). Under it are **Bought** and **Sold** (tons and credits) and a **Best sales** list of your five most profitable commodities, each with its profit and tons. If more than five were traded and the worst one lost money, a **Worst** line names it.
+**Profit.** Trade profit is the amount paid minus the cost of the tons sold, as the game reports it. Stolen or black-market cargo counts the whole sale. Credits per hour (`+1,200,000 cr/hr`) appears after about three minutes of trading (first trade to last trade). Below it are **Bought** and **Sold** (tons and credits) and a **Best sales** list of the five most profitable commodities with profit and tons. If more than five commodities were traded and the worst one lost money, a **Worst** line names it.
 
-**Running costs**, so the profit is honest:
+**Running costs:**
 
 - **Fuel** (refuelling)
 - **Repairs**
-- **Advanced maintenance** (the game logs it as a repair that includes module "Wear"; the whole charge goes on its
-  own line)
+- **Advanced maintenance**: the game logs it as a repair that includes module "Wear". The whole charge is listed on its own line.
 - **Rearm** (ammunition, and restocking an SRV or fighter)
 - **Limpets** (bought, less any sold back)
-- **Fines and bounties paid** (only if you turn it on in the Session window; see below)
+- **Fines and bounties paid** (only when enabled in the Session window)
 
-Once you've spent anything, the headline becomes **Net profit**: trade profit less those costs. The credits per hour is the net. The trade profit and each cost are listed under it.
+Once any cost exists, the headline becomes **Net profit**: trade profit less the costs. Credits per hour is the net. The trade profit and each cost are listed under it.
 
-What is not counted as a cost:
+Not counted as costs:
 
 - Insurance rebuys.
-- Fines and bounties you pay off, because a fine usually has nothing to do with your trading. Tick **Count fines and bounties I pay as a running cost** in the Session window to count them. Turning it on counts payments from then on, not ones already made.
+- Fines and bounties paid off. Tick **Count fines and bounties I pay as a running cost** in the Session window to count them. Enabling it counts payments made from then on, not earlier ones.
 
-A cost only counts once WFMT has seen it.
+A cost counts only once WFMT has seen it.
 
 #### Worked example: profit after costs
 
-You sell 100 t of Gold for 1,200,000 cr that cost you 900,000 cr to buy, then pay 18,000 cr for fuel and 12,000 cr
-for repairs. These figures are examples. The Session page shows trade profit of 300,000 cr, the fuel and repairs
-lines, and the headline **Net profit** of 270,000 cr (300,000 less 30,000). The credits per hour figure is
-worked out from that net once you have traded for about three minutes.
+100 t of Gold is sold for 1,200,000 cr, having cost 900,000 cr to buy. Fuel costs 18,000 cr and repairs 12,000 cr. The Session page shows trade profit of 300,000 cr, the fuel and repairs lines, and the headline **Net profit** of 270,000 cr (300,000 less 30,000). Credits per hour is computed from the net after about three minutes of trading.
 
-**In your ship.** Your **Ship** and the **Landing pad** it needs (for example "Type-9 Heavy" and "Large"; `Unknown` when WFMT cannot tell, in which case no pad filter is applied), then:
+**In your ship.** The page shows **Ship** and the **Landing pad** it needs (for example "Type-9 Heavy" and "Large"; `Unknown` when WFMT cannot determine it, in which case no pad filter is applied), then:
 
-- **Ship hold**: how many tons are used, the capacity and how much is free (just `Ship hold: empty` when WFMT does not yet know your capacity and nothing is aboard),
-- **Worth at (station)**: what the station you're docked at would pay for the whole hold, once you have opened its commodity market,
-- an **In hold / Sells here** table: what each commodity aboard would sell for there. The four largest loads are listed, with `+N more` after.
+- **Ship hold**: tons used, capacity and free tons. It reads `Ship hold: empty` when the capacity is not yet known and nothing is aboard.
+- **Worth at (station)**: what the docked station would pay for the whole hold, once its commodity market has been opened.
+- An **In hold / Sells here** table: what each commodity aboard would sell for there. The four largest loads are listed, followed by `+N more`.
 
-**Hold space**, just under the landing pad, splits the hold into cargo and limpets (they take hold space like any cargo), for example "312 t cargo (40 t mission, 12 t stolen), 16 t limpets". The free tons are on the **Ship hold** line. The line appears only when there are mission or stolen tons or limpets to show. The mission and stolen figures come from the game's cargo list (`Cargo.json`).
+**Hold space**, below the landing pad, splits the hold into cargo and limpets (limpets take hold space like cargo), for example "312 t cargo (40 t mission, 12 t stolen), 16 t limpets". The free tons are on the **Ship hold** line. The line appears only when there are mission or stolen tons or limpets to show. The mission and stolen figures come from the game's cargo list (`Cargo.json`).
 
-**Carrier cargo.** Your carrier's cargo storage, only shown if you have a carrier (see [below](#your-fleet-carrier-and-squadron-carrier)). Each carrier has its own heading, `Fleet carrier: NAME` or `Squadron carrier: NAME`. Until the game has reported its space, a note under the heading says `Open Carrier Management once to read its cargo space.`
+**Carrier cargo.** The carrier's cargo storage, shown only when a carrier is configured (see [below](#your-fleet-carrier-and-squadron-carrier)). Each carrier has its own heading, `Fleet carrier: NAME` or `Squadron carrier: NAME`. Until the game has reported the carrier's space, a note under the heading reads `Open Carrier Management once to read its cargo space.`
 
-- It is shown as **Carrier cargo** (for example `12,400 / 25,000 t (12,600 free)`) and **Carrier reserved for orders**, so it is never mistaken for your ship hold. **Carrier reserved for orders** is left out when it is 0.
-- Under the cargo line, **Carrier crew services** and **Carrier ship / module packs** show what the rest of the carrier's space is spent on. A line is left out when it is 0.
-- Below those, when the journal has told WFMT, come the carrier's tritium, where it is, a planned jump, its balance and the trade orders you have set (the first six, with `+N more carrier orders` after).
+- The figures are labeled **Carrier cargo** (for example `12,400 / 25,000 t (12,600 free)`) and **Carrier reserved for orders**, to distinguish them from the ship hold. **Carrier reserved for orders** is omitted when 0.
+- Under the cargo line, **Carrier crew services** and **Carrier ship / module packs** show the other uses of the carrier's space. A line is omitted when 0.
+- Below those, when the journal has provided them: the carrier's tritium, its location, a planned jump, its balance and the trade orders that are set (the first six, followed by `+N more carrier orders`).
 
-**No history here.** The Session page shows the present only. The game's lifetime totals (trading, mining, exobiology, fleet carrier)
-and your income over time are in the **Credits Ledger** window instead (click the *Credits this session* line under the mode buttons),
-where Trade, Exploration and Exobiology stay separate. Saved sessions are in **History**.
+**No history.** The Session page shows the present only. The game's lifetime totals (trading, mining, exobiology, fleet carrier) and income over time are in the **Credits Ledger** window (opened from the *Credits this session* line under the mode buttons), where Trade, Exploration and Exobiology are kept separate. Saved sessions are in **History**.
 
 ### Buttons
 
-- **Reset**: starts the tally again. If the session has trades that were never saved it asks `Save it before starting again?` with **Yes**, **No** and **Cancel**.
-- **Save session**: keeps the session in Trade History. Grayed out until there is something to save (a trade or a running cost). A short message at the top of the page begins `Saved to Trade History.` or `Updated this session in Trade History.`, then says how many sessions are saved and reminds you to press **Reset** for a new one.
+- **Reset**: restarts the tally. If the session has unsaved trades, the prompt `Save it before starting again?` offers **Yes**, **No** and **Cancel**.
+- **Save session**: keeps the session in Trade History. It is disabled until there is something to save (a trade or a running cost). A message at the top of the page begins `Saved to Trade History.` or `Updated this session in Trade History.`, then gives the number of saved sessions and reminds that **Reset** starts a new one.
 - **History**: opens the Trade History window.
-- **Rebuild**: recounts the session from the journals starting at a time you give, in UTC, as
-  `YYYY-MM-DD` or `YYYY-MM-DD HH:MM`, and replaces the tally. Use it when the session began on another computer.
-  It asks first if the current tally is unsaved, and says if it finds nothing for this commander in that time. It is grayed out until WFMT knows who you are. After it finishes, check the totals, then press **Save session**.
+- **Rebuild**: recounts the session from the journals starting at a time entered in UTC as `YYYY-MM-DD` or `YYYY-MM-DD HH:MM`, and replaces the tally. It is intended for a session that began on another computer. It asks first if the current tally is unsaved, and reports when nothing is found for the commander in that period. It is disabled until WFMT knows the commander. After it finishes, check the totals, then press **Save session**.
 
 ## Trade History (saving sessions)
 
-Press **Save session** to keep a session. You can keep trading and press it again; that updates the same entry
-instead of adding a second one. **Reset** starts a new session, which becomes a new entry if you save it.
+**Save session** keeps a session. Pressing it again after more trading updates the same entry instead of adding a second. **Reset** starts a new session, which becomes a new entry when saved.
 
-Press **History** to open the **Trade History** window. It has a **SESSION** drop-down at the top to pick a saved session
-(newest first), and, with more than one commander, a **COMMANDER** filter. Up to 500 sessions are kept; past that the oldest go first. **It opens on the commander you are playing**;
-the others are one drop-down choice away (or **All commanders**). The tabs:
+**History** opens the **Trade History** window. A **SESSION** drop-down at the top selects a saved session (newest first). With more than one commander, a **COMMANDER** filter is shown. Up to 500 sessions are kept; past that, the oldest are removed first. The window opens on the commander being played; other commanders, or **All commanders**, are one drop-down choice away.
 
-| Tab | What it shows |
+| Tab | Content |
 |---|---|
-| **Overview** | Net profit, trade profit, running costs, net per hour, tons sold and trading time at a glance. Then commander, ship, start, end, session length and when saved, balance change, trades, tons bought and sold, profit per ton sold, margin on cost, jumps and light years, net per jump and per light year, each running cost's share of sales, and the best and weakest commodity. |
-| **Commodities** | For each one: Bought t, Spent, Avg buy, Sold t, Revenue, Avg sell, Profit, Margin, Profit/t and Unsold t. |
-| **Stations** | The same, added up for each station you traded at: Visits, Bought t, Spent, Sold t, Revenue, Profit, Costs and Net. |
-| **Route** | The stations in the order you flew them (#, Time, Station, System, What happened, Net and Running, the running total of the net). Going back to a station later is a new visit. |
-| **Trades** | Every purchase, sale and cost with its Time, Type, Commodity, t, Unit, Total, Profit, Station and System, the newest 200 first (**Show older trades** adds 200 older ones each press; the table scrolls up and down). |
-| **Stock & carrier** | What was bought but not sold (a journal **estimate**, with its cost and average cost per ton), the ship hold when you saved, and your carrier's used and free cargo space and the space reserved for orders when you saved. |
-| **Lookups** | Two tables of what you asked Spansh during the session: **Spansh routes searched** (Time (UTC), Started from, Hops, Total profit (cr) and the Route) and **Market searches** (Time (UTC), Side, Commodity, Tons, Scope, Best result, System, cr/t and ly). |
+| **Overview** | Net profit, trade profit, running costs, net per hour, tons sold and trading time. Then commander, ship, start, end, session length and when saved, balance change, trades, tons bought and sold, profit per ton sold, margin on cost, jumps and light years, net per jump and per light year, each running cost's share of sales, and the best and weakest commodity. |
+| **Commodities** | Per commodity: Bought t, Spent, Avg buy, Sold t, Revenue, Avg sell, Profit, Margin, Profit/t and Unsold t. |
+| **Stations** | The same, summed per station: Visits, Bought t, Spent, Sold t, Revenue, Profit, Costs and Net. |
+| **Route** | The stations in the order visited (#, Time, Station, System, What happened, Net and Running, the running total of the net). Returning to a station later is a new visit. |
+| **Trades** | Every purchase, sale and cost with Time, Type, Commodity, t, Unit, Total, Profit, Station and System. The newest 200 are shown first; **Show older trades** adds 200 older ones per press. The table scrolls vertically. |
+| **Stock & carrier** | Cargo bought but not sold (a journal estimate, with its cost and average cost per ton), the ship hold at the time of saving, and the carrier's used and free cargo space and space reserved for orders at the time of saving. |
+| **Lookups** | Two tables of Spansh requests made during the session: **Spansh routes searched** (Time (UTC), Started from, Hops, Total profit (cr) and the Route) and **Market searches** (Time (UTC), Side, Commodity, Tons, Scope, Best result, System, cr/t and ly). |
 
-Buttons in the window's header: **Help** explains the figures. **Copy summary** puts a plain-text report on the clipboard, **Export log (CSV)** saves the full trade log
-to a file you choose, and **Delete session** removes a saved session (it asks first). With no saved sessions the window tells you to press **Save session** on the Trade > Session page.
+Header buttons: **Help** explains the figures. **Copy summary** copies a plain-text report to the clipboard. **Export log (CSV)** saves the full trade log to a chosen file. **Delete session** removes a saved session after confirmation. With no saved sessions, the window instructs to press **Save session** on the Trade > Session page.
 
 ### Worked example: review a saved session
 
-You spent the evening hauling Tritium and finished at the carrier.
-
-1. On **Session**, press **Save session**. The message at the top says `Saved to Trade History.`
-2. Press **Reset** so tomorrow starts clean.
+1. On **Session**, press **Save session**. The message at the top reads `Saved to Trade History.`
+2. Press **Reset**.
 3. Press **History**. The newest session is selected in the **SESSION** drop-down.
-4. On **Overview**, check Net profit and net per hour. On **Commodities**, look at Profit/t for each load. On **Route**, see the stations in the order you flew them.
-5. Press **Copy summary** to paste a plain-text report, or **Export log (CSV)** to save the full trade log.
+4. On **Overview**, read net profit and net per hour. On **Commodities**, read Profit/t for each load. On **Route**, read the stations in visit order.
+5. Press **Copy summary** for a plain-text report, or **Export log (CSV)** for the full trade log.
 
-**Good to know:**
+**Notes:**
 
-- The balance change is your real credits difference, so it also includes anything else you earned.
+- The balance change is the actual credits difference, so it includes any other income.
 - Times are UTC.
-- A session keeps its most recent 5,000 trades and costs. The totals are always exact.
-- History is kept in `trade_history.json` in the WFMT plugin folder, which updates leave alone.
+- A session keeps its most recent 5,000 trades and costs. The totals are exact.
+- History is stored in `trade_history.json` in the WFMT plugin folder, which updates leave unchanged.
 
 ## Routes
 
-*Needs the Spansh lookups switched on (Settings → WFMT → Trade).*
+Requires the Spansh lookups to be enabled (Settings → WFMT → Trade).
 
-**Find routes** asks Spansh for the most profitable trade route from where you are.
+**Find routes** asks Spansh for the most profitable trade route from the current position.
 
-**What it uses:**
+**Inputs:**
 
-- *Start:* the station you're docked at, or the last one **this commander** docked at. Each commander has their own and it is
-  saved, so it survives switching commander and restarting EDMC, and it is brought up to date from journals written
-  while EDMC was closed. A commander who has never docked has none, and the page says so.
+- *Start:* the docked station, or the last station this commander docked at. Each commander's start is saved, survives commander switches and EDMC restarts, and is updated from journals written while EDMC was closed. A commander who has never docked has no start, and the page says so.
 - *Cargo size and credits:* from the game.
-- *Jump range:* your ship's **unladen** range. Lower it with **Jump range** in the Routes window if a full hold jumps shorter.
-- *Pad size:* if your ship needs a large pad, only stations with one are considered.
+- *Jump range:* the ship's unladen range. **Jump range** in the Routes window overrides it.
+- *Pad size:* if the ship needs a large pad, only stations with one are considered.
 
-Before you search, the page shows what it will use (start, ship, cargo, jump range, budget), so you can check it.
+Before a search, the page shows the inputs that will be used (start, ship, cargo, jump range, budget).
 
-**Fleet carriers:** Spansh's planner doesn't know them, so a route never starts from one. If you're docked at your
-carrier, it starts from the last real station you docked at, and the page says where. If Spansh refuses a search,
-the page shows its reason.
+**Fleet carriers:** Spansh's planner does not support fleet carriers as a start, so a route never starts from one. When docked at the commander's carrier, the route starts from the last station docked at, and the page names it. If Spansh refuses a search, the page shows its reason.
 
-**Round trip is the exception:** it pairs stations itself from a station search, which lists fleet carriers, so when you are docked at
-a fleet carrier (your own, say) the round trip starts from that carrier's market, and the result names where it started. Spansh must
-have a recent market for the carrier, so open its commodity market once so it is reported; if it has none the page says so.
+**Round trip is the exception:** it pairs stations from a station search, which lists fleet carriers. When docked at a fleet carrier, the round trip starts from that carrier's market, and the result names the start. Spansh must hold a recent market for the carrier, so the carrier's commodity market must have been opened once. If Spansh has none, the page says so.
 
 ### Worked example: find a route
 
-You are docked at a station and want a profitable run.
-
-1. Tick **Enable Spansh trade lookups** in **Settings → WFMT → Trade** if you have not.
-2. Go to the **Routes** page. The page lists what it will use: start, ship, cargo, jump range and budget. Check them.
+1. Tick **Enable Spansh trade lookups** in **Settings → WFMT → Trade**.
+2. Open the **Routes** page. Check the listed inputs: start, ship, cargo, jump range and budget.
 3. Press **Hops** until it reads `Hops: 3`, then press **Find routes**.
-4. Wait while the page says whether the search is in Spansh's queue or being calculated. Press **Cancel** to stop.
-5. Read **Total profit** and **Est. profit / hour**, then each numbered hop. Press **Copy next system** and paste it into the galaxy map.
-
-If the first destination is Example System, that is the name now on your clipboard.
+4. The page states whether the search is in Spansh's queue or being calculated. **Cancel** stops the search.
+5. Read **Total profit** and **Est. profit / hour**, then each numbered hop. **Copy next system** copies the first destination for the galaxy map.
 
 ### Hops
 
-The Routes window has a **Routes** box at the top with what the search asks Spansh for: **Hops**, **Furthest from the star (ls)**, **Jump range (ly, blank = my ship's)**, **Ignore prices older than (hours)**, and ticks for **Systems that need a permit**, **Fleet carriers**, **Ground facilities** and **Large landing pad only**. Under **Round trip** are **Least supply to buy**, **Least demand to sell**, **Search radius** and **Carry only this commodity**. A box saves when you press Enter or click away; a tick saves at once. These settings are only in the window, not in Settings → WFMT → Trade (see [Trade settings](#trade-settings) for the whole list and where each one is).
+The Routes window has a **Routes** box at the top with the search parameters: **Hops**, **Furthest from the star (ls)**, **Jump range (ly, blank = my ship's)**, **Ignore prices older than (hours)**, and ticks for **Systems that need a permit**, **Fleet carriers**, **Ground facilities** and **Large landing pad only**. Under **Round trip** are **Least supply to buy**, **Least demand to sell**, **Search radius** and **Carry only this commodity**. A box saves on Enter or when focus leaves it; a tick saves at once. These settings exist only in the window, not in Settings → WFMT → Trade (see [Trade settings](#trade-settings) for the complete list and location of each).
 
-The other Trade settings are in the windows they belong to too: **Ship size (landing pad)** in both the Routes and Market windows, **Fleet carriers** and **Ground facilities** also in Market, the **'Near me' search radius (ly)** in the Market window, and **Count fines and bounties I pay as a running cost** in the Session window.
+Other Trade settings are also in their windows: **Ship size (landing pad)** in the Routes and Market windows, **Fleet carriers** and **Ground facilities** also in Market, the **'Near me' search radius (ly)** in the Market window, and **Count fines and bounties I pay as a running cost** in the Session window.
 
-The **Hops** button shows the current length (for example `Hops: 3`). Each press cycles it from 2 up to 10 and then back to 2. It
-is the same value as the **Hops** box in the Routes window, which accepts 1 to 10.
+The **Hops** button shows the current value (for example `Hops: 3`). Each press cycles it from 2 to 10 and back to 2. It is the same value as the **Hops** box in the Routes window, which accepts 1 to 10.
 
-**2 hops** is the choice for a back-and-forth pair. When the route ends at the station it started from and every leg
-carries cargo, the result is headed "repeatable loop" and says you can fly it again. With 2 hops that do not make a pair, the page says
-the second hop ends at a third station. A leg with no cargo is flagged.
+With 2 hops, when the route ends at its starting station and every leg carries cargo, the result is headed "repeatable loop". With 2 hops that do not form a pair, the page states that the second hop ends at a third station. A leg with no cargo is flagged.
 
 ### Round trip
 
-Spansh's planner returns the best *chain*, which doesn't always come back. **Round trip** finds the best
-back-and-forth pair itself.
+Spansh's planner returns the best chain, which does not necessarily return to its start. **Round trip** finds the best back-and-forth pair directly.
 
-How it works, in plain terms:
+Procedure:
 
-1. It asks Spansh for the markets of the nearest stations (up to 300, within twice your jump range, but never less
-   than 20 ly or more than 100 ly, unless you set a search radius in the Routes window).
-2. For each neighbor, it works out what to carry out and what to bring back.
-3. A pair only counts when **both legs make a profit, so you never fly empty**.
-4. Each leg fills the hold with the most profitable commodity first and tops up with the next, limited by the supply
-   where you buy, the demand where you sell and what you can afford.
-5. Pairs are ranked by estimated profit per hour, and the top three are shown with what to carry each way. Every pair, not
-   only the best, lists its commodities on each leg with the tons, the profit, what it costs where you buy, what it sells for
-   where you sell (and the profit per ton), and the supply and demand behind it. Three commodities are listed per leg, with
-   "+N more" after.
+1. Request the markets of the nearest stations from Spansh: up to 300, within twice the jump range but never less than 20 ly or more than 100 ly, unless a search radius is set in the Routes window.
+2. For each neighboring station, compute what to carry out and what to bring back.
+3. A pair counts only when both legs make a profit.
+4. Each leg fills the hold with the most profitable commodity first and tops up with the next, limited by supply at the buying station, demand at the selling station and the available credits.
+5. Pairs are ranked by estimated profit per hour, and the top three are shown. Every pair lists, per leg, three commodities (followed by "+N more") with tons, profit, the cost where bought, the sale price where sold (and profit per ton), and the supply and demand behind them.
 
-It uses the same filters as Find routes (price age, ground facilities, fleet carriers, your ship's pad size,
-distance from the star), plus the **least supply** and **least demand** settings (200 t each by default), so thin
-markets are left out. It takes about 20 seconds and makes one to three Spansh requests (100 stations each).
-
-**Example.** You want a pair of stations to shuttle between. Dock at your start station, go to **Routes** and press
-**Round trip**. After about 20 seconds you see the top three pairs, each with what to carry out and what to bring
-back. Every leg makes a profit, so you never fly empty.
+The same filters as Find routes apply (price age, ground facilities, fleet carriers, ship pad size, distance from the star), plus the **least supply** and **least demand** settings (200 t each by default), which exclude thin markets. The search makes one to three Spansh requests (100 stations each).
 
 ### Reading the result
 
-Spansh can take a minute or two. While you wait the page says whether the search is **waiting in Spansh's queue** or being
-calculated, so you can tell a busy Spansh from a stalled search. **Cancel** stops waiting. The result shows:
+While waiting, the page states whether the search is in Spansh's queue or being calculated. **Cancel** stops waiting. The result shows:
 
-- **Total profit** and **Est. profit / hour** (a rough figure worked out from your jump range), then **Hops**,
-- each hop, numbered: the two stations, then three figures: the hop's **Profit**, the **Total** so far (the running total, so the last hop's Total is the route's profit) and the distance in light years; under them the destination system and its distance from the star, the best commodity with its tons, and the supply at the buying station and the
-  demand at the selling one. Every hop is listed, and a **Whole route** row under the last hop adds them up: the profit of all the hops, the same figure again under **Total**, and the distance flown. Under it a bold line reads `Average per leg: +1,067 cr × 3 legs = +3,200 cr estimated total earnings`. In a **Round trip**, each pair ends with `Both legs: out + back = per loop` and the same kind of average line for its two legs. Gains are green and losses red.
+- **Total profit** and **Est. profit / hour** (a rough figure derived from the jump range), then **Hops**.
+- Each hop, numbered: the two stations, then the hop's **Profit**, the **Total** so far (so the last hop's Total is the route's profit) and the distance in light years; beneath them the destination system and its distance from the star, the best commodity with tons, and the supply at the buying station and the demand at the selling one. A **Whole route** row under the last hop sums the profit of all hops, repeats that figure under **Total**, and gives the distance flown. A bold line below reads `Average per leg: +1,067 cr × 3 legs = +3,200 cr estimated total earnings`. In a **Round trip**, each pair ends with `Both legs: out + back = per loop` and an average line for its two legs. Gains are green and losses red.
 
-**Copy next system** puts the first destination on your clipboard so you can paste it into the galaxy map.
+**Copy next system** copies the first destination for the galaxy map.
 
 ## Market
 
-*Needs the Spansh lookups switched on.*
+Requires the Spansh lookups to be enabled.
 
-Finds where to **sell** or where to **buy** a commodity.
+Market finds where to sell or buy a commodity.
 
-The **Commodity** box, the **Sell** / **Buy** buttons beside **I want to** and the search buttons under them (**Near me**, **Galaxy**, **Best picks**, **Price finder**, after **Then search**) work only once the Spansh lookups are switched on. Without them the buttons are grayed out and the window tells you to turn them on in Settings → WFMT → Trade (the Spansh lookups switch, which stays there).
+The **Commodity** box, the **Sell** / **Buy** buttons beside **I want to**, and the search buttons (**Near me**, **Galaxy**, **Best picks**, **Price finder**, after **Then search**) work only when the Spansh lookups are enabled. Otherwise they are disabled and the window directs to Settings → WFMT → Trade.
 
-1. **Choose Sell or Buy** with the **I want to** buttons under the Commodity box (the lit one is chosen). It is remembered.
-2. **Pick a commodity.** Click the **Commodity** box and start typing. Enter in the box runs **Near me**. Suggestions fill in as you type: first what
-   you carry and what the station you're at buys, then every commodity.
-   - When *selling*, you can leave it empty to search for the commodity you carry the most of.
-   - When *buying*, type what you want.
-3. **Press Near me** (the first button after **Then search**, under the box) to look within a radius of your system (100 ly unless you change it), or **Galaxy** to look
-   everywhere. You can press both. While a search is running the **Near me** button becomes **Cancel**, and the page counts the seconds.
+1. Choose **Sell** or **Buy** with the **I want to** buttons under the Commodity box (the lit button is selected). The choice is remembered.
+2. Select a commodity. Click the **Commodity** box and type. Enter in the box runs **Near me**. Suggestions list first the cargo carried and what the docked station buys, then every commodity.
+   - When selling, an empty box searches for the commodity carried in the greatest quantity.
+   - When buying, a commodity must be typed.
+3. Press **Near me** (the first button after **Then search**) to search within a radius of the current system (100 ly by default), or **Galaxy** to search everywhere. Both may be pressed. While a search runs, **Near me** becomes **Cancel** and the page counts seconds.
 
-Before you search, the page shows what it will use: your ship and landing pad, the commodity and amount (marked `(your free hold space)` when you are buying), and the radius. The lit **Sell** or **Buy** button shows which way you are searching.
+Before a search, the page shows what it will use: ship and landing pad, the commodity and amount (marked `(your free hold space)` when buying), and the radius. The lit **Sell** or **Buy** button shows the direction.
 
-**Example.** You're hauling 200 t of Palladium and want to sell. Leave the box empty (it picks Palladium), press
-**Sell**, then **Near me**. You get a list of stations within 100 ly ranked by what your whole load would earn.
+Example: with 200 t of Palladium aboard, leave the box empty (it selects Palladium), press **Sell**, then **Near me**. The result lists stations within 100 ly ranked by what the whole load would earn.
 
 ### How results are ranked
 
-- **Selling:** by what *your load* would earn: price per ton times the tons the station still wants. A station
-  paying more per ton but wanting only 40 t is worth less to a 200 t hold. If you haven't got any of it, a full
-  hold is assumed.
-- **Buying:** the amount is your *free hold space*. Stations that can supply all of it come first, cheapest first.
-  Stations that can only supply part come after, marked "only N t in stock".
+- **Selling:** by what the load would earn: price per ton times the tons the station still wants. If none of the commodity is held, a full hold is assumed.
+- **Buying:** the amount is the free hold space. Stations that can supply all of it come first, cheapest first. Stations that can supply only part follow, marked "only N t in stock".
 
-Once you've run both searches (near and galaxy), it tells you which is better and by how much (more money when
-selling, a lower price when buying), and how much further away it is. When nothing in the galaxy beats the best nearby it says only `Best overall is nearby.` (the station is the first one listed).
+When both searches (near and galaxy) have run, the page states which is better and by how much (more money when selling, lower price when buying) and how much further away it is. When nothing in the galaxy beats the best nearby result, it reads `Best overall is nearby.` (the station is the first one listed).
 
-### What each result tells you
+### What each result shows
 
-Every result says what kind of place it is: **orbital** or **ground** (on a planet's surface), the station type
-(Coriolis Starport, Planetary Outpost and so on), and how far it is from the arrival star in light seconds. Stations
-with no landing pad your ship fits are left out.
+Every result states whether the place is **orbital** or **ground** (on a planet's surface), the station type (Coriolis Starport, Planetary Outpost and so on), and the distance from the arrival star in light seconds. Stations with no landing pad that fits the ship are omitted.
 
 ### Fleet carriers in results
 
-**Fleet carriers are listed in their own section**, marked "they can move", because a carrier can jump away before
-you arrive. They are asked for separately and weighted about one carrier to every three stations, so cheap carriers
-never crowd the real stations out of the list. A line says when a carrier would beat the best station.
+Fleet carriers are listed in a separate section, marked "they can move". They are requested separately and weighted at about one carrier to every three stations. A line states when a carrier would beat the best station.
 
-In the Routes and Market windows you can stop searching for **Fleet carriers**, for **Ground facilities** (planetary ports
-and outposts, and settlements), or both, which leaves only stations in space.
+In the Routes and Market windows, **Fleet carriers** and **Ground facilities** (planetary ports and outposts, and settlements) can each be excluded. Excluding both leaves only stations in space.
 
 ### Best picks
 
-The **Best picks** button answers "where should I buy (or sell) this?" with four choices for the commodity in the box
-(buying: what you typed; selling: what you typed, or your largest load):
+**Best picks** returns four choices for the commodity in the box (buying: the typed commodity; selling: the typed commodity or the largest load):
 
 | Pick | Meaning |
 |---|---|
-| **Closest** | The nearest station that has it in stock (buying) or wants it (selling), whatever the price. |
-| **Best local** | The cheapest (buying) or highest-paying (selling) station within your **Near me** radius. |
-| **Cheapest anywhere** / **Highest anywhere** | The best price in the whole galaxy, nearest first when prices tie. |
-| **Recommended** | The nearest station whose price is within **10%** of the best price in the galaxy: nearly the best price without the long trip. |
+| **Closest** | The nearest station that has it in stock (buying) or wants it (selling), at any price. |
+| **Best local** | The cheapest (buying) or highest-paying (selling) station within the **Near me** radius. |
+| **Cheapest anywhere** / **Highest anywhere** | The best price in the galaxy, nearest first when prices tie. |
+| **Recommended** | The nearest station whose price is within **10%** of the best price in the galaxy. |
 
-- "In stock" means at least the amount shown (your free hold space when buying, your load when selling). If no station has that much, the pick falls back to the nearest with any and says how much it has ("only 12 t in stock" when buying, "only 12 t wanted" when selling).
-- Your landing pad size, the ground-facilities setting and the carriers setting apply.
+- "In stock" means at least the amount shown (free hold space when buying, the load when selling). If no station has that much, the pick falls back to the nearest with any and states the quantity ("only 12 t in stock" when buying, "only 12 t wanted" when selling).
+- The landing pad size, ground-facilities and carriers settings apply.
 - Market data older than 7 days is ignored.
-- A fleet carrier is not offered as a pick (it can move). If one has a better price than the cheapest station, it is mentioned underneath.
+- A fleet carrier is not offered as a pick. If a carrier has a better price than the cheapest station, it is noted underneath.
 - A station that is two picks is listed for each, with "same as ..." beside the second.
 
-It asks Spansh about four times (five with carriers), one after another, so it takes a few seconds. The numbers are the same as the other results: cr/t, total for the amount, and distance.
+Best picks makes about four Spansh requests (five with carriers), one after another. Results show cr/t, the total for the amount, and distance.
 
-**Example.** You need 64 t of Tritium and have 64 t of free hold space. Choose **Buy**, type `Tritium` in the Commodity box
-(pick it from the suggestions) and press **Best picks**. After a few seconds you see **Closest**, **Best local**,
-**Cheapest anywhere** and **Recommended**. If **Recommended** is within 10% of the galaxy's best price and much
-nearer, that is usually the one to fly to.
+Example: for 64 t of Tritium with 64 t of free hold space, choose **Buy**, type `Tritium` in the Commodity box (select it from the suggestions) and press **Best picks**. The result shows **Closest**, **Best local**, **Cheapest anywhere** and **Recommended**.
 
-The same four picks for a mission's cargo are in the Mission mode ([Source commodities](missions.md#source-commodities)).
+The same four picks for a mission's cargo are in Mission mode ([Source commodities](missions.md#source-commodities)).
 
 ### Price finder
 
-Opens the finder that Mining's **Prices** button also uses ([Find Best Price](mining.md#prices-find-best-price)), for any commodity, to buy or sell, with its own **Where** distance
-drop-down. The button is grayed out until Trade's Spansh lookups are on. Its suggestions list what you carry and what this station buys first, then every commodity. The finder always leaves fleet carriers out and asks only for markets updated in the last 30 days, whatever the Trade settings say.
+**Price finder** opens the finder that Mining's **Prices** button also uses ([Find Best Price](mining.md#prices-find-best-price)), for any commodity, to buy or sell, with its own **Where** distance drop-down. The button is disabled until Trade's Spansh lookups are enabled. Its suggestions list the cargo carried and what the docked station buys first, then every commodity. The finder always excludes fleet carriers and requests only markets updated in the last 30 days, regardless of the Trade settings.
 
-**Prices are only as fresh as the last player who docked there.** Markets older than 30 days are ignored. Check the
-market when you arrive.
+Prices are only as recent as the last player who docked at the station. Markets older than 30 days are ignored.
 
 ## Watch list
 
-A short list of the commodities you care about, with the best price to buy and to sell each at a glance. It is a collapsible **Watch list**
-row in Trade mode, under the page (it starts folded; click its heading to open or fold it, and the heading shows `- 3 watched` when folded). Each line reads like `Gold: buy 9,100 / sell 11,200`, with `-` for a side nobody has a price for. Five commodities are listed, then `+N more in the window`. Two buttons sit under the lines: **Refresh** asks Spansh, and **Watch** opens the window. A status line under the list says what the last refresh did. With nothing watched the row says `Nothing watched yet. Press Watch to add commodities.`
+The watch list tracks selected commodities and shows the best price to buy and to sell each. It is a collapsible **Watch list** row in Trade mode, under the page. It starts folded; clicking its heading opens or folds it, and the folded heading shows `- 3 watched`. Each line reads like `Gold: buy 9,100 / sell 11,200`, with `-` for a side with no price. Five commodities are listed, then `+N more in the window`. Two buttons sit under the lines: **Refresh** requests prices from Spansh, and **Watch** opens the window. A status line under the list reports the result of the last refresh. With nothing watched, the row reads `Nothing watched yet. Press Watch to add commodities.`
 
-- **Add a commodity** in the window: click the box beside **Add a commodity**, start typing and pick from the suggestions (the same names the Market page uses), then
-  press **Add** or Enter. Up to 30. Select a commodity and press **Remove** to take it off and forget its prices; press it twice (the first press asks, the second, within a few seconds, removes).
-- **The two tables.** The top table lists every watched commodity with **Commodity**, **Buy (cr/t)**, **Buy at**, **Sell (cr/t)** and **Sell at**. Select a row and the lower table lists where it was seen: **From** (`Seen` for a market you opened, `Spansh: buy` or `Spansh: sell`), **Station**, **System**, **Buy (cr/t)**, **Stock**, **Sell (cr/t)**, **Demand**, **ly** and **Age**. The window's **Help** button explains them.
-- **Where the prices come from.** Every time you open a station's commodity market in the game, WFMT reads it and keeps the buy price
-  (what the station charges), the sell price (what it pays), the stock and the demand of each commodity you watch, for the newest 12
-  stations. This needs nothing turned on and sends nothing anywhere. Pick a commodity in the window to see every market it was seen at.
-- **Refresh from Spansh.** **Refresh** on the row (or **Refresh from Spansh** in the window) asks Spansh for the cheapest station to buy and
-  the dearest to sell each watched commodity, within your "Near me" radius of the system you are in.
-  - It needs *Enable Spansh trade lookups* in Settings.
-  - It sends only the commodity names and your system name, never your commander name.
-  - Fleet carriers are left out, because they move.
-  - The answer is kept until you close EDMC. The search radius is your "Near me" radius (5 to 5,000 ly).
-- **The price shown is the best of both**: the cheapest to buy and the dearest to sell among the markets you opened and Spansh's answer. The
-  window says where each price is, how many tons the station has to sell you (or still wants from you), where the price is from and how
-  old it is. The row shows only the prices; open the window for the place.
-- **Spansh's five best stations for each side** are kept, not just the best one, and listed under the commodity you pick, with their stock or
-  demand and their distance in light years, so you have others to go to when one runs short.
+- **Add a commodity** (window): click the box beside **Add a commodity**, type, select from the suggestions (the same names as the Market page), then press **Add** or Enter. The limit is 30 commodities. Select a commodity and press **Remove** to take it off and discard its prices; the first press asks for confirmation and a second press within a few seconds removes it.
+- **The two tables.** The top table lists every watched commodity with **Commodity**, **Buy (cr/t)**, **Buy at**, **Sell (cr/t)** and **Sell at**. Selecting a row fills the lower table with where it was seen: **From** (`Seen` for a market that was opened, `Spansh: buy` or `Spansh: sell`), **Station**, **System**, **Buy (cr/t)**, **Stock**, **Sell (cr/t)**, **Demand**, **ly** and **Age**. The window's **Help** button explains them.
+- **Where prices come from.** Each time a station's commodity market is opened in the game, WFMT reads it and keeps the buy price (what the station charges), the sell price (what it pays), the stock and the demand of each watched commodity, for the newest 12 stations. This requires no setting and sends nothing.
+- **Refresh from Spansh.** **Refresh** on the row (or **Refresh from Spansh** in the window) asks Spansh for the cheapest station to buy and the dearest to sell each watched commodity, within the "Near me" radius of the current system.
+  - It requires *Enable Spansh trade lookups* in Settings.
+  - It sends only the commodity names and the system name, never the commander name.
+  - Fleet carriers are excluded because they move.
+  - The answer is kept until EDMC closes. The search radius is the "Near me" radius, limited to 5 to 5,000 ly.
+- **Displayed price.** The cheapest to buy and the dearest to sell among the opened markets and Spansh's answer. The window shows where each price is, how many tons the station has to sell (or still wants), the price source and its age. The row shows only prices.
+- **Spansh's five best stations for each side** are kept and listed under the selected commodity, with their stock or demand and distance in light years.
 
-**Example.** You want to keep an eye on Gold and Palladium.
+Example:
 
 1. Open the **Watch list** row and press **Watch**.
-2. In the box beside **Add a commodity**, type `Gold`, pick it and press **Add**. Do the same for `Palladium`.
-3. Press **Refresh from Spansh** in the window. The status line says when it is done.
-4. Close the window. The row now shows lines such as `Gold: buy 9,100 / sell 11,200` (example prices).
-5. Open the window again and select Gold to see where each price was seen, its stock or demand, the distance and the age.
+2. In the box beside **Add a commodity**, type `Gold`, select it and press **Add**. Repeat for `Palladium`.
+3. Press **Refresh from Spansh** in the window. The status line reports completion.
+4. Close the window. The row shows lines such as `Gold: buy 9,100 / sell 11,200` (example prices).
+5. Reopen the window and select Gold to see where each price was seen, its stock or demand, the distance and the age.
 
-**A price is only true when it was seen.** A market you opened last week may have changed, and Spansh's data is only as fresh as the last
-player who docked there (this refresh ignores markets older than 7 days). Check the age, and the market when you arrive.
+A price is a snapshot of when it was seen. A market opened last week may have changed, and Spansh's data is only as recent as the last player who docked (the refresh ignores markets older than 7 days).
 
-The list is kept on your computer for the commander who made it. Another commander on the same install has their own.
+The list is stored on the computer for the commander who created it. Another commander on the same install has a separate list.
 
 ## Your fleet carrier and squadron carrier
 
-Not every commander has a carrier, and some have a fleet carrier, a squadron carrier or both. Under
-**Settings → WFMT → Trade**, each commander WFMT has seen gets a choice:
+Each commander WFMT has seen has a carrier choice under **Settings → WFMT → Trade**:
 
-**Auto** (show whatever your journal has revealed) · **None** · **Fleet** · **Squadron** · **Both**
+**Auto** (show whatever the journal has revealed) · **None** · **Fleet** · **Squadron** · **Both**
 
-Nothing is shown for a carrier you haven't chosen. For each one, the Session page shows:
+Nothing is shown for a carrier that is not selected. For each carrier, the Session page shows:
 
-- cargo used, free, and reserved for orders, for example "5,060 / 23,720 t used, 18,660 t free",
-- what the rest of the space is spent on (crew, packs),
-- when the journal has told WFMT: **Carrier tritium**, **Carrier is at**, **Carrier jump planned**, **Carrier balance**,
-- one line per order you have set (**Carrier selling Gold** 300 t @ 12,000 cr, **Carrier buying Tritium**).
+- cargo used, free, and reserved for orders, for example "5,060 / 23,720 t used, 18,660 t free";
+- what the rest of the space is used for (crew, packs);
+- when the journal has provided them: **Carrier tritium**, **Carrier is at**, **Carrier jump planned**, **Carrier balance**;
+- one line per order that is set (**Carrier selling Gold** 300 t @ 12,000 cr, **Carrier buying Tritium**).
 
-A carrier being decommissioned is flagged. Once the game scraps it (the scrap time in the journal, or seven days after the last report that said it was pending, if the journal gave no date) WFMT forgets it, so a commander who has scrapped their carrier stops showing one on Auto.
+A carrier being decommissioned is flagged. Once the game scraps it (the scrap time in the journal, or seven days after the last report that said it was pending if the journal gave no date), WFMT forgets it, so a scrapped carrier stops showing on Auto.
 
-**Example.** You load 20,000 t of cargo onto your carrier over an evening.
+Example for loading 20,000 t of cargo onto a carrier:
 
-1. In **Settings → WFMT → Trade**, set your commander's choice to **Fleet** (or leave it on **Auto**).
-2. Dock at your carrier and do your transfers. The Session page's **Carrier cargo** goes up with each one.
-3. If the figure shows a `~` or looks wrong after a big unload, open Carrier Management in the game. Within a couple
-   of seconds the page shows the exact **Carrier cargo** and **Carrier reserved for orders**.
+1. In **Settings → WFMT → Trade**, set the commander's choice to **Fleet** (or leave it on **Auto**).
+2. Dock at the carrier and perform the transfers. **Carrier cargo** on the Session page increases with each transfer.
+3. If the figure shows a `~` or appears wrong after a large unload, open Carrier Management in the game. Within a couple of seconds the page shows the exact **Carrier cargo** and **Carrier reserved for orders**.
 
 ### How the number stays up to date
 
-The game only reports a carrier's space when you **open Carrier Management**, so do that once. WFMT also reads your
-recent journal files when it starts, so it finds the last time you did, even if EDMC was restarted since.
+The game reports a carrier's space only when **Carrier Management** is opened. WFMT also reads recent journal files at start-up, so it finds the last time this occurred, even after an EDMC restart.
 
-After that:
+Afterwards:
 
-- It follows your cargo transfers. A transfer is counted for the carrier you're **docked at**, so docking at
-  someone else's carrier never changes your figure.
-- Reserved space, and the tons your carrier's trade orders move, only update the next time you open Carrier
-  Management. The orders themselves, tritium deposits, the carrier's location and jump plans are recorded as they
-  happen, so those lines stay current.
+- WFMT follows cargo transfers. A transfer is counted for the carrier the commander is docked at, so docking at another commander's carrier does not change the figure.
+- Reserved space, and the tons moved by the carrier's trade orders, update only the next time Carrier Management is opened. The orders themselves, tritium deposits, the carrier's location and jump plans are recorded as they happen.
 
-**To get the real, exact cargo figure, open Carrier Management** (the carrier's management screen, where you see its
-services and cargo). The game writes a fresh report of the whole inventory and WFMT shows it within a couple of
-seconds. Nothing in the game's files lists everything in the carrier's hold (the report gives only the total, and the
-orders name only the commodities on order), so there is no other way to read it.
+To obtain the exact cargo figure, open Carrier Management (the carrier's management screen, which shows its services and cargo). The game writes a report of the whole inventory and WFMT shows it within a couple of seconds. The game's files do not list everything in the carrier's hold (the report gives only the total, and the orders name only the commodities on order).
 
 ### Quirks worth knowing
 
-- **A `~` before the figure** (for example `~23,720 / 23,720 t`) **means an estimate.** The transfers WFMT has seen
-  add up to more than the carrier can hold (or take out more than it holds), so cargo left the carrier without the
-  game writing anything down, usually a trade order or a sale made from the carrier. A note under the figure says
-  so. Open Carrier Management and the `~` goes away.
-- **Playing on another computer leaves the figure stale** until the journals are copied over and read, and even then
-  it is only as good as the last time you opened Carrier Management. Play with EDMC closed on this computer is read
-  back when EDMC next starts.
-- **The figure can look wrong right after you unload.** The unload is in the journal but the total is not. Open
-  Carrier Management after a big load to put an exact number back.
+- **A `~` before the figure** (for example `~23,720 / 23,720 t`) marks an estimate. The transfers WFMT has seen add up to more than the carrier can hold (or remove more than it holds), so cargo left the carrier without the game writing anything, usually through a trade order or a sale made from the carrier. A note under the figure states this. Opening Carrier Management removes the `~`.
+- **Playing on another computer leaves the figure stale** until the journals are copied over and read, and then it is only as accurate as the last time Carrier Management was opened. Play with EDMC closed on this computer is read when EDMC next starts.
+- **The figure can be wrong right after an unload.** The unload is in the journal but the total is not. Open Carrier Management after a large load to restore an exact number.
 
 ## What the game does and doesn't tell us, and how to work around it
 
-WFMT, like every third-party tool, only knows what Elite Dangerous writes to its journal files.
+WFMT uses what Elite Dangerous writes to its journal files, what Spansh (a community database) reports, and what Frontier's servers give a signed-in EDMC (a carrier's real cargo). Where the game records a value late, partly or not at all, WFMT shows the figure it has and states its certainty. See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
-- It adds what Spansh, a community database, reports, and what Frontier's servers give a signed-in EDMC (a carrier's real cargo), and works around the rest.
-- Some things the game never records, or records late or only in part. Rather than guess quietly, WFMT shows the figure it has and says how sure it is.
-- Below is every gap we know about, what it looks like on screen, and what to do.
+### Fleet carrier
 
-See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
-
-### Your fleet carrier
-
-| What you might expect | What the game gives | What to do |
+| Item | What the game provides | Handling |
 |---|---|---|
-| The carrier's space to be known as soon as you log in | The space report (`CarrierStats`) is written **only when you open Carrier Management**. It is not written at login. | Open Carrier Management once per session. WFMT reads recent journals at start-up, so the last time you did still counts after an EDMC restart. |
-| A list of what commodities are in the carrier's bay | Only the **total tons** in the bay. Commodity names are not in the space report. | The carrier's own orders are the closest thing: WFMT lists them (below), and a sale order names a commodity that is aboard. Carrier Management in the game lists the contents. WFMT does not invent a per-commodity list. |
-| Trade orders to be tracked as they fill | The game writes an order **when you place or cancel it** (`CarrierTradeOrder`), not each ton it later moves. | WFMT shows the orders you have set (commodity, tons, price). The tons that have moved, and the cargo figure, only update in the next space report: open Carrier Management after an order completes. Until then the cargo figure may be too high and shows a `~`. |
-| Space reserved for orders to follow along | Only updates in the space report. | Same: open Carrier Management. |
-| Lifetime totals to move while you play | The game writes its `Statistics` event only at login. | They are on the Credits Ledger's Lifetime tab and refresh the next time you log in. |
-| Tritium, location and jump plans | Tritium comes from the space report and from each fuel deposit you make; the location is written at login and after a jump; a jump request carries the destination and departure time. Fuel the carrier burns jumping is **not** written. | WFMT shows the tritium, where the carrier is and a planned jump. After a jump, open Carrier Management for the real tritium figure. A plan is dropped once its departure time is well past. |
-| Cargo moved by someone else to be seen | WFMT follows the transfers **your** journal records while you are docked at the carrier. We have not seen the game report anyone else's. | Open Carrier Management when someone else may have used the bay (a squadron carrier especially). |
-| The figure to be right right after unloading | The transfer is in the journal but the total is not updated. | WFMT counts the transfer itself; open Carrier Management after a big load to put the exact number back. |
-| Crew and pack space to be listed by type | Crew services, ship packs and module packs are reported, but only in the same report as above. | Same. |
+| Carrier space known at login | The space report (`CarrierStats`) is written only when Carrier Management is opened, not at login. | Open Carrier Management once per session. WFMT reads recent journals at start-up, so the last report still counts after an EDMC restart. |
+| List of commodities in the carrier's bay | Only the total tons in the bay. Commodity names are not in the space report. | WFMT lists the carrier's orders (a sale order names a commodity that is aboard). Carrier Management in the game lists the contents. WFMT does not construct a per-commodity list. |
+| Trade orders tracked as they fill | The game writes an order when it is placed or canceled (`CarrierTradeOrder`), not each ton later moved. | WFMT shows the orders that are set (commodity, tons, price). The tons moved and the cargo figure update only in the next space report. Until then the cargo figure may be too high and shows a `~`. |
+| Space reserved for orders | Updated only in the space report. | Open Carrier Management. |
+| Lifetime totals while playing | The game writes its `Statistics` event only at login. | They are on the Credits Ledger's Lifetime tab and refresh at the next login. |
+| Tritium, location and jump plans | Tritium comes from the space report and from each fuel deposit; the location is written at login and after a jump; a jump request carries the destination and departure time. Fuel the carrier burns jumping is not written. | WFMT shows the tritium, the carrier location and a planned jump. After a jump, open Carrier Management for the real tritium figure. A plan is dropped once its departure time is well past. |
+| Cargo moved by another commander | WFMT follows the transfers recorded in the commander's own journal while docked at the carrier. | Open Carrier Management when another commander may have used the bay (a squadron carrier especially). |
+| Figure correct right after unloading | The transfer is in the journal but the total is not updated. | WFMT counts the transfer itself. Open Carrier Management after a large load for the exact number. |
+| Crew and pack space by type | Crew services, ship packs and module packs are reported only in the space report. | Open Carrier Management. |
 
-**A `~` before a figure is WFMT telling you it is an estimate.** The transfers it has seen add up to more than the bay
-can hold, so something left the bay without a journal entry. It is a prompt, not an error: open Carrier Management and
-it goes away.
+A `~` before a figure marks an estimate: the transfers seen add up to more than the bay can hold, so something left the bay without a journal entry. Opening Carrier Management removes it.
 
-### Your ship's hold
+### Ship hold
 
-- **Mission and stolen cargo** are told apart from the cargo list the game writes whenever the hold changes (each
-  entry says if it is stolen, or belongs to a mission). If that list is missing or unreadable, the line shows the
-  total without the split.
-- **Limpets are counted as cargo by the game**, which is why they are shown as their own part of **Hold space**:
-  they use tons you might think are free.
-- **Some SRV and vehicle capacities are unknown**; the Inventory window shows the count with "capacity unknown" rather
-  than a guessed figure.
-- **"Bought, not yet sold" is an estimate.** It only comes down when WFMT sees you sell. Cargo lost, jettisoned, sold by
-  a carrier order, or moved to a carrier without WFMT running is not subtracted. Use **Rebuild** to recount from a
-  chosen start time, or **Reset** to start clean.
+- **Mission and stolen cargo** are distinguished using the cargo list the game writes whenever the hold changes (each entry states whether it is stolen or belongs to a mission). If the list is missing or unreadable, the line shows the total without the split.
+- **Limpets are counted as cargo by the game**, so they are shown as their own part of **Hold space**.
+- **Some SRV and vehicle capacities are unknown.** The Inventory window shows the count with "capacity unknown" instead of an estimated figure.
+- **"Bought, not yet sold" is an estimate.** It decreases only when WFMT sees a sale. Cargo lost, jettisoned, sold by a carrier order, or moved to a carrier without WFMT running is not subtracted. **Rebuild** recounts from a chosen start time, and **Reset** starts clean.
 
 ### Profit and costs
 
-- **Only what WFMT has seen is counted.** Trades before it first ran are not in the session. Keep EDMC running, or
-  copy the journals over later (see [two computers](#using-trade-on-two-computers)); the catch-up adds only what is
-  new.
-- **Insurance rebuys and fines are not counted**, and a cost only counts once WFMT has seen it.
-- **Advanced maintenance is logged by the game as a repair**, so it gets its own line to keep it visible.
-- **The session balance change is your real credits difference**, so it also includes anything else you earned.
+- Only what WFMT has seen is counted. Trades before it first ran are not in the session. The catch-up from copied journals adds only what is new (see [two computers](#using-trade-on-two-computers)).
+- Insurance rebuys and fines are not counted, and a cost counts only once WFMT has seen it.
+- The game logs advanced maintenance as a repair, so it is given its own line.
+- The session balance change is the actual credits difference, so it includes other income.
 
 ### Routes and Market (Spansh)
 
-- **Prices are only as fresh as the last player who docked there.** Spansh gets them from other players' game data.
-  Markets older than 30 days are ignored; check the market when you arrive.
-- **Spansh doesn't know fleet carriers as route starts**, so a route never starts from your carrier. Dock at a real
-  station first, or accept the last station you docked at.
-- **Fleet carriers in results can jump away**, so they are listed apart and marked. Switch them off in the Routes or Market window if you
-  only want fixed stations.
-- **Jump range is your ship's unladen range.** A full hold jumps shorter, so lower **Jump range** in the Routes window if routes are too
-  long.
-- **Commodity names must match the game exactly** ("Void Opal", not "Void Opals"). Pick from the suggestion list.
-- **The landing pad size is worked out from your ship** and can be wrong for unusual ships. Override it with **Ship size** in the Routes or Market window.
-- **Spansh can be slow or refuse a search.** Cancel and try again later; the page shows its reason. WFMT retries a busy answer a few times, and after repeated failures stops asking Spansh for five minutes and says so.
+- Prices are only as recent as the last player who docked. Spansh obtains them from other players' game data. Markets older than 30 days are ignored.
+- Spansh does not support fleet carriers as route starts, so a route never starts from a carrier. The last real station docked at is used.
+- Fleet carriers in results can jump away, so they are listed separately and marked. They can be excluded in the Routes or Market window.
+- The jump range is the ship's unladen range. A full hold jumps shorter; **Jump range** in the Routes window overrides it.
+- Commodity names must match the game exactly ("Void Opal", not "Void Opals"). Select from the suggestion list.
+- The landing pad size is derived from the ship and can be wrong for unusual ships. **Ship size** in the Routes or Market window overrides it.
+- Spansh can be slow or refuse a search. The page shows its reason. WFMT retries a busy answer several times, and after repeated failures stops asking Spansh for five minutes and states so.
 
 ### Watch list
 
-- **A seen price is a snapshot.** The game only writes a market when you open it, so a watched commodity has no price until you have
-  visited a station that trades it (or pressed Refresh). It never updates by itself.
-- **Stock and demand are from that moment too.** A station that showed 5,000 t last week may be empty now.
-- **Fleet carriers are not in the Spansh refresh**, so a carrier that sells a commodity cheaply only shows up if you opened its market.
-- **The Spansh refresh makes two requests per commodity** (buy, then sell), at least 0.4 seconds apart, so thirty commodities take
-  at least half a minute (longer if Spansh is slow). It runs in the background; the row says when it is done.
+- A seen price is a snapshot. The game writes a market only when it is opened, so a watched commodity has no price until a station that trades it has been visited or **Refresh** has been pressed. It never updates by itself.
+- Stock and demand are from the same moment.
+- Fleet carriers are not in the Spansh refresh, so a carrier that sells a commodity cheaply appears only if its market was opened.
+- The Spansh refresh makes two requests per commodity (buy, then sell), at least 0.4 seconds apart, so thirty commodities take at least half a minute. It runs in the background, and the row reports completion.
 
-### Gaps we have not been able to confirm
+### Limitations
 
-- **Squadron carriers.** We assume a squadron carrier's space report matches a fleet carrier's. No real one was
-  available to check, so treat its figures with care and report anything odd.
-- **Ship pad sizes** come from Coriolis data and a partly hand-written name map. A ship that doesn't match shows
-  **Landing pad: Unknown** and is not filtered. Set the size yourself with **Ship size** in the Routes or Market window.
-- **Spansh's route planner can filter for large pads but not medium ones.** If your ship needs a medium pad, check
-  the pad at each stop.
-- **A price can't be shown as current**, only that the market was updated in the last 30 days.
-- **The commodity list and ship classes are snapshots.** A new commodity or ship needs a WFMT update.
-- **On a first run, Stock looks back only 14 days**, so older purchases that are still unsold aren't known.
+- **Spansh's route planner** accepts a large-pad filter only (`requires_large_pad`).
+- **On a first run, Stock looks back only 14 days**, so older purchases that are still unsold are not known.
 
 ### Playing on more than one computer, or with EDMC closed
 
-The journal files are the only link, so everything above applies to each machine separately. Copy the journals across
-(all of them, with the game closed if you can), let WFMT read them, and use **Rebuild** for a session that began
-elsewhere. See [Using Trade on two computers](#using-trade-on-two-computers).
+The journal files are the only link, so everything above applies to each machine separately. Copy all journals across (with the game closed where possible), let WFMT read them, and use **Rebuild** for a session that began elsewhere. See [Using Trade on two computers](#using-trade-on-two-computers).
 
 ## Using Trade on two computers
 
-If you play on more than one computer (say Windows and Linux), each one keeps **its own** Trade records. The game's
-journals are the only thing that has to travel between them, and WFMT reads them for you.
+Each computer keeps its own Trade records. The game's journals are the only data that must be transferred, and WFMT reads them.
 
-**What lives on each computer** (files in the WFMT plugin folder, never shared):
+**Files on each computer** (in the WFMT plugin folder, not shared):
 
 | File | Holds |
 |---|---|
@@ -570,72 +442,59 @@ journals are the only thing that has to travel between them, and WFMT reads them
 | `trade_route_start.json` | each commander's route start |
 | `trade_history.json` | saved sessions |
 | `trade_journal_scan.json` | the list of journals already read |
-| `trade_watch.json` | the watch list and the prices seen in markets you opened (one list per commander) |
+| `trade_watch.json` | the watch list and the prices seen in opened markets (one list per commander) |
 
-Copying these between computers is not needed and not recommended.
+Copying these files between computers is not needed.
 
 ### What to do
 
-1. **Copy the journal files** from the computer you played on into the other computer's journal folder (the one
-   EDMC's **Journal directory** points at). Copy them all, not just the newest. Copying a file that is already there
-   is fine. Doing it while the game is closed is best, because a file that is still being written is read again
-   later.
-2. **That's it.** WFMT looks for journal files it hasn't read **a few seconds after EDMC starts and then once a
-   minute**. It reads each new file (and any file that has grown since) once, and adds its trades, costs, stock and
-   carrier figures and docks (for the route start) to this computer's records.
+1. Copy the journal files from the computer played on into the other computer's journal folder (the folder EDMC's **Journal directory** points at). Copy all files, not only the newest. Copying a file that is already present is harmless. Copying while the game is closed is preferred, because a file still being written is read again later.
+2. WFMT looks for unread journal files a few seconds after EDMC starts and then once a minute. It reads each new file (and any file that has grown) once, and adds its trades, costs, stock, carrier figures and docks (for the route start) to this computer's records.
 
-   The Session page does not report this (it shows no history). Each review that reads something is logged in EDMC's log,
-   for example *"Trade read 1 new or changed journal file(s)"*. A "new" journal is one that was not there at the previous
-   review, or that has grown since.
-3. It only ever **adds what is new**. Reading a file twice, or out of order, never counts anything twice and never
-   overwrites a newer carrier figure with an older one.
+   The Session page does not report this. Each review that reads something is logged in EDMC's log, for example *"Trade read 1 new or changed journal file(s)"*. A new journal is one that was not present at the previous review, or that has grown since.
+3. WFMT only adds what is new. Reading a file twice, or out of order, does not count anything twice and does not overwrite a newer carrier figure with an older one.
 
-### Things that are not obvious
+### Notes
 
-- **The file you are playing right now is left alone** (EDMC already delivers its events live). It is read on a
-  later look, after the game has moved on to a new file or after EDMC restarts.
-- **The first time, only the 80 newest files are read.** Older history is not crawled. If your session began before
-  that, use **Rebuild**.
-- **A session that began on the other computer is not copied, only the journals are.** If this computer first met
-  the commander partway through, its tally starts from there. To fix it:
-  1. Press **Rebuild** on the Session page and give the date and time (UTC) the session began.
+- The file being played now is left alone (EDMC delivers its events live). It is read at a later review, after the game has moved to a new file or EDMC restarts.
+- On the first run, only the 80 newest files are read. Older history is not read. If the session began earlier, use **Rebuild**.
+- A session that began on the other computer is not copied; only the journals are. If this computer first saw the commander partway through, its tally starts from there. To correct it:
+  1. Press **Rebuild** on the Session page and enter the date and time (UTC) the session began.
   2. WFMT recounts the journals from then on and replaces the tally.
-  3. Check the totals against the other computer, adjusting the start time until they match.
-  4. Press **Save session** if you want to keep it.
-- **Reset and Save session only affect the computer you press them on.** Press Reset on both if you start a fresh
-  session.
-- **Carrier cargo only becomes exact when you open Carrier Management.** Copying journals does not change that.
+  3. Compare the totals with the other computer, adjusting the start time until they match.
+  4. Press **Save session** to keep it.
+- **Reset** and **Save session** affect only the computer on which they are pressed. Press **Reset** on both when starting a new session.
+- Carrier cargo becomes exact only when Carrier Management is opened. Copying journals does not change that.
 
 ## Trade settings
 
-Trade's settings are in two places. A number typed outside its range snaps back inside it, a box saves when you press Enter or click away, and a tick saves at once.
+Trade's settings are in two places. A number typed outside its range is set to the nearest limit, a box saves on Enter or when focus leaves it, and a tick saves at once.
 
 **In Settings → WFMT → Trade:**
 
 | Setting | Default | Notes |
 |---|---|---|
-| Enable Spansh trade lookups | Off | The Routes and Market windows do nothing without it. It is the permission to contact Spansh, so it stays in Settings. |
-| Carrier choice, per commander | Auto | See above. |
+| Enable Spansh trade lookups | Off | The Routes and Market windows do nothing without it. It is the permission to contact Spansh, so it is in Settings. |
+| Carrier choice, per commander | Auto | See [above](#your-fleet-carrier-and-squadron-carrier). |
 
-**In the windows**, where you use them:
+**In the windows:**
 
 | Window | Setting | Default | Notes |
 |---|---|---|---|
 | Routes | Hops | 3 (range 1 to 10) | Also set by the **Hops** button. |
 | Routes | Furthest from the star (ls) | 5,000 (1 to 1,000,000) | |
-| Routes | Jump range (ly, blank = my ship's) | blank | Blank uses your ship's unladen range. |
+| Routes | Jump range (ly, blank = my ship's) | blank | Blank uses the ship's unladen range. |
 | Routes | Ignore prices older than (hours) | 72 (0 = any age, up to 8,760) | |
 | Routes | Systems that need a permit | Off | |
 | Routes and Market | Fleet carriers, Ground facilities | On, On | In Routes they apply to routes; in Market to price results and Best picks. Both windows hold the same setting. |
-| Routes | Large landing pad only | Off | Leaves out stations without a large pad, in Routes. |
-| Routes and Market | Ship size (landing pad) | From my ship | Or Small, Medium or Large if it guesses wrong. |
-| Routes, Round trip | Least supply to buy, Least demand to sell | 200 t each | Leaves thin markets out. |
-| Routes, Round trip | Search radius (ly, 0 = from jump range) | 0 | How far around your start to look. 0 uses twice your ship's jump range, between 20 and 100 ly. Any number from 5 to 500 is used as given; the search reads at most the nearest 300 stations. |
-| Routes, Round trip | Carry only this commodity | blank (anything) | Type a commodity name (case does not matter) and both legs of a round trip carry only that. A pair counts only if it trades that commodity at a profit in both directions, so expect fewer results. |
+| Routes | Large landing pad only | Off | Excludes stations without a large pad. |
+| Routes and Market | Ship size (landing pad) | From my ship | Small, Medium or Large to override. |
+| Routes, Round trip | Least supply to buy, Least demand to sell | 200 t each | Excludes thin markets. |
+| Routes, Round trip | Search radius (ly, 0 = from jump range) | 0 | 0 uses twice the ship's jump range, between 20 and 100 ly. A value from 5 to 500 is used as given; the search reads at most the nearest 300 stations. |
+| Routes, Round trip | Carry only this commodity | blank (anything) | A commodity name (case-insensitive). Both legs of a round trip carry only that commodity. A pair counts only if it trades that commodity at a profit in both directions. |
 | Market | 'Near me' search radius (ly) | 100 (1 to 100,000) | Also the Watch list refresh radius (limited to 5 to 5,000 ly there). |
-| Session | Count fines and bounties I pay as a running cost | Off | Adds a **Fines and bounties paid** line to the costs; only payments made after you tick it. |
+| Session | Count fines and bounties I pay as a running cost | Off | Adds a **Fines and bounties paid** line to the costs; only payments made after enabling are counted. |
 
-See [what goes on the internet](internet-and-privacy.md) for exactly what is contacted, and the
-[Trade specification](../TRADE_TECH_SPEC.md) for how it all works.
+See [what goes on the internet](internet-and-privacy.md) for the services contacted, and the [Trade specification](../TRADE_TECH_SPEC.md) for the implementation.
 
-Stuck? See [Troubleshooting](troubleshooting.md#trade).
+For problems, see [Troubleshooting](troubleshooting.md#trade).

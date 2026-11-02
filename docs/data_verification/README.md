@@ -1,53 +1,48 @@
 # Data verification checklist
 
-`verification_checklist.csv` lists every piece of data WFMT carries, or would carry, that is **missing** or still **needs verification** in the game, with where it came from and under what license.
+`verification_checklist.csv` lists the data that WFMT carries, or would carry, that is missing or requires verification in the game, with its origin and license. `sheet_lists.csv` holds the status and priority value lists.
 
-- It is meant to be imported into a Google Sheet and worked through.
-- The project's method is stated in [ATTRIBUTIONS.md](../ATTRIBUTIONS.md) ("Data"):
-  - Values are measured in the game by the project owner.
-  - Other authors' published values are reviewed, checked against the game, and used once verified, with credit.
+The method is stated under "Data" in [ATTRIBUTIONS.md](../ATTRIBUTIONS.md):
 
-## Import into Google Sheets
+- Values are measured in the game by the project owner.
+- Other authors' published values are reviewed, checked against the game, and used once verified, with credit.
 
-1. In Google Sheets choose **File → Import → Upload** and pick `verification_checklist.csv`.
-   - Set **Import location** to *Insert new sheet(s)* (or *Replace spreadsheet* for a new file).
-   - Set **Separator type** to *Comma*.
-   - Untick **Convert text to numbers, dates, and formulas** so values such as `1,875,000` and `+50%` stay as written.
-2. **View → Freeze → 1 row** and **2 columns** (id and status stay visible).
-   - Turn on **Data → Create a filter** and filter by `area` or `status`.
-3. Optional: also import `sheet_lists.csv` into a second sheet.
-   - Select the `status` column, choose **Data → Data validation → Dropdown (from a range)** and point it at the status list there. Do the same for `priority`.
-   - Then **Format → Conditional formatting** by `status` (for example red for Missing, amber for Needs verification, green for the two Verified values).
-4. Widen `what_to_check`, `how_to_verify_in_game` and `notes`, and set them to *wrap text*.
+The checklist was generated from the project's own tables and from [TODO.md](../TODO.md). It lists only data known to be unverified. A table that is not listed has not been audited.
 
 ## Columns
 
 | Column | Meaning |
 |---|---|
-| `id` | Stable row number (`V-0001`). Do not renumber; add new rows at the bottom with the next number. |
-| `status` | **Missing** (nothing recorded yet), **Needs verification** (a value exists but has not been checked in the game), **Verified - journal** (confirmed by real journal events, which are the game's own records), **Verified - in game** (the project owner has read it in the game). |
-| `priority` | High, Medium or Low: what to do first. |
-| `area` / `item` | Where the data belongs and exactly which piece it is. Rows are sorted by area, then priority. |
-| `what_to_check` | What to look at. |
-| `current_value_in_wfmt` | What WFMT carries now, if anything. |
-| `value_from_source` | A value from a cited source that is not in WFMT yet (a candidate to verify). |
-| `source`, `source_license`, `source_url` | Where it came from and its license. "Confirm" in a license cell means it was not checked. |
-| `how_to_verify_in_game` | The steps. |
-| `verified_value` ... `screenshot_ref` | Fill in when you check it: the value you read, the date, the game version (the journal's `Fileheader` has it) and the screenshot's file name. |
-| `notes` | Anything else, including disagreements between sources. |
+| `id` | Stable row number (`V-0001`). Rows are not renumbered; new rows are added at the bottom with the next number. |
+| `status` | `Missing`: nothing recorded. `Needs verification`: a value exists and has not been checked in the game. `Verified - journal`: confirmed by journal events. `Verified - in game`: read in the game by the project owner. |
+| `priority` | High, Medium or Low. |
+| `area`, `item` | Where the data belongs and the specific item. Rows are sorted by area, then priority. |
+| `what_to_check` | The value to inspect. |
+| `current_value_in_wfmt` | The value WFMT carries, if any. |
+| `value_from_source` | A value from a cited source that is not in WFMT (a candidate for verification). |
+| `source`, `source_license`, `source_url` | Origin and license. "Confirm" in a license cell means the license was not checked. |
+| `how_to_verify_in_game` | The verification steps. |
+| `verified_value`, `verified_on`, `game_version`, `screenshot_ref` | Entered on verification: the value read, the date, the game version (the journal `Fileheader` event contains it) and the screenshot file name. |
+| `notes` | Additional information, including disagreements between sources. |
 
-## Working through it
+## Import into Google Sheets
 
-1. Start with **High** rows, then the Odyssey stat rows (`docs/ODYSSEY_STAT_COLLECTION.md` says how to record those).
-2. When a row is checked, set `status` to *Verified - in game* and fill in the verified columns.
-   - If the game disagrees with WFMT or the source, say so in `notes` and tell the project so the data can be corrected.
-3. A value from a source stays *Needs verification* until you have read it in the game yourself. Do not change a status on the strength of another tool.
-4. Bring the checked values back into the repository (the Odyssey ones as `docs/odyssey_stats/base_stats.csv` and `mod_effects.csv`).
-   - Credit the source of any value that began as another author's published data.
-   - The data is open; the request is acknowledgement. See the license note in [ODYSSEY_STAT_COLLECTION.md](../ODYSSEY_STAT_COLLECTION.md).
+1. Choose File > Import > Upload and select `verification_checklist.csv`.
+   - Set Import location to "Insert new sheet(s)" (or "Replace spreadsheet" for a new file).
+   - Set Separator type to "Comma".
+   - Clear "Convert text to numbers, dates, and formulas" so that values such as `1,875,000` and `+50%` remain as written.
+2. Choose View > Freeze > 1 row and 2 columns, so that `id` and `status` stay visible.
+   - Choose Data > Create a filter and filter by `area` or `status`.
+3. Optional: import `sheet_lists.csv` into a second sheet.
+   - Select the `status` column and choose Data > Data validation > Dropdown (from a range) with the status list as the range. Repeat for `priority`.
+   - Choose Format > Conditional formatting by `status` to color the rows.
+4. Widen `what_to_check`, `how_to_verify_in_game` and `notes` and set them to wrap text.
 
-**About the list**
+## Procedure
 
-- The checklist was generated from the project's own tables and from [TODO.md](../TODO.md).
-- It lists only what is known to be unverified.
-- A table not listed has not been audited, not been proven right.
+1. Process High-priority rows first, then the Odyssey stat rows ([ODYSSEY_STAT_COLLECTION.md](../ODYSSEY_STAT_COLLECTION.md) describes how to record them).
+2. After checking a row, set `status` to `Verified - in game` and fill in the verified columns.
+   - If the game differs from WFMT or the source, record the difference in `notes`.
+3. A value from a source keeps the status `Needs verification` until it has been read in the game.
+4. Transfer the checked values to the repository. Odyssey values go to `docs/odyssey_stats/base_stats.csv` and `docs/odyssey_stats/mod_effects.csv`.
+   - Credit the source of any value that originated as another author's published data. See the license section of [ODYSSEY_STAT_COLLECTION.md](../ODYSSEY_STAT_COLLECTION.md).

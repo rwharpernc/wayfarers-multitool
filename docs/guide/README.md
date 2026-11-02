@@ -1,50 +1,44 @@
 # WFMT user guide
 
-Plain-language guides for using the Wayfarer's Multitool.
+Index of the Wayfarer's Multitool user documentation.
 
-- **New here?** Start with [Getting started](getting-started.md).
-- **Want every feature at a glance, with its controls?** [Features at a glance](features.md) lists them mode by mode and starts with a table that goes from what you want to do to the right guide.
-- **Want to see every setting?** [Settings in Getting started](getting-started.md#settings) lists each tab and its starting values, and [Every Overlays tab](../OVERLAY_SETUP.md#every-overlays-tab-in-detail) does the same for the overlays.
-- **More:** [Tips, quirks and workarounds](tips.md) and [Planned and being researched](planned.md).
-- **Something looks wrong?** See [Known issues](known-issues.md) first.
+- [Getting started](getting-started.md): first guide to read.
+- [Features at a glance](features.md): every feature and its controls, by mode, with a table that maps tasks to guides.
+- [Settings](getting-started.md#settings): each Settings tab and its starting values. [Every Overlays tab](../OVERLAY_SETUP.md#every-overlays-tab-in-detail): the same for the overlays.
+- [Tips, quirks and workarounds](tips.md) and [Planned and being researched](planned.md).
+- [Known issues](known-issues.md): known faults of the current release.
 
 ## How WFMT knows what it knows
 
-Like every third-party tool for Elite Dangerous, WFMT only knows what the game writes to its journal files. Much of what makes play easier starts there, and not everything is logged.
+WFMT uses the data the game writes to its journal files. Not every event is logged.
 
-Where the journal is silent, WFMT adds what it can from other places:
+Where the journal has no data, WFMT adds data from other sources:
 
-- figures Frontier's own servers give a signed-in EDMC (such as a fleet carrier's cargo),
-- data that players and community services report (Spansh, EDSM, Canonn, edastro, Raven Colonial and others).
+- figures that Frontier's servers provide to a signed-in EDMC (for example a fleet carrier's cargo),
+- data reported by players and community services (Spansh, EDSM, Canonn, edastro, Raven Colonial and others).
 
-Where none of that exists, WFMT works around the gap with an estimate that it marks as one, or with a step you take (such as opening Carrier Management so the game reports the figure).
+Where neither source has the data, WFMT uses an estimate that is marked as an estimate, or an action that the commander takes (for example, opening Carrier Management so that the game reports the figure).
 
-Until Frontier expands the journal or offers a broader API, these workarounds are part of how WFMT works, and every guide lists the gaps it knows of.
+The sources, in order of precedence:
 
-Three layers, in the order WFMT prefers them:
+1. **The journal** is the source for all data about the commander: trades, scans, missions, deliveries, merits and similar. No setting changes what the game does not write.
+2. **Other sources:** Frontier's servers (through a signed-in EDMC) and data reported by players and communities. WFMT uses these to fill gaps in the journal and does not use them to override it. The [internet page](internet-and-privacy.md) lists each one.
+3. **Marked workarounds:** WFMT's own bookkeeping (for example, the tally of cargo transferred to a fleet carrier), estimates labeled as estimates, and actions the commander can take (for example, opening Carrier Management).
 
-1. **The journal** is the source for everything about *you*: your trades, scans, missions, deliveries, merits and so on. If the game
-   doesn't write it down, WFMT can't see it, and no setting changes that.
-2. **Other places that know more**: Frontier's servers (through a signed-in EDMC) and the data players and communities report. WFMT
-   uses these to fill gaps the journal leaves, never to overrule it, and the [internet page](internet-and-privacy.md) lists every one.
-3. **Workarounds, marked as such**: WFMT's own bookkeeping (for example, tallying what you transfer to a fleet carrier), estimates
-   labeled as estimates, and steps you can take (such as opening Carrier Management) to make the game write what it normally doesn't.
-
-**Every mode guide ends with a section called "What the game does and doesn't tell us, and how to work around it"** listing each gap we
-know of, how it looks on screen, and what to do. Where a figure is an estimate, WFMT marks it as one.
+Every mode guide ends with a section titled "What the game does and doesn't tell us, and how to work around it". The section lists each known gap, its appearance on screen, and the workaround.
 
 ## Setting up
 
-| Guide | What's in it |
+| Guide | Contents |
 |---|---|
-| [Installing WFMT](../INSTALL.md) | Install, update, remove and build from source, with the folders for each system |
-| [Getting started](getting-started.md) | What you need, installing, the in-app updater, finding your way around (the lines under the mode buttons and the Credits Ledger), your data and backing it up, catching up after EDMC was closed, every Settings tab and what it starts as, opening windows, button names |
-| [Setting up the overlay](../OVERLAY_SETUP.md) | The on-screen overlay for alerts, cards and diagrams: WFMT's built-in one (Windows) or EDMCModernOverlay, using both, every Overlays tab in detail, placement, color schemes, opacity and fonts |
-| [Windows and Linux](platforms.md) | What works where, feature by feature |
-| [WFMT on Linux](linux.md) | Step-by-step Linux and Flatpak setup |
-| [What goes on the internet](internet-and-privacy.md) | Every feature that contacts an outside site, what triggers it, what it sends and the address it uses |
-| [Known issues](known-issues.md) | What is known to go wrong in this release (such as doubled or ghosted overlay text) and the fix |
-| [Reporting a problem](reporting-problems.md) | The **Report an issue** and **Copy diagnostics** buttons, step by step, and what they include |
+| [Installing WFMT](../INSTALL.md) | Install, update, remove and build from source, with the folders of each system |
+| [Getting started](getting-started.md) | Requirements, installing, the in-app updater, the lines under the mode buttons and the Credits Ledger, data and backups, catching up after EDMC was closed, every Settings tab and its starting values, opening windows, button names |
+| [Setting up the overlay](../OVERLAY_SETUP.md) | The on-screen overlay: the built-in overlay (Windows) and EDMCModernOverlay, using both, every Overlays tab, placement, color schemes, opacity and fonts |
+| [Windows and Linux](platforms.md) | Feature availability by system |
+| [WFMT on Linux](linux.md) | Linux and Flatpak setup |
+| [What goes on the internet](internet-and-privacy.md) | Every feature that contacts an outside site, its trigger, the data it sends and the address it uses |
+| [Known issues](known-issues.md) | Known faults of the current release and their remedies |
+| [Reporting a problem](reporting-problems.md) | The **Report an issue** and **Copy diagnostics** buttons and the data they include |
 
 ## The modes
 
@@ -52,24 +46,23 @@ know of, how it looks on screen, and what to do. Where a figure is an estimate, 
 |---|---|
 | **Powerplay** | [Powerplay](powerplay.md): merits, cycles, sessions, megaships, the Rare Goods Finder |
 | **Explore** (Exploration) | [Exploration](exploration.md): Auto-Honk, alerts, Boxel Survey, Exploration Value, Codex, POI Reference, Notes, Expedition planner, Expedition Log, System targets and Body info, Exploration Dashboard, Route Planner and Carrier Route, Nearest place to land, Compass |
-| **Exobiology** | [Exobiology](exobiology.md): the Organic Scanning panel, the four overlay cards (status, predicted species, sample radar, popup), finding your way back to a plant, first footfall |
+| **Exobiology** | [Exobiology](exobiology.md): the Organic Scanning panel, the four overlay cards (status, predicted species, sample radar, popup), returning to a plant, first footfall |
 | **Shortcuts** | [Shortcuts](shortcuts.md): keyboard shortcuts (Windows) and chat commands (Windows and Linux) for Mark center, Mark border, the radar range, the Live window and hiding the overlays |
 | **Mine** (Mining) | [Mining](mining.md): space and surface mining, the Space Mining Book and the Surface Mining Book, Mining History, mining alerts |
 | **Trade** | [Trade](trade.md): profit, routes, prices, Watch list, carrier cargo, History |
-| **Mission** (Missions) | [Missions](missions.md): every mission in one view, the Missions window and pinning, progress colors, where to buy mission cargo |
-| **Operations** | [Operations](operations.md): screenshots, inventory, engineering materials, blueprints, a wishlist, ship and Odyssey upgrade planners, where the engineers are, material traders, ship builds |
-| **Colony** (Colonization) | [Colonization](colonization.md): your current project, your history, the sites window, where to buy |
-| **BGS** | [BGS](bgs.md): factions, states and your effect on them |
-| *Sharing* | [Sharing reports to Discord](discord.md): copy for Discord, post to a webhook, and plain copy for anywhere else, with the Discord-side setup step by step |
+| **Mission** (Missions) | [Missions](missions.md): all missions in one view, the Missions window and pinning, progress colors, sources for mission cargo |
+| **Operations** | [Operations](operations.md): screenshots, inventory, engineering materials, blueprints, wishlist, ship and Odyssey upgrade planners, engineers, material traders, ship builds |
+| **Colony** (Colonization) | [Colonization](colonization.md): the current project, history, the sites window, where to buy |
+| **BGS** | [BGS](bgs.md): factions, states and the commander's effect on them |
+| *Sharing* | [Sharing reports to Discord](discord.md): copy for Discord, post to a webhook, plain copy, and the Discord-side setup |
 | *Always on* | [Landing Assist, Interdiction Warning, Flight Alerts (carrier countdown, fuel and mining alerts) and the Route overlay](always-on.md) |
 
-## When something's wrong
+## When something is wrong
 
-- [Known issues](known-issues.md) lists what is known to go wrong in this release and the workaround.
-- [Troubleshooting](troubleshooting.md) lists symptoms and fixes.
-- If it is a bug, [Reporting a problem](reporting-problems.md) shows how to file one in a few clicks.
+- [Known issues](known-issues.md) lists known faults of the current release and their workarounds.
+- [Troubleshooting](troubleshooting.md) lists symptoms and remedies.
+- [Reporting a problem](reporting-problems.md) describes how to file a bug report.
 
 ## For developers
 
-Technical documentation lives one level up in [docs/](..): [DEVELOPMENT.md](../DEVELOPMENT.md),
-[TECHNICAL.md](../TECHNICAL.md), [MODULES.md](../MODULES.md), the feature specifications, and [TODO.md](../TODO.md), the list of open work.
+Technical documentation is in [docs/](..): [DEVELOPMENT.md](../DEVELOPMENT.md), [TECHNICAL.md](../TECHNICAL.md), [MODULES.md](../MODULES.md), the feature specifications, and [TODO.md](../TODO.md) (open work).

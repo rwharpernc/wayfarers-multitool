@@ -1,156 +1,124 @@
 # Screenshots and input automation technical specification
 
-Two WFMT features press keys in the game for you: **Auto-Honk** and **timed or automatic screenshot
-capture**. This document explains exactly what they do and don't do, how Screenshots converts and crops
-pictures, and how it all differs on Linux. For how to use them, see the
-[README](guide/operations.md). For how the code is organized in general, see
-[TECHNICAL.md](TECHNICAL.md).
+This document specifies the two WFMT features that send key presses to the game, **Auto-Honk** and timed or automatic screenshot capture, together with the conversion and cropping of screenshots and the platform differences on Linux. Usage is described in [the operations guide](guide/operations.md). The general code organization is described in [TECHNICAL.md](TECHNICAL.md).
 
 - **Author:** R.W. Harper (CMDR Mactavious)
 
-**Design principle.**
+WFMT is journal-first: it uses the information the game writes to its journal files and fills gaps from Frontier data or community services where they exist. See [the design principle in TECHNICAL.md](TECHNICAL.md).
 
-- Like all of WFMT, this is journal-first: a third-party tool only knows what the game writes to its journal files, and not everything is logged.
-- Gaps are filled from Frontier's own data or from community services where those exist, and otherwise worked around.
-- Each gap and its workaround is written down.
-- See [the design principle in TECHNICAL.md](TECHNICAL.md).
+## 1. Input automation
 
-## 1. Input automation: what it is, and isn't
+WFMT asks the operating system to press a key, as if it were pressed on the keyboard, only while an Elite Dangerous window exists. The screenshot timer additionally requires that window to have focus.
 
-**What WFMT does.** It asks the operating system to press a key, exactly as if you pressed it on your
-keyboard, and only while an Elite Dangerous window exists (and, for the screenshot timer, has focus).
+- **Windows:** Win32 key events (`keybd_event`, and `ctypes` calls to `user32.dll`).
+- **Linux:** the `xdotool` program, which sends keys to the focused window through the X server (X11, or XWayland on a Wayland desktop).
 
-- **Windows:** ordinary Win32 key events (`keybd_event`, and `ctypes` calls to `user32.dll`).
-- **Linux:** the `xdotool` program, which sends keys to the focused window through the X server (X11, or
-  XWayland on a Wayland desktop).
+Constraints:
 
-**What WFMT does not do.**
-- It does not read or change the game's memory, inject into the game, or alter game files.
-- It does not send anything over the network as part of this.
-- It cannot press joystick or HOTAS buttons, only keyboard keys.
-- It does nothing at all unless you turn it on (see §6 for the one automatic exception).
-
-**Every entry point is a safe no-op when unsupported** (for example on macOS, or Linux without
-`xdotool`): it returns "not done" and the rest of WFMT carries on. Failure to press a key never breaks
-journal handling.
+- WFMT does not read or change the game's memory, inject code into the game, or alter game files.
+- The feature sends nothing over the network.
+- Only keyboard keys can be pressed. Joystick and HOTAS buttons cannot.
+- Nothing is sent unless the feature is enabled (the exception is described in section 6).
+- Every entry point is a no-op when unsupported (for example on macOS, or on Linux without `xdotool`). It returns "not done" and the rest of WFMT continues. A failed key press does not affect journal handling.
 
 ## 2. Auto-Honk
 
-Fires your ship's **Discovery Scanner** (the basic system-wide "honk", not the surface scanner) when you
-arrive in a system. **Off by default.**
+Auto-Honk fires the ship's Discovery Scanner (the system-wide scanner, not the surface scanner) on arrival in a system. It is off by default.
 
-1. **Trigger:** a `FSDJump` or `CarrierJump` journal event. A fresh login (`LoadGame`) clears the
-   "visited this session" memory.
-2. **Skip repeats (default on):** each system is honked once per session, by its system address.
-3. **Find the key:** it reads your active **binds file** (the most recently modified `<preset>.<major>.<minor>.binds`, where the preset is named in `StartPreset.start`, usually `Custom`) and
-   finds the keyboard key assigned to the chosen fire button (Primary or Secondary; default Secondary).
-   If that button is bound only to a joystick button, or isn't bound, or the key isn't one WFMT can
-   produce, nothing is sent and the Settings tab says why.
-4. **Press and hold:** the key is held down for a set time (default **10 seconds**), because the scanner
-   charges while the button is held and a quick tap never honks. The time depends on your scanner and
-   engineering, so it's adjustable (saved as at least 1 second). This runs on a background thread so EDMC never freezes.
-5. **Focus the game (default on):** it can bring the Elite window to the front first.
+1. **Trigger:** a `FSDJump` or `CarrierJump` journal event. A `LoadGame` event clears the record of systems visited in the session.
+2. **Skip repeats** (**Skip systems already visited**, default on): each system is honked once per session, identified by its system address.
+3. **Key lookup:** the active binds file is read: the most recently modified `<preset>.<major>.<minor>.binds` file, where the preset is named in `StartPreset.start` (usually `Custom`). The keyboard key assigned to the selected fire button (Primary or Secondary; default Secondary) is used. If that button is bound only to a joystick button, is not bound, or is bound to a key WFMT cannot produce, nothing is sent and the Settings tab states the reason.
+4. **Press and hold:** the key is held for the configured time (default 10 seconds, `DEFAULT_HOLD_MS` = 10000). The setting is stored with a minimum of 1 second. The scanner charges while the button is held, so a short press does not honk. The hold runs on a background thread.
+5. **Focus** (**Focus game window first**, default on): the Elite window is brought to the front before the key is sent.
 
-Outcomes shown in Settings: sent; Elite window not found; no usable keybind; unsupported OS;
-`xdotool` missing (Linux); error (see the EDMC log). The **Test Honk Now** button runs the same steps on
-demand. A co-pilot app can have an auto-honk too, so WFMT warns you to turn one off if it sees one running.
+Outcomes shown in Settings: sent; Elite window not found; no usable keybind; unsupported OS; `xdotool` missing (Linux); error (see the EDMC log). The **Test Honk Now** button runs the same steps on demand. WFMT shows a warning to disable one of the two when a co-pilot application with its own auto-honk is detected.
 
 ## 3. Screenshots
 
-### 3.1 What it does
-When Elite takes a screenshot (by you, or by the timer), the game writes a raw file and logs a
-`Screenshot` event. WFMT then:
+### 3.1 Processing
 
-1. **Finds the file.** The event's `Filename` isn't a real path, so only its base name is used, searched
-   for in the configured Screenshot Directory first, then in fallback locations. If it was found
-   somewhere other than the configured folder, the setting is corrected.
-2. **Converts it to PNG** (using Pillow) and saves it, renamed, in the output folder. The folder can be
-   grouped into one sub-folder per system.
-3. **Shows thumbnails:** the newest capture, an optional cropped version, and a strip of the last 8
-   (wrapped four to a row). Click one for a larger preview.
-4. **Optionally deletes the original**, but only after a **60-second** grace period so other plugins that
-   want the raw file can see it first. Off by default.
-5. **Notifies:** a status line in the panel and, if you use an overlay, a short on-screen message (shown for 10 seconds, 20 for the Settings test message, so it survives an alt-tab to the game).
+When Elite takes a screenshot, the game writes a raw file and logs a `Screenshot` event. WFMT then performs the following steps.
 
-Conversion and cropping work on every platform; only the key simulation is platform-specific.
+1. **Locate the file.** The `Filename` field of the event is not a usable path, so only its base name is used. The file is searched for in the configured Screenshot Directory, then in fallback locations. If the file is found outside the configured folder, the setting is corrected.
+2. **Convert to PNG** (Pillow) and save under the generated name in the output folder. The output folder can be grouped into one subfolder per system.
+3. **Show thumbnails:** the newest capture, an optional cropped version, and a history of the last 8 captures (4 per row). A thumbnail opens a larger preview.
+4. **Delete the original** (optional, off by default) after a grace period of 60 seconds (`_DELETE_GRACE_MS`), so other plugins can read the raw file.
+5. **Notify:** a status line in the panel and, when an overlay is in use, an on-screen message shown for 10 seconds (20 seconds for the Settings test message).
+
+Conversion and cropping work on every platform. Only key simulation is platform-specific.
 
 ### 3.2 File names
-Names come from a **mask** you choose. The tokens are `SYSTEM`, `BODY`, `CMDR` and `DATE` (a UTC
-timestamp), plus `NNNNN`, a five-digit sequence number that is unique per output folder (WFMT looks at the
-files already there and uses the next number). Characters a file system might reject are stripped. A
-hi-res capture (the game's `HighRes` file names) gets a `HighRes_` prefix. The `BODY` token drops the
-leading system name so a mask using both doesn't repeat it.
+
+File names are generated from a mask. Tokens:
+
+| Token | Replaced by |
+|---|---|
+| `SYSTEM` | System name |
+| `BODY` | Body name, with the leading system name removed |
+| `CMDR` | Commander name |
+| `DATE` | UTC timestamp |
+| `NNNNN` | Five-digit sequence number, unique per output folder (WFMT reads the existing files and uses the next number) |
+
+Characters that a file system can reject are removed. A hi-res capture (the game's `HighRes` file names) receives the prefix `HighRes_`.
 
 ### 3.3 Cropping
-The game doesn't say which panel you had open in the screenshot event, so WFMT reads **`GuiFocus`** from
-`Status.json` (the game's live status file) at that moment. For the **Target**, **Comms**, **Role** and
-**Systems** panels it makes a second, cropped picture of just that panel.
 
-- The crop rectangles are defined on a 1920×1080 reference frame and scaled **uniformly** (by the
-  smaller axis ratio) and centered, because the HUD panels keep their proportions and sit centered on
-  ultrawide and multi-monitor setups.
-- Scaling the two axes separately would stretch the crop.
-- Hi-res captures are not cropped.
+The `Screenshot` event does not state the open panel. WFMT reads `GuiFocus` from `Status.json` at the moment of the event. For the Target, Comms, Role and Systems panels it creates a second, cropped picture of that panel. Hi-res captures are not cropped.
 
-A **Thargoid** capture crops the bottom-left quarter of the screen instead (see §6).
+| `GuiFocus` | Panel | Crop rectangle (1920×1080 reference frame) |
+|---|---|---|
+| 1 | Systems (internal panel) | 451, 270, 1460, 837 |
+| 2 | Target (external panel) | 850, 279, 1306, 538 |
+| 3 | Comms | 406, 123, 919, 832 |
+| 4 | Role | 451, 270, 1460, 837 |
 
-### 3.4 The timer
-An optional **auto-capture timer** (a clock icon) presses the screenshot key every **poll interval**
-(default 1 second, never faster than 0.2 s, because it presses a real key combination and a mistyped value
-shouldn't hammer it). Safeguards:
-- It starts **off** every time EDMC starts.
-- It only fires while an **Elite window has focus**; otherwise the status says "paused (Elite not
-  focused)".
-- It stops itself on `ShutDown` and `Died`.
-- The key is held for only **60 ms** and released on a timer, so it is never left held waiting for the next
-  journal event.
-- **Hi-res on timer** (off by default) adds Left Alt for an Alt+F10 capture, and is only used in **Solo**
-  mode, where the game allows hi-res captures.
+The rectangles are scaled uniformly (by the smaller of the two axis ratios) and centered, because the HUD panels keep their proportions and are centered on ultrawide and multi-monitor displays. A Thargoid capture crops the bottom-left quadrant of the screen (see section 6).
 
-## 4. Keeping the main window from growing
+### 3.4 Timer
 
-Every image in the panel sits in a fixed width-and-height box, so an ultrawide capture can't widen EDMC's
-main window. See [TECHNICAL.md](TECHNICAL.md) section 5.
+The optional auto-capture timer (a clock icon) presses the screenshot key (F10) every poll interval (default 1 second, minimum 0.2 seconds).
+
+- The timer is off each time EDMC starts.
+- It fires only while an Elite window has focus. Otherwise the status reads "Auto-capture paused (Elite not focused)".
+- It stops on `ShutDown` and `Died`.
+- The key is held for 60 ms (`_KEY_HOLD_MS`) and then released.
+- **Hi-res on timer** (off by default) adds Left Alt for an Alt+F10 capture. It applies only in Solo mode, the only game mode in which hi-res captures are permitted.
+
+## 4. Main window size
+
+Every image in the panel is placed in a box of fixed width and height, so an ultrawide capture cannot widen the EDMC main window. See [TECHNICAL.md](TECHNICAL.md) section 5.
 
 ## 5. Linux
 
-On Linux, Elite runs under Steam Proton or Wine, so the game's "Windows" folders live inside a Wine prefix.
+Elite runs under Steam Proton or Wine on Linux, so the game's Windows folders are inside a Wine prefix.
 
-- `platform_support.py` finds that prefix (including extra Steam library folders and Flatpak Steam, with
-  a Settings override for Lutris, Heroic or custom setups), and from it the binds folder, the Pictures
-  (screenshot) folder and the journal folder.
-- Keys are sent with `xdotool` after focusing the game window, because synthetic per-window key events
-  are ignored by most games.
+- `platform_support.py` locates the prefix (including additional Steam library folders and Flatpak Steam; Settings provides an override for Lutris, Heroic and custom setups) and derives the binds folder, the Pictures (screenshot) folder and the journal folder from it.
+- Keys are sent with `xdotool` after the game window is focused.
 - Auto-Honk and the timer work on X11 and on XWayland.
-- Everything is returned as "not found" rather than raising when something is missing.
+- A missing item is reported as "not found". No exception is raised.
 
-## 6. The one automatic behavior: Thargoid captures
+## 6. Automatic Thargoid capture
 
-**On by default**, a setting called *Thargoid capture*: when you collect Thargoid ship flight data or an
-unknown ship signature (`MaterialCollected`), WFMT presses the screenshot key once and crops the result.
-The game's `Music` event for the Thargoid encounter tracks also marks the next capture for the same crop.
-This is the only input WFMT sends without you turning something on first. To stop it, turn off
-*Thargoid capture* in **Settings → WFMT → Operations → Screenshots**.
+The setting **Automatically capture a screenshot when scanning a Thargoid signal** (key `wfmt_screenshot_thargoid_capture`) is on by default. On a `MaterialCollected` event for `tg_shipflightdata` or `unknownshipsignature`, WFMT presses the screenshot key once and crops the result to the bottom-left quadrant. A `Music` event with the track `Unknown_Encounter` or `Combat_Unknown` marks subsequent captures for the same crop, without triggering a capture. This is the only key press WFMT sends without a feature being enabled first. The setting is in Settings → WFMT → Operations → Screenshots.
 
 ## 7. Settings
 
-**File → Settings → WFMT → Operations → Screenshots** (keys start `wfmt_screenshot_`): source and output folders,
-delete originals, group by system, the file-name mask, the timer icon, hi-res on timer, Thargoid capture,
-and the poll interval. The overlay notification is set on **Settings → WFMT → Overlays → Screenshots**. **Settings → WFMT → Exploration → Auto-Honk** (keys start `wfmt_autohonk_`):
-enabled, fire button, hold time, focus the game and skip repeats; the Linux prefix override is stored as `wfmt_elite_prefix`.
+Settings → WFMT → Operations → Screenshots (keys beginning `wfmt_screenshot_`): source and output folders, delete originals, group by system, file-name mask, timer icon, hi-res on timer, Thargoid capture and poll interval. The overlay notification is set in Settings → WFMT → Overlays → Screenshots.
 
-## 8. Testing
+Settings → WFMT → Exploration → Auto-Honk (keys beginning `wfmt_autohonk_`): enabled, fire button, hold time, focus the game window and skip visited systems. The Linux prefix override is stored as `wfmt_elite_prefix`.
 
-`tests/test_platform_support.py` covers the Linux helpers (prefix and folder finding, key naming). The
-file-name masks, crop rectangles, conversion, thumbnails and delayed delete are covered by
-`tests/test_screenshot_files.py` (including that a thumbnail is bounded on both axes, so an ultrawide screenshot cannot widen
-EDMC's window), and the key simulation is checked by hand in a live game. Every failure path returns a plain result rather than
-raising.
+## 8. Tests
 
-## 9. Known gaps
+- `tests/test_platform_support.py`: Linux helpers (prefix and folder discovery, key naming).
+- `tests/test_screenshot_files.py`: file-name masks, crop rectangles, conversion, thumbnails (including that a thumbnail is bounded on both axes) and delayed deletion.
+- Key simulation is not covered by an automated test.
 
-- Auto-Honk and the timer can only press **keyboard** keys.
-- The crop rectangles are fixed measurements and may need adjusting if Frontier changes the HUD.
-- Windows may block file access with Controlled Folder Access or antivirus; the error message says so.
-- macOS isn't supported for key simulation (conversion and cropping still work).
-- Linux on Wayland **without** XWayland is unsupported for key simulation.
+Every failure path returns a result and does not raise an exception.
+
+## 9. Limitations
+
+- Auto-Honk and the timer press keyboard keys only.
+- The crop rectangles are fixed measurements. A change to the game HUD can make them incorrect.
+- Controlled Folder Access or antivirus software on Windows can block file access. The error message states this.
+- Key simulation is not supported on macOS. Conversion and cropping work.
+- Key simulation is not supported on Linux under Wayland without XWayland.

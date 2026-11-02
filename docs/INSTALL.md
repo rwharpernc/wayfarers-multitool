@@ -1,6 +1,6 @@
 # Installing WFMT
 
-WFMT is a plugin for [EDMC](https://github.com/EDCD/EDMarketConnector) (Elite Dangerous Market Connector). This page covers installing it, updating it, removing it and, for developers, building it from source. Day-to-day use is in the [guide](guide/README.md).
+WFMT is a plugin for [EDMC](https://github.com/EDCD/EDMarketConnector) (Elite Dangerous Market Connector). This page covers installing, updating and removing WFMT and, for developers, building it from source. Usage is described in the [guide](guide/README.md).
 
 **On this page:**
 
@@ -16,80 +16,79 @@ WFMT is a plugin for [EDMC](https://github.com/EDCD/EDMarketConnector) (Elite Da
 
 ## What you need
 
-- **EDMC**, on Windows or Linux. WFMT runs inside it. Everything except the on-screen displays works with EDMC alone.
-- **Elite Dangerous** with EDMC reading its journal folder. On Linux the journal folder usually has to be set by hand: see [Linux](#linux).
-- **An overlay** (optional), only for the on-screen displays: see [Overlays](#overlays).
+- **EDMC**, on Windows or Linux. WFMT runs inside it. All features except the on-screen displays work with EDMC alone.
+- **Elite Dangerous**, with EDMC reading its journal folder. On Linux the journal folder usually must be set manually: see [Linux](#linux).
+- **An overlay** (optional), required only for the on-screen displays: see [Overlays](#overlays).
 
 ## Install from a release
 
-1. Download **`Wayfarers-Multitool.zip`** from the [latest release](https://github.com/rwharpernc/wayfarers-multitool/releases/latest), under **Assets**.
-   - Do not use the green **Code → Download ZIP** button. That is the source code, and EDMC cannot load it as a plugin.
-2. In EDMC open **File → Settings → Plugins** and press **Open** beside the plugins folder.
+1. Download **`Wayfarers-Multitool.zip`** from the [latest release](https://github.com/rwharpernc/wayfarers-multitool/releases/latest), under **Assets**. The **Code → Download ZIP** button provides the source code, which EDMC cannot load as a plugin.
+2. In EDMC, open **File → Settings → Plugins** and select **Open** beside the plugins folder.
    - Windows: usually `%LOCALAPPDATA%\EDMarketConnector\plugins`.
-   - Linux: usually `~/.local/share/EDMarketConnector/plugins`, or for a Flatpak EDMC `~/.var/app/io.edcd.EDMarketConnector/data/EDMarketConnector/plugins`.
+   - Linux: usually `~/.local/share/EDMarketConnector/plugins`. For a Flatpak EDMC: `~/.var/app/io.edcd.EDMarketConnector/data/EDMarketConnector/plugins`.
 3. Extract the ZIP into that folder.
-   - Windows: right-click the ZIP, **Extract All…**, and choose the plugins folder itself.
-   - Linux: `unzip Wayfarers-Multitool.zip -d <your plugins folder>`.
-4. Check you now have `plugins/Wayfarers-Multitool/load.py`. If it is `plugins/Wayfarers-Multitool/Wayfarers-Multitool/load.py`, move the inner folder up one level.
+   - Windows: right-click the ZIP, select **Extract All…**, and choose the plugins folder.
+   - Linux: `unzip Wayfarers-Multitool.zip -d <plugins folder>`.
+4. Confirm that `plugins/Wayfarers-Multitool/load.py` exists. If the file is at `plugins/Wayfarers-Multitool/Wayfarers-Multitool/load.py`, move the inner folder up one level.
 5. Restart EDMC. The **Wayfarer's Multitool (WFMT)** panel appears in the main window. Settings are under **File → Settings → WFMT**.
 
-The first line under the mode buttons says which version is running (**Plugin: v1.5.0**).
+The first line under the mode buttons shows the running version (**Plugin: v1.5.0**).
 
-**After installing:** every on-screen display, every online lookup and every write to another site starts off, so look through **File → Settings → WFMT** ([every tab and what it starts as](guide/getting-started.md#settings)). Consider turning on **Back up automatically** (General → Backup) so your data is copied outside the plugin folder.
+**After installation:** every on-screen display, every online lookup and every write to another site is off by default. Review **File → Settings → WFMT** ([each tab and its starting values](guide/getting-started.md#settings)). **Back up automatically** (General → Backup) copies saved data to a folder outside the plugin folder.
 
 ## Linux
 
-EDMC needs a few settings before most features find anything:
+EDMC requires the following configuration before most features find data:
 
-- Point EDMC's **Journal directory** at the game's journals inside the Steam Proton or Wine folder.
+- Set EDMC's **Journal directory** to the game's journal folder inside the Steam Proton or Wine folder.
 - Install `xdotool` for Auto-Honk and the screenshot timer (X11 or XWayland windows).
-- With a Flatpak EDMC, grant it access to the folders it needs.
+- With a Flatpak EDMC, grant access to the required folders.
 
-The steps, in order, are in [WFMT on Linux](guide/linux.md). What differs between the two systems is in [Windows and Linux](guide/platforms.md), and what has been checked on Linux is in [Linux testing](LINUX_TESTING.md).
+The steps are in [WFMT on Linux](guide/linux.md). Differences between Windows and Linux are in [Windows and Linux](guide/platforms.md). Tested configurations are in [Linux testing](LINUX_TESTING.md).
 
 ## Overlays
 
 An overlay draws WFMT's displays over the game.
 
-- **Windows:** WFMT has a built-in overlay. Choose it under **Settings → WFMT → Overlays → Overlay Connection**.
+- **Windows:** WFMT has a built-in overlay. Select it under **Settings → WFMT → Overlays → Overlay Connection**.
 - **Linux (and optionally Windows):** install [EDMCModernOverlay](https://github.com/SweetJonnySauce/EDMCModernOverlay). The built-in overlay is Windows only.
-- Set Elite to **borderless** or **windowed** mode. Every WFMT overlay is off until you turn it on in Settings.
+- Set Elite to **borderless** or **windowed** mode. Every WFMT overlay is off until enabled in Settings.
 
-The step-by-step guide is [Overlay setup](OVERLAY_SETUP.md).
+See [Overlay setup](OVERLAY_SETUP.md).
 
 ## Update
 
-- Extract the new ZIP over the existing `Wayfarers-Multitool` folder and replace files when asked. **Do not delete the old folder first:** your saved data lives inside it.
-- Or turn on **Automatically download and install updates** under **Settings → WFMT → General → Updates**. It is off by default and only follows published releases (not drafts or pre-releases).
-  - WFMT looks once each time EDMC starts. If a newer release exists it downloads the ZIP, makes a data backup first if **Back up automatically** is on, keeps a zip of the program files it replaces in `backups` (the newest three), and stages the new files.
-  - The update takes effect when EDMC next starts; the line under the mode buttons turns orange and says to restart EDMC. Your saved data is not changed by an update.
-  - [How the updater works](guide/getting-started.md#updating) has the details, and [the update did not take](guide/troubleshooting.md#the-update-did-not-take) helps when it seems stuck.
+- Extract the new ZIP over the existing `Wayfarers-Multitool` folder and confirm file replacement. Do not delete the old folder first: saved data is stored inside it.
+- Alternatively, enable **Automatically download and install updates** under **Settings → WFMT → General → Updates**. The option is off by default and follows published releases only (not drafts or pre-releases).
+  - WFMT checks once each time EDMC starts. If a newer release exists, WFMT downloads the ZIP, makes a data backup first if **Back up automatically** is on, keeps a zip of the replaced program files in `backups` (the newest three), and stages the new files.
+  - The update takes effect at the next EDMC start. The line under the mode buttons turns orange and states that EDMC must be restarted. Saved data is not changed by an update.
+  - [How the updater works](guide/getting-started.md#updating). [The update did not take](guide/troubleshooting.md#the-update-did-not-take).
 
-Back up your data first if you like: **Settings → WFMT → General → Backup → Back up my data**.
+To back up data before an update: **Settings → WFMT → General → Backup → Back up my data**.
 
 ## What is in the plugin folder
 
-Everything WFMT saves about your play is a plain file in the `Wayfarers-Multitool` folder, so you know what an update keeps and what a removal takes with it:
+All data WFMT saves about play is stored as plain files in the `Wayfarers-Multitool` folder.
 
 | What | Where | Notes |
 |---|---|---|
 | The program | `load.py`, the other `.py` files, `fonts`, `icons`, `LICENSE`, `THIRD-PARTY-NOTICES.md` | Replaced by an update |
-| Your data | The `.json` files WFMT writes as you play (trade, mining, missions, ledgers, notes, expeditions, surveys, ship builds, `overlay_settings.json` for each commander's overlay choices and so on; not `colonization_costs.json` and `rare_goods.json`, which ship with the program), and `mining_sessions` if you archive runs | Kept by updates; included in **Back up my data**. One section per commander |
-| Raven Colonial keys and Discord webhook links | `rcc_keys.json` and `discord_webhooks.json` | Kept by updates; **left out** of backups on purpose |
-| Local star index | `star_index` folder (about 110 MB, optional) | Kept by updates; not in backups; made again from Settings |
+| Saved data | The `.json` files WFMT writes during play (trade, mining, missions, ledgers, notes, expeditions, surveys, ship builds, `overlay_settings.json` for each commander's overlay choices, and others; not `colonization_costs.json` and `rare_goods.json`, which ship with the program), and `mining_sessions` if runs are archived | Kept by updates; included in **Back up my data**. One section per commander |
+| Raven Colonial keys and Discord webhook links | `rcc_keys.json` and `discord_webhooks.json` | Kept by updates; excluded from backups |
+| Local star index | `star_index` folder (about 110 MB, optional) | Kept by updates; not in backups; rebuilt from Settings |
 | Downloaded Codex catalog | `codex_catalog.json` | Kept by updates; not in backups; downloaded again by WFMT |
-| Update files | `updates` (the downloaded ZIP) and `backups` (the program files an update replaced, and `pre-restore-<date>.zip` files from restores) | Safe to delete once you no longer need them |
-| A waiting restore | `restore_pending` | Applied at the next start, then removed |
+| Update files | `updates` (the downloaded ZIP) and `backups` (program files replaced by an update, and `pre-restore-<date>.zip` files from restores) | Can be deleted when no longer needed |
+| A pending restore | `restore_pending` | Applied at the next start, then removed |
 
-Your **settings** (every tick on every Settings tab, and your overlay choices while a commander is not active) are not files in this folder. EDMC keeps them in its own settings, so they survive removing the plugin folder and are not in a data backup. Only the files that hold each commander's overlay choices (`overlay_settings.json`) are.
+Settings (every option on every Settings tab) are not stored in this folder. EDMC keeps them in its own settings, so they survive removal of the plugin folder and are not part of a data backup. The per-commander overlay choices are stored in `overlay_settings.json`.
 
 ## Remove
 
-Close EDMC and delete the `Wayfarers-Multitool` folder from the plugins folder. Your saved data is inside that folder, so use **Back up my data** first if you want to keep it. WFMT's settings stay in EDMC's own settings and are picked up again if you install it later.
+Close EDMC and delete the `Wayfarers-Multitool` folder from the plugins folder. Saved data is stored in that folder: run **Back up my data** first to keep it. WFMT's settings remain in EDMC's settings and apply again after a later installation.
 
 ## Build from source
 
-Most people should use a release. To build or change WFMT yourself you need Python 3, a current Node.js and Git:
+Building requires Python 3, a current Node.js and Git.
 
 ```bash
 git clone https://github.com/rwharpernc/wayfarers-multitool.git
@@ -97,7 +96,7 @@ cd wayfarers-multitool
 npm run package     # writes dist/Wayfarers-Multitool.zip
 ```
 
-`npm run deploy` builds and copies the plugin into EDMC's plugins folder for your system. Details, tests and the layout of the code are in the [development guide](DEVELOPMENT.md).
+`npm run deploy` builds the plugin and copies it into EDMC's plugins folder for the current system. Tests and the code layout are in the [development guide](DEVELOPMENT.md).
 
 ## If it does not appear
 

@@ -1,235 +1,153 @@
 # BGS tracking technical specification
 
-The standing reference for BGS tracking: what it records from the journal, how it attributes your actions to factions and systems, how a tick is detected, and what its numbers can and can't tell you. For how to use it, see the [BGS guide](guide/bgs.md). For how the code is organized in general, see [TECHNICAL.md](TECHNICAL.md).
+This document specifies BGS tracking: which journal data is recorded, how actions are attributed to factions and systems, how a tick is detected, and the limits of the figures. Usage is described in the [BGS guide](guide/bgs.md). The general code organization is described in [TECHNICAL.md](TECHNICAL.md).
 
 - **Author:** R.W. Harper (CMDR Mactavious)
-- **Status:** work in progress. Feedback, bug reports and suggestions are welcome: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
+- **Status:** work in progress. Feedback and bug reports: [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
-**Design principle.**
+WFMT is journal-first: it uses the information the game writes to its journal files and fills gaps from Frontier data or community services where they exist. Each gap and its workaround is documented. See [the design principle in TECHNICAL.md](TECHNICAL.md).
 
-- Like all of WFMT, this is journal-first: a third-party tool only knows what the game writes to its journal files, and not everything is logged.
-- Gaps are filled from Frontier's own data or from community services where those exist, and otherwise worked around.
-- Each gap and its workaround is written down.
-- See [the design principle in TECHNICAL.md](TECHNICAL.md).
+## 1. Scope
 
-## 1. Goals
+BGS tracking records what the commander does to the Background Simulation (BGS). Powerplay and Colonization are outside its scope.
 
-A WFMT mode that shows what the commander is doing to the Background Simulation (BGS), scoped to *only*
-BGS (Powerplay and Colonization are out of scope, handled elsewhere or not at all).
+- **Panel:** shows only the current system. For each faction it shows state and influence, with the change since before the tick, and the commander's actions against that faction in the current tick.
+- **BGS Report window:** shows every other system in which the commander acted in the tick, one tab per system, and earlier ticks through a drop-down (the archive).
+- **Recorded effects (increases and decreases):** missions completed (+/- INF pips), failed and abandoned missions, bounty and combat-bond redemptions, trade profit or loss, exploration data sold, and crimes committed against a faction. The faction's influence and state change since before the tick is also shown.
+- **Per tick:** totals reset at each tick. The closed tick is archived for a configurable number of days (`wfmt_bgs_archive_days`, default 7, range 1 to 90). At start, the current period is rebuilt from the commander's recent journals, so it is cumulative since the tick even if EDMC was not running.
+- **Report tabs:**
+  - The last `RECENT_SYSTEMS` (6) systems visited (any system present in the period's faction data or with activity; the current system first), plus the commander's pinned systems (shown first, starred, in every period).
+  - **Close tab** adds a system to `hidden_systems` and unpins it.
+  - **Add system** (the "Show a system" box, a `SuggestEntry` with a drop-down of all known systems and type-ahead filtering; free text is accepted) pins the system and removes it from `hidden_systems`.
+  - `pinned_systems` and `hidden_systems` are stored per commander in `bgs_state.json`.
+  - Archived periods hold faction data only for systems with activity, so their recent list consists of those systems.
+  - **Copy Summary** ignores the tab limit and the hidden list.
+- **Persistence:** per commander, across a relog and an EDMC restart.
+- Activity is recorded in whichever system the commander acts. There are no lists of tracked systems or factions.
 
-- **The panel shows only the current system**: each faction's state and influence (with the change since
-  before the tick) and, under it, what the commander has done to that faction this tick.
-- **The BGS Report window** shows every other system the commander has acted in this tick, one tab per
-  system, and earlier ticks via a drop-down (the archive).
-- **Everything that moves a faction, up and down**: missions done (+/- INF pips), failed and abandoned
-  missions, bounty/combat-bond redemptions, trade profit *or loss*, exploration data sold, crimes
-  committed against a faction; plus the faction's own influence and state change since before the tick.
-- **Per-tick**: totals reset at each tick and the closed tick is archived for a configurable number of
-  days (`wfmt_bgs_archive_days`, default 7, 1-90). On start the current period is rebuilt from the
-  commander's recent journals, so it is cumulative since the tick even if EDMC wasn't running.
-- **Report tabs**:
-  - The last `RECENT_SYSTEMS` (6) systems visited (any system seen in the period's faction data or with
-    activity; the current one first), plus the commander's **pinned** systems (first, starred, always
-    shown, in every period).
-  - **Close tab** adds a system to `hidden_systems` (and unpins it).
-  - **Add system** (the "Show a system" box: a `SuggestEntry` with a dropdown of every known system and
-    type-ahead filtering, free text allowed) pins it and un-hides it.
-  - Both lists are per commander in `bgs_state.json` (`pinned_systems`, `hidden_systems`).
-  - Archived periods only hold faction data for systems with activity, so their recent list is those
-    systems.
-  - Copy Summary ignores the limit and hidden list.
-- **Per-commander** persistence that survives a relog and a full EDMC restart.
-- No "tracked systems/factions" lists: activity is recorded wherever the commander acts.
+### 1.1 Not included
 
-## 2. Non-goals
+- Discord posting was outside the original BGS feature. Since 2026-10-29 it is part of the shared Discord feature of WFMT (see [DISCORD_SHARING_RESEARCH.md](DISCORD_SHARING_RESEARCH.md)): **Copy for Discord** and **Post to Discord** operate on the tick shown in the report window (`bgs_discord.py`, `discord_share.py`). **Copy Summary** is separate plain text.
+- Combat-zone participation as a signal of its own, and Thargoid war states (section 5).
 
-- Discord webhook: out of scope for the original BGS feature. Since 2026-10-29 posting by webhook is in scope as a shared feature across WFMT (see [DISCORD_SHARING_RESEARCH.md](DISCORD_SHARING_RESEARCH.md)). Built: **Copy for Discord** and **Post to Discord** for the tick shown in the report window (`bgs_discord.py`, `discord_share.py`); the plain **Copy Summary** is unchanged.
-- No combat-zone participation as its own signal, no Thargoid-war state tracking (section 5).
+## 2. Architecture
 
-## 3. Architecture
+`PANEL_PLACEMENT = "bgs"`: BGS has its own top-level mode button (`PANEL_MODES` in `ui.py`, next to Powerplay).
 
-`PANEL_PLACEMENT = "bgs"` - its own top-level mode button (`ui.py`'s `PANEL_MODES`, next to Powerplay).
+| Module | Role |
+|---|---|
+| `bgs_tracker.py` | Pure parsing: `FactionSnapshot` / `parse_faction_entry()`, `FactionActivity`, `parse_mission_faction_effects()`, `parse_bounty_voucher()`, `parse_combat_bond()`, `parse_crime()`, `market_*()`, `exploration_sale_value()`. |
+| `bgs_ledger.py` | Pure engine. `TickLedger` is one tick period for one commander: activity per system and faction; a `FactionTrack` per system and faction (`before` = last snapshot before the tick, `now` = newest since); open missions (`MissionID` to issuing faction, for scoring failed and abandoned missions); the commander's location and the faction of the station docked at. `process(entry)` accepts a live or replayed journal entry. Entries older than `tick_start` update context and `before` but never count as activity. `roll()` closes the period into an archive record and starts the next (each faction's newest snapshot becomes the next `before`). Also `PeriodView` (read-only view for the window), `prune_archive()`, `rebuild()` and `fingerprint()`. |
+| `bgs_journal.py` | Reads the commander's recent `Journal*.log` files, starting `LOOKBACK_DAYS` (3) before the tick, and returns the relevant events, filtered by the `Commander` event of each file. |
+| `bgs_format.py` | Shared wording (panel, window, Copy Summary). Clips every journal-sourced name. |
+| `bgs_state.py` | Per-commander JSON (`bgs_state.json`): `ledger` (current period) and `archive` (closed periods, newest first). Written to a temporary file and moved with `os.replace`. |
+| `bgs_tick_client.py` | Synchronous HTTP client, the only network call: `fetch_latest_tick()`. |
+| `bgs_panel.py` | Controller, main-panel widgets and the Settings tab (tick detection only). Feeds live events to the ledger, polls the tick (`queue.Queue`, generation counter, `threading.Thread`, `after()`), runs the journal replay on a worker thread, and archives on a new tick. |
+| `bgs_settings.py` | The Settings card of the Report window and the config keys and readers for the display switch and the days of ticks kept (see "Settings in the report window"). |
+| `bgs_window.py` | Report window (`uikit`): a tick drop-down and one tab per system, each with a table of factions and a table of the commander's actions. Tabs are the last 6 systems plus the pinned ones. |
 
-```
-bgs_tracker.py     Pure parsing: FactionSnapshot / parse_faction_entry(), FactionActivity,
-                    parse_mission_faction_effects(), parse_bounty_voucher(), parse_combat_bond(),
-                    parse_crime(), market_*(), exploration_sale_value().
-bgs_ledger.py      Pure engine. TickLedger = one tick period for one commander: activity per
-                    system+faction, FactionTrack per system+faction (`before` = last snapshot before
-                    the tick, `now` = newest since), open missions (MissionID -> issuing faction, for
-                    scoring failed/abandoned), and where the commander is / which station faction is
-                    docked at. process(entry) takes a live OR replayed journal entry; entries older
-                    than tick_start update context and `before` but never count as activity.
-                    roll() closes the period into an archive record and starts the next (every
-                    faction's newest snapshot becomes the next `before`). Also PeriodView (read-only
-                    view for the window), prune_archive(), rebuild() and fingerprint().
-bgs_journal.py     Reads the commander's recent Journal*.log files (from 3 days before the tick) and
-                    returns just the relevant events, filtered by the file's Commander event.
-bgs_format.py      Shared wording (panel, window, Copy Summary); clips every journal-sourced name.
-bgs_state.py       Per-commander JSON (bgs_state.json): `ledger` (current period) and `archive`
-                    (closed periods, newest first). Atomic write-temp-then-os.replace.
-bgs_tick_client.py Sync HTTP client (the only network call) - fetch_latest_tick().
-bgs_panel.py       Controller + main-panel widgets + Settings tab (tick detection only). Feeds live events to the ledger,
-                    polls the tick (queue.Queue/generation-counter/threading.Thread/after() pattern),
-                    runs the journal replay on a worker thread, archives on a new tick.
-bgs_settings.py    The Settings card of the Report window and the config keys/readers for the display
-                    switch and the days of ticks kept (section "Settings in the report window").
-bgs_window.py      Report window (uikit): tick drop-down + one tab per system, each with a "Factions"
-                    table and a "What you did" table. Tabs = last 6 systems + pinned; Copy
-                    Summary always has every system.
-```
+### 2.1 Tick lifecycle
 
-### 3.1 Tick lifecycle
+1. A journal event identifies the commander (`_switch_cmdr` loads the saved ledger and archive).
+2. The tick poll returns the latest galaxy tick `T`. When both are known, `_reconcile_tick()` runs:
+   - If the stored `tick_start` is older than `T` (a tick passed, possibly while EDMC was closed), the stored period is archived, a new period starts at `T`, and a repair is queued (`_repair`: the closing period's start, `T`, and the missions open at that time).
+   - If no `tick_start` is stored, `T` is adopted.
+3. `_start_backfill()` (once per commander and tick per session) replays the journals on a worker thread into a new `TickLedger`. Live events arriving during the replay are buffered. When the replay finishes they are applied on top, skipping events the replay already saw (matched by `fingerprint()`). If no journal events are found (folder unset or unreadable), the live ledger is kept unchanged.
 
-1. A journal event reveals the commander (`_switch_cmdr` loads the saved ledger + archive).
-2. The tick poll returns the latest galaxy tick `T`. Once both are known, `_reconcile_tick()` runs:
-   - stored `tick_start` older than `T` (a tick passed, maybe while EDMC was closed) -> archive the
-     stored period, start a new one at `T`, and queue a **repair** (`_repair`: the closing period's start, `T` and
-     the missions open then);
-   - no stored `tick_start` -> adopt `T`.
-3. `_start_backfill()` (once per commander + tick per session) replays the journals on a worker thread
-   into a fresh `TickLedger`. Live events that arrive meanwhile are buffered; when the replay finishes
-   they are applied on top, skipping any the replay already saw (matched by `fingerprint()`). If no
-   journal events are found (folder unset/unreadable) the live ledger is kept untouched.
+   **Repair.** The same worker read serves the repair:
+   - It reads from the start of the closing period.
+   - `bgs_ledger.repair_record(events, old_start, T, open_missions)` replays only the events before `T` into that period (events before its start establish state but never count) and returns an archive record. It returns None if the journals show no activity, if the times cannot be read, or if the period began more than `REPAIR_MAX_DAYS` (14) days ago.
+   - `_apply_repair` merges the record into the live record with the same start and end through `bgs_ledger.merge_records` (the rebuilt activity and tracks win per faction; a faction present only in the live record is kept), or adds the record when none was filed live.
+   - The repair is applied regardless of the outcome of the replay of the current period, but only if the commander is still the one it was built for.
+   - Ticks missed entirely cannot be separated; the activity of those ticks is stored in one record.
+4. At later ticks while running, step 2 is repeated, followed by a new replay.
 
-   **Repair.** The same worker read also serves the repair:
-   - It reads from the closing period's start.
-   - `bgs_ledger.repair_record(events, old_start, T, open_missions)` replays only the events before `T`
-     into that period (events before its start set up state but never count) and returns an archive
-     record, or None if the journals show no activity, the times can't be read, or the period began more
-     than `REPAIR_MAX_DAYS` (14) ago.
-   - `_apply_repair` files the record over the live record with the same start and end via
-     `bgs_ledger.merge_records` (the rebuilt activity and tracks win per faction; a faction only the live
-     record has stays), or adds it when nothing was filed live.
-   - It is applied whatever happens to the current period's replay, but only if the commander is still
-     the one it was built for.
-   - Ticks missed altogether can't be told apart: their play lands in the one record.
+If tick detection is off or unreachable and no tick was ever stored, there is no period boundary: the ledger accumulates live events and no replay occurs.
 
-4. Later ticks while running: same as step 2's roll, then a new replay.
+Archive limits: ledgers keep `before` baselines for factions seen within the archive-days window (`prune_tracks`). Archived periods keep faction tracks only for systems with activity.
 
-If tick detection is off or unreachable and no tick was ever stored, there is no period boundary: the
-ledger just accumulates live and no replay happens.
+## 3. Journal fields
 
-Archive limits: ledgers keep `before` baselines for factions seen within the archive-days window
-(`prune_tracks`); archived periods keep faction tracks only for systems with activity.
+### 3.1 Faction-state snapshot
 
-## 4. Journal fields
+`FSDJump`, `Location` and `CarrierJump` events contain:
 
-### 4.1 Faction-state snapshot
-
-`FSDJump`/`Location`/`CarrierJump` events each carry:
-
-- `StarSystem` (string) — used instead of the `system` argument EDMC passes into `handle_event`
-  where available, falling back to it otherwise.
-- `SystemFaction: {Name, FactionState}` — the system's current controller, used only to flag
-  `is_controlling` on the matching faction's snapshot.
-- `Factions: [...]` — one entry per minor faction present, each with `Name`, `FactionState`,
-  `Government`, `Allegiance`, `Influence` (0.0–1.0 fraction, displayed ×100 as a percentage),
-  `Happiness`/`Happiness_Localised`, `PendingStates: [{State, Trend}]`, `RecoveringStates: [...]`,
-  `ActiveStates: [{State}]`.
+- `StarSystem` (string): used in preference to the `system` argument that EDMC passes to `handle_event`, which is the fallback.
+- `SystemFaction: {Name, FactionState}`: the system's current controller, used only to set `is_controlling` on the matching faction's snapshot.
+- `Factions: [...]`: one entry per minor faction present, with `Name`, `FactionState`, `Government`, `Allegiance`, `Influence` (a fraction from 0.0 to 1.0, displayed ×100 as a percentage), `Happiness` / `Happiness_Localised`, `PendingStates: [{State, Trend}]`, `RecoveringStates: [...]` and `ActiveStates: [{State}]`.
 
 Every faction present is stored on the ledger as a `FactionTrack`:
 
-- A sighting before the tick replaces `before`; a sighting since replaces `now`.
-- Snapshots are **overwritten wholesale**, never merged field-by-field — the journal always sends the
-  complete current state for a faction, not a delta.
-- The influence change shown is `now - before` in percentage points. It is blank when either end is
-  unknown (e.g. a system first seen after the tick with no earlier journal record).
+- A sighting before the tick replaces `before`. A sighting since the tick replaces `now`.
+- Snapshots are overwritten completely, never merged field by field, because the journal always sends the complete current state of a faction.
+- The influence change shown is `now - before` in percentage points. It is blank when either end is unknown (for example a system first seen after the tick with no earlier journal record).
 
-### 4.2 Mission INF
+### 3.2 Mission influence
 
-`MissionCompleted`'s `FactionEffects[]` array: each entry has `Faction` and an `Influence[]` array of
-`{Trend, Influence}`, where `Influence` is a string of `+`/`-` characters (Frontier never exposes an
-exact percentage) and `Trend` is one of `UpGood`/`DownGood`/`UpBad`/`DownBad`.
+`MissionCompleted` contains `FactionEffects[]`. Each entry has `Faction` and `Influence[]`, an array of `{Trend, Influence}`. `Influence` is a string of `+` or `-` characters; the journal contains no exact percentage. `Trend` is one of `UpGood`, `DownGood`, `UpBad`, `DownBad`.
 
-**Trend → direction mapping**, as observed in real journal entries:
+Trend to direction, as observed in journal entries:
 
-- `UpGood`/`DownGood` → +INF.
-- `UpBad`/`DownBad` → -INF.
-- The pip count is the length of the `Influence` string (e.g. `"++"` → 2 pips).
+- `UpGood` and `DownGood`: +INF.
+- `UpBad` and `DownBad`: -INF.
+- The pip count is the length of the `Influence` string (`"++"` is 2 pips).
 
-**Which system gets the INF**:
+Totals are kept per faction as `inf_plus` and `inf_minus` pip counts and a mission count.
 
-- Each `Influence[]` entry carries a `SystemAddress`, resolved to a name via the addresses seen in
-  `FSDJump`/`Location`/`CarrierJump`/`Docked` events.
-- If it can't be resolved, the issuing faction's INF goes to the system the mission was *accepted* in.
-- Only if that is unknown too does it fall back to the system the mission was handed in at.
-- Handing a mission in elsewhere therefore never moves its INF.
-- Tallied per faction as `inf_plus`/`inf_minus` pip counts plus a mission count — never an exact
-  percentage, since Frontier doesn't provide one.
+System attribution:
 
-**Conflict missions with no `Influence[]`**:
+- Each `Influence[]` entry carries a `SystemAddress`, resolved to a name through the addresses seen in `FSDJump`, `Location`, `CarrierJump` and `Docked` events.
+- If it cannot be resolved, the influence of the issuing faction is attributed to the system in which the mission was accepted.
+- If that is also unknown, the system in which the mission was handed in is used.
+- Handing in a mission elsewhere therefore does not move its influence.
 
-- The issuing faction's entry is sometimes empty (observed on `Mission_Massacre_Conflict_CivilWar`).
-- When the mission name has a conflict word (`War`, `CivilWar`, `Conflict`, `Election`) and the
-  faction's last-seen state in that system is `War`/`CivilWar` (assumed ++) or `Election` (assumed +),
-  the ledger credits that many pips to `inf_plus`.
-- These are assumptions, not journal values; any other mission with an empty entry stays at zero.
-- Squadron perks are not exposed in the journal, so any squadron influence bonus is not visible here.
+Conflict missions without `Influence[]`:
 
-### 4.2b Failed and abandoned missions
+- The entry of the issuing faction is sometimes empty (observed on `Mission_Massacre_Conflict_CivilWar`).
+- If the mission name contains a conflict word (`War`, `CivilWar`, `Conflict`, `Election`, `Elections`) and the last seen state of the faction in that system is `War` or `CivilWar` (assumed 2 pips) or `Election` (assumed 1 pip), the ledger credits that number of pips to `inf_plus`.
+- These pip counts are assumptions, not journal values. Any other mission with an empty entry stays at zero.
+- Squadron perks are not in the journal, so a squadron influence bonus is not visible.
 
-`MissionFailed` and `MissionAbandoned` carry only a `MissionID`, no faction. The ledger remembers each
-`MissionAccepted`'s `Faction` and the system it was accepted in, and scores the failure/abandonment
-against that faction there (an INF decrease). Missions accepted before the replay window are unknown and
-skipped; the open-mission map is persisted (capped at 400) to cover missions that outlive a restart.
+### 3.3 Failed and abandoned missions
 
-### 4.3 Bounty vouchers & combat bonds
+`MissionFailed` and `MissionAbandoned` contain only a `MissionID`. The ledger records the `Faction` and the system of each `MissionAccepted` and scores the failure or abandonment against that faction in that system as an influence decrease. Missions accepted before the replay window are unknown and skipped. The open-mission map is persisted (`MAX_OPEN_MISSIONS` = 400) so that missions that outlive a restart are covered.
 
-`RedeemVoucher` — the authoritative BGS-credit source (the effect applies at redemption, not at the
-kill, so there's no need to correlate with `Bounty`/`FactionKillBond` events at all):
+### 3.4 Bounty vouchers and combat bonds
 
-- `Type == "bounty"`: carries a `Factions: [{Faction, Amount}]` array — a single redemption can cover
-  bounties earned against several factions at once.
-- `Type == "CombatBond"`: carries a single top-level `Faction`/`Amount` pair instead — **not** a
-  `Factions[]` array (a combat bond is always earned fighting for one faction's side in one conflict
-  zone).
+`RedeemVoucher` is the source of BGS credit. The effect applies at redemption, so no correlation with `Bounty` or `FactionKillBond` events is needed.
 
-This asymmetry is observed in real journal entries — easy to get wrong by assuming both shapes match.
+- `Type == "bounty"`: contains `Factions: [{Faction, Amount}]`. One redemption can cover bounties against several factions.
+- `Type == "CombatBond"`: contains a single top-level `Faction` and `Amount`, not a `Factions[]` array.
 
-### 4.4 Trade profit/loss & exploration data sold
+The two shapes differ in real journal entries.
 
-`MarketBuy`/`MarketSell` (using `TotalCost`/`TotalSale`) and `SellExplorationData`(legacy)/
-`MultiSellExplorationData` (using `TotalEarnings`, falling back to `BaseValue + Bonus` for the legacy
-event, which has no `TotalEarnings` field) are all attributed to **the current station's controlling
-faction** — captured from the preceding `Docked` event's own `StationFaction.Name` field, not the
-system's overall controller.
+### 3.5 Trade profit or loss and exploration data
 
-Trade profit is `trade_sell_credits - trade_buy_credits`, net of nothing else. It is an approximation
-(net credits transacted, not an exact supply/demand BGS-rules model), called out explicitly in the
-Settings-tab description.
+`MarketBuy` and `MarketSell` (`TotalCost`, `TotalSale`), `SellExplorationData` (legacy) and `MultiSellExplorationData` (`TotalEarnings`; the legacy event has no `TotalEarnings` field, so `BaseValue + Bonus` is used) are attributed to the controlling faction of the current station. That faction is taken from the `StationFaction.Name` field of the preceding `Docked` event, not from the system's overall controller.
 
-### 4.4b Crimes
+Trade profit is `trade_sell_credits - trade_buy_credits`. It is net credits transacted and is not an exact model of the BGS supply and demand rules. The Settings tab describes it as an approximation.
 
-`CommitCrime`: `Faction` (the faction the crime was committed against) and `Fine` or `Bounty`. Counted
-per faction as a crime plus the credits incurred; shown as an INF decrease. Attributed to the current
-system.
+### 3.6 Crimes
 
-### 4.5 BGS tick detection
+`CommitCrime` contains `Faction` (the faction the crime was committed against) and `Fine` or `Bounty`. It is counted per faction as one crime plus the credits incurred, shown as an influence decrease, and attributed to the current system.
 
-`bgs_tick_client.fetch_latest_tick()` does a plain HTTP GET against
-`http://tick.infomancer.uk/galtick.json` (10s timeout), reads the `lastGalaxyTick` field, and parses it
-with `%Y-%m-%dT%H:%M:%S.%fZ`.
+### 3.7 Tick detection
 
-- This is a **community-run, third-party** endpoint.
-- It is polled every 60 seconds via `bgs_panel.py`'s own
-  `queue.Queue`/generation-counter/`threading.Thread`/`after()`-poll loop. It never blocks the Tk main
-  thread, and any failure is treated as "tick unknown for now", never fatal.
-- Toggleable independently (`wfmt_bgs_tick_enabled`, on by default), since it's the only network call
-  this mode makes.
-- See section 3.1 for what a new or first-seen tick triggers.
+`bgs_tick_client.fetch_latest_tick()` sends an HTTP GET to `http://tick.infomancer.uk/galtick.json` (`TICK_URL`), reads the `lastGalaxyTick` field and parses it with `%Y-%m-%dT%H:%M:%S.%fZ`.
 
-## 5. Known gaps (not silently dropped)
+- The endpoint is operated by a third party (the community).
+- `bgs_panel.py` polls every 60 seconds (`_TICK_POLL_INTERVAL_MS` = 60000) with its own `queue.Queue`, generation counter, `threading.Thread` and `after()` loop. The Tk main thread is not blocked. A failure is treated as "tick unknown for now".
+- Detection is switched independently (`wfmt_bgs_tick_enabled`, on by default), because it is the only network call of this mode.
+- Section 2.1 describes what a new or first-seen tick triggers.
 
-- Murder/crime beyond what `CommitCrime` reports (e.g. no victim-faction attribution for kills).
-- Ticks before this feature was installed: the tick API only gives the *latest* tick, so earlier
-  periods can't be reconstructed from earlier journals; the archive starts filling from the first tick
-  WFMT sees roll.
-- Combat-zone (ground & space) participation as its own signal (only the resulting bounty/combat-bond
-  *redemption* is tracked, not CZ presence/wins directly).
+## 4. Settings in the report window
+
+The switch that shows faction states and activity, and the number of days of ticks to keep, are set only on the **Settings** card at the top of the BGS Report window (`bgs_settings.SettingsCard`). The Settings → WFMT → BGS tab contains tick detection and refers to the card. The config keys and readers are in `bgs_settings` (`bgs_panel` imports them). `set_enabled` and `set_archive_days` save with the same clamping as the Settings tab (1 to 90 days). Every change is announced to listeners: a card follows a change made in another card, and `BgsController._on_window_setting` applies it (prunes the archive, saves, redraws, reconciles the tick poll). Tick detection is set only in Settings.
+
+## 5. Known gaps
+
+- Crimes beyond what `CommitCrime` reports (no victim-faction attribution for kills).
+- Ticks before the feature was installed: the tick API returns only the latest tick, so earlier periods cannot be reconstructed from earlier journals. The archive fills from the first tick that WFMT sees roll.
+- Combat-zone participation (ground and space) as a signal of its own. Only the resulting bounty or combat-bond redemption is tracked.
 - Thargoid war states.
-- Discord webhook export: built for the selected tick as a shared Discord feature (see [DISCORD_SHARING_RESEARCH.md](DISCORD_SHARING_RESEARCH.md)); posting every tick at once is not offered, since a long report would be many messages.
-
-## Settings in the report window
-
-The switch that shows faction states and activity and the days of ticks to keep are set only on the **Settings** card at the top of the BGS Report window (`bgs_settings.SettingsCard`); the Settings → WFMT → BGS tab keeps tick detection and points there. The config keys and readers live in `bgs_settings` (`bgs_panel` imports them), `set_enabled` / `set_archive_days` save with the same clamping the Settings tab uses (1 to 90 days), and every change is announced to listeners: a card follows a change made in another card, and `BgsController._on_window_setting` applies it (prunes the archive, saves, redraws, reconciles the tick poll). Tick detection stays in Settings only.
+- Discord export covers the selected tick. Posting every tick at once is not offered.

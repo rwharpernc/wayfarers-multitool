@@ -1,69 +1,44 @@
 # Planned and being researched
 
-Things I would like to add or am still looking into, by feature. This is a wish list, not a promise: there are no dates, the order can change, and some of it may turn out not to be possible.
-
-If one of these matters to you, tell me (see [Getting help](../../README.md#getting-help)).
+Open work that is recorded in [TODO.md](../TODO.md). The list has no dates or order and is not a commitment. Suggestions are accepted on the [Issues page](https://github.com/rwharpernc/wayfarers-multitool/issues) (see [Getting help](../../README.md#getting-help)).
 
 ## Colonization
 
-- **Raven Colonial:** sharing your progress, deliveries and carrier cargo is built, strictly **opt-in and off by default**, and the internet page lists exactly what is sent and when.
-  - **Raven Progress** reads Raven's own figures for a site when you press it.
-  - **Create Project on Raven** starts a project for a site you are docked at, and **My Projects** lists every active project you have there.
-  - Not done: reading Raven's progress automatically instead of on a button press, assigning commodities to commanders on a project, showing other linked carriers' cargo, and a guided tool that fills in a system's whole plan on Raven.
-- **Team projects:** several commanders on one project, with a "what the team still needs" line. Everything today is per commander and would stay that way until you choose to share.
-- **Co-op building and colony tracking:** not available yet. Reading who on a team has taken which commodity (and, later, claiming and releasing them) comes first, and the planned Discord post of who is hauling what waits for it.
-- *Being researched, may not happen:* tons per hour and credits earned per delivery. The journal does not say how long you spent hauling, and I have not been able to confirm that the credits a depot lists are what is actually paid.
-
-## Sharing to Discord
-
-Built: the BGS report and Powerplay progress can be copied for Discord or posted to a webhook, with a named list of destinations for each commander and a dialog to customize how the posts look ([Sharing reports to Discord](discord.md)). Every post is a button press, and that stays: nothing will be posted on its own.
-
-- **More reports to share:** an expedition's earnings from selling exploration and exobiology data, and expedition announcements (started, next stop, stop reached, finished), each with a preview you can edit before it goes.
-- **Colonization and team building:** a shopping list, a progress update, a call for helpers and a completion post for a site, and who is hauling what once co-op building exists.
-- **Carrier movement:** a planned jump, a cancellation and an arrival, with the departure shown in each reader's own time.
-- **More ways to shape a post:** your own header, row and footer wording with placeholders, a different template for each destination, importing and exporting a template so a squadron can share a look, a one-message short mode, and colored cards (embeds).
-- **Other chat programs:** webhooks for services other than Discord, as further destinations.
-- The thinking behind these is in [the Discord sharing research](../DISCORD_SHARING_RESEARCH.md).
+- **Raven Colonial.** Implemented: sharing of progress, deliveries and carrier cargo (opt-in, off by default; the [internet page](internet-and-privacy.md) lists what is sent and when), **Raven Progress**, **Create Project on Raven** and **My Projects**. Not implemented:
+  - reading Raven's progress automatically instead of on a button press,
+  - assigning commodities to commanders on a project,
+  - showing the cargo of other linked carriers,
+  - a guided tool that fills in the whole plan of a system on Raven.
+- **Team projects.** Several commanders on one project. All data is currently per commander.
+- **Co-op building and colony tracking.** Not available.
+- **Tons per hour and credits per delivery.** The journal does not record the time spent hauling, so tons per hour would be estimated from the gaps between deliveries. Whether the credits listed by a depot match the credits paid has not been confirmed.
 
 ## Exploration
 
-- **More Ship planner links.** The Ship planner reads Coriolis and EDSY links that carry a whole build. Other link forms need the sites' own identifier tables, so they are being looked at.
-- **Subtracting stored modules from a Ship planner plan.** The planner now shows which modules you have in storage but does not yet take their engineering off the plan.
+- **Ship planner links.** The Ship planner reads Coriolis and EDSY links that carry a whole build. Reading EDSY `#/L=` links and Coriolis `/outfit` links requires the sites' identifier tables and is not implemented.
+- **Stored modules in a Ship planner plan.** The planner shows which modules are in storage. It does not subtract their engineering from the plan.
 
 ## Operations
 
-- **A stat preview in the Odyssey upgrade planner.** The stat tables are not available as open data, so they are being gathered and checked in the game first.
-
-## Shortcuts
-
-- **More actions,** for example starting or pausing an expedition, or copying the next system.
-- **A Linux key binding.** The six actions work as chat commands on Linux. Whether a desktop key binding that runs a command WFMT listens for is worth adding is undecided.
+- **Odyssey upgrade planner, stat preview.** The stat tables are not available as open data. They are being collected and verified in the game ([ODYSSEY_STAT_COLLECTION.md](../ODYSSEY_STAT_COLLECTION.md)). The preview is not implemented.
 
 ## Mining
 
-- **A closer look at Mining**, surface mining included.
-  - A first review of both Mining windows found the coverage broad. Core asteroids, a target rock, mission needs, alerts and a live value for the hold are already in.
-  - The Surface (Rhino) tools and the radar over the game can only be judged by playing with them, so those are still to look at.
-  - The share of a rock that is left on the surface side is an idea I have not started.
-  - Nothing is promised.
+- **Review of Mining, including surface mining.** A desk review found that the run's ore, limpets, rates, hold, targets, missions, sales, history, hotspots, prices and reserve lookups are covered. The Surface (Rhino) tools and the radar over the game have not been assessed in play.
 
 ## Landing Assist
 
-- **My own pad layouts,** with fore and aft cues and diagrams for the facilities that have none today, settlements first. I need to
-  confirm the pad numbering of settlements in the game before drawing any, so nothing misleading ships.
+- **Own pad layouts** with fore and aft cues and diagrams for facilities that have none, starting with settlements. The pad numbering of settlements must be confirmed in the game before any layout is drawn.
 
 ## Trade
 
-- **Round trip:** a Powerplay bonus filter (that depends on what the price service can tell me).
+- **Round trip:** a Powerplay bonus filter. It depends on what the price service reports and on the definition of "bonus".
 
 ## Overlays
 
-- **A built-in overlay for Linux.** Windows has one that needs nothing else installed; on Linux EDMCModernOverlay is still required. A Linux version is being researched (the window handling differs between X11 and Wayland), and nothing is built yet.
-- **Screens smaller than 1920 x 1080** are not laid out for. The displays are sized in pixels, so on a smaller screen some can overlap until you
-  move them on Overlay Placement. On 1920 x 1080 or larger, ultrawide screens included, the default spots do not overlap, except for cards that are never up together
-  and the wide Bio status strip, which reaches over the top of the Expedition Log card by a few lines.
+- **Built-in overlay for Linux.** Not built. Linux uses EDMCModernOverlay. The window handling differs between X11 and Wayland; see [LINUX_OVERLAY_RESEARCH.md](../LINUX_OVERLAY_RESEARCH.md).
+- **Screens smaller than 1920 x 1080.** The default overlay positions are laid out for 1920 x 1080 or larger. Displays are sized in pixels, so on a smaller screen some can overlap until moved on Overlay Placement. On 1920 x 1080 or larger (including ultrawide screens) the default positions do not overlap, except for cards that are never shown together and the wide Bio status strip, which reaches over the top of the Expedition Log card by a few lines.
 
-## Everywhere
+## Verification
 
-- **More checking in the game on both Windows and Linux.** Several parts have had a first pass only, and each guide ends with
-  a list of what the game does not tell us.
+- Several parts have had a first verification pass only. Each mode guide ends with a list of what the game does not report. Open checks are listed in [TODO.md](../TODO.md) and [LINUX_TESTING.md](../LINUX_TESTING.md).

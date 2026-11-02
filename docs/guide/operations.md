@@ -1,13 +1,12 @@
 # Operations
 
-Operations holds the on-foot and housekeeping tools: screenshots, your inventory, your engineering materials (with the blueprints, wishlist, ship planner and engineers) and saved ship builds.
-(Colonization has its own mode, with its own page: [Colonization](colonization.md).)
+This page describes the Operations mode: screenshots, inventory, engineering materials (with blueprints, wishlist, ship planner and engineers) and saved ship builds. Colonization is a separate mode: see [Colonization](colonization.md).
 
-**Where this comes from:**
+**Data sources:**
 
-- Screenshots, your backpack and ship locker, and ship loadouts come from the journal (or from EDMC's own state, which it rebuilds from the journal).
-- The journal doesn't give your backpack's capacity, so WFMT uses a built-in table.
-- The Carrier Locker isn't in the journal at all: it comes from Frontier's servers through a signed-in EDMC.
+- Screenshots, the backpack and ship locker, and ship loadouts come from the journal (or from EDMC's own state, which EDMC rebuilds from the journal).
+- The journal does not report the backpack capacity; WFMT uses a built-in table.
+- The Carrier Locker is not in the journal. It comes from Frontier's servers through a signed-in EDMC.
 - See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 **On this page:**
@@ -22,42 +21,42 @@ Operations holds the on-foot and housekeeping tools: screenshots, your inventory
 
 ## How to
 
-The most common tasks, step by step. Each one links to the section with the full detail.
+Common tasks, each with a link to the full description.
 
 **Set up screenshots** (details: [Screenshots](#screenshots))
 
 1. Open **Settings → WFMT → Operations → Screenshots**.
-2. Check **Screenshot Directory** is the folder where the game saves its screenshots (use **Browse…** if not).
-3. Choose a **Converted Directory** for the PNG copies, and pick a **Filename Mask** from the drop-down.
+2. Verify that **Screenshot Directory** is the folder in which the game saves screenshots (use **Browse…** to change it).
+3. Select a **Converted Directory** for the PNG copies and a **Filename Mask** from the drop-down.
 4. Optionally tick **Delete original file after conversion**.
 5. Take a screenshot in the game. The status line on the Operations panel shows the converted file's name.
 
-**See your backpack and cargo** (details: [Inventory](#inventory))
+**View the backpack and cargo** (details: [Inventory](#inventory))
 
-1. Switch to Operations mode. The Inventory bars show the Backpack, the Ship Locker and, while you are in a ship or SRV, the Cargo.
-2. Click any bar to open the Inventory window.
-3. Pick the **Backpack**, **Ship Locker** or **Cargo** tab. Type in **Filter** to narrow every tab at once.
+1. Switch to Operations mode. The Inventory bars show the Backpack, the Ship Locker and, while in a ship or SRV, the Cargo.
+2. Click a bar to open the Inventory window.
+3. Select the **Backpack**, **Ship Locker** or **Cargo** tab. Text in **Filter** narrows every tab at once.
 
 **Check materials for a blueprint** (details: [Engineering](#engineering-blueprints-and-a-wishlist))
 
 1. Press **Blueprints** on the Engineering row to open the Engineering window.
-2. On the **Blueprints** tab, type the module or effect in **Search** and pick the blueprint. Its ingredients show what one craft takes and how many you hold.
+2. On the **Blueprints** tab, enter the module or effect in **Search** and select the blueprint. The ingredients show what one craft takes and how many are held.
 3. Set **Crafts**, then press **Add to wishlist**.
-4. Open the **Wishlist** tab to see whether it **can be made now** and what you are **short** of.
+4. Open the **Wishlist** tab to see whether the entry **can be made now** and what it is **short** of.
 
 **Find a material trader** (details: [Materials](#materials))
 
 1. Press **Materials**, then **Find a trader** in the Materials window.
-2. Pick the **Type**, **Within** distance and **Pad** size, and check **Search from**.
+2. Select the **Type**, **Within** distance and **Pad** size, and check **Search from**.
 3. Press **Find**. The **Material trader** window lists the closest stations first.
 
 **Save a ship build** (details: [Ship Builds](#ship-builds))
 
-1. Design the build on Coriolis, EDSY or Spansh and copy its address from your browser.
+1. Design the build on Coriolis, EDSY or Spansh and copy its address from the browser.
 2. Press **Ships** in the **Ship Builds** row, then **Add build**.
 3. Fill in **Name**, **Ship**, **Site** and **Link**, then press **Save**.
 
-**Plan a whole ship's engineering** (details: the Ship planner in [Engineering](#engineering-blueprints-and-a-wishlist))
+**Plan the engineering of a whole ship** (details: the Ship planner in [Engineering](#engineering-blueprints-and-a-wishlist))
 
 1. Export the build from EDSY or Coriolis as SLEF and copy it.
 2. In the Engineering window open **Ship planner** and press **Paste from clipboard**.
@@ -65,110 +64,97 @@ The most common tasks, step by step. Each one links to the section with the full
 
 ## Screenshots
 
-Converts Elite's screenshots to PNG automatically, with an optional crop to just the relevant HUD panel.
+Converts Elite's screenshots to PNG automatically, with an optional crop to the relevant HUD panel. No action is required: conversion occurs when the game's journal reports a screenshot.
 
-**How to use it:** nothing to do. Take a screenshot in the game as usual and WFMT converts it when the game's journal reports it.
+**Panel** (Operations mode, **Operations**):
 
-**On the panel** (Operations mode, **Operations**):
+- A status line. It reads `Waiting for a screenshot…` until a screenshot is taken, then the converted file's name (cut to 40 characters). Clicking the status line opens the folder the last screenshot was saved in.
+- The **clock icon** to its right turns the auto-capture timer on and off (see below). It is hidden when the timer cannot work on the system or when the icon is turned off in Settings.
+- **Click to expand** / **Click to collapse** shows or hides the thumbnails. They start collapsed at each EDMC start.
+- Expanded, the panel shows the newest screenshot as a thumbnail (and, when a crop was made, the cropped copy beside it), then **Recent - click to preview**: the eight screenshots before it, in rows of four. Clicking any thumbnail, including the newest, opens a larger preview.
+- The preview window is view-only. It scales the image to fit the window (never larger than the image), remembers its size, and has an **Open Folder** button for the folder the file was saved in, a **Close** button and a help button.
 
-- A status line. It reads `Waiting for a screenshot…` until one is taken, then the converted file's name (cut to 40 characters). **Click the status line to open the folder** the last screenshot was saved in.
-- The **clock icon** to its right turns the auto-capture timer on and off (see below). It is hidden when the timer cannot work on your system or when you turn the icon off in Settings.
-- **Click to expand** / **Click to collapse** shows or hides the thumbnails. They always start collapsed when EDMC starts.
-- Expanded, you see the newest screenshot as a thumbnail (and, when a crop was made, the cropped copy beside it), then **Recent - click to preview**: the eight screenshots before it, in rows of four. Click any thumbnail, including the newest, to open a larger preview.
-- The preview window is view-only. It scales the image to fit the window (never larger than the image itself), remembers its size and has an **Open Folder** button for the folder the file was saved in, a **Close** button and a help button.
-
-**What happens to each screenshot.**
+**Processing of each screenshot.**
 
 1. The game saves its own image file in its screenshots folder and writes a `Screenshot` entry to the journal.
-2. WFMT finds the file, converts it to PNG in the **Converted Directory**, and names it from the **Filename Mask** (the system, the body or station, your commander name, a five-digit number or the date and time in UTC).
-3. If **Delete original file after conversion** is ticked, the game's original is deleted after a 60 second grace period so that other tools can see it first.
-4. If the panel that was open when you pressed the key has a crop rectangle, a cropped copy is made as well: the target panel, the comms panel, the role panel or the left-hand (systems) panel. A high-resolution screenshot is never cropped. The rectangles are fixed measurements for a 1920 by 1080 screen, scaled to the screenshot's size and centered on wider screens.
-5. The status line, the thumbnails and (if you turned it on) the on-screen **Screenshot saved** message update.
+2. WFMT locates the file, converts it to PNG in the **Converted Directory**, and names it from the **Filename Mask** (the system, the body or station, the commander name, a five-digit number or the date and time in UTC).
+3. If **Delete original file after conversion** is ticked, the game's original is deleted after a 60-second grace period so that other tools can access it first.
+4. If the panel that was open when the key was pressed has a crop rectangle, a cropped copy is also made: the target panel, the comms panel, the role panel or the left-hand (systems) panel. A high-resolution screenshot is never cropped. The rectangles are fixed measurements for a 1920 by 1080 screen, scaled to the screenshot's size and centered on wider screens.
+5. The status line, the thumbnails and (if enabled) the on-screen **Screenshot saved** message update.
 
-The status line also reports problems: `Screenshot not found - check Screenshot Directory in Settings` (when the file is in none of the known folders), and `Conversion failed: <reason>`. If the file is not in the folder you set but WFMT finds it in a known fallback folder, it corrects the Screenshot Directory by itself (and moves the Converted Directory with it when that was still the default).
+The status line also reports problems: `Screenshot not found - check Screenshot Directory in Settings` (the file is in none of the known folders) and `Conversion failed: <reason>`. If the file is not in the configured folder but is found in a known fallback folder, WFMT corrects the Screenshot Directory (and moves the Converted Directory with it when that was still the default).
 
-**The auto-capture timer.** The clock icon presses the game's screenshot key (F10) for you, on a timer, so you can leave it running while you work.
+**The auto-capture timer.** The clock icon presses the game's screenshot key (F10) on a timer.
 
-- Click the icon to start it (`Auto-capture enabled`) and again to stop it (`Auto-capture disabled`). It starts off every time EDMC starts and stops by itself when the game shuts down or you die (`Auto-capture stopped`).
-- It only presses the key while Elite is the window in front; otherwise the status line says `Auto-capture paused (Elite not focused)`.
-- It presses once every **poll interval** (1 second by default, 0.2 second at the least).
-- It can only press the key on systems that support it (Windows, and Linux under X11 or XWayland with `xdotool`).
-- **Thargoid scans.** When you collect a Thargoid signal's data, WFMT presses the key once for you (if *Automatically capture a screenshot when scanning a Thargoid signal* is on) and crops the copy to the bottom-left quarter of the screen, where the scan result appears. The same crop is used for the next screenshot you take while the game's Thargoid encounter music is playing.
+- Clicking the icon starts the timer (`Auto-capture enabled`); clicking again stops it (`Auto-capture disabled`). The timer is off at every EDMC start and stops by itself when the game shuts down or the commander dies (`Auto-capture stopped`).
+- The key is pressed only while Elite is the foreground window; otherwise the status line reads `Auto-capture paused (Elite not focused)`.
+- The key is pressed once per **poll interval** (1 second by default, 0.2 second minimum).
+- The key press is supported on Windows, and on Linux under X11 or XWayland with `xdotool`.
+- **Thargoid scans.** When a Thargoid signal's data is collected, WFMT presses the key once (if *Automatically capture a screenshot when scanning a Thargoid signal* is on) and crops the copy to the bottom-left quarter of the screen, where the scan result appears. The same crop is used for the next screenshot taken while the game's Thargoid encounter music is playing.
 
 **Settings → WFMT → Operations → Screenshots:**
 
-- **Screenshot Directory**: where the game saves its screenshots. **Browse…** picks a folder.
-- **Converted Directory**: where the PNG copies go. **Browse…** picks a folder.
-- **Delete original file after conversion** (off by default).
-- *Include WFMT's built-in overlay in the converted screenshot (the game's own capture never shows an overlay)* (off by default; Windows, needs the built-in overlay chosen under Settings → WFMT → Overlays).
-  - The game's own screenshot never shows an overlay, so WFMT draws the cards that were on screen when you pressed the key onto the converted copy.
-  - A failure here never loses the screenshot.
-- **Group converted files into a per-system subfolder** (off by default).
-- **Show the auto-capture timer icon on the main window** (on by default).
-- **Filename Mask**: a drop-down of presets, from `SYSTEM(BODY)_NNNNN.png` (the default) through `SYSTEM(CMDR)_DATE.png`, `BODY(CMDR)_NNNNN.png`, `SYSTEM BODY (CMDR) NNNNN.png` to `DATE_SYSTEM_BODY_CMDR.png`. `NNNNN` is a running five-digit number, `DATE` the date and time.
-- **Auto-capture poll interval (seconds)** (1; the minimum is 0.2). This, the timer icon option, the high-resolution option and the Thargoid option below appear only where WFMT can press the screenshot key (Windows, or Linux with `xdotool`).
-- **Use high-resolution capture on the auto-timer (Solo play only)** (off by default). The timer then holds Left Alt with F10, which the game honors in Solo only.
-- **Automatically capture a screenshot when scanning a Thargoid signal** (on by default).
-- The optional **Show a notification on the in-game overlay when a screenshot is saved** is set on **Settings → WFMT → Overlays → Screenshots** (off by default; needs an overlay; has a **Test Overlay** button).
+| Setting | Default and detail |
+|---|---|
+| **Screenshot Directory** | Where the game saves screenshots. **Browse…** selects a folder |
+| **Converted Directory** | Where the PNG copies are stored. **Browse…** selects a folder |
+| **Delete original file after conversion** | Off |
+| *Include WFMT's built-in overlay in the converted screenshot (the game's own capture never shows an overlay)* | Off. Windows; requires the built-in overlay selected under Settings → WFMT → Overlays. WFMT draws the cards that were on screen when the key was pressed onto the converted copy. A failure never loses the screenshot |
+| **Group converted files into a per-system subfolder** | Off |
+| **Show the auto-capture timer icon on the main window** | On |
+| **Filename Mask** | A drop-down of presets, from `SYSTEM(BODY)_NNNNN.png` (the default) through `SYSTEM(CMDR)_DATE.png`, `BODY(CMDR)_NNNNN.png`, `SYSTEM BODY (CMDR) NNNNN.png` to `DATE_SYSTEM_BODY_CMDR.png`. `NNNNN` is a running five-digit number, `DATE` the date and time |
+| **Auto-capture poll interval (seconds)** | 1; minimum 0.2. This setting, the timer icon option, the high-resolution option and the Thargoid option appear only where WFMT can press the screenshot key (Windows, or Linux with `xdotool`) |
+| **Use high-resolution capture on the auto-timer (Solo play only)** | Off. The timer holds Left Alt with F10, which the game honors in Solo only |
+| **Automatically capture a screenshot when scanning a Thargoid signal** | On |
+| **Show a notification on the in-game overlay when a screenshot is saved** | Set on **Settings → WFMT → Overlays → Screenshots**. Off; requires an overlay; has a **Test Overlay** button |
 
-**Worked example: a photo set of one system.** You want every screenshot from a system in its own folder, with the file named by system and body.
+**Example: one folder per system.**
 
 1. Open **Settings → WFMT → Operations → Screenshots**.
 2. Tick **Group converted files into a per-system subfolder**.
-3. Leave **Filename Mask** on `SYSTEM(BODY)_NNNNN.png`.
-4. Take a screenshot at a planet. WFMT converts it and the status line shows the new file name (cut to 40 characters). Click the status line to open the folder it was saved in.
+3. Keep **Filename Mask** on `SYSTEM(BODY)_NNNNN.png`.
+4. Take a screenshot at a planet. WFMT converts it and the status line shows the new file name. Clicking the status line opens the folder.
 
-**Worked example: auto-capture while you scan.** You are mapping a system and want a screenshot every few seconds.
+**Example: auto-capture during scanning.**
 
-1. With Elite in front, click the clock icon on the Operations panel. The status line says `Auto-capture enabled`.
-2. WFMT presses F10 once per poll interval (1 second unless you changed **Auto-capture poll interval (seconds)**).
-3. If you alt-tab away, the status line says `Auto-capture paused (Elite not focused)` and no key is pressed.
-4. Click the icon again for `Auto-capture disabled`. The timer also stops by itself if the game shuts down or you die.
+1. With Elite in the foreground, click the clock icon on the Operations panel. The status line reads `Auto-capture enabled`.
+2. WFMT presses F10 once per poll interval.
+3. When Elite loses focus, the status line reads `Auto-capture paused (Elite not focused)` and no key is pressed.
+4. Clicking the icon again shows `Auto-capture disabled`. The timer also stops when the game shuts down or the commander dies.
 
-*On Linux, the auto-timer needs `xdotool`, and a Flatpak EDMC needs the screenshots permission. See
-[WFMT on Linux](linux.md). On Windows, OneDrive-redirected folders are handled automatically.*
+On Linux, the auto-timer requires `xdotool`, and a Flatpak EDMC requires the screenshots permission. See [WFMT on Linux](linux.md). On Windows, OneDrive-redirected folders are handled automatically.
 
 ## Inventory
 
-Tracks your Odyssey **microresources** and your cargo hold as capacity bars. For microresources it follows the
-game's three categories: **Assets**, **Goods** and **Data** (the journal calls these Component, Item and Data).
+Tracks Odyssey **microresources** and the cargo hold as capacity bars. Microresources follow the game's three categories: **Assets**, **Goods** and **Data** (the journal calls these Component, Item and Data).
 
-**On the panel:** a status line (`Awaiting Odyssey loot…` until something happens), then up to four bars. Each shows
-`count/capacity`, or just the count where WFMT doesn't know the capacity.
+**Panel:** a status line (`Awaiting Odyssey loot…` until an event occurs), then up to four bars. Each shows `count/capacity`, or only the count where the capacity is unknown.
 
 | Bar | Capacity | When it appears |
 |---|---|---|
-| **Backpack** | From your suit, if known (see below) | Always |
+| **Backpack** | From the suit, if known (see below) | Always |
 | **Ship Locker** | 1,000 each of Assets, Goods and Data (3,000 in all) | Always |
-| **Carrier Locker** | Not shown | Only once WFMT has real fleet carrier locker data for this commander |
-| **Cargo** | Your ship's cargo capacity; Scarab 4 t, Scorpion 2 t; Rhino capacity unknown | While you are in a ship or SRV. Hidden while on foot. The label reads Ship Cargo, Scarab Cargo and so on |
+| **Carrier Locker** | Not shown | Only once WFMT has real fleet carrier locker data for the commander |
+| **Cargo** | The ship's cargo capacity; Scarab 4 t, Scorpion 2 t; Rhino capacity unknown | While in a ship or SRV; hidden on foot. The label reads Ship Cargo, Scarab Cargo and so on |
 
-Under the bars a small line names the last change (a pick-up or a transfer), and a reminder reads `Click Inventory Bar to Open Inventory Panel`. **Click any bar** to open the Inventory window.
+Under the bars a small line names the last change (a pick-up or a transfer), followed by the reminder `Click Inventory Bar to Open Inventory Panel`. Clicking a bar opens the Inventory window.
 
 ### The Inventory window
 
-Tabs: **Backpack**, **Ship Locker**, **Carrier Locker** (only once a carrier is confirmed), **Cargo** and **Settings** (see [Settings](#settings) below). Each of the
-first three lists **Resource**, **Category** and **Held**; the Cargo tab lists **Commodity** and **Tons** for the
-hold you are using (ship or SRV).
+Tabs: **Backpack**, **Ship Locker**, **Carrier Locker** (only once a carrier is confirmed), **Cargo** and **Settings** (see [Settings](#settings) below). Each of the first three lists **Resource**, **Category** and **Held**; the Cargo tab lists **Commodity** and **Tons** for the hold in use (ship or SRV).
 
 - The **Filter** box at the top filters every tab at once. **Clear filter** empties it.
 - **Refresh** redraws the window.
-- The subtitle shows your current suit (`Suit: ...`).
-- The Cargo tab opens with a bar and `tons / capacity` (or `capacity unknown`), then the commodities, most tons first. On foot it says `Cargo - not applicable on foot`.
-- The window remembers its size and position and follows the commander if you switch.
-- A note on the Backpack tab says `Not yet synced this session` if the game hasn't yet reported your backpack
-  (for example if you logged in already on foot). Loot, resupply or disembark to refresh it.
-- Capacity colors change as a category fills: amber near the limit, red when full. The ship locker warning level
-  is **90%** of 1,000 for a category. When a category crosses it, WFMT logs `Ship Locker <Assets|Goods|Data>: n/1000 - nearing capacity` and shows it on the overlay if pickup notifications are on (and the category is ticked under *Announce pickups for*). The same warning appears when you transfer remotely through an Apex shuttle's Manage Items screen.
+- The subtitle shows the current suit (`Suit: ...`).
+- The Cargo tab opens with a bar and `tons / capacity` (or `capacity unknown`), then the commodities, most tons first. On foot it reads `Cargo - not applicable on foot`.
+- The window remembers its size and position and follows the commander when the commander changes.
+- A note on the Backpack tab reads `Not yet synced this session` if the game has not yet reported the backpack (for example after logging in already on foot). Looting, resupplying or disembarking refreshes it.
+- Capacity colors change as a category fills: amber near the limit, red when full. The ship locker warning level is **90%** of 1,000 for a category. When a category crosses it, WFMT logs `⚠ Ship Locker <Assets|Goods|Data>: n/1000 — nearing capacity` and shows it on the overlay if pickup notifications are on (and the category is ticked under *Announce pickups for*). The same warning appears for a remote transfer through an Apex shuttle's Manage Items screen.
 
 ### Things worth knowing
 
-- **Carrier Locker comes from Frontier's servers, not the journal.** EDMC must be signed in to Frontier, and the
-  data can **lag the game by 15 to 30 minutes**.
-- **Backpack capacity is a built-in table, not something the game reports.** WFMT looks up your suit and whether it
-  has the *Extra Backpack Capacity* mod. The table cannot see engineering grade, and has no figure for the Flight
-  Suit (so its bar shows a count with no limit). The Settings tab lets you type in the real number for each of your
-  suit loadouts.
+- **The Carrier Locker comes from Frontier's servers, not the journal.** EDMC must be signed in to Frontier. The Carrier Locker tab is labeled `Carrier Locker — from CAPI, may lag 15–30 min`.
+- **The backpack capacity is a built-in table, not a value the game reports.** WFMT looks up the suit and whether it has the *Extra Backpack Capacity* mod. The table does not include the engineering grade and has no figure for the Flight Suit (its bar shows a count with no limit). The Settings tab accepts the real number for each suit loadout.
 
 | Suit | Assets | Goods | Data |
 |---|---|---|---|
@@ -178,25 +164,25 @@ hold you are using (ship or SRV).
 
 ### Worked examples
 
-**Finding a single item.** You remember picking up a data item but not where it is.
+**Finding a single item.**
 
-1. Click any bar on the Operations panel to open the Inventory window.
-2. Type part of its name in **Filter**. Every tab is filtered at once, so you see it on the **Backpack** or **Ship Locker** tab, with its **Category** and how many you hold.
-3. Press **Clear filter** to see everything again.
+1. Click a bar on the Operations panel to open the Inventory window.
+2. Enter part of the item's name in **Filter**. Every tab is filtered at once; the item appears on the **Backpack** or **Ship Locker** tab with its **Category** and the quantity held.
+3. Press **Clear filter** to show everything again.
 
-**Checking your hold before a haul.** You are in your ship and want to know how many tons are free.
+**Checking the hold before a haul.**
 
-1. Click the **Cargo** bar, or open the Inventory window and pick the **Cargo** tab.
-2. The tab opens with a bar and `tons / capacity`, then the commodities with the most tons first. On foot it says `Cargo - not applicable on foot`.
+1. Click the **Cargo** bar, or open the Inventory window and select the **Cargo** tab.
+2. The tab shows a bar and `tons / capacity`, then the commodities with the most tons first. On foot it reads `Cargo - not applicable on foot`.
 
-**Correcting a backpack limit.** The Backpack bar shows a limit that differs from the number you see in the game, because the built-in table cannot see engineering grade.
+**Correcting a backpack limit** (the built-in table does not include the engineering grade).
 
-1. Open the **Inventory** window and go to its **Settings** tab.
-2. Find your suit loadout under *Suit Backpack Capacity* and type the number the game shows. If the tab says `No suits recorded yet for this commander`, wear a suit in the game, then reopen the Settings tab.
+1. Open the **Inventory** window and select its **Settings** tab.
+2. Under *Suit Backpack Capacity*, find the suit loadout and enter the number the game shows. If the tab reads `No suits recorded yet for this commander`, wear a suit in the game, then reopen the Settings tab.
 
 ### Settings
 
-The pillage message, the sound, which categories are announced and the suit backpack capacities are on the **Settings** tab of the Inventory window (press **Inventory** on the Operations panel). **Settings → WFMT → Operations → Inventory** only points there. The overlay switches are on **Settings → WFMT → Overlays → Inventory**.
+The pillage message, the sound, the announced categories and the suit backpack capacities are on the **Settings** tab of the Inventory window (press **Inventory** on the Operations panel). **Settings → WFMT → Operations → Inventory** only points there. The overlay switches are on **Settings → WFMT → Overlays → Inventory**.
 
 | Setting | Where | Default |
 |---|---|---|
@@ -204,266 +190,261 @@ The pillage message, the sound, which categories are announced and the suit back
 | Pillage message (placeholders `{item}`, `{total}`) | Inventory window → Settings | `[{item}] pillaged! New Inventory Total: {total}` |
 | Play a sound on pickup | Inventory window → Settings | Off |
 | Show these inventory bars on the overlay (one tick per bar) | Overlays → Inventory | All off |
-| Where it sits on screen | Overlays → Overlay Placement | Top right area |
+| Position on screen | Overlays → Overlay Placement | Top right area |
 | Announce pickups for (Assets, Goods, Data) | Inventory window → Settings | All three |
-| Suit Backpack Capacity (per suit loadout) | Inventory window → Settings | The built-in table. One row per suit loadout WFMT has seen for the commander, pre-filled with the unengineered default; change the number to what you see in the game. Until a suit has been seen the tab says `No suits recorded yet for this commander` - wear a suit in the game, then reopen Settings |
-| Test pickup (button) | Overlays → Inventory | Sends a sample pickup to the overlay and says whether the overlay could be reached, even while notifications are off |
+| Suit Backpack Capacity (per suit loadout) | Inventory window → Settings | The built-in table. One row per suit loadout WFMT has seen for the commander, pre-filled with the unengineered default. Until a suit has been seen the tab reads `No suits recorded yet for this commander`; wear a suit in the game, then reopen Settings |
+| Test pickup (button) | Overlays → Inventory | Sends a sample pickup to the overlay and reports whether the overlay could be reached, even while notifications are off |
 
-On that tab a tick saves when you click it and a box when you press Enter or click away. A blank message restores the default; a capacity left blank, or set to the unengineered default, clears your number; a capacity that is not a number above 0 leaves the saved one. A suit you wear after opening the window appears as a new row. The overlay switches and the Test pickup button stay on the Overlays tab.
+On the Inventory Settings tab a tick saves when clicked and a box saves on Enter or when focus leaves it. A blank message restores the default. A capacity left blank, or set to the unengineered default, clears the entered number. A capacity that is not a number above 0 leaves the saved one. A suit worn after the window was opened appears as a new row. The overlay switches and the Test pickup button remain on the Overlays tab.
 
-Unticking a category in *Announce pickups for* only mutes its notifications. It is still counted.
-The overlay settings need an overlay running; see
-[Setting up the overlay](../OVERLAY_SETUP.md).
+Unticking a category in *Announce pickups for* only mutes its notifications; the category is still counted. The overlay settings require a running overlay; see [Setting up the overlay](../OVERLAY_SETUP.md).
 
-On Linux, the pickup sound needs `canberra-gtk-play` or `paplay`; see [Windows and Linux](platforms.md).
+On Linux, the pickup sound requires `canberra-gtk-play` or `paplay`; see [Windows and Linux](platforms.md).
 
 ## Materials
 
-What you hold of each engineering material: **Raw** (mined and scanned), **Manufactured** and **Encoded**, with each one's grade (1 very common to 5 very rare) and the most the game lets you hold of it.
+Shows the engineering materials held: **Raw** (mined and scanned), **Manufactured** and **Encoded**, with each material's grade (1 very common to 5 very rare) and the maximum the game allows.
 
-A collapsible **Engineering** row (it was called Materials before 1.4.1, and is first in Operations mode, which lists its sections A to Z) shows (click its title to fold it; the title says just **Engineering**, and everything below is in the section):
+A collapsible **Engineering** row (named Materials before 1.4.1; first in Operations mode, which lists its sections A to Z) shows the following. Clicking its title folds it; the title reads **Engineering**, and everything below is in the section.
 
-- the pieces held of each type (`Materials held: Raw 400 · Manufactured 350 · Encoded 300`, plus `Other` for a material the table does not know),
-- the last pick-up or discard (`Last change: +3 Carbon (now 123)`),
-- which materials are **at the limit** (`At the limit: ...`), so you know that collecting more is wasted,
-- `As of your last session.` until the game has sent a fresh list,
-- how many engineers you have unlocked (`Engineers: 7 of 38 unlocked · 2 invited · 4 known`), once the game has listed them,
-- a wishlist line when you have one.
+- The pieces held of each type (`Materials held: Raw 400 · Manufactured 350 · Encoded 300`, plus `Other` for a material the table does not know).
+- The last pick-up or discard (`Last change: +3 Carbon (now 123)`).
+- Which materials are **at the limit** (`At the limit: ...`).
+- `As of your last session.` until the game has sent a fresh list.
+- The number of engineers unlocked (`Engineers: 7 of 38 unlocked · 2 invited · 4 known`), once the game has listed them.
+- A wishlist line when a wishlist exists.
 
-Before the game has told WFMT anything the row says `Log in to see your materials.`, and with an empty book `No materials yet. The counts fill in when you are in the game.` (the engineers line still shows if the game has listed your engineers).
+Before the game has reported anything the row reads `Log in to see your materials.`; with an empty book it reads `No materials yet. The counts fill in when you are in the game.` (the engineers line still appears if the game has listed the engineers).
 
-Three buttons sit in one row under the text: **Materials** opens the Materials window, **Blueprints** opens the Engineering window on its Blueprints tab, and **Engineers** opens the Engineering window on its Engineers tab. (If the row would be wider than EDMC's window, the last button wraps to a second line instead of widening it.)
+Three buttons sit in one row under the text: **Materials** opens the Materials window, **Blueprints** opens the Engineering window on its Blueprints tab, and **Engineers** opens the Engineering window on its Engineers tab. If the row would be wider than EDMC's window, the last button wraps to a second line.
 
-**To use it:**
-1. Switch to Operations mode and open the **Engineering** row if it is folded. Log in to the game once, so WFMT has the full list.
+**Procedure:**
+
+1. Switch to Operations mode and open the **Engineering** row if it is folded. Log in to the game once so that WFMT has the full list.
 2. Read the row: pieces held of each type, the last change, and anything at the limit.
-3. Press **Materials** to search, filter and sort. To find where to swap materials, press **Find a trader** inside that window (see below).
+3. Press **Materials** to search, filter and sort. Press **Find a trader** inside that window to find where to trade materials (see below).
 4. To plan crafts, press **Blueprints** (see [Engineering](#engineering-blueprints-and-a-wishlist)).
 
-**The window** lists every material you hold in the columns **Material**, **Type**, **Grade**, **Held**, **Limit** and **Room**. A help button repeats these notes. Type in **Search** (every word must be in
-the name), pick a **Type** or **Grade**, tick **Only what is at the limit**, and click a heading to sort.
+**The window** lists every material held in the columns **Material**, **Type**, **Grade**, **Held**, **Limit** and **Room**. A help button repeats these notes. Text in **Search** must match every word in the name; **Type** and **Grade** filter the list; **Only what is at the limit** restricts it to materials at the limit; clicking a heading sorts.
 
-**Where the counts come from.**
+**Source of the counts.**
 
-- The game writes your whole list when you log in, and then one entry for every change: pick-ups, discards, material trades, synthesis, engineering crafts, the Technology Broker, materials handed to an engineer and mission rewards. WFMT follows those.
-- If you start EDMC in the middle of a session, WFMT takes EDMC's own running totals once, so the counts are right straight away.
-- The counts are kept on your computer for the commander they belong to, and nothing is sent anywhere.
+- The game writes the whole list at login, then one entry for every change: pick-ups, discards, material trades, synthesis, engineering crafts, the Technology Broker, materials handed to an engineer and mission rewards. WFMT follows those entries.
+- If EDMC starts in the middle of a session, WFMT takes EDMC's own running totals once.
+- The counts are stored on the computer for the commander they belong to, and nothing is sent anywhere.
 
-**The limits** are 300, 250, 200, 150 and 100 for grades 1 to 5. The names, types and grades are a built-in table of the game's 146 materials;
-a new material the table does not know is still counted, with no grade or limit shown, until WFMT is updated.
+**Limits.** The limits are 300, 250, 200, 150 and 100 for grades 1 to 5. The names, types and grades are a built-in table of the game's 146 materials. A material the table does not know is still counted, with no grade or limit shown, until WFMT is updated.
 
-**Find a trader.** A material trader swaps materials within one category (a Raw trader trades Raw materials, and so on). **Find a trader** in the Materials window opens a window to look for the closest one.
+**Find a trader.** A material trader exchanges materials within one category (a Raw trader trades Raw materials, and so on). **Find a trader** in the Materials window opens a window to find the closest one.
 
-1. Pick the **Type** (it starts as the type with the most materials at the limit), how far to look (**Within**: 50, 100, 250 or 500 ly, or any distance; 100 ly by default) and the smallest landing **Pad** you need (**Any size**, **Medium or larger** or **Large only**).
-2. Check the system to **Search from**. It starts as the one you are in; type another to plan ahead, or press **Here**.
+1. Select the **Type** (initially the type with the most materials at the limit), the search distance (**Within**: 50, 100, 250 or 500 ly, or any distance; 100 ly by default) and the smallest landing **Pad** required (**Any size**, **Medium or larger** or **Large only**).
+2. Check the system in **Search from**. It starts as the current system; another system can be entered, or **Here** pressed.
 3. Press **Find**.
 
-The results:
+Results:
 
-- The window is called **Material trader**. Its columns are **Station**, **System**, **Where** (in space or on a surface, with its distance from the arrival star), **Distance (ly)** and **Largest pad**, closest first.
-- Double-click a row to copy its system name for the galaxy map.
-- Above the results is what you hold of that type by grade, with how many materials are at the game's limit, so you can see what is worth swapping.
+- The window is titled **Material trader**. Its columns are **Station**, **System**, **Where** (in space or on a surface, with the distance from the arrival star), **Distance (ly)** and **Largest pad**, closest first.
+- Double-clicking a row copies its system name for the galaxy map.
+- Above the results is the quantity held of that type by grade, with the number of materials at the game's limit.
 
-Pressing **Find** is the only thing that goes online: it sends Spansh the system name and the type. The same search within two minutes is answered from memory.
+Pressing **Find** is the only action that goes online: it sends Spansh the system name and the type. The same search within two minutes is answered from memory.
 
-**Worked example: swapping away surplus Raw materials.** Your Engineering row says `At the limit: ...` and lists several Raw materials.
+**Example: trading away surplus Raw materials.**
 
-1. Press **Materials**, then **Find a trader**. **Type** starts as the type with the most materials at the limit, here Raw.
-2. Leave **Within** at 100 ly. If your ship needs it, set **Pad** to **Large only**.
-3. Check **Search from** (it starts as your current system) and press **Find**.
-4. In the **Material trader** window, read the closest station first: its **Where** column says whether it is in space or on a surface, with the distance from the arrival star. Above the list, the grades you hold of that type show what is worth swapping.
-5. Double-click the row to copy the system name, then paste it into the galaxy map.
-6. Check the rate at the trader itself: WFMT does not show rates.
+1. The Engineering row reads `At the limit: ...` and lists several Raw materials.
+2. Press **Materials**, then **Find a trader**. **Type** starts as the type with the most materials at the limit, here Raw.
+3. Keep **Within** at 100 ly. Set **Pad** to **Large only** if the ship requires it.
+4. Check **Search from** (initially the current system) and press **Find**.
+5. In the **Material trader** window, the closest station is listed first; its **Where** column states whether it is in space or on a surface, with the distance from the arrival star.
+6. Double-click the row to copy the system name and paste it into the galaxy map.
+7. Check the rate at the trader itself: WFMT does not show rates.
 
 ## Engineering: blueprints and a wishlist
 
-**Blueprints** on the Engineering row opens the Engineering window. It has five tabs: Blueprints, Wishlist, Ship planner, Upgrade planner and Engineers. **Refresh counts** (top right) re-reads what you hold, which the Have and Short figures use.
+**Blueprints** on the Engineering row opens the Engineering window. It has five tabs: Blueprints, Wishlist, Ship planner, Upgrade planner and Engineers. **Refresh counts** (top right) re-reads the holdings used by the Have and Short figures.
 
-**To use it:**
-1. Press **Blueprints** on the Engineering row. On the **Blueprints** tab, search for a module or an effect and pick a blueprint.
-2. Read its ingredients: how many one craft takes, how many you hold and where each is found. Set **Crafts** to the number you expect to need.
-3. Press **Add to wishlist**. Repeat for everything you plan to build.
-4. Open the **Wishlist** tab: it says which entries can be made now, what you are short of, and the shopping list for all of it.
-5. Open the **Engineers** tab to see who you have unlocked and what unlocking the others takes. **Put their unlock on the wishlist** adds it.
+**Procedure:**
 
-**Worked example: planning two crafts.** You want to know whether you can build a blueprint twice.
+1. Press **Blueprints** on the Engineering row. On the **Blueprints** tab, search for a module or an effect and select a blueprint.
+2. Read its ingredients: how many one craft takes, how many are held and where each is found. Set **Crafts** to the number expected to be needed.
+3. Press **Add to wishlist**. Repeat for each planned blueprint.
+4. Open the **Wishlist** tab: it states which entries can be made now, what is short, and the shopping list for the whole wishlist.
+5. Open the **Engineers** tab to see which engineers are unlocked and what unlocking the others requires. **Put their unlock on the wishlist** adds it.
 
-1. Press **Blueprints** and stay on the **Blueprints** tab. Type the module name in **Search**; every word you type must match.
-2. Pick the blueprint. Under it you see who offers it, its effects and what **one craft** takes: each ingredient with how many you need, how many you hold and where it is found.
+**Example: two crafts of one blueprint.**
+
+1. Press **Blueprints** and stay on the **Blueprints** tab. Enter the module name in **Search**; every word must match.
+2. Select the blueprint. Beneath it appear who offers it, its effects and what **one craft** takes: each ingredient with the quantity needed, the quantity held and where it is found.
 3. Set **Crafts** to 2 and press **Add to wishlist**.
-4. Open the **Wishlist** tab. The entry says whether it **can be made now** and how many pieces it is **short**. The shopping list below lists each ingredient's need, have and short, with what is short at the top, and where it is found.
+4. Open the **Wishlist** tab. The entry states whether it **can be made now** and how many pieces it is **short**. The shopping list below lists each ingredient's need, have and short, with the shortfalls at the top, and where each is found.
 5. On the Engineering row the wishlist line reads like `Wishlist: 3 blueprints, 2 can be made, 14 pieces short`.
 
-Remember that two crafts is your estimate: the game rolls each result, so the real number can differ. Change it with **Set crafts**.
+The number of crafts is an estimate: the game rolls each result, so the actual number can differ. **Set crafts** changes it.
 
-**Worked example: a whole build from EDSY.** You designed an engineered ship on EDSY.
+**Example: a whole build from EDSY.**
 
 1. In EDSY, export the build as SLEF and copy it.
-2. In the Engineering window open **Ship planner** and press **Paste from clipboard**. If the text holds several ships, pick one in the **Ship** box.
-3. Read the table: one row per engineered module. A pre-engineered module takes nothing, and anything the table does not cover says **not counted**.
-4. Tick **Subtract what my current ship already has** if the build is for the ship you are flying. Modules already done say **already done**.
+2. In the Engineering window open **Ship planner** and press **Paste from clipboard**. If the text holds several ships, select one in the **Ship** box.
+3. Read the table: one row per engineered module. A pre-engineered module takes nothing, and anything the table does not cover reads **not counted**.
+4. Tick **Subtract what my current ship already has** if the build is for the ship being flown. Modules already done read **already done**.
 5. Set **Rolls per grade** (for example 3) and read the summary line for the totals.
-6. Press **Add plan to wishlist**, then use the **Wishlist** tab for what you can make now and the shopping list.
+6. Press **Add plan to wishlist**, then use the **Wishlist** tab for what can be made now and the shopping list.
 
-**Blueprints.** Every engineering blueprint in the table (about 1,180: ship modules, Guardian items, Technology Broker unlocks, engineer unlocks, synthesis recipes, and Odyssey suit and weapon upgrades).
+**Blueprints.** Every engineering blueprint in the table (1,177: ship modules, Guardian items, Technology Broker unlocks, engineer unlocks, synthesis recipes, and Odyssey suit and weapon upgrades).
 
-- The table has the columns **Module**, **Blueprint**, **Grade** and **Offered by**. **Search** matches the module, blueprint name, engineer, effect or an ingredient (every word you type must match), and **Module** narrows to one type; a count beside them says how many match.
-- Pick a blueprint to see who offers it, its effects, and what **one craft** takes: each ingredient with how many you need, how many you hold, and where it is found.
+- The table has the columns **Module**, **Blueprint**, **Grade** and **Offered by**. **Search** matches the module, blueprint name, engineer, effect or an ingredient (every word must match), and **Module** narrows the list to one type; a count beside them states how many match.
+- Selecting a blueprint shows who offers it, its effects, and what **one craft** takes: each ingredient with the quantity needed, the quantity held and where it is found.
 - Set **Crafts** and press **Add to wishlist** (or double-click a row to add one craft).
 
-**Wishlist.** Your list of blueprints, with a number of crafts each, kept on your computer for the commander who made it.
+**Wishlist.** The list of blueprints, with a number of crafts each, stored on the computer for the commander who made it.
 
-- For each entry it says whether it **can be made now** and how many pieces it is **short**.
-- Below is one **shopping list** for the whole wishlist: need, have, short and where each ingredient is found, with what is short at the top.
-- Each entry also says **who can do it**: an engineer you have unlocked, or a vendor or the synthesis panel (which need no unlocking), or "No engineer unlocked yet".
+- For each entry it states whether it **can be made now** and how many pieces it is **short**.
+- Below is one **shopping list** for the whole wishlist: need, have, short and where each ingredient is found, with the shortfalls at the top.
+- Each entry also states **who can do it**: an engineer who is unlocked, or a vendor or the synthesis panel (which need no unlocking), or "No engineer unlocked yet".
 - The table has the columns **Blueprint**, **Crafts**, **Can be made now**, **Short** and **Who can do it**. The shopping list has **Ingredient**, **Kind**, **Need**, **Have**, **Short** and **Where it is found**.
-- Select an entry, type the new number in **Crafts** and press **Set crafts**; **Remove** takes it off and **Clear list** empties the list. Each of the last two asks you to press the button a second time to confirm.
+- To change an entry, select it, enter the new number in **Crafts** and press **Set crafts**. **Remove** takes an entry off and **Clear list** empties the list. Each of the last two requires a second press of the button to confirm.
 - The Engineering row shows a line such as `Wishlist: 3 blueprints, 2 can be made, 14 pieces short`.
+- The wishlist holds 100 blueprints and 99 crafts of each.
 
-**Ship planner.** Work out what a whole ship's engineering takes, and put it on the wishlist in one step.
+**Ship planner.** Calculates what the engineering of a whole ship requires and adds it to the wishlist in one step.
 
-1. In **EDSY** or **Coriolis**, design the ship with its engineering and export it as **SLEF** (the Ship Loadout Exchange Format). Other ways in:
-   - Paste one `Loadout` line from your journal to plan your current ship.
+1. In **EDSY** or **Coriolis**, design the ship with its engineering and export it as **SLEF** (the Ship Loadout Exchange Format). Other input methods:
+   - Paste one `Loadout` line from the journal to plan the current ship.
    - Paste an **import link** (`https://coriolis.io/import?data=...` or `https://edsy.org/#/I=...`), such as one copied with the **Copy Coriolis link** or **Copy EDSY link** buttons below, or made by EDMC's own shipyard links.
-   - The address a site shows for a build you designed there (EDSY's `#/L=...`, Coriolis's `/outfit/...`) holds that site's own code, which WFMT cannot read, and short links would need a request to another website. For those, use **Export**, SLEF, instead.
-2. In the Engineering window open the **Ship planner** tab and press **Paste from clipboard**, or paste into the box and press **Read loadout**. If the text holds several ships, pick one in the **Ship** box.
-3. The table has the columns **Slot**, **Module**, **Engineering**, **Level**, **Experimental** and **Counted?** (and **In storage**, below), one row per engineered module. Select a row for the detail. **Clear** empties the box and the table.
-   - A module with no engineering is left out.
-   - A **pre-engineered** module (it comes that way from Frontier) says so and takes nothing.
-   - Anything WFMT's table does not cover says **not counted** and why.
-4. Optionally tick **Subtract what my current ship already has**. WFMT reads your newest journal for the ship you are flying and leaves out what it already holds.
+   - The address a site shows for a build designed there (EDSY's `#/L=...`, Coriolis's `/outfit/...`) holds that site's own code, which WFMT cannot read, and short links would require a request to another website. For those, use **Export**, SLEF, instead.
+2. In the Engineering window open the **Ship planner** tab and press **Paste from clipboard**, or paste into the box and press **Read loadout**. If the text holds several ships, select one in the **Ship** box.
+3. The table has the columns **Slot**, **Module**, **Engineering**, **Level**, **Experimental** and **Counted?** (and **In storage**, below), one row per engineered module. Selecting a row shows the detail. **Clear** empties the box and the table.
+   - A module with no engineering is omitted.
+   - A **pre-engineered** module (supplied that way by Frontier) is labeled as such and takes nothing.
+   - Anything WFMT's table does not cover reads **not counted** with the reason.
+4. Optionally tick **Subtract what my current ship already has**. WFMT reads the newest journal for the ship being flown and omits what it already holds.
    - For a module in the same slot with the same blueprint, the grades up to its level are done (only higher ones are planned), and an experimental effect it already carries is done.
-   - A module that is completely done says **already done**.
-   - It only subtracts when the build is the same kind of ship as yours (otherwise the line under the table says so).
-   - It assumes the build is meant for the ship you are flying: two ships of one kind cannot be told apart.
+   - A module that is completely done reads **already done**.
+   - Subtraction applies only when the build is the same kind of ship as the one flown (otherwise the line under the table says so).
+   - It assumes the build is intended for the ship being flown; two ships of one kind cannot be distinguished.
    - A different blueprint in that slot is not subtracted from.
-   - If it finds no ship, the status line says so and nothing is subtracted.
-5. The **In storage** column says whether you already have the module in Module Storage.
-   - **Yes**: a stored module of the same kind (the same module, size and class) with the engineering the build wants, at that level or higher.
-   - **Partly**: a stored module of the same kind with other engineering, or none. Select the row to see what it has and where it is.
-   - Only storage counts. A module fitted to a ship is not listed, and the plan is not reduced by what you hold in storage.
-   - The list is as fresh as your last visit to Module Storage (see the Stored modules tab), and it does not say which experimental effect a stored module carries.
-6. Set **Rolls per grade**. To reach level 5 the game applies grades 1 to 5 in order, and how many rolls each grade takes depends on the game's dice, which the journal cannot tell, so you say how many to plan for (1 to 10). An experimental effect is one craft. The summary line shows the totals.
+   - If no ship is found, the status line says so and nothing is subtracted.
+5. The **In storage** column states whether the module is in Module Storage.
+   - **Yes**: a stored module of the same kind (the same module, size and class) with the engineering the build requires, at that level or higher.
+   - **Partly**: a stored module of the same kind with other engineering, or none. Selecting the row shows what it has and where it is.
+   - Only storage counts. A module fitted to a ship is not listed, and the plan is not reduced by what is in storage.
+   - The list is as current as the last visit to Module Storage (see the Stored modules tab), and it does not state which experimental effect a stored module carries.
+6. Set **Rolls per grade**. To reach level 5 the game applies grades 1 to 5 in order. The number of rolls per grade depends on the game's dice, which the journal does not report, so the number to plan for (1 to 10) is entered. An experimental effect is one craft. The summary line shows the totals.
 7. Press **Add plan to wishlist**. The same blueprint on several modules is added together.
-   - The wishlist holds 100 blueprints and 99 crafts of each. If the plan would pass either, **nothing is added** and the message says why.
-   - Then use the **Wishlist** tab for what you can make now and the shopping list.
+   - The wishlist holds 100 blueprints and 99 crafts of each. If the plan would exceed either, **nothing is added** and the message states why.
+   - Then use the **Wishlist** tab for what can be made now and the shopping list.
 
-**This build on a site.** With a ship read and chosen:
+**This build on a site.** With a ship read and selected:
 
 - **Copy Coriolis link** and **Copy EDSY link** copy a link that opens that build on the site.
-- **Open in Coriolis** and **Open in EDSY** open it in your browser.
-- The link carries the whole loadout (ship, name, modules and engineering) in the address, so the site needs nothing else. When you open or share it, that site and anyone you send it to can see the build.
-- Coriolis refuses a link of 2,083 characters or more, so for a very large engineered build WFMT says so instead of opening it, and the EDSY link is the one to use.
-- WFMT sends nothing itself: the browser you press **Open** in makes the request.
-- Links use the sites' main addresses (not their beta pages), and whether a site accepts a link is up to the site.
+- **Open in Coriolis** and **Open in EDSY** open it in the browser.
+- The link carries the whole loadout (ship, name, modules and engineering) in the address, so the site needs nothing else. When the link is opened or shared, that site and every recipient can see the build.
+- Coriolis refuses a link of 2,083 characters or more, so for a very large engineered build WFMT reports this instead of opening it; the EDSY link is the alternative.
+- WFMT sends nothing itself: the browser in which **Open** is pressed makes the request.
+- Links use the sites' main addresses (not their beta pages). Whether a site accepts a link is determined by the site.
 
-Nothing is sent anywhere: the text comes from you and everything is worked out on your computer.
+Nothing is sent anywhere by the planner: the text comes from the user and all calculation is done on the computer.
 
-What it cannot do:
+Limits:
 
-- It does not know how many rolls you need.
-- It cannot tell which of two ships of one kind a build is meant for.
-- It only covers module types in the blueprint table.
+- The number of rolls required is not known.
+- It cannot determine which of two ships of one kind a build is intended for.
+- It covers only module types in the blueprint table.
 
-The journal's names for blueprints and effects are matched to the table's from public lists (see [Technical](../TECHNICAL.md#ship-engineering-planner-ship_planpy-ship_plan_tabpy-journal_blueprintspy)); a name it does not know is shown as **not counted**.
+The journal's names for blueprints and effects are matched to the table's from public lists (see [Technical](../TECHNICAL.md#ship-engineering-planner-ship_planpy-ship_plan_tabpy-journal_blueprintspy)); a name that is not recognized is shown as **not counted**.
 
-**Upgrade planner.** What it takes to upgrade an Odyssey suit or weapon, and to fit its modifications, onto the wishlist.
+**Upgrade planner.** Puts what it takes to upgrade an Odyssey suit or weapon, and to fit its modifications, onto the wishlist.
 
-1. Open the **Upgrade planner** tab and pick the **Item**: the Artemis, Dominator or Maverick suit, or one of the Karma, Manticore and TK weapons.
-   - Or press **Read my gear**: WFMT reads the suits and weapons you own from your journal (the loadouts the game lists when you log in on foot, plus any upgrade since) and offers them in the box beside it.
-   - Picking one fills in the item, the class it is now and the modifications it already carries.
-2. Set the **Class now** and the class you **Wanted** (1 to 5). The table lists each step, from the class you have to the class you want, with the materials it takes and the credits. A line under the table gives the total.
-3. Optionally pick up to four **Modifications**. An item you read from the journal that already carries some has fewer slots left, and the ones it has are not offered again.
-   - The boxes offer those the table has for the item.
-   - A weapon modification marked with a family in brackets, such as "(Kinematic kinetic)", is only offered for that family (Karma is kinetic, Manticore is plasma, TK is laser).
-   - The table does not say whether the game offers every unmarked modification for every weapon.
-4. Press **Add to wishlist**. Each class step and each modification goes on the list once, all or nothing (the limits are the wishlist's: 100 blueprints, 99 crafts). The Wishlist tab then shows the shopping list: what you hold in your ship locker and what you are short of.
+1. Open the **Upgrade planner** tab and select the **Item**: the Artemis, Dominator or Maverick suit, or one of the Karma, Manticore and TK weapons.
+   - Alternatively press **Read my gear**: WFMT reads the suits and weapons owned from the journal (the loadouts the game lists when logging in on foot, plus any upgrade since) and offers them in the box beside it.
+   - Selecting one fills in the item, its current class and the modifications it already carries.
+2. Set **Class now** and the wanted class (**Wanted**; 1 to 5). The table lists each step, from the current class to the wanted class, with the materials and the credits. A line under the table gives the total.
+3. Optionally select up to four **Modifications**. An item read from the journal that already carries some has fewer slots left, and the ones it has are not offered again.
+   - The boxes offer the modifications the table has for the item.
+   - A weapon modification marked with a family in brackets, such as "(Kinematic kinetic)", is offered only for that family (Karma is kinetic, Manticore is plasma, TK is laser).
+   - The table does not state whether the game offers every unmarked modification for every weapon.
+4. Press **Add to wishlist**. Each class step and each modification is added once, all or nothing (the limits are the wishlist's: 100 blueprints, 99 crafts). The Wishlist tab then shows the shopping list: what is held in the ship locker and what is short.
 
-**What the costs are, and are not:**
+**Costs counted and not counted:**
 
 - **The materials** are the game's current ones.
   - The schematic, the item's family item and Manufacturing Instructions (a Health Monitor for a suit) take 1, 2, 4 and 5 for classes 2 to 5.
   - The item's other two materials take 2, 5, 9 and 12.
-  - They were read from real upgrade events in the journals of play, for the Karma AR-50, C-44 and L-6, the Manticore Tormentor and Executioner, and the Maverick, Artemis and Dominator suits.
-  - The counts were the same for every item, so they are used for the rest (the Karma P-15, Manticore Intimidator and Oppressor, and the three TK lasers), but those have not been confirmed by an upgrade of their own.
+  - These counts were read from upgrade events in journals for the Karma AR-50, C-44 and L-6, the Manticore Tormentor and Executioner, and the Maverick, Artemis and Dominator suits.
+  - The counts were the same for every item, so they are used for the rest (the Karma P-15, Manticore Intimidator and Oppressor, and the three TK lasers); those have not been confirmed by an upgrade of their own.
 - **The credits** are a unit for the item times 1, 3, 6 and 10 for classes 2 to 5 (the Karma AR-50 costs 625,000 for class 2, so 12,500,000 for classes 2 to 5 together).
   - They are shown only for the eight items listed above.
-  - For the others the tab says the credits are **not recorded**, and still plans the materials.
-- **A modification's engineer fee** is not in the table, so it is not counted.
-- **Read my gear** is what the game last listed, not a live inventory.
-  - A suit or weapon you bought, sold or changed since the last time you logged in on foot may not show.
-  - A session that never went on foot has no loadouts, so WFMT looks back through your newest journals.
-  - It reads only the commander of your newest journal.
-  - A modification the planner has no name for is mentioned in the status line and left out.
+  - For the others the tab states that the credits are **not recorded**, and still plans the materials.
+- **A modification's engineer fee** is not in the table and is not counted.
+- **Read my gear** shows what the game last listed, not a live inventory.
+  - A suit or weapon bought, sold or changed since the last time the commander logged in on foot may not appear.
+  - A session that never went on foot has no loadouts, so WFMT looks back through the newest journals.
+  - It reads only the commander of the newest journal.
+  - A modification the planner has no name for is mentioned in the status line and omitted.
 - The planner does not preview an item's stats.
 
-**Engineers.** All 38 engineers (ship and on-foot, the Colonia ones included).
+**Engineers.** All 38 engineers (ship and on-foot, including the Colonia ones).
 
-- **Show** box: above the table, it picks **Both**, **Bubble** (the 30 engineers in the human bubble) or **Colonia** (the 8 in the Colonia region, about 22,000 ly away: Baltanos, Eleanor Bresa, Etienne Dorn, Marsha Hicks, Mel Brandon, Petra Olmanova, Rosa Dayette and Yi Shen). The count beside it reads like `8 of 38 engineers`, and WFMT remembers your choice. An engineer the location table lacks (a name only your journal knows) shows under **Both** only.
-- **Row colors:** an unlocked engineer's row is green, one you know of or have been invited by (in progress) is yellow, and one the game has not listed you as knowing (not available yet) is red. The colors are the same in every theme and readable on all of them. Before the game has listed any engineers no row is colored.
-- **Each row** has the columns **Engineer**, **You are** (where you stand: Known, Invited, or Unlocked with their rank), **Works on** (the module types they engineer, each with the top grade, such as `Frame Shift Drive 5, Thrusters 3`; an on-foot engineer shows `Suit, Weapon`), **Where** (base, system and planet, with "on foot" or "permit needed") and **Next step** (towards unlocking them).
-- **Next step column:** until an engineer is unlocked, it gives the one thing to do next. That is the engineer's own next step, or `First <engineer>:` and that engineer's step when you have to deal with another engineer first (Lei Cheung is found through The Dweller). A find step that only says "Common knowledge" is skipped. When the step is the engineer's own and the unlock is items, it adds how much of them you hold (such as 200 Gold for Lei Cheung); those items can go on the wishlist. Unlocked engineers come first.
-- **Select an engineer** for the full details under the table. The pane has a large title with where you stand with them (colored the same way: green, yellow or red), then clearly headed sections in bold type: **Location** (base, system, body, region and how to get there), **Works on** (each module type with the top grade they offer and any experimental effects, or the suit and weapon upgrades of an on-foot engineer), **Path to unlock**, **What to hand over**, **Raising your rank with them** (a general line, marked community-reported, until an engineer's own text is confirmed) (for the engineer whose unlock is items for the others) and **Notes**. Each step of the path is numbered, with its label in bold and the detail after it, and wrapped lines line up under the detail. The pane follows the text size setting (the A- and A+ in the window's footer). **The engineer's system is a link** (underlined, in the subtitle and in the System row): click it to open that system's page on Inara in your browser (only when you click). **To copy the text**, select part of it with the mouse and press **Ctrl+C**, press **Ctrl+A** then **Ctrl+C** for all of it, right-click for **Copy selection**, **Copy all** and **Select all**, or press **Copy details** under the table to copy the whole pane as plain text. It contains:
-  - **the path to unlock them**, as numbered steps in order: find them, hold the permit if one is needed, earn the invitation and unlock them. A step the game says you have done is marked `[done]`: *Known* marks the find, *Invited* marks the find and the invitation, and *Unlocked* marks everything. The game does not report permits or what an invitation asks for, so those stay open until the engineer is invited or unlocked,
-  - **where you stand on the invitation**, for the requirements the game's journal totals. A rank or a lifetime figure shows beside the step, for example `(you have Competent: needs Expert)` or `(you have 304 markets: met)`. It covers 18 engineers: combat, trade and exploration ranks, the Empire and Federation Navy ranks, the greatest distance from your start, markets and black markets traded with, tons mined, combat bonds and bounty vouchers. The game writes these at login, so the figures are as old as your last login (a promotion shows at once). If EDMC was started after you logged in, WFMT reads the newest ones from your journal files once, in the background. The note is information: the step is marked `[done]` only by the engineer's standing. A requirement the journal does not total (a faction's standing, missions of one kind, items sold to a bartender) shows the table's words with no check,
-  - **the engineers to deal with first**, when one is found through another. Tiana Fortune's path starts with Liz Ryder, then Hera Tani, and says `takes 3 engineers, in this order`. An engineer you have already unlocked on the way is left out,
-  - **on-foot engineers:** what you hand an on-foot engineer is for learning of the *next* one, so it appears as a step on the next engineer's path ("To learn of Kit Fowler, give Domino Green the items: Provide 5 doses of Push."). Yarden Bond, Oden Geiger, Uma Laszlo and Yi Shen end their chains and hand nothing over, so they have no unlock step of their own. Yi Shen's path has one hand-in step for each of the three engineers he is found through,
-  - how to gain standing with them,
-  - whether they work on foot (no ranks: every upgrade is offered once you have met them),
-  - any known quirk (for example, Terra Velasquez's meeting requirement is reported bugged: Covert Theft missions may not count, Covert Heist missions do).
-- **Verification needed:** for an engineer whose invitation requirement WFMT cannot check against your journal (20 of the 38: a faction's standing, a kind of mission, a data sale and similar), the details end with a note saying so, until the engineer is invited or unlocked. The tables are community lists, so if you can see what the game shows, press **Report engineer data**: it opens a prefilled GitHub form (the engineer, the standing WFMT has, the Environment box) where you write what the in-game Engineers panel says. Nothing is sent until you submit it there. See [Telling us what the game shows](reporting-problems.md#telling-us-what-the-game-shows-game-data).
-- **What you need to hand over** lists each item the engineer asks for with how many you need and hold (a commodity is not counted from the journal), how it is got (buy at a market, mine it, trade engineering materials, collect at a Thargoid or Guardian site, collect at a planetary settlement on foot, scan ships or data points, or a mission reward or rescue) and where the data says it is found. Where WFMT has a finder for that kind it offers it under the item:
-  - **Find where to buy** (items bought at a market) opens the Source commodities lookup for that commodity: the nearest stations with it in stock, nearest, best nearby and cheapest. It is the same Spansh lookup as the Mission mode's, so it needs the **Enable Spansh trade lookups** tick in Settings (Trade) and does nothing until you press **Find sources** there.
+- **Show** box: above the table, it selects **Both**, **Bubble** (the 30 engineers in the human bubble) or **Colonia** (the 8 in the Colonia region, about 22,000 ly away: Baltanos, Eleanor Bresa, Etienne Dorn, Marsha Hicks, Mel Brandon, Petra Olmanova, Rosa Dayette and Yi Shen). The count beside it reads like `8 of 38 engineers`, and the choice is remembered. An engineer the location table lacks (a name known only to the journal) appears under **Both** only.
+- **Row colors:** an unlocked engineer's row is green, one known or invited (in progress) is yellow, and one the game has not listed as known (not available yet) is red. The colors are the same in every theme. Before the game has listed any engineers no row is colored.
+- **Each row** has the columns **Engineer**, **You are** (the standing: Known, Invited, or Unlocked with the rank), **Works on** (the module types the engineer works on, each with the top grade, such as `Frame Shift Drive 5, Thrusters 3`; an on-foot engineer shows `Suit, Weapon`), **Where** (base, system and planet, with "on foot" or "permit needed") and **Next step** (toward unlocking).
+- **Next step column:** until an engineer is unlocked, it gives the one next action. That is the engineer's own next step, or `First <engineer>:` and that engineer's step when another engineer must be dealt with first (Lei Cheung is found through The Dweller). A find step that only reads "Common knowledge" is skipped. When the step is the engineer's own and the unlock is items, it adds the quantity held (such as 200 Gold for Lei Cheung); those items can go on the wishlist. Unlocked engineers are listed first.
+- **Selecting an engineer** shows the full details under the table. The pane has a large title with the standing (colored: green, yellow or red), then headed sections in bold type: **Location** (base, system, body, region and how to get there), **Works on** (each module type with the top grade offered and any experimental effects, or the suit and weapon upgrades of an on-foot engineer), **Path to unlock**, **What to hand over**, **Raising your rank with them** (a general line, marked community-reported, until an engineer's own text is confirmed) and **Notes**. Each step of the path is numbered, with its label in bold and the detail after it. The pane follows the text size setting (the A- and A+ in the window's footer).
+  - **The engineer's system is a link** (underlined, in the subtitle and in the System row): clicking opens that system's page on Inara in the browser (only on click).
+  - **To copy the text:** select part of it with the mouse and press **Ctrl+C**; press **Ctrl+A** then **Ctrl+C** for all of it; right-click for **Copy selection**, **Copy all** and **Select all**; or press **Copy details** under the table to copy the whole pane as plain text.
+- The pane contains:
+  - **The path to unlock the engineer**, as numbered steps in order: find them, hold the permit if one is needed, earn the invitation and unlock them. A step the game reports as done is marked `[done]`: *Known* marks the find, *Invited* marks the find and the invitation, and *Unlocked* marks everything. The game does not report permits or what an invitation requires, so those stay open until the engineer is invited or unlocked.
+  - **The standing on the invitation requirements**, for the requirements the game's journal totals. A rank or a lifetime figure shows beside the step, for example `(you have Competent: needs Expert)` or `(you have 304 markets: met)`. It covers combat, trade and exploration ranks, the Empire and Federation Navy ranks, the greatest distance from the start, markets and black markets traded with, tons mined, combat bonds and bounty vouchers. The game writes these at login, so the figures are as old as the last login (a promotion shows at once). If EDMC was started after login, WFMT reads the newest ones from the journal files once, in the background. The note is information: the step is marked `[done]` only by the engineer's standing. A requirement the journal does not total (a faction's standing, missions of one kind, items sold to a bartender) shows the table's words with no check.
+  - **The engineers to deal with first**, when one is found through another. Tiana Fortune's path starts with Liz Ryder, then Hera Tani, and reads `takes 3 engineers, in this order`. An engineer already unlocked on the way is omitted.
+  - **On-foot engineers:** what is handed to an on-foot engineer is for learning of the *next* one, so it appears as a step on the next engineer's path ("To learn of Kit Fowler, give Domino Green the items: Provide 5 doses of Push."). Yarden Bond, Oden Geiger, Uma Laszlo and Yi Shen end their chains and hand nothing over, so they have no unlock step of their own. Yi Shen's path has one hand-in step for each of the three engineers he is found through.
+  - How to gain standing with the engineer.
+  - Whether the engineer works on foot (no ranks: every upgrade is offered once the engineer has been met).
+- **Verification needed:** for an engineer whose invitation requirement WFMT cannot check against the journal (a faction's standing, a kind of mission, a data sale and similar), the details end with a note saying so, until the engineer is invited or unlocked. The tables are community lists; **Report engineer data** opens a prefilled GitHub form (the engineer, the standing WFMT has, the Environment box) in which the in-game Engineers panel text can be entered. Nothing is sent until the form is submitted there. See [Telling us what the game shows](reporting-problems.md#telling-us-what-the-game-shows-game-data).
+- **What to hand over** lists each item the engineer requires with the quantity needed and held (a commodity is not counted from the journal), how it is obtained (buy at a market, mine it, trade engineering materials, collect at a Thargoid or Guardian site, collect at a planetary settlement on foot, scan ships or data points, or a mission reward or rescue) and where the data states it is found. Where WFMT has a finder for that kind it offers it under the item:
+  - **Find where to buy** (items bought at a market) opens the Source commodities lookup for that commodity: the nearest stations with it in stock, nearest, best nearby and cheapest. It is the same Spansh lookup as the Mission mode's, so it requires the **Enable Spansh trade lookups** tick in Settings (Trade) and acts only when **Find sources** is pressed there.
   - **Find a material trader** (engineering materials) opens the Material trader finder.
-  - **Look up the nearest Thargoid site** (Sensor Fragments and other Thargoid items) finds the nearest Thargoid site in Canonn's list from your current position (always a Thargoid site, never a Guardian one, and whether or not you have logged it in Codex Completionist). The answer, the system and the distance with Canonn's note on it, appears in the line at the foot of the window, and the system name is copied so you can paste it into the galaxy map. It needs the game running and a known position (jump to a system or load into one); with neither, the line says to log in to the game. It also needs **Include Thargoid sites** on (Settings → WFMT → Exploration → POI Reference, on by default); if that is off, the line says where to turn it on.
-  - Items mined, from settlements, from scanning or from missions have no finder; the text says where they come from.
-- **How to get it** is a written guide for the engineer, when there is one: what to do in order, where, what to watch out for, and a note on each item. A guide is marked **Community-reported and not yet confirmed in the game** until it has been checked in the game, and says **Confirmed in the game** with the date once it has. Chloe Sedesi and Professor Palin have one (collecting Sensor Fragments from a crashed Thargoid ship with your SRV), still community-reported; an engineer without one says so. If you know how to get an item, press **Report engineer data** and tell us.
-- **Buttons:** **Show their blueprints** lists what they offer, **Put their unlock on the wishlist** adds what unlocking them takes, **Copy details** copies the selected engineer's details as plain text, and **Report engineer data** opens a prefilled GitHub form so you can tell us what the game shows for them.
-- **Where standings come from:** the game's engineer list, sent at login and whenever one changes (including a rank-up), and kept on your computer for each commander.
+  - **Look up the nearest Thargoid site** (Sensor Fragments and other Thargoid items) finds the nearest Thargoid site in Canonn's list from the current position (always a Thargoid site, never a Guardian one, whether or not it is logged in Codex Completionist). The answer, the system and the distance with Canonn's note on it, appears in the line at the foot of the window, and the system name is copied for the galaxy map. It requires the game to be running and a known position (a jump to a system or a load into one); otherwise the line instructs to log in to the game. It also requires **Include Thargoid sites** on (Settings → WFMT → Exploration → POI Reference, on by default); if it is off, the line states where to turn it on.
+  - Items mined, from settlements, from scanning or from missions have no finder; the text states where they come from.
+- **How to get it** is a written guide for the engineer, when one exists: the steps in order, where, hazards, and a note on each item. A guide is marked **Community-reported and not yet confirmed in the game** until it has been checked in the game, and then reads **Confirmed in the game** with the date. Chloe Sedesi and Professor Palin have one (collecting Sensor Fragments from a crashed Thargoid ship with the SRV), still community-reported; an engineer without one states so. **Report engineer data** accepts corrections.
+- **Buttons:** **Show their blueprints** lists what the engineer offers, **Put their unlock on the wishlist** adds what unlocking requires, **Copy details** copies the selected engineer's details as plain text, and **Report engineer data** opens a prefilled GitHub form.
+- **Source of standings:** the game's engineer list, sent at login and whenever one changes (including a rank-up), and stored on the computer for each commander.
 
-**How "can be made now" works.** Entries are weighed in list order, as you would craft them: an entry that can be made takes what it needs, and the
-ones below it only see what is left. An entry that cannot be made takes nothing, so it does not use up materials a later entry could use.
+**How "can be made now" is determined.** Entries are evaluated in list order, as they would be crafted: an entry that can be made takes what it needs, and the entries below it see only what is left. An entry that cannot be made takes nothing, so it does not consume materials a later entry could use.
 
-**Crafts are up to you.** A blueprint's ingredients are what one craft takes. How many crafts it takes to reach the result you want depends on the
-game's rolls, which no tool can know; set the number you expect.
+**Number of crafts.** A blueprint's ingredients are what one craft takes. How many crafts reach the wanted result depends on the game's rolls, which no tool can know; the expected number is entered manually.
 
 **What is counted:**
+
 - **Ship materials** (Raw, Manufactured, Encoded): from the Materials counts above.
-- **On-foot items** (Odyssey components, goods and data): from your **ship locker**, as the Inventory tracks it. The backpack and a fleet carrier's
-  locker are not counted: move what you want to use into the ship locker. WFMT counts the ship locker as available and shows a carrier's
-  stock apart; Frontier does not say whether that is right, so it is on the list to confirm in the game.
-- **Trade goods** (a Technology Broker unlock takes commodities): shown as needed but **not counted**, and an entry that needs them says "Yes, not
-  counting ..." rather than guessing.
+- **On-foot items** (Odyssey components, goods and data): from the **ship locker**, as the Inventory tracks it. The backpack and a fleet carrier's locker are not counted: items to be used must be moved into the ship locker. WFMT counts the ship locker as available and shows a carrier's stock separately.
+- **Trade goods** (a Technology Broker unlock takes commodities): shown as needed but **not counted**. An entry that needs them reads "Yes, not counting ..." rather than guessing.
 
 ## Ship Builds
 
-A place to keep ship builds you've designed on sites like Coriolis, EDSY or Spansh, one list per commander. WFMT
-doesn't design ships itself. This just helps you find a build again later.
+Stores ship builds designed on sites such as Coriolis, EDSY or Spansh, one list per commander. WFMT does not design ships; it stores the link and name entered.
 
 **To save a build:**
 
-1. Design your build on whichever site you like.
-2. Click **Ships** (manage ship builds) in the **Ship Builds** row of the WFMT panel. The row is collapsible, and its text shows how many builds you have.
+1. Design the build on the chosen site.
+2. Click **Ships** (manage ship builds) in the **Ship Builds** row of the WFMT panel. The row is collapsible, and its text shows the number of builds.
 3. Click **Add build** (the highlighted button).
-4. Fill in the **Add Ship Build** form. **Name**, **Ship**, **Site** and **Link** are required. **Ship** starts as the ship you are flying; **Role** is what the build is for, such as "PvE Exploration"; **Notes** is free text.
-5. Pick the **Site** (**Coriolis**, **EDSY (E:D Shipyard)**, **Spansh** or **Other**; you can also type another name) and paste the build's web address, which must start with `http://` or `https://`, into **Link**.
+4. Fill in the **Add Ship Build** form. **Name**, **Ship**, **Site** and **Link** are required. **Ship** starts as the ship being flown; **Role** is the purpose of the build, such as "PvE Exploration"; **Notes** is free text.
+5. Select the **Site** (**Coriolis**, **EDSY (E:D Shipyard)**, **Spansh** or **Other**; another name can also be typed) and paste the build's web address, which must start with `http://` or `https://`, into **Link**.
 6. Click **Save** (or **Cancel**).
 
-**Example:** name `Krait Phantom explorer`, role `Exploration`, site `Coriolis`, and paste the link from your
-browser's address bar.
+**Example:** name `Krait Phantom explorer`, role `Exploration`, site `Coriolis`, and the link from the browser's address bar.
 
-**Worked example: finding a build again.** Months later you want your exploration build.
+**Retrieving a build.**
 
-1. Press **Ships** in the **Ship Builds** row. The **Builds** tab lists your builds with their **Name**, **Ship**, **Role**, **Site** and **Updated**.
-2. Select `Krait Phantom explorer`, then press **Open Link** to open it in your browser, or **Copy Link** to copy the address.
+1. Press **Ships** in the **Ship Builds** row. The **Builds** tab lists the builds with their **Name**, **Ship**, **Role**, **Site** and **Updated**.
+2. Select `Krait Phantom explorer`, then press **Open Link** to open it in the browser, or **Copy Link** to copy the address.
 3. If the site's address changed, press **Edit build**, paste the new link and save.
 
-**To use it later:** the **Builds** tab lists your builds with the columns **Name**, **Ship**, **Role**, **Site** and **Updated**. Select one and use **Open Link** to open it in your browser, or **Copy Link** to copy
-the address. **Edit build** and **Delete build** work on the selected build in the same way.
+**Edit build** and **Delete build** act on the selected build.
 
 ### Stored modules
 
-The **Stored modules** tab of the Ship Builds window lists the modules you have in Module Storage and where they are. For each it shows:
+The **Stored modules** tab of the Ship Builds window lists the modules in Module Storage and where they are. For each it shows:
 
 - **Module** and **Class**,
 - **Engineering** (blueprint and grade, or `-`),
@@ -471,47 +452,45 @@ The **Stored modules** tab of the Ship Builds window lists the modules you have 
 - **Transfer** (the cost and time),
 - **Marks** (hot modules and modules still in transit).
 
-Type in the **Filter** box to narrow the list (a count beside it reads `Showing N of M; filter to narrow` for a long list); every word you type has to match something in the row (a name, a blueprint, a system, `hot`, `in transit`). The list is kept per commander, and the line above it says when it was last written.
+Text in the **Filter** box narrows the list (a count beside it reads `Showing N of M; filter to narrow` for a long list); every word must match something in the row (a name, a blueprint, a system, `hot`, `in transit`). The list is kept per commander, and the line above it states when it was last written.
 
 How it stays current:
 
-- The game writes the full list each time you open **Module Storage** at a station.
-- Between visits WFMT follows the modules you store and take out.
-- When EDMC starts it reads your newest journals to catch up on what happened while it was closed.
-- Until you have opened Module Storage once, the tab says so and shows nothing.
+- The game writes the full list each time **Module Storage** is opened at a station.
+- Between visits WFMT follows the modules stored and taken out.
+- When EDMC starts it reads the newest journals to catch up on events that occurred while it was closed.
+- Until Module Storage has been opened once, the tab states so and shows nothing.
 
-A module that is fitted to a ship is part of that ship's loadout and is not listed here.
+A module fitted to a ship is part of that ship's loadout and is not listed here.
 
 ## What the game does and doesn't tell us, and how to work around it
 
-WFMT, like every third-party tool, only knows what Elite Dangerous writes to its journal files. It adds what Frontier's servers give a signed-in EDMC (for the Carrier Locker) and works around the rest. Where it can't be sure, WFMT says so rather than guess quietly. See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
+WFMT uses only what Elite Dangerous writes to its journal files, plus what Frontier's servers give a signed-in EDMC (for the Carrier Locker). Where WFMT cannot be certain, it states so. See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
-| What you might expect | What the game gives | What to do |
+| Expectation | What the game provides | Action |
 |---|---|---|
-| Screenshots cropped perfectly | The crop rectangles are **fixed measurements** and may need adjusting if Frontier changes the HUD. | Turn the crop off, or report it, if a crop is wrong after a game update. |
-| The screenshot timer to press any button | It can only press **keyboard** keys. macOS isn't supported for key simulation, and Linux on Wayland without XWayland isn't either (conversion and cropping still work). | Bind a keyboard key to the screenshot control. |
-| Screenshots to always save | Windows Controlled Folder Access or antivirus can block file access. The error message says so. | Allow EDMC through, or choose another save folder. |
-| Your backpack capacity to be reported | The game doesn't report it. WFMT uses a **built-in table** by suit and the Extra Backpack Capacity mod. It can't see engineering grade and has no figure for the Flight Suit. | Type the real number for each suit loadout in the Inventory settings. |
-| The inventory to show after restarting EDMC mid-game | EDMC does not replay the session to plugins, but it rebuilds its own state from the journal. WFMT syncs the backpack and ship locker from that state when EDMC starts. | If a bar still shows nothing, loot, resupply or disembark to refresh it. This relies on EDMC's state and has not been checked against every EDMC version. |
-| The Backpack to be known at login | If you log in already on foot, the game hasn't yet reported it (the tab says `Not yet synced this session`). | Loot, resupply or disembark to refresh it. |
-| The Carrier Locker to be live | It comes from **Frontier's servers**, not the journal. EDMC must be signed in to Frontier, and the data can **lag the game by 15 to 30 minutes**. | Sign EDMC in, and allow time after changes. The locker is hidden until real data arrives. |
-| The Rhino's cargo capacity | Not confirmed against a real journal entry, so the bar shows the count with no limit. | Read the tons, not a percentage. |
-| Your materials to be right as soon as EDMC starts | The game writes the full list only when you **log in**. Between logins WFMT follows each change, and after a restart it shows the counts from your last session until the next login list arrives (the window says so). | Log in to the game, or start EDMC before the game. |
-| Materials you were not able to carry to be counted | When you are at the limit, the game discards what you cannot carry. WFMT never counts above the limit. | Nothing; the login list corrects any difference. |
-| Which engineer or blueprint needs a material | Not shown yet. This page counts what you hold; it does not know what you need it for. | Use a site such as Inara or EDSY for what a blueprint takes. |
-| The blueprint table to be current | The recipes are a table bundled with WFMT, supplemented with the suit and weapon upgrade costs seen in real upgrade events and with synthesis recipes and Thargoid-war and chip materials. The table is not Frontier's own list. A blueprint or material added to the game since may be missing, and a recipe Frontier changed may be out of date.<br><br>Checked against 4,391 real blueprint crafts from the journals of one commander, every one used exactly the materials the table lists for that grade. Experimental effects are in the table as one-craft entries, but they were **not** part of that check (the journals held 143 further crafts that used them), so their recipes are less certain. | Check the in-game recipe before you spend rare materials, and report a difference. |
-| Which upgrades each Colonia engineer offers to be certain | The blueprint table lacks the four **Colonia on-foot engineers** (Baltanos, Eleanor Bresa, Rosa Dayette and Yi Shen). Their places, unlock steps and the suit and weapon upgrades each offers are bundled with WFMT separately; other sources may differ, and none is Frontier's own list. Yi Shen's unlock is the three sets of items handed to the other three. | Check what an engineer offers in the game's Engineers panel before you spend items on it, and report a difference. |
-| Engineer places and steps to be current | They come from a table bundled with WFMT and can drift when the game changes. Yarden Bond's meeting requirement says 5 Smear campaign plans, while the blueprint table's "Unlock" row for him asks for 8 to be handed over: the sources disagree on that step. | Check the engineer's requirements in the game's Engineers panel. |
-| What unlocking an engineer takes to be complete | The table lists the **materials or goods** an engineer asks for. An invitation can ask for more (a rank, a visit, a referral), which it does not list. | Check the engineer's requirements in the game's Engineers panel. |
-| Your materials to match the game after every pick-up | The journal reports almost every gain, but not all of them: replaying real journals, WFMT's counts matched the game's next login list 97% of the time when the game was restarted within ten minutes (737 of 761), and 93% over all gaps (the rest are mostly play on another computer). The misses that remain are exactly 5 more of several materials in the game with no event in between. | The next login list corrects the counts. |
-| The Engineering window to know how many crafts you need | The game rolls the result of each craft; nothing in the journal says how many it will take. | Set the number of crafts you expect. |
-| On-foot upgrades to count your backpack | The wishlist counts the **ship locker** only. Whether the game also draws on the backpack is not confirmed. | Stow what you carry into the ship locker (or just check the count in the game). |
-| The trader finder to say what a trade would give you | It finds the stations. The rates a trader offers are not in the journal or in Spansh's data, so WFMT does not show or work out a rate. | Check the rate at the trader before you swap. |
-| The trader finder to be current | The list is Spansh's, from what players have reported: a station can have lost its trader or be closed to you (a permit, a faction state). | Check the station when you arrive; the `Pad` column is the largest pad Spansh knows. |
-| The stored modules list to be live | The game writes the whole list only when you open **Module Storage** at a station. In between, WFMT applies the store and retrieve events the game reports, so a change the game does not report with those events (in checks against real journals a few modules appeared or left storage that way, and finished transfers move modules between stations) shows only at the next visit. The tab says when the last visit was. | Open Module Storage at a station to refresh the list. |
-| Modules on ships kept in storage to be listed | The game reports a stored ship by its type, not by what is fitted to it, so those modules are not in the list. A module fitted to the ship you fly is in its loadout, not in storage. | Check the ship's loadout in the game. |
-| Transfer cost and time to be current | They are the game's figures at the last visit to Module Storage and are not updated until the next one. A module that is not at a station shows `In transit` and may have no station or cost. | Open Module Storage again for current figures. |
-| Every station to have a name | The list gives a system and a market number for each module, and a station's name only when WFMT has seen it in your own journals (the station you opened Module Storage at, or one you have docked at). Other stations show as `System (market 123456)`. | Look the market up on a site such as Inara or EDSM. |
-| A module swapped out of a ship to show its engineering | When a swap puts a module into storage, the game does not say how that module was engineered, so the Engineering column shows `?` until the next visit to Module Storage. | Open Module Storage to read it. |
-| Ship Builds to be checked | WFMT only stores the link and name you give it. It doesn't read or check the build. | Keep your link current if the site changes. |
-
+| Screenshots cropped exactly | The crop rectangles are **fixed measurements** and may need adjusting if Frontier changes the HUD | Turn the crop off, or report it, if a crop is wrong after a game update |
+| The screenshot timer presses any button | It can press **keyboard** keys only. macOS is not supported for key simulation, and Linux on Wayland without XWayland is not either (conversion and cropping still work) | Bind a keyboard key to the screenshot control |
+| Screenshots always save | Windows Controlled Folder Access or antivirus can block file access. The error message states this | Allow EDMC through, or choose another save folder |
+| The backpack capacity is reported | The game does not report it. WFMT uses a **built-in table** by suit and the Extra Backpack Capacity mod. The table does not include the engineering grade and has no figure for the Flight Suit | Enter the real number for each suit loadout in the Inventory settings |
+| The Backpack is known at login | After a login already on foot, the game has not yet reported it (the tab reads `Not yet synced this session`) | Loot, resupply or disembark to refresh it |
+| The Carrier Locker is live | It comes from **Frontier's servers**, not the journal. EDMC must be signed in to Frontier. The Carrier Locker tab is labeled `Carrier Locker — from CAPI, may lag 15–30 min` | Sign EDMC in. The locker is hidden until real data arrives |
+| The Rhino's cargo capacity | No journal field for the fitted capacity is known to WFMT, so the bar shows the count with no limit | Read the tons, not a percentage |
+| Materials are correct as soon as EDMC starts | The game writes the full list only at **login**. Between logins WFMT follows each change, and after a restart it shows the counts from the last session until the next login list arrives (the window states this) | Log in to the game, or start EDMC before the game |
+| Materials that could not be carried are counted | At the limit, the game discards what cannot be carried. WFMT never counts above the limit | None; the login list corrects any difference |
+| Which engineer or blueprint needs a material | Not shown. This page counts what is held; it does not know what the material is needed for | Use a site such as Inara or EDSY for what a blueprint takes |
+| The blueprint table is current | The recipes are a table bundled with WFMT, supplemented with the suit and weapon upgrade costs seen in upgrade events and with synthesis recipes and Thargoid-war and chip materials. The table is not Frontier's own list. A blueprint or material added to the game since may be missing, and a recipe Frontier changed may be out of date. Experimental effects are entered in the table as one-craft entries | Check the in-game recipe before spending rare materials, and report a difference |
+| Which upgrades each Colonia engineer offers | The places, unlock steps and the suit and weapon upgrades each Colonia on-foot engineer (Baltanos, Eleanor Bresa, Rosa Dayette and Yi Shen) offers are bundled with WFMT; other sources may differ, and none is Frontier's own list. Yi Shen's unlock is the three sets of items handed to the other three | Check what an engineer offers in the game's Engineers panel before spending items, and report a difference |
+| Engineer places and steps are current | They come from a table bundled with WFMT and can drift when the game changes | Check the engineer's requirements in the game's Engineers panel |
+| What unlocking an engineer takes is complete | The table lists the **materials or goods** an engineer requires. An invitation can require more (a rank, a visit, a referral), which the table does not list | Check the engineer's requirements in the game's Engineers panel |
+| Materials match the game after every pick-up | The journal does not report every gain. Counts can differ from the game until the next login list | The next login list corrects the counts |
+| The Engineering window knows how many crafts are needed | The game rolls the result of each craft; nothing in the journal states how many will be required | Enter the expected number of crafts |
+| On-foot upgrades count the backpack | The wishlist counts the **ship locker** only. Whether the game also draws on the backpack is not confirmed | Stow carried items in the ship locker, or check the count in the game |
+| The trader finder states what a trade would give | It finds the stations. The rates a trader offers are not in the journal or in Spansh's data, so WFMT does not show or calculate a rate | Check the rate at the trader before trading |
+| The trader finder is current | The list is Spansh's, from player reports: a station can have lost its trader or be closed to the commander (a permit, a faction state) | Check the station on arrival; the `Pad` column is the largest pad Spansh knows |
+| The stored modules list is live | The game writes the whole list only when **Module Storage** is opened at a station. In between, WFMT applies the store and retrieve events the game reports, so a change the game does not report with those events (finished transfers move modules between stations) shows only at the next visit. The tab states when the last visit was | Open Module Storage at a station to refresh the list |
+| Modules on ships kept in storage are listed | The game reports a stored ship by its type, not by what is fitted to it, so those modules are not in the list. A module fitted to the ship being flown is in its loadout, not in storage | Check the ship's loadout in the game |
+| Transfer cost and time are current | They are the game's figures at the last visit to Module Storage and are not updated until the next one. A module that is not at a station reads `In transit` and may have no station or cost | Open Module Storage again for current figures |
+| Every station has a name | The list gives a system and a market number for each module, and a station's name only when WFMT has seen it in the journals (the station where Module Storage was opened, or one docked at). Other stations appear as `System (market 123456)` | Look the market up on a site such as Inara or EDSM |
+| A module swapped out of a ship shows its engineering | When a swap puts a module into storage, the game does not report how that module was engineered, so the Engineering column shows `?` until the next visit to Module Storage | Open Module Storage to read it |
+| Ship Builds are checked | WFMT stores only the link and name entered. It does not read or check the build | Keep the link current if the site changes |

@@ -1,16 +1,8 @@
 # Trade mode specification
 
-How Trade mode (the **Trade** button) works, what each module owns, which journal events and web services it
-reads, and what has and hasn't been verified. For what it does for the user, see the
-[README](guide/trade.md). For the plugin-wide rules it follows (feature contract, main-window sizing,
-threading, persistence), see [TECHNICAL.md](TECHNICAL.md).
+This document specifies Trade mode (the **Trade** button): the responsibilities of each module, the journal events and web services it reads, and what has and has not been verified. Usage is described in the [trade guide](guide/trade.md). The plugin-wide rules that Trade follows (feature contract, main-window sizing, threading, persistence) are in [TECHNICAL.md](TECHNICAL.md).
 
-**Design principle.**
-
-- Like all of WFMT, this is journal-first: a third-party tool only knows what the game writes to its journal files, and not everything is logged.
-- Gaps are filled from Frontier's own data or from community services where those exist, and otherwise worked around.
-- Each gap and its workaround is written down.
-- See [the design principle in TECHNICAL.md](TECHNICAL.md).
+WFMT is journal-first: it uses the information the game writes to its journal files and fills gaps from Frontier data or community services where they exist. Each gap and its workaround is documented. See [the design principle in TECHNICAL.md](TECHNICAL.md).
 
 **Contents**
 
@@ -43,9 +35,9 @@ Each Trade window shows the requirements of its `PAGE_GROUPS` entry: Routes the 
 
 | Page | Works offline? | Purpose |
 |---|---|---|
-| Session | Yes | What you have bought and sold this session (until Reset), your ship and hold, and your carrier's cargo space |
-| Routes | No (Spansh) | The most profitable trade route from where you are |
-| Market | No (Spansh) | Where a commodity sells best, near you and anywhere |
+| Session | Yes | Items bought and sold in the session (until Reset), the ship and hold, and the cargo space of the carrier |
+| Routes | No (Spansh) | The most profitable trade route from the current location |
+| Market | No (Spansh) | Where a commodity sells best, near the current system and anywhere |
 
 Everything that contacts a web service is **off until enabled** in Settings and runs only when a button is
 pressed. The Session page never touches the network.
@@ -62,7 +54,7 @@ All in `plugin/`. Pure modules have no Tk and no EDMC-only imports, so they are 
 | `trade_pages.py` | pure | Page names and order |
 | `trade_ledger.py` | pure + file | The session ledger and `trade_ledger.json` |
 | `trade_journal_scan.py` | pure + file | Which journal files have been read, finding new or grown ones, and applying them to the ledger, stock and carrier; `trade_journal_scan.json` |
-| `trade_route_start.py` | pure + file | Each commander's route start and `trade_route_start.json`; `round_trip_start`, which unlike Routes may start from a carrier you are docked at |
+| `trade_route_start.py` | pure + file | Each commander's route start and `trade_route_start.json`; `round_trip_start`, which unlike Routes may start from a carrier at which the commander is docked |
 | `trade_stock.py` | pure + file | The stock book (bought, not yet sold) and `trade_stock.json` |
 | `trade_history.py` | pure + file | Saved-session records, the `HistoryBook`, and `trade_history.json` |
 | `trade_hold.py` | pure + file read | Mission and stolen tons in the hold from the `Cargo` inventory / `Cargo.json` |
@@ -75,7 +67,7 @@ All in `plugin/`. Pure modules have no Tk and no EDMC-only imports, so they are 
 | `trade_carrier_ops.py` | pure | Running the carrier (tritium, location, planned jump, orders, balance) from `CarrierDepositFuel`, `CarrierLocation`, `CarrierJumpRequest`/`Cancelled`, `CarrierTradeOrder`, `CarrierFinance` and the extra `CarrierStats` fields; every fact carries its event time and only a newer event replaces it |
 | `trade_commodities.py` | pure | Matching typed or journal commodity names to Spansh's names; type-ahead suggestions |
 | `trade_commodities_data.py` | generated data | The commodity table |
-| `trade_prices.py` | pure | Valuing and ranking station offers for your load; carrier split; verdict lines |
+| `trade_prices.py` | pure | Valuing and ranking station offers for the load carried; carrier split; verdict lines |
 | `trade_spansh_client.py` | network | The route planner client (submit, poll, parse) and the profit-per-hour estimate |
 | `trade_roundtrip.py` | pure + network | The back-and-forth pair finder (one station search, then local pairing) |
 | `trade_commodity_entry.py` | UI | The type-ahead entry widget |
@@ -121,7 +113,7 @@ and **Round trip** (section 8.2).
 - The choice is two buttons, the chosen one lit (`kind="accent"`), built by `TradeWindow._paint_side`.
 - Every button carries its full label, not an abbreviation.
 - Every button also has a hover tip, "Name - what it does" (`trade_panel.BUTTON_TIPS`, looked up by the button text before any colon, so `Hops: 3` finds `Hops`). The row of page buttons wraps instead of widening the panel.
-- Selling with an empty box = the commodity you carry most of; buying needs a typed commodity.
+- Selling with an empty box uses the commodity carried in the greatest quantity; buying needs a typed commodity.
 
 **How a page is drawn.** Each page builds a list of typed blocks (`trade_blocks.py`) rather than lines of
 text:
@@ -154,8 +146,8 @@ flexible (titles and labels) and columns 1 to 3 hold numbers.
 - The number columns are measured with the real font (`font.measure`, plus the label's own padding) so
   this holds at any screen scaling.
 - A label/value row puts its value in the same columns as a table's numbers, so those columns are sized
-  for the wider of the two (`value_need`) and the title column gets what is left. Getting this wrong made
-  a stress page ask for 347 px of 330, which `tests/trade_view_smoke.py` checks.
+  for the wider of the two (`value_need`) and the title column gets what is left. An earlier layout
+  requested 347 px of 330 px on a stress page; `tests/trade_view_smoke.py` checks this.
 - When the figures would leave the title column under 110 px (a wide font), the cells drop to the small
   font, and the title column never goes under 60 px, so a long title wraps instead of widening the page.
 - The History window sets its minimum width from its widest table (`_fit_width`, never more than the
@@ -164,16 +156,15 @@ flexible (titles and labels) and columns 1 to 3 hold numbers.
 - Names are only bounded at 64 characters (`_NAME_MAX`), since the view wraps them.
 - The suggestion list is a separate borderless window of at most eight rows.
 
-**Theming.** EDMC's theme only auto-colors a widget that had no color when it was first registered, and
-leaves a Frame's background alone (see `missions_ui.py`). So:
+**Theming.** The EDMC theme auto-colors only a widget that had no color when it was first registered, and leaves the background of a Frame unchanged (see `missions_ui.py`). Therefore:
 
 - The accent color and fonts are set at creation.
 - The view takes its parent's background.
 - The rules are colored after the theme pass (`panelkit.separator_color`).
 - The widgets are themed with `panelkit.apply_theme_deep`.
 
-The shared wrapping-label registry (`panelkit.wrap_label`) is deliberately not used here: it never
-forgets a label, and these are rebuilt.
+The shared wrapping-label registry (`panelkit.wrap_label`) is not used, because it never
+discards a label and these labels are rebuilt.
 
 ## 4. Data sources
 
@@ -187,8 +178,8 @@ Journal events and EDMC state read by `trade_panel.handle_event` (every handler 
 | `PayFines`, `PayBounties`, `PayLegacyFines` | The *fines* running cost, only when the Trade setting is ticked |
 | `FSDJump` | Jumps and light years for a saved session (`trade_ledger.note_jump`) |
 | `Market` (then the `Market.json` file in the journal folder) | The docked market: cargo valuation, "what this station buys" suggestions |
-| `Docked`, `Undocked`, `Location` | Route start station (kept per commander, `trade_route_start.py`); which carrier you are docked at |
-| `Loadout` (`Ship`, `MaxJumpRange`) | Your ship and its pad size; jump range for routes |
+| `Docked`, `Undocked`, `Location` | Route start station (kept per commander, `trade_route_start.py`); the carrier at which the commander is docked |
+| `Loadout` (`Ship`, `MaxJumpRange`) | The ship and its pad size; jump range for routes |
 | `LoadGame`, `StartUp`, `Commander` | Session boundaries; which commander the events belong to |
 | `CarrierStats`, `CarrierBuy`, `CargoTransfer` | Carrier cargo space |
 | `CarrierDepositFuel`, `CarrierLocation`, `CarrierJumpRequest`, `CarrierJumpCancelled`, `CarrierTradeOrder`, `CarrierFinance`, `CarrierDecommission`, `CarrierCancelDecommission` (and `FuelLevel`, `Finance` and `PendingDecommission` on `CarrierStats`) | Running the carrier: tritium, location, planned jump, orders, balance (`trade_carrier_ops.py`) |
@@ -204,7 +195,7 @@ The journal folder is `config.get_str("journaldir")` or EDMC's default (same loo
 category to credits (an older saved ledger without it still loads).
 
 - **Profit** = revenue - cost basis, where cost basis = `AvgPricePaid x Count` from `MarketSell`. The game
-  reports what the sold tons cost you, so FIFO bookkeeping isn't needed. Stolen and black-market cargo has
+  reports the cost of the tons sold, so FIFO bookkeeping is not required. Stolen and black-market cargo has
   `AvgPricePaid` 0, so the whole sale counts as profit, which matches the credits that arrived.
 - **Running costs** are folded in too (`_apply_expense`), from events whose field names were checked
   against a real journal:
@@ -213,9 +204,9 @@ category to credits (an older saved ledger without it still loads).
   - `BuyAmmo` and `RestockVehicle` (`Cost`) are *rearm*.
   - A `Repair` whose `Items` include `"Wear"` is *Advanced Maintenance* (shown as its own line;
     confirmed against a real journal, where one `Repair` listing the cockpit, hull, cargo bay door and
-    Wear cost 905 cr, so the whole charge counts and can't be split).
+    Wear cost 905 cr, so the whole charge counts and cannot be split).
   - `BuyDrones` (`TotalCost`) adds and `SellDrones` (`TotalSale`) subtracts for *limpets*, so that
-    category can read as a gain if you sell back more than you bought this session.
+    category can show a gain if more limpets are sold back than were bought in the session.
   - A zero or missing cost changes nothing.
   - Not counted: insurance rebuys (`Resurrect`).
   - Fines and bounties (`PayFines`, `PayBounties`, `PayLegacyFines`; their `Amount`) are a *fines*
@@ -228,10 +219,10 @@ category to credits (an older saved ledger without it still loads).
   trade profit and each cost beneath it; with none it reads "Profit", as before. Costs before the first trade
   still show ("No trades yet", the costs, "Net: ...").
 - **Rate** (credits per hour) is the net figure over first-to-last trade time, so a refuel before the first sale
-  doesn't stretch the clock. It appears after 3 minutes (`MIN_HOURS_FOR_RATE`).
+  does not extend the time span. It appears after 3 minutes (`MIN_HOURS_FOR_RATE`).
 - **Session identity.**
   - A session belongs to a **commander** (matched ignoring case) and lasts **until Reset**.
-  - It is deliberately not tied to a game login or a journal file, because a job such as loading a fleet
+  - It is not tied to a game login or a journal file, because a job such as loading a fleet
     carrier for a bulk sale spans several play sessions, several journal files and several EDMC runs.
   - `LedgerBook` holds one working session per commander, so switching commanders never discards
     anyone's tally.
@@ -254,7 +245,7 @@ stays tied up until the cargo is sold, whenever that is. So the stock book follo
   but not what was paid, so it is not a stock event. Stock comes out only when sold.
 
 Because there is one list, nothing needs reconciling between "route" and "carrier" tracking, and no purchase
-is counted twice. The book is an estimate (see Limits), so it is **not shown on the Session page**, which shows only
+is counted twice. The book is an estimate (see Limits), so it is not shown on the Session page, which shows only
 exact figures: the ship hold from `state["Cargo"]` and the carrier's cargo from `CarrierStats`. The book is snapshotted into
 each saved session (`stock`) and shown on Trade History's Stock & carrier tab, labeled as a journal estimate.
 
@@ -264,17 +255,16 @@ cargo came from outside what the book saw; the ledger is the profit figure and t
 
 **Applying each event exactly once.** The book keeps `as_of` (the timestamp of the last event applied) and
 the fingerprints (a short SHA-1 of the event) of events at exactly that second. An event older than `as_of`, or
-already fingerprinted at `as_of`, is skipped; anything else is applied. Two sales in the same second (common:
-a multi-commodity sale) are therefore both counted, and a replay never doubles one.
+already fingerprinted at `as_of`, is skipped; anything else is applied. Two sales in the same second (for example a
+multi-commodity sale) are therefore both counted, and a replay never doubles one.
 
-**Catching up.** EDMC doesn't replay events and trades made while it was closed would be missed, so `start()`
-calls `trade_stock.backfill` **synchronously, before any live event can arrive** (about 0.14 s on a real
-journal folder): it replays the newest 60 journal files (chosen by modified time, see below), applying only
-events newer than each commander's `as_of`, or, for a commander with no book yet, the last 14 days. Doing it
-synchronously removes any race with live events.
+**Catching up.** EDMC does not replay events, so trades made while it was closed would be missed. `start()`
+calls `trade_stock.backfill` **synchronously, before any live event can arrive**: it replays the newest 60 journal files (chosen by modification time, see below), applying only
+events newer than each commander's `as_of`, or, for a commander with no book yet, the last 14 days. Running it
+synchronously avoids a race with live events.
 
-**Clearing.** `StockBook.clear` empties the items but keeps `as_of`, so a later replay can't bring the stock
-back. There is no button for it, because the Session page does not list the stock.
+**Clearing.** `StockBook.clear` empties the items but keeps `as_of`, so a later replay cannot restore the stock.
+There is no button for it, because the Session page does not list the stock.
 
 **Limits.** Cargo that leaves some other way (the carrier selling on a trade order, cargo jettisoned or lost,
 mission cargo) stays on the books. Stolen cargo bought nowhere has no book entry.
@@ -307,8 +297,7 @@ first and last trade, balance at start and at save, ship and pad size, jumps and
 `routes`, `searches`, plus what was true at the moment of saving: the unsold `stock`, the `hold` and its `capacity`, and
 the commander's `carriers`. Later changes to the live ledger never alter it.
 
-**Catching a session up from the journals.** EDMC doesn't replay old events when it starts, and the game
-can be played with EDMC closed, so a session would be missing whatever happened in between.
+**Catching a session up from the journals.** EDMC does not replay old events when it starts, and the game can be played with EDMC closed, so a session lacks whatever happened in between.
 
 **The marker**
 
@@ -358,7 +347,7 @@ copied between machines. `trade_journal_scan.py` makes new journals take effect 
 
 - **Record.** `trade_journal_scan.json`: `files` (journal name -> `size` when read and when), `floor` (epoch seconds), and
   `last_pass` / `last_found` (`summary()` words them; the line is written to the EDMC log, not shown on the Session page). A file counts as new or changed when its **size**
-  differs from the record (a copy gets a new modified time without changing). Listed in `update.py`'s `_OWN_DATA_FILES`.
+  differs from the record (a copy receives a new modification time without a change in size). Listed in `update.py`'s `_OWN_DATA_FILES`.
 - **Passes.** `trade_panel` runs `_scan_tick` 4 s after the panel is built and then every 60 s. A worker thread
   (`WFMT-trade-scan`) calls `pending` (at most 80 files, **oldest first by each file's own first timestamp**, because copying
   scrambles modified times) and `read_events` (only the lines Trade can use, parsed). The Tk thread then calls `apply` for
@@ -389,8 +378,7 @@ copied between machines. `trade_journal_scan.py` makes new journals take effect 
 
 ## 6. Hold, ship and landing pads
 
-**Ship hold.** (labeled "Ship hold" on the panel, to keep it apart from the carrier's "Carrier cargo ..."
-lines) `used/capacity (free)` from EDMC's `state["Cargo"]` and `["CargoCapacity"]`.
+**Ship hold** (labeled "Ship hold" on the panel, to distinguish it from the "Carrier cargo ..." lines) `used/capacity (free)` from EDMC's `state["Cargo"]` and `["CargoCapacity"]`.
 
 - Above it, **Hold space** splits the used tons into cargo and limpets (`drones`, which the game counts
   as cargo). It is shown only when there are mission or stolen tons or limpets; the free tons are on the
@@ -409,16 +397,16 @@ lines) `used/capacity (free)` from EDMC's `state["Cargo"]` and `["CargoCapacity"
   hand-written map plus EDMC's own `edmc_data.ship_name_map` (when importable) turns it into a display
   name first.
 - Names are matched after lower-casing and dropping everything but letters and digits.
-- An unmatched ship gives `None`, which means "don't filter" (never "assume small"), and Settings can
+- An unmatched ship gives `None`, which means "do not filter" (never "assume small"), and Settings can
   override the size.
 
 **Fit rule** (`trade_ship.fits`): a ship fits a pad of its own size or larger. Small fits anything; medium
 needs a medium or large pad; large needs a large pad. Spansh reports `small_pads`, `medium_pads` and
-`large_pads` counts per station; a count Spansh doesn't give (`None`) is treated as "fits" rather than hiding
+`large_pads` counts per station; a count Spansh does not give (`None`) is treated as "fits" rather than hiding
 a good station. Fleet and squadron carriers always fit (they have every pad size and Spansh gives no counts).
 
-The pad filter runs **after** the search, because Spansh's station search has no pad filter we rely on, so a
-pad-filtered search asks for 40 stations instead of 20 (`_SELL_FETCH_PAD_FILTERED`).
+The pad filter runs **after** the search, because the station search of Spansh has no pad filter that WFMT uses, so a
+pad-filtered search requests 40 stations instead of 20 (`_SELL_FETCH_PAD_FILTERED`).
 
 Routes: Spansh's planner only has a boolean `requires_large_pad`, so a large ship sets it automatically (or
 the Settings checkbox does). There is no medium-pad option in that API.
@@ -447,17 +435,16 @@ A record first met through one of those events has no space figures and `updated
   23,720 t). `free` is the journal's `FreeSpace` when present, else computed.
 - `CargoTransfer` (`Direction` `tocarrier` / `toship`) moves tons but **does not name the carrier**.
 
-**Attribution** (`CarrierTracker._transfer_target`): a transfer goes to the carrier you are **docked at**.
+**Attribution** (`CarrierTracker._transfer_target`): a transfer goes to the carrier at which the commander is docked.
 
 - `Docked` and `Location` (when `Docked`) carry the station's `MarketID` (equal to the carrier's
   `CarrierID`) and `StationType`; `Undocked` and `LoadGame` clear it.
-- If you are docked at a carrier that isn't yours, nothing is counted (real journals show docking at
-  other players' carriers).
-- With no dock information, the transfer goes to your only carrier if you have exactly one, and is
-  skipped if you have two (it is never guessed).
+- If the commander is docked at a carrier that is not their own, nothing is counted (real journals show docking at other players' carriers).
+- With no dock information, the transfer goes to the only carrier of the commander if there is exactly one, and is
+  skipped if there are two (it is never guessed).
 
-**Backfill** (`backfill`, `backfill_tracker`). EDMC doesn't replay old events when it starts, and the
-baseline only appears when Carrier Management is opened, so a baseline seen before WFMT started would be
+**Backfill** (`backfill`, `backfill_tracker`). EDMC does not replay old events when it starts, and the
+baseline appears only when Carrier Management is opened, so a baseline seen before WFMT started would be
 missed.
 
 - At startup a daemon thread reads the newest 40 journal files, parsing only lines that contain one of a
@@ -465,7 +452,6 @@ missed.
 - The result is handed to the Tk thread through a `queue.Queue` and merged (`merge`: a record replaces
   the held one only if its `updated` timestamp is newer; ISO timestamps compare as text).
 - The tracker's final dock state is adopted when the live one has none.
-- Against a real journal folder this took 0.03 s.
 
 **Transfers can overflow.** The journal never says when cargo leaves the carrier on a trade order or sale,
 so transfers alone can add up to more than the bay holds.
@@ -515,8 +501,7 @@ is the one place to fix if it changes.
 1. `POST https://spansh.co.uk/api/trade/route`, form-encoded: `system`, `station`, `max_hops`,
    `max_hop_distance`, `starting_capital`, `max_cargo`, `max_system_distance` (arrival distance in ls),
    `requires_large_pad`. Returns `{"job": "<id>", "status": "queued"}`.
-2. `GET https://spansh.co.uk/api/results/<job>` repeatedly until `state == "completed"` (a small search
-   took about 80 s).
+2. `GET https://spansh.co.uk/api/results/<job>` repeatedly until `state == "completed"` .
    - The state is told to the page each time: `describe_state` turns `queued` into "Waiting in Spansh's
      queue.", a working word into "Spansh is calculating the route.", and shows any other word as
      written, cleaned.
@@ -559,7 +544,7 @@ Each `Load` keeps, besides its `(commodity, tons, profit per ton)` items, a `Loa
 station's supply, the selling station's demand); `leg_blocks` turns a leg into a summary line plus up to three commodity rows with
 the prices and stock beneath, for every pair shown (not only the best).
 
-Spansh's planner can't be asked for a pair that comes back, so the pair is found locally.
+Spansh's planner cannot be asked for a pair that comes back, so the pair is found locally.
 
 1. `fetch_stations` posts to `https://spansh.co.uk/api/stations/search`:
    - `distance` (the radius: the Settings value if set, 5 to 500 ly, else twice the jump range, 20 to
@@ -568,8 +553,8 @@ Spansh's planner can't be asked for a pair that comes back, so the pair is found
    - sorted nearest first, 100 per page, at most 3 pages.
 
    With no `market` filter each result still carries the station's **entire** `market` (`commodity`,
-   `buy_price` = what it charges you, `sell_price` = what it pays you, `supply`, `demand`), checked live
-   on 2026-10-09 (300 stations in about 22 s). `Station` also keeps position (`system_x/y/z`),
+   `buy_price` = the price the station charges, `sell_price` = the price the station pays, `supply`, `demand`), checked live
+   on 2026-10-09. `Station` also keeps position (`system_x/y/z`),
    `distance_to_arrival`, `is_planetary`, `type` (carriers are `Drake-Class Carrier`) and the pad
    counts.
 2. `best_load(source, dest, cargo, capital, min_supply, min_demand)`: commodities that sell for more at `dest` than they
@@ -598,15 +583,15 @@ The panel shows the top three (`RESULTS_KEPT`) with what to carry each way, reme
   still resolves if typed or carried.
 - An unresolved typed name is searched as typed, and a zero-result answer says to check the spelling.
 
-**Suggestions** (`suggest`): prefix matches first, then word-start matches, then contains; names you carry and
-names the docked station buys lead each group. Empty text lists just those preferred names.
+**Suggestions** (`suggest`): prefix matches first, then word-start matches, then contains; names carried and
+names bought by the docked station lead each group. Empty text lists just those preferred names.
 
 **Side** (`wfmt_trade_market_side`, default sell): chosen with the toggle and remembered. Changing it clears
 the results, since they belong to one side, and results are keyed by `(commodity, tons, pad, side)`.
 
-**Search target** (`_search_target`). Selling: the box's text if any, else your largest load; tons = what you
-carry of it, else a full hold (`CargoCapacity`, or 100 if unknown). Buying: only the typed commodity; tons =
-your *free hold space* (`CargoCapacity` less what is aboard), or a full hold's worth if the hold is already full.
+**Search target** (`_search_target`). Selling: the text of the box if any, otherwise the largest load carried; tons = the amount
+carried of it, else a full hold (`CargoCapacity`, or 100 if unknown). Buying: only the typed commodity; tons =
+the free hold space (`CargoCapacity` less what is aboard), or a full hold's worth if the hold is already full.
 
 **Scopes.** Near me = `search_best_price_stations(system, name, "Sell" or "Buy" by side, radius_ly)` with the Settings radius
 (default 100 ly). Galaxy = the same call with `max_distance_ly=None`, which omits the distance filter (Spansh
@@ -615,7 +600,7 @@ unfiltered search returned fleet carrier markets years old.
 
 **Ranking** (`trade_prices.rank_offers`, `side`).
 
-- **Selling:** each station is valued for your load, `price x min(tons, demand)`, and sorted by that
+- **Selling:** each station is valued for the load carried, `price x min(tons, demand)`, and sorted by that
   (ties: nearer first).
 - **Buying:** the amount that can change hands is `min(tons, supply)`. Stations that can supply all of
   it come first, cheapest first, then partial ones, cheapest first (each marked "only N t in stock").
@@ -655,14 +640,13 @@ The **Best picks** button on the Market page runs `source_picks.find` for the co
   falls back to the nearest station with any stock when none has the full amount (saying how much).
 - A fleet carrier is never a pick; a better carrier price is a note.
 - The results are held in memory only.
-- The Mission mode's Source commodities window calls the same function for each commodity a mission
-  needs; see `MISSIONS_TECH_SPEC.md` 10c and `TECHNICAL.md`.
+- The Source commodities window of Mission mode calls the same function for each commodity a mission requires; see `MISSIONS_TECH_SPEC.md` section 10 and `TECHNICAL.md`.
 
 ## 10. Settings, config keys and files
 
 The keys below are set in the windows named in the guide's Trade settings table (`docs/guide/trade.md`), except `wfmt_trade_lookups_enabled` and the carrier choice, which are on the Settings tab.
 
-Settings > WFMT > Trade (a top-level tab; the top-level tabs are in alphabetical order).
+Settings → WFMT → Trade (a top-level tab).
 
 | Config key | Meaning | Default |
 |---|---|---|
@@ -720,7 +704,7 @@ Follows TECHNICAL.md section 11 ("Keeping API traffic low").
   why (`SpanshBusy`).
   While the separate diagnostic log is on (Settings → WFMT → General → Help), each request's endpoint (without its query), outcome and time is written to it.
 - **Round trip:** one to three station-search requests (100 stations each, nearest first, stops at the first short
-  page), about 20 s, request timeout 30 s, identified as `trade-roundtrip`.
+  page), request timeout 30 s, identified as `trade-roundtrip`.
 - **Price search:** a press of Near me or Galaxy makes **two requests**, one for stations and one for
   fleet carriers (one if carriers are hidden in Settings), and the two buttons are separate presses.
   - Stations: 20, or 40 when filtering by pad. Carriers: a third as many (at least 5).
@@ -757,7 +741,7 @@ the refresh uses the "Near me" radius held to 5 to 5,000 ly (`trade_watch_panel.
   sightings with demand above 0 and the Spansh sell quote. Ties go to the newer.
 - **Sizing.** The row is a hard-wrapped label (200 px), at most 5 lines of at most 32 characters of name (then a `+N more in the window` line), and the status is clipped to 160
   characters; `tests/trade_watch_smoke.py` fails if the open row asks for more than the main panel's default width.
-- **Not verified in game:** reading `Market.json` on the `Market` event with a real market (the same file `trade_panel` already reads for cargo
+- **Not verified in the game:** reading `Market.json` on the `Market` event with a real market (the same file `trade_panel` already reads for cargo
   value), and a real Spansh answer for a refresh (the call is the one the Market page makes).
 
 ## 12. Testing
@@ -796,9 +780,9 @@ the refresh uses the "Near me" radius held to 5 to 5,000 ly (`trade_watch_panel.
 - The History window is opened by `tests/trade_history_window_smoke.py` (see below).
 - The drawn page is checked by `tests/trade_view_smoke.py` (run by `test_trade_view_smoke.py` in a
   subprocess, skipped without a display): no label asks for more than the width available, unchanged
-  blocks aren't redrawn, and a table's number columns end at the same place.
+  blocks are not redrawn, and a table's number columns end at the same place.
 
-They run without EDMC or a display. The Settings tab is built by `tests/test_prefs_smoke.py` (eleven
+The tests run without EDMC or a display. The Settings tab is built by `tests/test_prefs_smoke.py` (eleven
 top-level tabs).
 
 The History window is also drawn in a real Tk window by `tests/trade_history_window_smoke.py` (run by
@@ -806,37 +790,28 @@ The History window is also drawn in a real Tk window by `tests/trade_history_win
 each table must fit, and the picker, commander filter, Copy, Delete (with and without confirmation), the empty state
 and refresh-on-save are exercised.
 
-Not covered by automation: the panel's controls and the suggestion popup (Tk). During development the panel was driven in
-a real Tk window with EDMC and Spansh stubbed; that is not part of the suite.
+Not covered by automation: the panel's controls and the suggestion popup (Tk). 
 
 ## 13. Verified, assumed and known gaps
 
-**Verified against live data:**
+**Recorded as verified against live data** (recorded on 2026-10-09 in the earlier version of this document; not reproducible from the repository):
 
-- Spansh trade-route submit and result shapes; the station search with and without a distance filter; exact
-  and case-sensitive market names; pad counts in station results (all 2026-10-09).
-- A real `CarrierStats`, `CargoTransfer`, `Docked` and `Location` from a commander's own journal, including
-  `CarrierType`, `CarrierID` and `StationType`, and a backfill that reproduced the expected cargo figure.
+- The submit and result shapes of the Spansh trade route; the station search with and without a distance filter; the exact, case-sensitive market names; the pad counts in station results.
+- A real `CarrierStats`, `CargoTransfer`, `Docked` and `Location` from a commander's own journal, including `CarrierType`, `CarrierID` and `StationType`, and a backfill that reproduced the expected cargo figure.
 
-**Assumed, not yet seen:**
+**Not examined:**
 
-- A **squadron carrier's** `CarrierStats` is assumed to match a fleet carrier's with
-  `CarrierType: "SquadronCarrier"`. No real one was available.
-- Ship pad sizes come from a bundled table and a partly hand-written journal-name map; a ship that doesn't match
-  shows "Landing pad: Unknown" and isn't filtered.
+- No real `CarrierStats` of a squadron carrier has been examined. The code handles it with the same layout as a fleet carrier and `CarrierType: "SquadronCarrier"`.
+- Ship pad sizes come from a bundled table and a partly hand-written journal-name map. A ship that does not match shows "Landing pad: Unknown" and is not filtered.
 
 **Known gaps:**
 
-- `CarrierStats` only on opening Carrier Management; reserved space and the tons carrier trade orders move are stale
-  until then. Tritium burnt by jumps is not written. Cargo moved by someone else is not seen.
-- The commodity list and pad classes are snapshots; a new commodity or ship needs a regeneration or edit.
-- Spansh's route planner has no medium-pad option; routes use the unladen jump range.
-- Spansh data is player-reported and can be stale; the page can't say a price is current, only that the market
-  was updated in the last 30 days.
-- Stock: cargo sold by the carrier's own orders or lost stays listed until cleared; a first run only looks back
-  14 days, so older purchases still unsold aren't known.
-- UI tests are smoke tests only (`tests/trade_view_smoke.py`, `tests/trade_history_window_smoke.py`, run in
-  subprocesses and skipped without a display); they check layout and clipping, not looks.
+- `CarrierStats` is written only when Carrier Management is opened. Reserved space and the tons moved by carrier trade orders are stale until then. Tritium burnt by jumps is not written. Cargo moved by another player is not seen.
+- The commodity list and pad classes are snapshots. A new commodity or ship requires a regeneration or an edit.
+- The Spansh route planner has no medium-pad option. Routes use the unladen jump range.
+- Spansh data is player-reported and can be stale. The page can state only that the market was updated in the last 30 days.
+- Stock: cargo sold by the carrier's own orders or lost remains listed until cleared. A first run looks back only 14 days, so older purchases that are still unsold are not known.
+- UI tests are smoke tests (`tests/trade_view_smoke.py`, `tests/trade_history_window_smoke.py`, run in subprocesses and skipped without a display). They check layout and clipping, not appearance.
 
 ## 14. Platform notes
 
