@@ -573,7 +573,8 @@ Spansh's planner can't be asked for a pair that comes back, so the pair is found
 
 The panel shows the top three (`RESULTS_KEPT`) with what to carry each way, remembers the best pair's destination for
 **Copy next system** and records it in the session's lookups (two hops). Settings: `wfmt_trade_min_supply` and
-`wfmt_trade_min_demand` (default 200 t). Tested by `tests/test_trade_roundtrip.py`.
+`wfmt_trade_min_demand` (default 200 t). `wfmt_trade_roundtrip_commodity` (blank = anything) limits both legs to one commodity:
+`best_load` and `find_round_trips` take `only`, matched ignoring case, so a pair must trade it both ways to count. Tested by `tests/test_trade_roundtrip.py`.
 
 ## 9. Market: commodity search and ranking
 
@@ -665,6 +666,7 @@ Settings > WFMT > Trade (a top-level tab; the top-level tabs are in alphabetical
 | `wfmt_trade_min_supply` | Round trip: least tons the buying station must have | 200 |
 | `wfmt_trade_min_demand` | Round trip: least tons the selling station must want | 200 |
 | `wfmt_trade_round_radius_ly` | Round trip: search radius in ly (0 = twice the jump range, between 20 and 100; otherwise 5 to 500, `trade_roundtrip.search_radius`) | 0 |
+| `wfmt_trade_roundtrip_commodity` | Round trip: carry only this commodity ("" = anything) | "" |
 | `wfmt_trade_near_radius_ly` | "Near me" radius | 100 |
 | `wfmt_trade_include_carriers` | Fleet carriers in price results and routes (`allow_player_owned`) | on |
 | `wfmt_trade_include_ground` | Ground facilities in price results and routes (`allow_planetary`) | on |

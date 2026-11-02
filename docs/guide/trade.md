@@ -615,6 +615,7 @@ Copying these between computers is not needed and not recommended.
 | Jump range override | blank | Blank uses your ship's unladen range. |
 | Only stations with a large landing pad | Off | Leaves out stations without a large pad, in Routes. |
 | Round trips: least supply / least demand | 200 t each | Leaves thin markets out. |
+| Round trips: carry only this commodity | blank (anything) | Type a commodity name (case does not matter) and both legs of a round trip carry only that. A pair counts only if it trades that commodity at a profit in both directions, so expect fewer results. |
 | Round trips: search radius | 0 (from my jump range) | How far around your start to look, in light years. 0 uses twice your ship's jump range, between 20 and 100 ly. Any number from 5 to 500 is used as given; the search reads at most the nearest 300 stations. |
 | Routes: **Ignore prices older than** | 72 hours (0 = any age, up to 8,760) | |
 | Routes may use systems that need a permit | Off | |

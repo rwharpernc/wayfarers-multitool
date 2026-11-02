@@ -160,11 +160,15 @@ def distance_ly(a: Station, b: Station) -> float:
 
 
 def best_load(source: Station, dest: Station, cargo: int, capital: int, min_supply: int = 0,
-              min_demand: int = 0) -> Optional[Load]:
+              min_demand: int = 0, only: str = "") -> Optional[Load]:
     """The most profitable hold from `source` to `dest`: commodities in order of profit per ton, each limited by
-    the supply there, the demand here and what you can afford, until the hold is full. None when nothing profits."""
+    the supply there, the demand here and what you can afford, until the hold is full. None when nothing profits.
+    `only` limits the hold to that one commodity (matched ignoring case)."""
+    only = (only or "").strip().casefold()
     candidates = []
     for name, buy in source.market.items():
+        if only and name.casefold() != only:
+            continue
         sell = dest.market.get(name)
         if sell is None or buy.buy_price <= 0 or sell.sell_price <= buy.buy_price:
             continue
@@ -218,8 +222,9 @@ def _fits(station: Station, ship_pad: Optional[str]) -> bool:
 def find_round_trips(start: Station, others: Sequence[Station], cargo: int, capital: int, jump_range_ly: float,
                      ship_pad: Optional[str] = None, min_supply: int = 0, min_demand: int = 0,
                      include_ground: bool = True, include_carriers: bool = False,
-                     max_arrival_ls: float = 0, limit: int = RESULTS_KEPT) -> List[RoundTrip]:
-    """The best pairs with `start`, each leg loaded and profitable, best estimated profit per hour first."""
+                     max_arrival_ls: float = 0, limit: int = RESULTS_KEPT, only: str = "") -> List[RoundTrip]:
+    """The best pairs with `start`, each leg loaded and profitable, best estimated profit per hour first.
+    `only` names the one commodity both legs may carry (blank = anything)."""
     trips: List[RoundTrip] = []
     for other in others:
         if other is start or (other.name == start.name and other.system == start.system):
@@ -230,8 +235,8 @@ def find_round_trips(start: Station, others: Sequence[Station], cargo: int, capi
             continue
         if not _fits(other, ship_pad):
             continue
-        out = best_load(start, other, cargo, capital, min_supply, min_demand)
-        back = best_load(other, start, cargo, capital + out.profit if out else capital, min_supply, min_demand) \
+        out = best_load(start, other, cargo, capital, min_supply, min_demand, only)
+        back = best_load(other, start, cargo, capital + out.profit if out else capital, min_supply, min_demand, only) \
             if out else None
         if out is None or back is None:
             continue    # one leg would be empty: not a round trip

@@ -41,6 +41,14 @@ class BestLoadTests(unittest.TestCase):
         self.assertIsNone(rt.best_load(a, b, 100, 10**9, min_supply=100))
         self.assertIsNone(rt.best_load(a, b, 100, 10**9, min_demand=1000))
 
+    def test_only_limits_the_hold_to_one_commodity(self) -> None:
+        a = station("A", {"Gold": (100, 90, 50, 0), "Tea": (10, 5, 1000, 0)})
+        b = station("B", {"Gold": (0, 200, 0, 40), "Tea": (0, 30, 0, 1000)})
+        load = rt.best_load(a, b, cargo=100, capital=10**9, only="tea")      # case does not matter
+        self.assertEqual([(n, t) for n, t, _ in load.items], [("Tea", 100)])
+        self.assertIsNone(rt.best_load(a, b, 100, 10**9, only="Silver"))
+        self.assertEqual(rt.best_load(a, b, 100, 10**9, only="  ").tons, 100)   # blank means anything
+
     def test_no_profit_gives_none(self) -> None:
         a = station("A", {"Gold": (200, 190, 50, 0)})
         b = station("B", {"Gold": (0, 150, 0, 50)})
@@ -59,6 +67,17 @@ class FindRoundTripsTests(unittest.TestCase):
         self.assertGreater(trips[0].out.profit, 0)
         self.assertGreater(trips[0].back.profit, 0)
         self.assertEqual(trips[0].profit, trips[0].out.profit + trips[0].back.profit)
+
+    def test_only_needs_the_commodity_both_ways(self) -> None:
+        loaded = station("Loaded", {"Gold": (0, 200, 0, 500), "Tea": (20, 15, 500, 0)}, x=10)
+        trips = rt.find_round_trips(self.start, [loaded], 100, 10**9, 30.0)
+        self.assertEqual(len(trips), 1)                                      # Gold out, Tea back
+        self.assertEqual(rt.find_round_trips(self.start, [loaded], 100, 10**9, 30.0, only="Gold"), [])
+        both = station("Both", {"Gold": (50, 200, 500, 500)}, x=10)
+        start = station("Start", {"Gold": (100, 90, 500, 500)})
+        trips = rt.find_round_trips(start, [both], 100, 10**9, 30.0, only="gold")
+        self.assertEqual([[n for n, _, _ in t.out.items] + [n for n, _, _ in t.back.items] for t in trips],
+                         [["Gold", "Gold"]])
 
     def test_ranked_by_profit_per_hour_not_per_loop(self) -> None:
         near = station("Near", {"Gold": (0, 150, 0, 500), "Tea": (20, 15, 500, 0)}, x=5)

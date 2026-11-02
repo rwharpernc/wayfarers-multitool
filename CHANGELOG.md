@@ -5,6 +5,10 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ## Unreleased
 
+### Added
+
+- **Round trip: carry only one commodity.** A new setting, **Carry only this commodity** under Round trips in Settings → WFMT → Trade, limits both legs to that commodity (blank means anything, as before). A pair counts only when the commodity pays in both directions, and the result says which commodity it was limited to.
+
 ## 1.4.2 (2026-11-01)
 
 ### Changed

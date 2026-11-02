@@ -72,6 +72,7 @@ _CFG_PRICE_AGE_H = "wfmt_trade_route_price_age_h"   # routes: ignore markets old
 _CFG_PERMIT = "wfmt_trade_route_permit"            # routes: allow systems that need a permit
 _CFG_MIN_SUPPLY = "wfmt_trade_min_supply"          # round trip: least tons the buying station must have
 _CFG_MIN_DEMAND = "wfmt_trade_min_demand"          # round trip: least tons the selling station must want
+_CFG_ROUND_ONLY = "wfmt_trade_roundtrip_commodity"  # round trip: carry only this commodity (blank = anything)
 _CFG_CURRENT_PAGE = "wfmt_trade_current_page"
 _CFG_NEAR_RADIUS = "wfmt_trade_near_radius_ly"
 _CFG_ROUND_RADIUS = "wfmt_trade_round_radius_ly"   # round trip: how far to look (0 = from the jump range)
@@ -196,6 +197,7 @@ class TradePanelController:
         self._history = trade_history.HistoryBook()   # sessions saved on request (Save session)
         self._saved_marks: Dict[str, tuple] = {}      # session id -> how it looked when last saved
         self._save_message: Optional[str] = None      # shown at the top of the Session page for a few seconds
+        self._round_only = ""                         # the commodity the last round trip search was limited to
         self._route_label = ""                        # where the route search being run started from
         self._carrier = trade_carrier.CarrierTracker()  # each commander's fleet / squadron carrier cargo space
         self._cmdr = ""
@@ -267,6 +269,7 @@ class TradePanelController:
         self._ground_var: Optional[tk.BooleanVar] = None
         self._fines_var: Optional[tk.BooleanVar] = None
         self._round_radius_var: Optional[tk.StringVar] = None
+        self._only_var: Optional[tk.StringVar] = None
         self._carrier_mode_vars: Dict[str, tk.StringVar] = {}  # commander -> their carrier choice
         self._pad_override_var: Optional[tk.StringVar] = None
 
@@ -1245,8 +1248,10 @@ class TradePanelController:
         ground = config.get_bool(_CFG_GROUND, default=True)
         carriers = config.get_bool(_CFG_CARRIERS, default=True)
         arrival = _cfg_int(_CFG_MAX_ARRIVAL_LS, _DEFAULT_MAX_ARRIVAL_LS, 1, 1_000_000)
+        only = (config.get_str(_CFG_ROUND_ONLY) or "").strip()
         self._route_blocks, self._next_system = [], None
         self._route_label = f"{station} ({system})"
+        self._round_only = only
 
         def work(cancel: threading.Event) -> Any:
             stations = trade_roundtrip.fetch_stations(system, radius, age)
@@ -1257,7 +1262,8 @@ class TradePanelController:
                     "reported, or raise the price-age limit in Settings.")
             trips = trade_roundtrip.find_round_trips(
                 origin, stations, cargo, capital, jump, ship_pad=ship_pad, min_supply=min_supply,
-                min_demand=min_demand, include_ground=ground, include_carriers=carriers, max_arrival_ls=arrival)
+                min_demand=min_demand, include_ground=ground, include_carriers=carriers, max_arrival_ls=arrival,
+                only=only)
             return {"trips": trips, "searched": len(stations), "radius": radius}
 
         self._start_job("roundtrip", work)
@@ -1270,12 +1276,15 @@ class TradePanelController:
         trips: List[trade_roundtrip.RoundTrip] = found.get("trips") or []
         if not trips:
             self._route_blocks = [
-                Heading("Round trip"), Note("No pair of stations is profitable both ways.", warn=True),
+                Heading("Round trip"),
+                Note("No pair of stations is profitable both ways"
+                     + (f" carrying only {_clip(self._round_only)}." if self._round_only else "."), warn=True),
                 Note(f"Looked at {found.get('searched', 0)} stations within {found.get('radius', 0):.0f} ly. Try a "
                      "longer price-age limit, lower minimum supply and demand, or a bigger jump range.")]
             return
         blocks: List[Block] = [Heading("Round trip (loaded both ways)"),
                                Pair("From", _clip(self._route_label)),
+                               *([Pair("Carrying only", _clip(self._round_only))] if self._round_only else []),
                                Note(f"Best of {found.get('searched', 0)} stations within {found.get('radius', 0):.0f} ly, "
                                     "ranked by estimated profit per hour."), Columns(("Per loop", "ly"))]
         for number, trip in enumerate(trips, start=1):
@@ -1391,6 +1400,7 @@ class TradePanelController:
         self._age_var = tk.StringVar(value=str(_cfg_int(_CFG_PRICE_AGE_H, _DEFAULT_PRICE_AGE_H, 0, 24 * 365)))
         self._supply_var = tk.StringVar(value=str(_cfg_int(_CFG_MIN_SUPPLY, _DEFAULT_MIN_STOCK, 0, 1_000_000)))
         self._demand_var = tk.StringVar(value=str(_cfg_int(_CFG_MIN_DEMAND, _DEFAULT_MIN_STOCK, 0, 1_000_000)))
+        self._only_var = tk.StringVar(value=config.get_str(_CFG_ROUND_ONLY) or "")
         self._permit_var = tk.BooleanVar(value=config.get_bool(_CFG_PERMIT, default=False))
         self._pad_var = tk.BooleanVar(value=config.get_bool(_CFG_LARGE_PAD, default=False))
         self._near_var = tk.StringVar(value=str(self._near_radius()))
@@ -1412,7 +1422,8 @@ class TradePanelController:
             ("Round trips", (
                 ("Least supply at the buying station (t)", self._supply_var, 0, 1_000_000),
                 ("Least demand at the selling station (t)", self._demand_var, 0, 1_000_000),
-                ("Search radius (ly, 0 = from my jump range)", self._round_radius_var, 0, 100_000))),
+                ("Search radius (ly, 0 = from my jump range)", self._round_radius_var, 0, 100_000),
+                ("Carry only this commodity (blank = anything)", self._only_var, None, None))),
             ("Market", (
                 ("'Near me' price search radius (ly)", self._near_var, 1, 100_000),)),
         )
@@ -1514,6 +1525,7 @@ class TradePanelController:
             except ValueError:
                 value = default
             config.set(key, max(low, min(high, value)))
+        config.set(_CFG_ROUND_ONLY, (self._only_var.get() if self._only_var is not None else "").strip())
         jump = (self._range_var.get() if self._range_var is not None else "").strip()
         try:
             config.set(_CFG_JUMP_RANGE, jump if jump and float(jump) > 0 else "")
