@@ -2,7 +2,7 @@
 Renders Mission mode's content: two detailed kill-stacking pages (Massacre
 Space, Settlement Raids Ground), a handful of general pages covering every
 other mission type, and one non-mission page (Community Goals) tacked onto
-the same ◂/▸ nav — see _PAGE_ORDER/_PAGE_LABELS below. Mission pages are
+the same list in the Mission types window — see _PAGE_ORDER/_PAGE_LABELS below. Mission pages are
 separate rather than merged because kill-stacking math doesn't generalize
 to missions that have no kill count - see mission_types.py for how a
 mission lands on a given page.

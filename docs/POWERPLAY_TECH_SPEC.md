@@ -79,7 +79,7 @@ would claim the wrong event. The windows are `DELIVERY_FIRST_MERIT_S` and `DELIV
 ## 4. Control Points
 
 Control Points depend on the activity, and Frontier hasn't documented the conversion. WFMT therefore uses
-**merits-per-Control-Point ratios that you can edit** in Settings, not constants:
+**merits-per-Control-Point ratios that you can edit** on the Sessions window's Settings tab, not constants:
 
 | Activity | Default merits per CP |
 |---|---|
@@ -121,7 +121,7 @@ Power, and its **commander**.
 - The **Sessions** window's History tab and its running total show only the active commander's sessions
   (`store.sessions_of`). Sessions with no recorded commander can't be given to anyone and are hidden
   (kept in the file).
-- **Copy** puts the current session on the clipboard using a format you can edit in Settings.
+- **Copy** puts the current session on the clipboard using a format you can edit on the Sessions window's Settings tab.
 
 ## 7. Rare Goods Finder
 
@@ -156,7 +156,7 @@ A window listing the rare commodities closest to your current system.
 
 ## 8. Settings
 
-**File → Settings → WFMT → Powerplay** (keys start `wfmt_powerplay_`): the three merits-per-CP ratios,
+The **Settings** tab of the Powerplay Sessions window (keys start `wfmt_powerplay_`; **File → Settings → WFMT → Powerplay** only points there): the three merits-per-CP ratios,
 the clipboard format, and how many cycles the start-up journal scan covers (`wfmt_powerplay_backfill_cycles`,
 default 4, 1-12). Sessions, cycles and history need no setting. The overlay card's two ticks are on **Settings → Overlays → Powerplay**
 (`wfmt_powerplay_overlay` and `wfmt_powerplay_overlay_lookahead`, both off; section 12).

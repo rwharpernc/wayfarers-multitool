@@ -47,14 +47,14 @@ Work that is under way, being researched, or waiting on a decision. Items are li
 ### Next area of work: Mining, including surface mining
 
 - A desk review (2026-10-21) compared the following against what the journal offers:
-  - the Space and Surface pages
+  - the Space and Surface Mining windows
   - Mining History
   - the Mining Books
   - the live window
   - the guide
 - It found the coverage broad. The run's ore, limpets, rates, hold, targets, missions, sales, history, hotspots, prices and reserve lookups are all there.
 - It found some candidates, none confirmed by play. Profit, the time until the hold is full and the price against the galactic average are built (see their steps in the checklist below).
-- **Not assessed without playing:** the Surface (Rhino) tools and the radar over the game, the overlay layouts, and whether the Space and Surface pages show too much or too little at a glance.
+- **Not assessed without playing:** the Surface (Rhino) tools and the radar over the game, the overlay layouts, and whether the Space and Surface Mining windows (and the panel's summary) show too much or too little at a glance.
   - Those need your impressions from a play-through (the checklist below covers them).
 - Not subtracted from *After limpets*: fuel, repairs and ammunition. The journal records them; they are not tied to a run the way launches are.
 
@@ -108,6 +108,7 @@ The items below are implemented and covered by unit tests, but have not all been
 
 - Linux passes of earlier builds were made on 2026-10-18 and 2026-10-20 (see [STATUS.md](STATUS.md)), so items that do not end in "Then Linux" do not ask for a Linux check.
 - Items that end in "Then Linux" need the Linux checklist ([LINUX_TESTING.md](LINUX_TESTING.md)) as well.
+- [ ] **1.5.0: pages are windows, settings are in their windows** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 12). Trade (Session, Routes, Market, History), Mining (Space Mining, Surface Mining) and Missions (Mission types) open from buttons; no ◀ ▶ is left. Each moved setting is set in its window and saved at once, File → Settings → WFMT shows where it went, and a change in a window shows on the panel. Type-ahead works in the Body, Ring, Ship and comma-separated commodity boxes. A scrapped fleet carrier disappears. The main panel's orange is readable on EDMC's Default theme.
 - [ ] **Color themes, text size and column fit for WFMT's windows** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 6 and [LINUX_TESTING.md](LINUX_TESTING.md) 7k3 and 7k4).
   - The theme name at the right end of a window's bottom line offers Navy, Cyan, Amber and Green; open windows recolor at once, nothing becomes hard to read, and the choice (and the same one under Settings → General → Window) is kept after a restart.
   - **A-** and **A+** change the text of every window; the stat tiles and status chips keep their size; at the larger sizes no window loses its title, buttons or footer.
@@ -126,7 +127,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Pause and Resume from the Expedition window, then from the Log tab. Check both agree and the time excludes the pause.
   - Stop from either side.
   - Restart EDMC while paused and check both stay paused.
-  - With *Start the Expedition Log when I start an expedition* unticked (Settings → Exploration → Expedition), starting an expedition starts no Log run.
+  - With *Start the Expedition Log when I start an expedition* unticked (the Expedition window's Settings strip), starting an expedition starts no Log run.
   - Road to Riches and Exomastery: tick **Start it now** and check the expedition starts.
   - Check the Route Planner buttons and the plan dialog fit at a small window size.
   - Then Linux.
@@ -267,12 +268,12 @@ The items below are implemented and covered by unit tests, but have not all been
 ### Mining
 
 - [ ] **Mining rates, targets and the live hold.** Mine a ring.
-  - The Space page, the Live window and the HUD show the same lines:
+  - The Space Mining window, the panel's summary and the HUD show the same lines:
     - *Refining now* (tons per hour over the last minute)
     - *Run average* (over mining time; a gap of more than ten minutes is left out)
     - *Hold: N of M t*
   - The hold alert fires from the live hold without a Cargo event.
-  - Settings → WFMT → Mining → target box: type several names with their own percentages (`Painite 30, Platinum 25, Void Opals`).
+  - Space Mining window → Settings card → Target commodities: type several names with their own percentages (`Painite 30, Platinum 25, Void Opals`).
     - Check the type-ahead after a comma, the status line under the box and a long list wrapping.
     - Last rock reads `target: <name>` and each target hit gets its own card.
   - Open Mining History once: old runs are re-read in the background.
@@ -305,26 +306,26 @@ The items below are implemented and covered by unit tests, but have not all been
   - Mine for a few minutes with EDMC closed, start it, and confirm the run is there.
   - Then Linux.
 - [ ] **Station price against the galactic average.** Mine and dock, open the station's commodities market in the game.
-  - The Space page gains a line for each commodity the run refined that this station buys, such as `Painite here: 521,400 cr/t, 8% above the galactic average (482,000)`. Most tons first, at most three.
+  - The Space Mining window gains a line for each commodity the run refined that this station buys, such as `Painite here: 521,400 cr/t, 8% above the galactic average (482,000)`. Most tons first, at most three.
   - Check the percentage against the market screen's own average.
   - Check that a commodity the station lists without demand is skipped.
   - Check that Low Temperature Diamonds and Void Opals are found (their internal names differ from the display names).
   - Check that the lines go when you undock.
   - Nothing is fetched.
   - Then Linux: the market is read from the journal folder where `Market.json` is written.
-- [ ] **Hold full in.** Mine a ring with the Space page, the HUD overlay and the Live window open.
-  - Once a minute of mining has passed, a line `Hold full in about N min` appears under *Run average* on all three.
+- [ ] **Hold full in.** Mine a ring with the Space Mining window and the HUD overlay open.
+  - Once a minute of mining has passed, a line `Hold full in about N min` appears under *Run average* on both.
   - N matches the free tons divided by the run average (for example 100 t free at 75 t/h is about 80 min).
-  - It drops as the hold fills, and it reads `Hold is full` when the hold is at capacity (on the Space page only with *Show the cargo bar* off, since the Hold line already says it).
+  - It drops as the hold fills, and it reads `Hold is full` when the hold is at capacity (in the Space Mining window only with *Show the cargo bar* off, since the Hold line already says it).
   - It does not show before a Loadout has been seen (no capacity), and not at all while nothing is being refined.
-  - Launch the Rhino and check `SRV hold full in about N min` on the Surface page for the 72 t hold. It is gone once the Rhino is stowed.
+  - Launch the Rhino and check `SRV hold full in about N min` in the Surface Mining window for the 72 t hold. It is gone once the Rhino is stowed.
   - Check the extra line fits the panel width and the HUD panel.
 - [ ] **Mining: core asteroids, target rock, mission needs, alerts.** Mine at a ring.
-  - Space Mining page:
+  - Space Mining window:
     - The **Last rock** line follows each prospected rock.
     - A core asteroid adds `core: <mineral>` and the **Core asteroids found** count.
     - The limpet figure reads `(N on board)` and matches your cargo.
-  - Settings → Mining: type a target commodity (for example Painite) and a percentage. Check a rock at or over it says `target`.
+  - Space Mining window → Settings card: type a target commodity (for example Painite) and a percentage. Check a rock at or over it says `target`.
   - Accept a mining mission and check **Mission needs** shows its tons against what you hold.
   - Flight Alerts (Settings → Overlays → Flight Alerts, Mining alerts ticked):
     - a green card for a core asteroid and for a rich rock (30 seconds)
@@ -332,20 +333,20 @@ The items below are implemented and covered by unit tests, but have not all been
     - none while you are not mining
     - the sound if ticked
   - Then Linux.
-- [ ] **Space Mining Book.** On the Space Mining page press **Book**.
+- [ ] **Space Mining Book.** In the Space Mining window press **Book**.
   - The window fills with the rings your journals show (it reads them once in the background, so give it a moment on the first open). It shows hotspots per mineral, class, reserve level, tons mined and last mined.
   - Compare a few rings with the game (the hotspot counts, the reserve level).
   - Type a note, press **Favorite**, **Find** by a mineral, **Add ring** by hand and remove it, and **Copy system**.
   - Restart EDMC: notes and favorites remain. A second commander sees none.
-  - Check **Book** on the Surface Mining page opens the Surface Mining Book as before.
+  - Check **Book** in the Surface Mining window opens the Surface Mining Book as before.
   - Check its body list has a **From your journals** group of bodies with mining locations and tons refined (compare a body or two with what you remember).
   - Then Linux.
 - [ ] **Surface Live radar: drive rings, stops, target line, Save map.** *Windows: tried on the simulation only.*
-  - On a body with a marked location (Mark center, then Mark border) and several saved deposits, open **Live**.
+  - On a body with a marked location (Mark center, then Mark border) and several saved deposits, open the **Surface Mining** window.
   - Check the orange dashed rings are drawn as described. The 2 km reach behind them is a community figure that will not be measured (see STATUS.md).
   - Check that the first ring starts at the center and the last sits on the border, and that before a border is marked they reach as far as you have driven.
-  - Check that violet circles sit round the best stops (the radius is Settings → Mining).
-  - Check that with a target commodity set (Settings → Mining) a bright line runs to the nearest saved deposit of it, and a far one is labeled at the edge.
+  - Check that violet circles sit round the best stops (the radius is the Stop radius on the Surface Mining window's Settings card).
+  - Check that with a target commodity set (Space Mining window's Settings card) a bright line runs to the nearest saved deposit of it, and a far one is labeled at the edge.
   - Check that **Help** matches what you see.
   - Check that **Save map** writes a PNG that opens, reads well and holds no commander name.
 - [ ] **Shortcuts.** *Windows: the key combinations were registered and fired with simulated key presses; nothing was tried in the game.*
@@ -359,7 +360,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check that a combination another program holds is reported after OK.
   - Tick **Chat commands**, type `!wf zoom` and `!wf overlays` in a chat channel with nobody else in it, and check they run within a second or two. This also confirms the journal's `SendText` line carries the text in a `Message` field.
   - Linux steps are in `docs/LINUX_TESTING.md` section 7l.
-- [ ] **Rig placed and the rig bands.** Measure the game's rig gap: stand at one rig, press Mark center, drive until the game lets you place the next, press Mark border. Enter it in Settings → Mining (*Too close to place another rig*).
+- [ ] **Rig placed and the rig bands.** Measure the game's rig gap: stand at one rig, press Mark center, drive until the game lets you place the next, press Mark border. Enter it on the Surface Mining window's Settings card (*Too close for another rig*).
   - In the Rhino press **Rig placed** (or Ctrl+Alt+Shift+R, or type `!wf rig`) each time you put a rig down.
   - A band of that radius should appear round it, filled while you are inside and an outline once you are clear.
   - The lines on the right should say how far the nearest rig is.
@@ -397,7 +398,7 @@ The items below are implemented and covered by unit tests, but have not all been
   - Check the **Stops** lines above the hotspots, the dashed rings on the map at 1x/2x/4x and the `stop N` tags. Changing the Stop radius on the Surface Mining window's Settings card changes them.
   - Standing within 175 m of a deposit selects it and marks `you are here`, and Mark depleted there is one click.
   - Mark a deposit depleted. Check the card says `Depleted N d ago. When it refills is unknown` and that the mark stays.
-  - Set Settings → Mining → *Assume a depleted deposit has refilled after (days)* to 14, edit `depleted_at` in `mining_hotspots.json` to 15 days ago, reopen the Book. Check the mark is gone and the card says `Assumed refilled`.
+  - Set *Deposit refills after (days)* on the Surface Mining window's Settings card to 14, edit `depleted_at` in `mining_hotspots.json` to 15 days ago, reopen the Book. Check the mark is gone and the card says `Assumed refilled`.
   - Press Mark depleted again with no mining and check `Still depleted at ...; look again in 7 d`.
   - Check the dialog's Edit keeps these dates.
 - [ ] **Surface Mining Book: Market research.** Tick *Enable Spansh best price finder*, open the Book on a system where you have saved hotspots, press **Market research**.
@@ -613,7 +614,7 @@ The items below are implemented and covered by unit tests, but have not all been
 - [ ] **Prediction review and the record of finds.** Sample a few species with WFMT running.
   - Check that `exo_observations.json` gains a record for each.
   - Open **Review** on the Organic Scanning panel and check the Finds, By genus, Ranges and Together tabs, a review status and note, and Copy report.
-  - Turn the record off and clear it under Settings → Exploration → Organic Scanning.
+  - Turn the record off and clear it in the Prediction review window.
 - [ ] **My Codex.** Press **My Codex** in the Codex Completionist section.
   - Check the Overview totals against the Found tab.
   - Check that Closest to complete lists types that are started but not finished.
@@ -677,7 +678,6 @@ The items below are implemented and covered by unit tests, but have not all been
 - [ ] **Missions window and pinned missions.** With a real mission board, open the window from the **Missions window** button at the bottom of the panel.
   - Check the Active and By place tabs, the summary line and the detail strip against the game's mission board.
   - Pin two missions and confirm the PINNED section on the overlay card (and that a pinned mission is removed when it is handed in).
-  - Check the text size beside the panel arrows.
 - [ ] **Mission progress colors.** Take two source-and-return missions and buy part of the cargo.
   - Confirm that the Missions window shows `N/total held` with a bar.
   - Confirm that the row turns blue and then lime past halfway, and that the overlay line follows.

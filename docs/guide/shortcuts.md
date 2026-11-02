@@ -4,10 +4,10 @@ Start an action without the mouse, while you are in the game: a **keyboard short
 
 | Action | Keys (Windows) | Chat command | What it does |
 |---|---|---|---|
-| Mark the center | Ctrl+Alt+Shift+**C** | `!wf center` | Marks the center of the mining location you are at, as **Mark center** does in the Surface Live window ([marking a location](mining.md#marking-a-mining-location)). |
+| Mark the center | Ctrl+Alt+Shift+**C** | `!wf center` | Marks the center of the mining location you are at, as **Mark center** does in the Surface Mining Live window ([marking a location](mining.md#marking-a-mining-location)). |
 | Mark the border | Ctrl+Alt+Shift+**B** | `!wf border` | Marks the border of the nearest marked location, as **Mark border** does. |
 | Radar range | Ctrl+Alt+Shift+**Z** | `!wf zoom` | Steps the Live radar's reach through 50 m, 250 m, 500 m, 1 km and 2 km and back. |
-| Open the Live window | Ctrl+Alt+Shift+**L** | `!wf live` | Opens the Surface Mining Live window, or raises it if it is open. |
+| Open the Live window | Ctrl+Alt+Shift+**L** | `!wf live` | Opens the Surface Mining Live window (the same one the **Surface Mining** button opens, with **Book** and **Dashboard** in its header), or raises it if it is open. |
 | Hide or show overlays | Ctrl+Alt+Shift+**O** | `!wf overlays` | Hides every WFMT overlay, or shows them again ([hiding the overlays](../OVERLAY_SETUP.md#hiding-the-overlays-for-a-while)). |
 | Rig placed | Ctrl+Alt+Shift+**R** | `!wf rig` | Notes the Rhino's position as a mining rig you have just placed, so the radar can show the spacing bands ([rig bands](mining.md#the-live-window)). |
 
@@ -22,7 +22,7 @@ The last key of each combination can be changed to any letter, digit or function
 5. Leave **Play a sound when a shortcut worked** ticked (it is by default) if you want a sound as confirmation.
 6. Press **OK** on the Settings window. The keys are registered when you press it; if another program already holds one, WFMT tells you which.
 
-**What each action says it did.** The result is written to the Surface Live window's status line while it is open, and to EDMC's log:
+**What each action says it did.** The result is written to the Surface Mining Live window's status line while it is open, and to EDMC's log:
 
 - **Hide or show overlays** reports `Overlays hidden.` or `Overlays shown.` A hidden overlay clears what is on screen and stops drawing until shown again; nothing is saved, so overlays are shown whenever EDMC starts.
 - **Radar range** reports `Radar reaches <distance>.` and saves the new reach.
@@ -38,7 +38,7 @@ The shortcuts work while Elite has the focus, because they are registered with W
 - **Checked against Elite.** The page reads your active Elite controls file and tells you if one of Elite's controls uses exactly the combination you picked. It also warns if two WFMT actions share a key. If the controls file cannot be found, it says so and the combinations are not checked.
 - **Held by another program.** If another program already holds a combination, WFMT says so after you press **OK**; pick another key. (A combination is held by one program at a time.)
 - **A sound** plays when a shortcut worked, if **Play a sound when a shortcut worked** is ticked (it is, by default), so you know it did something without looking away from the game. Nothing plays when it did not work, for example when there is no position to mark.
-- Where the result shows: in the Surface Live window's status line while it is open, and in the Surface Mining page's text for the marks.
+- Where the result shows: in the Surface Mining Live window's status line while it is open, and in the Surface Mining window's text for the marks.
 
 **On Linux:** a Linux desktop gives a program no portable way to hear keys while another window has the focus, and Wayland gives none, so the key combinations are for Windows only. The page shows the same table on Linux with the key choices grayed out.
 
@@ -58,4 +58,4 @@ The game writes what you send to its journal, WFMT reads it there, and the actio
 
 ## What is not a shortcut
 
-Saving a deposit (**Add hotspot**) and **Save map** open a window you fill in or a file dialog, which does not suit a key pressed in the game, so they stay buttons in the Surface Live window.
+Saving a deposit (**Add hotspot**) and **Save map** open a window you fill in or a file dialog, which does not suit a key pressed in the game, so they stay buttons in the Surface Mining Live window.

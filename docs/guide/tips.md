@@ -98,5 +98,9 @@ Things that surprise people, and what to do about them. Back to the [README](../
 
 ## Windows
 
+- **Trade, Mining and Missions have no page arrows.** The panel is a short summary with a button for each page (Trade: **Session**, **Routes**, **Market**, **History**; Mining: **Space Mining**, **Surface Mining**; Missions: **Mission types**), and each button opens that page in its own window.
+- **A setting that belongs to a window is in that window.** Routes' hops and filters, Market's radius, Mining's display switches, the Mission types **Display** card, Powerplay's and Inventory's **Settings** tab and the like are set there and saved as you change them, with no **OK**. File → Settings → WFMT keeps the switches that let WFMT contact another service, the keys, and a note on each tab that says where its other settings went.
+- **Typing in a Body, Ring, Ship or commodity box suggests names** the way system boxes do, from what WFMT already knows (nothing is fetched).
+- On EDMC's light Default theme the panel's orange text is a darker orange so it stays readable; the Dark and Transparent themes keep the bright one.
 - A WFMT window opens on the monitor EDMC is on the first time, and again there if the monitor you left it on is gone. To have every window open there, tick *Always open WFMT's windows on EDMC's monitor* in Settings → WFMT → General → Window. A window you left on a second screen otherwise reopens there.
 - If screenshots don't save, Windows **Controlled Folder Access** or your antivirus may be blocking EDMC. Allow it, or choose another folder.

@@ -184,7 +184,7 @@ One small card on your game screen with three jobs. It has no panel button, only
   - `No scoop at next star`, `(neutron star)`, `Fuel 38% (12.2 t)` when the star you have plotted to is one you cannot scoop (neutron stars, white dwarfs, black holes and the other non-main-sequence stars) and the tank is at or under a second percentage. That second warning is the one the game does not give you.
 - **Mining alerts.** While you mine:
   - A green `Core asteroid` card with the core mineral for 30 seconds when a prospected rock is a core asteroid.
-  - A green `Rich rock: Painite` card for each target commodity (set under Settings → WFMT → Mining; several can be set, each with its own percentage) that a rock holds at least the percentage of. A rock rich in more than three targets shows the richest three.
+  - A green `Rich rock: Painite` card for each target commodity (set on the Settings card of the Space Mining window; several can be set, each with its own percentage) that a rock holds at least the percentage of. A rock rich in more than three targets shows the richest three.
   - An amber `Low on limpets` when the limpets aboard are at or under a number you choose.
   - An amber `Hold nearly full` when the hold is at or over a percentage you choose. It follows the cargo in the game's `Status.json` as it changes, and the `Cargo` event when that is not available; it does not use the figure while the Rhino is out.
 
@@ -201,7 +201,7 @@ One small card on your game screen with three jobs. It has no panel button, only
    - **Fleet carrier jump countdown (alerts at 10, 5 and 1 minute, and at departure)** (on).
    - **Fuel warnings** (on), with two percentages, each from 5 to 95: **Warn when the tank is at or under** (25 by default) and **Warn about a star that cannot be scooped when the tank is at or under** (50 by default).
    - **Mining alerts (a core asteroid, a rock rich in your target commodity, low limpets, a nearly full hold)** (on), with **Warn when the limpets aboard are at or under** (0 to 99, 5 by default) and **Warn when the hold is at or over** (50 to 100 percent full, 95 by default).
-   - The target commodity and its percentage for the rich-rock alert are set under **Settings → WFMT → Mining**; a core asteroid is always flagged.
+   - The target commodity and its percentage for the rich-rock alert are set on the Settings card of the **Space Mining** window; a core asteroid is always flagged.
 3. Optionally tick **Play a sound when an alert starts** (off by default): it plays when a fuel or mining alert starts and at 10 minutes, 5 minutes, 1 minute
    and departure for a carrier jump. The box is grayed out where WFMT cannot play a sound (on Linux it needs `canberra-gtk-play`
    or `paplay`).

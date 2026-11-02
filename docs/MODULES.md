@@ -72,7 +72,7 @@ Spec: [TECHNICAL.md](TECHNICAL.md) sections 3 to 5 and 10
 | `overlay_placement.py` | Global overlay placement: reads the real window size, mode and display scaling from EDMCModernOverlay's log (falling back to Elite's `DisplaySettings.xml` and Windows' scaling, then to the window size alone from the overlay's log when that file cannot be read), keeps every display's saved spot, places a card from the size it is drawn at (`client_for_measured`), and the Overlay Placement Settings tab with its preview and the drag-and-drop layout editor |
 | `overlay_grid.py` | The drag-and-drop layout editor on the Overlay Placement tab: a to-scale picture of the screen with a grid and a box for every display; dropping a box writes the spot and offset (snapping flush to an edge or the center line, and to the grid); the conversions between a dropped box and a placement are pure |
 | `diag_log.py` | The separate diagnostic log, off by default (Settings → WFMT → Help): its own rotating file in `logs/WFMT/` in EDMC's data folder with the plugin's finer log lines (EDMC's log is kept as it was) and lines for journal event names, buttons, windows, Spansh requests, searches and rescans; the commander's name, the home folder and webhook links are hidden |
-| `panelkit.py` | Shared Tk helpers for the main panel and Settings: wrapping labels (a `min_wrap` per label, so a section can wrap at the window's width without ever widening a narrow one), separators, toggles, tooltips (`uikit/tooltip.py`'s `add_tooltip`, re-exported), collapsible sections, theming, `fit_entry` / `fit_button_row`, which cap an entry box and a row of buttons in pixels whatever the font, and `flow_buttons`, which wraps a row of buttons onto a second line before it passes the width EDMC's window is held at |
+| `panelkit.py` | Shared Tk helpers for the main panel and Settings: `accent_color` (the Elite orange, darker on EDMC's light Default theme so it stays readable), wrapping labels (a `min_wrap` per label, so a section can wrap at the window's width without ever widening a narrow one), separators, toggles, tooltips (`uikit/tooltip.py`'s `add_tooltip`, re-exported), collapsible sections, theming, `fit_entry` / `fit_button_row`, which cap an entry box and a row of buttons in pixels whatever the font, and `flow_buttons`, which wraps a row of buttons onto a second line before it passes the width EDMC's window is held at |
 | `platform_support.py` | Windows/Linux differences in one place: Elite's folders, key presses (`xdotool`), host programs under Flatpak, the primary display's size from the operating system (`primary_display_size`: `GetDeviceCaps` on Windows, `xrandr` on Linux), "Works on" notes |
 | `restore.py` | Names the last commander from the newest journal and tells every feature when EDMC starts without the game running, so nothing waits for a login |
 | `settings_scroll.py` | Wraps each Settings page in a height-capped scrolling frame so a long page never pushes the OK button off the screen |
@@ -233,8 +233,8 @@ Spec: [MINING_TECH_SPEC.md](MINING_TECH_SPEC.md)
 
 | Module | What it is |
 |---|---|
-| `mining_alerts.py` | Mining alerts for the Flight Alerts card and the Space Mining page: reads a prospected rock (a core asteroid's mineral, the commodity chosen in Settings and its percent), the exact limpets aboard from EDMC's cargo, and when the limpet and hold alerts apply; no Tk, no network |
-| `mining_missions.py` | What the active mining missions still need against the hold, as the Space Mining page's "Mission needs" lines; no Tk, no network |
+| `mining_alerts.py` | Mining alerts for the Flight Alerts card and the Space Mining window: reads a prospected rock (a core asteroid's mineral, the commodity chosen in Settings and its percent), the exact limpets aboard from EDMC's cargo, and when the limpet and hold alerts apply; no Tk, no network |
+| `mining_missions.py` | What the active mining missions still need against the hold, as the Space Mining window's "Mission needs" lines; no Tk, no network |
 | `mining_bearing.py` | Great-circle distance, bearing and arrow maths, for the Surface Compass and the coverage map |
 | `mining_body_survey.py` | The landable bodies the journal has shown in the current system (scans and mining-location signals), which the Surface Mining Book lists and the ground-type rates are worked from |
 | `mining_coverage.py` | Where the SRV's scanner has driven, per body, one map per commander; the mining locations the commander marked (center and border, radius, how much of the edge is driven) |
@@ -245,7 +245,7 @@ Spec: [MINING_TECH_SPEC.md](MINING_TECH_SPEC.md)
 | `mining_history.py` | The commander's mining runs, read from their journals in the background and saved per commander (`mining_history.json`); the newest journal is read afresh and never saved; no Tk |
 | `mining_history_data.py` | The Mining History window's tiles, fields and tables, worked out from the saved runs; no Tk |
 | `mining_window_settings.py` | Mining's display and tuning settings (session totals, cargo bar, prospector hints, coverage minimap, stop radius, rig gap, refill time, target commodities) as a Settings card in the Space Mining and Surface Mining windows (set only there) |
-| `mining_live_window.py` | The Mining live window (the Live button on each Mining page): on the Surface page a radar centered on the Rhino, the panel's lines and the Mark center, Mark border, Add hotspot and Import/export controls; on the Space page the panel's lines and the lookups; drawn by the same code as the panel, no overlay needed |
+| `mining_live_window.py` | The Space Mining and Surface Mining windows (opened by the Mine panel's two buttons, or by the Live shortcut), each with Book and Dashboard in its header and a Settings card (`mining_window_settings.py`): in Surface Mining a radar centered on the Rhino, the panel's lines and the Mark center, Mark border, Add hotspot and Import/export controls; in Space Mining the panel's lines and the lookups; drawn by the same code as the panel, no overlay needed |
 | `mining_history_window.py` | The Mining History window (the Dashboard button in Mine mode) |
 | `mining_market.py` | The open station market set against the galactic average: a line for each commodity the run refined that the station buys; no network |
 | `mining_hotspot_dialog.py` | The shared Add/Edit Hotspot form (on `uikit/form.py`), with `build_hotspot`, which turns the typed text into a hotspot and writes the material in the one spelling |
@@ -255,7 +255,7 @@ Spec: [MINING_TECH_SPEC.md](MINING_TECH_SPEC.md)
 | `mining_hotspots.py` | The saved surface-hotspot list, one per commander |
 | `mining_journal_backfill.py` | Replays the current journal when EDMC starts mid-session |
 | `mining_bodies_data.py` | The bodies the Rhino mined on, read from the journals for the Surface Mining Book: mining locations a DSS scan found, the planet class, and tons refined with a Rhino; no Tk |
-| `mining_ring_book.py` | The Space Mining Book window (the Book button on the Space Mining page): every ring with hotspots or mining runs in the journals (and ones you noted, starred or added), with hotspots by mineral, class, reserve level, tons mined, a note and a favorite |
+| `mining_ring_book.py` | The Space Mining Book window (the Book button in the Space Mining window): every ring with hotspots or mining runs in the journals (and ones you noted, starred or added), with hotspots by mineral, class, reserve level, tons mined, a note and a favorite |
 | `mining_names.py` | One spelling for a mineral or commodity name in the mining books and pages (`Tritium`, not `tritium`; the internal and short forms of Low Temp. Diamonds and Void Opal mapped to one name); no Tk |
 | `mining_rings.py` | The commander's notes, favorites and rings added by hand for the Space Mining Book, kept in `mining_ring_notes.json` (`commander_data.py`, one record per commander) |
 | `mining_rings_data.py` | The Space Mining Book's data: ring records from the journal, joined with the mining runs and the notes into rows; no Tk |
@@ -267,12 +267,12 @@ Spec: [MINING_TECH_SPEC.md](MINING_TECH_SPEC.md)
 | `mining_market_research_dialog.py` | The Market Research window (Spansh, opened from the Surface Mining Book): a table grouped by commodity, with a copyable report |
 | `mining_methods.py` | Which mining method suits each commodity |
 | `mining_overlay.py` | The mining stats overlay |
-| `mining_pages.py` | Mining's page order |
-| `mining_panel.py` | Mine mode's entry point: page chrome, Settings tab, event dispatch |
+| `mining_pages.py` | The names of Mining's two pages (Space Mining and Surface Mining), kept apart so config defaulting needs no panel import; each page is a window |
+| `mining_panel.py` | Mine mode's entry point: the summary, the Space Mining and Surface Mining buttons, the Settings tab (permissions and lookups), event dispatch |
 | `mining_price_finder_dialog.py` | The Find Best Price window (Spansh; a sortable results table), also opened from Trade's Price finder |
 | `mining_rate.py` | The rate now (tons per hour over the last minute) and the run average (tons over mining time, leaving out long gaps), with the text both the panel and the overlay show; no Tk |
 | `mining_targets.py` | The target commodities typed in Settings: parsing, a percentage per name, the problems found; no Tk |
-| `mining_render.py` | Draws each Mining page's content |
+| `mining_render.py` | Draws the Mine panel's summary and each Mining window's content |
 | `mining_reserve_lookup_dialog.py` | The Check Ring Reserve Level window (EDSM; a table of rings, or of every ringed body in a system) |
 | `mining_session_archive.py` | Optional per-run JSON archive of finished mining runs |
 | `mining_space.py` | Tracks ship-based mining runs |
@@ -300,7 +300,7 @@ Spec: [TRADE_TECH_SPEC.md](TRADE_TECH_SPEC.md) (has its own module table with mo
 |---|---|
 | `trade_blocks.py` | The typed page model Trade draws (headings, label/value rows, tables, notes) and its plain-text form |
 | `trade_carrier.py` | Fleet and squadron carrier cargo space and records, journal backfill and `trade_carrier.json` |
-| `trade_carrier_ops.py` | Running the carrier: tritium, location, planned jump, trade orders and balance from the carrier journal events |
+| `trade_carrier_ops.py` | Running the carrier: tritium, location, planned jump, trade orders and balance from the carrier journal events, and `CarrierDecommission` / `CarrierCancelDecommission`, so a scrapped carrier is dropped |
 | `trade_commodities.py` | Commodity name matching and the type-ahead list |
 | `trade_commodities_data.py` | The generated commodity table |
 | `trade_commodity_entry.py` | The type-ahead Commodity box widget |
@@ -310,8 +310,8 @@ Spec: [TRADE_TECH_SPEC.md](TRADE_TECH_SPEC.md) (has its own module table with mo
 | `trade_journal_scan.py` | Finds journal files not read yet (or grown) and applies them to the ledger, stock and carrier; `trade_journal_scan.json` |
 | `trade_ledger.py` | The per-commander session ledger, running costs, catch-up from journals and `trade_ledger.json` |
 | `trade_market.py` | Reads `Market.json` and values your cargo at the docked station |
-| `trade_pages.py` | Trade's page order |
-| `trade_panel.py` | Trade mode's entry point: chrome, page rendering, buttons, background jobs, Settings tab, journal dispatch |
+| `trade_pages.py` | The names of Trade's three pages (Session, Routes, Market), kept apart so config defaulting needs no panel import; each page is a window |
+| `trade_panel.py` | Trade mode's entry point: the short summary and the Session, Routes, Market and History buttons, what each page window shows (`page_content`), the route and market settings those windows set, background jobs, the Settings tab (permissions and the carrier choice), journal dispatch |
 | `current_system.py` | The system the commander is in now, asked on demand: what the caller tracked, EDMC's state, then the newest journal |
 | `mission_progress.py` | How far along each mission is (the game's cargo count, kills, or tons in the hold) and the color band for it; used by the Missions window and the overlay card |
 | `current_cargo.py` | The commander's hold by commodity, from EDMC's state, for "held" mission progress |
@@ -325,16 +325,16 @@ Spec: [TRADE_TECH_SPEC.md](TRADE_TECH_SPEC.md) (has its own module table with mo
 | `source_picks.py` | The four answers to "where do I buy or sell this?": closest, best local, cheapest anywhere, recommended (within 10% of the best); used by Trade and Missions |
 | `trade_prices.py` | Ranks station offers for your load (sell and buy), carrier split and verdict lines |
 | `trade_route_start.py` | Each commander's route start (last real station docked at) and `trade_route_start.json`; the journal scan feeds it docks, newest wins |
-| `trade_roundtrip.py` | Finds the best back-and-forth station pair, loaded both ways |
+| `trade_roundtrip.py` | Finds the best back-and-forth station pair, loaded both ways (optionally carrying only one commodity) |
 | `trade_ship.py` | Ship to landing-pad size and the fit rule |
 | `trade_spansh_client.py` | Spansh trade-route planner client and the profit-per-hour estimate |
 | `trade_stats.py` | Every figure and table row shown for a saved session |
 | `trade_stock.py` | The stock book: cargo bought and not yet sold, and `trade_stock.json` |
-| `trade_view.py` | Draws Trade's page blocks with real layout (figures drop to the small font in a wide font, and the title wraps instead of widening the page) |
+| `trade_view.py` | Draws Trade's page blocks with real layout (figures drop to the small font in a wide font, and the title wraps instead of widening the page), in the window theme's colors with a heading, label, value, gain, loss and warning hierarchy |
 | `trade_watch_data.py` | The market watch list: a commander's watched commodities and the prices seen for them at the markets they opened (`Market.json`), kept per commander in `trade_watch.json`, with the Spansh answers held in memory; best buy and sell across both; no Tk |
 | `trade_watch_lookup.py` | The watch list's Spansh refresh: the cheapest station to buy and the dearest to sell each watched commodity near a system, stations only, paused between requests and cancellable; the search is passed in, so it is tested offline |
 | `trade_watch_panel.py` | The Watch list row in Trade mode: a few short best-price lines, Refresh (Spansh, on a worker thread; needs Trade's lookups on) and Watch (the window); reads `Market.json` on the `Market` event |
-| `trade_windows.py` | Trade's three pages as windows (Session, Routes, Market), opened by the Trade panel's buttons; they draw what `trade_panel` hands them |
+| `trade_windows.py` | Trade's three pages as windows (Session, Routes, Market), opened by the Trade panel's buttons, each with its own saved size; they draw what `trade_panel` hands them and hold the settings that belong to the page (the route requirements, the Near me radius, count fines) |
 | `trade_watch_window.py` | The Watch list window: add a commodity with the type-ahead box, remove one, the best buy and sell with where and how old, and every market a commodity was seen at |
 
 ## Missions
@@ -352,7 +352,7 @@ Spec: [MISSIONS_TECH_SPEC.md](MISSIONS_TECH_SPEC.md)
 | `mission_cargo.py` | Collect / delivery progress of cargo missions from the journal's `CargoDepot` events |
 | `mission_types.py` | Classifies missions into the panel's categories |
 | `missions.py` | Mission mode's entry point and event handling |
-| `missions_ui.py` | Draws Missions' pages and opens the Missions window |
+| `missions_ui.py` | Draws the Missions panel (each mission type with its count) and the pages of the Mission types window, and opens the Missions window |
 
 ## Colonization: current project, history, sites window
 

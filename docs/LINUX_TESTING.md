@@ -48,6 +48,7 @@ For anyone testing WFMT on Linux with Elite Dangerous under Steam Proton (or Win
 
 Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 under "Getting set up") and work through these. They are the work added since the earlier passes; each has its longer wording in `docs/TODO.md` under "Verification in the game".
 
+- **Added in 1.5.0 (not yet run on Linux).** The pages-as-windows layout, the settings that moved into their windows, the type-ahead boxes and the darker orange on the light theme: section 7r.
 - **Added in 1.3.3 (not yet run on Linux).**
   - **Powerplay card.** Needs EDMCModernOverlay. Tick *Enable the Powerplay card* (Settings → WFMT → Overlays → Powerplay) and press **Test Card**: a card appears at the top right. Jump into a Powerplay system and then one without Powerplay data (it says **No Powerplay Detected in system**).
   - **Look-ahead.** Tick *Look up the system I am jumping to* and start a hyperspace jump: the card turns to the destination (marked *jumping*) and then to the system you arrive in. Fly a loop twice: the second lap should not look anything up. The steps are in [TEST_PLAN.md](TEST_PLAN.md) section 9.
@@ -114,12 +115,12 @@ Do sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 und
   - Relogging inside a ring fills in the ring.
   - Mining History's Earned includes a sale made at a different station than the one you docked at after mining (and *Mined, not sold yet* shows what is waiting).
   - The price finder and What pays leave fleet carriers out and fill *Minimum demand (t)* from your hold.
-- **Station price against the average.** Docked after a ring run with the commodities market open, the Space page shows `<commodity> here: N cr/t, P% above/below the galactic average (M)` for what the run refined.
+- **Station price against the average.** Docked after a ring run with the commodities market open, the Space Mining window shows `<commodity> here: N cr/t, P% above/below the galactic average (M)` for what the run refined.
   - It reads `Market.json` from the journal folder.
   - Report whether it appears with a Flatpak or Proton setup.
 - **Mining rates and targets.**
-  - The Space page, the Live window and the HUD show the same *Refining now*, *Run average*, *Hold full in about N min* and *Hold: N of M t* lines.
-  - The target box in Settings → WFMT → Mining takes several names with their own percentages, and its type-ahead works after a comma.
+  - The Space Mining window, the Surface Mining Live window and the HUD show the same *Refining now*, *Run average*, *Hold full in about N min* and *Hold: N of M t* lines.
+  - The target box on the Settings card of the Space Mining window takes several names with their own percentages, and its type-ahead works after a comma.
   - Opening Mining History once re-reads old runs in the background.
 - **Local star index** (Settings → WFMT → General → Online lookups → Local star index).
   - **Download and build** downloads about 173 MB into the Flatpak's data folder and builds an index of about 110 MB (about 300 MB free is needed while it builds).
@@ -198,7 +199,7 @@ Use them for anything the passes did not reach.
   - With Expedition (Exploration mode) and Materials (Operations mode) open, the main EDMC window must not grow wider.
   - In Expedition, **Copy on arrival** sits on its own line under **Copy Next** and **Expedition**.
   - In Engineering, **Materials**, **Blueprints** and **Engineers** sit in one row.
-  - With a large font the Trade page and the Trade History window should not widen the EDMC window either.
+  - With a large font the Trade windows and the Trade History window should not widen the EDMC window either.
 - **History heading and Busiest site:**
   - The Colonization History heading names the commander (`History - NAME`).
   - Busiest site shows the site's name and system rather than `Construction site <number>` once you have docked at it.
@@ -588,18 +589,18 @@ Windows was checked as Trade was built. The boxes below are unticked so the list
   - **Delete session** asks first.
   - **Reset** with unsaved trades asks whether to save first.
 - [ ] A session spans play sessions: trade, log out of the game and back in (a new journal file), restart EDMC, then trade some more.
-  - The Session page keeps one running tally through all of it (nothing starts afresh until you press **Reset**), and the numbers don't double.
+  - The Session window keeps one running tally through all of it (nothing starts afresh until you press **Reset**), and the numbers don't double.
   - After **Save session** the **Route** tab lists the stations from every part.
   - Also play a short stretch with EDMC closed, then start EDMC: that stretch is added the next time it sees you.
   - With two commanders, switching to the other and back leaves each one's tally as it was.
-- [ ] Session page: the sections read "In your ship" (Ship hold, and the cargo with an "In hold"
+- [ ] Session window: the sections read "In your ship" (Ship hold, and the cargo with an "In hold"
       column; "Hold space" above it only with limpets, mission or stolen cargo) and, if you have a carrier, "Carrier cargo".
   - There is no unsold-stock list and no Clear stock button.
   - Buy cargo, then save the session: Trade History's **Stock & carrier** tab shows it under "Bought, not yet sold (journal estimate...)".
 - [ ] Two computers: copy the other computer's newer journal files into this one's journal folder while EDMC is running.
   - Within a minute EDMC's log reads "Trade read N new or changed journal file(s)".
   - The trades, stock and carrier figure from those files appear (nothing doubles if you copy the same files again).
-  - Press **Rebuild** on the Session page, type the date and time the session began (UTC), and check the totals against the other computer.
+  - Press **Rebuild** in the Session window, type the date and time the session began (UTC), and check the totals against the other computer.
   - A carrier figure with a `~` in front means estimate: open Carrier Management and it goes away.
 - [ ] Carriers (only if you have one): open Carrier Management once.
   - "Carrier cargo" (used / capacity, with the free tons) appears (separate from the "Ship hold" line).
@@ -611,14 +612,14 @@ Windows was checked as Trade was built. The boxes below are unticked so the list
   - Typing narrows it.
   - Up/Down/Enter/Esc work.
   - Clicking a name fills the box.
-- [ ] Layout: the Session, Routes and Market windows show orange section headings with a rule between them where a page has more than one list (a page with a single list has no heading above it), values on the right, and aligned number columns.
+- [ ] Layout: the Session, Routes and Market windows show orange section headings with a rule between them where a window has more than one list (a window with a single list has no heading above it), values on the right, and aligned number columns.
   - Long station names wrap instead of being cut off.
   - Nothing is clipped on the right edge or makes the EDMC window wider.
   - The buttons and (on Market) the Commodity box and **Sell** / **Buy** are **above** the results.
-- [ ] Settings → Trade: untick **Include ground facilities** and **Include fleet carriers**; the results then show
+- [ ] Routes window (or Market): untick **Ground facilities** and **Fleet carriers**; the results then show
       orbital stations only, and a search makes one request instead of two.
 - [ ] The **Sell** / **Buy** buttons under the Commodity box: the chosen one is lit, switching clears the results,
-      and the results heading says "Selling" or "Buying". All the page's buttons show their full labels (**Near me**,
+      and the results heading says "Selling" or "Buying". All the window's buttons show their full labels (**Near me**,
       **Galaxy**, **Price finder**) with nothing cut off.
 - [ ] **Near me** and **Galaxy** each return results for a common commodity (try Gold and Liquid oxygen).
   - Each station says **orbital** or **ground** and its type.
@@ -628,9 +629,8 @@ Windows was checked as Trade was built. The boxes below are unticked so the list
       minutes. **Cancel** stops it. **Copy next system** puts the system name on the clipboard.
 - [ ] **Hops** button cycles 2 up to 10.
   - **Round trip** (docked at a normal station, not a carrier) answers in about 20 seconds with up to three pairs, each showing what to carry out and back. Both legs are loaded.
-  - A route's page shows an estimated profit per hour and supply/demand per hop.
-- [ ] Settings → Trade route filters: set **ignore prices older than** to a small number of hours and tick **Routes may use
-      systems that need a permit**; **Find routes** and **Round trip** still answer (an old-price filter can leave fewer results).
+  - A route shows an estimated profit per hour and supply/demand per hop.
+- [ ] Routes window filters: set **Ignore prices older than (hours)** to a small number and tick **Systems that need a permit**; **Find routes** and **Round trip** still answer (an old-price filter can leave fewer results).
 - [ ] No Python errors in the EDMC log, and the EDMC window did not get wider when you opened Trade.
 
 ## 7. BGS
@@ -659,7 +659,7 @@ All of this is platform-neutral Python reading the journal folder, but it has on
 - [ ] **Codex**: find a Codex entry with EDMC closed, start EDMC: the summary line goes up by one.
 - [ ] **Boxel Survey**: jump to a few systems with EDMC closed; after a restart the visited count (Settings → Boxel
       Survey) includes them.
-- [ ] **Trade**: the route start (Routes page) is the last real station you docked at, also after a restart and after
+- [ ] **Trade**: the route start (Routes window) is the last real station you docked at, also after a restart and after
       switching commander; carrier tritium, location and orders appear under the carrier lines if you have one.
 - [ ] **Inventory**: restart EDMC while on foot or with items in the ship locker: the bars fill without a login.
 - [ ] **Exploration Value**: after a restart mid-system, "System bodies" shows scanned of total, and "Last data sale"
@@ -680,14 +680,14 @@ Nothing should be shared between commanders.
   - **Market research** (after ticking *Enable Spansh best price finder*) lists buyers for a system where you have saved hotspots.
   - **Share line** on a positioned hotspot and **Paste spot** (refused for a spot within 100 m of one saved).
   - **Stops** lines and dashed rings on the map, and `you are here` with the Rhino within 175 m of a deposit.
-  - A Depleted mark stays and the card says how long ago (set Settings → Mining → refill days to see it come off).
+  - A Depleted mark stays and the card says how long ago (set the refill time on the Surface Mining window's Settings card to see it come off).
   - Nothing here is OS-specific; check the Book fits and the text is readable.
 - [ ] **Codex**: log in as each commander in turn: the details window subtitle names whose tally it is, and the counts
       differ. On the first start, each commander's tally is built once from their own journals (the
       panel says so while it reads).
 - [ ] **Powerplay**: the Sessions window's History tab and its total show only the commander you are playing.
 - [ ] **Boxel Survey**: the "Surveyed: N systems" line and the exported CSV change with the commander.
-- [ ] **Trade**: switching commander clears the previous one's ship, hold and route results from the Session page; the
+- [ ] **Trade**: switching commander clears the previous one's ship, hold and route results from the Session window; the
       History window opens on the active commander.
 - [ ] A commander typed in another case (the journal can write `EXAMPLECMDR` for `Examplecmdr`) is the same commander.
 - [ ] Nothing under the plugin folder is named after a commander except the `mining_sessions/` archive files.
@@ -860,10 +860,10 @@ Written on Windows against a 3840 x 2160 screen in EDMCModernOverlay's fill mode
 - [ ] **Powerplay cycle tally:** the panel shows **Cycle N merits** and **Cycle N CP** under the session lines, and they are still
       there after restarting EDMC.
 - [ ] **Trade, Round trip:** each pair lists its loads with prices, profit per ton, supply and demand; docked at a fleet carrier
-      the result says it started from the carrier. The Trade setting for the search radius changes how far it looks.
-- [ ] **Trade, Session page:** ends with the game's career totals for the commander.
+      the result says it started from the carrier. The Round trip radius in the Routes window changes how far it looks.
+- [ ] **Trade, Session window:** ends with the game's career totals for the commander.
 - [ ] **Waypoint Route, From plotted route:** plot a route in the game, press the button: its systems are added.
-- [ ] **Community goals:** the Community Goals page lists payouts under **Paid out**.
+- [ ] **Community goals:** the Community Goals type in the Mission types window lists payouts under **Paid out**.
 - [ ] **Colonization, Find all:** the results begin with a suggested shopping route, and **Copy Route** puts it on the clipboard.
 - [ ] **Planned Builds:** the **Full cost** column fills, the window's subtitle adds up the planned builds, and clicking a row names
       the building and its five biggest commodities.
@@ -893,10 +893,10 @@ The Surface Live radar has not been looked at on Linux. The simulation shows it 
 - [ ] The radar also shows:
   - orange dashed **drive rings** round the first marked location (2 km, then 4.5 km on the border)
   - two violet **Stop** circles
-  - with a target commodity set in Settings → Mining (try Painite or Platinum), a bright line to the nearest saved deposit of it with the nearest of any kind dotted
+  - with a target commodity set on the Space Mining window's Settings card (try Painite or Platinum), a bright line to the nearest saved deposit of it with the nearest of any kind dotted
   - Press **Help** and check each entry matches what you see, and that the window and its text are whole.
 - [ ] **Save map** opens your desktop's save dialog (check it appears in front of the window and takes clicks), writes a PNG, and the picture opens in an image viewer with the title, the marks and the legend legible.
-- [ ] Close it, open the real Live window from the Mining page, and check none of the pretend deposits or marks are there.
+- [ ] Close it, open the real Live window (the **Surface Mining** button), and check none of the pretend deposits or marks are there.
 - [ ] Report the distro, desktop, X11 or Wayland, native or Flatpak EDMC, and any `Plugin "WFMT" failed` or traceback lines in EDMC's log.
 
 ## 7k2. The navy look (new, not run on Linux)
@@ -929,7 +929,7 @@ Keyboard shortcuts are Windows only; the chat commands are the same on both syst
 - [ ] Settings → General → Shortcuts lists six actions with the key choices **grayed out**, the chat commands (`!wf center`, `!wf border`, `!wf rig`, `!wf zoom`, `!wf live`, `!wf overlays`) and a **Chat commands** tick box (off by default). The page is whole at the default Settings size and nothing is cut off.
 - [ ] If the page says it could not find Elite's controls file, note it (the Linux binds file is looked for inside the Proton or Wine folder).
 - [ ] Tick **Chat commands**, press OK, then in Elite's chat (a channel with nobody else in it) type `!wf overlays` and press Enter: the overlays hide; type it again: they show. Note how long after pressing Enter it happens, and with a Flatpak EDMC whether it works at all.
-- [ ] With the simulation open (Settings → Mining → Simulation) or on real ground:
+- [ ] With the simulation open (Settings → WFMT → Mining → Simulation) or on real ground:
   - `!wf zoom` steps the radar's range (50 m, 250 m, 500 m, 1 km, 2 km, back).
   - `!wf live` raises the Live window.
   - `!wf center` / `!wf border` say what they did in the window's status line.
@@ -939,7 +939,7 @@ Keyboard shortcuts are Windows only; the chat commands are the same on both syst
 
 ## 7m. What pays (Windows-tested only: check on Linux)
 
-- [ ] With *Enable Spansh best price finder* ticked (Settings → Mining) and a few saved deposits, **Book** → **What pays** opens a window.
+- [ ] With *Enable Spansh best price finder* ticked (Settings → WFMT → Mining) and a few saved deposits, **Book** → **What pays** opens a window.
   - *Near* holds your system, and *Within 100 ly* is chosen.
   - The table fills in one commodity at a time and is then ordered best price first.
   - Nothing is cut off at the default size.
@@ -970,7 +970,7 @@ Keyboard shortcuts are Windows only; the chat commands are the same on both syst
   - **Rig placed** says `Rig N noted here.`
   - Pressing it again at the same spot says it is already noted.
   - **Clear rigs** forgets them.
-  - With a rig gap set in Settings → Mining, a band of that radius appears round each rig (filled while you are inside it, an outline when you are clear).
+  - With a rig gap set on the Surface Mining window's Settings card, a band of that radius appears round each rig (filled while you are inside it, an outline when you are clear).
 - [ ] `!wf rig` typed in Elite's chat does the same (with chat commands switched on); the sound plays when it worked.
 
 ## 7q. 1.4.2: Where to Buy tabs and the Colony page (new, not run on Linux)
@@ -982,6 +982,18 @@ Keyboard shortcuts are Windows only; the chat commands are the same on both syst
 - [ ] **Stops:** each stop's Notes give its body and the age of its market data; the trip has no final row for the site.
 - [ ] **Colony page:** a **Body** line for the highlighted site, **Commodities** as `N done - N partly - N working on it`, three **Biggest gaps**.
 - [ ] **Mode buttons:** the row reads Powerplay, BGS, Explore, Mine, Trade, Mission, Operations, Colony, and the whole row still fits the panel's width.
+
+## 7r. 1.5.0: pages as windows, settings in their windows, type-ahead (new, not run on Linux)
+
+- [ ] **No page arrows:** Trade shows a short summary over **Session**, **Routes**, **Market** and **History** in one row; Mining shows a few lines for both sides over **Space Mining** and **Surface Mining**; Missions lists each type with its count over **Mission types**. Each button opens its window; check each opens in front, fits its text and does not widen EDMC's window.
+- [ ] **Trade History:** the Trades tab opens on the newest 200 trades and **Show older trades** adds 200 more each press.
+- [ ] **Mining windows:** **Book** and **Dashboard** are in each window's header and open the right windows; the `!wf live` command and its Windows shortcut open the Surface Mining window with them.
+- [ ] **Routes:** every hop shows **Profit**, the running **Total** and the distance; a **Whole route** row and a bold average-per-leg line follow; **Hops** cycles 2 to 10; a **Round trip** pair ends with *Both legs*. **Carry only this commodity** limits both legs and suggests commodity names as you type.
+- [ ] **Settings in their windows:** each of these saves as you change it (no **OK**) and shows the same value in File → Settings → WFMT where the tab keeps a copy: Routes and Market (Trade), Session (*Count fines and bounties*), the Settings card of Space Mining and Surface Mining, the Display card of Mission types, the Settings tab of Powerplay Sessions and of Inventory, the Settings card of BGS Report, the Raven Colonial strip of Sites (its ticks grayed out while the master switch is off), and the Settings strips of Expedition, Prediction review and My Codex.
+- [ ] **Settings tabs say where things went:** the Trade, Mining, Missions, Powerplay, BGS, Inventory, Colonization, Expedition and Organic Scanning tabs each carry a note that matches what you found.
+- [ ] **Type-ahead:** the Body and Ring boxes (Add hotspot, Expedition stops, Surface marks, Notes, the ring reserve lookup), the Ship box of a ship build, the Also check and Hotspots boxes (after a comma) and the Add a ring and Expedition Log system boxes suggest names; Down, Up, Enter and Escape work, and the list does not steal the keyboard.
+- [ ] **Light theme:** with EDMC on its Default (light) theme the panel's headings, warnings and buttons are a darker orange and readable; on Dark they keep the bright orange.
+- [ ] **Scrapped carrier:** after decommissioning a fleet carrier in the game (or with a journal containing `CarrierDecommission`), its record goes once the scrap time passes.
 
 ## Reporting
 

@@ -1,6 +1,6 @@
-# Test plan: 1.4.2
+# Test plan: 1.5.0
 
-What to check in EDMC after the 1.4.2 release (and before any later one), on **Windows** first and then on **Linux**.
+What to check in EDMC on the 1.5.0 build (the `feature/ux-improvements` branch; section 12 is new for it), and after any release, on **Windows** first and then on **Linux**.
 
 - This is the quick pass over the whole release:
   - the Rare Goods Finder
@@ -18,6 +18,7 @@ What to check in EDMC after the 1.4.2 release (and before any later one), on **W
 | **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is proved only by the in-game pass. | Not yet recorded for 1.3.0. Sections 1 to 7 below are open. |
 | **Linux** | 3,857 tests pass in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-11-01 for the 1.4.2 release (3,850 and 13 skipped for 1.4.1, 3,805 for the unpublished 1.4.0, 3,731 for 1.3.3, 3,687 for 1.3.2, 3,656 for 1.3.1, 3,639 before 1.3.0, 3,485 on 2026-10-28 before 1.2.0, 3,471 on 2026-10-27 before 1.1.0). | Not yet recorded for 1.3.0. The last manual passes (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
 
+- 1.5.0 is on the branch `feature/ux-improvements` and is not released; no automated or in-game result is recorded for it yet (section 12 is its pass).
 - 1.0.0 was released on 2026-10-26 (tag `v1.0.0`). 1.1.0 was released on 2026-10-27 (tag `v1.1.0`). 1.2.0 was released on 2026-10-28 (tag `v1.2.0`). 1.3.0 was released on 2026-10-29 (tag `v1.3.0`), 1.3.1 the same day (tag `v1.3.1`) and 1.3.2 the same day (tag `v1.3.2`), and 1.3.3 on 2026-10-30 (tag `v1.3.3`). These passes are the checks to run on the released build, and a failure goes to a fix on a short bugfix branch (`bugfix/1.3.2` is open).
 - Tick a box in the sections below only when you have seen it pass; nothing here has been ticked from the automated run.
 
@@ -46,8 +47,8 @@ What to check in EDMC after the 1.4.2 release (and before any later one), on **W
 
 ## 2. Mining (Mine mode)
 
-- [ ] Space Mining page: **Last rock** follows each prospected rock; a core asteroid adds `core: <mineral>` and **Core asteroids found**; the limpet figure reads `(N on board)` and matches your cargo.
-- [ ] Settings → Mining: type a target commodity and a percentage; a rock at or over it says `target`.
+- [ ] Space Mining window: **Last rock** follows each prospected rock; a core asteroid adds `core: <mineral>` and **Core asteroids found**; the limpet figure reads `(N on board)` and matches your cargo.
+- [ ] Space Mining window → Settings card: type a target commodity and a percentage; a rock at or over it says `target`.
 - [ ] Accept a mining mission: **Mission needs** shows its tons against what you hold, and changes as the hold changes.
 - [ ] Flight Alerts (Settings → Overlays → Flight Alerts, Mining alerts ticked): the Test Card shows the green core lines.
   - In a ring a core asteroid and a rich rock give a green card for about 30 seconds.
@@ -201,3 +202,20 @@ Report the distro, desktop, X11 or Wayland, and native or Flatpak EDMC.
 - [ ] **Where to Buy: body and data age.** A stop's **Notes** and the **Copy Route** lines give the body (without the system's name) and `data today` or `data N days old`. The trip no longer ends with a row for delivering at the site.
 - [ ] **The Colony page.** The highlighted site shows a **Body** line (looked up once from Raven Colonial's plan; left out when Raven has none). **Commodities** reads `N done - N partly - N working on it (of N commodities)` and **Biggest gaps** names three commodities.
 - [ ] **Mode buttons.** The row reads Powerplay, BGS, Explore, **Mine**, Trade, **Mission**, Operations, Colony; the tooltips and the Settings choices for hiding a mode use the same names.
+
+## 12. Added in 1.5.0 (feature/ux-improvements, for testing)
+
+Run `npm run deploy` from the branch and restart EDMC. The changelog's 1.5.0 entry has the full list; the checks below are the ones that need the game, a real display or EDMC's themes.
+
+- [ ] **No page arrows.** Trade, Mine and Mission show no ◀ ▶ anywhere. The Trade panel is a short summary (net profit and the hold) over one row of **Session**, **Routes**, **Market** and **History**; the Mine panel shows a few lines for the ring run and the Rhino with **Space Mining** and **Surface Mining**; the Mission panel lists each type with its count and a **Mission types** button.
+- [ ] **Trade windows.** Each of **Session**, **Routes** and **Market** opens its own window, remembers its size and position, and updates as you play. The text is easy to read (large headings, muted labels, bright values, gains green, losses red, warnings amber).
+- [ ] **Trade, Routes.** Set **Hops** (the button cycles 2 to 10), the arrival distance, jump range, price age and the permit, carrier, ground and large-pad ticks in the window, and run a search. Every hop shows its Profit, running Total and distance; a **Whole route** row and a bold line (average per leg times legs) follow. In a Round trip, each pair ends with *Both legs: out + back = per loop* and an average line. Type in **Carry only this commodity** (it suggests commodity names): both legs carry only that, and a pair counts only when it pays both ways.
+- [ ] **Trade, Market and Session.** **Near me**, **Galaxy**, **Best picks** and **Price finder** are in a row under the Commodity box and the Sell / Buy choice. The Near me radius, ship size, fleet carriers and ground facilities are set in Market, and *Count fines and bounties* in Session.
+- [ ] **Trade History.** The Trades tab opens on the newest 200 trades; **Show older trades** adds 200 more each press, and the table scrolls. There is no Earlier / Later.
+- [ ] **A scrapped fleet carrier.** On a commander whose carrier was decommissioned (or with a pending decommission, then cancel it) the carrier is gone from Trade once the scrap time has passed, and cancelling the decommission in the game keeps it.
+- [ ] **Mining windows.** **Space Mining** and **Surface Mining** open from the panel, each with **Book** and **Dashboard** in the header and a **Settings** card: the display ticks and target commodities (Space), the display ticks, coverage minimap, stop radius, rig gap and refill time (Surface). A change shows on the panel and in the other window at once. The Mining lookups, the archive option and the simulation are still in Settings → WFMT → Mining, and the Settings tab says where the rest went. The Live shortcut opens the windows.
+- [ ] **Missions.** **Mission types** opens a window with the types down the left and counts, the chosen page on the right, and a **Display** card with the six display switches; changing one redraws the panel.
+- [ ] **Powerplay, BGS and Inventory.** The Powerplay Sessions window has a **Settings** tab (CP ratios, the Copy Progress format, cycles to scan); the BGS Report window has a Settings card (show states and activity, days of ticks to keep); the Inventory window has a **Settings** tab (pillage message, pickup sound, which categories announce, suit backpack capacities). Each is saved as you change it.
+- [ ] **Colonization and Exploration.** The Sites window's Raven Colonial strip shows what is reported and holds the two ticks, grayed out while the master switch in Settings is off; the window cannot turn the master switch on. The Expedition window (copy on arrival, start the log), the Prediction review window (the record switch, its count and **Clear the record...**) and My Codex (*Track codex entries*) each have their settings. Auto-Honk, Boxel Survey, Region Sweep, Exploration Value, the Canonn filters and Waypoint Route stay in Settings.
+- [ ] **Type-ahead.** The Body boxes (Add hotspot, Expedition stops, Surface marks, Notes) and the Ring and Body or ring boxes suggest the bodies and rings WFMT knows in the system beside them; the Ship box of a ship build suggests ships; the Also check boxes and the Hotspots box of Add a ring suggest the commodity being typed in a comma-separated list; the Add a ring System and the Expedition Log locations suggest systems. Down, Up, Enter, a click and Escape work as in a system box. Nothing is fetched.
+- [ ] **EDMC's light Default theme.** The orange headings, warnings and page buttons on the main panel are a darker orange and easy to read; on Dark and Transparent they are the bright orange.

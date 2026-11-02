@@ -69,9 +69,11 @@ bgs_format.py      Shared wording (panel, window, Copy Summary); clips every jou
 bgs_state.py       Per-commander JSON (bgs_state.json): `ledger` (current period) and `archive`
                     (closed periods, newest first). Atomic write-temp-then-os.replace.
 bgs_tick_client.py Sync HTTP client (the only network call) - fetch_latest_tick().
-bgs_panel.py       Controller + main-panel widgets + Settings tab. Feeds live events to the ledger,
+bgs_panel.py       Controller + main-panel widgets + Settings tab (tick detection only). Feeds live events to the ledger,
                     polls the tick (queue.Queue/generation-counter/threading.Thread/after() pattern),
                     runs the journal replay on a worker thread, archives on a new tick.
+bgs_settings.py    The Settings card of the Report window and the config keys/readers for the display
+                    switch and the days of ticks kept (section "Settings in the report window").
 bgs_window.py      Report window (uikit): tick drop-down + one tab per system, each with a "Factions"
                     table and a "What you did" table. Tabs = last 6 systems + pinned; Copy
                     Summary always has every system.

@@ -193,8 +193,9 @@ pools every commander's finds on the install, and it stores no commander name.
 
 **Switch**
 
-- Recording is on by default (`wfmt_exo_observations_enabled`, Settings → Exploration → Organic
-  Scanning → Prediction review, which also has **Clear the record...**).
+- Recording is on by default (`wfmt_exo_observations_enabled`), switched on or off on the Settings strip at the top of the
+  Prediction review window, which also has **Clear the record...** (the Settings → Exploration →
+  Organic Scanning tab only points there).
 - Off, nothing is recorded and no older state is backfilled.
 
 **Prediction review window**

@@ -36,7 +36,7 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | The Colonization shopping list appears by itself at markets | **Also show the shopping list automatically**, or tick **Always show the shopping list, whatever screen you are on** to keep it up on every screen (with neither ticked it does not show) | Settings → WFMT → Overlays → Colonization |
 | Auto-Honk | **Enable Auto-Honk** or the **Auto-Honk** button | Settings → WFMT → Exploration → Auto-Honk |
 | **Find sources** (Missions) and **Best picks** (Trade) | **Enable Spansh trade lookups**; Find sources asks to turn it on when you press it | Settings → WFMT → Trade |
-| Routes and Market on the Trade page | **Enable Spansh trade lookups** ([details](#the-lookup-buttons-are-grayed-out-or-there-is-no-commodity-box)) | Settings → WFMT → Trade |
+| Routes and Market in Trade | **Enable Spansh trade lookups** ([details](#the-lookup-buttons-are-grayed-out-or-there-is-no-commodity-box)) | Settings → WFMT → Trade |
 | The **Hotspots**, **Prices** or **Reserves** buttons in Mine mode | **Enable Spansh nearby hotspot finder**, **Enable Spansh best price finder**, **Enable EDSM ring reserve lookup** (each separately) | Settings → WFMT → Mining |
 | ELW rarity or EDSM upload status in Exploration | The two options under Exploration Value | Settings → WFMT → Exploration → Exploration Value |
 | Fleet carriers or surface ports missing from "where to buy" results | the filters in the Where to Buy window: **Exclude fleet carriers**, **Exclude surface ports**, **Only stations with enough stock**, **Only stations with a shipyard** and **Arrival within** (all off, so everything is included, by default) | Where to Buy window (the **Where to Buy** button in the Colonization Sites window) |
@@ -45,7 +45,7 @@ off does not show an error. It just does nothing, which looks exactly like a bug
 | WFMT never updates itself | **Automatically download and install updates** (see also [the update did not take](#the-update-did-not-take)) | Settings → WFMT → General → Updates |
 | **Neutron Star** asks Spansh every time | Install the optional Local star index, and leave **Use the local index for Neutron Star when it is installed** ticked | Settings → WFMT → General → Online lookups |
 | Chat commands such as `!wf overlays` do nothing | **Chat commands** | Settings → WFMT → General → Shortcuts |
-| Prices and routes near you are for the wrong ship size | **Ship size (landing pad)** | Settings → WFMT → Trade |
+| Prices and routes near you are for the wrong ship size | **Ship size (landing pad)** | The Routes window and the Market window (Trade) |
 
 Notes:
 
@@ -75,8 +75,7 @@ A wrapped line uses the width EDMC's window already has; widening the window giv
 ### A button or section is missing
 
 Open **File → Settings → WFMT** and check the feature hasn't been switched off. The BGS, Codex Completionist and Organic Scanning
-sections can each be hidden there (Settings → WFMT → BGS; Exploration → POI Reference; Exploration → Organic Scanning), and a mode's own button can be hidden under General → Window → *Mode buttons on the main panel*. Also make sure you're in the right mode, and on the right page (some buttons
-only appear on one page).
+sections can each be hidden (BGS on the Settings card of the BGS Report window; Settings → WFMT → Exploration → POI Reference; Exploration → Organic Scanning), and a mode's own button can be hidden under General → Window → *Mode buttons on the main panel*. Also make sure you're in the right mode, and that the button you want is not in one of the mode's windows (Trade's Routes and Market buttons are in their own windows, and Mining's **Book** and **Dashboard** are in the headers of the Space Mining and Surface Mining windows).
 
 ### Numbers look wrong or out of date
 
@@ -481,7 +480,7 @@ EDMC's **Journal directory** isn't set, or points at the wrong place. See
 ### The lookup buttons are grayed out, or there is no Commodity box
 
 The Spansh lookups are off until you tick **Enable Spansh trade lookups** under **Settings → WFMT → Trade**. The
-Commodity box only appears on the Market page, and only once lookups are on.
+Commodity box only appears in the Market window, and only once lookups are on.
 
 ### I can't tell whether it's searching for a place to buy or to sell
 
@@ -492,10 +491,10 @@ heading says "Selling" or "Buying". Changing the side clears the old results.
 
 - Pick the name from the suggestion list. Spansh only knows commodities by their exact in-game name (for example
   "Void Opal", not "Void Opals"), and an unknown name finds no markets.
-- Check that your ship's pad size is right under **Settings → WFMT → Trade**. Stations without a pad your ship fits
+- Check that your ship's pad size is right in the **Market** window (**Ship size (landing pad)**). Stations without a pad your ship fits
   are left out, and the result says how many were.
 
-### The Session page seems to have lost some trades
+### The Session window seems to have lost some trades
 
 A session lasts until you press **Reset**, across logins and EDMC restarts, and catches up from the journals when
 EDMC next sees you. So check:
@@ -512,7 +511,7 @@ saved, so press **Save session** first.
 ### Trade History says I had cargo unsold that I'd already sold
 
 The "Bought, not yet sold" estimate on the Stock & carrier tab only comes down when WFMT sees you sell. Cargo your
-carrier sold on a trade order, or that you lost or jettisoned, stays in it. The Session page does not show this
+carrier sold on a trade order, or that you lost or jettisoned, stays in it. The Session window does not show this
 estimate; it shows only your ship hold and the carrier's cargo figures.
 
 ### My carrier doesn't show, or its cargo looks wrong

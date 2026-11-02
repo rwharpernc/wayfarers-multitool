@@ -105,7 +105,7 @@ Buttons:
 
 - **Reset** starts the tally again; it offers to save an unsaved session first.
 - **Save session** is grayed out until there is something to save.
-- **History** and **Rebuild** (see 5.2); the four buttons share one row. A fifth button, if a page ever needs one, goes on a second row so it never widens the panel.
+- **History** and **Rebuild** (see 5.2). These four are the Session window's header buttons. The panel's own four buttons (Session, Routes, Market, History) share one row; a fifth, if one is ever added, goes on a second row so it never widens the panel.
 
 Save does not end or restart the session: tracking is always on, the label never changes, and only
 **Reset** begins a new session.
@@ -114,12 +114,11 @@ Save does not end or restart the session: tracking is always on, the label never
 Buttons: **Find routes** (becomes **Cancel** while searching), **Copy next system**, **Hops: N** (cycles 2 to 10, section 8.1)
 and **Round trip** (section 8.2).
 
-**Market.** A commodity box (type-ahead), a **Sell** / **Buy** toggle, then **Near me**, **Galaxy**, **Best picks** and
-**Price finder**.
+**Market.** A commodity box (type-ahead), a **Sell** / **Buy** choice (**I want to**), then a row after **Then search** with **Near me**, **Galaxy**, **Best picks** and
+**Price finder** (`TradeWindow._build_search_bar`; the buttons are no longer in the window's header).
 
-- The box and toggle are shown only on this page and only when lookups are enabled.
-- The toggle is two buttons using the same on/off look as the mode buttons
-  (`panelkit.apply_toggle_button_state`), not radio buttons, which EDMC's theme doesn't color reliably.
+- The box, the choice and the buttons are in the Market window only; the buttons are grayed out until the lookups are enabled.
+- The choice is two buttons, the chosen one lit (`kind="accent"`), built by `TradeWindow._paint_side`.
 - Every button carries its full label, not an abbreviation.
 - Every button also has a hover tip, "Name - what it does" (`trade_panel.BUTTON_TIPS`, looked up by the button text before any colon, so `Hops: 3` finds `Hops`). The row of page buttons wraps instead of widening the panel.
 - Selling with an empty box = the commodity you carry most of; buying needs a typed commodity.
@@ -526,12 +525,14 @@ is the one place to fix if it changes.
      `profit` per ton, `total_profit`), `total_profit`, `cumulative_profit`.
 
 Inputs come from the game: start = docked station, else the last station docked at; cargo = `CargoCapacity`;
-budget = `Credits`; hop distance = the Settings override, else the ship's unladen `MaxJumpRange`, else 30 ly.
+budget = `Credits`; hop distance = the jump range set in the Routes window, else the ship's unladen `MaxJumpRange`, else 30 ly.
 Hops default to 3, arrival distance to 5,000 ls.
 
-`parse_hops` skips a malformed hop rather than failing the whole route. The panel shows route profit, up to
-four hops (station to station, system, ly, ls, best commodity and profit) and a "+N more" line, and remembers
-the first hop's destination system for **Copy next system**.
+`parse_hops` skips a malformed hop rather than failing the whole route. The Routes window shows route profit and every hop (station
+to station, then three figures: the hop's profit, the running total and the distance in ly; under them the system, ls, best commodity and
+the supply and demand). A **Whole route** item under the last hop adds them up, and a bold note gives the average per leg times the number
+of legs, which is the estimated total earnings (`_finish_routes`). A Round trip pair ends with a `Both legs: out + back = per loop` note and the same kind of
+average line (`_finish_round_trip`). The first hop's destination system is remembered for **Copy next system**.
 
 ### 8.1 Route filters and the time estimate
 
@@ -549,7 +550,7 @@ the first hop's destination system for **Copy next system**.
 the jump range, rounded up), 30 s plus 0.03 s per ls of supercruise to the destination, and 120 s at the station. These are
 fixed allowances for comparing routes, not measurements.
 
-The **Hops** button cycles 2 to 10 and writes the Settings value. `_finish_routes` marks a result a repeatable loop when
+The **Hops** button cycles 2 to 10 (`_HOP_CHOICES`) and writes the same saved value as the Routes window's Hops box (1 to 10). `_finish_routes` marks a result a repeatable loop when
 the last hop ends at the first hop's start and every hop has cargo.
 
 ### 8.2 Round trip (`trade_roundtrip.py`)
@@ -581,7 +582,7 @@ Spansh's planner can't be asked for a pair that comes back, so the pair is found
 The panel shows the top three (`RESULTS_KEPT`) with what to carry each way, remembers the best pair's destination for
 **Copy next system** and records it in the session's lookups (two hops). Settings: `wfmt_trade_min_supply` and
 `wfmt_trade_min_demand` (default 200 t). `wfmt_trade_roundtrip_commodity` (blank = anything) limits both legs to one commodity:
-`best_load` and `find_round_trips` take `only`, matched ignoring case, so a pair must trade it both ways to count. Tested by `tests/test_trade_roundtrip.py`.
+`best_load` and `find_round_trips` take `only`, matched ignoring case, so a pair must trade it both ways to count. The Routes window's box suggests commodity names as you type (a `CommodityEntry`, the Market box's type-ahead; local, nothing fetched). Tested by `tests/test_trade_roundtrip.py`.
 
 ## 9. Market: commodity search and ranking
 

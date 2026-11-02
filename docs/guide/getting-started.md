@@ -237,20 +237,20 @@ adds what is new, so nothing is counted twice:
 
 | Feature | What it catches up on | How far back |
 |---|---|---|
-| **Trade** | *Enable Spansh trade lookups* (off) and the carrier choice for each commander. The search numbers, the ticks (large pad, fleet carriers, ground facilities, permits), the ship size, *Count fines and bounties* and the Round trip settings are in the Routes, Market and Session windows | [Trade settings](trade.md#trade-settings) |
-| **Powerplay** | Nothing to set: a note pointing to the Settings tab of the Powerplay Sessions window, which holds *CP Ratios* (merits for 1 Control Point: Acquisition 4.0, Reinforcement 2.5, Undermining 4.2), the *Copy Progress* format and *Cycles to scan* (1 to 12, 4 by default) | [Powerplay settings](powerplay.md#settings) |
-| **BGS** | *Detect BGS ticks (polls tick.infomancer.uk every 60s)* (on). *Show BGS faction states and activity* and *Keep previous ticks for [n] days* are on the Settings card of the BGS Report window | [BGS settings](bgs.md#settings) |
-| **Missions** | Nothing to set: a note pointing to the Display card of the Mission types window, which holds the six display switches (all on by default) | [Missions settings](missions.md#settings) |
-| **Colonization** | The Raven Colonial group: *Allow WFMT to write to Raven Colonial (master switch)* (off), and your *Raven Colonial key* (hidden as you type) with **Test key**, and a link to the page where the key is made. What is reported once the switch is on (*Report my construction progress and deliveries*, *Also report cargo I move to and from my fleet carrier*) is chosen on the Raven Colonial strip of the Colonization Sites window, where its two ticks stay grayed out until the master switch is on | [Colonization](colonization.md#sharing-your-progress-with-raven-colonial) |
+| **Trade** | Session tally, stock, carrier figures, route start | New or grown journal files, every minute |
+| **Powerplay** | Merits and Control Points | The gap since EDMC last saw the journal (up to the scan depth on the Sessions window's Settings tab) |
+| **BGS** | Your effect on factions this tick | From the start of the tick |
+| **Missions** | Active missions, kill progress, cargo progress, Community Goals | The last 2 weeks |
+| **Colonization** | Deliveries (also counted into your history) and sites docked at, and transfers to your fleet carrier (its FC column) | 14 days, or back to your oldest site (30 days at most); the delivery history is also rebuilt once from every journal |
 | **Codex Completionist** | Codex finds, for the active commander | Everything since the last find it counted |
 | **System targets, Body info and the Exploration Dashboard** | The survey of the system you are in: the bodies you scanned, mapped and analyzed there, including a system you scanned while EDMC was closed | The journals that hold your visits to that system, when you log in or when EDMC starts |
 | **Your ship** (Route Planner, fuel percentage, jump range, landing-pad size) | The ship you are flying, from the last `Loadout` in your newest journal | When EDMC starts with the game already running |
-| **Organic Scanning** | *Show predicted species and scan progress* (on). *Keep a record of what I find, to check the prediction* (on) and **Clear the record...** are on the Settings strip of the Prediction review window. See [Exobiology](exobiology.md) |
+| **Organic Scanning** | The progress of each species you logged, sampled or analyzed (the stage, not the position of a sample), and the conditions, genera and first-footfall flag of bodies scanned with EDMC closed, so the prediction works when you land | The last 14 days; a sample is skipped if its body is not named in them |
 | **Boxel Survey** | Systems you arrived at, and the notable bodies and biological signals you scanned (systems new to the survey log; a system it already had keeps its scanned count) | The last 14 days |
-| **Mining** | The three opt-in lookups, *Enable body lookup*, *Archive completed mining runs*, the Surface Live simulation and the saved Known Surface Hotspots list. The display switches, target commodities, minimap, stop radius, rig gap and refill time are on the Settings card of the Space Mining and Surface Mining windows | [Mining settings](mining.md#settings) |
+| **Mining** | The run in progress (the Space Mining and Surface Mining windows); every earlier run (the Mining History window); the rings (the Space Mining Book) and the bodies with mining locations or Rhino mining (the Surface Mining Book's *From your journals* group) | The current journal file for the run in progress; every journal for the history and the two books, read once in the background (a notice says so) and then only the new ones |
 | **Carrier Route** | Your carrier's place, the tritium in its tank and the space it uses | The last 30 days, when the Carrier Route window first opens |
 | **Exploration Value** | Region, system scan progress, last data sales | The current journal file |
-| **Inventory** | Nothing to set: a note pointing to the Settings tab of the Inventory window (the *Pillage message*, *Play a sound on pickup*, *Announce pickups for* and the per-loadout backpack capacities). The overlay switches are on the Overlays tab. See [Inventory](operations.md#inventory) |
+| **Inventory** | Backpack and ship locker | Taken from EDMC's own rebuilt state |
 | **Credits line** | The session, if it is the same journal file | The saved session |
 | **Credits Ledger** | Sales, data, mission rewards and vouchers earned while EDMC was closed; the first time a commander is seen it is rebuilt once from every journal | Every journal once, then only what is newer than the last event it counted |
 
@@ -274,7 +274,7 @@ mode's guide for the limits.
 | An expedition's totals look low | The Expedition Log reads the journal live | Press **Rescan** on the expedition |
 | Codex entries you found before WFMT first ran (a new install, or a commander new to it) | Codex Completionist catches up forward from the last find it counted, so it starts from nothing for a new install | **My Codex → Backfill Journals** once |
 | A Powerplay session or a BGS period looks wrong | Their catch-ups are limited by the scan depth and the tick | **Rescan** (Powerplay); BGS rebuilds a closed period by itself |
-| A mining run that began before a restart | The Mining pages read the current journal file only (Mining History and the two books read every journal) | The run carries on from the journal file in use; an earlier file's run is not rejoined |
+| A mining run that began before a restart | The Mining windows read the current journal file only (Mining History and the two books read every journal) | The run carries on from the journal file in use; an earlier file's run is not rejoined |
 
 None of these is lost data in the game; they are limits of what WFMT can read back from the journals.
 
@@ -296,17 +296,17 @@ Most of WFMT's settings live in EDMC's Settings window: **File → Settings → 
 
 | Tab | What is on it | Guide |
 |---|---|---|
-| **BGS** | *Show BGS faction states and activity* (on); *Detect BGS ticks (polls tick.infomancer.uk every 60s)* (on); *Keep previous ticks for [n] days* (1 to 90, 7 by default) | [BGS settings](bgs.md#settings) |
+| **BGS** | *Detect BGS ticks (polls tick.infomancer.uk every 60s)* (on), with a note saying that *Show BGS faction states and activity* (on) and *Keep previous ticks for [n] days* (1 to 90, 7 by default) are on the Settings card of the BGS Report window | [BGS settings](bgs.md#settings) |
 | **Colonization** | The Raven Colonial group: *Allow WFMT to write to Raven Colonial (master switch)* (off), *Report my construction progress and deliveries to Raven Colonial* (off), *Also report cargo I move to and from my fleet carrier* (off), your *Raven Colonial key* (hidden as you type) with **Test key**, and a link to the page where the key is made. The two reporting ticks stay grayed out until the master switch is on | [Colonization](colonization.md#sharing-your-progress-with-raven-colonial) |
 | **Discord** | *Allow Post to Discord* (off); your **Destinations** (each a *Name*, a *Webhook link* hidden as you type, and an optional *Thread ID*), saved for the commander you are playing, with **Test**, **Remove**, **Add destination** and **Copy their destinations**, and **Customize posts…** (how the posts look) | [Sharing reports to Discord](discord.md) |
 | **Exploration** | A row of inner tabs, below | [Exploration](exploration.md) |
 | **General** | A row of inner tabs, below | this page |
-| **Mining** | Display switches, the three opt-in lookups, *Enable body lookup*, *Show coverage minimap*, *Archive completed mining runs*, the stop radius, the refill time, *Target commodities* with its percentage, *Too close to place another rig*, the saved Known Surface Hotspots list and the Surface Live simulation | [Mining settings](mining.md#settings) |
-| **Missions** | Six display switches, all on by default: *Show kill progress*, *Show remaining-kills column*, *Show totals row*, *Show mission count*, *Show target settlement (ground missions)*, *Show commodities needed (trade and mining)* | [Missions settings](missions.md#settings) |
+| **Mining** | The three opt-in lookups (*Enable Spansh nearby hotspot finder*, *Enable Spansh best price finder*, *Enable EDSM ring reserve lookup*, all off), *Enable body lookup* (off), *Archive completed mining runs* (off), the Surface Live simulation and the saved Known Surface Hotspots list, with a note saying where the rest went: the display switches, target commodities, coverage minimap, stop radius, rig gap and refill time are on the Settings card of the Space Mining and Surface Mining windows | [Mining settings](mining.md#settings) |
+| **Missions** | Nothing to set: a note pointing to the Display card of the Mission types window, which holds the six display switches (*Show kill progress*, *Show remaining-kills column*, *Show totals row*, *Show mission count*, *Show target settlement (ground missions)*, *Show commodities needed (trade and mining)*; all on by default) | [Missions settings](missions.md#settings) |
 | **Operations** | A row of inner tabs, below | [Operations](operations.md) |
 | **Overlays** | A row of inner tabs, below | [Overlay setup](../OVERLAY_SETUP.md) |
-| **Powerplay** | *CP Ratios* (merits for 1 Control Point: Acquisition 4.0, Reinforcement 2.5, Undermining 4.2); *Clipboard* (the format of **Copy Progress**); *Journal scan* (*Cycles to scan*, 1 to 12, 4 by default) | [Powerplay settings](powerplay.md#settings) |
-| **Trade** | *Enable Spansh trade lookups* (off) and the search numbers under it; *Only stations with a large landing pad* (off); *Include fleet carriers in prices and routes* (on); *Include ground facilities in prices and routes* (on); *Routes may use systems that need a permit* (off); *Count fines and bounties I pay as a running cost*; *Ship size (landing pad)*: From my ship, Small, Medium or Large; the carrier choice (Auto, Fleet, Squadron, Both or None) | [Trade settings](trade.md#trade-settings) |
+| **Powerplay** | Nothing to set: a note pointing to the Settings tab of the Powerplay Sessions window, which holds *CP Ratios* (merits for 1 Control Point: Acquisition 4.0, Reinforcement 2.5, Undermining 4.2), the *Copy Progress* format and *Cycles to scan* (1 to 12, 4 by default) | [Powerplay settings](powerplay.md#settings) |
+| **Trade** | *Enable Spansh trade lookups* (off); the carrier choice for each commander (Auto, Fleet, Squadron, Both or None), with a note saying where the rest went: the search numbers, the ticks (large pad, fleet carriers, ground facilities, permits), the ship size and the Round trip settings are in the Routes and Market windows, and *Count fines and bounties* is in the Session window | [Trade settings](trade.md#trade-settings) |
 
 **General** (inner tabs: Backup, Help, Online lookups, Shortcuts, Updates, Window)
 
@@ -347,7 +347,7 @@ Most of WFMT's settings live in EDMC's Settings window: **File → Settings → 
 
 | Inner tab | Controls and their starting values |
 |---|---|
-| **Inventory** | The *Pillage message* format (placeholders `{item}` and `{total}`); *Play a sound on pickup* (off; grayed out where no sound can play); *Announce pickups for* each category; the per-loadout backpack capacity overrides. See [Inventory](operations.md#inventory) |
+| **Inventory** | Nothing to set: a note pointing to the Settings tab of the Inventory window, which holds the *Pillage message* format (placeholders `{item}` and `{total}`), *Play a sound on pickup* (off; grayed out where no sound can play), *Announce pickups for* each category and the per-loadout backpack capacity overrides. See [Inventory](operations.md#inventory) |
 | **Screenshots** | *Delete original file after conversion* (off); *Include WFMT's built-in overlay in the converted screenshot* (off; Windows, built-in overlay); *Group converted files into a per-system subfolder* (off); *Show the auto-capture timer icon on the main window* (on); *Filename Mask* (a preset list); *Auto-capture poll interval (seconds)*; *Use high-resolution capture on the auto-timer (Solo play only)* (off); *Automatically capture a screenshot when scanning a Thargoid signal* (on). See [Screenshots](operations.md#screenshots) |
 | **Ship Builds** | An explanation only: the builds are kept by link in the Ship Builds window (**Ships**) |
 
@@ -359,6 +359,7 @@ Every box that takes a system name suggests systems as you type, from the second
 
 - **What it suggests:** the systems you have been in this session first, then ones WFMT already holds (expedition stops, notes).
 - **Keys:** **Down** and **Up** move through the list, **Enter** or a click takes the highlighted one, and **Escape** closes it. **Enter** with nothing highlighted does what the box always did (add the stop, run the search).
+- **Other names:** the same keys work in the other boxes that take a name WFMT can list, and all of it is local (nothing is fetched). The **Body** and **Ring** boxes (Add hotspot, Expedition stops, Surface marks, Notes, the ring reserve lookup, Add a ring) suggest the bodies and rings WFMT knows in the system typed beside them; the **Ship** box of a ship build suggests ships; a single commodity box (such as **Carry only this commodity** in the Routes window) suggests commodities; and a box that takes several commodities separated by commas (the **Also check** boxes of the mining price lookups, the **Hotspots** box of Add a ring) suggests the one you are typing.
 - **Systems you have never been to:** tick **Suggest system names from Spansh while typing** under Settings → WFMT → General → Window. It is off until you tick it, and then the letters you have typed so far (from the third) go to Spansh ([what goes on the internet](internet-and-privacy.md)).
 
 ### What you can and can't switch off
@@ -423,7 +424,7 @@ Switch to the mode first, then use the button listed here.
 | Surface Mining Book | Mining | **Book** button in the Surface Mining window |
 | Mining History | Mining | **Dashboard** button, in both mining windows |
 | Mining live window (Surface and Space) | Mining | **Space Mining** and **Surface Mining** buttons |
-| Trade History (tabs: Overview, Commodities, Stations, Route, Trades, Stock & carrier, Lookups) | Trade | **History** button on the Session page |
+| Trade History (tabs: Overview, Commodities, Stations, Route, Trades, Stock & carrier, Lookups) | Trade | **History** button on the Trade panel |
 
 Notes:
 
@@ -491,18 +492,18 @@ a moment and a tooltip shows its name and what it does.** The same goes for the 
 | **Mark border** | Mark the border of a surface mining location | Mine (the live window's header) |
 | **Book** | Space Mining Book (in the Space Mining window) or Surface Mining Book (in the Surface Mining window) | Mine (window headers) |
 | **Dashboard** | Open Mining History | Mine (window headers) |
-| **Reset** | End this session and start a new tally (offers to save first) | Trade (Session page) |
-| **Save session** | Keep this session in Trade History (the tally keeps running; press Reset to start a new one) | Trade (Session page) |
-| **History** | Open the Trade History window | Trade (Session page) |
-| **Rebuild** | Recount the session from the journals from a start time you give (UTC); for a session that began on another computer | Trade (Session page) |
-| **Find routes** / **Cancel** | Ask Spansh for trade routes / stop waiting | Trade (Routes page) |
-| **Hops** | Cycle the route length from 2 up to 10 hops | Trade (Routes page) |
-| **Round trip** | Find the best back-and-forth pair of stations, loaded both ways | Trade (Routes page) |
-| **Copy next system** | Copy the first destination to the clipboard | Trade (Routes page) |
-| **Sell** / **Buy** | Choose whether the search is for selling or buying | Trade (Market page) |
-| **Near me** / **Galaxy** | Best place to sell or buy, near you / anywhere | Trade (Market page) |
-| **Best picks** | Closest, best local, cheapest or highest anywhere, and a price within 10% of the best, for the commodity in the box | Trade (Market page) |
-| **Price finder** | The finder behind Mining's **Prices** button, for any commodity | Trade (Market page) |
+| **Reset** | End this session and start a new tally (offers to save first) | Trade (Session window) |
+| **Save session** | Keep this session in Trade History (the tally keeps running; press Reset to start a new one) | Trade (Session window) |
+| **History** | Open the Trade History window | Trade (Session window) |
+| **Rebuild** | Recount the session from the journals from a start time you give (UTC); for a session that began on another computer | Trade (Session window) |
+| **Find routes** / **Cancel** | Ask Spansh for trade routes / stop waiting | Trade (Routes window) |
+| **Hops** | Cycle the route length from 2 up to 10 hops | Trade (Routes window) |
+| **Round trip** | Find the best back-and-forth pair of stations, loaded both ways | Trade (Routes window) |
+| **Copy next system** | Copy the first destination to the clipboard | Trade (Routes window) |
+| **Sell** / **Buy** | Choose whether the search is for selling or buying | Trade (Market window) |
+| **Near me** / **Galaxy** | Best place to sell or buy, near you / anywhere | Trade (Market window) |
+| **Best picks** | Closest, best local, cheapest or highest anywhere, and a price within 10% of the best, for the commodity in the box | Trade (Market window) |
+| **Price finder** | The finder behind Mining's **Prices** button, for any commodity | Trade (Market window) |
 | **Refresh** | Ask Spansh for the best buy and sell price of each watched commodity near you (needs Trade lookups on) | Trade (Watch list section) |
 | **Watch** | Open the Watch list window | Trade (Watch list section) |
 | **Session** / **Routes** / **Market** | Open that page of Trade in its own window | Trade |

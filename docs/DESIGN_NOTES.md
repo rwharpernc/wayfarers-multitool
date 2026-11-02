@@ -534,6 +534,14 @@ Those two files are where credit belongs; the rest of this page is about WFMT's 
 - **Why:** color separates the structure of a window (where a section starts, what a column is) from its data, without adding a setting. Every window gets it because they all read the palette tokens.
 - **Not done:** a light variant or a user choice of theme; the in-game overlay cards (which have their own schemes in Settings → Overlays) and the main panel (which follows EDMC) are unchanged.
 
+### 3.28 Pages are windows, and a window's settings are set there (1.5.0)
+
+- **Decision:** Trade, Mining and Missions no longer page the main panel with ◀ ▶ arrows. The panel is a short summary with a button for each page, and the button opens that page as a window. The display and tuning settings that belong to a window are set in it and nowhere else; File → Settings → WFMT keeps the permissions and says where the rest went.
+- **Why:** EDMC's main window is small and is sized by the widest row of every plugin, which is why the arrows had already been made larger once (they were too small to see). A window can be large, sits on a second screen and updates alongside the panel. With a setting in both Settings and a window, a commander has two places to look; one place, saved as you change it, is easier to find.
+- **How it stays safe:** the saved values and config keys did not change, so nothing is migrated or lost. A window cannot turn on a permission (the Raven master switch, the lookups that contact Spansh or EDSM), so granting one is still a deliberate act in Settings.
+- **Supersedes:** the page arrows (`panelkit.nav_arrow`) and the notes in earlier sections about Mining, Trade and Missions pages on the panel.
+- **Type-ahead in every name box** belongs to the same release: a box that takes a name WFMT already holds (bodies, rings, ships, commodity lists) suggests it as you type, from local data only.
+
 ## 4. Deliberately not built
 
 Each was considered and left out for a reason that still holds. They are in the "Not planned" list of [TODO.md](TODO.md) so they are not proposed again.

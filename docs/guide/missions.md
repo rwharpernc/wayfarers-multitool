@@ -16,7 +16,7 @@ Short steps for the common jobs. Each one points at the section with the full de
 
 ### See every active mission in one view
 
-1. Press **Missions window** at the bottom of the Missions panel (or click any mission's card).
+1. Press **Missions window** at the bottom of the Missions panel (or click a mission's card in the Mission types window).
 2. Stay on the **Active** tab for one row per mission, ready ones first and then the soonest to expire. Use the **By place** tab to see the same missions grouped by the system you must go to.
 3. Click a row to read its faction, where to go, cargo, exact reward and expiry in the detail strip.
 
@@ -24,7 +24,7 @@ More: [The Missions window](#the-missions-window).
 
 ### Read the progress bars
 
-1. Open the **Progress** column in the Missions window, or page the Missions panel to **Massacre (Space)** or **Settlement Raids (Ground)** for the kill bars.
+1. Open the **Progress** column in the Missions window, or press **Mission types** on the Missions panel and pick **Massacre (Space)** or **Settlement Raids (Ground)** for the kill bars.
 2. Read the text first: `20/60` is cargo handed in, `36/36 loaded` is cargo picked up but not yet handed in, `~18/40 kills` is a kill estimate and `36/60 held` is cargo in your hold for a source and return mission.
 3. Read the color of the row: green is ready to hand in, red is under an hour left, amber is under six hours, lime is half or more done and blue is started but under half.
 4. Treat a `~` as "at least this many". The game's own mission screen is the final word.
@@ -34,7 +34,7 @@ More: [Progress](#progress) and [What the game does and doesn't tell us](#what-t
 ### Open the Missions window
 
 1. Press **Mission** in the mode bar.
-2. Press **Missions window** at the bottom of the panel, or click a mission's card to open the window on that mission.
+2. Press **Missions window** at the bottom of the panel, or click a mission's card in the Mission types window to open the Missions window on that mission.
 3. Close it when you are done. It remembers its size and position, and while it is open it keeps counting down and updating as you accept and hand in missions.
 
 More: [The Missions window](#the-missions-window).
@@ -51,7 +51,7 @@ More: [Source commodities](#source-commodities) and [Finding sources](#finding-s
 ### Track kill missions
 
 1. Accept your massacre or settlement-raid missions as usual.
-2. Page the Missions panel to **Massacre (Space)** (or **Settlement Raids (Ground)**). There is one block per issuing faction with the kills as `done/required`.
+2. Press **Mission types** on the Missions panel (or click the **Massacre** line) and pick **Massacre (Space)** (or **Settlement Raids (Ground)**). There is one block per issuing faction with the kills as `done/required`.
 3. Fly and fight. The `~` before a count means an estimate, because wing and on-foot kills are often missing from the journal until the mission completes.
 4. When the kills are done the mission turns ready (green, with a tick) and shows where to hand it in.
 5. Pin a mission (the **Pin / Unpin** button in the Missions window) if you want it listed first on the overlay card.
@@ -73,7 +73,7 @@ The numbers and names below are made up to show how the screens read. The wordin
 
 **A kill-mission stack.** You hold five massacre missions from three stations. Three are for Faction A (20, 20 and 10 kills) and two are for Faction B (15 and 15 kills).
 
-1. Page to **Massacre (Space)**. There are two blocks, not five counters. Faction A reads `0/50` and Faction B reads `0/30`.
+1. Open **Mission types** and pick **Massacre (Space)**. There are two blocks, not five counters. Faction A reads `0/50` and Faction B reads `0/30`.
 2. Under each block's bar the reward shows the total of the stacked missions. Faction B's block shows `Δ20`: the biggest stack (Faction A) needs 20 more kills than this one. Faction A's `Δ` compares it with the next biggest stack (Faction B) and reads `Δ-20`: it leads by 20.
 3. After 18 kills against Faction A, its block reads `~18/50`, because some of those kills may have come from a wing-mate. The **Sum** line at the end totals the biggest stack (Faction A, 50 kills) with a bar and the total reward.
 4. Kill with a wing-mate, then check the game's own mission screen if the count looks low. The `~` means "at least this many".
@@ -168,8 +168,8 @@ A pinned mission (★) is shown on the [Missions overlay card](#missions-on-the-
 - A pin is kept for each commander (`mission_pins.json`, mission numbers only).
 - A pin goes when its mission is handed in, fails, is abandoned or expires.
 
-**Example.** You've taken five massacre missions against the same faction from different stations. Page to
-**Massacre (Space)** and the bars show your total progress, rather than five separate counters to remember.
+**Example.** You've taken five massacre missions against the same faction from different stations. Open
+**Mission types** and pick **Massacre (Space)**: the bars show your total progress, rather than five separate counters to remember.
 
 ## What the game does and doesn't tell us, and how to work around it
 

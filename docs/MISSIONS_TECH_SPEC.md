@@ -179,9 +179,10 @@ shows that commander's data and never leaks another's.
 
 ## 9. Settings
 
-Under **File → Settings → WFMT → Missions** (config keys start `wfmt_missions_`): kill progress, the
+Set on the **Display** card of the Mission types window only (config keys start `wfmt_missions_`): kill progress, the
 remaining-kills column, the totals row, mission count, target settlement (for ground missions), and the
-commodities-needed summary on the Trade & Mining page. All default to on.
+commodities-needed summary on the Trade & Mining page. All default to on. **File → Settings → WFMT → Missions** only says where they went; the
+overlay card's options are under Settings → WFMT → Overlays → Missions.
 
 ## 10. Testing
 
@@ -236,8 +237,8 @@ The rest of the board:
 - `missions_window.MissionsWindow` shows them in two `DataTable`s, rebuilding a table only when its rows
   changed (so selection and scroll stay put), refreshes from `MissionsUI.redraw` and every 30 s.
 - `MissionsUI.__live_rows` supplies the live data.
-- The panel's two buttons (Missions window, Find sources) are built once in `build_panel`, in grid row 1
-  below the canvas, so they show on every page.
+- The panel's three buttons (Missions window, Mission types, Find sources) are built once in `build_panel`, in grid row 1
+  below the canvas and laid out by `panelkit.flow_buttons`, so they show whatever the panel lists.
 - The six display switches are set only on the **Display** card at the top of the Mission types window (the Settings → WFMT → Missions tab points there) (`missions_display_settings.DisplayCard`). The config keys live in `missions_display_settings` (`missions.py` imports them); `set_value` saves a switch and tells the listeners, and `MissionsController._on_display_setting` calls `apply_display_settings`, which redraws the panel and the window.
 - The panel has no category paging: `missions_ui._display_category_summary` lists each type that holds missions with its count (clicking a line opens the Mission types window on it). `MissionsUI.render_category` draws a type's page into a window's frame, with that window's background and wrap width (the module's `_content_bg`, `_WRAP` and `_WRAP_NAME` are put back afterwards) and without EDMC's theme.
 

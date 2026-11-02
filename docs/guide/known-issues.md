@@ -97,6 +97,14 @@ The overlay window can only sit over Elite when the game runs **borderless or wi
 
 **What to do:** restart EDMC (safe at any time), and see the table in [If EDMC wasn't running](getting-started.md#if-edmc-wasnt-running) for the action that rebuilds each feature.
 
+## Version 1.5.0 moved pages and settings into windows
+
+Version 1.5.0 replaces the page arrows of Trade, Mining and Missions with a button for each page that opens a window, and moves the settings that belong to a window into that window ([Getting started](getting-started.md#settings)). It has been checked by the automated tests; the pass in the game on Windows and Linux is still being done.
+
+- If a setting you remember in **File → Settings → WFMT** is not there, the tab says where it went. The saved values did not change.
+- A window's settings are saved as you change them, with no **OK**.
+- Please report a window that opens in a strange size or place, a setting that does not stick, or a control that does nothing ([Reporting a problem](reporting-problems.md)).
+
 ## Larger text can need a larger window
 
 - The text size of WFMT's pop-out windows (-2 to +6 points) does not change a window's saved size. At the larger sizes a window may need dragging bigger before every column and line fits; the stat tiles at the top of a dashboard and the status chips keep their size on purpose.
@@ -116,7 +124,7 @@ These were proven on Windows first:
 
 **Not yet tried:** the data backup has not been tried on Linux. Other setups (other distributions and desktops, X11, a non-Flatpak EDMC) have not been tested. Please report anything odd. The checks are listed in [Linux testing](../LINUX_TESTING.md).
 
-- **Quick pass on Linux only:** the Carrier Route window, the mining alerts and the Space Mining page's rock, core and mission lines, Mining History, and the Rare Goods Finder's columns and filters. They had a quick pass on Linux on 2026-10-20 (an earlier build of this code); the full checks are in [Linux testing](../LINUX_TESTING.md).
+- **Quick pass on Linux only:** the Carrier Route window, the mining alerts and the Space Mining window's rock, core and mission lines, Mining History, and the Rare Goods Finder's columns and filters. They had a quick pass on Linux on 2026-10-20 (an earlier build of this code); the full checks are in [Linux testing](../LINUX_TESTING.md).
 - **Keyboard shortcuts are available on Windows only.** A Linux desktop gives a program no portable way to hear keys while another window has the focus, so on Linux use the chat commands (`!wf center`, `!wf border` and so on; see [Shortcuts](shortcuts.md)). They are the same words on both systems.
 
 ## Estimates and limits worth knowing
@@ -148,7 +156,7 @@ These are not bugs, but they surprise people. Each is explained where it belongs
   - The journal records how many mining locations a body has and the tons you refined on it, but not where any deposit is. Deposits are still the hotspots you save.
   - Tons refined on a body are counted only while a Rhino is deployed and a body is known.
   - See [Mining](mining.md#the-surface-mining-book).
-- **Mining: the target commodity must be spelled as the game spells it** (for example Painite). The limpet count is exact only once EDMC has told WFMT your cargo; until then the page shows an estimate, marked with a `~`. See [Mining](mining.md#what-each-page-shows).
+- **Mining: the target commodity must be spelled as the game spells it** (for example Painite). The limpet count is exact only once EDMC has told WFMT your cargo; until then the window shows an estimate, marked with a `~`. See [Mining](mining.md#what-each-page-shows).
 - **Sounds with a Flatpak EDMC on Linux.** The Inventory and Flight Alerts sound ticks look for `canberra-gtk-play` or `paplay` inside the Flatpak, not on your system, so they can be grayed out there. See [Windows and Linux](platforms.md).
 - **The Local star index covers neutron stars only,** and only a system's main star. **White Dwarf** always asks Spansh. See [Settings](getting-started.md#settings).
 - **Hide overlays is not remembered and never automatic.** The overlays are shown again whenever EDMC starts, and WFMT does not hide them in the galaxy map. See [Overlay setup](../OVERLAY_SETUP.md#hiding-the-overlays-for-a-while).

@@ -10,17 +10,17 @@ alphabetical order of their names (in every mode the sections are alphabetical, 
   every section is folded again at each start, so the panel is the same short height every time.
 - **Long values never widen EDMC's window.** Names, notes and results in this panel wrap or are cut to a fixed length, so a long system name cannot make the main window wider.
 
-**Where the settings are.** Everything is under **Settings → WFMT**:
+**Where the settings are.** Most are under **Settings → WFMT**. A few belong to a window and are set only in that window (the table says which); their Settings tab just points there:
 
 | Feature | Settings page |
 |---|---|
 | Auto-Honk | Exploration → Auto-Honk |
 | Boxel Survey, Region Sweep, Waypoint Route | Exploration → Boxel Survey (one page, the three sections one under another) |
-| Expedition | Exploration → Expedition |
+| Expedition (copy on arrival, start the Expedition Log with an expedition) | The **Settings** strip across the top of the Expedition window (Exploration → Expedition only points there) |
 | Exploration Value | Exploration → Exploration Value |
 | Nearest place to land | Exploration → Nearest place to land |
-| Organic Scanning | Exploration → Organic Scanning |
-| POI Reference and Codex Completionist | Exploration → POI Reference (the Canonn, edastro and Codex sections one under another) |
+| Organic Scanning | Exploration → Organic Scanning (the switch for the panel's section). Keeping the record for the prediction review is on the **Settings** strip of the Prediction review window |
+| POI Reference and Codex Completionist | Exploration → POI Reference (the Canonn, edastro and Codex sections one under another). *Track codex entries* is on the **Settings** strip of the My Codex window |
 | Discovery Alerts, Notable Bodies | Overlays → Discovery, Overlays → Notable Bodies |
 | System targets, Body info, Route, Expedition Log card, Surface Compass, Exobiology cards | Overlays → the page of the same name |
 | Where each card sits, its colors and the overlay connection | Overlays → Overlay Placement, Appearance and Overlay Connection (Overlay Placement can also copy another commander's overlay choices: see [Setting up the overlay](../OVERLAY_SETUP.md#moving-things-around)) |
@@ -640,7 +640,7 @@ you when you arrive. With the section folded, the title says how many the system
   when you are near one (the game's `Status.json` names it).
 - **Notes** opens the Notes window: a **Search** box (every word you type must appear in the system, body or note), a list of every
   note, newest change first, and an editor underneath. The list's columns are **System**, **Body**, **Note** (the start of it) and **Changed (UTC)**. Select a note to change it, press **New note** (in the header) to write another. **Here**
-  beside the System and Body boxes fills in where you are now (the System box also suggests names as you type). Press **Save** to keep what is in the editor. Tick **Only the system I am in** to see just this system's notes.
+  beside the System and Body boxes fills in where you are now (the System box suggests systems and the Body box the bodies WFMT knows in that system, as you type). Press **Save** to keep what is in the editor. Tick **Only the system I am in** to see just this system's notes.
 - **Delete** asks you to press it a second time, because a note cannot be got back.
 - A note can be up to 2,000 characters, a system or body name up to 100, and you can keep 2,000 notes. Past a limit WFMT tells you
   rather than cutting the note short.
@@ -667,7 +667,7 @@ There are two ways to start, and you pick one by the tab you are on:
 
 | You want | Go to | Press | What happens |
 |---|---|---|---|
-| A trip with stops, ticked off as you arrive | **Plan** tab | **Start** | The expedition starts, and a run starts in the Log with the same name (unless switched off in Settings) |
+| A trip with stops, ticked off as you arrive | **Plan** tab | **Start** | The expedition starts, and a run starts in the Log with the same name (unless switched off on the Expedition window's Settings strip) |
 | To record a trip without planning stops | **Log** tab | **Start** | A run starts from the system you are in, in the ship you are flying. There are no stops to tick off |
 | To count a trip you are already on | **Log** tab | **Start from my last** and **sale**, **Discovery Data sale** or **Exobiology Data sale** | The expedition begins just after that sale and fills itself in from your journals |
 
@@ -759,7 +759,7 @@ Once you have honked, it also knows how many bodies the system has, so a stop re
   | **Found here** | What you did at the stop, such as `5 of 12 scanned · 2 first · 1 mapped` |
   | **From you (ly)** | The straight-line distance from where you are now, or `-` when the stop has no position yet |
 
-- **The editor** under the table has **System** (with suggestions as you type, and **Here** to fill in the system you are in), **Body (optional)** and **Note (optional)** boxes and the buttons **Add stop**, **Save changes**, **Mark visited**, **Move up**, **Move down** and **Remove**. **Mark visited** on a ticked stop takes the tick away again.
+- **The editor** under the table has **System** (with suggestions as you type, and **Here** to fill in the system you are in), **Body (optional)** (which suggests the bodies WFMT knows in that stop's system) and **Note (optional)** boxes and the buttons **Add stop**, **Save changes**, **Mark visited**, **Move up**, **Move down** and **Remove**. **Mark visited** on a ticked stop takes the tick away again.
 - **Make an expedition with Spansh** has **Road to Riches**, **Exomastery** and **Neutron route**.
 - **The tools row** has **From plotted route**, **Import CSV**, **Locate and reorder (EDSM)**, **Copy list**, **Export CSV** and **Copy next**.
 - **The status line** at the foot says what the last button did, including why it refused.
@@ -819,7 +819,7 @@ Once you have honked, it also knows how many bodies the system has, so a stop re
 
 ### The Expedition Log goes with it
 
-Unless you untick *Start the Expedition Log when I start an expedition* (Settings → WFMT → Exploration → Expedition; it is on to start with), **Start** also starts a run in the [Expedition Log](#expedition-log) under the same name, in the ship you are flying. The status line says so (*Logging in Expedition Log.*).
+Unless you untick *Start the Expedition Log with an expedition* (on the **Settings** strip across the top of the Expedition window; it is on to start with), **Start** also starts a run in the [Expedition Log](#expedition-log) under the same name, in the ship you are flying. The status line says so (*Logging in Expedition Log.*).
 
 - **Pause** pauses the run, **Stop** stops it, and starting the expedition again carries the same run on.
 - The Log tab's **Pause**, **Resume** and **Stop** act on the expedition too. The panel's Expedition section only shows what is running, so that section, the Exploration Dashboard and the overlay card always agree with the window.
@@ -834,7 +834,7 @@ The expeditions are kept on your computer for each commander, and nothing is sen
 An archive of your exploration expeditions, and a card that keeps the running one in view. It is separate from the [Expedition planner](#expedition) above, which plans stops to
 visit; the log records what **happened** on a trip, whether or not you planned a route.
 
-**An expedition from the planner.** Starting an expedition in the [Expedition planner](#expedition) or the [Route Planner](#route-planner) also starts a run here with the same name, unless that is switched off (Settings → WFMT → Exploration → Expedition, *Start the Expedition Log when I start an expedition*).
+**An expedition from the planner.** Starting an expedition in the [Expedition planner](#expedition) or the [Route Planner](#route-planner) also starts a run here with the same name, unless that is switched off (the *Start the Expedition Log with an expedition* tick on the Expedition window's **Settings** strip).
 
 - The run and the expedition are linked. **Pause**, **Resume** and **Stop** in the Log tab pause, resume and stop the expedition too, and the other way round.
 - Starting a different run here (**Start**) stops the expedition that was linked to the run it replaces.
@@ -885,7 +885,7 @@ Select one to read everything it recorded and to **edit** these, then press **Sa
 
 - its name,
 - when it started and ended (UTC; `2026-10-16` or `2026-10-16 18:30`),
-- where it started and ended,
+- where it started and ended (the two location boxes suggest systems as you type),
 - the ships used,
 - your notes.
 
@@ -1199,7 +1199,7 @@ Spansh counts a supercharge at any system with a neutron star, even when that st
 
 ### Start expedition
 
-**Start expedition** turns the stops still ahead into an expedition in the [Expedition planner](#expedition), starts it, and (unless switched off in Settings → WFMT → Exploration → Expedition) starts its [Expedition Log](#expedition-log) run, in one press.
+**Start expedition** turns the stops still ahead into an expedition in the [Expedition planner](#expedition), starts it, and (unless switched off on the Expedition window's **Settings** strip) starts its [Expedition Log](#expedition-log) run, in one press.
 
 - The status line says what happened, in green when it started (*Started 'Neutron Highway from Sol to Colonia': 12 stops. Logging in Expedition Log.*), and the button reads **Started ✓** for a few seconds.
 - The Expedition window, when you open it, is on that expedition.
@@ -1330,7 +1330,7 @@ When the target is a mark on another body than the one you are on, the line says
 **The Marks window.** Its table lists every mark with the columns **Name**, **Body**, **Latitude**, **Longitude** and **From here** (the distance from you now, when the mark is on your body). Under the heading **The compass points at:** (with what it is now aiming at) are three buttons: **Nearest hotspot**, **Selected mark** and **Nothing**. Below the table is the editor:
 
 1. Press **New mark** (in the header) or select a mark to change it.
-2. Fill in **Name**, **Body**, **Latitude** and **Longitude**. **Here** fills in your own position and body. You can also type a position, for example one from a guide or a screenshot.
+2. Fill in **Name**, **Body** (the bodies of the system you are in are suggested as you type), **Latitude** and **Longitude**. **Here** fills in your own position and body. You can also type a position, for example one from a guide or a screenshot.
 3. Press **Save**. **Delete** removes the selected mark; press it twice, since a deleted mark cannot be got back.
 
 **To see the arrow on your game screen**, tick **Settings → WFMT → Overlays → Surface Compass → Enable Surface Compass** (**off by default**) and

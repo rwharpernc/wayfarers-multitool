@@ -42,7 +42,7 @@ perfect, but it has the bells and whistles I always wanted, and I am sharing it 
 | **What it covers** | Powerplay, exploration and exobiology, mining, trading, missions, on-foot and cargo tracking, colonization, the BGS, sharing reports to Discord and more |
 | **Where it runs** | Inside [EDMC](https://github.com/EDCD/EDMarketConnector), on Windows and Linux |
 | **What you need to know** | Nothing about programming |
-| **Latest release** | **1.3.3**, published 2026-10-30 ([changelog](CHANGELOG.md)) |
+| **Latest release** | **1.4.2**, published 2026-11-01 ([changelog](CHANGELOG.md)); 1.5.0 is being tested and is not released |
 | **Cost and privacy** | Free. Alerts, overlays and online lookups are off until you turn them on, and every online lookup is listed on [one page](docs/guide/internet-and-privacy.md) |
 
 ## Download and install
@@ -112,7 +112,7 @@ The modes differ, but the habits carry over. Learn these once and they work ever
 | Move around a mode | Press a page's button to open it in its own window. **Click a section's title** to fold or unfold it |
 | Open a pop-out window | Press its panel button. Windows remember their size and place, and close with **Esc** ([the list](docs/guide/getting-started.md#opening-the-pop-out-windows)) |
 | Search the galaxy map | Use a **copy button** to put a system name on the clipboard. System-name boxes suggest as you type |
-| Change a setting | **File → Settings → WFMT**, one tab per feature |
+| Change a setting | A setting that belongs to a window is in that window (for example Routes' hops or Mining's display switches) and saves as you change it. The rest, such as the switches that let WFMT contact another service, the overlays and General, are in **File → Settings → WFMT**, one tab per feature |
 | Keep commanders apart | Each commander's data is separate, and playing with EDMC closed is fine: WFMT catches up from your journals when EDMC starts |
 | Get help or save your data | **Settings → WFMT → General**: **Report an issue**, **Copy diagnostics**, **Back up my data** |
 

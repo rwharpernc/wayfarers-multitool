@@ -42,7 +42,7 @@ Built: the BGS report and Powerplay progress can be copied for Discord or posted
 ## Mining
 
 - **A closer look at Mining**, surface mining included.
-  - A first review of both Mining pages found the coverage broad. Core asteroids, a target rock, mission needs, alerts and a live value for the hold are already in.
+  - A first review of both Mining windows found the coverage broad. Core asteroids, a target rock, mission needs, alerts and a live value for the hold are already in.
   - The Surface (Rhino) tools and the radar over the game can only be judged by playing with them, so those are still to look at.
   - The share of a rock that is left on the surface side is an idea I have not started.
   - Nothing is promised.

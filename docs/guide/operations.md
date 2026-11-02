@@ -147,7 +147,7 @@ Under the bars a small line names the last change (a pick-up or a transfer), and
 
 ### The Inventory window
 
-Tabs: **Backpack**, **Ship Locker**, **Carrier Locker** (only once a carrier is confirmed) and **Cargo**. Each of the
+Tabs: **Backpack**, **Ship Locker**, **Carrier Locker** (only once a carrier is confirmed), **Cargo** and **Settings** (see [Settings](#settings) below). Each of the
 first three lists **Resource**, **Category** and **Held**; the Cargo tab lists **Commodity** and **Tons** for the
 hold you are using (ship or SRV).
 
@@ -209,7 +209,7 @@ The pillage message, the sound, which categories are announced and the suit back
 | Suit Backpack Capacity (per suit loadout) | Inventory window → Settings | The built-in table. One row per suit loadout WFMT has seen for the commander, pre-filled with the unengineered default; change the number to what you see in the game. Until a suit has been seen the tab says `No suits recorded yet for this commander` - wear a suit in the game, then reopen Settings |
 | Test pickup (button) | Overlays → Inventory | Sends a sample pickup to the overlay and says whether the overlay could be reached, even while notifications are off |
 
-On that tab a tick saves when you click it and a box when you press Enter or click away. A blank message restores the default; a capacity left blank, or set to the unengineered default, clears your number; a capacity that is not a number above 0 leaves the saved one. A suit you wear after opening the window appears as a new row. There a tick saves when you click it, and a box when you press Enter or click away. A blank message restores the default; a capacity left blank, or set to the unengineered default, clears your number; a capacity that is not a number above 0 leaves the saved one. A suit you wear after opening the window appears as a new row. The overlay switches and the Test pickup button stay on the Overlays tab.
+On that tab a tick saves when you click it and a box when you press Enter or click away. A blank message restores the default; a capacity left blank, or set to the unengineered default, clears your number; a capacity that is not a number above 0 leaves the saved one. A suit you wear after opening the window appears as a new row. The overlay switches and the Test pickup button stay on the Overlays tab.
 
 Unticking a category in *Announce pickups for* only mutes its notifications. It is still counted.
 The overlay settings need an overlay running; see

@@ -176,6 +176,7 @@ Larger features add `start(plugin_dir)` and `stop()` for loading and flushing st
 
 - Feature modules import `panelkit`, never `ui`. If a popup window imported helpers back out of `ui.py`, that would create a circular dependency.
 - Putting shared, content-agnostic helpers in a third module that both sides import breaks that cycle by construction.
+- **`panelkit.accent_color()`** is the orange for headings, warnings and the page buttons on the main panel. EDMC's Dark and Transparent themes get the bright Elite orange (`ACCENT_ON_DARK`, 8 to 9:1); its light Default theme gets a burnt orange (`ACCENT_ON_LIGHT`, 4.5:1 or better), because the bright one is only 1.7 to 2.3:1 there. `tests/test_panel_accent.py` checks the ratios.
 
 **Stacking and pairing**
 
@@ -202,6 +203,15 @@ Larger features add `start(plugin_dir)` and `stop()` for loading and flushing st
 - Everything is placed with `grid`.
 - Features not listed fall into "Other" rather than losing their tab.
 - Every page is wrapped by `settings_scroll.scrolled_page`, which caps its visible height (between 260 and 640 px, from the screen height less 530 px for the window chrome) and adds a scrollbar past it, so a long page cannot push EDMC's Settings window, and its OK button, off the screen.
+
+**Settings that live in a window**
+
+From 1.5.0 the display and tuning settings of a feature that has windows are set in those windows, and only there. The Settings tab of such a feature keeps its permissions (the switches that let WFMT contact Spansh, EDSM or Raven Colonial, the master switch and the key) and a line saying where the rest went.
+
+- Each window builds a Settings card, tab or strip from a field list, and every box or tick saves at once (a box when Enter is pressed or focus leaves it). The saved values and config keys are unchanged, so nothing is migrated.
+- A feature's settings module owns the config keys, readers and savers (`exploration_settings.py`, `colonization_settings.py`, `inventory_settings.py`, `bgs_settings.py`, `mining_window_settings.py`, `missions_display_settings.py`) and offers `add_listener`, so the panel, the Settings tab's own variables and every open window redraw when any one of them changes. These modules import nothing from the panel, which avoids a circular import.
+- The cards are drawn by `mining_window_settings.py` (Space Mining and Surface Mining windows), `missions_display_settings.py` (the Display card of the Mission types window), `powerplay_settings_tab.py` (the Settings tab of the Powerplay Sessions window), `inventory_settings_tab.py` (the Settings tab of the Inventory window) and the Trade windows (`trade_windows.py`).
+- A permission is never set from a window: the Colonization strip shows what is reported and holds the progress and carrier-cargo ticks, but cannot turn the master switch on, and the ticks are grayed out while it is off.
 
 The **Overlays** group holds every overlay setting and toggle:
 
@@ -296,6 +306,7 @@ How that plays out:
   - `panelkit.fit_button_row(buttons, max_px)` lowers the buttons' inner padding and then the font (never below 7 pt) until the row fits.
   - The Notes and Surface Compass quick-add rows use both, capped at 190 px.
   - `panelkit.flow_buttons(container, buttons)` wraps a row of buttons onto a second line when the next one would pass the width EDMC's window is already held at (the mode-button row, set once by `panelkit.set_row_cap`; the pure `flow_positions` decides where). The Mining button bar, Region Sweep's Discover row and the Waypoints list row use it, so full-length labels cannot widen the window.
+- **Name boxes** (bodies, rings, ships, comma-separated commodities) get type-ahead from `name_suggestions.py`, on the same list as the system and commodity boxes; the names are local and nothing is fetched (see "Name type-ahead" below).
 - **Trade pages** measure their number columns with the real font; when the figures would leave the title column under 110 px (a wide font)
   the cells drop to the small font, and the title column never goes under 60 px (the title wraps instead of widening the window).
 - **Windows with tables** (the Trade History window) size their minimum width from the widest table (`_fit_width`), capped at the screen
@@ -612,6 +623,12 @@ Spansh planners:
 - Suggestions are `system_names.local()` from two letters: the systems seen by `load.journal_entry`, then sources such as the expedition stops and notes registered with `add_source`.
 - It adds Spansh's `/api/systems/field_values/system_names?q=` answers from three letters when `wfmt_system_suggest_spansh` is on (off by default).
   - The call is debounced 350 ms, runs on a worker thread, and is cached by typed start for the session.
+
+**Name type-ahead** (`name_suggestions.py`)
+
+- Systems have `system_autocomplete` and a single commodity has `commodity_autocomplete`; `name_suggestions` is the rest, on the same popup list and keys. `attach_bodies` (the bodies and rings of the system typed beside the box: the system survey, the system's saved hotspots and an earlier body lookup), `attach_ships` (the ship names the game uses) and `attach_commodity_list` (a comma-separated box; the suggestions are for the entry being typed) are the entry points, and `FormDialog` fields of type body, ship and commodity use them.
+- It is local only: the names come from data WFMT already holds, and nothing is fetched. The boxes that take it: the Body boxes (Add hotspot, Expedition stops, Surface marks, Notes), the Ring and Body or ring boxes, the Ship box of a ship build, the Also check boxes of the mining price lookups, the Hotspots box of Add a ring, the Add a ring and Expedition Log location system boxes, and the Carry only this commodity box in Routes.
+- `tests/test_name_suggestions.py` (with `tests/name_suggestions_smoke.py`) covers the matching and the attached boxes.
 
 **Missions card** (`missions_overlay.py`)
 
@@ -1287,6 +1304,7 @@ Predicts species per body from atmosphere, gravity, temperature, pressure, regio
   - Rigs is capped at 7 in the hotspot dialog.
   - While the Rhino is out, each `MiningRefined` ton is credited to the nearest positioned hotspot within 200 m (`Hotspot.mined_tons`, written on a 5 s throttle and on shutdown), so a Depleted deposit reads "depleted (612 t)".
   - Saving a hotspot from the panel within 100 m of an existing one on the same body updates it instead of adding a second.
+- **The panel is a summary; each page is a window.** The Mine panel shows a few lines for the ring run and the Rhino at once (`mining_render.py`), with **Space Mining** and **Surface Mining** buttons that open the Live windows (`mining_live_window.py`). Those windows carry **Book** and **Dashboard** in their header (the panel no longer has Book, Dashboard or Live buttons; the Live shortcut opens the windows with them) and a Settings card from `mining_window_settings.py`. `mining_pages.py` keeps the two page names only as identifiers.
 - **Windows** (`plugin/uikit/`, `mining_ledger.py`) use WFMT's own navy look - see "External windows" in section 5.
   - The Surface Mining Book (`mining_ledger.py`, data in `mining_ledger_data.py`) is the browser for scanned bodies and saved hotspots.
   - Beyond the list and map it holds the following, each documented in `MINING_TECH_SPEC.md` section 6:
@@ -1340,14 +1358,33 @@ Full detail is in the [Trade spec](TRADE_TECH_SPEC.md); the decisions worth know
 - **The page is blocks, not text.** Each page is a list of typed blocks (`trade_blocks.py`) drawn by `BlockView`
   (`trade_view.py`), so headings, label/value rows and number columns are real layout instead of text padded with spaces.
   The builders are pure and testable, and an unchanged page isn't redrawn. See the Trade spec for the sizing rules.
-- **There are no page arrows.** Trade's three pages are windows (`trade_windows.py`) opened from buttons under the
-  panel's summary, Mining's pages are its Live windows with the panel picking its own page, and Missions' category
-  pages are the Mission types window. The page-arrow helper is gone.
+- **There are no page arrows.** Trade's three pages are windows (`trade_windows.py`) opened from the **Session**, **Routes**,
+  **Market** and **History** buttons (one row) under the panel's short summary, Mining's pages are its Live windows, and
+  Missions' category pages are the Mission types window. The page-arrow helper (`panelkit.nav_arrow`) is gone, and so are
+  the settings that remembered a page. `trade_pages.py` keeps the page names only as identifiers.
+  - The windows hold no trading state: a window asks `TradePanelController.page_content(page)` for the blocks and header
+    buttons and is redrawn whenever the controller refreshes. Each page has its own saved geometry (`wfmt_trade_window_geometry_<page>`).
+  - The Routes window holds the route requirements (hops, arrival distance, jump range, price age, the permit, carrier, ground and
+    large-pad ticks, the Round trip settings), Market the Near me radius and ship size, and Session the count-fines switch, all on the
+    keys they always had. The Hops button cycles 2 to 10.
+  - Routes lists every hop with its profit, the running total and the distance, then a Whole route row and a bold average-per-leg
+    line (the average times the legs is the estimated total earnings); a Round trip pair ends with a both-legs total and the same
+    kind of average.
+  - Trade History shows the newest 200 trades and a **Show older trades** button adds 200 more; there is no Earlier / Later paging.
+  - `BlockView` can take the window theme's colors, and the windows use a text hierarchy (large headings, muted labels, bright
+    values, green gains, red losses, amber warnings).
+- **A scrapped fleet carrier is forgotten.** A decommissioned carrier writes no last event, so `trade_carrier_ops.py` reads
+  `CarrierDecommission` (its `ScrapTime`) and `CarrierCancelDecommission`; `is_scrapped` and the prune in `trade_carrier.py` drop the
+  record once the carrier is scrapped, and a Carrier Management report with `PendingDecommission` and no date counts `DECOMMISSION_DAYS`
+  (7) from that report. `tests/test_trade_carrier_scrapped.py` covers it.
+- **Round trip can carry one commodity.** The setting limits both legs to it (matched ignoring case; blank means anything), a pair
+  counts only when it pays both ways, and the result names the commodity (`tests/test_trade_roundtrip.py`).
 
 ### Missions (`missions*.py`, `mission_*.py`, `active_missions.py`, `kill_missions.py`, `all_missions.py`, `kill_tracker.py`)
 
 Data-layer modules keep per-commander state and announce changes through `Notifier` objects (`notifier.py`); derived views and the UI subscribe to them. That avoids the data layer importing UI code.
 
+- **The panel lists each mission type that holds something with its count, and the pages are a window.** The **Mission types** button opens `missions_types_window.py` (the types down the left, the chosen page on the right, drawn by `missions_ui`). Its Display card (`missions_display_settings.py`) holds the six display switches on the keys they always had. The page arrows and the settings that remembered a page are gone.
 - A bounded lookback journal scan (`journal_scan.py`, two weeks) restores missions on startup: long enough to catch anything still active, short because missions expire.
 - It also works out which missions the journals leave active, so a restart mid-game does not wait for the next login (see "Catching up on state EDMC missed").
 - `mission_cargo.py` keeps the newest `CargoDepot` progress per mission.
@@ -1801,7 +1838,10 @@ Test files add the repo root to `sys.path` and import `plugin.<module>` directly
 
 `tests/test_import_smoke.py` additionally imports every plugin module (including `load.py`) with EDMC's modules stubbed, in a subprocess, to catch import-time breakage that single-module tests miss.
 
-Trade mode's drawn page and its History window are the Tk exceptions:
+Trade mode's drawn page, its windows and its History window are the Tk exceptions:
+
+- `tests/trade_windows_smoke.py` (run by `tests/test_trade_windows_smoke.py`) opens the Session, Routes and Market windows against a stand-in controller and checks the buttons, the settings and the redraws.
+- The settings in windows have the same kind of test: `tests/mining_window_settings_smoke.py`, `missions_types_window_smoke.py`, `powerplay_bgs_settings_smoke.py`, `inventory_settings_smoke.py`, `colonization_settings_smoke.py` and `exploration_settings_smoke.py`, each run by a `tests/test_*.py` wrapper in a subprocess.
 
 - `tests/trade_history_window_smoke.py` opens the History window the same way and visits every tab.
 - The drawn page: `tests/trade_view_smoke.py` draws it in a real window with EDMC stubbed, in a subprocess (skipped when there is no display), and checks widths, redraws and column alignment.

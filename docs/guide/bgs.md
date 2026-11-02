@@ -6,7 +6,7 @@ tracks faction states, and the effect of your own missions, bounties, trade, exp
 **Work in progress.** BGS tracking is still being built, and I'd really appreciate your feedback. If something
 looks wrong, or you have a suggestion, please [open an issue](https://github.com/rwharpernc/wayfarers-multitool/issues).
 
-There is nothing to set up: it records wherever you act. BGS is on by default (the Settings card at the top of the BGS Report window); with it turned off the panel says `BGS tracking is disabled — see Settings.`
+There is nothing to set up: it records wherever you act. BGS is on by default (the Settings card at the top of the BGS Report window); with it turned off the panel says `BGS tracking is disabled — see Settings.` The switch is on the Settings card of the Report window, not in File → Settings.
 
 **On this page:** [How to](#how-to) · [The panel](#the-panel) · [What it counts](#what-it-counts) ·
 [The BGS Report window](#the-bgs-report-window) · [Resets and history](#resets-and-history) ·

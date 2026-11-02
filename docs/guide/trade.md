@@ -13,8 +13,8 @@ The Trade panel shows a short summary (your net profit and your hold) and four b
 
 A pop-out **Trade History** window keeps the sessions you choose to save.
 
-Each page is laid out in sections (orange headings with a rule between them), with label-and-value rows and tables
-whose numbers line up in columns. Long station names wrap instead of being cut off. A page's buttons are at the top of its window.
+Each page is laid out in sections with large headings, with muted labels beside bright values, small muted details, and tables
+whose numbers line up in columns. Gains are green, losses red and warnings amber. Long station names wrap instead of being cut off. A page's buttons are at the top of its window (on Market, the Commodity box and the search buttons come first).
 
 **On this page:** [How to](#how-to) · [How a trading session works](#how-a-trading-session-works) ·
 [The Session page](#the-session-page) · [Trade History](#trade-history-saving-sessions) · [Routes](#routes) ·

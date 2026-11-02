@@ -20,12 +20,12 @@ Know what you want to do? Find it here, then follow the link for the how-to.
 | Point an arrow at a spot on a planet | **Mark**, **Target** and **Marks** (the Compass) | [Compass](exploration.md#compass) |
 | Find somewhere to land in deep space | **Find** in Nearest place to land | [Nearest place to land](exploration.md#nearest-place-to-land) |
 | Keep my own notes on a system or body | The Notes section: type a line, **Add Note**; **Notes** to browse | [Notes](exploration.md#notes) |
-| See my mining run, and my rings | **Mine** mode; **Book** on the Space page | [Mining](mining.md#what-each-page-shows), [Space Mining Book](mining.md#the-space-mining-book) |
-| Keep a catalog of Rhino deposits | **Book** on the Surface page | [Surface Mining Book](mining.md#the-surface-mining-book) |
-| See everything I have ever mined | **Dashboard** in Mine mode | [Mining History](mining.md#mining-history) |
+| See my mining run, and my rings | **Mine** mode; **Space Mining**, then **Book** in its header | [Mining](mining.md#what-each-page-shows), [Space Mining Book](mining.md#the-space-mining-book) |
+| Keep a catalog of Rhino deposits | **Surface Mining**, then **Book** in its header | [Surface Mining Book](mining.md#the-surface-mining-book) |
+| See everything I have ever mined | **Dashboard** in the header of the Space Mining or Surface Mining window | [Mining History](mining.md#mining-history) |
 | Be alerted to a core asteroid, low limpets or a full hold | Flight Alerts (Settings → WFMT → Overlays → Flight Alerts) | [Flight Alerts](always-on.md#flight-alerts) |
-| Know my trading profit | **Trade** mode, the Session page | [The Session page](trade.md#the-session-page) |
-| Find the best trade route or the best price | **Find routes**; the Market page | [Routes](trade.md#routes), [Market](trade.md#market) |
+| Know my trading profit | **Trade** mode, the **Session** window | [The Session page](trade.md#the-session-page) |
+| Find the best trade route or the best price | **Find routes** in the Routes window; the Market window | [Routes](trade.md#routes), [Market](trade.md#market) |
 | See every mission and pin some | **Mission** mode; **Missions window** | [The Missions window](missions.md#the-missions-window) |
 | Find where to buy mission cargo | **Find sources** | [Source commodities](missions.md#source-commodities) |
 | Plan engineering upgrades | **Blueprints** in Operations | [Engineering](operations.md#engineering-blueprints-and-a-wishlist) |
@@ -56,12 +56,13 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
+| Pages as windows | Trade, Mining and Missions have no page arrows: the panel is a short summary with a button for each page, and each button opens that page in a window; the settings that belong to a window are set in it and save as you change them | **Session**, **Routes**, **Market**, **History** (Trade); **Space Mining**, **Surface Mining** (Mining); **Mission types** (Missions) | [Pages](getting-started.md#pages), [Settings](getting-started.md#settings) |
 | Eight modes in one panel | One small panel, switched by mode buttons; the version you run, the game mode, credits and merits lines, the overlay switch and a catch-up notice sit under them | Click a mode button; hide the ones you don't use under **Settings → WFMT → General → Window** | [Getting started](getting-started.md#finding-your-way-around) |
 | Credits this session and the Credits Ledger | What you earned or lost since login with an hourly rate, and a window of income by activity (Trade profit, exploration data, exobiology data, mission rewards, bounties and bonds), by day and the game's lifetime totals | Click the **Credits this session** line | [The lines under the mode buttons](getting-started.md#the-lines-under-the-mode-buttons) |
 | Window height fits | The EDMC window's height follows the panel as you switch modes or open a section; its width never changes | **Settings → WFMT → General → Window** to switch it off | [Window height](getting-started.md#window-height) |
 | Everything per commander | Nothing WFMT saves about play is shared between commanders | Nothing to do; switching commander in EDMC switches the data | [Getting started](getting-started.md) |
 | Catches up after EDMC was closed | Reads the recent journals when EDMC starts, counting nothing twice | Nothing to do | [If EDMC wasn't running](getting-started.md) |
-| System-name suggestions | Suggests systems as you type in any system box | Type two letters; **Down** and **Enter** pick one, **Esc** closes it | [Typing a system name](getting-started.md#typing-a-system-name) |
+| Name suggestions | Suggests systems as you type in any system box, and the bodies and rings of a system, ships and commodities in the boxes that take them (all local) | Type two letters; **Down** and **Enter** pick one, **Esc** closes it | [Typing a system name](getting-started.md#typing-a-system-name) |
 | Pop-out windows | Navy windows with colored headings that remember their size and place, and open on EDMC's monitor the first time | Open from the panel's buttons; **Esc** closes; *Always open WFMT's windows on EDMC's monitor* in **Settings → WFMT → General → Window** | [Opening the pop-out windows](getting-started.md#opening-the-pop-out-windows) |
 | Window text size | One text size for every WFMT pop-out window and dashboard, from -2 to +6 points; the small boxes at the top of a dashboard keep their size | **A-** and **A+** at the right end of a window's bottom line, or **Settings → WFMT → General → Window** | [Opening the pop-out windows](getting-started.md#opening-the-pop-out-windows) |
 | Color themes | Navy (the default), Cyan, Amber and Green for WFMT's own windows; open windows change at once and the choice is remembered; EDMC and the overlay cards are not changed | The theme name at the right end of a window's bottom line, or **Settings → WFMT → General → Window** | [Opening the pop-out windows](getting-started.md#opening-the-pop-out-windows) |
@@ -79,7 +80,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 ### Powerplay ([guide](powerplay.md))
 
-**Controls:** the panel shows live numbers. **Report** opens the Sessions window, **Rares** opens the Rare Goods Finder, **Rescan** rebuilds from your journals. **Settings → WFMT → Powerplay** holds the CP ratios and the journal scan depth.
+**Controls:** the panel shows live numbers. **Report** opens the Sessions window, **Rares** opens the Rare Goods Finder, **Rescan** rebuilds from your journals. The CP ratios, the Copy Progress format and the journal scan depth are on the **Settings** tab of the Sessions window.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
@@ -129,22 +130,22 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 - **Dashboard** (in each window's header) opens Mining History.
 - The windows are the second-screen live view (**Mark center**, **Mark border**, **Add hotspot** and **Import/export** are in the Surface Mining one).
 - **Hotspots**, **Prices** and **Reserves** are the lookups.
-- Settings are under **Settings → WFMT → Mining**.
+- The display switches, target commodities and tuning are on the Settings card at the top of each window; the lookups that contact other services, the archive option and the simulation are under **Settings → WFMT → Mining**.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
-| Space Mining page | Live stats for your run: asteroids prospected and cracked, the last rock and any core asteroids, limpets aboard, what you refined and the rate, and what your mining missions still need | Undock and mine; the page fills in | [What each page shows](mining.md#what-each-page-shows) |
-| Surface Mining page | The Rhino's cargo, what you refined and transferred, raw materials, the last DSS scan, known hotspots here and a minimap of the ground driven | Launch the Rhino; tick *Show coverage minimap* in Settings for the map | [What each page shows](mining.md#what-each-page-shows) |
-| Space Mining Book | Every ring your journals show hotspots for or that you mined at: hotspots by mineral, class, reserve level, tons mined and when, your note and a favorite; fills itself from your journals | **Book** on the Space page; **Find**, **Favorites only**, **Add ring**, **This system**, **Copy system**, **Save note**, **Favorite** | [The Space Mining Book](mining.md#the-space-mining-book) |
-| Surface Mining Book | Your catalog of Rhino deposits: tons mined, tons left (an estimate), dated Depleted marks, Rhino stops, market research, what pays (your commodities ranked by the best price Spansh shows), sharing one deposit as a line; plus the bodies your journals show mining on | **Book** on the Surface page; **Add hotspot**, **Mark depleted**, **Market research**, **What pays**, **Share line**, **Paste spot**, **This system** | [The Surface Mining Book](mining.md#the-surface-mining-book) |
-| Mining History | Every mining run in your journals added up: tons, tons per hour, commodities, rings, prospecting quality, limpets and what the sales paid, including runs made with EDMC closed | **Dashboard**; sortable tabs | [Mining History](mining.md#mining-history) |
-| Live window | A window for a second screen: on the Surface page a radar centered on the Rhino (range rings, ground driven, marked locations, saved deposits, the nearest one) with the panel's lines and the Mark center, Mark border, Add hotspot and Import/export controls; on the Space page the live numbers | **Live**; the buttons under the radar set its reach | [The live window](mining.md#the-live-window) |
+| Space Mining window | Live stats for your run: asteroids prospected and cracked, the last rock and any core asteroids, limpets aboard, what you refined and the rate, and what your mining missions still need | Undock and mine; the panel and the window fill in | [What each page shows](mining.md#what-each-page-shows) |
+| Surface Mining window | The Rhino's cargo, what you refined and transferred, raw materials, the last DSS scan, known hotspots here and a minimap of the ground driven | Launch the Rhino; tick *Show coverage minimap* on the window's Settings card for the map | [What each page shows](mining.md#what-each-page-shows) |
+| Space Mining Book | Every ring your journals show hotspots for or that you mined at: hotspots by mineral, class, reserve level, tons mined and when, your note and a favorite; fills itself from your journals | **Book** in the Space Mining window's header; **Find**, **Favorites only**, **Add ring**, **This system**, **Copy system**, **Save note**, **Favorite** | [The Space Mining Book](mining.md#the-space-mining-book) |
+| Surface Mining Book | Your catalog of Rhino deposits: tons mined, tons left (an estimate), dated Depleted marks, Rhino stops, market research, what pays (your commodities ranked by the best price Spansh shows), sharing one deposit as a line; plus the bodies your journals show mining on | **Book** in the Surface Mining window's header; **Add hotspot**, **Mark depleted**, **Market research**, **What pays**, **Share line**, **Paste spot**, **This system** | [The Surface Mining Book](mining.md#the-surface-mining-book) |
+| Mining History | Every mining run in your journals added up: tons, tons per hour, commodities, rings, prospecting quality, limpets and what the sales paid, including runs made with EDMC closed | **Dashboard** in either mining window's header; sortable tabs | [Mining History](mining.md#mining-history) |
+| Live windows | Windows for a second screen: Surface Mining has a radar centered on the Rhino (range rings, ground driven, marked locations, saved deposits, the nearest one) with the panel's lines and the Mark center, Mark border, Add hotspot and Import/export controls; Space Mining has the live numbers | **Space Mining** and **Surface Mining** (or the Live shortcut); the buttons under the radar set its reach | [The live window](mining.md#the-live-window) |
 | Mark a mining location | The center and border of a surface mining signal, drawn on the minimap with its radius and how much of its edge you have driven | **Mark center** at the middle, **Mark border** at the edge, both in the live window | [Marking a mining location](mining.md#marking-a-mining-location) |
 | Save and share hotspots | Save the spot you stand at, import or export your list | **Add hotspot** saves; **Import/export** imports or exports (both in the live window) | [The buttons](mining.md#the-buttons) |
-| Mining alerts | A card for a core asteroid or a rock rich in your target commodity; warnings for low limpets and a nearly full hold while you mine | **Settings → WFMT → Mining** for the target commodity; **Settings → WFMT → Overlays → Flight Alerts** to switch them on | [Flight Alerts](always-on.md#flight-alerts) |
+| Mining alerts | A card for a core asteroid or a rock rich in your target commodity; warnings for low limpets and a nearly full hold while you mine | The target commodities on the Settings card of the Space Mining window; **Settings → WFMT → Overlays → Flight Alerts** to switch them on | [Flight Alerts](always-on.md#flight-alerts) |
 | Mining overlay and archive | Live stats on your game screen; an optional JSON file per completed run | **Settings → WFMT → Overlays → Mining**; *Archive completed mining runs* | [Settings](mining.md#settings) |
 | Mining radar over the game | The Surface Live radar drawn on your game screen while the Rhino is out (WFMT's built-in overlay, Windows) | **Settings → WFMT → Overlays → Mining**: *Show the Mining radar over the game*, its size and opacity, **Test radar** | [The radar over the game](mining.md#the-radar-over-the-game) |
-| Opt-in lookups | Nearby hotspots and best price (Spansh), ring reserve level (EDSM) | Tick them in Settings, then **Hotspots**, **Prices**, **Reserves** | [The buttons](mining.md#the-buttons) |
+| Opt-in lookups | Nearby hotspots and best price (Spansh), ring reserve level (EDSM) | Tick them under **Settings → WFMT → Mining**, then **Hotspots**, **Prices**, **Reserves** | [The buttons](mining.md#the-buttons) |
 
 ### Trade ([guide](trade.md))
 
@@ -155,13 +156,13 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 - Routes: **Find routes**, **Cancel**, **Hops**, **Round trip**, **Copy next system**.
 - Market: **Sell**/**Buy**, **Near me**/**Galaxy**, **Best picks**, **Price finder**.
 - Watch list: **Watch**, **Refresh**.
-- The Spansh lookups are switched on under **Settings → WFMT → Trade**.
+- The Spansh lookups and the carrier choice are under **Settings → WFMT → Trade**; the route requirements, the Near me radius and ship size are set in the Routes and Market windows, and *Count fines and bounties* in Session.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
 | Session profit | Profit after fuel, repairs and running costs, credits per hour, your hold, the carrier's space, what was bought but not sold (an estimate) and the game's lifetime totals | Just trade; **Reset** ends the session | [The Session page](trade.md#the-session-page) |
 | Trade History | Saved sessions, with a CSV export | **Save session**, then **History** | [Trade History](trade.md#trade-history-saving-sessions) |
-| Routes | The best trade routes from where you are, and a round trip | **Find routes**; **Hops** cycles 2 to 10; **Round trip** | [Routes](trade.md#routes) |
+| Routes | The best trade routes from where you are, and a round trip | **Find routes**; **Hops** cycles 2 to 10; **Round trip** (with an optional **Carry only this commodity**) | [Routes](trade.md#routes) |
 | Market and Best picks | Where to sell or buy a commodity; the closest, best local and cheapest station | Pick **Sell** or **Buy**, type a commodity, **Near me** or **Galaxy**; **Best picks** | [Market](trade.md#market), [Best picks](trade.md#best-picks) |
 | Watch list | The commodities you care about with the best buy and sell price | **Watch**; add a commodity; **Refresh** | [Watch list](trade.md#watch-list) |
 | Fleet and squadron carrier | Cargo and tritium kept up to date from the journal | Open Carrier Management once in the game | [Your fleet carrier](trade.md#your-fleet-carrier-and-squadron-carrier) |
@@ -169,7 +170,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 
 ### Missions ([guide](missions.md))
 
-**Controls:** the panel lists each type with its count; **Mission types** opens the pages in a window. **Missions window** and **Find sources** are at the bottom of the panel. The Missions overlay is under **Settings → WFMT → Overlays → Missions**.
+**Controls:** the panel lists each type with its count; **Mission types** opens the pages in a window, with the six display switches on its **Display** card. **Missions window** and **Find sources** are at the bottom of the panel. The Missions overlay is under **Settings → WFMT → Overlays → Missions**.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
@@ -177,7 +178,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Missions window | Every mission with progress, reward, time left, where to hand it in, and pinning | **Missions window**, or click a mission card; pin to keep one on the overlay | [The Missions window](missions.md#the-missions-window) |
 | Missions overlay card | The missions for this system and the next, ready ones in green | **Settings → WFMT → Overlays → Missions** | [Missions on the overlay](missions.md#missions-on-the-overlay) |
 | Source commodities | Where to buy the cargo your Collect and Mining missions need, and where to pick up a Delivery | **Find sources** | [Source commodities](missions.md#source-commodities) |
-| Community Goals | The goals you are in and what they paid | The Community Goals page | [Using it](missions.md#using-it) |
+| Community Goals | The goals you are in and what they paid | The Community Goals type in the **Mission types** window | [Using it](missions.md#using-it) |
 
 ### Operations ([guide](operations.md))
 
@@ -186,7 +187,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
 | Screenshots | Converts Elite's screenshots to PNG, with an optional crop to the HUD; an optional auto-capture timer and Thargoid-scan capture press the screenshot key for you | Nothing to do; **Click to expand** shows thumbnails; the clock icon starts the timer | [Screenshots](operations.md#screenshots) |
-| Inventory | Your backpack, locker and cargo as bars, and the Carrier Locker, with a pick-up sound | Click an inventory bar | [Inventory](operations.md#inventory) |
+| Inventory | Your backpack, locker and cargo as bars, and the Carrier Locker, with a pick-up sound | Click an inventory bar; its pickup settings are on the **Settings** tab of the Inventory window | [Inventory](operations.md#inventory) |
 | Materials | The Raw, Manufactured and Encoded materials you hold, their grade and limit | **Materials** | [Materials](operations.md#materials) |
 | Engineering | About 1,180 blueprints against what you hold, a wishlist and shopping list, a ship planner (which also shows the engineered modules you already have in storage), an Odyssey upgrade planner and an Engineers tab (rows colored by status, the next step and the full unlock path for each engineer) | **Blueprints** | [Engineering](operations.md#engineering-blueprints-and-a-wishlist) |
 | Material trader finder | The closest Raw, Manufactured or Encoded trader, with distance and pad filters | **Find a trader** in the Materials window | [Materials](operations.md#materials) |
@@ -203,7 +204,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Colonization Sites window | Every site's shopping list, progress and totals, and the carrier's part | **Dashboard**; **Rescan Journals** if a load did not register | [The Sites window](colonization.md#the-colonization-sites-window) |
 | Where to buy | The closest places to buy a commodity, or a whole list, with, for a list, a suggested shopping trip in flying order with a next-stop card, and the price and stock at each stop | Click a commodity row, press **Where to Buy**, then **Find nearest** or **Find all** (**Stop** while it runs) | [Where to buy](colonization.md#where-to-buy), [Suggested route](colonization.md#suggested-route) |
 | My Projects | Every active project you have on Raven Colonial, across systems, with totals and trips | **Projects** | [My Projects](colonization.md#my-projects) |
-| Planned Builds and Raven Colonial | Links, starting a Raven project for a site, and opt-in sharing of progress and deliveries | **Raven Colonial** menu in the Sites window; **Settings → WFMT → Colonization** (master switch and your Raven key) | [Planned builds](colonization.md#planned-builds), [Starting a project](colonization.md#starting-a-project-on-raven-colonial) |
+| Planned Builds and Raven Colonial | Links, starting a Raven project for a site, and opt-in sharing of progress and deliveries | **Raven Colonial** menu in the Sites window; **Settings → WFMT → Colonization** (master switch and your Raven key); the two reporting ticks are on the Raven Colonial strip of the Sites window | [Planned builds](colonization.md#planned-builds), [Starting a project](colonization.md#starting-a-project-on-raven-colonial) |
 | Shopping list overlay | Shown at the market, your carrier or a construction site; a List choice (All, To buy or To haul) picks which rows it shows | The options under Settings → WFMT → Overlays → Colonization (*Always show*, automatic showing, rows, *List*) | [The overlay](colonization.md#the-shopping-list-on-the-overlay) |
 | Colonization Archive | Finished sites put away for reference, with how they ended, their dates and the commodities they needed; restore or remove them | **Manage Sites → Archive Finished**, then **Show Archive** | [The archive](colonization.md#the-archive) |
 | Colonization History | What you delivered over time, by day, commodity and site | **History** | [History](colonization.md#history) |
@@ -217,7 +218,7 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Faction states | The factions in this system and what your activity does to each since the last tick | Just play | [The panel](bgs.md#the-panel), [What it counts](bgs.md#what-it-counts) |
 | BGS Report | A tab per system you acted in, per tick, with an archive | **Report**; the drop-down picks an earlier tick | [The BGS Report window](bgs.md#the-bgs-report-window) |
 | Share a tick to Discord | The tick as Discord messages, copied to paste or posted to your webhook | **Report**, then the **Discord** menu | [Sharing reports to Discord](discord.md) |
-| Tick detection | Optional detection of the server tick from a community service | **Settings → WFMT → BGS** | [Tick detection](bgs.md#tick-detection-and-the-internet) |
+| Tick detection | Optional detection of the server tick from a community service | **Settings → WFMT → BGS** (the other BGS settings are on the Settings card of the BGS Report window) | [Tick detection](bgs.md#tick-detection-and-the-internet) |
 
 ### Always on, in any mode ([guide](always-on.md))
 

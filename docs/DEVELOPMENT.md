@@ -147,6 +147,12 @@ detects the OS and EDMC's plugins folder (see "Try your changes in EDMC" above).
   - Anything it draws on the overlay goes in the Overlays group (a `build_overlay_settings`, or the whole tab if it is an overlay feature), with its place registered in `overlay_placement.SLOTS`.
   - A feature with a `build_settings` that isn't listed still gets a tab, under "Other".
   - To put two small pages on one tab, wrap them with `_stacked_page`. Each feature's `build_settings(notebook)` keeps working unchanged, because the stack accepts `add(frame, text=...)` like a notebook does.
+- A setting that belongs to a window is set in that window, not in Settings (1.5.0).
+  - The window builds a card, tab or strip from a field list, saves each change at once, and shares the config key with the feature's Settings tab, which keeps only permissions (lookups that contact another service, the Raven master switch and key) and a line saying where the rest went.
+  - Put the keys, readers and savers in a small `*_settings.py` module that imports nothing from the panel, with an `add_listener` so the panel, the Settings tab and every open window redraw together (see `mining_window_settings.py`, `bgs_settings.py`, `exploration_settings.py`).
+  - Never let a window grant a permission: it may show it and grays out what depends on it.
+  - A page of a mode is a window opened from a button, never an arrow that pages the panel; a test for the window goes in `tests/*_smoke.py` with a `test_*.py` wrapper that runs it headless.
+- Boxes that take a name WFMT can list get type-ahead: `system_autocomplete` for systems, `commodity_autocomplete` for one commodity, `name_suggestions` for bodies and rings, ships and comma-separated commodities.
 - `monitor.logfile` (EDMC) is a `str` or a `pathlib.Path` depending on the version: wrap it in `str()` before
   comparing it or saving it to JSON.
 - Background threads must never touch a Tk widget; hand results back with a queue and `after()`.

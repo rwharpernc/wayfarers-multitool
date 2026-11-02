@@ -39,10 +39,11 @@ files it keeps, and the outside lookups it can make. For how to use it, see the
 All modules live in `plugin/`; `PANEL_PLACEMENT = "mining"`.
 
 ```
-mining_panel.py          Entry point (feature-module contract). Page navigation, buttons, Settings tab,
+mining_panel.py          Entry point (feature-module contract). The summary panel, its buttons, the Settings tab,
                          and the journal and Status.json dispatch.
-mining_render.py         What goes on each page (Space or Surface), redrawn on events and once a second.
-mining_pages.py          Page order (kept separate to avoid a circular import).
+mining_render.py         The panel's summary (`render_summary`) and the lines of each page (Space or Surface), redrawn on events and once a second.
+mining_pages.py          The two pages and their order (kept separate to avoid a circular import).
+mining_window_settings.py The Settings card at the top of the Space Mining and Surface Mining windows.
 mining_space.py          Ship-mining runs and the shared ring state.
 mining_surface.py        Rhino surface-mining runs and the current body and system.
 mining_rate.py           The rate now (tons per hour over the last minute) and the run average (tons over mining time), shared by both pages.
@@ -412,8 +413,8 @@ kind of ground: the share of your saved deposits, per material, with the sample 
 
 ### 6.4 The Space Mining Book
 
-The Book button opens the book for the page it is on: `mining_ring_book.py` on the Space Mining page,
-`mining_ledger.py` (the Surface Mining Book above) on the Surface Mining page.
+The **Book** button in each window's header opens the book for that page: `mining_ring_book.py` from the Space Mining window,
+`mining_ledger.py` (the Surface Mining Book above) from the Surface Mining window.
 
 **The Space Mining Book** is a catalog of **rings**, built from the journals instead of typed in.
 
@@ -473,10 +474,10 @@ the commander marks them:
   uses.
 
 ### 7.3 The Live window and the radar
-The **Live** button opens one window for each page (`mining_live_window.py`): geometry is saved per page, it redraws
+The **Space Mining** and **Surface Mining** buttons open one window for each page (`mining_live_window.py`; the Ctrl+Alt+Shift+L shortcut and `!wf live` open the Surface one): geometry is saved per page, it redraws
 once a second, and the page's lines are drawn by the same code as the panel (`mining_render`, with no button bar), so
 the two cannot disagree.
-The window will not shrink below `MIN_SIZE` (1120 by 520 pixels on the Surface page, 520 by 420 on the Space page), so the header buttons keep their room.
+The window will not shrink below `MIN_SIZE` (1120 by 600 pixels on the Surface page, 600 by 560 on the Space page), so the header buttons keep their room.
 
 - **Surface Live** has the radar (`mining_radar_view.render`, drawn by `mining_coverage_render.render_radar`): the Rhino
   in the middle, north up, range rings, the driven ground (a 2,000 m disc at each recorded point), marked locations,
@@ -554,22 +555,24 @@ The panel's buttons (`mining_render.BUTTON_ORDER`: Space Mining, Surface Mining,
 
 ## 10. Settings
 
-Under **File → Settings → WFMT → Mining** (keys start `wfmt_mining_`):
+Set on the **Settings** card of the windows only (keys start `wfmt_mining_`; see §8):
 
-- Session totals, cargo bar, prospector hints (`wfmt_mining_display_session_totals`, `_cargo_bar`, `_prospector_hints`; on),
-  the three lookups (`wfmt_mining_spansh_hotspot_finder_enabled`, `wfmt_mining_spansh_price_finder_enabled`,
-  `wfmt_mining_edsm_reserve_lookup_enabled`), body lookup (`wfmt_mining_edsm_body_lookup_enabled`), the coverage minimap
-  (`wfmt_mining_display_coverage_minimap`), run archiving (`wfmt_mining_archive_sessions`); the lookups, minimap and
-  archiving are off.
-- `wfmt_mining_stop_radius_m` (500 to 2,500 in steps of 250, default 1,250), `wfmt_mining_rig_gap_m` (0 to 2,000, 0 =
-  off) and `wfmt_mining_refill_days` (0 to 90, 0 = unknown).
-- The Known Surface Hotspots list (add, edit, delete, import, export) at the bottom of the tab.
-- The two overlays (the HUD overlay and the radar) are on Settings → WFMT → Overlays → Mining.
-- The target commodities and the default percentage (`wfmt_mining_target_commodity`,
+- Session totals, cargo bar, prospector hints (`wfmt_mining_display_session_totals`, `_cargo_bar`, `_prospector_hints`; on), in both windows.
+- Space Mining: the target commodities and the default percentage (`wfmt_mining_target_commodity`,
   `wfmt_mining_target_percent`; a line under the box lists problems in what is typed).
+- Surface Mining: the coverage minimap (`wfmt_mining_display_coverage_minimap`; off), `wfmt_mining_stop_radius_m` (500 to 2,500 in steps of 250,
+  default 1,250), `wfmt_mining_rig_gap_m` (0 to 2,000, 0 = off) and `wfmt_mining_refill_days` (0 to 90, 0 = unknown).
+
+Under **File → Settings → WFMT → Mining**, which says where the rest went:
+
+- The three lookups (`wfmt_mining_spansh_hotspot_finder_enabled`, `wfmt_mining_spansh_price_finder_enabled`,
+  `wfmt_mining_edsm_reserve_lookup_enabled`), body lookup (`wfmt_mining_edsm_body_lookup_enabled`) and run archiving
+  (`wfmt_mining_archive_sessions`); all off. They contact other services or write files, so they stay in Settings.
+- The Known Surface Hotspots list (add, edit, delete, import, export) at the bottom of the tab, and the Simulation button.
+- The two overlays (the HUD overlay and the radar) are on Settings → WFMT → Overlays → Mining.
 - The mining alerts' own switches (`wfmt_flight_mining`, `wfmt_flight_limpets_low`,
   `wfmt_flight_hold_percent`) are on Settings → Overlays → Flight Alerts.
-- The last page you viewed is remembered.
+- There is no remembered page: the panel always shows both sides.
 
 ## 11. Files
 

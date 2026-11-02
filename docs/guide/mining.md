@@ -6,7 +6,7 @@ Mine mode tracks two kinds of mining, keeps a book for each, and adds up everyth
 - **Surface Mining**, in the Rhino SRV, with the **Surface Mining Book**: your catalog of deposits, and the bodies your journals show mining on.
 - **Mining History**: every run in your journals, added up.
 
-The Mining panel is a short summary and a row of buttons. It shows a few lines for your ring run and a few for the Rhino, both at once, then **Space Mining** and **Surface Mining**, which each open that page's own window: the live numbers (for the Rhino also the radar and the controls), with **Book** and **Dashboard** in its header. **Hotspots**, **Prices** and **Reserves** are there too once you switch those lookups on. There are no pages to switch between.
+The Mining panel is a short summary and a row of buttons. It shows a few lines for your ring run and a few for the Rhino, both at once, then **Space Mining** and **Surface Mining**, which each open that page's own window: the live numbers (for the Rhino also the radar and the controls), with **Book** and **Dashboard** in its header and a **Settings** card at the top. **Hotspots**, **Prices** and **Reserves** are on the panel and in the Space Mining window once you switch those lookups on. There are no pages to switch between and no page arrows.
 
 **On this page:** [How to](#how-to) · [What each page shows](#what-each-page-shows) · [The buttons](#the-buttons) · [A typical run](#a-typical-run) · [Mining History](#mining-history) · [The live window](#the-live-window) · [Marking a mining location](#marking-a-mining-location) · [The Space Mining Book](#the-space-mining-book) · [The Surface Mining Book](#the-surface-mining-book) · [Mining alerts](#mining-alerts) · [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it) · [Settings](#settings)
 
@@ -23,15 +23,15 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 **Start a Space Mining run.** Details: [Space Mining](#space-mining).
 
-1. Look at the panel when you are in your ship: it shows the Space Mining page (or press **Space Mining** for its window).
-2. Undock. A new run begins. The page keeps saying `No active mining run. Undock to start tracking a new run.` until the run has something to show (tons in the hold, a prospected rock, a launched limpet or a refined ton), then the live numbers of the run appear.
+1. Look at the panel when you are in your ship: it shows a few lines for the ring run (press **Space Mining** for the whole page in its window).
+2. Undock. A new run begins. The Space Mining window keeps saying `No active mining run. Undock to start tracking a new run.` until the run has something to show (tons in the hold, a prospected rock, a launched limpet or a refined ton), then the live numbers of the run appear.
 3. Fly to the ring and start mining. The **Hold**, **Asteroids prospected** and **Refined** lines fill in as you work.
 
 **Start a Surface Mining run.** Details: [Surface Mining](#surface-mining).
 
-1. Launch the Rhino. The panel's Rhino lines change from `Rhino: not deployed.` to `Rhino deployed`, and **Surface Mining** opens the full page.
-2. Launch the Rhino. The page changes from `No active Rhino deployment. Launch the Rhino to start tracking a new run.` to the live numbers.
-3. Stow the Rhino to end the run. The numbers stay on the page, marked `Rhino stowed (last deployment)`, until the next launch.
+1. Launch the Rhino. The panel's Rhino lines change from `Rhino: not deployed.` to `Rhino deployed`.
+2. Press **Surface Mining** to open the full page. Until the launch it says `No active Rhino deployment. Launch the Rhino to start tracking a new run.`; then it shows the live numbers.
+3. Stow the Rhino to end the run. The numbers stay on the page and the panel, marked `Rhino stowed (last deployment)`, until the next launch.
 
 **Read the radar.** Details: [Surface Mining Live](#surface-mining-live).
 
@@ -65,10 +65,12 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 **Find a hotspot.** Details: [Hotspots: Find Nearby Hotspots](#hotspots-find-nearby-hotspots).
 
 1. Tick *Enable Spansh nearby hotspot finder* in **Settings → WFMT → Mining**.
-2. On the Space Mining page press **Hotspots**, pick a **Material** and a **Where** distance, and press **Search**.
+2. Press **Hotspots** (on the panel or in the Space Mining window), pick a **Material** and a **Where** distance, and press **Search**.
 3. Select a row and press **Copy system** to paste the system into the galaxy map.
 
 ## What each page shows
+
+**The panel** shows the short version of both sides. For the ring run: `Ring mining` (or `Ring mining (paused in supercruise)`), the hold, the mission needs, **Refined** and **Refining now**; before a run, `Ring mining: no active run. Undock to start one.` with the mission needs. For the Rhino: `Rhino deployed` (or `Rhino stowed (last deployment)`, or `Rhino: not deployed.`), its hold while it is out, and **Refined**. Before the game has told WFMT who you are, it says `No commander detected yet.` Everything else is in the two windows, described next.
 
 Lines come and go with the settings listed at the end of this page. Three switches on the Settings card of the Space Mining and Surface Mining windows decide which lines you see (all three are on by default):
 
@@ -166,17 +168,17 @@ Both pages carry the buttons below, and the Surface Mining Book and the coverage
 
 ## The buttons
 
-The buttons sit side by side, in this order, and wrap onto a second line when they would not fit the window. Which ones you see depends on the page and on your
+The panel's buttons sit side by side and wrap onto a second line when they would not fit. **Book** and **Dashboard** are in the header of the Space Mining and Surface Mining windows (as are **Hotspots**, **Prices** and **Reserves** in the Space Mining one). Which ones you see depends on the page and on your
 Settings. Hover over a button for a tip that gives its name and what it does.
 
 | Button | What it does | Shown when |
 |---|---|---|
+| **Space Mining** / **Surface Mining** (on the panel) | Each opens that page's window: a radar and the controls on Surface Mining, the live numbers on Space Mining. Meant for a second screen ([the live window](#the-live-window)). | Always |
 | **Book** (in the Space Mining and Surface Mining windows) | Opens the book for that window: the **Space Mining Book** (your rings) from Space Mining, the **Surface Mining Book** (Rhino deposits) from Surface Mining. | Always |
 | **Dashboard** (Mining History; in both windows) | Opens every mining run found in your journals, added up (see below). | Always |
-| **Space Mining** / **Surface Mining** (on the panel) | Each opens that page's window: a radar and the controls on Surface Mining, the live numbers on Space Mining. Meant for a second screen ([the live window](#the-live-window)). | Always |
-| **Hotspots** (find nearby hotspots) | Opens the Find Nearby Hotspots window (see below). | Space Mining page, once *Enable Spansh nearby hotspot finder* is ticked |
-| **Prices** (find best price) | Opens the Find Best Price window (see below). | Once *Enable Spansh best price finder* is ticked (the same switch also turns on Market research and What pays in the Surface Mining Book) |
-| **Reserves** (check ring reserve level) | Opens the Check Ring Reserve Level window (see below). | Space Mining page, once *Enable EDSM ring reserve lookup* is ticked |
+| **Hotspots** (find nearby hotspots) | Opens the Find Nearby Hotspots window (see below). | Panel and Space Mining window, once *Enable Spansh nearby hotspot finder* is ticked |
+| **Prices** (find best price) | Opens the Find Best Price window (see below). | Panel and Space Mining window, once *Enable Spansh best price finder* is ticked (the same switch also turns on Market research and What pays in the Surface Mining Book) |
+| **Reserves** (check ring reserve level) | Opens the Check Ring Reserve Level window (see below). | Panel and Space Mining window, once *Enable EDSM ring reserve lookup* is ticked |
 
 The three online lookups are **off until you turn them on in Settings**. See [what goes on the internet](internet-and-privacy.md).
 
@@ -243,14 +245,14 @@ The table gives each ring with its **Body**, **Reserve level**, **Ring type** an
 **In space:**
 
 1. Fly to a ring and start mining. The Space Mining page fills in live stats for your run; a core asteroid or a rock rich in your target commodity shows on the page (and on the overlay, if Flight Alerts is on).
-2. Done for the day? Open **Book** on the Space page: the ring is in the **Space Mining Book** with the tons you mined; add a note or a favorite star so you find it again. **This system** jumps to the rings you have in the system you are in.
+2. Done for the day? Open **Book** in the Space Mining window's header: the ring is in the **Space Mining Book** with the tons you mined; add a note or a favorite star so you find it again. **This system** jumps to the rings you have in the system you are in.
 3. Want the bigger picture? **Dashboard** (Mining History) adds up every run.
 
 **On the surface:**
 
 1. Launch the Rhino and mine. The Surface Mining page fills in live stats.
 2. Found a good deposit? Press **Add hotspot** in the Surface Mining window to save the spot.
-3. Open **Book** on the Surface Mining page to see everything you've saved, including tons mined and an estimate of tons left; **Mark depleted** when one runs out.
+3. Open **Book** in the Surface Mining window's header to see everything you've saved, including tons mined and an estimate of tons left; **Mark depleted** when one runs out.
 4. Next time you're in the system, the Surface Mining Book lists the bodies you've scanned and your hotspots there, and its **From your journals** group lists other bodies your journals show mining on.
 
 ## Mining History
@@ -381,7 +383,7 @@ Other controls and lines:
 - The **Help** button in the window's header explains every mark.
 - The **Radar reaches** buttons under the radar set how far it reaches: 50 m, 250 m, 500 m, 1 km or 2 km (2 km is the default, and the choice is remembered). The button for the current reach is highlighted.
 - The radar needs your position and the body's size. Until it has them (you are not on or just above the ground) it says `The radar draws when you are on or just above the ground.` instead of a picture.
-- On the right are the same lines the panel shows: the run, cargo, refined, the last DSS scan, your saved deposits here, the nearest marked location and the nearest saved deposit.
+- On the right are the lines of the Surface Mining page described above: the run, cargo, refined, the last DSS scan, your saved deposits here, the nearest marked location and the nearest saved deposit.
 
 The controls that act on the ground are in the header:
 
@@ -410,7 +412,7 @@ Three of the controls, the radar range and the window itself have shortcuts, so 
 | Mark the border (**Mark border**) | Ctrl+Alt+Shift+B | `!wf border` |
 | **Rig placed** | Ctrl+Alt+Shift+R | `!wf rig` |
 | Radar range (steps 50 m, 250 m, 500 m, 1 km, 2 km, then back to 50 m) | Ctrl+Alt+Shift+Z | `!wf zoom` |
-| Open the Live window | Ctrl+Alt+Shift+L | `!wf live` |
+| Open the Surface Mining Live window (with its Book and Dashboard buttons) | Ctrl+Alt+Shift+L | `!wf live` |
 
 Chat commands are off until you tick *Chat commands* on that page. The key combinations are Windows only; on Linux use the chat commands.
 
@@ -442,7 +444,7 @@ With it set:
 
 ### Space Mining Live
 
-- It shows the same lines as the Space Mining page in a larger window, with **Hotspots**, **Prices** and **Reserves** in the header when you have switched those lookups on in Settings.
+- It shows all the lines of the Space Mining page described above, with the **Settings** card at the top, and **Hotspots**, **Prices** and **Reserves** in the header when you have switched those lookups on in Settings.
 - It has no radar: the journal does not say where a ring's hotspots are, so there is nothing to place on one.
 
 The panel keeps the summary and the **Space Mining**, **Surface Mining** and lookup buttons. **Book**, **Dashboard**, **Mark center**, **Mark border**, **Add hotspot** and **Import/export** are in the windows only.
@@ -509,7 +511,7 @@ The marks are per commander and stay for the body. They are your own readings: t
 
 ## The Space Mining Book
 
-Press **Book** on the Space Mining page. It lists every **ring** your journals show hotspots for or that you mined at. It is built from what the game wrote when you DSS-scanned the ring and mined there, so it fills itself.
+Press **Book** in the Space Mining window's header. It lists every **ring** your journals show hotspots for or that you mined at. It is built from what the game wrote when you DSS-scanned the ring and mined there, so it fills itself.
 
 - A ring the journals only show as part of a planet you scanned (no hotspots, no mining) is left out, since there are thousands.
 - A ring with a note, a favorite star, or added by hand stays.
@@ -538,7 +540,7 @@ If the list is still long, it draws the first 150 rings (favorites first, then t
 
 **Worked example.** You want to remember a ring you heard about, and mark a good one you mined.
 
-1. Press **Book** on the Space Mining page and press **Add ring**.
+1. Press **Book** in the Space Mining window's header and press **Add ring**.
 2. Enter the ring's name as the game names it, the system, hotspots written as `Painite 3, Platinum 2`, a class (for example Metallic) and a reserve level (for example Pristine), then save. The ring shows `Added by hand`.
 3. Select a ring you mined, type `Best Painite, drop in at the north edge` in **Your note**, press **Save note**, then press **Favorite**. The ring moves to the top and its panel shows `Mined: 620 t in 3 runs, last 2026-10-12`.
 4. Next time you are in that system, press **This system** to list the rings you have there.
@@ -553,7 +555,7 @@ If the list is still long, it draws the first 150 rings (favorites first, then t
 
 ## The Surface Mining Book
 
-Press **Book** on the Surface Mining page. You don't need to be mining to open it; it lists your saved hotspots either way.
+Press **Book** in the Surface Mining window's header. You don't need to be mining to open it; it lists your saved hotspots either way.
 
 This is the book for the Rhino's surface deposits (the Space Mining Book, above, is the one for rings). It lists:
 

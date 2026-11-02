@@ -278,7 +278,7 @@ Sessions window. They copy plain text with no Discord marks, so a forum post, an
 **Example: a forum post.** In BGS mode open **Report**, press **Copy Summary**, and paste into the post. You get lines such as `Nervi:` then
 `  * Nervi Brotherhood — Boom, 45.2% (+1.3)`. **Copy Progress** gives one line for each system (by default
 `[Nervi](https://inara.cz/...) - 120 merits (~48.0 CP) - Exploited`, which several forums and chat programs turn into a link). Its layout is
-editable under **Settings → WFMT → Powerplay → Clipboard**.
+editable on the **Settings** tab of the Powerplay Sessions window.
 
 ## What is sent, and who can see it
 

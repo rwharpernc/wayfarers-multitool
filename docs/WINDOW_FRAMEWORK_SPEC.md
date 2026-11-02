@@ -60,7 +60,7 @@ A consequence:
   - Esc cancels, Enter takes the default button.
   - `tests/test_no_native_dialogs.py` fails if a plugin module imports `tkinter.messagebox` or `simpledialog`.
 - **Map canvas** (`mapview.py`): a `Canvas`-based map with zoom, hover and click-to-select, and dashed
-  rings (`MapCircle`, the Mining Book's stops), used by the Mining Book. The fixed-size minimap image on the Surface Mining page is drawn separately.
+  rings (`MapCircle`, the Mining Book's stops), used by the Mining Book. The fixed-size minimap image in the Surface Mining window is drawn separately.
 
 Any window content that comes from outside data (Spansh names, file names) is truncated with a hard cap,
 for the same discipline as the main panels.
