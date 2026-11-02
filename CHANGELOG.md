@@ -5,6 +5,10 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ## Unreleased
 
+### Changed
+
+- **Main panel: orange text is readable on EDMC's light Default theme.** The bright orange used for headings, warnings and the page arrows was only about 1.7 to 2.3:1 against the Default theme's light backgrounds. On that theme these now use a darker orange (4.5:1 or better); the Dark and Transparent themes keep the bright orange.
+
 ### Added
 
 - **Round trip: carry only one commodity.** A new setting, **Carry only this commodity** under Round trips in Settings → WFMT → Trade, limits both legs to that commodity (blank means anything, as before). A pair counts only when the commodity pays in both directions, and the result says which commodity it was limited to.

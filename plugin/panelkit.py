@@ -228,7 +228,17 @@ def separator_color() -> str:
     return _SEPARATOR_DARK if is_dark_theme() else _SEPARATOR_LIGHT
 
 
-NAV_ARROW_COLOR = "#ff8c0d"  # Elite orange
+ACCENT_ON_DARK = "#ff8c0d"    # Elite orange: 8 to 9:1 on EDMC's near-black Dark and Transparent themes
+ACCENT_ON_LIGHT = "#a63d00"   # a burnt orange for EDMC's light Default theme, where ff8c0d is only 1.7 to 2.3:1 (this is 4.5:1 or more)
+
+
+def accent_color() -> str:
+    """The Elite orange used for text that should stand out (headings, warnings, the page arrows), chosen to be readable on the
+    theme EDMC is using: the bright orange on dark, a darker one on light."""
+    return ACCENT_ON_DARK if is_dark_theme() else ACCENT_ON_LIGHT
+
+
+NAV_ARROW_COLOR = ACCENT_ON_DARK    # kept for older callers; nav_arrow() picks by theme
 _NAV_ARROW_EXTRA_PT = 7
 _nav_arrow_font: "tkfont.Font | None" = None
 
@@ -249,7 +259,7 @@ def nav_arrow(parent: tk.Misc, direction: int, command) -> tk.Label:
                 size=size + _NAV_ARROW_EXTRA_PT if size > 0 else size - _NAV_ARROW_EXTRA_PT)
         except tk.TclError:
             _nav_arrow_font = tkfont.Font(family="TkDefaultFont", weight="bold", size=16)
-    arrow = tk.Label(parent, text="◀" if direction < 0 else "▶", font=_nav_arrow_font, fg=NAV_ARROW_COLOR,
+    arrow = tk.Label(parent, text="◀" if direction < 0 else "▶", font=_nav_arrow_font, fg=accent_color(),
                      cursor="hand2", relief="raised", borderwidth=2, padx=10, pady=0)
     arrow.bind("<Button-1>", lambda _e: command())
     return arrow

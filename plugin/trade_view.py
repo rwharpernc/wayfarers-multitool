@@ -20,7 +20,6 @@ from typing import List, Optional, Sequence
 from . import panelkit
 from .trade_blocks import Block, Columns, Heading, Item, Note, Pair
 
-ACCENT = "#ff8c0d"           # Elite orange: section headings and things to watch
 _MIN_WIDTH = 260             # never lay out narrower than this
 _FALLBACK_WIDTH = 300        # before the first real width is known
 _NUMERIC_COLUMNS = 3         # columns 1..3 hold table numbers; column 0 is the title
@@ -121,7 +120,7 @@ class BlockView(tk.Frame):
                     rule.grid(row=row, column=0, columnspan=span, sticky="ew", pady=(7 if not block.minor else 4, 2))
                     rules.append(rule)
                     row += 1
-                options = {} if block.minor else {"fg": ACCENT}
+                options = {} if block.minor else {"fg": panelkit.accent_color()}
                 label = tk.Label(self, text=block.text, anchor="w", justify="left", wraplength=total - 4,
                                  font=fonts["bold"], **options)
                 label.grid(row=row, column=0, columnspan=span, sticky="w")
@@ -160,14 +159,14 @@ class BlockView(tk.Frame):
                         padx=(block.indent * _INDENT + _INDENT, 0))
                     row += 1
                 if block.warn:
-                    warn = tk.Label(self, text=block.warn, anchor="w", justify="left", font=fonts["small"], fg=ACCENT,
+                    warn = tk.Label(self, text=block.warn, anchor="w", justify="left", font=fonts["small"], fg=panelkit.accent_color(),
                                     wraplength=total - 8 - block.indent * _INDENT - _INDENT)
                     warn.grid(row=row, column=0, columnspan=span, sticky="w",
                               padx=(block.indent * _INDENT + _INDENT, 0))
                     accents.append(warn)
                     row += 1
             elif isinstance(block, Note):
-                options = {"fg": ACCENT} if block.warn else {}
+                options = {"fg": panelkit.accent_color()} if block.warn else {}
                 label = tk.Label(self, text=block.text, anchor="w", justify="left", wraplength=total - 4,
                                  font=fonts["bold"] if block.strong else fonts["normal"], **options)
                 label.grid(row=row, column=0, columnspan=span, sticky="w", pady=(2, 0))
@@ -178,8 +177,9 @@ class BlockView(tk.Frame):
 
         # EDMC's theme colors the labels; the accent, the rules and the frames' own background are set after it.
         panelkit.apply_theme_deep(self)
+        accent = panelkit.accent_color()
         for widget in accents:
-            widget.configure(fg=ACCENT)
+            widget.configure(fg=accent)
         color = panelkit.separator_color()
         for rule in rules:
             rule.configure(background=color)
