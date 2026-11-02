@@ -15,6 +15,7 @@ takes its parent's background.
 from __future__ import annotations
 
 import tkinter as tk
+import tkinter.font as tkfont
 from typing import List, Optional, Sequence
 
 from . import panelkit
@@ -40,6 +41,7 @@ class BlockView(tk.Frame):
         """`themed` True follows EDMC's theme (the main panel). False is for a WFMT window, whose own colors the window kit applies: the
         headings use the window theme's heading color and the rules its line color, and EDMC's theme is left out of it."""
         self._themed = themed
+        self._large: Optional[tkfont.Font] = None
         options = {}
         try:
             options["background"] = parent.cget("background")
@@ -51,6 +53,20 @@ class BlockView(tk.Frame):
         self._pending: Optional[str] = None
         self.columnconfigure(0, weight=1)
         self.bind("<Configure>", self._on_configure)
+
+    def _look(self) -> dict:
+        """The colors and fonts of a window's text, so the page has a hierarchy: headings large and in the heading color, labels muted with their values
+        bright, details small and muted, gains green and losses red, warnings in the warning color. Empty for the main panel, which follows EDMC's
+        theme and keeps its own few colors."""
+        if self._themed:
+            return {}
+        from .uikit import palette as P
+        base = panelkit.view_fonts()["bold"]
+        if self._large is None:
+            self._large = tkfont.Font(font=base)
+            self._large.configure(size=(abs(int(base.actual("size"))) + 3) * (-1 if int(base.actual("size")) < 0 else 1))
+        return {"heading": P.HEADING, "minor": P.MUTED, "label": P.MUTED, "value": P.TEXT, "detail": P.MUTED, "gain": P.OK, "loss": P.DANGER,
+                "warn": P.WARN, "column": P.MUTED, "text": P.TEXT, "large": self._large}
 
     def _accent(self) -> str:
         if self._themed:
@@ -118,6 +134,16 @@ class BlockView(tk.Frame):
         title_wrap = max(_FLOOR_TITLE, total - numeric_need - 6)   # narrower than _MIN_TITLE only when the figures leave no more; it wraps instead
         span = _NUMERIC_COLUMNS + 1
 
+        look = self._look()
+
+        def tone(role: str, text: str = "") -> dict:
+            """Color options for a label of this role in a window (none on the panel). Figures that start with + or - are green or red."""
+            if not look:
+                return {}
+            if role in ("value", "cell") and len(text) > 1 and text[0] in "+-" and text[1].isdigit():
+                return {"fg": look["gain"] if text[0] == "+" else look["loss"]}
+            return {"fg": look["value" if role == "cell" else role]}
+
         accents: List[tk.Misc] = []
         rules: List[tk.Frame] = []
         row = 0
@@ -126,60 +152,72 @@ class BlockView(tk.Frame):
             if isinstance(block, Heading):
                 if not first:
                     rule = tk.Frame(self, height=1, borderwidth=0)
-                    rule.grid(row=row, column=0, columnspan=span, sticky="ew", pady=(7 if not block.minor else 4, 2))
+                    rule.grid(row=row, column=0, columnspan=span, sticky="ew", pady=((14 if look else 7) if not block.minor else 6, 3))
                     rules.append(rule)
                     row += 1
-                options = {} if block.minor else {"fg": self._accent()}
+                if look:
+                    options = tone("minor" if block.minor else "heading")
+                elif block.minor:
+                    options = {}
+                else:
+                    options = {"fg": self._accent()}
                 label = tk.Label(self, text=block.text, anchor="w", justify="left", wraplength=total - 4,
-                                 font=fonts["bold"], **options)
+                                 font=fonts["bold"] if block.minor or not look else look["large"], **options)
                 label.grid(row=row, column=0, columnspan=span, sticky="w")
-                if not block.minor:
+                if not block.minor and not look:
                     accents.append(label)
                 row += 1
             elif isinstance(block, Pair):
                 font = fonts["bold"] if block.bold else fonts["normal"]
-                tk.Label(self, text=block.label, anchor="w", justify="left", font=font,
-                         wraplength=max(90, min(int(total * _LABEL_SHARE), title_wrap) - block.indent * _INDENT)).grid(
-                    row=row, column=0, sticky="nw", padx=(block.indent * _INDENT, 0))
+                tk.Label(self, text=block.label, anchor="w", justify="left", font=fonts["normal"] if look else font,
+                         wraplength=max(90, min(int(total * _LABEL_SHARE), title_wrap) - block.indent * _INDENT),
+                         **tone("label")).grid(
+                    row=row, column=0, sticky="nw", padx=(block.indent * _INDENT, 0), pady=(2, 0) if look else 0)
                 tk.Label(self, text=block.value, anchor="e", justify="right", font=font,
-                         wraplength=int(total * _VALUE_SHARE)).grid(
-                    row=row, column=1, columnspan=_NUMERIC_COLUMNS, sticky="ne", padx=(_GAP, 0))
+                         wraplength=int(total * _VALUE_SHARE), **tone("value", block.value)).grid(
+                    row=row, column=1, columnspan=_NUMERIC_COLUMNS, sticky="ne", padx=(_GAP, 0), pady=(2, 0) if look else 0)
                 row += 1
             elif isinstance(block, Columns):
                 for position, text in enumerate(block.labels[-_NUMERIC_COLUMNS:]):
                     column = 1 + _NUMERIC_COLUMNS - len(block.labels[-_NUMERIC_COLUMNS:]) + position
-                    tk.Label(self, text=text, anchor="e", font=fonts["small_bold"]).grid(
-                        row=row, column=column, sticky="e", padx=(_GAP, 0))
+                    tk.Label(self, text=text, anchor="e", font=fonts["small_bold"], **tone("column")).grid(
+                        row=row, column=column, sticky="e", padx=(_GAP, 0), pady=(6, 0) if look else 0)
                 row += 1
             elif isinstance(block, Item):
+                gap = 8 if look and not block.indent else 3
                 tk.Label(self, text=block.title, anchor="w", justify="left", font=fonts["bold"],
-                         wraplength=max(90, title_wrap - block.indent * _INDENT)).grid(
-                    row=row, column=0, sticky="nw", padx=(block.indent * _INDENT, 0), pady=(3, 0))
+                         wraplength=max(90, title_wrap - block.indent * _INDENT), **tone("value")).grid(
+                    row=row, column=0, sticky="nw", padx=(block.indent * _INDENT, 0), pady=(gap, 0))
                 cells = block.cells[-_NUMERIC_COLUMNS:]
                 for position, text in enumerate(cells):
                     column = 1 + _NUMERIC_COLUMNS - len(cells) + position
-                    tk.Label(self, text=text, anchor="e", font=fonts[cell_font]).grid(
-                        row=row, column=column, sticky="ne", padx=(_GAP, 0), pady=(3, 0))
+                    tk.Label(self, text=text, anchor="e", font=fonts[cell_font], **tone("cell", text)).grid(
+                        row=row, column=column, sticky="ne", padx=(_GAP, 0), pady=(gap, 0))
                 row += 1
                 if block.detail:
                     tk.Label(self, text=block.detail, anchor="w", justify="left", font=fonts["small"],
-                             wraplength=total - 8 - block.indent * _INDENT - _INDENT).grid(
+                             wraplength=total - 8 - block.indent * _INDENT - _INDENT, **tone("detail")).grid(
                         row=row, column=0, columnspan=span, sticky="w",
                         padx=(block.indent * _INDENT + _INDENT, 0))
                     row += 1
                 if block.warn:
-                    warn = tk.Label(self, text=block.warn, anchor="w", justify="left", font=fonts["small"], fg=self._accent(),
-                                    wraplength=total - 8 - block.indent * _INDENT - _INDENT)
+                    warn = tk.Label(self, text=block.warn, anchor="w", justify="left", font=fonts["small"],
+                                    wraplength=total - 8 - block.indent * _INDENT - _INDENT,
+                                    **(tone("warn") if look else {"fg": self._accent()}))
                     warn.grid(row=row, column=0, columnspan=span, sticky="w",
                               padx=(block.indent * _INDENT + _INDENT, 0))
-                    accents.append(warn)
+                    if not look:
+                        accents.append(warn)
                     row += 1
             elif isinstance(block, Note):
-                options = {"fg": self._accent()} if block.warn else {}
+                if look:
+                    options = tone("warn" if block.warn else "text")
+                else:
+                    options = {"fg": self._accent()} if block.warn else {}
                 label = tk.Label(self, text=block.text, anchor="w", justify="left", wraplength=total - 4,
                                  font=fonts["bold"] if block.strong else fonts["normal"], **options)
-                label.grid(row=row, column=0, columnspan=span, sticky="w", pady=(2, 0))
-                if block.warn:
+                label.grid(row=row, column=0, columnspan=span, sticky="w", pady=(4, 0) if look else (2, 0))
+                if block.warn and not look:
                     accents.append(label)
                 row += 1
             first = False

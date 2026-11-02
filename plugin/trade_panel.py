@@ -115,6 +115,7 @@ PAGE_BUTTON_TIPS = {
     "History": BUTTON_TIPS["History"],
 }
 
+_PANEL_ROW_PX = 216   # the default main-panel width, used until the window reports its own
 _HOP_CHOICES = (2, 3, 4, 5)  # the Hops button on the Routes page cycles through these
 _DEFAULT_MAX_ARRIVAL_LS = 5000
 _FALLBACK_JUMP_RANGE_LY = 30.0
@@ -128,7 +129,6 @@ _CARRIER_FETCH_MIN = 5
 _SELL_SHOWN = 3
 _OFFER_COLUMNS = ("cr/t", "Total", "ly")
 _CARRIERS_SHOWN = 1   # with _SELL_SHOWN = 3 stations: 75% stations, 25% carriers
-_ROUTES_SHOWN = 4  # hops
 _CARGO_LINES = 4
 _NAME_MAX = 64  # a safety bound on station / system / commodity names; the view wraps anything long
 _PERSIST_EVERY_S = 30.0
@@ -506,15 +506,17 @@ class TradePanelController:
 
         rows = tk.Frame(parent)
         rows.grid(row=1, column=0, columnspan=3, sticky="w")
-        # Two buttons to a line: four in one would be wider than EDMC's main window, which clips whatever does not fit.
+        made = []
         for number, (text, command) in enumerate(((trade_pages.SESSION, lambda: self._open_page(trade_pages.SESSION)),
                                                   (trade_pages.ROUTES, lambda: self._open_page(trade_pages.ROUTES)),
                                                   (trade_pages.MARKET, lambda: self._open_page(trade_pages.MARKET)),
                                                   ("History", self._open_history))):
             button = tk.Button(rows, text=text, command=command)
-            button.grid(row=number // 2, column=number % 2, sticky="w", padx=(0 if number % 2 == 0 else 6, 0),
-                        pady=(0 if number < 2 else 3, 0))
+            button.pack(side=tk.LEFT, padx=(0 if number == 0 else 4, 0))
             panelkit.add_tooltip(button, PAGE_BUTTON_TIPS[text])
+            made.append(button)
+        # One row: EDMC clips what is wider than its window, so the padding (then the font) narrows until all four fit.
+        panelkit.fit_button_row(made, panelkit._row_cap_px or _PANEL_ROW_PX)
 
         self._refresh()
         parent.after(2000, self._poll_carrier_history)
@@ -1297,8 +1299,10 @@ class TradePanelController:
                                Pair("Total profit", f"{total:+,} cr", bold=True),
                                Pair("Est. profit / hour",
                                     f"~{spansh_routes.estimate_profit_per_hour(hops, self._jump_range_ly()):,} cr"),
-                               Pair("Hops", str(len(hops))), Columns(("Profit", "ly"))]
-        for number, hop in enumerate(hops[:_ROUTES_SHOWN], start=1):
+                               Pair("Hops", str(len(hops))), Columns(("Profit", "Total", "ly"))]
+        running = 0
+        for number, hop in enumerate(hops, start=1):
+            running += hop.profit
             detail = f"{_clip(hop.dest_system)} \u00b7 {hop.dest_ls:,.0f} ls"
             if hop.cargo:
                 best = max(hop.cargo, key=lambda c: c.total_profit)
@@ -1306,9 +1310,7 @@ class TradePanelController:
                 if best.supply or best.demand:
                     detail += f" \u00b7 supply {best.supply:,} / demand {best.demand:,}"
             blocks.append(Item(f"{number}. {_clip(hop.source_station)} \u2192 {_clip(hop.dest_station)}",
-                               (f"{hop.profit:+,}", f"{hop.distance_ly:.1f}"), detail=detail))
-        if len(hops) > _ROUTES_SHOWN:
-            blocks.append(Note(f"+{len(hops) - _ROUTES_SHOWN} more hop(s)"))
+                               (f"{hop.profit:+,}", f"{running:+,}", f"{hop.distance_ly:.1f}"), detail=detail))
         if empty_leg:
             blocks.append(Note("One leg of this route carries no cargo.", warn=True))
         elif loop:

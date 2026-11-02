@@ -78,6 +78,7 @@ class TradePageWindow:
         self._signature: Optional[tuple] = None
         self._side_row: Optional[tk.Frame] = None
         self._entry: Optional[CommodityEntry] = None
+        self._button_bar: Optional[tk.Frame] = None       # Market: the search buttons sit under the box, where they are seen
 
         self._shell = WindowShell(
             parent, page, _SUBTITLES.get(page, ""), size=DEFAULT_SIZE, min_size=MIN_SIZE,
@@ -128,11 +129,13 @@ class TradePageWindow:
         if signature == self._signature:
             return
         self._signature = signature
-        for child in self._shell.actions.winfo_children():
+        host = self._button_bar if self._button_bar is not None else self._shell.actions
+        for child in host.winfo_children():
             child.destroy()
         for number, (text, command, enabled) in enumerate(specs):
-            button = self._shell.add_action(text, command, accent=number == 0 and enabled,
-                                            tip=self._controller.button_tip(text))
+            kind = "accent" if number == 0 and enabled else "normal"
+            button = FlatButton(host, text, command, kind=kind, tip=self._controller.button_tip(text))
+            button.pack(side="left", padx=(0 if self._button_bar is not None and number == 0 else 6, 0))
             button.set_enabled(enabled)
 
     # --- Market: the commodity box and the Sell / Buy choice ------------------------------------------------------------
@@ -151,6 +154,12 @@ class TradePageWindow:
         self._side_buttons: Dict[str, tk.Frame] = {}
         self._painted_side: Optional[str] = None
         self._paint_side()
+        # Step 3, under the box and the Sell / Buy choice: the buttons that run the search (Near me, Galaxy, Best picks, Price finder).
+        steps = tk.Frame(self._shell.body, bg=P.BG)
+        steps.pack(fill="x", pady=(0, P.PAD_SM))
+        tk.Label(steps, text="Then search", fg=P.MUTED, bg=P.BG).pack(side="left", padx=(0, P.PAD_SM))
+        self._button_bar = tk.Frame(steps, bg=P.BG)
+        self._button_bar.pack(side="left")
 
     def _paint_side(self) -> None:
         """Sell and Buy as two buttons, the chosen one lit. Rebuilt when the choice changes."""

@@ -284,8 +284,8 @@ Spansh can take a minute or two. While you wait the page says whether the search
 calculated, so you can tell a busy Spansh from a stalled search. **Cancel** stops waiting. The result shows:
 
 - **Total profit** and **Est. profit / hour** (a rough figure worked out from your jump range), then **Hops**,
-- each hop, numbered: the two stations, the profit and the distance in light years, then the destination system and its distance from the star, the best commodity with its tons, and the supply at the buying station and the
-  demand at the selling one (the first four hops are shown, with "+N more hop(s)" after).
+- each hop, numbered: the two stations, then three figures: the hop's **Profit**, the **Total** so far (the running total, so the last hop's Total is the route's profit) and the distance in light years; under them the destination system and its distance from the star, the best commodity with its tons, and the supply at the buying station and the
+  demand at the selling one. Every hop is listed. Gains are green and losses red.
 
 **Copy next system** puts the first destination on your clipboard so you can paste it into the galaxy map.
 
@@ -295,14 +295,14 @@ calculated, so you can tell a busy Spansh from a stalled search. **Cancel** stop
 
 Finds where to **sell** or where to **buy** a commodity.
 
-The **Commodity** box and the **Sell** / **Buy** buttons beside **I want to:** appear on this page only once the Spansh lookups are switched on. Without them the page tells you to turn them on in Settings → WFMT → Trade.
+The **Commodity** box, the **Sell** / **Buy** buttons beside **I want to** and the search buttons under them (**Near me**, **Galaxy**, **Best picks**, **Price finder**, after **Then search**) work only once the Spansh lookups are switched on. Without them the buttons are grayed out and the window tells you to turn them on in Settings → WFMT → Trade.
 
 1. **Choose Sell or Buy** with the **I want to** buttons under the Commodity box (the lit one is chosen). It is remembered.
 2. **Pick a commodity.** Click the **Commodity** box and start typing. Enter in the box runs **Near me**. Suggestions fill in as you type: first what
    you carry and what the station you're at buys, then every commodity.
    - When *selling*, you can leave it empty to search for the commodity you carry the most of.
    - When *buying*, type what you want.
-3. **Press Near me** to look within a radius of your system (100 ly unless you change it), or **Galaxy** to look
+3. **Press Near me** (the first button after **Then search**, under the box) to look within a radius of your system (100 ly unless you change it), or **Galaxy** to look
    everywhere. You can press both. While a search is running the **Near me** button becomes **Cancel**, and the page counts the seconds.
 
 Before you search, the page shows what it will use: your ship and landing pad, the commodity and amount (marked `(your free hold space)` when you are buying), and the radius. The lit **Sell** or **Buy** button shows which way you are searching.

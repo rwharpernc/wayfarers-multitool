@@ -112,6 +112,8 @@ pump()
 panel_buttons = {str(b.cget("text")): b for b in buttons_of(host)}
 check(set(panel_buttons) == {"Session", "Routes", "Market", "History"}, f"the panel's buttons: {sorted(panel_buttons)}")
 check(not any("\u25c0" in str(b.cget("text")) or "\u25b6" in str(b.cget("text")) for b in buttons_of(host)), "no page arrows are left")
+button_rows = {b.winfo_y() for b in buttons_of(host)}
+check(len(button_rows) == 1, f"the four buttons are in one row, not {len(button_rows)}: {sorted(button_rows)}")
 check(host.winfo_reqwidth() <= 260, f"the panel asks for {host.winfo_reqwidth()} px")
 
 for page in (trade_pages.SESSION, trade_pages.ROUTES, trade_pages.MARKET):
@@ -133,6 +135,9 @@ check(captions[0] == "Find routes" and captions[-1] == "Round trip", f"the Route
 
 # the Market window: the box is the controller's, and Sell / Buy repaint
 market = trade_windows._windows[trade_pages.MARKET]
+captions = [str(b.cget("text")) for b in market._button_bar.winfo_children()]
+check(captions == ["Near me", "Galaxy", "Best picks", "Price finder"], f"the search buttons sit under the box: {captions}")
+check(not market._shell.actions.winfo_children(), "and not in the header")
 check(controller._commodity_entry is market._entry and market._entry is not None, "the Market box is bound to the controller")
 market._entry.set("Tritium")
 check(controller._search_target() is not None and controller._search_target()[0] == "Tritium", f"the typed commodity is searched: {controller._search_target()}")
@@ -161,6 +166,42 @@ controller._refresh()
 pump()
 check(any("10 / 100" in str(getattr(b, "value", "")) for b in controller._summary_blocks()), "the panel summary shows the hold")
 check("In your ship" in " ".join(str(getattr(b, "text", "")) for b in session._view._blocks), "the Session window follows the refresh")
+
+# Routes: a running total beside each hop's profit
+from plugin import trade_spansh_client as spansh  # noqa: E402
+hops = [spansh.Hop("Sol", f"Station {n}", 10.0, "Alpha", f"Station {n + 1}", 20.0, 5.0 + n, [], profit=p)
+        for n, p in enumerate((1000, 2500, -300), start=1)]
+job = types.SimpleNamespace(error=None, result=hops)
+controller._finish_routes(job)
+mock.patch.object(trade_panel, "lookups_enabled", lambda: True).start()
+route_items = [b for b in controller._route_blocks if type(b).__name__ == "Item"]
+check([i.cells[1] for i in route_items] == ["+1,000", "+3,500", "+3,200"], f"running totals: {[i.cells for i in route_items]}")
+check(len(route_items) == 3, "every hop is listed, not just the first few")
+cols = [b for b in controller._route_blocks if type(b).__name__ == "Columns"][0]
+check(cols.labels == ("Profit", "Total", "ly"), f"the column headings: {cols.labels}")
+routes.refresh()
+pump()
+
+# window text has a hierarchy: gains green, losses red, labels muted, headings large
+from plugin.uikit import palette as P  # noqa: E402
+
+
+def labels(widget):
+    found = []
+    for child in widget.winfo_children():
+        if isinstance(child, tk.Label):
+            found.append(child)
+        found.extend(labels(child))
+    return found
+
+
+texts = {str(l.cget("text")): l for l in labels(routes._view)}
+check(str(texts["+1,000"].cget("fg")) == P.OK, "a gain is green")
+check(str(texts["-300"].cget("fg")) == P.DANGER if "-300" in texts else True, "a loss is red")
+heading = texts.get("Route") or texts.get("Route (repeatable loop)")
+check(heading is not None and str(heading.cget("fg")) == P.HEADING, "the heading uses the heading color")
+check(str(texts["Hops"].cget("fg")) == P.MUTED, "a label is muted")
+check(str(texts["3"].cget("fg")) == P.TEXT, "its value is bright")
 
 trade_windows.close_all()
 pump()
