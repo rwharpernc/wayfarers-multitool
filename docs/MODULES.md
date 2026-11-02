@@ -320,6 +320,7 @@ Spec: [TRADE_TECH_SPEC.md](TRADE_TECH_SPEC.md) (has its own module table with mo
 | `missions_board.py` | The Missions window's data: a row per active mission (progress, reward, time left, ready, pinned), the totals line, grouping by place, the detail lines; no Tk |
 | `missions_display_settings.py` | Missions' six display switches as a Display card in the Mission types window (set only there) |
 | `missions_types_window.py` | The Mission types window: Missions mode's category pages (massacre stacks, mission cards, Community Goals), one at a time, picked from a list with counts; drawn by `missions_ui` |
+| `mission_detail_window.py` | The Mission description window: every field the journal gives for one mission, in groups, opened by clicking a mission's card; the content builder `sections()` has no Tk |
 | `missions_window.py` | The Missions window (Active and By place tabs, detail strip, Pin / Unpin, Pin all here, Unpin all, Copy system, Sources) |
 | `mission_sources.py` | The commodities your Collect and Mining missions still need (with the four source picks looked up for each) and the Delivery cargo still to pick up, with the station |
 | `mission_sources_window.py` | The Missions "Source commodities" window (also opened by the Engineering window for an engineer's items, `show_for`) (Find sources, Copy system) |
@@ -353,7 +354,7 @@ Spec: [MISSIONS_TECH_SPEC.md](MISSIONS_TECH_SPEC.md)
 | `mission_cargo.py` | Collect / delivery progress of cargo missions from the journal's `CargoDepot` events |
 | `mission_types.py` | Classifies missions into the panel's categories |
 | `missions.py` | Mission mode's entry point and event handling |
-| `missions_ui.py` | Draws the Missions panel (each mission type with its count) and the pages of the Mission types window, and opens the Missions window |
+| `missions_ui.py` | Draws the Missions panel (each mission type with its count) and the pages of the Mission types window, and opens the Missions and Mission description windows |
 
 ## Colonization: current project, history, sites window
 

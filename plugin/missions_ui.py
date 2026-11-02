@@ -48,7 +48,8 @@ from typing import Callable, Optional
 from config import appname, config
 from theme import theme
 
-from . import all_missions, community_goal_state, current_cargo, current_system, kill_missions, kill_tracker, mining_methods, mission_pins, mission_progress, mission_sources, mission_types, missions_board, missions_overlay, panelkit
+from . import active_missions, all_missions, community_goal_state, current_cargo, current_system, kill_missions, kill_tracker, mining_methods, mission_pins, mission_progress, mission_sources, mission_types, missions_board, missions_overlay, panelkit
+from .mission_detail_window import MissionDetailWindow
 from .mission_sources_window import MissionSourcesWindow
 from . import missions_types_window
 from .missions_window import MissionsWindow
@@ -800,6 +801,7 @@ class MissionsUI:
         self.__scrollbar: Optional[tk.Scrollbar] = None
         self.__window: Optional[MissionsWindow] = None
         self.__sources: Optional[MissionSourcesWindow] = None
+        self.__detail: Optional[MissionDetailWindow] = None
         self.__settings = DisplaySettings()
 
     def apply_display_settings(self, settings: DisplaySettings):
@@ -972,7 +974,7 @@ class MissionsUI:
             row = _display_commodities_needed(
                 frame, _aggregate_commodities_needed(missions), row)
         return _display_all_missions(frame, missions, row, no_missions_text,
-                                     self.__show_missions_window)
+                                     self.__show_mission_detail)
 
     def redraw(self):
         if self.__parent is None or self.__content is None:
@@ -1008,6 +1010,8 @@ class MissionsUI:
         self.__canvas.yview_moveto(0)
         if self.__window is not None:
             self.__window.refresh()
+        if self.__detail is not None and self.__detail.alive:
+            self.__detail.refresh()
         missions_types_window.refresh()
 
     # --- the Mission types window draws the category pages -----------------------------------------------------------
@@ -1058,6 +1062,17 @@ class MissionsUI:
                 lambda: current_system.find(state.here), lambda: state.next_system, on_pins_changed=state.refresh, open_sources=self.__show_sources_window)
         if mission_id is not None:
             self.__window.select(mission_id)
+
+    def __show_mission_detail(self, mission_id: int):
+        """Opens (or reuses) the Mission description window on the mission whose card was clicked."""
+        def lookup(mid: int):
+            return (self.__all_missions_data or {}).get(mid), (active_missions.tracker.snapshot() or {}).get(mid)
+
+        if self.__detail is not None and self.__detail.alive:
+            self.__detail.show(mission_id)
+            self.__detail.lift()
+            return
+        self.__detail = MissionDetailWindow(self.__parent.winfo_toplevel(), mission_id, self.__live_rows, lookup)
 
     def __show_sources_window(self):
         """Opens (or raises) the Source commodities window: where to get what the Collect and Mining missions still need."""

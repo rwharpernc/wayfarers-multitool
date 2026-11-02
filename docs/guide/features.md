@@ -175,7 +175,8 @@ Every feature, mode by mode: what it does, **how to use it** (the buttons and se
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
 | Every mission in one view | Pages by type (in the Mission types window); grouped kill-progress bars for massacre and settlement raids; one card per mission otherwise | **Mission types** | [Using it](missions.md#using-it) |
-| Missions window | Every mission with progress, reward, time left, where to hand it in, and pinning | **Missions window**, or click a mission card; pin to keep one on the overlay | [The Missions window](missions.md#the-missions-window) |
+| Missions window | Every mission with progress, reward, time left, where to hand it in, and pinning | **Missions window**; pin to keep one on the overlay | [The Missions window](missions.md#the-missions-window) |
+| Mission description window | Everything the journal says about one mission: objective, target, cargo, passengers, reward, influence and reputation | Click a mission's card in the Mission types window | [The Mission description window](missions.md#the-mission-description-window) |
 | Missions overlay card | The missions for this system and the next, ready ones in green | **Settings → WFMT → Overlays → Missions** | [Missions on the overlay](missions.md#missions-on-the-overlay) |
 | Source commodities | Where to buy the cargo your Collect and Mining missions need, and where to pick up a Delivery | **Find sources** | [Source commodities](missions.md#source-commodities) |
 | Community Goals | The goals you are in and what they paid | The Community Goals type in the **Mission types** window | [Using it](missions.md#using-it) |

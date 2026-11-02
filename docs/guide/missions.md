@@ -16,7 +16,7 @@ Short steps for the common jobs. Each one points at the section with the full de
 
 ### See every active mission in one view
 
-1. Press **Missions window** at the bottom of the Missions panel (or click a mission's card in the Mission types window).
+1. Press **Missions window** at the bottom of the Missions panel. (Clicking a mission's card in the Mission types window opens its [description](#the-mission-description-window) instead.)
 2. Stay on the **Active** tab for one row per mission, ready ones first and then the soonest to expire. Use the **By place** tab to see the same missions grouped by the system you must go to.
 3. Click a row to read its faction, where to go, cargo, exact reward and expiry in the detail strip.
 
@@ -34,7 +34,7 @@ More: [Progress](#progress) and [What the game does and doesn't tell us](#what-t
 ### Open the Missions window
 
 1. Press **Mission** in the mode bar.
-2. Press **Missions window** at the bottom of the panel, or click a mission's card in the Mission types window to open the Missions window on that mission.
+2. Press **Missions window** at the bottom of the panel.
 3. Close it when you are done. It remembers its size and position, and while it is open it keeps counting down and updating as you accept and hand in missions.
 
 More: [The Missions window](#the-missions-window).
@@ -117,7 +117,7 @@ The **Mission types** window has a **Display** card at the top with the six disp
 
 ## The Missions window
 
-Opens from the **Missions window** button at the bottom of the panel (or by clicking a mission's card in the Mission types window). It stays live while you play: times left count down, progress moves, and missions
+Opens from the **Missions window** button at the bottom of the panel. It stays live while you play: times left count down, progress moves, and missions
 come and go as you accept and hand them in.
 
 - **Active** tab: one row per mission, ready ones (✓, green) first, then the soonest to expire.
@@ -139,6 +139,20 @@ come and go as you accept and hand them in.
   - **Copy system** puts the selected mission's system on the clipboard for the galaxy map.
   - **Sources** opens [Source commodities](#source-commodities).
 - The window is titled **WFMT - Missions**, stays on the mission you selected as the list updates, and remembers its size and position.
+
+## The Mission description window
+
+Click a mission's card in the Mission types window to open **WFMT - Mission description**: everything WFMT knows about that one mission, in groups. Clicking another card switches the same window to that mission. It stays live (times left count down, progress moves) and says so when the mission is handed in, fails or is abandoned.
+
+- **Overview:** the same lines as the Missions window's detail strip (faction, status, where to go, progress, reward, wing, accepted, expires, pinned).
+- **Objective:** the mission's description, target, target type and faction, kills required, commodity and units, passengers (count, type, VIPs, wanted), and the destination system, station and settlement, where the game gave them.
+- **Cargo:** cargo progress, what is still to pick up, where and the largest pad there, and what is still to find.
+- **Reward and standing:** the reward, donation, commodity reward, and the influence and reputation the game says it will give.
+- **Journal:** the mission ID and the game's internal name.
+- **Other journal fields:** any other field the game wrote about the mission, as it wrote it, so nothing is hidden.
+- **Copy system** puts the destination system on the clipboard; **Copy details** copies everything shown as plain text.
+
+Fields the game did not write for a mission type are left out. The window reads only your journal and opens nothing online. It remembers its size and position.
 
 ### Progress
 

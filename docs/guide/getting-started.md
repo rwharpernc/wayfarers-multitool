@@ -408,7 +408,8 @@ Switch to the mode first, then use the button listed here.
 | Exploration Dashboard (tabs: Overview, Orbit, Surface, Exploration) | Exploration | **Dashboard** button in the Dashboard section |
 | Marks (for the Surface Compass) | Exploration | **Marks** button in the Compass section |
 | Watch list | Trade | **Watch** button in the Watch list section |
-| Missions window (tabs: Active, By place) | Missions | **Missions window** button at the very bottom of the panel, or click a mission's card |
+| Missions window (tabs: Active, By place) | Missions | **Missions window** button at the very bottom of the panel |
+| Mission description | Missions | Click a mission's card in the Mission types window |
 | Source commodities | Missions | **Find sources** button at the very bottom of the panel (or **Sources** in the Missions window) |
 | Inventory | Operations | Click one of the **inventory bars** (there is no button) |
 | Materials | Operations | **Materials** button in the Engineering section |

@@ -46,10 +46,11 @@ all_missions.py        A generic summary of every active mission (the "All Missi
 mission_cargo.py       Collect / delivery progress of cargo missions (CargoDepot events).
 community_goal_state.py Community Goal snapshots and the commander's contribution.
 mission_types.py       The rules that decide a mission's category. Pure, no dependencies.
-missions_ui.py         The panel (a count for each type) and the drawing of the category pages; opens the Missions window.
+missions_ui.py         The panel (a count for each type) and the drawing of the category pages; opens the Missions window and the Mission description window.
 missions_types_window.py The Mission types window: the category pages, picked from a list with counts.
 missions_board.py      The Missions window's data: a Row per active mission, totals, grouping by place, detail lines. Pure.
 missions_window.py     The Missions window (Active and By place tabs, detail strip, pinning).
+mission_detail_window.py  The Mission description window, opened by a mission card: sections() joins the Row, the MissionSummary and the raw MissionAccepted event.
 mission_pins.py        The commander's pinned mission ids (per commander, mission_pins.json).
 mission_sources.py     The commodities the missions still need, and the source lookups (section 10c).
 mission_sources_window.py  The Source commodities window.
@@ -237,6 +238,7 @@ The rest of the board:
 - `missions_window.MissionsWindow` shows them in two `DataTable`s, rebuilding a table only when its rows
   changed (so selection and scroll stay put), refreshes from `MissionsUI.redraw` and every 30 s.
 - `MissionsUI.__live_rows` supplies the live data.
+- A mission card on a Mission types page calls `MissionsUI.__show_mission_detail`, which opens (or re-points) `mission_detail_window.MissionDetailWindow`. `sections(row, summary, event, now)` builds its content from the `Row`, the `MissionSummary` and the raw MissionAccepted event (`active_missions.tracker.snapshot()`); journal keys without a label go under "Other journal fields". Tests: `tests/test_mission_detail_window.py`.
 - The panel's three buttons (Missions window, Mission types, Find sources) are built once in `build_panel`, in grid row 1
   below the canvas and laid out by `panelkit.flow_buttons`, so they show whatever the panel lists.
 - The six display switches are set only on the **Display** card at the top of the Mission types window (the Settings → WFMT → Missions tab points there) (`missions_display_settings.DisplayCard`). The config keys live in `missions_display_settings` (`missions.py` imports them); `set_value` saves a switch and tells the listeners, and `MissionsController._on_display_setting` calls `apply_display_settings`, which redraws the panel and the window.
