@@ -914,6 +914,18 @@ Keyboard shortcuts are Windows only. The chat commands are the same on both syst
 - [x] **Ship names:** the Trade ship line and the Expedition Log's ship show proper names.
 - [x] **Flatpak EDMC:** the new data file `combat_record.json` is in the plugin folder, and **Back up my data** includes it.
 
+## 7t. 1.5.2: Rename Site, Anduliga, Landing Places, Mission Types, Item Names, Blueprints (Not Run on Linux)
+
+Steps for each are in [TEST_PLAN.md](TEST_PLAN.md) section 14.
+
+- [ ] **Rename Site:** **Manage Sites → Rename Site…** and, for an archived site, **Manage → Rename Site…**. The dialog takes the keyboard focus, **Rename** and **Cancel** work, the name shows in the list, the overlay card and the History, survives docking and a restart, and an empty name brings the game's name back.
+- [ ] **Flatpak EDMC:** a renamed site is kept in the sites file in the plugin folder, and **Back up my data** includes it.
+- [ ] **Rare Goods Finder:** Anduliga Fire Works is in the list (142 rares).
+- [ ] **Nearest place to land:** settlements, Dodec Starports and Asteroid bases appear in the Stations table.
+- [ ] **Mission types:** a donation or rescue mission is under **Donation & Rescue**, a scan mission under **Combat**.
+- [ ] **Inventory:** the consumables are named Medkit, Energy Cell and so on.
+- [ ] **Engineering:** the new blueprints are listed, and the Ship planner skips no module of a build that holds them.
+
 ## Reporting a Failure
 
 Open an issue with the setup line (distribution, desktop, X11 or Wayland, native or Flatpak EDMC), the failing step number and the log excerpt.
