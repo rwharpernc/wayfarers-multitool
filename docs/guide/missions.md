@@ -95,7 +95,7 @@ The numbers and names below are illustrative. The wording is what WFMT displays.
 
 Press **Mission** in the mode bar. The top line reads `Missions: 7/20` (missions held of the game's limit of 20; hidden by *Show mission count* on the Display card of the Mission types window). Below it, each type that holds a mission is listed with its count (`Combat 3`). Click a line, or press **Mission types**, to open the **Mission types** window: the types are listed on the left with their counts and the selected type's page is shown on the right. The types, in order:
 
-**Massacre (Space) · Settlement Raids (Ground) · Combat · Trade & Mining · Passenger · Covert / On-Foot Ops · Other · Community Goals**
+**Massacre (Space) · Settlement Raids (Ground) · Combat · Trade & Mining · Passenger · Covert / On-Foot Ops · Donation & Rescue · Other · Community Goals**
 
 - **Massacre** and **Settlement Raids** pages show grouped kill-progress bars.
   - One block per issuing faction. The top line is the faction name (`⚠ Illegal` when any stacked mission is illegal) and kills as `done/required`. A `~` before the count marks an estimate.
@@ -190,7 +190,7 @@ WFMT uses only what Elite Dangerous writes to its journal files. Missions need n
 | Missions for the next jump on the overlay when a route is plotted | The game names the targeted system (`FSDTarget`), not the whole route, so only the next hop is NEXT. | Target each hop as it is reached. |
 | Missions accepted long ago | WFMT reads only the last two weeks of journals at start-up. A mission still active but accepted earlier is not found. | Check the game's mission board. |
 | Kills made while EDMC was closed | Counted only if they are in the last two weeks of journal files. | Run EDMC during play. |
-| Correct category for every mission | Names WFMT does not recognize are placed in **Other**. | The card shows the details. |
+| Correct category for every mission | Names WFMT does not recognize are placed in **Other** (in one commander's journals, only a story mission and a permit mission were left there). | The card shows the details. |
 | Long-term Community Goal payout memory | The game writes the payout (`CommunityGoalReward`) once. WFMT lists the latest three under **Paid out**, found in the last two weeks of journals at start-up. | None. |
 | Community Goal removal at its end | The game gives no end signal, so the panel uses each goal's expiry date. | A goal past its expiry clears itself. |
 

@@ -3602,5 +3602,28 @@
       "y": -910.28125,
       "z": 19808.125
     }
+  },
+  {
+    "rare": "Anduliga Fire Works",
+    "inaraId": 3810,
+    "system": "Anduliga",
+    "spanshId64": 16065727899073,
+    "station": "Celsius Estate",
+    "pad": "M",
+    "illegalInSuperpowers": [],
+    "illegalInGovs": [],
+    "cost": 882,
+    "pp": {
+      "eligibleSystemTypes": [
+        "acquisition",
+        "exploit"
+      ]
+    },
+    "distanceToStarLs": 626422,
+    "coords": {
+      "x": 124.625,
+      "y": 2.5,
+      "z": 61.25
+    }
   }
 ]

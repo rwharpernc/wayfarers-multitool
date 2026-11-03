@@ -76,11 +76,12 @@ Every roster, kill list and goal set is keyed by commander. Switching commander 
 Frontier does not document mission types. The internal `Name` of each mission contains underscore-separated tags (for example `Mission_Massacre_Onslaught`, `Mission_Delivery_Illegal_MB`). `mission_types.classify()` assigns a `MissionAccepted` event to a category. The first matching rule applies:
 
 1. Massacre-shaped (below): Massacre (Space) or Settlement Raids (Ground).
-2. The name contains a combat hint (`assassinate`, `assassination`, `disable`, `skimmer`, `conflict`, `blops`, `piracy`, `scout`, `thargoid`, `terminalprosecution`, `tacticaltakedown`, `reclamationpoint`, `biohazardtakedown`, `rapidresponse`): **Combat**.
-3. The name contains a trade hint (`delivery`, `courier`, `collect`, `mining`, `salvage`, `communitygoal`, `smuggle`): **Trade & Mining**.
-4. The name contains a passenger hint (`passenger`, `sightseeing`, `vip`, `bulk`, `evacuation`, `polprisoner`): **Passenger**.
-5. The name contains a covert hint (`hack`, `covert`, `heist`, `sabotage`, `reboot`, `download`, `upload`, `poi`, `productionheist`, `theft`, `power`, `production`, `ncd`), or the mission is on foot: **Covert / On-Foot Ops**.
-6. Otherwise: **Other**.
+2. The name contains a donation or rescue hint (`altruism`, `rescue`): **Donation & Rescue**. This is checked before the combat hint.
+3. The name contains a combat hint (`assassinate`, `assassination`, `disable`, `skimmer`, `conflict`, `blops`, `piracy`, `scout`, `thargoid`, `terminalprosecution`, `tacticaltakedown`, `reclamationpoint`, `biohazardtakedown`, `rapidresponse`, `mission_scan`): **Combat**.
+4. The name contains a trade hint (`delivery`, `courier`, `collect`, `mining`, `salvage`, `communitygoal`, `smuggle`): **Trade & Mining**.
+5. The name contains a passenger hint (`passenger`, `sightseeing`, `vip`, `bulk`, `evacuation`, `polprisoner`): **Passenger**.
+6. The name contains a covert hint (`hack`, `covert`, `heist`, `sabotage`, `reboot`, `download`, `upload`, `poi`, `productionheist`, `theft`, `power`, `production`, `ncd`), or the mission is on foot: **Covert / On-Foot Ops**.
+7. Otherwise: **Other**.
 
 Definitions:
 

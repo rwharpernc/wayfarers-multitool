@@ -97,11 +97,11 @@ The two ticks of the overlay card are under Settings → Overlays → Powerplay 
 
 A window listing the rare commodities nearest to the current system.
 
-- **Bundled list** (`rare_goods.json`, 141 rare goods). Each entry contains the origin system and station, landing-pad size, cost, legality restrictions, Powerplay eligibility, the distance of the station from its arrival star (`distanceToStarLs`, light seconds, approximate), system coordinates, an Inara id and a Spansh system id. Rare goods do not move, so none of this is fetched at runtime. The coordinates and ids were looked up once when the list was compiled.
+- **Bundled list** (`rare_goods.json`, 142 rare goods). Each entry contains the origin system and station, landing-pad size, cost, legality restrictions, Powerplay eligibility, the distance of the station from its arrival star (`distanceToStarLs`, light seconds, approximate), system coordinates, an Inara id and a Spansh system id. Rare goods do not move, so none of this is fetched at runtime. The coordinates and ids were looked up once when the list was compiled.
 - **Nearest** is computed locally from the `StarPos` of the commander: straight-line distance in light years, nearest first, up to the selected number (1 to 141, remembered).
 - **Controlling Power** is the one live lookup, because control changes weekly: the public system endpoint of Spansh, for each origin system. Results are cached for the session, failures included, at most 5 at a time. A "—" means unclaimed or unreachable. See [TECHNICAL.md](TECHNICAL.md#keeping-api-traffic-low).
 - **Filters.**
-  - **Large pads only** keeps the rare goods whose station has a large pad (20 of the 141).
+  - **Large pads only** keeps the rare goods whose station has a large pad (20 of the 142).
   - **Only my Power** keeps those whose origin system is controlled by the pledged Power of the commander. The window queries Spansh (`powerplay_control_lookup`) for `POWER_BATCH` (10) origin systems at a time, nearest first, until it has as many matches as the number to show or has gone through the list. Each answer is cached for the session. The filter is unavailable until the Power is known.
   - Both filters apply before the number to show. The selections are remembered.
 - **Position.** The list needs the `StarPos` of the commander. **Use last known location** takes it, with the allegiance and government of the system, from the commander's newest journals (`current_system.last_place`), for use while the game is closed.

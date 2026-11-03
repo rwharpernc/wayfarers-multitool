@@ -1059,7 +1059,7 @@ The journal's `PowerplayMerits` event reports the merits earned after every game
 
 **Rare Goods Finder** (`rare_goods.py`, `rare_goods_window.py`, `powerplay_control_lookup.py`, `rare_goods.json`)
 
-- Rare-good origins do not move, so the dataset (141 entries, with coordinates, Inara id and Spansh id64) ships as a static file.
+- Rare-good origins do not move, so the dataset (142 entries, with coordinates, Inara id and Spansh id64) ships as a static file.
 - "Nearest" is the plain 3D distance from the latest `StarPos` the Powerplay controller saw.
 - Only the origin system's controlling Power changes, so only that is fetched live, from Spansh's `system/<id64>` endpoint on a small thread pool.
 - Results are cached per process, including failures, so a redraw or a dead network does not re-request.

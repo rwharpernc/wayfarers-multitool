@@ -22,7 +22,7 @@ from plugin import rare_goods  # noqa: E402
 
 class DatasetTests(unittest.TestCase):
     def test_dataset_loads_with_expected_shape(self) -> None:
-        self.assertEqual(rare_goods.dataset_size(), 141)
+        self.assertEqual(rare_goods.dataset_size(), 142)
         for entry in rare_goods._load():
             for key in ("rare", "inaraId", "system", "station", "pad", "coords"):
                 self.assertIn(key, entry, entry.get("rare"))

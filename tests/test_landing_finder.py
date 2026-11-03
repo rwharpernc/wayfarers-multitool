@@ -32,7 +32,7 @@ class RequestTests(unittest.TestCase):
         self.assertEqual(filters["services"], [{"name": "Refuel"}, {"name": "Repair"}])
         self.assertEqual(filters["medium_pads"], {"comparison": "<=>", "value": [1, 999]})
         self.assertEqual(filters["type"]["value"], list(F.STATION_TYPES))
-        for kind in ("Dodec Starport", "Asteroid base"):          # Spansh's own names for two starport types that were not asked for before
+        for kind in ("Dodec Starport", "Asteroid base", "Settlement"):          # Spansh's own names for station types that were not asked for before
             self.assertIn(kind, F.STATION_TYPES)
         self.assertNotIn(F.CARRIER_TYPE, filters["type"]["value"])
         self.assertNotIn("carrier_docking_access", filters)

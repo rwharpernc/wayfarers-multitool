@@ -213,7 +213,7 @@ WFMT knows only what Elite Dangerous writes to its journal files, plus what Span
 | Deliveries | The game writes a `PowerplayDeliver` event (what and how many) just before the merits a hand-in earns. It does not state whether the hand-in counted as Acquisition, Reinforcement or Undermining. | WFMT labels the merit events following a hand-in *Delivery*: the first one within 10 minutes, and any within 10 seconds of the last one labeled. Only merits are counted, not CP. Unattributed merits are handled the same way. A merit from other activity inside that window can be mislabeled. |
 | Live standing for any system | Whole-system figures are written only on a jump into or a login at the system. | The figures are as current as the last visit. |
 | Cycles before WFMT | Available only as far back as the journal files still exist and the scan depth allows (1 to 12 cycles, 4 by default). | Older cycles are absent. The depth is set on the Sessions window's Settings tab. |
-| New rare goods | The rare goods list is a snapshot (141 rare goods). | A new rare requires a WFMT update. The Power column also requires Spansh and shows "—" when it cannot be checked. |
+| New rare goods | The rare goods list is a snapshot (142 rare goods). | A new rare requires a WFMT update. The Power column also requires Spansh and shows "—" when it cannot be checked. |
 
 Further detail: [Powerplay specification](../POWERPLAY_TECH_SPEC.md).
 
@@ -241,8 +241,8 @@ The table columns are **Rare Good**, **Origin System**, **Distance**, **Station*
 |---|---|
 | **Rares** (Powerplay panel) | Opens the window. |
 | **Show nearest** and **Apply** | Number of rows shown. The value is stored. |
-| **Large pads only** | Keeps the rares sold at large-pad stations (20 of the 141). The setting is stored. |
-| **Only my Power** (shown as **Only my Power (Your Power)**) | Keeps the rares whose origin system is controlled by the pledged Power. The box is disabled and labeled `(not pledged or not known yet)` until WFMT knows the Power (the journal writes it at login when pledged). To find the matches, WFMT asks Spansh which Power controls each origin system, nearest first and ten at a time, until it has enough (at most all 141 systems, once per session). The setting is stored. |
+| **Large pads only** | Keeps the rares sold at large-pad stations (20 of the 142). The setting is stored. |
+| **Only my Power** (shown as **Only my Power (Your Power)**) | Keeps the rares whose origin system is controlled by the pledged Power. The box is disabled and labeled `(not pledged or not known yet)` until WFMT knows the Power (the journal writes it at login when pledged). To find the matches, WFMT asks Spansh which Power controls each origin system, nearest first and ten at a time, until it has enough (at most all 142 systems, once per session). The setting is stored. |
 | **Copy system** | Places the selected row's origin system on the clipboard. |
 | **Use last known location** | Takes the commander's last position from the journals, for when the game is closed or no jump or login has been seen. |
 | **Refresh** | Rebuilds the list from the current location. |
@@ -253,7 +253,7 @@ In the Power column, "…" indicates that the lookup is in progress, and "—" i
 
 **Legality**
 
-- *Legal* means the table lists no place where the rare is illegal (128 of the 141).
+- *Legal* means the table lists no place where the rare is illegal (129 of the 142).
 - For the 13 restricted rares, the column shows *Illegal here* or *Legal here* for the current system.
   - The decision uses the allegiance and government of the current system from the journal at a jump or login.
   - The column shows *Restricted* until WFMT knows them.

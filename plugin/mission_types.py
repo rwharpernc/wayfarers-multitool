@@ -14,6 +14,7 @@ COMBAT = "combat"
 TRADE = "trade"
 PASSENGER = "passenger"
 COVERT = "covert"
+SUPPORT = "support"
 OTHER = "other"
 
 CATEGORY_LABELS: dict[str, str] = {
@@ -23,18 +24,19 @@ CATEGORY_LABELS: dict[str, str] = {
     TRADE: "Trade & Mining",
     PASSENGER: "Passenger",
     COVERT: "Covert / On-Foot Ops",
+    SUPPORT: "Donation & Rescue",
     OTHER: "Other",
 }
 
 CATEGORY_ORDER: list[str] = [
-    MASSACRE_SPACE, MASSACRE_GROUND, COMBAT, TRADE, PASSENGER, COVERT, OTHER,
+    MASSACRE_SPACE, MASSACRE_GROUND, COMBAT, TRADE, PASSENGER, COVERT, SUPPORT, OTHER,
 ]
 
 _MASSACRE_HINTS = ("massacre", "onslaught", "raid")
 _COMBAT_HINTS = ("assassinate", "assassination", "disable", "skimmer", "conflict",
                  "blops", "piracy", "scout", "thargoid", "terminalprosecution",
                  "tacticaltakedown", "reclamationpoint", "biohazardtakedown",
-                 "rapidresponse")
+                 "rapidresponse", "mission_scan")
 _TRADE_HINTS = ("delivery", "courier", "collect", "mining", "salvage",
                 "communitygoal", "smuggle")
 _PASSENGER_HINTS = ("passenger", "sightseeing", "vip", "bulk", "evacuation",
@@ -42,6 +44,7 @@ _PASSENGER_HINTS = ("passenger", "sightseeing", "vip", "bulk", "evacuation",
 _COVERT_HINTS = ("hack", "covert", "heist", "sabotage", "reboot", "download",
                  "upload", "poi", "productionheist", "theft", "power",
                  "production", "ncd")
+_SUPPORT_HINTS = ("altruism", "rescue")      # Mission_AltruismCredits* (credit donations to a faction's cause) and Mission_Rescue* (planetary rescue)
 _ILLEGAL_HINTS = ("illegal", "smuggle")
 
 
@@ -148,6 +151,8 @@ def classify(event: dict) -> str:
         return MASSACRE_GROUND if is_ground_mission(event) else MASSACRE_SPACE
 
     name = event.get("Name", "").lower()
+    if any(hint in name for hint in _SUPPORT_HINTS):
+        return SUPPORT
     if any(hint in name for hint in _COMBAT_HINTS):
         return COMBAT
     if any(hint in name for hint in _TRADE_HINTS):

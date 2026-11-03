@@ -1,7 +1,7 @@
 """Rare-goods locator for Powerplay mode: nearest rare commodities to the
 current system.
 
-Rare-good origins never move, so the dataset (`rare_goods.json`: 141 rare
+Rare-good origins never move, so the dataset (`rare_goods.json`: 142 rare
 goods with origin system, station, pad size, cost, legality restrictions,
 Powerplay eligibility, the station's distance from the arrival star, and baked-in EDSM coordinates / Inara id / Spansh
 id64 - see docs/ATTRIBUTIONS.md) ships as a static file rather than being
