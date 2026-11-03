@@ -27,9 +27,13 @@ class TradeShipNameTests(unittest.TestCase):
         for name in ("anaconda", "Anaconda", "anacondamkii", "AnacondaMkII", "Anaconda Mk II"):
             self.assertEqual(trade_ship.pad_size(name), trade_ship.LARGE, name)
 
+    def test_the_lynx_highliner_needs_a_medium_pad(self):
+        for name in ("mediumtransport01", "MediumTransport01", "Lynx Highliner"):
+            self.assertEqual(trade_ship.pad_size(name), trade_ship.MEDIUM, name)
+
     def test_a_pad_is_never_guessed_for_a_ship_not_in_the_pad_table(self):
         self.assertIsNone(trade_ship.pad_size("brand_new_ship"))
-        self.assertIsNone(trade_ship.pad_size("mediumtransport01"))
+        self.assertIsNone(trade_ship.pad_size("lander01"))          # the Nomad launches from a ship; the game gives it no pad requirement
 
     def test_the_ship_boxes_offer_ships_only(self):
         names = trade_ship.known_ships()

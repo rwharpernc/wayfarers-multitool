@@ -21,7 +21,7 @@ from typing import Any, Callable, Dict, Mapping, Optional, Sequence, Tuple
 from . import http_identity, mining_spansh_client, trade_ship
 
 CARRIER_TYPE = "Drake-Class Carrier"
-STATION_TYPES = ("Coriolis Starport", "Orbis Starport", "Ocellus Starport", "Outpost", "Planetary Outpost", "Planetary Port", "Mega ship",
+STATION_TYPES = ("Coriolis Starport", "Orbis Starport", "Ocellus Starport", "Dodec Starport", "Asteroid base", "Outpost", "Planetary Outpost", "Planetary Port", "Mega ship",
                  "Space Construction Depot", "Planetary Construction Depot")
 SERVICES = ("Refuel", "Repair", "Restock", "Outfitting")
 SERVICE_LABELS = {"Refuel": "Refuel", "Repair": "Repair", "Restock": "Rearm (restock)", "Outfitting": "Outfitting"}

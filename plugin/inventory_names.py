@@ -44,6 +44,35 @@ DISPLAY_NAMES: Dict[str, str] = {
     "weaponblueprint": "Weapon Blueprint",
     "weaponexperimentals": "Weapon Experimentals",
     "weaponinstructions": "Weapon Instructions",
+    # Consumables the community list (EDCD FDevIDs, microresources.csv) names. They were shown as "Healthpack" and "Amm Grenade Frag" wherever the event
+    # carries no localised name.
+    "healthpack": "Medkit",
+    "energycell": "Energy Cell",
+    "amm_grenade_emp": "Shield Disruptor",
+    "amm_grenade_frag": "Frag Grenade",
+    "amm_grenade_shield": "Shield Projector",
+    "bypass": "E-Breach",
+    # Powerplay items and a seed that the community list does not have yet: the game's own names, as its journal writes them (Name_Localised).
+    "nm_seed": "Unica Seed",
+    "powerclassifieddata": "Power Classified Data",
+    "powercomputer": "Computer Parts",
+    "poweremployeedata": "Power Association Data",
+    "powerelectronics": "Electronics Package",
+    "powerequipment": "Personal Protective Equipment",
+    "powerexperiment": "Experiment Prototype",
+    "powerextraction": "Extraction Sample",
+    "powerfinancialrecords": "Power Industrial Data",
+    "powerindustrial": "Industrial Component",
+    "powerinventory": "Inventory Record",
+    "powermisccomputer": "Data Storage Device",
+    "powermiscindust": "Industrial Machinery",
+    "powerplaymilitary": "Military Schematic",
+    "powerpower": "Energy Regulator",
+    "powerpropagandadata": "Power Political Data",
+    "powerresearch": "Research Notes",
+    "powerresearchdata": "Power Research Data",
+    "powersecurity": "Security Logs",
+    "powerspyware": "Power Tracker Malware",
 }
 
 

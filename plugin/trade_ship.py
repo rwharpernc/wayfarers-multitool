@@ -45,7 +45,7 @@ _add(1, "Adder", "Cobra Mk III", "Cobra Mk IV", "Cobra Mk V", "Diamondback Explo
      "Sidewinder", "Sidewinder MkI", "Viper", "Viper MkIII", "Viper Mk IV", "Vulture")
 _add(2, "Alliance Challenger", "Alliance Chieftain", "Alliance Crusader", "Asp Explorer", "Asp Scout",
      "Federal Assault Ship", "Federal Dropship", "Federal Gunship", "Fer-de-Lance", "Corsair", "Imperial Corsair",
-     "Keelback", "Krait Mk II", "Krait Phantom", "Mamba", "Mandalay", "Python", "Python Mk II",
+     "Keelback", "Krait Mk II", "Krait Phantom", "Lynx Highliner", "Mamba", "Mandalay", "Python", "Python Mk II",
      "Type-11 Prospector", "Type-6 Transporter", "Type-8 Transporter")
 _add(3, "Anaconda", "Anaconda Mk II", "Beluga Liner", "Caspian Explorer", "Federal Corvette", "Imperial Clipper", "Imperial Cutter",
      "Orca", "Panther Clipper Mk II", "Type-10 Defender", "Type-7 Transporter", "Type-9 Heavy")
