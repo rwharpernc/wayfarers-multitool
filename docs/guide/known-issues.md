@@ -156,3 +156,11 @@ These are not faults. Each is described where it belongs:
 - **Linux is verified after Windows.** See [Windows and Linux](platforms.md).
 
 Where the cause is data the journal does not record, each mode guide ends with a section titled "What the game does and doesn't tell us, and how to work around it".
+
+## Trade does not know the landing pad of some newer ships
+
+**Appearance:** the Trade panel's **Landing pad** line reads **Unknown** for a ship such as the Anaconda Mk II, and no pad restriction is applied to a station search.
+
+**Cause:** the pad sizes come from a table bundled with WFMT, and the journal does not report a ship's pad. A ship that is not in the table has no size, and WFMT does not guess one.
+
+**Remedy:** set **Ship size (landing pad)** by hand in the Routes or Market window, or report the ship's pad size so it can be added.

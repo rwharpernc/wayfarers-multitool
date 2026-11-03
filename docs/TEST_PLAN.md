@@ -1,6 +1,6 @@
-# Test Plan: 1.5.0
+# Test Plan: 1.5.1
 
-Scope: the checks to run in EDMC on the 1.5.0 build and after any release, first on **Windows** and then on **Linux**. Section 12 is new for 1.5.0.
+Scope: the checks to run in EDMC on the 1.5.1 build and after any release, first on **Windows** and then on **Linux**. Section 13 is new for 1.5.1.
 
 - Sections 1 to 4 are the quick pass over the whole release: the Rare Goods Finder, Mining, the Carrier Route window, and the Expedition, Route Planner and overlay basics.
 - The remaining in-game checks for every mode and window are under "Verification in the game" in [TODO.md](TODO.md), which holds the longer wording of each check.
@@ -11,9 +11,10 @@ Scope: the checks to run in EDMC on the 1.5.0 build and after any release, first
 
 | Platform | Automated tests | Checks in the game |
 | --- | --- | --- |
-| **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is verified only by the in-game pass. | Section 12 (1.5.0) passed in the game on 2026-11-02, before the release. Sections 1 to 7 are not recorded for 1.3.0 or later and are open. |
-| **Linux** | 3,894 tests passed in the Docker container (Xvfb and a window manager), 13 skipped, run on 2026-11-02 for the 1.5.0 build. Earlier runs: 3,857 passed and 12 skipped on 2026-11-01 for 1.4.2; 3,850 and 13 skipped for 1.4.1; 3,805 for the unpublished 1.4.0; 3,731 for 1.3.3; 3,687 for 1.3.2; 3,656 for 1.3.1; 3,639 before 1.3.0; 3,485 on 2026-10-28 before 1.2.0; 3,471 on 2026-10-27 before 1.1.0. | Section 12 (1.5.0) passed in the game on 2026-11-02, before the release. Earlier sections are not recorded for 1.3.0 or later. The last manual passes of them (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
+| **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is verified only by the in-game pass. | Section 12 (1.5.0) passed in the game on 2026-11-02, before that release. Section 13 (1.5.1) is not recorded. Sections 1 to 7 are not recorded for 1.3.0 or later and are open. |
+| **Linux** | 3,923 tests passed in the Docker container (Xvfb and a window manager), 13 skipped, run on 2026-11-03 for the 1.5.1 build. Earlier runs: 3,894 passed and 13 skipped on 2026-11-02 for 1.5.0; 3,857 passed and 12 skipped on 2026-11-01 for 1.4.2; 3,850 and 13 skipped for 1.4.1; 3,805 for the unpublished 1.4.0; 3,731 for 1.3.3; 3,687 for 1.3.2; 3,656 for 1.3.1; 3,639 before 1.3.0; 3,485 on 2026-10-28 before 1.2.0; 3,471 on 2026-10-27 before 1.1.0. | Section 12 (1.5.0) passed in the game on 2026-11-02, before that release. Section 13 (1.5.1) is not recorded. Earlier sections are not recorded for 1.3.0 or later. The last manual passes of them (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
 
+- 1.5.1 was released on 2026-11-03. The Docker tests passed on Linux (3,923 passed, 13 skipped). The in-game pass of section 13 is not recorded.
 - 1.5.0 was released on 2026-11-02. The Docker tests passed on Linux (3,894 passed, 13 skipped), and the in-game pass of section 12 was done on Windows and on Linux on 2026-11-02, before the release, with no failures.
 - Release dates: 1.0.0 on 2026-10-26 (tag `v1.0.0`); 1.1.0 on 2026-10-27 (tag `v1.1.0`); 1.2.0 on 2026-10-28 (tag `v1.2.0`); 1.3.0, 1.3.1 and 1.3.2 on 2026-10-29 (tags `v1.3.0`, `v1.3.1`, `v1.3.2`); 1.3.3 on 2026-10-30 (tag `v1.3.3`).
 - These passes are the checks to run on a released build. A failure is fixed on a short bugfix branch.
@@ -208,6 +209,19 @@ Run `npm run deploy` and restart EDMC. The 1.5.0 entry of the changelog has the 
 - [x] **Tabbing through settings boxes.** Tab through the numeric boxes of the windows (Mining, BGS, Powerplay, Inventory, Trade) without editing. Nothing flickers or redraws, and a changed value is saved once.
 - [x] **Display and monitors.** The new windows are legible at the usual scaling, and on a second monitor.
 - [x] **EDMC's light Default theme.** The orange headings, warnings and page buttons on the main panel are a darker orange. On Dark and Transparent they are the bright orange.
+
+## 13. Added in 1.5.1
+
+Run `npm run deploy` and restart EDMC. The 1.5.1 entry of the changelog has the full list of changes. None of the boxes below is ticked yet: each is ticked only after the check has been seen to pass.
+
+- [ ] **Start-up.** After a restart the line under the mode buttons reads `Plugin: v1.5.1`. The first start after the update reads the journals in the background: the **All time** row of the Combat Record reads `...` and then shows figures, and EDMC stays responsive while it does.
+- [ ] **Combat Record panel.** In Operations the **Combat Record** row (above Engineering) shows a small table with **Kills**, **Deaths** and **K/D** for **This session** and **All time**. Destroy a wanted ship, or take a bond in a conflict zone: **Kills** rises in both rows. Be destroyed: **Deaths** rises. The text is legible and the row does not make EDMC's main window wider.
+- [ ] **Combat window.** **Combat** opens a window with **This session**, **All time** and **Sessions**. Each of the first two has tiles (**Kills**, **PvP kills**, **Deaths**, **K/D**, **Rewards (cr)**) over a table with a row for each ship. **Sessions** lists the sessions newest first, marks the one being played with `(this session)`, and shows the ships of the selected session below. The window remembers its size and position.
+- [ ] **Ships in the Combat window.** Every ship is shown as the game names it (for example `Anaconda Mk II`, `Kestrel Mk II`, `Federal Corvette`), never as an internal name. A renamed ship stays on one row. An SRV or on-foot kill is on the **SRV** or **On foot** row.
+- [ ] **Earlier play counts.** Kills and deaths from journals written before WFMT 1.5.1, and while EDMC was closed, are in **All time** and **Sessions**. Close and start EDMC again: the figures do not change (nothing is counted twice). **Rebuild from journals** gives the same figures.
+- [ ] **Engineering row.** The row shows a table with **Raw**, **Manufactured** and **Encoded** and the columns **Held** and **Session**. Pick up a material from the world: **Held** and **Session** both rise. Discard or trade one: only **Held** changes. Restart EDMC during the same login: **Session** keeps its figure. Start EDMC after picking some up: those pick-ups are counted. After the next login, **Session** starts again at 0.
+- [ ] **Ship names in Trade and the Expedition Log.** With the Anaconda Mk II, the Kestrel Mk II or the Lynx Highliner as the current ship, the Trade panel's **Ship** line and the Expedition Log's ship read the proper name. The ship boxes (a ship build, Trade) suggest those names. Trade shows the landing pad of the Anaconda Mk II as unknown unless a ship size override is set.
+- [ ] **Display.** The new rows and the Combat window are legible at the usual scaling, on a second monitor, and on EDMC's Default, Dark and Transparent themes.
 
 ## Linux Specifics
 

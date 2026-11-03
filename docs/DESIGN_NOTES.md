@@ -505,6 +505,17 @@ Acknowledgements are in [ATTRIBUTIONS.md](ATTRIBUTIONS.md). The license notices 
 - Supersedes: the page arrows (`panelkit.nav_arrow`, no longer present in the code) and the earlier notes about Mining, Trade and Missions pages on the panel.
 - Type-ahead in name boxes belongs to the same release: a box that takes a name that WFMT already holds (bodies, rings, ships, commodity lists) suggests it while typing, from local data only.
 
+### 3.29 The Combat Record, and one table of ship names (1.5.1)
+
+- Decision: kills and deaths are counted per ship and per session in a record of their own (`combat_record.py`), kept per commander. A session is one game login, identified by the journal file it was played in, which is the rule `session_credits.py` already uses. Totals are kept apart from the sessions, so the limit on listed sessions never changes them.
+- Why the journal file: it is the same whether the event arrives live or is read back later, so one session is one record whichever way it was seen. A time gap or a `LoadGame` count would give a live session and a rebuilt one different boundaries.
+- Why `through` and `seen`: the journals are read once at start-up, and EDMC delivers the live events of the same file. The newest counted timestamp plus the fingerprints of the events at that second counts an event once however it arrives, and still counts two different events of one second.
+- Ships: a ship is its type and the game's number for it, so a rename does not split a row. The SRV and on foot are rows of their own, because a kill in them is not the ship's. The vessel is followed from the events that change it; a login made on foot is not reported by the game, so that case is an estimate (stated in the guide).
+- Not counted: a kill that pays no bounty or bond and is not a PvP kill is not in the journal. `CapShipBond` is left out so a capital ship is not counted twice.
+- Ship names: the journal gives `Ship_Localised` for only some ships, and a newer ship can have only a codename (`smallcombat01_nx`). `ship_names.py` uses the game's own name when given, then one table built from a long-time player's journals, then the internal name tidied into words. The Combat Record, the Expedition Log and Trade use it, replacing three tables that disagreed on what they covered. A landing pad is still never guessed for a ship the pad table lacks.
+- Materials this session: counted from `MaterialCollected` only (a pick-up from the world), kept per commander with the journal file's name, and filled once from that file when WFMT meets a login it has not seen, so pick-ups made before EDMC started count. A trade, a reward or a craft is not collecting.
+- Presentation: short figures that belong side by side (this session against all time, held against picked up) are shown in aligned rows (`panelkit.StatRows`), not in one wrapped sentence. The rows hold only the plugin's own short labels, so they cannot widen EDMC's window.
+
 ---
 
 ## 4. Deliberately not built

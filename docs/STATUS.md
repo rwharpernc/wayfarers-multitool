@@ -1,11 +1,12 @@
 # Project Status
 
-Scope: the release state, branches, test state and unverified items of Wayfarer's Multitool (WFMT) as of 2026-11-02. The file is kept in Git because Git is the only thing shared between the two test machines, one running Windows and one running Linux.
+Scope: the release state, branches, test state and unverified items of Wayfarer's Multitool (WFMT) as of 2026-11-03. The file is kept in Git because Git is the only thing shared between the two test machines, one running Windows and one running Linux.
 
 ## Release
 
 | Version | Published | Notes |
 | --- | --- | --- |
+| 1.5.1 | 2026-11-03 (tag `v1.5.1`) | Patch on 1.5.0, built on `patch/1.5.1`. Docker tests on Linux before release: 3,923 passed, 13 skipped. No in-game pass recorded: the new checks are [TEST_PLAN.md](TEST_PLAN.md) section 13. |
 | 1.5.0 | 2026-11-02 (tag `v1.5.0`) | Docker tests on Linux before release: 3,894 passed, 13 skipped. In-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 12 on Windows and on Linux on 2026-11-02, before publication, with no failures. |
 | 1.4.2 | 2026-11-01 (tag `v1.4.2`) | Patch on 1.4.1. |
 | 1.4.1 | 2026-11-01 (tag `v1.4.1`) | Next release after 1.3.3. The 1.4.0 version number was prepared and never published; its changes are part of 1.4.1. Docker tests on Linux: 3,850 passed, 13 skipped. No in-game pass recorded. |
@@ -18,12 +19,17 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 | 1.0.0 | 2026-10-26 | First release. Contains everything built up to 2026-10-26. |
 
 - The project was renamed Wayfarer's Multitool (WFMT) and its version history restarted at 1.0.0 on 2026-10-21.
-- The latest published release is 1.5.0. The repository is public.
+- The latest published release is 1.5.1. The repository is public.
 - The in-app updater and the README "latest release" link read GitHub's public releases API.
 - The full list of changes for each version is in [CHANGELOG.md](../CHANGELOG.md).
 
 ### Contents of each release
 
+- **1.5.1**
+  - Adds the Combat Record to Operations: kills, PvP kills, deaths and rewards per ship, for this session, every session and in total, kept per commander and read back from the journals.
+  - Adds the materials picked up this session to the Engineering row, which now shows what is held and what was picked up as a small table.
+  - Shows ship names as the game shows them in the Combat Record, the Expedition Log and Trade (one shared table, `ship_names.py`), instead of the journal's internal names.
+  - The updater offers 1.5.1 to installations on 1.5.0.
 - **1.5.0**
   - Replaces the ◀ ▶ pages with windows (Trade, Mining, Missions).
   - Moves the display and tuning settings of Trade, Mining, Missions, Powerplay, BGS, Inventory, Colonization (the reporting choices) and Exploration (three windows) out of File → Settings into the windows that use them.
@@ -66,7 +72,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 ## Branches
 
-- One long-lived branch exists: `master`. The feature branch `feature/ux-improvements` (version 1.5.0) was merged into it for the 1.5.0 release.
+- One long-lived branch exists: `master`. The feature branch `feature/ux-improvements` (version 1.5.0) was merged into it for the 1.5.0 release, and `patch/1.5.1` (version 1.5.1) for the 1.5.1 release.
 - A release is built on a branch named for it (`release/1.3.0` was the last). Releases 1.3.1, 1.3.2 and 1.3.3 were built on `bugfix/1.3.1`, `bugfix/1.3.2` and `bugfix/1.3.3`. Each branch is merged fast-forward into `master` and deleted after the tag is created.
 - A fix to a released version is made on a short branch cut from `master` (for example `bugfix/1.3.4`) and merged back.
 
@@ -76,6 +82,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 | Date | Release | Result |
 | --- | --- | --- |
+| 2026-11-03 | 1.5.1 | 3,923 passed, 13 skipped (Docker, Linux) |
 | 2026-11-02 | 1.5.0 | 3,894 passed, 13 skipped (Docker, Linux) |
 | 2026-11-01 | 1.4.2 | 3,857 passed, 12 skipped (Docker, Linux) |
 | | 1.4.1 | 3,850 passed, 13 skipped (Docker, Linux) |
@@ -93,7 +100,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 - Tested by the maintainer with a build of the branch being worked on (`npm run deploy`, run by hand).
 - Bugs found are fixed on `master` or on a short bug fix branch.
-- The in-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 12 for 1.5.0 was completed on 2026-11-02 with no failures.
+- The in-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 12 for 1.5.0 was completed on 2026-11-02 with no failures. The in-game pass of section 13 for 1.5.1 is not recorded.
 - Native checks made on Windows on 2026-10-23: the display probe read 3840 x 2160 at 125% scaling; the journals confirmed the Mk II jet cone boost of 6x at a neutron star and 3x at a white dwarf (V-0351).
 - Recorded for 1.2.0 (deployed and used on Windows on 2026-10-28; not run on Linux outside the Docker tests):
   - The Colonization Archive (Archive Finished, Show Archive, Restore) works.
@@ -114,7 +121,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 ### Linux
 
-- Manual pass target: CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC. Releases 1.0.0 through 1.4.2 have no manual pass recorded on this setup. The 1.5.0 in-game pass on Linux was completed on 2026-11-02.
+- Manual pass target: CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC. Releases 1.0.0 through 1.4.2 have no manual pass recorded on this setup. The 1.5.0 in-game pass on Linux was completed on 2026-11-02. The 1.5.1 pass (section 7s of `docs/LINUX_TESTING.md`) is not recorded.
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Earlier manual passes:
   - 2026-10-18 (KDE Plasma, Wayland, Flatpak EDMC): completed without recorded problems.
