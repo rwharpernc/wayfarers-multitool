@@ -23,9 +23,13 @@ class TradeShipNameTests(unittest.TestCase):
         self.assertEqual(trade_ship.ship_display_name("some_new_ship"), "Some New Ship")
         self.assertEqual(trade_ship.ship_display_name(""), "")
 
-    def test_a_pad_is_still_never_guessed_for_a_ship_not_in_the_pad_table(self):
-        self.assertIsNone(trade_ship.pad_size("anacondamkii"))
-        self.assertEqual(trade_ship.pad_size("anaconda"), trade_ship.LARGE)
+    def test_the_anaconda_and_the_anaconda_mk_ii_need_a_large_pad(self):
+        for name in ("anaconda", "Anaconda", "anacondamkii", "AnacondaMkII", "Anaconda Mk II"):
+            self.assertEqual(trade_ship.pad_size(name), trade_ship.LARGE, name)
+
+    def test_a_pad_is_never_guessed_for_a_ship_not_in_the_pad_table(self):
+        self.assertIsNone(trade_ship.pad_size("brand_new_ship"))
+        self.assertIsNone(trade_ship.pad_size("mediumtransport01"))
 
     def test_the_ship_boxes_offer_ships_only(self):
         names = trade_ship.known_ships()

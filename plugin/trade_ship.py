@@ -47,7 +47,7 @@ _add(2, "Alliance Challenger", "Alliance Chieftain", "Alliance Crusader", "Asp E
      "Federal Assault Ship", "Federal Dropship", "Federal Gunship", "Fer-de-Lance", "Corsair", "Imperial Corsair",
      "Keelback", "Krait Mk II", "Krait Phantom", "Mamba", "Mandalay", "Python", "Python Mk II",
      "Type-11 Prospector", "Type-6 Transporter", "Type-8 Transporter")
-_add(3, "Anaconda", "Beluga Liner", "Caspian Explorer", "Federal Corvette", "Imperial Clipper", "Imperial Cutter",
+_add(3, "Anaconda", "Anaconda Mk II", "Beluga Liner", "Caspian Explorer", "Federal Corvette", "Imperial Clipper", "Imperial Cutter",
      "Orca", "Panther Clipper Mk II", "Type-10 Defender", "Type-7 Transporter", "Type-9 Heavy")
 
 

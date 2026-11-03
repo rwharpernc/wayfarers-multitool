@@ -157,9 +157,9 @@ These are not faults. Each is described where it belongs:
 
 Where the cause is data the journal does not record, each mode guide ends with a section titled "What the game does and doesn't tell us, and how to work around it".
 
-## Trade does not know the landing pad of some newer ships
+## Trade does not know the landing pad of a ship that is not in its table
 
-**Appearance:** the Trade panel's **Landing pad** line reads **Unknown** for a ship such as the Anaconda Mk II, and no pad restriction is applied to a station search.
+**Appearance:** the Trade panel's **Landing pad** line reads **Unknown** for a ship such as the Lynx Highliner or the Nomad, and no pad restriction is applied to a station search.
 
 **Cause:** the pad sizes come from a table bundled with WFMT, and the journal does not report a ship's pad. A ship that is not in the table has no size, and WFMT does not guess one.
 
