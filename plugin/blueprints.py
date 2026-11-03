@@ -22,6 +22,7 @@ from dataclasses import dataclass
 from typing import Callable, Dict, Iterable, List, Optional, Tuple
 
 from .blueprints_data import BLUEPRINT_ROWS, INGREDIENT_ROWS
+from .blueprints_edsy import EDSY_ROWS
 from .blueprints_extra import EXTRA_INGREDIENTS, EXTRA_ROWS
 from .materials import CATALOG
 
@@ -105,7 +106,7 @@ _SOURCES = _build_sources()
 
 def _build() -> Tuple[Blueprint, ...]:
     out: List[Blueprint] = []
-    for kind, name, grade, engineers, ingredients, effects in (*BLUEPRINT_ROWS, *EXTRA_ROWS):
+    for kind, name, grade, engineers, ingredients, effects in (*BLUEPRINT_ROWS, *EXTRA_ROWS, *EDSY_ROWS):
         made = []
         for ingredient, count in ingredients:
             what, key, group, found = _SOURCES.get(ingredient, (COMMODITY, None, "", ()))

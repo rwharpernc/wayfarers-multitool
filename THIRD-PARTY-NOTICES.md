@@ -358,6 +358,15 @@ multipliers and the efficiency and Odyssey bonuses) uses the figures in EDDiscov
    limitations under the License.
 ```
 
+## Engineering blueprints added from EDSY
+
+`plugin/blueprints_edsy.py` holds 18 engineering blueprints that the table above lacks (its source was last changed in March 2024), read on 2026-11-03 from `eddb.js` in
+[taleden/EDSY](https://github.com/taleden/EDSY): each blueprint's name, the materials of each grade and the module types it applies to. Only those facts were read. EDSY's own
+code, markup and script are copyright taleden and licensed under
+[Creative Commons Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/); the Elite Dangerous game data in it remains the property of
+Frontier Developments plc, which EDSY states it uses as authorized by Frontier. No EDSY code, text or file is bundled; the rows are written in WFMT's own table format.
+EDSY's data was also used to compare the table's other recipes and the ships' landing-pad classes. WFMT is a free, non-commercial plugin.
+
 ## Ship engineering planner: journal blueprint names
 
 `plugin/journal_blueprints.py` links the names the journal uses for engineering blueprints and experimental effects (`FSD_LongRange`,
@@ -386,8 +395,9 @@ Spansh's market search needs them exactly.
 ## Ship landing-pad sizes (Trade)
 
 The pad class of each ship in `plugin/trade_ship.py` (small, medium or large) was read from the ship data in
-[EDCD/coriolis-data](https://github.com/EDCD/coriolis-data) (`properties.class`). These are game facts; no code
-or data file from that project is bundled.
+[EDCD/coriolis-data](https://github.com/EDCD/coriolis-data) (`properties.class`). The Lynx Highliner and the Anaconda Mk II, which that data lacks, were read from
+[EDSY](https://github.com/taleden/EDSY)'s ship data (`class`) and checked against Frontier's ship pages. These are game facts; no code
+or data file from those projects is bundled.
 
 ## Notable Bodies: rules, thresholds and green gas giant temperatures (MIT)
 

@@ -294,8 +294,9 @@ Data was taken from several sources in this section. Each entry states what was 
   - **Code:** WFMT's own, built from the journal's events. None taken from the other projects.
 - **Engineering blueprints** (what each blueprint requires and where the ingredients are found)
   - **Credit:** [EDEngineer](https://github.com/msarilar/EDEngineer) (MIT; notice in `THIRD-PARTY-NOTICES.md`),
-    [Elite Dangerous Odyssey Materials Helper](https://github.com/jixxed/ed-odyssey-materials-helper) and
-    [EDDiscovery](https://github.com/EDDiscovery/EliteDangerousCore) (Apache-2.0; notice in `THIRD-PARTY-NOTICES.md`).
+    [Elite Dangerous Odyssey Materials Helper](https://github.com/jixxed/ed-odyssey-materials-helper),
+    [EDDiscovery](https://github.com/EDDiscovery/EliteDangerousCore) (Apache-2.0; notice in `THIRD-PARTY-NOTICES.md`) and
+    [EDSY](https://github.com/taleden/EDSY) (notice in `THIRD-PARTY-NOTICES.md`).
   - **Use in WFMT:**
     - The recipes and the "where found" text are a trimmed copy of EDEngineer's `blueprints.json` and `entryData.json`, compiled by its
       contributors from the game.
@@ -303,6 +304,10 @@ Data was taken from several sources in this section. Each entry states what was 
     - EDDiscovery's data corrected five synthesis recipes and supplied seven synthesis families and nine Thargoid-war and chip materials. EDDiscovery's engineer table is
       `plugin/engineers_data.py` (each engineer's location and how to find, be invited by and unlock them).
     - EDEngineer's data also records the Coriolis identifier of each grade, which the generated table of journal blueprint names uses.
+    - EDSY's data (`eddb.js`, read on 2026-11-03) supplied 18 blueprints that EDEngineer's table, last changed 2024-03-07, lacks: their names, the materials of each grade and
+      the module types each applies to, in `plugin/blueprints_edsy.py` (materials only: no engineers or effects, and no grade the source leaves empty). Its limits are stated in
+      that file's header. EDSY's materials for the other recipes were compared with the table (712 grade recipes matched) and its ship classes were used to check the landing
+      pads (the Lynx Highliner and the Anaconda Mk II).
   - **Code:** none taken. None of the data is from Frontier.
 
 ### Engineers
@@ -455,7 +460,7 @@ constants, mining depletion figures and micro-resource names) come from the comm
 license requires a notice, the notice is in `THIRD-PARTY-NOTICES.md`.
 
 - Micro-resource and commodity names come from **[EDCD/FDevIDs](https://github.com/EDCD/FDevIDs)**.
-- The landing-pad size of each ship (Trade mode) comes from **[EDCD/coriolis-data](https://github.com/EDCD/coriolis-data)**.
+- The landing-pad size of each ship (Trade mode) comes from **[EDCD/coriolis-data](https://github.com/EDCD/coriolis-data)**; the Lynx Highliner and the Anaconda Mk II, which that data lacks, from [EDSY](https://github.com/taleden/EDSY) and Frontier's own ship pages, as [Inara](https://inara.cz/) also lists them.
 - Engineering material names, types and grades (Operations → Materials) come from FDevIDs' `material.csv`.
 
 ## Data gathering and verification

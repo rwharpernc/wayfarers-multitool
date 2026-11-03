@@ -18,6 +18,7 @@ if "config" not in sys.modules:
 
 from plugin import blueprint_wishlist as W  # noqa: E402
 from plugin import blueprints as B  # noqa: E402
+from plugin.blueprints_edsy import EDSY_ROWS  # noqa: E402
 from plugin import journal_blueprints as J  # noqa: E402
 from plugin import ship_plan as S  # noqa: E402
 
@@ -69,11 +70,15 @@ class ModuleTypeTests(unittest.TestCase):
                            ("hpt_advancedtorppylon_fixed_large", "Torpedo Pylon"), ("int_hyperdrive_size5_class5", "Frame Shift Drive"), ("int_engine_size4_class2", "Thrusters"),
                            ("int_shieldgenerator_size3_class5_strong", "Shield Generator"), ("asp_armour_grade1", "Armour"), ("python_armour_reactive", "Armour"),
                            ("int_detailedsurfacescanner_tiny", "Surface Scanner"), ("int_repairer_size3_class5", "Auto Field-Maintenance Unit"),
-                           ("hpt_chafflauncher_tiny", "Chaff Launcher"), ("int_sensors_size5_class2", "Sensors")):
+                           ("hpt_chafflauncher_tiny", "Chaff Launcher"), ("int_sensors_size5_class2", "Sensors"),
+                           ("int_mkiiagileboost_engine", "Thrusters"), ("int_cargorack_size6_class1", "Cargo Rack"), ("int_modulereinforcement_size3_class1", "Module Reinforcement Package"),
+                           ("hpt_mininglaser_fixed_small", "Mining Laser"), ("hpt_mining_abrblstr_fixed_small", "Abrasion Blaster"),
+                           ("hpt_guardian_gausscannon_fixed_medium", "Guardian Gauss Cannon"), ("hpt_guardian_plasmalauncher_turret_large", "Guardian Plasma Charger"),
+                           ("hpt_guardian_shardcannon_fixed_large", "Guardian Shard Cannon")):
             self.assertEqual(S.module_type(item), kind, item)
 
     def test_unknown_items_and_non_text_have_no_type(self):
-        for item in ("modularcargobaydoor", "int_cargorack_size6_class1", "", None, 5):
+        for item in ("modularcargobaydoor", "hpt_flakmortar_fixed_medium", "", None, 5):
             self.assertEqual(S.module_type(item), "" if item != 5 else S.module_type("5"))
 
     def test_every_module_type_is_a_type_the_table_has(self):
@@ -105,12 +110,62 @@ class PlanModuleTests(unittest.TestCase):
         utility = S.plan_module(module("b", "hpt_chafflauncher_tiny", "Misc_LightWeight", 1))
         self.assertEqual((weapon.blueprint, utility.blueprint), ("Lightweight Mount", "Lightweight"))
 
+    def test_modules_seen_in_a_real_journal_that_were_not_counted_now_are(self):
+        """Each of these is a module and blueprint pair a real ship's Loadout events held (with their BlueprintIDs), which the planner used to skip."""
+        for item, blueprint, level, kind, name in (
+                ("hpt_crimescanner_size0_class1", "Sensor_FastScan", 3, "Kill Warrant Scanner", "Fast Scanner"),
+                ("hpt_cloudscanner_size0_class1", "Sensor_LongRange", 2, "Wake Scanner", "Long Range Scanner"),
+                ("int_lifesupport_size4_class2", "Misc_LightWeight", 5, "Life Support", "Lightweight"),
+                ("int_refinery_size2_class2", "Misc_Shielded", 5, "Refinery", "Shielded"),
+                ("int_mkiiagileboost_engine", "Engine_Reinforced", 5, "Thrusters", "Drive Strengthening"),
+                ("int_mkiiagileboost_engine", "Engine_Dirty", 1, "Thrusters", "Dirty Drive Tuning")):
+            planned = S.plan_module(module("a", item, blueprint, level))
+            self.assertEqual((planned.module_type, planned.blueprint, planned.status), (kind, name, S.COUNTED), (item, blueprint, planned.note))
+            self.assertEqual([b.grade for b in planned.grades], list(range(1, level + 1)), (item, blueprint))
+
+    def test_the_scanners_share_their_recipes_so_the_new_links_are_consistent(self):
+        for name in ("Fast Scanner", "Long Range Scanner"):
+            manifest = [(b.grade, b.ingredients) for b in B.grades_for("Manifest Scanner", name)]
+            self.assertTrue(manifest)
+            for kind in ("Kill Warrant Scanner", "Wake Scanner"):
+                self.assertEqual([(b.grade, b.ingredients) for b in B.grades_for(kind, name)], manifest, (kind, name))
+
+    def test_blueprints_taken_from_edsys_data_are_counted(self):
+        """A mining laser's and an abrasion blaster's Long Range (the ordinary blueprint, as the data lists it for them and a real journal names it), and the Guardian
+        'Sturdy' blueprint (one grade) on a Guardian Gauss cannon, which a real ship's Loadout events held."""
+        for item, blueprint, level, kind, name in (("hpt_mininglaser_fixed_small", "Weapon_LongRange", 3, "Mining Laser", "Long Range Weapon"),
+                                                   ("hpt_mining_abrblstr_fixed_small", "Weapon_LongRange", 1, "Abrasion Blaster", "Long Range Weapon"),
+                                                   ("hpt_guardian_gausscannon_fixed_medium", "GuardianModule_Sturdy", 1, "Guardian Gauss Cannon", "Anti-Guardian Zone Resistance"),
+                                                   ("int_powerdistributor_size3_class5", "PowerDistributor_Balanced", 5, "Power Distributor", "Balanced")):
+            planned = S.plan_module(module("a", item, blueprint, level))
+            self.assertEqual((planned.module_type, planned.blueprint), (kind, name), (item, planned.note))
+            self.assertIn(planned.status, (S.COUNTED, S.PARTLY), (item, planned.note))
+            self.assertTrue(planned.grades, item)
+        sturdy = S.plan_module(module("a", "hpt_guardian_gausscannon_fixed_medium", "GuardianModule_Sturdy", 1))
+        self.assertEqual(sturdy.status, S.COUNTED)
+        self.assertEqual([(i.name, i.count) for i in sturdy.grades[0].ingredients], [("Hardened Surface Fragments", 2), ("Caustic Crystal", 1), ("Tactical Core Chip", 1)])
+
+    def test_a_blueprint_whose_first_grade_the_data_does_not_know_is_partly_counted(self):
+        planned = S.plan_module(module("a", "int_cargorack_size6_class1", "CargoRack_Extended", 5))
+        self.assertEqual(planned.status, S.PARTLY)
+        self.assertEqual([b.grade for b in planned.grades], [2, 3, 4, 5])
+        self.assertIn("4 of the 5 grades", planned.note)
+
+    def test_what_still_has_no_recipe_in_the_table_is_not_counted(self):
+        """Expanded Cargo Rack (the data has no materials for it) and High-Yield (flak and flechette launchers have no module type) stay uncounted, with the reason."""
+        cargo = S.plan_module(module("a", "int_cargorack_size6_class1", "CargoRack_IncreasedCapacity", 5))
+        self.assertEqual(cargo.status, S.NOT_COUNTED)
+        self.assertIn("CargoRack_IncreasedCapacity", cargo.note)
+        flak = S.plan_module(module("a", "hpt_flakmortar_fixed_medium", "Weapon_HighYieldEnzyme", 5))
+        self.assertEqual(flak.status, S.NOT_COUNTED)
+        self.assertIn("no module type", flak.note)
+
     def test_a_pre_engineered_module_has_nothing_to_craft(self):
         planned = S.plan_module(module("a", "int_hyperdrive_size3_class5", "FSD_LongRange", 5, EngineerID=399999))
         self.assertEqual((planned.status, planned.grades), (S.PRE, ()))
 
     def test_what_the_table_lacks_is_not_counted_with_a_reason(self):
-        unknown_item = S.plan_module(module("a", "int_cargorack_size6_class1", "CargoRack_IncreasedCapacity"))
+        unknown_item = S.plan_module(module("a", "hpt_flakmortar_fixed_medium", "Weapon_HighYieldEnzyme"))
         self.assertEqual(unknown_item.status, S.NOT_COUNTED)
         self.assertIn("no module type", unknown_item.note)
         no_blueprint = S.plan_module(module("a", "int_hyperdrive_size5_class5", "Weapon_LongRange"))
@@ -341,7 +396,9 @@ class MappingTests(unittest.TestCase):
         for journal_name, kinds in J.BLUEPRINT_NAMES.items():
             for kind, name in kinds.items():
                 grades = [b.grade for b in B.grades_for(kind, name)]
-                self.assertEqual(grades, list(range(1, len(grades) + 1)), (journal_name, kind, name))        # 1 up with no gap
+                # 1 up with no gap; only a blueprint taken from EDSY's data may start at 2, where that data does not know grade 1 (plugin/blueprints_edsy.py)
+                first = 2 if grades and grades[0] == 2 and (kind, name) in {(r[0], r[1]) for r in EDSY_ROWS} else 1
+                self.assertEqual(grades, list(range(first, first + len(grades))), (journal_name, kind, name))
                 self.assertGreaterEqual(len(grades), 1, (journal_name, kind, name))
 
     def test_blueprints_with_a_single_grade_plan_at_level_one(self):

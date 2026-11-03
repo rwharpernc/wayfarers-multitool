@@ -16,9 +16,10 @@ from plugin.materials import CATALOG  # noqa: E402
 class DataTests(unittest.TestCase):
     def test_the_whole_table_is_there(self):
         from plugin.blueprints_data import BLUEPRINT_ROWS
+        from plugin.blueprints_edsy import EDSY_ROWS
         from plugin.blueprints_extra import EXTRA_ROWS
         self.assertEqual(len(BLUEPRINT_ROWS), 1176)
-        self.assertEqual(len(B.ALL), 1176 + len(EXTRA_ROWS))
+        self.assertEqual(len(B.ALL), 1176 + len(EXTRA_ROWS) + len(EDSY_ROWS))
         self.assertEqual(len({b.id for b in B.ALL}), len(B.ALL))    # no two blueprints share an id
 
     def test_every_blueprint_has_ingredients_with_counts(self):
@@ -44,7 +45,8 @@ class DataTests(unittest.TestCase):
                     self.assertIn(i.key, FDEVIDS_DISPLAY_NAMES, (b.id, i.name))
 
     def test_the_spelling_variants_resolve(self):
-        self.assertEqual(B.ship_key("Abnormal Compact Emission Data"), "compactemissionsdata")
+        self.assertEqual(B.ship_key("Abnormal Compact Emission Data"), "compactemissionsdata")      # the spelling this table used before
+        self.assertEqual(B.ship_key("Abnormal Compact Emissions Data"), "compactemissionsdata")     # the game's own
         self.assertEqual(B.ship_key("Guardian Wreckage Components"), "guardian_sentinel_wreckagecomponents")
         self.assertEqual(B.ship_key("untypical  shield scans"), "shielddensityreports")
         self.assertEqual(B.ship_key("Iron"), "iron")

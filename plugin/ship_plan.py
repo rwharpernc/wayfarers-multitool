@@ -57,12 +57,15 @@ MODULE_TYPES: Tuple[Tuple[str, str], ...] = (
     ("hpt_minelauncher", "Mine Launcher"), ("hpt_chafflauncher", "Chaff Launcher"), ("hpt_electroniccountermeasure", "Electronic Countermeasure"),
     ("hpt_heatsinklauncher", "Heat Sink Launcher"), ("hpt_plasmapointdefence", "Point Defence"), ("hpt_shieldbooster", "Shield Booster"),
     ("hpt_cargoscanner", "Manifest Scanner"), ("hpt_crimescanner", "Kill Warrant Scanner"), ("hpt_cloudscanner", "Wake Scanner"),
-    ("int_hyperdrive", "Frame Shift Drive"), ("int_engine", "Thrusters"), ("int_powerplant", "Power Plant"), ("int_powerdistributor", "Power Distributor"),
+    ("int_hyperdrive", "Frame Shift Drive"), ("int_engine", "Thrusters"), ("int_mkiiagileboost_engine", "Thrusters"), ("int_powerplant", "Power Plant"), ("int_powerdistributor", "Power Distributor"),
     ("int_sensors", "Sensors"), ("int_lifesupport", "Life Support"), ("int_shieldgenerator", "Shield Generator"), ("int_shieldcellbank", "Shield Cell Bank"),
     ("int_hullreinforcement", "Hull Reinforcement Package"), ("int_repairer", "Auto Field-Maintenance Unit"), ("int_fuelscoop", "Fuel Scoop"),
     ("int_fsdinterdictor", "Frame Shift Drive Interdictor"), ("int_refinery", "Refinery"), ("int_detailedsurfacescanner", "Surface Scanner"),
     ("int_dronecontrol_collection", "Collector Limpet Controller"), ("int_dronecontrol_fueltransfer", "Fuel Transfer Limpet Controller"),
     ("int_dronecontrol_prospector", "Prospector Limpet Controller"), ("int_dronecontrol_resourcesiphon", "Hatch Breaker Limpet Controller"),
+    ("int_cargorack", "Cargo Rack"), ("int_modulereinforcement", "Module Reinforcement Package"), ("hpt_mininglaser", "Mining Laser"),
+    ("hpt_mining_abrblstr", "Abrasion Blaster"), ("hpt_guardian_gausscannon", "Guardian Gauss Cannon"), ("hpt_guardian_plasmalauncher", "Guardian Plasma Charger"),
+    ("hpt_guardian_shardcannon", "Guardian Shard Cannon"),
 )
 
 

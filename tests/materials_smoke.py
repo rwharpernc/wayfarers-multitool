@@ -495,7 +495,7 @@ check(bwin._tabs is not None and planner._plan is None, "the planner starts empt
 check(not planner.load_text("not a loadout") and "not JSON" in bwin._shell._status.cget("text"), f"unreadable text is explained: {bwin._shell._status.cget('text')!r}")
 fsd = {"Slot": "FrameShiftDrive", "Item": "int_hyperdrive_size5_class5",
        "Engineering": {"EngineerID": 300160, "BlueprintName": "FSD_LongRange", "Level": 5, "Quality": 1.0, "ExperimentalEffect": "special_fsd_heavy"}}
-other = {"Slot": "Cargo", "Item": "int_cargorack_size6_class1", "Engineering": {"EngineerID": 1, "BlueprintName": "CargoRack_IncreasedCapacity", "Level": 1}}
+other = {"Slot": "Cargo", "Item": "hpt_flakmortar_fixed_medium", "Engineering": {"EngineerID": 1, "BlueprintName": "Weapon_HighYieldEnzyme", "Level": 1}}
 loadout = {"event": "Loadout", "Ship": "asp", "ShipName": "Test", "Modules": [fsd, other, {"Slot": "Hatch", "Item": "modularcargobaydoor"}]}
 check(planner.load_text(_json.dumps([{"header": {}, "data": loadout}])), "a SLEF list reads")
 pump()
