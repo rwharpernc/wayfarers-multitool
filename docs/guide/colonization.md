@@ -224,7 +224,7 @@ Deliveries made while EDMC was closed are found again when EDMC starts.
 
 ## The Colonization Sites window
 
-Sites are listed on the left under three headings: **Site** (the name), **Left** (tons the site still needs) and **Status** (progress as a percentage, or `complete` or `failed`). Finished sites are grayed. The subtitle reads `<commander> — N active of M sites`. With no sites, the list shows `No construction sites yet - dock at a construction depot to register one.` The window stores its size and position.
+Sites are listed on the left under four headings: **Site** (the name), **Left** (tons the site still needs), **Raven** (Raven Colonial's own figure for the site, empty until you press **Refresh from Raven**; see below) and **Status** (progress as a percentage, or `complete` or `failed`). Finished sites are grayed. The subtitle reads `<commander> — N active of M sites`. With no sites, the list shows `No construction sites yet - dock at a construction depot to register one.` The window stores its size and position.
 
 Select a site to view it on the right. The first active site is selected when the window opens. The right side contains:
 
@@ -658,9 +658,9 @@ Sharing is optional and off by default.
 - It uses a read that changes nothing, and shows Raven's name for the commander when the key is accepted.
 - It checks the box as typed, so it can be used before closing Settings.
 
-**Functions without a key and without the switch.** **Planned Builds**, **My Projects** (viewing) and **Raven Progress** only read from Raven Colonial.
+**Functions without a key and without the switch.** **Planned Builds**, **My Projects** (viewing), **Raven Progress** and **Refresh from Raven** only read from Raven Colonial.
 
-- Each runs when its button is pressed or its window is opened. **Planned Builds** sends only the system name. **My Projects** sends only the commander name. **Raven Progress** sends the system name and the project id (and, if the plan does not name the project, the system address and the site's market id).
+- Each runs when its button is pressed or its window is opened. **Planned Builds** sends only the system name. **My Projects** sends only the commander name. **Raven Progress** sends the system name and the project id (and, if the plan does not name the project, the system address and the site's market id). **Refresh from Raven** sends the same for each open site.
 - If another tool already reports the builds to Raven, leave the master switch off. WFMT then sends nothing, and Raven Progress can be used to compare Raven's figures with WFMT's.
 
 ### Rules for what is sent
@@ -671,6 +671,10 @@ Sharing is optional and off by default.
 - **Raven's `supply` call is never used.** It is meant for tools that cannot read the journal; used beside the depot figures it would reduce the amount needed twice.
 - **Do not run two tools that report to Raven.** If another tool (the Raven Colonial EDMC plugin or any other) also reports the deliveries, Raven counts them twice.
 - **Raven Progress** (in the **Raven Colonial** menu of the Colonization Sites window) reads Raven's own figures for the selected site and sets them beside WFMT's in the status line (*<site>: Raven Colonial says 12,345 t still needed of 20,000; WFMT says 12,345 t (they agree)*, or *they differ by N t*, with a note when Raven has the site marked complete). It looks up the project first, so it sends the system name and the project id.
+- **Refresh from Raven** (the button under the list of sites) does the same for every open site at once and fills the **Raven** column. Each open site shows the tons Raven says are still needed, `done` when Raven has it marked complete, `no project` when Raven has none for it, `error` when the read failed, or `not asked` when the run stopped early. The note under the button says when Raven was last asked and for how many sites it answered (*Raven figures refreshed 14:32: 5 of 6 sites answered.*, with the date when it was not today), and the status line sums up how many agree with WFMT and how many differ. Notes:
+  - Nothing is asked until the button is pressed, and nothing is repeated on a timer. The figures stay as they were at the last refresh while you play, so WFMT's **Left** can move on; press the button again to ask again.
+  - Only open sites are asked about (not complete, failed or archived ones), at most 25 at a time, one after another with a short pause. Sites in one system share one read of the system's plan. After three failures in a row the run stops and says so.
+  - The figures and the time are kept for this session only: after a restart, or a change of commander, the note reads *not refreshed yet*.
 
 WFMT's own tracking remains the source of truth for the site. Raven's figures never overwrite it.
 

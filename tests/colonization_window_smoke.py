@@ -485,6 +485,26 @@ check(menus["Raven"].entries() == ["My Projects", "Planned Builds", "Raven Progr
       f"Raven Colonial menu: {menus['Raven'].entries()}")
 check(menus["Manage"].entries() == ["Rename Site…", "Archive Finished", "Show Archive", "Remove Site", "Remove Finished"], f"Manage Sites menu: {menus['Manage'].entries()}")
 
+# Refresh from Raven: nothing is asked until the button is pressed; then every open site gets a Raven column figure and the note says when.
+from plugin import rcc_client as _rc
+asked_refresh = []
+_real_refresh = _rc.refresh_figures
+_rc.refresh_figures = lambda asks, **kw: asked_refresh.append(list(asks)) or {a.market_id: _rc.SiteFigure(_rc.FIGURE_OK, 77, 500) for a in asks}
+check(not asked_refresh, "nothing should be asked of Raven Colonial before Refresh from Raven is pressed")
+check("not refreshed yet" in window._raven_note.cget("text"), f"note before a refresh: {window._raven_note.cget('text')}")
+window._on_raven_refresh()
+for _ in range(80):
+    root.update()
+    if not window._raven_busy:
+        break
+open_sites = [s for s in window._sites.values() if s.active]
+check(len(asked_refresh) == 1 and len(asked_refresh[0]) == len(open_sites), f"one pass over the open sites: {[len(a) for a in asked_refresh]} vs {len(open_sites)}")
+check("refreshed" in window._raven_note.cget("text") and "answered" in window._raven_note.cget("text"), f"note after a refresh: {window._raven_note.cget('text')}")
+check(set(window._raven_figures) == {x.market_id for x in open_sites} and all(f.sum_need == 77 for f in window._raven_figures.values()),
+      "the window keeps Raven's figure for each open site, for the Raven column")
+check(window._raven_button._enabled, "the button is usable again after the refresh")
+_rc.refresh_figures = _real_refresh
+
 # Opening Raven's pages: the project's own page when it is found, the system's page when it is not; the browser is stood in for.
 opened = []
 real_open = W.webbrowser.open

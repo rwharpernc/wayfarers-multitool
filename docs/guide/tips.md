@@ -81,7 +81,7 @@ Usage notes that are not covered by a single feature guide. Each mode guide has 
 - **Where to buy** requires the internet (Spansh) and caches a search for two minutes. Selecting a result row copies its system name. After **Find all** with several commodities, the **Suggested route to buy what you need...** block above the lists shows a **Next stop** card (with a button that copies its system) and the stops in flying order, with the jump to each, the purchases at each and the stock there. **Stop** keeps the results found so far. **Exclude surface ports** (off by default) removes surface ports. The route then states which commodities are sold only on a surface. The route follows purchases: an item in the hold or on the carrier is removed from the route.
 - The **In Cargo** figures come from the game's `Cargo.json`, read again shortly after any event that can change the hold.
 - **Raven Colonial** (ravencolonial.com) is optional.
-  - Planned Builds, My Projects (viewing), Raven Progress and the page links only read data or open the browser.
+  - Planned Builds, My Projects (viewing), Raven Progress, Refresh from Raven and the page links only read data or open the browser.
   - Sending data to Raven is off until the master switch is selected in Settings and a Raven key is saved. This covers progress sharing, **Create Project on Raven**, **Report Complete to Raven**, **Mark Plan Entry Demolished**, and **Set as My Primary** and **Save Counted List** in My Projects.
   - **Create Project on Raven** (in the Colonization Sites window) creates a project when Raven has none for the site.
   - **Test key** checks the key.

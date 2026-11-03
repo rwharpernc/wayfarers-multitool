@@ -919,6 +919,7 @@ Keyboard shortcuts are Windows only. The chat commands are the same on both syst
 Steps for each are in [TEST_PLAN.md](TEST_PLAN.md) section 14.
 
 - [ ] **Rename Site:** **Manage Sites → Rename Site…** and, for an archived site, **Manage → Rename Site…**. The dialog takes the keyboard focus, **Rename** and **Cancel** work, the name shows in the list, the overlay card and the History, survives docking and a restart, and an empty name brings the game's name back.
+- [ ] **Refresh from Raven:** the button under the list of sites fills the **Raven** column for the open sites, the note gives the time, and the column and note are readable at the usual size. Nothing is asked before the button is pressed.
 - [ ] **Flatpak EDMC:** a renamed site is kept in the sites file in the plugin folder, and **Back up my data** includes it.
 - [ ] **Rare Goods Finder:** Anduliga Fire Works is in the list (142 rares).
 - [ ] **Nearest place to land:** settlements, Dodec Starports and Asteroid bases appear in the Stations table.

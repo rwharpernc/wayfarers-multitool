@@ -547,6 +547,72 @@ def fetch_project_by_market(address: int, market_id: int, opener: Callable[..., 
     return views[0] if views else None
 
 
+# --- Refresh from Raven: every active site's figures in one pass ------------------------------------------------------------------
+
+MAX_REFRESH_SITES = 25          # the most sites one press asks about (each may cost up to three reads; a commander rarely has this many open)
+MAX_FAILURES_IN_A_ROW = 3       # the pass stops after this many failed sites in a row (Raven or the connection is down)
+REFRESH_PAUSE_S = 0.25          # a pause between sites, so a pass is a trickle of requests and not a burst
+
+FIGURE_OK, FIGURE_NONE, FIGURE_ERROR, FIGURE_SKIPPED = "ok", "none", "error", "skipped"
+
+
+@dataclass(frozen=True)
+class SiteAsk:
+    """One site to ask Raven about: what the lookup needs to find its project."""
+    market_id: int
+    system: str
+    name: str = ""
+    address: Optional[int] = None
+
+
+@dataclass(frozen=True)
+class SiteFigure:
+    """What Raven answered for one site. `state` is FIGURE_OK (the figures are set), FIGURE_NONE (Raven has no project for it), FIGURE_ERROR
+    (the read failed, `note` says why) or FIGURE_SKIPPED (the pass stopped, or there were more sites than one pass asks about)."""
+    state: str
+    sum_need: int = 0
+    max_need: int = 0
+    complete: bool = False
+    note: str = ""
+
+
+def refresh_figures(asks: List[SiteAsk], fetch_plan: Callable[[str], "RccSystem"] = None, project_for: Callable[[str], RccProject] = None,
+                    by_market: Callable[[int, int], Optional[RccProjectView]] = None,
+                    stop: Callable[[], bool] = lambda: False, pause: Callable[[float], None] = time.sleep) -> Dict[int, SiteFigure]:
+    """Raven Colonial's own figures for every site in `asks`, read one site at a time (reads only, no key). A system shared by several sites is
+    asked once (`fetch_system` remembers an answer for a minute). A failure is kept against its site and the pass goes on, but it stops after
+    `MAX_FAILURES_IN_A_ROW` in a row, and the sites it did not reach are FIGURE_SKIPPED. Never raises for a Raven or network problem."""
+    fetch_plan = fetch_plan or fetch_system
+    project_for = project_for or fetch_project
+    by_market = by_market or fetch_project_by_market
+    figures: Dict[int, SiteFigure] = {}
+    failures = 0
+    for index, ask in enumerate(asks):
+        if index >= MAX_REFRESH_SITES:
+            figures[ask.market_id] = SiteFigure(FIGURE_SKIPPED, note=f"Only the first {MAX_REFRESH_SITES} sites are asked about at once.")
+            continue
+        if failures >= MAX_FAILURES_IN_A_ROW or stop():
+            figures[ask.market_id] = SiteFigure(FIGURE_SKIPPED, note="Not asked: the refresh stopped early.")
+            continue
+        if index:
+            pause(REFRESH_PAUSE_S)
+        try:
+            build_id = build_id_for(fetch_plan(ask.system), ask.market_id, ask.name, ask.address, by_market)
+            if not build_id:
+                figures[ask.market_id] = SiteFigure(FIGURE_NONE)
+            else:
+                project = project_for(build_id)
+                figures[ask.market_id] = SiteFigure(FIGURE_OK, project.sum_need, project.max_need, project.complete)
+            failures = 0
+        except RccError as err:
+            figures[ask.market_id] = SiteFigure(FIGURE_ERROR, note=str(err))
+            failures += 1
+        except Exception:     # a surprise in one site's answer must not lose the others
+            figures[ask.market_id] = SiteFigure(FIGURE_ERROR, note="The lookup failed unexpectedly.")
+            failures += 1
+    return figures
+
+
 def build_id_for(plan: "RccSystem", market_id: int, name: str = "", address: Optional[int] = None,
                  by_market: Callable[[int, int], Optional[RccProjectView]] = fetch_project_by_market) -> str:
     """Raven Colonial's build id for a site, or "" when it has none: first from the system's plan (see `find_build_id`), then, when the plan has

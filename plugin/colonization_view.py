@@ -7,10 +7,12 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
-from typing import Collection, List, Mapping, Optional, Tuple
+from datetime import datetime
+from typing import Collection, List, Mapping, Optional, Sequence, Tuple
 
 from . import commodity_categories
 from .colonization import Site
+from .rcc_client import FIGURE_ERROR, FIGURE_NONE, FIGURE_OK, FIGURE_SKIPPED, SiteFigure
 
 
 # Which commodities to list (the Sites window's Show dropdown and the overlay card's setting). "buy" is the old "hide rows already
@@ -187,3 +189,51 @@ def site_status(site: Site) -> str:
     if site.failed:
         return "failed"
     return f"{site.progress:.0%}"
+
+
+# --- Raven Colonial's figures beside WFMT's (the Refresh from Raven button) -------------------------------------------------------
+
+RAVEN_NOT_ASKED = "Raven figures: not refreshed yet. Press Refresh from Raven to ask for every open site."
+
+
+def raven_cell(figure: Optional[SiteFigure]) -> str:
+    """The Raven column of a site's row: Raven's tons still needed, or why there is none ("" before any refresh)."""
+    if figure is None:
+        return ""
+    if figure.state == FIGURE_OK:
+        return "done" if figure.complete else f"{figure.sum_need:,} t"
+    return {FIGURE_NONE: "no project", FIGURE_ERROR: "error", FIGURE_SKIPPED: "not asked"}.get(figure.state, "")
+
+
+def raven_note(when: Optional[datetime], figures: Mapping[int, SiteFigure], now: Optional[datetime] = None) -> str:
+    """The line beside the button: when Raven was last asked and how many sites it answered for. `when` is local time."""
+    if when is None:
+        return RAVEN_NOT_ASKED
+    now = now or datetime.now().astimezone()
+    stamp = when.strftime("%H:%M") if when.date() == now.date() else when.strftime("%Y-%m-%d %H:%M")
+    answered = sum(1 for f in figures.values() if f.state in (FIGURE_OK, FIGURE_NONE))
+    return f"Raven figures refreshed {stamp}: {answered} of {len(figures)} site{'s' if len(figures) != 1 else ''} answered."
+
+
+def raven_summary(sites: Sequence[Site], figures: Mapping[int, SiteFigure]) -> str:
+    """One sentence after a refresh: how many sites agree with Raven, differ, have no project there, or could not be read."""
+    agree = differ = none = failed = 0
+    for site in sites:
+        figure = figures.get(site.market_id)
+        if figure is None:
+            continue
+        if figure.state == FIGURE_OK:
+            if figure.complete == site.complete and (figure.complete or figure.sum_need == site.remaining_total):
+                agree += 1
+            else:
+                differ += 1
+        elif figure.state == FIGURE_NONE:
+            none += 1
+        else:
+            failed += 1
+    parts = [f"{agree} agree", f"{differ} differ"]
+    if none:
+        parts.append(f"{none} with no project on Raven")
+    if failed:
+        parts.append(f"{failed} not read")
+    return "Raven Colonial: " + ", ".join(parts) + "."

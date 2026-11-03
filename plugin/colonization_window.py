@@ -27,7 +27,7 @@ from .colonization_data import SiteRepository
 from .uikit import dialogs, palette as P, style
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
-from .uikit.widgets import Combobox, ProgressBar, StatTile, section_header
+from .uikit.widgets import Combobox, FlatButton, NoteLabel, ProgressBar, StatTile, section_header
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -45,6 +45,7 @@ DEFAULT_SIZE = (1300, 780)
 _SITE_COLUMNS = (
     Column("name", "Site", 190, stretch=True, max_chars=40),
     Column("left", "Left", 70, anchor="e", max_chars=10),
+    Column("raven", "Raven", 70, anchor="e", max_chars=10),
     Column("status", "Status", 80, anchor="e", max_chars=10),
 )
 _COMMODITY_COLUMNS = (
@@ -197,6 +198,10 @@ class ColonizationWindow:
 
         self._show = tk.StringVar(master=self._toplevel, value=_SHOW_LABELS[_saved_show()])   # the Show dropdown: which stage of the work to list (the overlay card's choice too)
         self._filter_text = tk.StringVar(master=self._toplevel, value="")
+        self._raven_figures: Dict[int, rcc_client.SiteFigure] = {}   # Raven Colonial's answers from the last Refresh from Raven (this session only)
+        self._raven_when: Optional[datetime] = None
+        self._raven_cmdr = ""
+        self._raven_busy = False
         self._station_only = tk.BooleanVar(master=self._toplevel, value=False)
         self._group_by_category = tk.BooleanVar(master=self._toplevel, value=config.get_bool(CONFIG_GROUP, default=True))
 
@@ -214,7 +219,14 @@ class ColonizationWindow:
             empty_text="No construction sites yet - dock at a construction depot to register one.")
         self._site_table.tag_configure("done", foreground=P.MUTED)
         self._site_table.pack(fill="both", expand=True)
-        panes.add(left, stretch="never", minsize=260, width=300)
+        raven_bar = tk.Frame(left, bg=P.PANE, padx=P.PAD_SM, pady=P.PAD_SM)
+        raven_bar.pack(fill="x")
+        self._raven_button = FlatButton(raven_bar, "Refresh from Raven", self._on_raven_refresh, tip="Refresh from Raven - ask Raven Colonial for its own "
+                                        "figures for every open site (a read; nothing is sent but each project's id). Press it again to ask again")
+        self._raven_button.pack(anchor="w")
+        self._raven_note = NoteLabel(raven_bar, view.RAVEN_NOT_ASKED, padx=0)
+        self._raven_note.pack(fill="x", pady=(P.PAD_SM, 0))
+        panes.add(left, stretch="never", minsize=300, width=340)
 
         right = tk.Frame(panes, bg=P.PANE)
         panes.add(right, stretch="always", minsize=760)
@@ -370,10 +382,14 @@ class ColonizationWindow:
             first_active = next((s for s in sites if s.active), None)
             self._selected = (first_active or sites[0]).market_id if sites else None
 
+        if self._raven_cmdr and self._raven_cmdr != self._cmdr:   # another commander's sites: Raven's figures for the last one do not apply
+            self._raven_figures, self._raven_when, self._raven_cmdr = {}, None, ""
+        self._raven_note.configure(text=view.raven_note(self._raven_when, self._raven_figures))
         self._site_table.clear()
         for site in sites:
             self._site_table.insert(
-                str(site.market_id), (site.display_name(), f"{site.remaining_total:,} t", view.site_status(site)),
+                str(site.market_id), (site.display_name(), f"{site.remaining_total:,} t", view.raven_cell(self._raven_figures.get(site.market_id)),
+                                      view.site_status(site)),
                 tag=None if site.active else "done")
         if self._selected is not None:
             self._site_table.select(str(self._selected))
@@ -608,6 +624,53 @@ class ColonizationWindow:
         else:
             webbrowser.open(rcc_client.system_page_url(site.system))
             self._announce("Raven Colonial has no project linked to this site, so its system page was opened instead.")
+
+    def _on_raven_refresh(self) -> None:
+        """Ask Raven Colonial for its own figures for every open site (one site at a time, reads only, no key) and show them in the Raven column,
+        with the time of the refresh beside the button. Nothing is asked until this is pressed, and nothing is repeated on a timer."""
+        if self._raven_busy:
+            return
+        if not self._cmdr:
+            self._announce("Refresh from Raven needs a commander; WFMT has not seen one yet.")
+            return
+        sites = [s for s in self._sites.values() if s.active]
+        if not sites:
+            self._announce("There are no open sites to ask Raven Colonial about.")
+            return
+        asks = [rcc_client.SiteAsk(s.market_id, s.system, s.name, self._address(s)) for s in sites]
+        cmdr = self._cmdr
+        job: Dict[str, Any] = {"done": False, "figures": {}}
+        self._raven_busy = True
+        self._raven_button.set_enabled(False)
+        self._announce(f"Asking Raven Colonial about {len(asks)} site{'s' if len(asks) != 1 else ''}…")
+
+        def work() -> None:
+            try:
+                job["figures"] = rcc_client.refresh_figures(asks, stop=lambda: not self._shell.alive)
+            except Exception:
+                logger.exception("Raven Colonial refresh failed")
+            job["done"] = True
+
+        threading.Thread(target=work, daemon=True, name="WFMT-rcc-refresh").start()
+        self._poll_raven_refresh(job, cmdr)
+
+    def _poll_raven_refresh(self, job: Dict[str, Any], cmdr: str) -> None:
+        if not self._shell.alive:
+            return
+        if not job["done"]:
+            self._toplevel.after(150, self._poll_raven_refresh, job, cmdr)
+            return
+        self._raven_busy = False
+        self._raven_button.set_enabled(True)
+        if cmdr != self._cmdr:      # the commander changed while Raven was being asked; the answers belong to someone else's sites
+            return
+        figures = job["figures"]
+        if not figures:
+            self._announce("The refresh failed unexpectedly; see the EDMC log.")
+            return
+        self._raven_figures, self._raven_when, self._raven_cmdr = figures, datetime.now().astimezone(), cmdr
+        self._refresh()
+        self._announce(view.raven_summary([s for s in self._sites.values() if s.active], figures), ok=True)
 
     def _on_raven_progress(self) -> None:
         """Read Raven Colonial's own figures for the selected site and set them beside WFMT's (a read; nothing is sent but the project's

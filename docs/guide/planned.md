@@ -4,8 +4,8 @@ Open work that is recorded in [TODO.md](../TODO.md). The list has no dates or or
 
 ## Colonization
 
-- **Raven Colonial.** Implemented: sharing of progress, deliveries and carrier cargo (opt-in, off by default; the [internet page](internet-and-privacy.md) lists what is sent and when), **Raven Progress**, **Create Project on Raven** and **My Projects**. Not implemented:
-  - reading Raven's progress automatically instead of on a button press,
+- **Raven Colonial.** Implemented: sharing of progress, deliveries and carrier cargo (opt-in, off by default; the [internet page](internet-and-privacy.md) lists what is sent and when), **Raven Progress**, **Refresh from Raven** (every open site on a button press), **Create Project on Raven** and **My Projects**. Not implemented:
+  - reading Raven's progress on a timer (a button press is the only trigger),
   - assigning commodities to commanders on a project,
   - showing the cargo of other linked carriers,
   - a guided tool that fills in the whole plan of a system on Raven.
