@@ -87,6 +87,7 @@ The items below are implemented and covered by unit tests, and have not all been
 
 - Linux passes of earlier builds were made on 2026-10-18 and 2026-10-20 (see [STATUS.md](STATUS.md)). Items that do not end in "Then Linux" do not require a Linux check.
 - Items that end in "Then Linux" also require the Linux checklist ([LINUX_TESTING.md](LINUX_TESTING.md)).
+- [ ] **1.5.2: Rename Site** (Windows, then Linux): select a site in the Sites window, **Manage Sites → Rename Site…**, type a name. The list, the title, the overlay card and the History show it. Archive the site (when finished), open **Show Archive** and rename it there with **Manage → Rename Site…**. Dock at the site again and the name stays. An empty name brings the game's name back. Raven Colonial is not touched.
 - [x] **1.5.1: Combat Record, materials this session, ship names** (done on Windows and Linux 2026-11-03, before the release; steps in [TEST_PLAN.md](TEST_PLAN.md) section 13 and [LINUX_TESTING.md](LINUX_TESTING.md) 7s). The Combat Record row and window count kills, PvP kills, deaths and rewards per ship and per session, read the older journals once without counting anything twice, and name every ship as the game does. The Engineering row's table shows what is held and what was picked up this session. Trade and the Expedition Log show proper ship names.
 - [x] **1.5.0: pages are windows, settings are in their windows** (done on Windows and Linux 2026-11-02, before the release; steps in [TEST_PLAN.md](TEST_PLAN.md) section 12). Trade (Session, Routes, Market, History), Mining (Space Mining, Surface Mining) and Missions (Mission types) open from buttons; no ◀ ▶ remains. Each moved setting is set in its window and saved at once, File → Settings → WFMT shows where it moved, and a change in a window shows on the panel. Type-ahead works in the Body, Ring, Ship and comma-separated commodity boxes. A scrapped fleet carrier disappears. The main panel's orange is readable on EDMC's Default theme.
 - [ ] **Color themes, text size and column fit for WFMT's windows** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 6 and [LINUX_TESTING.md](LINUX_TESTING.md) 7k3 and 7k4).
@@ -774,7 +775,7 @@ WFMT's own tracking is the reference. Reporting to Raven Colonial is opt-in: a f
 
 Not implemented:
 
-- **Rename Site** (Manage Sites menu).
+- Rename Site on Raven Colonial. WFMT's own Rename Site (Manage Sites menu, and in the Archive) is built and is local only; whether Raven Colonial offers a call to rename a project or plan entry has not been checked.
 - Multi-commander projects on one Raven project: assigning commodities, linking other commanders, ready flags and who delivered what. WFMT writes for one commander at a time: it links the commander, sends the depot snapshot and sends that commander's own `contribute` calls. Two commanders who each run WFMT with their own key are credited on the same project. Showing other linked carriers' cargo is not implemented.
 - A guided tool that fills in a system's whole plan on Raven (bodies, installations and statuses) from play.
 - Use of Raven's `supply` call, which Raven's documentation describes as unsuitable for a tool that reads the journal.

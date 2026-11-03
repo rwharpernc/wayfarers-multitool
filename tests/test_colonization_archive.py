@@ -71,6 +71,84 @@ class ArchiveTests(unittest.TestCase):
         self.assertTrue(C.apply_depot_event(depot(2, complete=True, stamp="2026-10-02T10:00:00Z"), still_done).archived)
 
 
+class RenameTests(unittest.TestCase):
+    def test_a_custom_name_is_shown_and_survives_a_save_and_a_load(self):
+        done = site(complete=True)
+        self.assertEqual(done.display_name(), "Dolgov Depot")
+        done.custom_name = "Dolgov Prime"
+        self.assertEqual(done.display_name(), "Dolgov Prime")
+        again = C.Site.from_dict(done.to_dict())
+        self.assertEqual((again.custom_name, again.name), ("Dolgov Prime", "Orbital Construction Site: Dolgov Depot"))
+        self.assertEqual(C.Site.from_dict(site().to_dict()).custom_name, "")
+
+    def test_docking_again_never_undoes_it(self):
+        named = site(complete=True)
+        named.custom_name = "Dolgov Prime"
+        self.assertTrue(C.apply_dock_name(named, "Dolgov Depot II"))     # the game's name moves on ...
+        self.assertEqual((named.name, named.display_name()), ("Dolgov Depot II", "Dolgov Prime"))   # ... the commander's stays
+
+    def test_the_repository_renames_archived_sites_clears_and_saves(self):
+        with tempfile.TemporaryDirectory() as folder:
+            repo = D.SiteRepository()
+            repo.load(folder)
+            repo.upsert("Alice", site(1, complete=True))
+            repo.set_archived("Alice", [1], True)
+            told = []
+            repo.add_listener(lambda: told.append(1))
+            self.assertTrue(repo.set_custom_name("alice", 1, "  Dolgov   Prime "))
+            self.assertEqual(repo.get("Alice", 1).custom_name, "Dolgov Prime")
+            self.assertEqual(len(told), 1)
+            self.assertFalse(repo.set_custom_name("Alice", 1, "Dolgov Prime"))     # unchanged: nothing saved or announced
+            self.assertFalse(repo.set_custom_name("Alice", 99, "x"))
+            self.assertFalse(repo.set_custom_name("Bob", 1, "x"))
+            self.assertEqual(len(told), 1)
+            again = D.SiteRepository()
+            again.load(folder)
+            self.assertEqual(again.get("Alice", 1).custom_name, "Dolgov Prime")
+            self.assertTrue(again.get("Alice", 1).archived)
+            self.assertTrue(repo.set_custom_name("Alice", 1, ""))
+            self.assertEqual(repo.get("Alice", 1).display_name(), "Dolgov Depot")
+
+    def test_a_name_is_capped(self):
+        repo = D.SiteRepository()
+        repo.upsert("Alice", site(1))
+        repo.set_custom_name("Alice", 1, "x" * 500)
+        self.assertEqual(len(repo.get("Alice", 1).custom_name), C.CUSTOM_NAME_MAX)
+
+
+class RenameDialogTests(unittest.TestCase):
+    def setUp(self):
+        from plugin import colonization_archive_window as W
+        from plugin.uikit import dialogs
+        self.W, self.dialogs = W, dialogs
+        self.repo = D.SiteRepository()
+        self.repo.upsert("Alice", site(1, complete=True))
+        self.addCleanup(dialogs.set_test_responder, None)
+
+    def rename(self, typed):
+        asked = []
+        self.dialogs.set_test_responder(lambda kind, title, message, **kw: asked.append((kind, kw.get("initial"))) or typed)
+        result = self.W.rename_site(None, self.repo, "Alice", self.repo.get("Alice", 1))
+        return result, asked
+
+    def test_it_asks_with_the_name_shown_and_keeps_the_answer(self):
+        result, asked = self.rename("Dolgov Prime")
+        self.assertEqual(asked, [("prompt", "Dolgov Depot")])
+        self.assertEqual(result, "Renamed to Dolgov Prime.")
+        self.assertEqual(self.repo.get("Alice", 1).display_name(), "Dolgov Prime")
+
+    def test_cancel_unchanged_empty_and_the_game_name_all_leave_or_restore_the_game_name(self):
+        self.assertEqual(self.rename(None)[0], "Rename cancelled.")
+        self.assertEqual(self.rename("Dolgov Depot")[0], "The name is unchanged.")
+        self.assertEqual(self.rename("")[0], "The name is unchanged.")
+        self.assertEqual(self.repo.get("Alice", 1).custom_name, "")
+        self.rename("Dolgov Prime")
+        self.assertIn("uses the game's name again", self.rename("")[0])
+        self.rename("Dolgov Prime")
+        self.assertIn("uses the game's name again", self.rename("Dolgov Depot")[0])
+        self.assertEqual(self.repo.get("Alice", 1).custom_name, "")
+
+
 class WindowFigureTests(unittest.TestCase):
     def test_the_rows_and_the_summary(self):
         from plugin import colonization_archive as A

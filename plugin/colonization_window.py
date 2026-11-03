@@ -186,12 +186,14 @@ class ColonizationWindow:
             ("Mark Plan Entry Demolished…", self._on_demolish_rcc)],
             tip="Raven Colonial - view your projects and planned builds, open Raven pages, or create and report projects (Raven)")
         self._shell.add_menu("Manage Sites", [
+            ("Rename Site…", self._on_rename),
+            None,
             ("Archive Finished", self._on_archive_finished),
             ("Show Archive", self._on_show_archive),
             None,
             ("Remove Site", self._on_remove, "danger"),
             ("Remove Finished", self._on_remove_finished, "danger")],
-            tip="Manage Sites - archive, show the archive of, or remove colonization sites")
+            tip="Manage Sites - rename, archive, show the archive of, or remove colonization sites")
 
         self._show = tk.StringVar(master=self._toplevel, value=_SHOW_LABELS[_saved_show()])   # the Show dropdown: which stage of the work to list (the overlay card's choice too)
         self._filter_text = tk.StringVar(master=self._toplevel, value="")
@@ -981,6 +983,14 @@ class ColonizationWindow:
             self._announce("Select the site you want to remove on the left first.")
             return
         self._repository.remove(self._cmdr, site.market_id)
+
+    def _on_rename(self) -> None:
+        """Gives the selected site a name of the commander's own, kept in WFMT only (the game's name and Raven Colonial are not changed)."""
+        site = self._selected_site()
+        if site is None or not self._cmdr:
+            self._announce("Select the site you want to rename on the left first.")
+            return
+        self._announce(colonization_archive_window.rename_site(self._toplevel, self._repository, self._cmdr, site))
 
     def _on_archive_finished(self) -> None:
         """Moves every completed or failed site to the Archive window, where it stays for reference (and can be brought back)."""

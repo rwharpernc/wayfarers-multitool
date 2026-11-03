@@ -18,7 +18,7 @@ from typing import Callable, Dict, List, Optional
 
 from config import appname
 
-from .colonization import Site
+from .colonization import CUSTOM_NAME_MAX, Site
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -115,6 +115,17 @@ class SiteRepository:
         if changed:
             self._save_and_notify()
         return changed
+
+    def set_custom_name(self, cmdr: str, market_id: int, name: str) -> bool:
+        """Give a site a name of the commander's own (an empty one goes back to the game's). Archived sites too. Returns whether it changed."""
+        key = self._cmdr_key(cmdr) if cmdr else None
+        site = self._by_cmdr[key].get(market_id) if key is not None else None
+        name = " ".join((name or "").split())[:CUSTOM_NAME_MAX]
+        if site is None or site.custom_name == name:
+            return False
+        site.custom_name = name
+        self._save_and_notify()
+        return True
 
     def remove(self, cmdr: str, market_id: int) -> None:
         key = self._cmdr_key(cmdr) if cmdr else None

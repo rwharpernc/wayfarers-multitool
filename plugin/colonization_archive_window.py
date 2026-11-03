@@ -50,6 +50,8 @@ _HELP = (
     ("Delivered", "A site's Delivered figures count every commander's deliveries, as the depot reports them, not only yours. "
                   "Your own are in the history."),
     ("Restore", "Puts the site back in the Colonization Sites window."),
+    ("Rename Site", "Manage → Rename Site… gives the selected site a name of your own. It is kept in WFMT only, and docking at the site does not undo it. "
+                    "Leave the name empty to use the game's name again."),
     ("Remove Permanently", "Forgets the site for good. The history keeps what you delivered, but not this list of commodities."),
 )
 
@@ -71,6 +73,26 @@ def close() -> None:
         _window.close()
 
 
+def rename_site(parent: tk.Misc, repository: SiteRepository, cmdr: str, site: Site) -> str:
+    """Ask for a name of the commander's own for `site` and keep it (an empty one goes back to the game's name). Used by this window and the
+    Colonization Sites window. Returns the sentence to show as the status."""
+    shown = site.display_name()
+    typed = dialogs.prompt(parent, "Rename site",
+                           f"A name of your own for {_clip(shown, _NAME_MAX)}.\n\nIt is kept in WFMT only: the game and Raven Colonial are not changed, "
+                           "and docking there does not undo it. Leave it empty to use the game's name again.",
+                           initial=shown, ok="Rename")
+    if typed is None:
+        return "Rename cancelled."
+    typed = " ".join(typed.split())
+    game_name = Site(market_id=site.market_id, name=site.name, complete=site.complete).display_name()
+    # Typing the very name the game gives is the same as clearing the custom one.
+    if not repository.set_custom_name(cmdr, site.market_id, "" if typed == game_name else typed):
+        return "The name is unchanged."
+    if site.custom_name:
+        return f"Renamed to {_clip(site.custom_name, _NAME_MAX)}."
+    return f"{_clip(game_name, _NAME_MAX)} uses the game's name again."
+
+
 def _clip(text: str, limit: int) -> str:
     return text if len(text) <= limit else text[:limit - 1] + "…"
 
@@ -90,8 +112,8 @@ class ArchiveWindow:
                                 tip="Restore - move the selected site back to the Colonization Sites window")
         self._shell.add_action("Copy Summary", self._on_copy,
                                 tip="Copy Summary - copy the selected archived site's summary to the clipboard")
-        self._shell.add_menu("Manage", [("Remove Permanently", self._on_remove, "danger")],
-                              tip="Manage - forget the selected archived site for good")
+        self._shell.add_menu("Manage", [("Rename Site…", self._on_rename), None, ("Remove Permanently", self._on_remove, "danger")],
+                              tip="Manage - rename the selected archived site, or forget it for good")
         self._sites_table = DataTable(self._shell.body, _SITE_COLUMNS, on_select=lambda _iid: self._show_detail(),
                                       empty_text="Nothing is archived yet. Archive Finished in the Manage Sites menu puts finished sites here.")
         self._sites_table.tag_configure("failed", foreground=P.DANGER)
@@ -159,6 +181,13 @@ class ArchiveWindow:
             return
         if panelkit.copy_to_clipboard(self._shell.window, summary_text(site)):
             self._shell.set_status(f"Copied the summary of {_clip(site.display_name(), _NAME_MAX)}.", ok=True)
+
+    def _on_rename(self) -> None:
+        site = self._picked()
+        if site is None:
+            self._shell.set_status("Select a site first.")
+            return
+        self._shell.set_status(rename_site(self._shell.window, self._repository, self._cmdr(), site), ok=True)
 
     def _on_remove(self) -> None:
         site = self._picked()

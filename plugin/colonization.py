@@ -34,6 +34,9 @@ from typing import Any, Dict, List, Mapping, Optional, Tuple
 
 _SITE_PREFIX = re.compile(r"^[^:]*construction site:\s*", re.IGNORECASE)
 
+CUSTOM_NAME_MAX = 80
+"""The longest name the commander can give a site."""
+
 EVENT_DEPOT = "ColonisationConstructionDepot"
 EVENT_CONTRIBUTION = "ColonisationContribution"
 EVENT_CLAIM = "ColonisationSystemClaim"
@@ -110,6 +113,9 @@ class Site:
     """The body the site is at, as Raven Colonial's plan names it ("" until looked up, or when Raven does not say); shown on the Colony panel."""
     archived: bool = False
     """Put away by the commander: a finished site kept for reference, out of the Sites window's list but still counted in the history."""
+    custom_name: str = ""
+    """A name the commander gave the site in WFMT ("" for none). It is shown instead of `name`, which stays the game's own (the journal, a dock
+    and the Raven Colonial match all use that one), so docking again never undoes it."""
 
     @property
     def remaining_total(self) -> int:
@@ -123,6 +129,8 @@ class Site:
         """The name to show. A finished build becomes an ordinary station under a new `MarketID`, so docking there never renames this depot's record;
         its name would keep the game's "Orbital Construction Site: " prefix for good. Once the build is complete the prefix is dropped
         ("Orbital Construction Site: Example Station" -> "Example Station")."""
+        if self.custom_name:
+            return self.custom_name
         name = _symbolic_name_to_text(self.name)
         if not name:
             return f"Construction site {self.market_id}"
@@ -136,6 +144,7 @@ class Site:
             "progress": self.progress, "complete": self.complete, "failed": self.failed,
             "updated": self.updated, "journal_at": self.journal_at,
             "first_seen": self.first_seen, "completed_at": self.completed_at, "archived": self.archived, "body_name": self.body_name,
+            "custom_name": self.custom_name,
             "resources": [
                 {"key": r.key, "label": r.label, "required": r.required,
                  "provided": r.provided, "payment": r.payment}
@@ -156,6 +165,7 @@ class Site:
             journal_at=str(raw.get("journal_at") or ""),
             first_seen=str(raw.get("first_seen") or ""), completed_at=str(raw.get("completed_at") or ""),
             archived=bool(raw.get("archived")), body_name=str(raw.get("body_name") or "")[:80],
+            custom_name=str(raw.get("custom_name") or "").strip()[:CUSTOM_NAME_MAX],
             resources=[
                 Resource(
                     key=str(r.get("key") or ""), label=str(r.get("label") or ""),

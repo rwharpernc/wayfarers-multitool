@@ -206,7 +206,9 @@ At start-up WFMT takes the commander from the newest journal (the last login in 
 - The name is the one the game gives the depot's market when the commander docks there.
 - If WFMT has not seen the commander dock there, the site is named `Construction site <number>`.
 - Docking again after a rename in the game updates the name (and the system, if it changed).
-- Raven Colonial keeps a separate list. A rename must be repeated there, otherwise WFMT cannot match the two by name.
+- Raven Colonial keeps a separate list. A rename in the game must be repeated there, otherwise WFMT cannot match the two by name.
+- **Your own name.** Select a site (or an archived site) and choose **Manage Sites → Rename Site…** (in the Archive, **Manage → Rename Site…**). The name you type is shown everywhere WFMT names the site: the Sites window, the overlay card, the History, the Archive and the copied text. It is kept in WFMT only: the game's name and Raven Colonial are not changed, and docking there again does not undo it. Leave the box empty, or type the game's own name, to go back to the game's name. A name has at most 80 characters.
+- WFMT still uses the game's name to find the site's project on Raven Colonial, so a name of your own never breaks that match.
 
 ### Keeping it right
 
@@ -544,6 +546,7 @@ The window header, top right. All of the buttons act on the site selected on the
 - **Rescan Journals** reads the journals again for the sites, the delivery history and (with a fleet carrier) the carrier tally; see [Rescan Journals](#rescan-journals-when-a-load-did-not-register).
 - **Raven Colonial** (a menu): **My Projects**, **Planned Builds**, **Raven Progress**, then **Open Selected Build on Raven**, **Open This System on Raven**, **Raven Colonial Website**, then **Create Project on Raven…**, **Report Complete to Raven** and **Mark Plan Entry Demolished…**. The last three write to Raven Colonial; the ellipsis indicates a following question. See [Planned builds](#planned-builds), [Starting a project on Raven Colonial](#starting-a-project-on-raven-colonial) and [Sharing your progress with Raven Colonial](#sharing-your-progress-with-raven-colonial).
 - **Manage Sites** (a menu):
+  - **Rename Site…** gives the selected site a name of your own (see [The site name](#the-site-name)).
   - **Archive Finished** moves every complete or failed site into the [Archive](#the-archive).
   - **Show Archive** opens the archive.
   - **Remove Site** stops tracking the selected site.
@@ -566,7 +569,7 @@ Finished sites stay in the Sites window until they are removed or archived. WFMT
 
 - **Archive Finished** (Manage Sites) moves every complete or failed site to the archive. An unfinished site is never archived.
 - **Show Archive** opens a window listing archived sites, newest finish first: the site, its system, how it ended (**Result**), when WFMT first saw it (**Started**) and when it finished (**Finished**), how long it took (**Took**), and the tons it needed (**Needed**). Selecting a site lists each commodity it needed (**Commodity**, **Required**, **Delivered**, **Left**). Delivered counts all commanders' deliveries, as the depot reports them.
-- **Restore** returns the selected site to the Sites window. **Copy Summary** copies its facts as text. **Manage → Remove Permanently** deletes the site after confirmation. The delivery history keeps the commander's own totals but not the site's list of commodities.
+- **Restore** returns the selected site to the Sites window. **Copy Summary** copies its facts as text. **Manage → Rename Site…** renames the selected archived site (see [The site name](#the-site-name)). **Manage → Remove Permanently** deletes the site after confirmation. The delivery history keeps the commander's own totals but not the site's list of commodities.
 - Archived sites still count in the [History](#history) figures. They are stored in the same data file as the other sites, so **Back up my data** includes them. If a depot reports an archived site as under construction again, the site returns to the Sites window.
 
 **Example.** Two of six sites show `complete` and one shows `failed`. **Manage Sites → Archive Finished** moves the three out of the list; the count of active sites in the subtitle is unchanged. **Manage Sites → Show Archive** lists them, newest finish first, with the duration of each. **Copy Summary** copies the facts of the selected site and **Restore** returns it. The History totals still include them.
@@ -809,7 +812,7 @@ WFMT knows only what Elite Dangerous writes to its journal files, plus what Fron
 |---|---|---|
 | All cargo on the carrier | The journal records only cargo transferred to or from the carrier. Stock that arrived any other way is invisible to it. Frontier's carrier data lists the actual hold, but only when EDMC is signed in. It is fetched when Carrier Management is opened (at most every 15 minutes) and can lag, sometimes for longer than 15 minutes. | WFMT ignores a lagging copy, so transfers are not undone. Sign EDMC in to Frontier and open Carrier Management at least 15 minutes after the last transfer; the FC column and the **On your carrier** line then follow the actual hold. See [Scenarios](#scenarios-what-to-expect-and-what-to-do). |
 | Colonization sites appearing automatically | The game writes the depot event only when the commander docks or opens the depot market. A delivery to a site for which WFMT has never seen a depot snapshot is ignored. | Dock at the depot (or open its market) once for each new site. Docking again replaces WFMT's figures with the game's figures. Deliveries made with EDMC closed are caught up from the last 14 to 30 days of journals at start-up. |
-| A site's name or rename | The name is taken from the last time the commander docked at that market. Otherwise it is `Construction site <number>`. The game does not announce a rename; it appears in the name the market has the next time the commander docks. | Dock at the market once to take the name, and again after a rename. |
+| A site's name or rename | The name is taken from the last time the commander docked at that market. Otherwise it is `Construction site <number>`. The game does not announce a rename; it appears in the name the market has the next time the commander docks. | Dock at the market once to take the name, and again after a rename. To keep a name of your own, use **Manage Sites → Rename Site…**; docking does not change it. |
 | A full history of all deliveries | The journal records each delivery as it happens. WFMT rebuilds the history once from every journal file still present, so deliveries from deleted journals are missing. | The history counts from the first delivery found (shown in the History window). |
 | Other commanders' work on the same project | The depot reports only the project's totals, not who delivered what. | The page shows the commander's deliveries and the project's overall progress. |
 | The cargo in the hold now | The journal's `Cargo` event carries only a count, and EDMC's cargo state did not follow a purchase. The game rewrites `Cargo.json` on every change. | WFMT reads `Cargo.json` and reads it again about 1.5 seconds after each cargo event. If the file is missing or describes the SRV, WFMT uses the hold EDMC reports. |
