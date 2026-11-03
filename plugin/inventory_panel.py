@@ -26,6 +26,7 @@ import logging
 import os
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, FrozenSet, List, Optional, Tuple
 
 import tkinter as tk
@@ -244,6 +245,8 @@ class InventoryPanelController:
         self._overlay_rendered_rows = 0
         self._rendered_bar_keys: FrozenSet[str] = frozenset()
         self._bars_broken = False
+        # One thread draws and clears the bars, in the order they were asked for, so a slow clear can never land after the redraw that follows it.
+        self._bars_jobs = ThreadPoolExecutor(max_workers=1, thread_name_prefix="WFMT-inventory-bars")
 
         # Main-panel widgets.
         self._status_label: Optional[tk.Label] = None
@@ -592,8 +595,9 @@ class InventoryPanelController:
                         self._clear_bar_key(key)
                 except OSError:
                     logger.debug("Could not reach the overlay to clear the inventory bars", exc_info=True)
+                    self._rendered_bar_keys = self._rendered_bar_keys | leftover    # still on screen: the next refresh tries again
 
-            threading.Thread(target=clear_worker, name="WFMT-inventory-bars-clear", daemon=True).start()
+            self._bars_jobs.submit(clear_worker)
             return
 
         look = overlay_appearance.current_look()
@@ -647,7 +651,7 @@ class InventoryPanelController:
                 logger.debug("Could not reach the overlay for inventory bars", exc_info=True)
                 self._bars_broken = True
 
-        threading.Thread(target=worker, name="WFMT-inventory-bars", daemon=True).start()
+        self._bars_jobs.submit(worker)
 
     def _clear_bar_key(self, key: str) -> None:
         self._overlay_client.send_message(f"{ID_PREFIX}bar_label_{key}", "", "white", self._overlay_x, self._overlay_y, ttl=1)

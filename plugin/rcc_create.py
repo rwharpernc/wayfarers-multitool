@@ -109,7 +109,7 @@ def suggested_name(site: Site) -> str:
     construction-site prefix."""
     if is_construction_ship(site):
         return PRIMARY_PORT_NAME
-    return rcc_client.station_part(site.display_name())[:NAME_MAX]
+    return rcc_client.station_part(site.game_name())[:NAME_MAX]
 
 
 def guess_planned(sites: Sequence[rcc_client.RccSite], name: str) -> Optional[rcc_client.RccSite]:

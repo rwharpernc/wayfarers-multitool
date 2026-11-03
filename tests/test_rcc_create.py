@@ -90,6 +90,11 @@ class Planned(unittest.TestCase):
         self.assertTrue(C.is_construction_ship(Site(market_id=6, name="System Colonization Ship Foo")))
         self.assertFalse(C.is_construction_ship(other))
 
+    def test_a_name_of_the_commanders_own_is_not_offered_to_raven(self):
+        other = Site(market_id=5, name="Orbital Construction Site: Grinning Station", custom_name="My mining hub")
+        self.assertEqual(other.display_name(), "My mining hub")
+        self.assertEqual(C.suggested_name(other), "Grinning Station")
+
     def test_the_only_planned_site_is_preselected(self):
         sites = rcc_client.parse_sites(PLAN)
         self.assertEqual(C.guess_planned(sites, "Primary port").site_id, "x1")

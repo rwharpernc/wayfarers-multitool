@@ -137,6 +137,12 @@ class RenameDialogTests(unittest.TestCase):
         self.assertEqual(result, "Renamed to Dolgov Prime.")
         self.assertEqual(self.repo.get("Alice", 1).display_name(), "Dolgov Prime")
 
+    def test_only_a_real_change_counts_as_a_success_for_the_status_line(self):
+        self.assertFalse(self.W.rename_succeeded(self.W.RENAME_CANCELLED))
+        self.assertFalse(self.W.rename_succeeded(self.W.RENAME_UNCHANGED))
+        self.assertTrue(self.W.rename_succeeded("Renamed to Dolgov Prime."))
+        self.assertTrue(self.W.rename_succeeded("Dolgov Depot uses the game's name again."))
+
     def test_cancel_unchanged_empty_and_the_game_name_all_leave_or_restore_the_game_name(self):
         self.assertEqual(self.rename(None)[0], "Rename cancelled.")
         self.assertEqual(self.rename("Dolgov Depot")[0], "The name is unchanged.")

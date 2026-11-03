@@ -594,6 +594,9 @@ def refresh_figures(asks: List[SiteAsk], fetch_plan: Callable[[str], "RccSystem"
         if failures >= MAX_FAILURES_IN_A_ROW or stop():
             figures[ask.market_id] = SiteFigure(FIGURE_SKIPPED, note="Not asked: the refresh stopped early.")
             continue
+        if not (ask.system or "").strip():     # WFMT's own gap, not a Raven or network problem: it must not count toward stopping the pass
+            figures[ask.market_id] = SiteFigure(FIGURE_ERROR, note="This site has no system name yet; dock at it once so WFMT knows where it is.")
+            continue
         if index:
             pause(REFRESH_PAUSE_S)
         try:

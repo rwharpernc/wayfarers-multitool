@@ -11,8 +11,9 @@ docs/ATTRIBUTIONS.md and THIRD-PARTY-NOTICES.md. What the rows are, and are not:
   written as free: the source does not know it. The Ship planner reports such a blueprint as partly counted, "the table has N of the L grades".
 - **Anti-Guardian Zone Resistance** (journal name `GuardianModule_Sturdy`, seen on a Guardian Gauss cannon at level 1) is one grade. The source writes its three materials as three
   separate entries and marks the blueprint's journal name `TODO`; the name is confirmed by the journal, and the three are taken as the one craft's materials. A figure may be wrong.
-- **Long Range for the mining laser and the abrasion blaster** is the ordinary Long Range Weapon blueprint (the source lists it for them, its recipe equals this table's for every
-  other weapon, and a journal's mining laser names it `Weapon_LongRange`).
+- **Long Range for the mining laser and the abrasion blaster** has two journal names, and both are kept: the ordinary Long Range Weapon (`Weapon_LongRange`, which a journal's mining
+  laser has been seen to name, and whose recipe equals this table's for every other weapon) and the source's own Long Range Mining Laser (`Weapon_LongRangeMiningLaser`). The rows for the
+  two carry the same materials, so whichever name an event gives, the same craft is counted.
 - **Left out**: Force Impact (the source has no materials for it), Expanded Cargo Rack (pre-engineered, no materials), High-Yield (flak and flechette launchers have no module type here)
   and the four decorative blueprints (no materials). They stay "not counted".
 

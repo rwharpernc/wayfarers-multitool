@@ -200,6 +200,7 @@ class ColonizationWindow:
         self._filter_text = tk.StringVar(master=self._toplevel, value="")
         self._raven_figures: Dict[int, rcc_client.SiteFigure] = {}   # Raven Colonial's answers from the last Refresh from Raven (this session only)
         self._raven_when: Optional[datetime] = None
+        self._raven_seen: Dict[int, tuple] = {}   # each site's (tons left, complete) when Raven was asked, to mark a figure that has since gone out of date
         self._raven_cmdr = ""
         self._raven_busy = False
         self._station_only = tk.BooleanVar(master=self._toplevel, value=False)
@@ -383,12 +384,13 @@ class ColonizationWindow:
             self._selected = (first_active or sites[0]).market_id if sites else None
 
         if self._raven_cmdr and self._raven_cmdr != self._cmdr:   # another commander's sites: Raven's figures for the last one do not apply
-            self._raven_figures, self._raven_when, self._raven_cmdr = {}, None, ""
-        self._raven_note.configure(text=view.raven_note(self._raven_when, self._raven_figures))
+            self._raven_figures, self._raven_when, self._raven_cmdr, self._raven_seen = {}, None, "", {}
+        stale = {s.market_id for s in sites if s.market_id in self._raven_seen and self._raven_seen[s.market_id] != (s.remaining_total, s.complete)}
+        self._raven_note.configure(text=view.raven_note(self._raven_when, self._raven_figures, stale=len(stale)))
         self._site_table.clear()
         for site in sites:
             self._site_table.insert(
-                str(site.market_id), (site.display_name(), f"{site.remaining_total:,} t", view.raven_cell(self._raven_figures.get(site.market_id)),
+                str(site.market_id), (site.display_name(), f"{site.remaining_total:,} t", view.raven_cell(self._raven_figures.get(site.market_id), stale=site.market_id in stale),
                                       view.site_status(site)),
                 tag=None if site.active else "done")
         if self._selected is not None:
@@ -639,14 +641,14 @@ class ColonizationWindow:
             return
         asks = [rcc_client.SiteAsk(s.market_id, s.system, s.name, self._address(s)) for s in sites]
         cmdr = self._cmdr
-        job: Dict[str, Any] = {"done": False, "figures": {}}
+        job: Dict[str, Any] = {"done": False, "figures": {}, "cancel": False}   # "cancel" is set on the main thread when the window closes
         self._raven_busy = True
         self._raven_button.set_enabled(False)
         self._announce(f"Asking Raven Colonial about {len(asks)} site{'s' if len(asks) != 1 else ''}…")
 
         def work() -> None:
             try:
-                job["figures"] = rcc_client.refresh_figures(asks, stop=lambda: not self._shell.alive)
+                job["figures"] = rcc_client.refresh_figures(asks, stop=lambda: job["cancel"])    # a flag: Tk is not touched from this thread
             except Exception:
                 logger.exception("Raven Colonial refresh failed")
             job["done"] = True
@@ -656,6 +658,7 @@ class ColonizationWindow:
 
     def _poll_raven_refresh(self, job: Dict[str, Any], cmdr: str) -> None:
         if not self._shell.alive:
+            job["cancel"] = True
             return
         if not job["done"]:
             self._toplevel.after(150, self._poll_raven_refresh, job, cmdr)
@@ -669,6 +672,7 @@ class ColonizationWindow:
             self._announce("The refresh failed unexpectedly; see the EDMC log.")
             return
         self._raven_figures, self._raven_when, self._raven_cmdr = figures, datetime.now().astimezone(), cmdr
+        self._raven_seen = {s.market_id: (s.remaining_total, s.complete) for s in self._sites.values()}
         self._refresh()
         self._announce(view.raven_summary([s for s in self._sites.values() if s.active], figures), ok=True)
 
@@ -1053,7 +1057,8 @@ class ColonizationWindow:
         if site is None or not self._cmdr:
             self._announce("Select the site you want to rename on the left first.")
             return
-        self._announce(colonization_archive_window.rename_site(self._toplevel, self._repository, self._cmdr, site))
+        message = colonization_archive_window.rename_site(self._toplevel, self._repository, self._cmdr, site)
+        self._announce(message, ok=colonization_archive_window.rename_succeeded(message))
 
     def _on_archive_finished(self) -> None:
         """Moves every completed or failed site to the Archive window, where it stays for reference (and can be brought back)."""

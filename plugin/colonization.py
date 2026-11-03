@@ -129,8 +129,10 @@ class Site:
         """The name to show. A finished build becomes an ordinary station under a new `MarketID`, so docking there never renames this depot's record;
         its name would keep the game's "Orbital Construction Site: " prefix for good. Once the build is complete the prefix is dropped
         ("Orbital Construction Site: Example Station" -> "Example Station")."""
-        if self.custom_name:
-            return self.custom_name
+        return self.custom_name or self.game_name()
+
+    def game_name(self) -> str:
+        """The name the game gives the site, ignoring any name the commander chose (what Raven Colonial knows it by)."""
         name = _symbolic_name_to_text(self.name)
         if not name:
             return f"Construction site {self.market_id}"

@@ -196,23 +196,28 @@ def site_status(site: Site) -> str:
 RAVEN_NOT_ASKED = "Raven figures: not refreshed yet. Press Refresh from Raven to ask for every open site."
 
 
-def raven_cell(figure: Optional[SiteFigure]) -> str:
-    """The Raven column of a site's row: Raven's tons still needed, or why there is none ("" before any refresh)."""
+RAVEN_OLD = " (old)"
+
+
+def raven_cell(figure: Optional[SiteFigure], stale: bool = False) -> str:
+    """The Raven column of a site's row: Raven's tons still needed, or why there is none ("" before any refresh). `stale` marks a figure read
+    before the site's own figures changed (cargo delivered, build finished): Raven's number is still shown, as the old reading it is."""
     if figure is None:
         return ""
     if figure.state == FIGURE_OK:
-        return "done" if figure.complete else f"{figure.sum_need:,} t"
+        return ("done" if figure.complete else f"{figure.sum_need:,} t") + (RAVEN_OLD if stale else "")
     return {FIGURE_NONE: "no project", FIGURE_ERROR: "error", FIGURE_SKIPPED: "not asked"}.get(figure.state, "")
 
 
-def raven_note(when: Optional[datetime], figures: Mapping[int, SiteFigure], now: Optional[datetime] = None) -> str:
+def raven_note(when: Optional[datetime], figures: Mapping[int, SiteFigure], now: Optional[datetime] = None, stale: int = 0) -> str:
     """The line beside the button: when Raven was last asked and how many sites it answered for. `when` is local time."""
     if when is None:
         return RAVEN_NOT_ASKED
     now = now or datetime.now().astimezone()
     stamp = when.strftime("%H:%M") if when.date() == now.date() else when.strftime("%Y-%m-%d %H:%M")
     answered = sum(1 for f in figures.values() if f.state in (FIGURE_OK, FIGURE_NONE))
-    return f"Raven figures refreshed {stamp}: {answered} of {len(figures)} site{'s' if len(figures) != 1 else ''} answered."
+    note = f"Raven figures refreshed {stamp}: {answered} of {len(figures)} site{'s' if len(figures) != 1 else ''} answered."
+    return note + (f" {stale} changed since (old): press Refresh again." if stale else "")
 
 
 def raven_summary(sites: Sequence[Site], figures: Mapping[int, SiteFigure]) -> str:

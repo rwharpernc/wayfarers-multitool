@@ -73,6 +73,15 @@ def close() -> None:
         _window.close()
 
 
+RENAME_CANCELLED = "Rename cancelled."
+RENAME_UNCHANGED = "The name is unchanged."
+
+
+def rename_succeeded(message: str) -> bool:
+    """Whether the sentence `rename_site` returned reports a change (a cancel or an unchanged name is not one)."""
+    return message not in (RENAME_CANCELLED, RENAME_UNCHANGED)
+
+
 def rename_site(parent: tk.Misc, repository: SiteRepository, cmdr: str, site: Site) -> str:
     """Ask for a name of the commander's own for `site` and keep it (an empty one goes back to the game's name). Used by this window and the
     Colonization Sites window. Returns the sentence to show as the status."""
@@ -82,12 +91,12 @@ def rename_site(parent: tk.Misc, repository: SiteRepository, cmdr: str, site: Si
                            "and docking there does not undo it. Leave it empty to use the game's name again.",
                            initial=shown, ok="Rename")
     if typed is None:
-        return "Rename cancelled."
+        return RENAME_CANCELLED
     typed = " ".join(typed.split())
-    game_name = Site(market_id=site.market_id, name=site.name, complete=site.complete).display_name()
+    game_name = Site(market_id=site.market_id, name=site.name, complete=site.complete).game_name()
     # Typing the very name the game gives is the same as clearing the custom one.
     if not repository.set_custom_name(cmdr, site.market_id, "" if typed == game_name else typed):
-        return "The name is unchanged."
+        return RENAME_UNCHANGED
     if site.custom_name:
         return f"Renamed to {_clip(site.custom_name, _NAME_MAX)}."
     return f"{_clip(game_name, _NAME_MAX)} uses the game's name again."
@@ -187,7 +196,8 @@ class ArchiveWindow:
         if site is None:
             self._shell.set_status("Select a site first.")
             return
-        self._shell.set_status(rename_site(self._shell.window, self._repository, self._cmdr(), site), ok=True)
+        message = rename_site(self._shell.window, self._repository, self._cmdr(), site)
+        self._shell.set_status(message, ok=rename_succeeded(message))
 
     def _on_remove(self) -> None:
         site = self._picked()

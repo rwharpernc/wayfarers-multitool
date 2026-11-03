@@ -120,6 +120,14 @@ class RefreshFiguresTests(unittest.TestCase):
         f.run([R.SiteAsk(i, "Sol", "Depot") for i in (7, 8, 9)])
         self.assertEqual(f.pauses, [R.REFRESH_PAUSE_S] * 2)
 
+    def test_sites_with_no_system_name_do_not_stop_the_pass(self):
+        f = Fakes({"Sol": plan(planned(9))}, {"b-9": R.RccProject("b-9", 5, 50, False, {})})
+        got = f.run([R.SiteAsk(i, "", "Depot") for i in (1, 2, 3, 4)] + [R.SiteAsk(9, "Sol", "Depot")])
+        self.assertTrue(all(got[i].state == R.FIGURE_ERROR for i in (1, 2, 3, 4)))
+        self.assertIn("no system name", got[1].note)
+        self.assertEqual(got[9], R.SiteFigure(R.FIGURE_OK, 5, 50, False))
+        self.assertEqual(f.plan_calls, ["Sol"])
+
     def test_nothing_to_ask_is_an_empty_answer(self):
         self.assertEqual(Fakes().run([]), {})
 
@@ -137,6 +145,14 @@ class WordingTests(unittest.TestCase):
         self.assertEqual(view.raven_cell(R.SiteFigure(R.FIGURE_NONE)), "no project")
         self.assertEqual(view.raven_cell(R.SiteFigure(R.FIGURE_ERROR, note="x")), "error")
         self.assertEqual(view.raven_cell(R.SiteFigure(R.FIGURE_SKIPPED)), "not asked")
+
+    def test_a_figure_read_before_the_site_changed_is_marked_old(self):
+        self.assertEqual(view.raven_cell(R.SiteFigure(R.FIGURE_OK, 1200, 5000), stale=True), "1,200 t (old)")
+        self.assertEqual(view.raven_cell(R.SiteFigure(R.FIGURE_OK, 0, 5000, True), stale=True), "done (old)")
+        self.assertEqual(view.raven_cell(R.SiteFigure(R.FIGURE_NONE), stale=True), "no project")
+        now = datetime(2026, 11, 3, 15, 0, tzinfo=timezone.utc)
+        note = view.raven_note(now, {1: R.SiteFigure(R.FIGURE_OK, 1, 2)}, now, stale=1)
+        self.assertTrue(note.endswith("1 changed since (old): press Refresh again."), note)
 
     def test_the_note_says_when_and_how_many(self):
         now = datetime(2026, 11, 3, 15, 0, tzinfo=timezone.utc)
