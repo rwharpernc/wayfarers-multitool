@@ -37,12 +37,19 @@ class ShipNameTests(unittest.TestCase):
             self.assertNotIn("_", shown)
             self.assertNotEqual(shown, raw)
 
+    def test_the_ship_list_has_no_fighters_or_vehicles(self):
+        listed = S.ships()
+        self.assertIn("Anaconda Mk II", listed)
+        self.assertNotIn("GU-97", listed)
+        self.assertNotIn("SRV", listed)
+        self.assertEqual(listed, sorted(listed, key=str.casefold))
+
     def test_no_name_is_empty(self):
         self.assertEqual(S.display_name(""), "")
         self.assertEqual(S.display_name(None), "")
 
     def test_every_table_name_is_a_readable_name(self):
-        for key, name in S.NAMES.items():
+        for key, name in {**S.NAMES, **S.VEHICLES}.items():
             self.assertEqual(key, key.casefold())
             self.assertNotIn("_", name)
             self.assertTrue(name[0].isupper() or name[0].isdigit(), name)

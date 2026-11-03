@@ -12,15 +12,16 @@ The pad class of each ship comes from ship data (input: https://github.com/EDCD/
 Ship names are matched after lower-casing and dropping everything but letters and
 digits, so "Cobra Mk III", "CobraMkIII" and the journal's "cobramkiii" all meet.
 The journal's `Loadout.Ship` is an internal name (`cobramkiii`, `empire_trader`);
-`ship_display_name` turns it into the display name using EDMC's own table when it is
-available, since guessing internal names is how this would go quietly wrong. A ship
-that cannot be matched gives None, and the caller falls back to the Settings override
-or asks for no pad restriction.
+`ship_display_name` turns it into the display name with the table in `ship_names.py`, then EDMC's own table when it is available, and shows a ship neither
+knows as words. Only the pad size is never guessed: a ship that cannot be matched gives None, and the caller falls back to the Settings override or asks
+for no pad restriction.
 """
 from __future__ import annotations
 
 import re
 from typing import Dict, Optional
+
+from . import ship_names
 
 SMALL, MEDIUM, LARGE = "small", "medium", "large"
 
@@ -49,34 +50,21 @@ _add(2, "Alliance Challenger", "Alliance Chieftain", "Alliance Crusader", "Asp E
 _add(3, "Anaconda", "Beluga Liner", "Caspian Explorer", "Federal Corvette", "Imperial Clipper", "Imperial Cutter",
      "Orca", "Panther Clipper Mk II", "Type-10 Defender", "Type-7 Transporter", "Type-9 Heavy")
 
-# Journal internal names that differ from the display name enough to need a hand-written hop.
-# Anything not listed is resolved through EDMC's ship_name_map in ship_display_name().
-_INTERNAL_TO_DISPLAY = {
-    "empire_trader": "Imperial Clipper", "empire_courier": "Imperial Courier", "empire_eagle": "Imperial Eagle",
-    "federation_corvette": "Federal Corvette", "federation_dropship": "Federal Dropship",
-    "federation_dropship_mkii": "Federal Assault Ship", "federation_gunship": "Federal Gunship",
-    "independant_trader": "Keelback", "ferdelance": "Fer-de-Lance", "cutter": "Imperial Cutter",
-    "diamondback": "Diamondback Scout", "diamondbackxl": "Diamondback Explorer",
-    "type6": "Type-6 Transporter", "type7": "Type-7 Transporter", "type9": "Type-9 Heavy",
-    "belugaliner": "Beluga Liner", "krait_mkii": "Krait Mk II", "krait_light": "Krait Phantom",
-    "asp": "Asp Explorer", "python_nx": "Python Mk II", "type8": "Type-8 Transporter",
-    "type9_military": "Type-10 Defender", "explorer_nx": "Caspian Explorer", "panthermkii": "Panther Clipper Mk II",
-    "typex": "Alliance Chieftain", "typex_2": "Alliance Crusader", "typex_3": "Alliance Challenger",
-}
-
 
 def ship_display_name(internal: str) -> str:
-    """'empire_trader' -> 'Imperial Clipper'. Falls back to the internal name when unknown."""
+    """'empire_trader' -> 'Imperial Clipper'. EDMC's own table names what `ship_names` does not know, and a ship neither knows is shown as words, never as the raw name."""
     key = str(internal or "").lower()
-    if key in _INTERNAL_TO_DISPLAY:
-        return _INTERNAL_TO_DISPLAY[key]
+    if not key:
+        return ""
+    if key in ship_names.NAMES or key in ship_names.VEHICLES or key.endswith("_taxi"):
+        return ship_names.display_name(key)
     try:
         from edmc_data import ship_name_map  # EDMC's own table; absent in unit tests
         if key in ship_name_map:
             return str(ship_name_map[key])
     except ImportError:
         pass
-    return str(internal or "")
+    return ship_names.display_name(key)
 
 
 def pad_size(ship: Optional[str]) -> Optional[str]:
@@ -106,7 +94,7 @@ def label(ship_pad: Optional[str]) -> str:
 
 def known_ships() -> list:
     """Every ship name WFMT knows, as the game shows it (Imperial Clipper, Fer-de-Lance...), A to Z: for the boxes that take a ship."""
-    names = set(_INTERNAL_TO_DISPLAY.values())
+    names = set(ship_names.ships())
     try:
         from edmc_data import ship_name_map  # EDMC's own table; absent in unit tests
         names.update(str(name) for name in ship_name_map.values())

@@ -28,6 +28,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Sequence
 
 from . import commander_data, scan_value
+from .ship_names import display_name
 
 try:
     from config import appname
@@ -59,23 +60,10 @@ SCAN_EVENTS = ("FSDJump", "CarrierJump", "Location", "FSSDiscoveryScan", "Scan",
                "ScanOrganic", "SellOrganicData", "CodexEntry", "Touchdown", "Loadout")
 
 
-SHIP_NAMES = {
-    "adder": "Adder", "anaconda": "Anaconda", "asp": "Asp Explorer", "asp_scout": "Asp Scout", "belugaliner": "Beluga Liner", "cobramkiii": "Cobra Mk III",
-    "cobramkiv": "Cobra Mk IV", "cobramkv": "Cobra Mk V", "diamondback": "Diamondback Scout", "diamondbackxl": "Diamondback Explorer", "dolphin": "Dolphin",
-    "eagle": "Eagle", "empire_courier": "Imperial Courier", "empire_eagle": "Imperial Eagle", "empire_trader": "Imperial Clipper", "federation_corvette": "Federal Corvette",
-    "federation_dropship": "Federal Dropship", "federation_dropship_mkii": "Federal Assault Ship", "federation_gunship": "Federal Gunship", "ferdelance": "Fer-de-Lance",
-    "hauler": "Hauler", "independant_trader": "Keelback", "independent_trader": "Keelback", "krait_light": "Krait Phantom", "krait_mkii": "Krait Mk II", "mamba": "Mamba",
-    "orca": "Orca", "python": "Python", "python_nx": "Python Mk II", "sidewinder": "Sidewinder", "type6": "Type-6 Transporter", "type7": "Type-7 Transporter",
-    "type8": "Type-8 Transporter", "type9": "Type-9 Heavy", "type9_military": "Type-10 Defender", "typex": "Alliance Chieftain", "typex_2": "Alliance Crusader",
-    "typex_3": "Alliance Challenger", "viper": "Viper Mk III", "viper_mkiv": "Viper Mk IV", "vulture": "Vulture", "cutter": "Imperial Cutter", "explorer_nx": "Caspian Explorer",
-}
-
-
 def ship_label(entry: Mapping[str, Any]) -> str:
-    """'Caspian Explorer 'Far Horizon' WF-01' from a Loadout (or LoadGame) event: the ship's name from the game, else the table above, else the key tidied; then its given
-    name and ident. Empty when the event names no ship."""
-    key = str(entry.get("Ship") or "")
-    ship = clip(entry.get("Ship_Localised"), 40) or SHIP_NAMES.get(key.casefold()) or clip(key.replace("_", " ").title(), 40)
+    """'Caspian Explorer 'Far Horizon' WF-01' from a Loadout (or LoadGame) event: the ship's name as a player reads it (`ship_names.display_name`: the game's own name,
+    else the table, else the key tidied), then its given name and ident. Empty when the event names no ship."""
+    ship = clip(display_name(entry.get("Ship"), entry.get("Ship_Localised")), 40)
     if not ship:
         return ""
     name, ident = clip(entry.get("ShipName"), 40), clip(entry.get("ShipIdent"), 12)

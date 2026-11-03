@@ -12,7 +12,7 @@ codename. `display_name` gives one readable name for all of them:
 from __future__ import annotations
 
 import re
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 NAMES: Dict[str, str] = {
     "adder": "Adder", "anaconda": "Anaconda", "anacondamkii": "Anaconda Mk II", "asp": "Asp Explorer", "asp_scout": "Asp Scout", "belugaliner": "Beluga Liner",
@@ -26,7 +26,9 @@ NAMES: Dict[str, str] = {
     "type6": "Type-6 Transporter", "type7": "Type-7 Transporter", "type8": "Type-8 Transporter", "type9": "Type-9 Heavy", "type9_military": "Type-10 Defender",
     "typex": "Alliance Chieftain", "typex_2": "Alliance Crusader", "typex_3": "Alliance Challenger", "viper": "Viper Mk III", "viper_mkiv": "Viper Mk IV",
     "vulture": "Vulture",
-    # ship-launched fighters and the vehicles that are not ships
+}
+# Ship-launched fighters and the vehicles that are not ships: named like ships, but not offered where a ship is chosen.
+VEHICLES: Dict[str, str] = {
     "empire_fighter": "GU-97", "federation_fighter": "F63 Condor", "independent_fighter": "Taipan", "testbuggy": "SRV", "mev_rhino": "Rhino",
 }
 _ROMAN = {"ii": "II", "iii": "III", "iv": "IV", "v": "V", "vi": "VI"}
@@ -54,8 +56,14 @@ def display_name(internal: Any, localised: Any = "") -> str:
     key = _key(internal)
     if not key:
         return ""
-    if key in NAMES:
-        return NAMES[key]
+    known = {**NAMES, **VEHICLES}
+    if key in known:
+        return known[key]
     if key.endswith(_TAXI) and key[:-len(_TAXI)] in NAMES:
         return f"{NAMES[key[:-len(_TAXI)]]} (Taxi)"
     return tidy(key)[:60]
+
+
+def ships() -> List[str]:
+    """Every ship the table names, as the game shows it, A to Z (no fighters or vehicles): for a box that takes a ship."""
+    return sorted(set(NAMES.values()), key=str.casefold)

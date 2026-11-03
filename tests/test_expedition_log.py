@@ -474,6 +474,8 @@ class Ships(unittest.TestCase):
     def test_a_loadout_without_a_localised_name_uses_the_table_or_a_tidied_key(self):
         self.assertEqual(L.ship_label({"Ship": "explorer_nx", "ShipName": "Far Horizon", "ShipIdent": "WF-01"}), "Caspian Explorer 'Far Horizon' WF-01")
         self.assertEqual(L.ship_label({"Ship": "some_new_ship"}), "Some New Ship")
+        self.assertEqual(L.ship_label({"Ship": "anacondamkii", "ShipName": "Big", "ShipIdent": "BG-01"}), "Anaconda Mk II 'Big' BG-01")
+        self.assertEqual(L.ship_label({"Ship": "smallcombat01_nx"}), "Kestrel Mk II")
         self.assertEqual(L.ship_label({"Ship": "python", "Ship_Localised": "Python", "ShipName": ""}), "Python")
         self.assertEqual(L.ship_label({}), "")
 
