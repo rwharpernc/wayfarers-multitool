@@ -3,6 +3,21 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## 1.5.2 (not yet released; for testing on the `patch/1.5.2` branch)
+
+### Added
+
+- **18 more engineering blueprints.** The blueprint table, built from data last changed in March 2024, lacked newer blueprints. Balanced and Support Focused (Power Distributor), Scoop Rate Enhanced (Fuel Scoop), Double Screaming (Fragment Cannon), Drag Seeker, Lightweight Thermal Seeker and Lockdown (Missile Rack), Overloaded (Beam Laser), Plasma Conversion (Beam, Burst and Pulse Laser), Rapid Phase (Multi-cannon), Regenerative (Burst Laser), Enduring Feedback (Rail Gun), Long Range (Surface Scanner), Heavy Duty (Module Reinforcement Package), Extended Cargo Rack, Far-Reaching and Long Range Mining Laser (mining laser and abrasion blaster) and the Guardian Anti-Guardian Zone Resistance are now in the table and the Ship planner. They list materials only: the data does not say who offers them or what they change, some may also cost mercenary coins that WFMT does not count, and where the data does not know grade 1 the planner reports the module as partly counted. The Anti-Guardian Zone Resistance recipe is the least certain.
+- **New module types in the Ship planner:** Cargo Rack, Module Reinforcement Package, Mining Laser, Abrasion Blaster and the Guardian Gauss Cannon, Plasma Charger and Shard Cannon.
+
+### Fixed
+
+- **The Ship planner counts more engineered modules.** It skipped modules whose blueprint it could not place, with the note "WFMT's table has no module type for this item". Seen in real journals and now counted: the Kill Warrant Scanner (Fast Scan), the Wake Scanner (Long Range), Life Support (Lightweight), the Refinery (Shielded), the Mk II agile boost engine (Reinforced and Dirty), the mining laser and abrasion blaster (Long Range) and the Guardian Gauss cannon (Anti-Guardian Zone Resistance). Across one commander's journals no engineered module is skipped now.
+- **The Anaconda Mk II and the Lynx Highliner have landing pad sizes.** The Anaconda Mk II needs a large pad and the Lynx Highliner a medium one; Trade showed both as Unknown and applied no pad restriction.
+- **Nearest place to land offers Dodec Starports and Asteroid bases.** The search never asked for them.
+- **Consumables and Powerplay items have their game names.** Medkit, Energy Cell, Frag Grenade, Shield Disruptor, Shield Projector, E-Breach, the Powerplay items and the Unica Seed were shown as their internal names (such as "Healthpack") when an event carried no localised name.
+- **The blueprint table spells Abnormal Compact Emissions Data as the game does.**
+
 ## 1.5.1 (2026-11-03)
 
 ### Added

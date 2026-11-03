@@ -68,7 +68,7 @@ WFMT can also update itself. Tick **Automatically download and install updates**
 4. **When it takes effect.** The new files are staged at once and take effect at the next EDMC start. Nothing is replaced in a running program.
 5. **On failure.** A failed check or download is written to EDMC's log and retried at the next start. The panel is unchanged. Manual extraction of the ZIP always works.
 
-The first line under the mode buttons always shows the running version (**Plugin: v1.5.1**).
+The first line under the mode buttons always shows the running version (**Plugin: v1.5.2**).
 
 - While an update is downloading it reads, for example, **Plugin: v1.5.0 (downloading v1.4.3...)**.
 - When the update is downloaded, the line is bold black on **orange** and reads **the new version's number, then download - Restart EDMC**.
@@ -109,7 +109,7 @@ Every mode keeps running in the background while another mode is displayed. For 
 
 Under the mode buttons, above the page, WFMT shows the following lines in every mode:
 
-- **Plugin**: the running version, for example `Plugin: v1.5.1` (see "Updating" for the text during an update). Clicking it opens the latest release's page.
+- **Plugin**: the running version, for example `Plugin: v1.5.2` (see "Updating" for the text during an update). Clicking it opens the latest release's page.
 - **Game mode**: `You are in Open mode.`, `You are in Solo mode.` or `You are in Private Group mode (the group's name).` Before the game has logged in it reads `Game mode: waiting for login…`.
 - **Credits this session**: credits earned or lost since login, for example `Credits this session: +1,234,567 cr earned (+411,522 cr/hr)`, `Credits this session: -5,000 cr lost` or `Credits this session: no change yet`. It is the current balance minus the balance at login (`waiting for your balance…` until EDMC has supplied the balance).
   - The hourly rate appears once the session is about three minutes old.
