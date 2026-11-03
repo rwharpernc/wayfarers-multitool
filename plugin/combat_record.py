@@ -34,7 +34,7 @@ except ImportError:   # unit tests outside EDMC
     appname = "EDMarketConnector"
 
 from . import commander_data, journal_files
-from .trade_ship import ship_display_name
+from .ship_names import display_name
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -152,6 +152,7 @@ class Craft:
         self.id: Optional[int] = None
         self.name = ""
         self.ident = ""
+        self.kind = ""            # the game's own name for the kind of ship, when the journal gave one
         self.vessel = "ship"
 
     def see(self, entry: Dict[str, Any]) -> None:
@@ -160,11 +161,13 @@ class Craft:
             if _text(entry.get("Ship")):
                 self.type, self.id = _text(entry.get("Ship")).lower(), _ship_id(entry.get("ShipID"))
                 self.name, self.ident = _text(entry.get("ShipName")), _text(entry.get("ShipIdent"))
+                self.kind = _text(entry.get("Ship_Localised"))
             if event == "LoadGame":
                 self.vessel = "ship"
         elif event == "ShipyardSwap":
             self.type, self.id = _text(entry.get("ShipType")).lower(), _ship_id(entry.get("ShipID"))
             self.name = self.ident = ""      # the Loadout that follows names it
+            self.kind = _text(entry.get("ShipType_Localised"))
             self.vessel = "ship"
         elif event == "SetUserShipName":
             if _ship_id(entry.get("ShipID")) == self.id:
@@ -184,6 +187,7 @@ class Craft:
             return
         self.type, self.id = _text(state.get("ShipType")).lower(), _ship_id(state.get("ShipID"))
         self.name, self.ident = _text(state.get("ShipName")), _text(state.get("ShipIdent"))
+        self.kind = ""
 
     def key_for(self, entry: Dict[str, Any]) -> str:
         """The row a count belongs to: a ship (`type#id`), `srv` or `foot`."""
@@ -198,15 +202,16 @@ class Craft:
     def meta(self, key: str) -> Dict[str, Any]:
         if key in _FIXED_NAMES:
             return {"type": key, "name": "", "ident": ""}
-        return {"type": self.type, "name": self.name, "ident": self.ident}
+        return {"type": self.type, "name": self.name, "ident": self.ident, "kind": self.kind}
 
 
 def ship_label(meta: Dict[str, Any], key: str = "") -> str:
-    """The ship's kind as the game names it ('Federal Corvette'); the SRV and on foot have fixed names."""
+    """The ship's kind as a player reads it ('Federal Corvette', 'Anaconda Mk II'): the game's own name when the journal gave one, else `ship_names`. The SRV
+    and on foot have fixed names."""
     kind = str(meta.get("type") or key)
     if kind in _FIXED_NAMES:
         return _FIXED_NAMES[kind]
-    return ship_display_name(kind) or kind
+    return display_name(kind, meta.get("kind")) or kind
 
 
 def ship_title(meta: Dict[str, Any]) -> str:

@@ -417,6 +417,7 @@ Spec: [SCREENSHOTS_AND_INPUT_TECH_SPEC.md](SCREENSHOTS_AND_INPUT_TECH_SPEC.md), 
 | `screenshot_gui_focus.py` | GUI-focus detection and per-panel crop rectangles |
 | `screenshot_naming.py` | Output file names for captured screenshots |
 | `screenshots.py` | The Screenshots section of Operations: capture, conversion, thumbnails, overlay message |
+| `ship_names.py` | Ship names as a player reads them: the game's own name when the journal gives one, else a table of every ship, fighter and taxi seen in a long-time player's journals, else the internal name tidied into words; no Tk |
 | `ship_builds_data.py` | Per-commander catalog of ship-build links |
 | `ship_builds_dialog.py` | The Add/Edit Ship Build form (on `uikit/form.py`), with `build_ship` |
 | `ship_builds_panel.py` | The Ship Builds section of Operations |

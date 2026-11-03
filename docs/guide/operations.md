@@ -493,7 +493,7 @@ Counts the commander's kills and deaths, split by ship, for the session being pl
    - **Sessions**: one row per session, newest first, with the start time (the session being played reads `(this session)`). Selecting a row shows that session's ships below.
 3. Click a column heading to sort a table.
 
-**Ships.** Each ship is a row with its **Ship** (the kind, such as `Federal Corvette`) and **Name** (the ship's own name and ident, such as `Wayward Star [WS-01]`). A ship is known by its kind and the game's number for it, so two ships of one kind are two rows, and renaming a ship does not start a new row. The **SRV** and **On foot** have rows of their own. Kills of on-foot targets are always on the **On foot** row.
+**Ships.** Each ship is a row with its **Ship** (the kind, always as the game shows it, such as `Federal Corvette` or `Anaconda Mk II`; a ship WFMT does not know yet is shown as words, never as the journal's internal name) and **Name** (the ship's own name and ident, such as `Wayward Star [WS-01]`). A ship is known by its kind and the game's number for it, so two ships of one kind are two rows, and renaming a ship does not start a new row. The **SRV** and **On foot** have rows of their own. Kills of on-foot targets are always on the **On foot** row.
 
 **A session** is one game login: the journal file it was played in. A logout to the menu and back is the same session. A session appears in the list once it has a kill or a death. The last 300 sessions are listed; the totals and the per-ship figures cover all of them.
 

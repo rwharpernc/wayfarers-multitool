@@ -91,6 +91,13 @@ class PureTests(unittest.TestCase):
         craft.see({"event": "SetUserShipName", "Ship": "python", "ShipID": 5, "UserShipName": "Other", "UserShipId": "OT-01"})
         self.assertEqual(craft.name, "Renamed")
 
+    def test_the_games_own_ship_name_is_kept(self):
+        craft = C.Craft()
+        craft.see({"event": "Loadout", "Ship": "newship_nx", "Ship_Localised": "Shiny Thing", "ShipID": 2, "ShipName": "", "ShipIdent": ""})
+        self.assertEqual(C.ship_label(craft.meta(craft.key_for(bounty(1)))), "Shiny Thing")
+        craft.see({"event": "ShipyardSwap", "ShipType": "other_nx", "ShipType_Localised": "Other Thing", "ShipID": 3})
+        self.assertEqual(C.ship_label(craft.meta(craft.key_for(bounty(1)))), "Other Thing")
+
     def test_adopt_takes_edmcs_ship_only_when_none_is_known(self):
         craft = C.Craft()
         craft.adopt({"ShipType": "Anaconda", "ShipID": 2, "ShipName": "Big", "ShipIdent": "BG-01"})
@@ -101,6 +108,10 @@ class PureTests(unittest.TestCase):
     def test_labels(self):
         self.assertEqual(C.ship_label({"type": "foot"}), "On foot")
         self.assertEqual(C.ship_label({"type": "federation_corvette"}), "Federal Corvette")
+        self.assertEqual(C.ship_label({"type": "anacondamkii"}), "Anaconda Mk II")           # no Ship_Localised in the journal: the table names it
+        self.assertEqual(C.ship_label({"type": "smallcombat01_nx"}), "Kestrel Mk II")         # a codename
+        self.assertEqual(C.ship_label({"type": "brand_new_ship"}), "Brand New Ship")          # unknown: words, never the raw string
+        self.assertEqual(C.ship_label({"type": "brand_new_ship", "kind": "Shiny Thing"}), "Shiny Thing")   # the game's own name wins
         self.assertEqual(C.ship_title({"name": "Star", "ident": "S-1"}), "Star [S-1]")
         self.assertEqual(C.ship_title({"name": "", "ident": ""}), "")
 
