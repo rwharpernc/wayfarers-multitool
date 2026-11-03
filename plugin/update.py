@@ -73,6 +73,7 @@ _OWN_DATA_FILES: set = {
     "mining_body_cache.json",  # what the Surface Mining Book's Get body info found for each system, per commander (mining_body_cache.py)
     "mining_history.json",  # the Mining History window's runs, built from the journals, per commander (mining_history.py)
     "ship_builds.json",  # Ship Builds list (ship_builds_data.py)
+    "combat_record.json",  # the commander's kills and deaths, per ship and per session (combat_record.py)
     "stored_modules.json",  # the modules the commander has in storage, per commander (stored_modules.py)
     "codex_catalog.json",  # Codex Completionist's cached Canonn entry catalog (codex_catalog.py)
     "colonization_sites.json",  # Colonization construction sites (colonization_data.py)

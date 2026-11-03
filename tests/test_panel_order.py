@@ -25,6 +25,7 @@ NAMES = {
     "notes_panel": ("exploration", "Notes"),
     "organic_scan_panel": ("exploration", "Organic Scanning"),
     "poi_reference_panel": ("exploration", "POI Reference"),
+    "combat_panel": ("fieldops", "Combat Record"),
     "inventory_panel": ("fieldops", "Inventory"),
     "materials_panel": ("fieldops", "Engineering"),
     "screenshots": ("fieldops", "Screenshots"),

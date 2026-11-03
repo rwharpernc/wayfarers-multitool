@@ -51,7 +51,7 @@ Every mode guide ends with a section titled "What the game does and doesn't tell
 | **Mine** (Mining) | [Mining](mining.md): space and surface mining, the Space Mining Book and the Surface Mining Book, Mining History, mining alerts |
 | **Trade** | [Trade](trade.md): profit, routes, prices, Watch list, carrier cargo, History |
 | **Mission** (Missions) | [Missions](missions.md): all missions in one view, the Missions window and pinning, progress colors, sources for mission cargo |
-| **Operations** | [Operations](operations.md): screenshots, inventory, engineering materials, blueprints, wishlist, ship and Odyssey upgrade planners, engineers, material traders, ship builds |
+| **Operations** | [Operations](operations.md): screenshots, inventory, engineering materials, blueprints, wishlist, ship and Odyssey upgrade planners, engineers, material traders, ship builds, the combat record |
 | **Colony** (Colonization) | [Colonization](colonization.md): the current project, history, the sites window, where to buy |
 | **BGS** | [BGS](bgs.md): factions, states and the commander's effect on them |
 | *Sharing* | [Sharing reports to Discord](discord.md): copy for Discord, post to a webhook, plain copy, and the Discord-side setup |

@@ -100,7 +100,7 @@ Everything else makes **no internet connection at all**:
 - The Ship planner. It reads a pasted loadout or import link, and the commander's journal for the ship flown. Its **Open in Coriolis** and **Open in EDSY** buttons only open the browser at that site when pressed, with the loadout in the address.
 - The Upgrade planner (the commander's journal for the gear owned).
 - Colonization tracking, history and the shopping list overlay. The parts that go online are the ones listed above (Raven Colonial and Where to buy).
-- Organic Scanning, Ship Builds, Landing Assist and Interdiction Warning.
+- Organic Scanning, Ship Builds, the Combat Record, Landing Assist and Interdiction Warning.
 - Mining History, the mining alerts, and both Mining Books (the Space Mining Book and the Surface Mining Book read the journals). The only mining requests are the opt-in lookups in the Mining row above, such as Get body info.
 - Trade's session profit, stock, carrier cargo and History, and the Watch list's prices from the markets opened.
 

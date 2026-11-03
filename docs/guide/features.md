@@ -183,7 +183,7 @@ Each table lists a feature, what it does, the controls and settings that operate
 
 ### Operations ([guide](operations.md))
 
-**Controls:** **Materials**, **Blueprints**, **Engineers** (all in the Engineering row), **Ships**, and the **inventory bars** (click one to open Inventory).
+**Controls:** **Materials**, **Blueprints**, **Engineers** (all in the Engineering row), **Ships**, **Combat**, and the **inventory bars** (click one to open Inventory).
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
@@ -193,6 +193,7 @@ Each table lists a feature, what it does, the controls and settings that operate
 | Engineering | 1,177 blueprints against the materials held, a wishlist and shopping list, a ship planner (which also shows the engineered modules already in storage), an Odyssey upgrade planner and an Engineers tab (rows colored by status, the next step and the full unlock path for each engineer) | **Blueprints** | [Engineering](operations.md#engineering-blueprints-and-a-wishlist) |
 | Material trader finder | The closest Raw, Manufactured or Encoded trader, with distance and pad filters | **Find a trader** in the Materials window | [Materials](operations.md#materials) |
 | Ship Builds | Builds from Coriolis, EDSY or Spansh, kept by link | **Ships** | [Ship Builds](operations.md#ship-builds) |
+| Combat Record | Kills, PvP kills, deaths and rewards, per ship, for this session, every session and in total | **Combat** | [Combat Record](operations.md#combat-record) |
 
 ### Colonization ([guide](colonization.md))
 

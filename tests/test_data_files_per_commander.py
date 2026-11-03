@@ -38,6 +38,7 @@ PER_COMMANDER = {
     "mining_body_cache.json": "one set of looked-up systems per commander (commander_data.py, mining_body_cache.BodyCache.set_commander)",
     "mining_history.json": "one record of mining runs per commander (commander_data.py, mining_history.MiningHistory); another commander's journals are skipped",
     "ship_builds.json": "keyed by commander (ship_builds_data.py)",
+    "combat_record.json": "one record of kills and deaths per commander (commander_data.py, combat_record.CombatBook); another commander's journal events are skipped",
     "stored_modules.json": "one list of stored modules per commander (commander_data.py, stored_modules.ModuleBook); another commander's journals are skipped",
     "colonization_sites.json": "keyed by commander (colonization_data.py)",
     "colonization_carrier.json": "one record per commander (commander_data.py, colonization_carrier.py)",

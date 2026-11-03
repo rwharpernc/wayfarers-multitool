@@ -151,7 +151,7 @@ All data WFMT saves about play belongs to one commander. Nothing is shared betwe
 - Trade sessions and route start, Powerplay and BGS ledgers, Missions.
 - Mining hotspots and the ground driven by the Rhino.
 - The Boxel Survey position and finds, the Codex tally.
-- Colonization sites, Ship Builds, Organic Scanning and Powerplay history.
+- Colonization sites, Ship Builds, the Combat Record, Organic Scanning and Powerplay history.
 - The Credits Ledger and the credits line, expeditions and the Expedition Log, notes, the Surface Compass marks, the engineering materials, blueprint wishlist and engineers, stored modules, pinned missions, the Raven Colonial key and the Discord destinations.
 - Each commander's overlay choices (which cards are on, where they sit, how they look).
 
@@ -331,7 +331,7 @@ A mode that is not used can be hidden under **Settings → WFMT → General → 
 | | |
 |---|---|
 | **Have a switch** | Auto-Honk, Discovery Alerts, Notable Bodies, Organic Scanning, Codex Completionist, Exploration Value (and its two online extras), BGS (and its tick detection), Landing Assist, Interdiction Warning, Flight Alerts, the Surface Compass, the Trade and Mining online lookups, and every overlay |
-| **Have no switch** | The core of Powerplay, Missions, Mining and Trade tracking, screenshot conversion, Inventory tracking, Materials and Engineering, the Expedition planner, Colonization, Ship Builds, Boxel Survey, and the GEC and Canonn POI finders. Some of these (Boxel Survey, the POI finders) only fold and act when a button is pressed |
+| **Have no switch** | The core of Powerplay, Missions, Mining and Trade tracking, screenshot conversion, Inventory tracking, Materials and Engineering, the Expedition planner, Colonization, Ship Builds, the Combat Record, Boxel Survey, and the GEC and Canonn POI finders. Some of these (Boxel Survey, the POI finders) only fold and act when a button is pressed |
 
 Most online lookups are off until enabled, or run only on a button press. The exceptions are listed in [what goes on the internet](internet-and-privacy.md).
 
@@ -376,6 +376,7 @@ Select the mode first, then use the button listed.
 | Engineers (standing with each engineer and the path to unlock them) | Operations | **Engineers** button in the Engineering section |
 | Material trader | Operations | **Find a trader** button in the Materials window |
 | Ship Builds | Operations | **Ships** button |
+| Combat Record (tabs: This session, All time, Sessions) | Operations | **Combat** button |
 | Colonization Sites | Colonization | **Dashboard** button |
 | Colonization History (tabs: Overview, By day, Commodities, Sites) | Colonization | **History** button |
 | My Projects (projects on Raven Colonial) | Colonization | **Projects** button, or **Raven Colonial → My Projects** in the Colonization Sites window |

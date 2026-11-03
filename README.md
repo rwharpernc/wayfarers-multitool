@@ -61,7 +61,7 @@ The panel has eight modes. A mode button switches between them. Each mode has it
 | **Mine** | Space and surface mining, a book of rings and deposits, Mining History, mining alerts | [Mining](docs/guide/mining.md) |
 | **Trade** | Profit after fuel and repairs, fleet carrier cargo, saved sessions, best routes and prices, a watch list | [Trade](docs/guide/trade.md) |
 | **Mission** | All missions in one view, progress bars, a Missions window, sources for mission cargo | [Missions](docs/guide/missions.md) |
-| **Operations** | Screenshots, backpack and cargo, engineering materials, blueprints and wishlist, engineers, material traders, ship builds | [Operations](docs/guide/operations.md) |
+| **Operations** | Screenshots, backpack and cargo, engineering materials, blueprints and wishlist, engineers, material traders, ship builds, the combat record | [Operations](docs/guide/operations.md) |
 | **Colony** (Colonization) | The current build, history, an archive of finished sites, the shopping list of each site | [Colonization](docs/guide/colonization.md) |
 | **BGS** | Faction states and the effect of the commander's activity; sharing a tick's report to Discord | [BGS](docs/guide/bgs.md) |
 

@@ -133,6 +133,9 @@ Spec: [ORGANIC_SCANNING_TECH_SPEC.md](ORGANIC_SCANNING_TECH_SPEC.md), [SCREENSHO
 | `catchup_status.py` | The line in the WFMT panel that names the journal catch-ups still running (Powerplay, BGS, Codex), shown only once one has run for 1.5 seconds so that a short read does not display it |
 | `canonn_poi_data.py` | Canonn's published Thargoid and Guardian site lists, fetched on demand |
 | `canonn_poi_panel.py` | The Canonn half of POI Reference: its lookup, cache, result line and Settings (Thargoid or Guardian sites) |
+| `combat_panel.py` | The Combat Record section of Operations: the journal events, the commander, and the two summary lines (this session, all time) |
+| `combat_record.py` | The Combat Record, no Tk: kills, PvP kills, deaths and rewards counted per ship (`Craft` follows the vessel) and per session, kept per commander in `combat_record.json` (`commander_data.py`), with a background catch-up from the journals that never counts an event twice |
+| `combat_window.py` | The Combat Record window: This session, All time and Sessions tabs, each with the split by ship |
 | `codex_hints.py` | Where to look for a missing codex entry (from the species and color data the Bio predictions use) and how far along each type of entry is; no Tk, no network |
 | `codex_backfill.py` | Journal readers for Codex Completionist, per commander: the full-history scan behind the Backfill Journals action and the one-time rebuild, and `scan_since` for the start-up catch-up |
 | `codex_catalog.py` | The catalog of every codex entry, for the "Not found" tab |

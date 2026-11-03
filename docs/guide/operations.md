@@ -1,10 +1,10 @@
 # Operations
 
-This page describes the Operations mode: screenshots, inventory, engineering materials (with blueprints, wishlist, ship planner and engineers) and saved ship builds. Colonization is a separate mode: see [Colonization](colonization.md).
+This page describes the Operations mode: screenshots, inventory, engineering materials (with blueprints, wishlist, ship planner and engineers), saved ship builds and the combat record. Colonization is a separate mode: see [Colonization](colonization.md).
 
 **Data sources:**
 
-- Screenshots, the backpack and ship locker, and ship loadouts come from the journal (or from EDMC's own state, which EDMC rebuilds from the journal).
+- Screenshots, the backpack and ship locker, ship loadouts, and kills and deaths come from the journal (or from EDMC's own state, which EDMC rebuilds from the journal).
 - The journal does not report the backpack capacity; WFMT uses a built-in table.
 - The Carrier Locker is not in the journal. It comes from Frontier's servers through a signed-in EDMC.
 - See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
@@ -17,6 +17,7 @@ This page describes the Operations mode: screenshots, inventory, engineering mat
 - [Materials](#materials)
 - [Engineering](#engineering-blueprints-and-a-wishlist) (including the [Ship planner](#engineering-blueprints-and-a-wishlist))
 - [Ship Builds](#ship-builds)
+- [Combat Record](#combat-record)
 - [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
 
 ## How to
@@ -55,6 +56,12 @@ Common tasks, each with a link to the full description.
 1. Design the build on Coriolis, EDSY or Spansh and copy its address from the browser.
 2. Press **Ships** in the **Ship Builds** row, then **Add build**.
 3. Fill in **Name**, **Ship**, **Site** and **Link**, then press **Save**.
+
+**See your kills and deaths** (details: [Combat Record](#combat-record))
+
+1. Open the **Combat Record** row. It shows this session's kills and deaths and the totals.
+2. Press **Combat**.
+3. Select the **This session**, **All time** or **Sessions** tab. Every tab splits the figures by ship.
 
 **Plan the engineering of a whole ship** (details: the Ship planner in [Engineering](#engineering-blueprints-and-a-wishlist))
 
@@ -463,6 +470,37 @@ How it stays current:
 
 A module fitted to a ship is part of that ship's loadout and is not listed here.
 
+## Combat Record
+
+Counts the commander's kills and deaths, split by ship, for the session being played and added up over every session. One record is kept per commander.
+
+**What is counted:**
+
+| Figure | Counted from |
+|---|---|
+| **Kills** | A ship destroyed for a bounty (`Bounty`) or a conflict zone or faction bond (`FactionKillBond`), and an on-foot target that paid a bounty |
+| **PvP kills** | Another commander destroyed (`PVPKill`). They are counted apart from kills |
+| **Deaths** | Each time the ship, SRV or suit was destroyed (`Died`), on the vessel that was lost |
+| **K/D** | Kills and PvP kills divided by deaths. A dash shows while there has been no death |
+| **Rewards (cr)** | The credits the bounties and bonds paid. This is what the game said was owed, not profit |
+
+**To see the record:**
+
+1. Open the **Combat Record** row of the WFMT panel. **This session** shows the login being played and **All time** the total. While the journals are being read, the second line reads `reading your journals...`.
+2. Press **Combat**. The window has three tabs:
+   - **This session**: tiles for **Kills**, **PvP kills**, **Deaths**, **K/D** and **Rewards (cr)**, and a table with a row for each ship.
+   - **All time**: the same, over every session.
+   - **Sessions**: one row per session, newest first, with the start time (the session being played reads `(this session)`). Selecting a row shows that session's ships below.
+3. Click a column heading to sort a table.
+
+**Ships.** Each ship is a row with its **Ship** (the kind, such as `Federal Corvette`) and **Name** (the ship's own name and ident, such as `Wayward Star [WS-01]`). A ship is known by its kind and the game's number for it, so two ships of one kind are two rows, and renaming a ship does not start a new row. The **SRV** and **On foot** have rows of their own. Kills of on-foot targets are always on the **On foot** row.
+
+**A session** is one game login: the journal file it was played in. A logout to the menu and back is the same session. A session appears in the list once it has a kill or a death. The last 300 sessions are listed; the totals and the per-ship figures cover all of them.
+
+**Earlier play.** When EDMC starts, WFMT reads the commander's journals in the background: all of them the first time, so play from before WFMT counts, and afterwards only the files that changed. An event is never counted twice. **Rebuild from journals** (in the window) clears this commander's record and reads every journal again; it gives the same figures when all the journals are still there.
+
+Nothing is sent anywhere. The record is the file `combat_record.json`, kept per commander and included in the data backup. There is no Settings tab.
+
 ## What the game does and doesn't tell us, and how to work around it
 
 WFMT uses only what Elite Dangerous writes to its journal files, plus what Frontier's servers give a signed-in EDMC (for the Carrier Locker). Where WFMT cannot be certain, it states so. See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
@@ -493,4 +531,8 @@ WFMT uses only what Elite Dangerous writes to its journal files, plus what Front
 | Transfer cost and time are current | They are the game's figures at the last visit to Module Storage and are not updated until the next one. A module that is not at a station reads `In transit` and may have no station or cost | Open Module Storage again for current figures |
 | Every station has a name | The list gives a system and a market number for each module, and a station's name only when WFMT has seen it in the journals (the station where Module Storage was opened, or one docked at). Other stations appear as `System (market 123456)` | Look the market up on a site such as Inara or EDSM |
 | A module swapped out of a ship shows its engineering | When a swap puts a module into storage, the game does not report how that module was engineered, so the Engineering column shows `?` until the next visit to Module Storage | Open Module Storage to read it |
+| Every kill is counted | Only the kills the game writes as a bounty, a faction or conflict-zone bond or a PvP kill. A kill that pays nothing and is not a PvP kill (for example, a ship that was not wanted, outside a conflict zone) is not in the journal, so it is not counted | None; the figure is the kills the game recorded |
+| Capital ship kills are separate | A capital ship bond (`CapShipBond`) is not counted, to avoid counting a kill twice | None |
+| Every death is on the right vessel | WFMT follows the vessel from the events that change it. A login made while on foot or in the SRV is not reported as such, so a death or kill before the next change of vessel can appear on the ship | None; the row is a best estimate for that session |
+| Journals from before WFMT are counted | The journals still on the disk are. Journals that were deleted, or play on another computer, are not | Point EDMC's journal folder at the full set |
 | Ship Builds are checked | WFMT stores only the link and name entered. It does not read or check the build | Keep the link current if the site changes |

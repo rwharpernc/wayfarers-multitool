@@ -37,7 +37,7 @@ from theme import theme
 from ttkHyperlinkLabel import HyperlinkLabel
 
 from . import (
-    __version__, autohonk, bgs_panel, boxel_survey, discord_settings, poi_reference_panel, codex_completionist_panel, colonization_panel, discovery,
+    __version__, autohonk, bgs_panel, boxel_survey, combat_panel, discord_settings, poi_reference_panel, codex_completionist_panel, colonization_panel, discovery,
     exploration_value, flight_alerts, interdiction, inventory_panel, landing, materials_panel, mining_panel, missions, missions_overlay,
     notable, notes_panel, expedition_panel, expedition_log_panel, expedition_log_overlay, explore_dashboard, route_planner_panel, landing_finder_panel, surface_compass, organic_scan_panel, exobiology_overlay, overlay, overlay_appearance, overlay_placement, overlay_visibility, shortcuts, catchup_status, panelkit, powerplay, powerplay_overlay, route_overlay, targets_overlay, body_info_overlay, screenshots, ship_builds_panel,
     credits_ledger, game_mode, session_credits, session_merits, settings_scroll, system_names, trade_panel, trade_watch_panel,
@@ -62,8 +62,8 @@ FEATURES = (
     autohonk, discovery, boxel_survey, codex_completionist_panel, surface_compass, explore_dashboard,
     expedition_panel, expedition_log_panel, exploration_value, landing_finder_panel,
     notes_panel, organic_scan_panel, poi_reference_panel, route_planner_panel, notable,
-    # Operations: Engineering (the Materials module), Inventory, Screenshots, Ship Builds.
-    materials_panel, inventory_panel, screenshots, ship_builds_panel,
+    # Operations: Combat Record, Engineering (the Materials module), Inventory, Screenshots, Ship Builds.
+    combat_panel, materials_panel, inventory_panel, screenshots, ship_builds_panel,
     colonization_panel,
     mining_panel,
     trade_panel, trade_watch_panel,
