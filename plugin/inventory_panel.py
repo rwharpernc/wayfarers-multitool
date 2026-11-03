@@ -575,7 +575,25 @@ class InventoryPanelController:
         toggled that bar off in Settings, or it's a conditional bar - no
         longer applicable) is actively cleared rather than left showing a
         stale value."""
-        if self._bars_broken or not overlay_enabled():
+        if self._bars_broken:
+            return
+
+        if not overlay_enabled():
+            # Switched off (or hidden in Overlay Placement): take down whatever is still on screen, since the bars
+            # carry a long TTL and would otherwise stay until it ran out.
+            leftover = self._rendered_bar_keys
+            if not leftover:
+                return
+            self._rendered_bar_keys = frozenset()
+
+            def clear_worker() -> None:
+                try:
+                    for key in leftover:
+                        self._clear_bar_key(key)
+                except OSError:
+                    logger.debug("Could not reach the overlay to clear the inventory bars", exc_info=True)
+
+            threading.Thread(target=clear_worker, name="WFMT-inventory-bars-clear", daemon=True).start()
             return
 
         look = overlay_appearance.current_look()
