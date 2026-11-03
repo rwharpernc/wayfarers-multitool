@@ -6,7 +6,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 | Version | Published | Notes |
 | --- | --- | --- |
-| 1.5.1 | 2026-11-03 (tag `v1.5.1`) | Patch on 1.5.0, built on `patch/1.5.1`. Docker tests on Linux before release: 3,923 passed, 13 skipped. No in-game pass recorded: the new checks are [TEST_PLAN.md](TEST_PLAN.md) section 13. |
+| 1.5.1 | 2026-11-03 (tag `v1.5.1`) | Patch on 1.5.0, built on `patch/1.5.1`. Docker tests on Linux before release: 3,923 passed, 13 skipped. In-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 13 on Windows and on Linux on 2026-11-03, before publication, with no failures. |
 | 1.5.0 | 2026-11-02 (tag `v1.5.0`) | Docker tests on Linux before release: 3,894 passed, 13 skipped. In-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 12 on Windows and on Linux on 2026-11-02, before publication, with no failures. |
 | 1.4.2 | 2026-11-01 (tag `v1.4.2`) | Patch on 1.4.1. |
 | 1.4.1 | 2026-11-01 (tag `v1.4.1`) | Next release after 1.3.3. The 1.4.0 version number was prepared and never published; its changes are part of 1.4.1. Docker tests on Linux: 3,850 passed, 13 skipped. No in-game pass recorded. |
@@ -100,7 +100,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 - Tested by the maintainer with a build of the branch being worked on (`npm run deploy`, run by hand).
 - Bugs found are fixed on `master` or on a short bug fix branch.
-- The in-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 12 for 1.5.0 was completed on 2026-11-02 with no failures. The in-game pass of section 13 for 1.5.1 is not recorded.
+- The in-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 12 for 1.5.0 was completed on 2026-11-02 with no failures. The in-game pass of section 13 for 1.5.1 was completed on 2026-11-03 with no failures.
 - Native checks made on Windows on 2026-10-23: the display probe read 3840 x 2160 at 125% scaling; the journals confirmed the Mk II jet cone boost of 6x at a neutron star and 3x at a white dwarf (V-0351).
 - Recorded for 1.2.0 (deployed and used on Windows on 2026-10-28; not run on Linux outside the Docker tests):
   - The Colonization Archive (Archive Finished, Show Archive, Restore) works.
@@ -121,7 +121,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 ### Linux
 
-- Manual pass target: CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC. Releases 1.0.0 through 1.4.2 have no manual pass recorded on this setup. The 1.5.0 in-game pass on Linux was completed on 2026-11-02. The 1.5.1 pass (section 7s of `docs/LINUX_TESTING.md`) is not recorded.
+- Manual pass target: CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC. Releases 1.0.0 through 1.4.2 have no manual pass recorded on this setup. The 1.5.0 in-game pass on Linux was completed on 2026-11-02. The 1.5.1 pass (section 7s of `docs/LINUX_TESTING.md`) was completed on 2026-11-03.
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Earlier manual passes:
   - 2026-10-18 (KDE Plasma, Wayland, Flatpak EDMC): completed without recorded problems.

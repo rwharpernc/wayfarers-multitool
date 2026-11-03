@@ -8,7 +8,7 @@ Scope: the checks for testing WFMT on Linux with Elite Dangerous under Steam Pro
 - Two manual passes were made on KDE Plasma (Wayland) with a Flatpak EDMC, on 2026-10-18 and 2026-10-20. Both tested builds from before the 1.0.0 restart and rename.
 - The window-fit fixes of 2026-10-21 were checked only in a Docker run (a Linux container).
 - 1.5.0 was run on Linux on 2026-11-02, before the release, with no failures (section 7r).
-- 1.5.1 has run in Docker on Linux only (3,923 passed, 13 skipped, 2026-11-03). Its in-game pass (section 7s) is not recorded.
+- 1.5.1 was run on Linux on 2026-11-03, before the release, with no failures (section 7s). Docker: 3,923 passed, 13 skipped.
 - Seen working (KDE Wayland, Flatpak EDMC): the WFMT Settings panel; the test overlay, Discovery and Notable Bodies overlays.
 - A Flatpak EDMC requires the host-spawn permission in section 0 before overlays draw.
 
@@ -45,7 +45,7 @@ Scope: the checks for testing WFMT on Linux with Elite Dangerous under Steam Pro
 
 Complete sections 0 and 1 first, then run the unit tests and a build (steps 2 to 4 under "Getting Set Up"), then the items below. They are work added since the earlier passes. Each has its longer wording in `docs/TODO.md` under "Verification in the game".
 
-- **Added in 1.5.1 (not run on Linux).** The Combat Record, the Engineering row's held and session table, and the shared ship names: section 7s.
+- **Added in 1.5.1 (run on Linux on 2026-11-03, before the release; no failures).** The Combat Record, the Engineering row's held and session table, and the shared ship names: section 7s.
 - **Added in 1.5.0 (run on Linux on 2026-11-02, before the release; no failures).** The pages-as-windows layout, the settings that moved into their windows, the type-ahead boxes and the darker orange on the light theme: section 7r.
 - **Added in 1.3.3 (not run on Linux).**
   - **Powerplay card.** Requires EDMCModernOverlay. Tick *Enable the Powerplay card* (Settings → WFMT → Overlays → Powerplay) and press **Test Card**. A card appears at the top right. Jump into a Powerplay system and then into one without Powerplay data (the card reads **No Powerplay Detected in system**).
@@ -905,14 +905,14 @@ Keyboard shortcuts are Windows only. The chat commands are the same on both syst
 - [x] **Light theme:** with EDMC on its Default (light) theme the panel's headings, warnings and buttons are a darker orange and legible. On Dark they keep the bright orange.
 - [x] **Scrapped carrier:** after decommissioning a fleet carrier in the game (or with a journal containing `CarrierDecommission`), its record goes once the scrap time passes.
 
-## 7s. 1.5.1: Combat Record, Materials This Session, Ship Names (Not Run on Linux)
+## 7s. 1.5.1: Combat Record, Materials This Session, Ship Names (Run on Linux 2026-11-03)
 
-- [ ] **Combat Record panel:** the row in Operations shows **Kills**, **Deaths** and **K/D** for **This session** and **All time**. The first start reads the journals (the Proton or Wine folder when EDMC's **Journal directory** points at it) and the **All time** row reads `...` until it is done.
-- [ ] **Combat window:** **This session**, **All time** and **Sessions** tabs, each with the split by ship. Ship names are the game's (`Anaconda Mk II`, `Kestrel Mk II`), not internal names. **Rebuild from journals** gives the same figures.
-- [ ] **Session boundaries:** the session is the journal file. A logout to the menu and back stays in one session; a new game start is a new one.
-- [ ] **Engineering row:** the **Held** and **Session** table. A pick-up raises both; a discard changes **Held** only; the **Session** figure survives a restart of EDMC in the same login.
-- [ ] **Ship names:** the Trade ship line and the Expedition Log's ship show proper names.
-- [ ] **Flatpak EDMC:** the new data file `combat_record.json` is in the plugin folder, and **Back up my data** includes it.
+- [x] **Combat Record panel:** the row in Operations shows **Kills**, **Deaths** and **K/D** for **This session** and **All time**. The first start reads the journals (the Proton or Wine folder when EDMC's **Journal directory** points at it) and the **All time** row reads `...` until it is done.
+- [x] **Combat window:** **This session**, **All time** and **Sessions** tabs, each with the split by ship. Ship names are the game's (`Anaconda Mk II`, `Kestrel Mk II`), not internal names. **Rebuild from journals** gives the same figures.
+- [x] **Session boundaries:** the session is the journal file. A logout to the menu and back stays in one session; a new game start is a new one.
+- [x] **Engineering row:** the **Held** and **Session** table. A pick-up raises both; a discard changes **Held** only; the **Session** figure survives a restart of EDMC in the same login.
+- [x] **Ship names:** the Trade ship line and the Expedition Log's ship show proper names.
+- [x] **Flatpak EDMC:** the new data file `combat_record.json` is in the plugin folder, and **Back up my data** includes it.
 
 ## Reporting a Failure
 
