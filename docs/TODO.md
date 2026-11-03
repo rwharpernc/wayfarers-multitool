@@ -775,7 +775,11 @@ WFMT's own tracking is the reference. Reporting to Raven Colonial is opt-in: a f
 
 Not implemented:
 
-- Rename Site on Raven Colonial. WFMT's own Rename Site (Manage Sites menu, and in the Archive) is built and is local only; whether Raven Colonial offers a call to rename a project or plan entry has not been checked.
+- Rename Site on Raven Colonial. WFMT's own Rename Site (Manage Sites menu, and in the Archive) is built and is local only. Raven's OpenAPI description (the openapi/v1.json address on the API host, read 2026-11-03) has two names that a rename would change:
+  - The plan entry: `PATCH /api/v2/system/{nameOrNum}/sites/{siteId}` with a `SitePatch` body (`name` and `marketId`, both optional). `PUT /api/v2/system/{id}/sites` also carries `name` (the call Mark Plan Entry Demolished uses).
+  - The project: `PATCH /api/project/{buildId}` with a `ProjectUpdate` body that includes `buildName` (the call WFMT already sends for progress).
+  - Not known: the description declares no authentication (WFMT sends `rcc-key` and `rcc-cmdr0` on writes), whether either patch accepts the name alone, and how Raven behaves live. Nothing has been sent. No rename call has been tried.
+  - If built: send the site's own name (`custom_name`) only when the commander asks, with a confirmation, as with the other Raven writes; add it to the privacy page and the request table; check it live first. WFMT finds the plan entry and the project by market id, so a name that differs from the game's does not break the match.
 - Multi-commander projects on one Raven project: assigning commodities, linking other commanders, ready flags and who delivered what. WFMT writes for one commander at a time: it links the commander, sends the depot snapshot and sends that commander's own `contribute` calls. Two commanders who each run WFMT with their own key are credited on the same project. Showing other linked carriers' cargo is not implemented.
 - A guided tool that fills in a system's whole plan on Raven (bodies, installations and statuses) from play.
 - Use of Raven's `supply` call, which Raven's documentation describes as unsuitable for a tool that reads the journal.
