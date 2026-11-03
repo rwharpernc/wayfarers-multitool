@@ -35,6 +35,16 @@ def journal_folder() -> str:
     return configured or getattr(config, "default_journal_dir", "") or ""
 
 
+def current_logfile() -> Optional[str]:
+    """The journal file the game is writing now, as EDMC's monitor reports it, or None (EDMC not running the game, or outside EDMC)."""
+    try:
+        from monitor import monitor  # EDMC's own module; absent in unit tests
+    except ImportError:
+        return None
+    logfile = getattr(monitor, "logfile", None)
+    return str(logfile) if logfile else None      # a str or a pathlib.Path depending on the EDMC version
+
+
 def event_pattern(*names: str) -> "re.Pattern[str]":
     """A cheap line test for the named journal events."""
     return re.compile(r'"event"\s*:\s*"(?:' + "|".join(re.escape(n) for n in names) + r')"')

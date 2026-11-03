@@ -215,6 +215,7 @@ Shows the engineering materials held: **Raw** (mined and scanned), **Manufacture
 A collapsible **Engineering** row (named Materials before 1.4.1; first in Operations mode, which lists its sections A to Z) shows the following. Clicking its title folds it; the title reads **Engineering**, and everything below is in the section.
 
 - The pieces held of each type (`Materials held: Raw 400 · Manufactured 350 · Encoded 300`, plus `Other` for a material the table does not know).
+- The pieces picked up this session (`Collected this session: 48 (Raw 40 · Manufactured 5 · Encoded 3)`, or `none yet`). Only materials picked up from the world (`MaterialCollected`) count; a trade, a mission reward, a discard or a craft does not. A session is one game login (the journal file it is played in), so the figure survives a restart of EDMC and starts again at the next login. Pick-ups made before EDMC started, in the same login, are read from the journal file and counted.
 - The last pick-up or discard (`Last change: +3 Carbon (now 123)`).
 - Which materials are **at the limit** (`At the limit: ...`).
 - `As of your last session.` until the game has sent a fresh list.

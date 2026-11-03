@@ -67,6 +67,16 @@ def engineers_line(engineer_book_: engineers.EngineerBook) -> str:
     return line
 
 
+def collected_line(book_: materials.MaterialBook) -> str:
+    """`Collected this session: 48 (Raw 40 · Manufactured 5 · Encoded 3)`; `none yet` before the first pick-up of the login."""
+    pieces = book_.collected_pieces()
+    if not pieces:
+        return "Collected this session: none yet"
+    by_type = book_.collected_this_session()
+    kinds = [*materials.TYPES, *([materials.OTHER] if by_type.get(materials.OTHER) else [])]
+    return f"Collected this session: {pieces:,} (" + " · ".join(f"{kind} {by_type.get(kind, 0):,}" for kind in kinds) + ")"
+
+
 def summary_lines(book_: materials.MaterialBook, engineer_book_: Optional[engineers.EngineerBook] = None) -> Tuple[str, str]:
     """(the lines under the title, and the note after the title when folded, which is always empty: the title says just Engineering). The engineers line comes last but one, before the wishlist."""
     engineer_book_ = engineer_book if engineer_book_ is None else engineer_book_
@@ -80,6 +90,7 @@ def summary_lines(book_: materials.MaterialBook, engineer_book_: Optional[engine
     lines = ["Materials held: " + " · ".join(f"{kind} {totals.get(kind, 0):,}" for kind in materials.TYPES)]
     if totals.get(materials.OTHER):
         lines[0] += f" · Other {totals[materials.OTHER]:,}"
+    lines.append(collected_line(book_))
     last = book_.last
     if last is not None:
         name = _clip(last.name)

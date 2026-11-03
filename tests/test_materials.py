@@ -229,6 +229,71 @@ class StateTests(unittest.TestCase):
         self.assertEqual(self.book.count_of("iron"), 3)
 
 
+def pickup(name, count, stamp="2026-10-20T10:00:05Z", category="Raw"):
+    return {"timestamp": stamp, "event": "MaterialCollected", "Category": category, "Name": name, "Count": count}
+
+
+class SessionTests(unittest.TestCase):
+    """The pick-ups of the login being played (`collected_this_session`): per journal file, kept across a restart, read from the file for earlier play."""
+
+    def setUp(self):
+        self.folder = tempfile.mkdtemp()
+        self.logfile = os.path.join(self.folder, "Journal.2026-10-20T100000.01.log")
+        self.real = M.journal_files.current_logfile
+        M.journal_files.current_logfile = lambda: self.logfile
+        self.addCleanup(lambda: setattr(M.journal_files, "current_logfile", self.real))
+
+    def test_only_pickups_count_and_they_are_split_by_type(self):
+        book = make(self.folder)
+        book.apply_event(LOGIN)
+        book.apply_event(pickup("iron", 3))
+        book.apply_event(pickup("iron", 2))
+        book.apply_event(pickup("gridresistors", 1, category="Manufactured"))
+        book.apply_event({"event": "MaterialDiscarded", "Category": "Raw", "Name": "iron", "Count": 4})
+        book.apply_event({"event": "MaterialTrade", "Paid": {"Material": "iron", "Category": "Raw", "Quantity": 6},
+                          "Received": {"Material": "tin", "Category": "Raw", "Quantity": 2}})
+        self.assertEqual(book.collected_this_session(), {"Raw": 5, "Manufactured": 1, "Encoded": 0})
+        self.assertEqual(book.collected_pieces(), 6)
+
+    def test_the_tally_survives_a_restart_in_the_same_login_and_starts_again_in_the_next(self):
+        book = make(self.folder)
+        book.apply_event(LOGIN)
+        book.apply_event(pickup("iron", 3))
+        book.flush()
+        again = make(self.folder)
+        again.apply_event({"event": "StartUp"})
+        self.assertEqual(again.collected_pieces(), 3)
+        self.logfile = os.path.join(self.folder, "Journal.2026-10-21T100000.01.log")
+        again.apply_event({"event": "LoadGame", "timestamp": "2026-10-21T10:00:00Z"})
+        self.assertEqual(again.collected_pieces(), 0)
+
+    def test_pickups_made_before_edmc_started_are_read_from_the_journal(self):
+        with open(self.logfile, "w", encoding="utf-8") as handle:
+            for entry in (
+                    {"timestamp": "2026-10-20T10:00:00Z", "event": "Commander", "Name": "Bocheaux"},
+                    pickup("iron", 4, "2026-10-20T10:01:00Z"),
+                    {"timestamp": "2026-10-20T10:02:00Z", "event": "Commander", "Name": "Other Pilot"},
+                    pickup("tin", 9, "2026-10-20T10:03:00Z"),
+                    {"timestamp": "2026-10-20T10:04:00Z", "event": "Commander", "Name": "Bocheaux"},
+                    pickup("iron", 1, "2026-10-20T10:05:00Z")):          # the event EDMC delivers first: counted once, from the live call
+                handle.write(json.dumps(entry) + "\n")
+        book = make(self.folder)
+        book.apply_event(pickup("iron", 1, "2026-10-20T10:05:00Z"))
+        self.assertEqual(book.collected_this_session(), {"Raw": 5, "Manufactured": 0, "Encoded": 0})
+
+    def test_commanders_have_their_own_tally(self):
+        book = make(self.folder)
+        book.apply_event(pickup("iron", 3))
+        book.set_commander("Other Pilot")
+        self.assertEqual(book.collected_pieces(), 0)
+
+    def test_no_journal_file_is_not_an_error(self):
+        self.logfile = None
+        book = make(self.folder)
+        book.apply_event(pickup("iron", 3))
+        self.assertEqual(book.collected_pieces(), 3)
+
+
 class SavingTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()

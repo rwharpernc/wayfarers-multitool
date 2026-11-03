@@ -14,7 +14,13 @@ that, and `full()` lists what is at the limit. A material the table does not kno
 the game gave, with no grade and no limit.
 
 The counts are saved when something changes, but not more than once every few seconds (a mining or scanning burst can send many events);
-`flush()` writes what is waiting."""
+`flush()` writes what is waiting.
+
+**This session.** `MaterialCollected` (a material picked up from the world) is also added to a per-commander tally for the game login being played,
+kept in the same file with the name of the journal file the login is written in (the rule of `session_credits.py`), so a restart of EDMC in the
+middle of a login keeps it. A login is new when that name changes. When WFMT meets a login for the first time it reads what the journal file
+already holds for the commander, so pick-ups made before EDMC started are counted too. Materials gained by trade, mission reward or any other way
+are not "collected" and are not in the tally."""
 from __future__ import annotations
 
 import logging
@@ -23,7 +29,7 @@ import time
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple
 
-from . import commander_data
+from . import commander_data, journal_files
 from .materials_data import MATERIAL_ROWS
 
 try:
@@ -164,7 +170,11 @@ def _entries(entry: Mapping[str, Any]) -> List[Tuple[str, str, str, int]]:
 
 
 def _empty() -> Dict[str, Any]:
-    return {"counts": {}, "unknown": {}}
+    return {"counts": {}, "unknown": {}, "session": {"id": "", "collected": {}}}
+
+
+def _utc_now() -> str:
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
 def _is_legacy(_raw: Any) -> bool:
@@ -183,6 +193,8 @@ class MaterialBook:
         self._counts: Dict[str, int] = {}
         self._unknown: Dict[str, Material] = {}    # materials the table does not know, by key
         self._last: Optional[Change] = None
+        self._session: Dict[str, Any] = {"id": "", "collected": {}}    # the login being played and what it picked up: {key: pieces}
+        self._session_seen = False    # the journal file of this run has been compared with the saved login
         self._listed = False          # the login list (or EDMC's totals) has been taken for this commander in this run
         self._dirty = False
         self._saved_at = -SAVE_EVERY_S
@@ -207,6 +219,7 @@ class MaterialBook:
 
     def _reload(self) -> None:
         self._counts, self._unknown, self._last, self._listed = {}, {}, None, False
+        self._session, self._session_seen = {"id": "", "collected": {}}, False
         if self._cmdr:
             payload = commander_data.payload_for(self._store, self._cmdr, _empty)
             if isinstance(payload, dict):
@@ -215,6 +228,10 @@ class MaterialBook:
                     if isinstance(key, str) and isinstance(info, list) and len(info) == 2 and key not in CATALOG:
                         kind = info[1] if info[1] in TYPES else OTHER
                         self._unknown[key] = Material(key, _clip(info[0]) or key, kind, 0)
+                saved = payload.get("session")
+                if isinstance(saved, dict) and isinstance(saved.get("collected"), dict):
+                    self._session = {"id": str(saved.get("id") or "")[:200], "collected": {
+                        key: _int(count) for key, count in saved["collected"].items() if isinstance(key, str) and _int(count)}}
                 raw_counts = payload.get("counts") if isinstance(payload.get("counts"), dict) else {}
                 for key, count in raw_counts.items():
                     if isinstance(key, str) and (key in CATALOG or key in self._unknown) and _int(count):
@@ -224,7 +241,7 @@ class MaterialBook:
 
     def _payload(self) -> Dict[str, Any]:
         used = {key: [m.name, m.type] for key, m in self._unknown.items() if key in self._counts}
-        return {"counts": dict(self._counts), "unknown": used}
+        return {"counts": dict(self._counts), "unknown": used, "session": {"id": self._session["id"], "collected": dict(self._session["collected"])}}
 
     def _save(self, force: bool = False) -> None:
         if not self._dirty or not self._cmdr or self._plugin_dir is None:
@@ -272,6 +289,17 @@ class MaterialBook:
     @property
     def last(self) -> Optional[Change]:
         return self._last
+
+    def collected_this_session(self) -> Dict[str, int]:
+        """Pieces picked up this login of each type (Raw, Manufactured, Encoded), and of the unknown ones under Other when there are any."""
+        out = {kind: 0 for kind in TYPES}
+        for key, count in self._session["collected"].items():
+            kind = self._material(key).type
+            out[kind] = out.get(kind, 0) + count
+        return out
+
+    def collected_pieces(self) -> int:
+        return sum(self._session["collected"].values())
 
     def _material(self, key: str) -> Material:
         return CATALOG.get(key) or self._unknown.get(key) or Material(key, key, OTHER, 0)
@@ -327,12 +355,56 @@ class MaterialBook:
         self._counts = {key: n for key, n in counts.items() if n > 0}
         self._listed = True
 
+    def _follow_session(self, entry: Mapping[str, Any]) -> bool:
+        """Compare the journal file being written with the saved login; a different file starts a new tally, filled from what that file already holds."""
+        event = entry.get("event")
+        if self._session_seen and event not in ("LoadGame", "StartUp"):
+            return False
+        path = journal_files.current_logfile()
+        if not path:
+            return False
+        self._session_seen = True
+        name = os.path.basename(path)
+        if self._session["id"] == name:
+            return False
+        self._session = {"id": name, "collected": {}}
+        self._read_session(path, str(entry.get("timestamp") or "") or _utc_now())
+        return True
+
+    def _read_session(self, path: str, before: str) -> None:
+        """Add the commander's pick-ups already in this login's journal file, older than `before` (the event being taken now is counted by the caller)."""
+        wanted, current = commander_data.key_for(self._cmdr), ""
+        try:
+            for item in journal_files.read_events(path, journal_files.event_pattern("Commander", "LoadGame", "MaterialCollected")):
+                kind = item.get("event")
+                if kind in ("Commander", "LoadGame"):
+                    name = item.get("Name") if kind == "Commander" else item.get("Commander")
+                    if name:
+                        current = commander_data.key_for(name)
+                elif current == wanted and str(item.get("timestamp") or "") < before:
+                    self._collect(item)
+        except Exception:
+            logger.debug("Could not read this login's pick-ups from the journal", exc_info=True)
+
+    def _collect(self, entry: Mapping[str, Any]) -> bool:
+        if entry.get("event") != "MaterialCollected":
+            return False
+        added = False
+        for name, category, localised, delta in _entries(entry):
+            key = self._know(name, category, localised)
+            if key and delta > 0:
+                self._session["collected"][key] = self._session["collected"].get(key, 0) + delta
+                added = True
+        return added
+
     def apply_event(self, entry: Mapping[str, Any], state: Optional[Mapping[str, Any]] = None) -> bool:
         """Take one journal event; True when the counts changed. `state` is EDMC's running state, used once, when no login list has been
         taken yet this run (WFMT started in the middle of a session)."""
         if not self.ready:
             return False
         event = entry.get("event")
+        touched = self._follow_session(entry)        # the tally changed: save and tell the listeners, but the held counts are what the result is about
+        touched = self._collect(entry) or touched
         changed = False
         if event == "Materials":
             counts: Dict[str, int] = {}
@@ -363,7 +435,7 @@ class MaterialBook:
                         self._counts.pop(key, None)
                     if event in ("MaterialCollected", "MaterialDiscarded"):
                         self._last = Change(self._material(key).name, delta, total)
-        if changed:
+        if changed or touched:
             self._dirty = True
             self._save(force=event == "Materials")
             self._changed()

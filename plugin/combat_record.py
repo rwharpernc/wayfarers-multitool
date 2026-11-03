@@ -225,15 +225,6 @@ def _is_legacy(_raw: Any) -> bool:
     return False
 
 
-def _current_logfile() -> Optional[str]:
-    try:
-        from monitor import monitor  # EDMC's own module; absent in unit tests
-    except ImportError:
-        return None
-    logfile = getattr(monitor, "logfile", None)
-    return str(logfile) if logfile else None
-
-
 class CombatBook:
     """Every commander's combat record. `load(plugin_dir)` once at start-up, `set_commander` when a commander is seen, `handle` for each journal event."""
 
@@ -248,7 +239,7 @@ class CombatBook:
         self._catching = False
         self._pending: List[Tuple[Dict[str, Any], Any]] = []
         self._thread: Optional[threading.Thread] = None
-        self.logfile = _current_logfile          # a test replaces it
+        self.logfile = journal_files.current_logfile          # a test replaces it
         self.revision = 0                        # changes whenever a count does, so a window can tell it is out of date
         self.reading = False                     # the journals are being read to catch up
 
