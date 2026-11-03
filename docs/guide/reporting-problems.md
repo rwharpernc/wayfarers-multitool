@@ -19,7 +19,7 @@ None of these controls sends data. A report exists on GitHub only after **Submit
 4. Select **Copy diagnostics**. The line under the button reads *Copied. Paste it into the report's log box.* If it reads *Could not copy to the clipboard*, see [If something does not work](#if-something-does-not-work).
 5. Select **Report an issue**. The browser opens GitHub's bug report form. GitHub requests a sign-in when none is active.
 6. Complete the form:
-   - **Title:** starts with the version, for example `[1.5.0] `. Append a short description of the problem.
+   - **Title:** starts with the version, for example `[1.5.1] `. Append a short description of the problem.
    - **What happened?** The observed result and the expected result.
    - **Steps to reproduce:** the actions in order, and the panel, window or Settings page.
    - **Environment:** filled in with the WFMT, EDMC and Python versions and the operating system. Leave it unchanged.
@@ -65,7 +65,7 @@ Example line: `2026-10-31 14:02:11.482 | DEBUG   | 1234 | spansh    POST spansh.
 The form opens with the title started and the **Environment** box filled in:
 
 ```
-- WFMT: 1.5.0
+- WFMT: 1.5.1
 - EDMC: 5.13.1
 - Python: 3.11.9
 - OS: Windows 11 (10.0.26200)

@@ -12,7 +12,7 @@ import os
 import queue
 import threading
 import tkinter as tk
-from typing import Any, Dict, Mapping, Optional, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Tuple
 
 from config import appname
 
@@ -67,14 +67,14 @@ def engineers_line(engineer_book_: engineers.EngineerBook) -> str:
     return line
 
 
-def collected_line(book_: materials.MaterialBook) -> str:
-    """`Collected this session: 48 (Raw 40 · Manufactured 5 · Encoded 3)`; `none yet` before the first pick-up of the login."""
-    pieces = book_.collected_pieces()
-    if not pieces:
-        return "Collected this session: none yet"
-    by_type = book_.collected_this_session()
-    kinds = [*materials.TYPES, *([materials.OTHER] if by_type.get(materials.OTHER) else [])]
-    return f"Collected this session: {pieces:,} (" + " · ".join(f"{kind} {by_type.get(kind, 0):,}" for kind in kinds) + ")"
+HELD_HEADER = ("", "Held", "Session")
+
+
+def held_rows(book_: materials.MaterialBook) -> List[Tuple[str, str, str]]:
+    """A row for each type: the pieces held, and the pieces picked up this session (the game login being played). `Other` only when something unknown is held."""
+    held, picked = book_.totals(), book_.collected_this_session()
+    kinds = [*materials.TYPES, *([materials.OTHER] if held.get(materials.OTHER) or picked.get(materials.OTHER) else [])]
+    return [(kind, f"{held.get(kind, 0):,}", f"{picked.get(kind, 0):,}") for kind in kinds]
 
 
 def summary_lines(book_: materials.MaterialBook, engineer_book_: Optional[engineers.EngineerBook] = None) -> Tuple[str, str]:
@@ -90,7 +90,6 @@ def summary_lines(book_: materials.MaterialBook, engineer_book_: Optional[engine
     lines = ["Materials held: " + " · ".join(f"{kind} {totals.get(kind, 0):,}" for kind in materials.TYPES)]
     if totals.get(materials.OTHER):
         lines[0] += f" · Other {totals[materials.OTHER]:,}"
-    lines.append(collected_line(book_))
     last = book_.last
     if last is not None:
         name = _clip(last.name)
@@ -117,7 +116,11 @@ def _clip(text: str) -> str:
 class MaterialsController:
     def __init__(self) -> None:
         self._system = ""
-        self._summary_var: Optional[tk.StringVar] = None
+        self._summary_var: Optional[tk.StringVar] = None        # the first line (shown only when there are no counts to put in the table)
+        self._head_label: Optional[tk.Label] = None
+        self._rest_var: Optional[tk.StringVar] = None           # the lines under the table
+        self._rest_label: Optional[tk.Label] = None
+        self._collected: Optional[panelkit.StatRows] = None     # the table: held and picked up this session, for each type
         self._section: Optional[tk.Frame] = None
         self._parent: Optional[tk.Frame] = None
         self._progress_tried: set = set()      # commanders whose ranks and figures were read from the journals this session
@@ -205,7 +208,15 @@ class MaterialsController:
             return
         try:
             text, suffix = self.summary()
-            self._summary_var.set(text)
+            head, _, rest = text.partition("\n")
+            if self._rest_var is not None and self._rest_label is not None and self._collected is not None and self._head_label is not None:
+                table = book.ready and bool(book.held())     # the counts go in a table once there are counts, and their text line is then left out
+                self._collected.show(HELD_HEADER if table else None, held_rows(book) if table else [])
+                (self._collected.grid if table else self._collected.grid_remove)()
+                (self._head_label.grid_remove if table else self._head_label.grid)()
+                self._summary_var.set("" if table else head)
+                self._rest_var.set(rest)
+                (self._rest_label.grid if rest else self._rest_label.grid_remove)()
             if self._section is not None:
                 self._section.set_title_suffix(suffix)   # type: ignore[attr-defined]
         except tk.TclError:
@@ -218,11 +229,16 @@ class MaterialsController:
         self._section = body
         # Wraps at the window's width but never below _WRAP_PX, so a long name wraps instead of being cut off and still can't widen
         # EDMC's window past the width it already has.
-        panelkit.wrap_label(body, min_wrap=_WRAP_PX, textvariable=self._summary_var, anchor="w").grid(
-            row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
+        self._head_label = panelkit.wrap_label(body, min_wrap=_WRAP_PX, textvariable=self._summary_var, anchor="w")
+        self._head_label.grid(row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
+        self._collected = panelkit.StatRows(body)
+        self._collected.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
+        self._rest_var = tk.StringVar()
+        self._rest_label = panelkit.wrap_label(body, min_wrap=_WRAP_PX, textvariable=self._rest_var, anchor="w")
+        self._rest_label.grid(row=3, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
         # One row of buttons. flow_buttons puts them on a second line only if the row would be wider than EDMC's window already is.
         row = tk.Frame(body)
-        row.grid(row=2, column=0, columnspan=3, sticky=tk.W, pady=(4, 0))
+        row.grid(row=4, column=0, columnspan=3, sticky=tk.W, pady=(4, 0))
         buttons = []
         for text, command, tip in (
                 ("Materials", self._open_window, "Materials - open the window to search and filter every material with its grade and limit"),

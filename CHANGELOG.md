@@ -3,6 +3,13 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## 1.5.1 (not yet released; for testing on the `patch/1.5.1` branch)
+
+### Added
+
+- **Combat Record (Operations).** A new **Combat Record** row counts your kills, PvP kills, deaths and the credits the bounties and bonds paid, split by ship, for the session being played and added up over every session. A small table on the panel shows kills, deaths and K/D for this session and all time. The **Combat** button opens a window with **This session**, **All time** and **Sessions** tabs, each with the split by ship (the SRV and being on foot have rows of their own, and a renamed ship stays one row). The record is kept per commander. When EDMC starts, your journals are read in the background (all of them the first time), so earlier play counts, and no event is counted twice. **Rebuild from journals** clears the record and reads them again.
+- **Materials collected this session (Operations).** The Engineering row now shows the pieces held as a small table (a row for Raw, Manufactured and Encoded) with a **Held** column and a **Session** column for what was picked up this login, in place of the single line of text. Only materials picked up from the world count (not trades, mission rewards or crafts). The tally belongs to the game login (it survives a restart of EDMC and starts again at the next login) and includes pick-ups made before EDMC started, read from the journal file.
+
 ## 1.5.0 (2026-11-02)
 
 ### Changed

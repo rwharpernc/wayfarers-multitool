@@ -22,7 +22,7 @@ import os
 import time
 import tkinter as tk
 import tkinter.font as tkfont
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 from config import appname, config
 from theme import theme
@@ -110,6 +110,50 @@ def wrap_label(parent: tk.Frame, min_wrap: int = MIN_WRAP, **kwargs) -> tk.Label
     label.bind("<Map>", on_map, add="+")
     label.bind("<Destroy>", on_destroy, add="+")
     return label
+
+
+class StatRows(tk.Frame):
+    """Figures in aligned rows: a label on the left and bold values to its right, with an optional small heading row over the value columns.
+
+    For the few short figures a section wants to show side by side (this session against all time, a total and its parts), where one wrapped sentence
+    runs them together. Every text in it is a short string of the plugin's own, so it never widens the panel; the labels of anything the game names
+    belong in `wrap_label`. A label that starts with spaces is indented. `show` redraws only when the rows changed."""
+
+    GAP = 10          # pixels before each value column
+    INDENT = 8        # pixels per leading space of a label
+
+    def __init__(self, parent: tk.Misc) -> None:
+        options = {}
+        try:
+            options["background"] = parent.cget("background")
+        except tk.TclError:
+            pass
+        super().__init__(parent, **options)
+        self._shown: Optional[tuple] = None
+        self.columnconfigure(0, weight=1)
+
+    def show(self, header: Optional[Sequence[str]], rows: Sequence[Sequence[str]]) -> None:
+        """`header`: the value columns' headings (the first, over the labels, is left empty), or None. `rows`: (label, value, value...)."""
+        key = (tuple(header or ()), tuple(tuple(row) for row in rows))
+        if key == self._shown:
+            return
+        self._shown = key
+        for child in self.winfo_children():
+            child.destroy()
+        fonts = view_fonts()
+        row = 0
+        if header and rows:
+            for column, text in enumerate(header):
+                if text:
+                    tk.Label(self, text=text, font=fonts["small"], fg="gray", anchor="e").grid(row=0, column=column, sticky="e", padx=(self.GAP, 0))
+            row = 1
+        for cells in rows:
+            label = str(cells[0])
+            tk.Label(self, text=label.strip(), font=fonts["normal"], anchor="w", justify=tk.LEFT).grid(
+                row=row, column=0, sticky="w", padx=((len(label) - len(label.lstrip())) * self.INDENT, 0))
+            for column, text in enumerate(cells[1:], start=1):
+                tk.Label(self, text=str(text), font=fonts["bold"], anchor="e").grid(row=row, column=column, sticky="e", padx=(self.GAP, 0))
+            row += 1
 
 
 _wrap_frame: Optional[tk.Misc] = None       # the plugin's top frame, seen on its first <Configure>

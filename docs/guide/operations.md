@@ -59,7 +59,7 @@ Common tasks, each with a link to the full description.
 
 **See your kills and deaths** (details: [Combat Record](#combat-record))
 
-1. Open the **Combat Record** row. It shows this session's kills and deaths and the totals.
+1. Open the **Combat Record** row. A small table shows the **Kills**, **Deaths** and **K/D** of **This session** and **All time**. **Kills** includes PvP kills, as K/D does. While the journals are being read, the **All time** row reads `...`.
 2. Press **Combat**.
 3. Select the **This session**, **All time** or **Sessions** tab. Every tab splits the figures by ship.
 
@@ -214,8 +214,7 @@ Shows the engineering materials held: **Raw** (mined and scanned), **Manufacture
 
 A collapsible **Engineering** row (named Materials before 1.4.1; first in Operations mode, which lists its sections A to Z) shows the following. Clicking its title folds it; the title reads **Engineering**, and everything below is in the section.
 
-- The pieces held of each type (`Materials held: Raw 400 · Manufactured 350 · Encoded 300`, plus `Other` for a material the table does not know).
-- The pieces picked up this session (`Collected this session: 48 (Raw 40 · Manufactured 5 · Encoded 3)`, or `none yet`). Only materials picked up from the world (`MaterialCollected`) count; a trade, a mission reward, a discard or a craft does not. A session is one game login (the journal file it is played in), so the figure survives a restart of EDMC and starts again at the next login. Pick-ups made before EDMC started, in the same login, are read from the journal file and counted.
+- A small table with a row for each type (**Raw**, **Manufactured**, **Encoded**, and **Other** for a material the table does not know) and two columns: **Held**, the pieces held, and **Session**, the pieces picked up this session. Only materials picked up from the world (`MaterialCollected`) count in **Session**; a trade, a mission reward, a discard or a craft does not. A session is one game login (the journal file it is played in), so the figure survives a restart of EDMC and starts again at the next login. Pick-ups made before EDMC started, in the same login, are read from the journal file and counted.
 - The last pick-up or discard (`Last change: +3 Carbon (now 123)`).
 - Which materials are **at the limit** (`At the limit: ...`).
 - `As of your last session.` until the game has sent a fresh list.
@@ -487,7 +486,7 @@ Counts the commander's kills and deaths, split by ship, for the session being pl
 
 **To see the record:**
 
-1. Open the **Combat Record** row of the WFMT panel. **This session** shows the login being played and **All time** the total. While the journals are being read, the second line reads `reading your journals...`.
+1. Open the **Combat Record** row of the WFMT panel. The table shows **Kills**, **Deaths** and **K/D** for **This session** (the login being played) and **All time**. **Kills** there includes PvP kills, as K/D does; the window lists them apart. While the journals are being read, the **All time** row reads `...`.
 2. Press **Combat**. The window has three tabs:
    - **This session**: tiles for **Kills**, **PvP kills**, **Deaths**, **K/D** and **Rewards (cr)**, and a table with a row for each ship.
    - **All time**: the same, over every session.

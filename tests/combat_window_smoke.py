@@ -90,6 +90,15 @@ def table_texts(table):
     return texts
 
 
+def grid_rows(frame):
+    """The text of a StatRows frame as the user reads it: one list per row, left to right."""
+    rows = {}
+    for child in frame.winfo_children():
+        info = child.grid_info()
+        rows.setdefault(int(info["row"]), {})[int(info["column"])] = child.cget("text")
+    return [[cells[column] for column in sorted(cells)] for _row, cells in sorted(rows.items())]
+
+
 def stamp(seconds):
     return "2026-10-20T10:00:%02dZ" % seconds
 
@@ -105,13 +114,14 @@ host = tk.Frame(root)
 host.pack()
 panel.build_panel(host)
 pump()
-check(panel._session_var.get() == "(waiting for commander login)", f"before a commander: {panel._session_var.get()!r}")
+check(panel._note_var.get() == "(waiting for commander login)" and panel._note.winfo_manager() == "grid", f"before a commander: {panel._note_var.get()!r}")
+check(grid_rows(panel._rows) == [], "no figures before a commander")
 
 journals = tempfile.mkdtemp()
 book.set_commander("Bocheaux", folder=journals, wait=True)
 panel.refresh()
-check(panel._session_var.get() == "This session: no kills or deaths yet", f"a commander, no play: {panel._session_var.get()!r}")
-check(panel._total_var.get() == "All time: none recorded yet", f"no totals: {panel._total_var.get()!r}")
+check(panel._note.winfo_manager() == "", "the waiting note is gone once there is a commander")
+check(grid_rows(panel._rows) == [["Kills", "Deaths", "K/D"], ["This session", "0", "0", "-"], ["All time", "0", "0", "-"]], f"a commander, no play: {grid_rows(panel._rows)}")
 
 state = {}
 panel.handle_event({"event": "LoadGame", "timestamp": stamp(0), "Ship": "federation_corvette", "ShipID": 3,
@@ -120,8 +130,7 @@ panel.handle_event({"event": "Bounty", "timestamp": stamp(1), "Target": "anacond
 panel.handle_event({"event": "FactionKillBond", "timestamp": stamp(2), "Reward": 5000}, "Bocheaux", "Sol", None, state)
 panel.handle_event({"event": "Died", "timestamp": stamp(3)}, "Bocheaux", "Sol", None, state)
 pump()
-check(panel._session_var.get() == "This session: 2 kills, 1 death, K/D 2.0", f"after play: {panel._session_var.get()!r}")
-check(panel._total_var.get() == "All time: 2 kills, 1 death, K/D 2.0", f"totals: {panel._total_var.get()!r}")
+check(grid_rows(panel._rows) == [["Kills", "Deaths", "K/D"], ["This session", "2", "1", "2.0"], ["All time", "2", "1", "2.0"]], f"after play: {grid_rows(panel._rows)}")
 
 width_before = host.winfo_reqwidth()
 panel.handle_event({"event": "Bounty", "timestamp": stamp(4), "Target": "x", "TotalReward": 1}, "Bocheaux", "Sol", None, state)

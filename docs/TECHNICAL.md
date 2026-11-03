@@ -921,7 +921,7 @@ Rules that apply to all services:
 
 - **API endpoints only.** Every call goes to an API or a published data file; no HTML pages are scraped.
 - **Failure returns no result.** `edsm_client.py` states in its docstring that any failure (offline, service down, unexpected shape) returns an empty result, so a failing network feature does not break journal handling. The BGS tick client is the exception: it raises, and the caller decides, because a guessed or stale tick would corrupt the tally. It never returns a guessed value.
-- **Every request identifies WFMT.** Each call sends a User-Agent naming WFMT, its version and the project's address (`http_identity.py`, for example `WFMT/1.5.0 (rare-goods; +https://github.com/...)`). EDSM returns HTTP 403 to the default `python-requests` agent, so its client sends EDMC's `config.user_agent` followed by WFMT's.
+- **Every request identifies WFMT.** Each call sends a User-Agent naming WFMT, its version and the project's address (`http_identity.py`, for example `WFMT/1.5.1 (rare-goods; +https://github.com/...)`). EDSM returns HTTP 403 to the default `python-requests` agent, so its client sends EDMC's `config.user_agent` followed by WFMT's.
 - **Documented limits are respected.** EDSM's `cube-systems` caps edge length at 200 ly; WFMT uses 100 ly.
 - **Opt-in by default.** A lookup that runs without a button press is off until enabled, except the three listed under Background activity below. The user guide lists which features make network calls.
 - **No service data is bundled.** Live queries are used, so nothing in the release goes stale and no service's content is redistributed. The exceptions are static game facts (section 12).

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import tkinter as tk
 
@@ -27,21 +27,25 @@ POLL_MS = 2000
 _NO_CMDR_TEXT = "(waiting for commander login)"
 
 
-def session_line(session: Dict[str, int]) -> str:
-    return "This session: " + (combat_record.summary_text(session) if not combat_record.is_empty(session) else "no kills or deaths yet")
+HEADER = ("", "Kills", "Deaths", "K/D")
+READING = "..."
 
 
-def total_line(total: Dict[str, int], reading: bool) -> str:
-    if reading:
-        return "All time: reading your journals..."
-    return "All time: " + (combat_record.summary_text(total) if not combat_record.is_empty(total) else "none recorded yet")
+def cells(tally: Dict[str, int]) -> Tuple[str, str, str]:
+    """Kills (PvP kills included, as K/D counts them), deaths and K/D for a row of the table."""
+    return f"{combat_record.all_kills(tally):,}", f"{int(tally.get('deaths', 0)):,}", combat_record.ratio_text(tally)
+
+
+def table_rows(session: Dict[str, int], total: Dict[str, int], reading: bool) -> List[Tuple[str, ...]]:
+    return [("This session",) + cells(session), ("All time",) + ((READING,) * 3 if reading else cells(total))]
 
 
 class CombatController:
     def __init__(self, book: combat_record.CombatBook) -> None:
         self._book = book
-        self._session_var: Optional[tk.StringVar] = None
-        self._total_var: Optional[tk.StringVar] = None
+        self._note_var: Optional[tk.StringVar] = None
+        self._note: Optional[tk.Label] = None
+        self._rows: Optional[panelkit.StatRows] = None
         self._parent: Optional[tk.Frame] = None
         self._shown = (-1, "", False)
 
@@ -61,17 +65,18 @@ class CombatController:
 
     # --- the panel ---------------------------------------------------------------------------------------------------------------------------------
     def refresh(self) -> None:
-        if self._session_var is None or self._total_var is None:
+        if self._note_var is None or self._note is None or self._rows is None:
             return
         book = self._book
         cmdr = book.cmdr
-        if not cmdr:
-            self._session_var.set(_NO_CMDR_TEXT)
-            self._total_var.set("")
-            return
         self._shown = (book.revision, cmdr, book.reading)
-        self._session_var.set(session_line(book.session_total(cmdr, book.session_id)))
-        self._total_var.set(total_line(book.total(cmdr), book.reading))
+        if not cmdr:
+            self._note_var.set(_NO_CMDR_TEXT)
+            self._note.grid()
+            self._rows.show(None, [])
+            return
+        self._note.grid_remove()
+        self._rows.show(HEADER, table_rows(book.session_total(cmdr, book.session_id), book.total(cmdr), book.reading))
 
     def _poll(self) -> None:
         parent = self._parent
@@ -88,11 +93,12 @@ class CombatController:
 
     def build_panel(self, parent: tk.Frame) -> None:
         self._parent = parent
-        self._session_var = tk.StringVar(value=_NO_CMDR_TEXT)
-        self._total_var = tk.StringVar(value="")
+        self._note_var = tk.StringVar(value=_NO_CMDR_TEXT)
         body = panelkit.collapsible_section(parent, "Combat Record", "wfmt_combat_collapsed")
-        panelkit.wrap_label(body, textvariable=self._session_var, anchor="w").grid(row=0, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
-        panelkit.wrap_label(body, textvariable=self._total_var, anchor="w").grid(row=1, column=0, columnspan=3, sticky=tk.W)
+        self._note = panelkit.wrap_label(body, textvariable=self._note_var, anchor="w")
+        self._note.grid(row=0, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
+        self._rows = panelkit.StatRows(body)
+        self._rows.grid(row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
         button = tk.Button(body, text="Combat", command=self._on_open)
         button.grid(row=2, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.add_tooltip(button, "Combat - open your kills and deaths, per ship, for this session and in total")

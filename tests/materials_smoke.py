@@ -120,10 +120,26 @@ text, suffix = panel.summary()
 check(text.splitlines()[0] == "Materials held: Raw 432 · Manufactured 40 · Encoded 7", f"the totals line: {text!r}")
 check("At the limit: Iron" in text, f"iron is at its limit: {text!r}")
 check(suffix == "", f"the folded title says just Engineering: {suffix!r}")
-check(panel._summary_var.get() == text, "the label follows the summary")
+check(panel._rest_var.get() == "\n".join(text.splitlines()[1:]), "the label under the table holds the lines after the first")
+check(panel._summary_var.get() == "" and panel._head_label.winfo_manager() == "", "the held line is replaced by the table")
+
+
+def grid_rows(frame):
+    """The text of a StatRows frame as the user reads it: one list per row, left to right."""
+    rows = {}
+    for child in frame.winfo_children():
+        info = child.grid_info()
+        rows.setdefault(int(info["row"]), {})[int(info["column"])] = child.cget("text")
+    return [[cells[column] for column in sorted(cells)] for _row, cells in sorted(rows.items())]
+
+
+check(grid_rows(panel._collected) == [["Held", "Session"], ["Raw", "432", "0"], ["Manufactured", "40", "0"], ["Encoded", "7", "0"]],
+      f"the table with nothing picked up yet: {grid_rows(panel._collected)}")
 
 panel.handle_event({"event": "MaterialCollected", "Category": "Raw", "Name": "carbon", "Count": 3}, "Bocheaux", "Sol", None, {})
 check("Last change: +3 Carbon (now 123)" in panel.summary()[0], f"the last change: {panel.summary()[0]!r}")
+check(grid_rows(panel._collected) == [["Held", "Session"], ["Raw", "435", "3"], ["Manufactured", "40", "0"], ["Encoded", "7", "0"]],
+      f"what is held and what was picked up, for each type: {grid_rows(panel._collected)}")
 panel.handle_event({"event": "MaterialDiscarded", "Category": "Raw", "Name": "carbon", "Count": 23}, "Bocheaux", "Sol", None, {})
 check("Last change: -23 Carbon (now 100)" in panel.summary()[0], f"a discard: {panel.summary()[0]!r}")
 
