@@ -19,6 +19,7 @@ import csv
 import io
 import os
 import threading
+import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple
@@ -324,21 +325,30 @@ def replay_sales(entries: Iterable[Dict[str, Any]], cmdr: str, tracker_factory: 
     return found
 
 
+YIELD_EVERY = 1500
+"""Lines read between short sleeps, so the scan on its worker thread never starves EDMC's window of the interpreter."""
+
+
 def _file_entries(path: str) -> Iterable[Dict[str, Any]]:
     import json
     try:
         with open(path, encoding="utf-8", errors="replace") as handle:
-            for line in handle:
-                if not any(needle in line for needle in NEEDLES):
-                    continue
-                try:
-                    entry = json.loads(line)
-                except ValueError:
-                    continue
-                if isinstance(entry, dict):
-                    yield entry
+            text = handle.read()
     except OSError:
         return
+    if '"MarketSell"' not in text:      # a file with no sale has nothing to give, and most files have none
+        return
+    for count, line in enumerate(text.splitlines()):
+        if count % YIELD_EVERY == YIELD_EVERY - 1:
+            time.sleep(0.002)
+        if not any(needle in line for needle in NEEDLES):
+            continue
+        try:
+            entry = json.loads(line)
+        except ValueError:
+            continue
+        if isinstance(entry, dict):
+            yield entry
 
 
 def scan_journals(folder: str, cmdr: str, tracker_factory: Callable[[], Any],
@@ -355,10 +365,13 @@ def scan_journals(folder: str, cmdr: str, tracker_factory: Callable[[], Any],
         return []
     found: List[Sale] = []
     for index, name in enumerate(names, 1):
+        before = len(found)
         try:
             found += replay_sales(_file_entries(os.path.join(root, name)), cmdr, tracker_factory)
         except Exception:        # one odd file must not stop the rest
             pass
+        if len(found) > before or index % 25 == 0:
+            time.sleep(0.003)   # let EDMC's window have the interpreter after real work, and now and then while skipping files
         if progress is not None:
             progress(index, len(names))
     return found

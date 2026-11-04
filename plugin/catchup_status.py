@@ -31,13 +31,13 @@ def text(now: float = 0.0) -> str:
     shown = [name for name, started in _running.items() if (now - started) * 1000 >= SHOW_AFTER_MS]
     if not shown:
         return ""
-    return f"Reading your journals to catch up ({', '.join(shown)}). This happens once and can take a minute."
+    return f"Reading your journals to catch up ({', '.join(shown)}). EDMC may be slow to respond until this finishes. It usually takes under a minute."
 
 
 def build_panel_line(parent: tk.Misc, row: int) -> tk.Label:
     """The line in the WFMT panel; it takes no room while there is nothing to say."""
     from . import panelkit
-    label = panelkit.wrap_label(parent, anchor="w", fg="gray")
+    label = panelkit.wrap_label(parent, anchor="w", fg="#c07000")      # amber, like the work-in-progress note: a pause should not be a mystery
     label.grid(row=row, column=0, columnspan=3, sticky=tk.W)
     _labels.append(label)
     _apply(label)

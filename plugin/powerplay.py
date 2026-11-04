@@ -702,6 +702,7 @@ class PowerplayController:
         self._sales_scan_status = ""
         self._sales_scan_running = False
         self._sales_caught_up: set = set()
+        self._sales_banner = False
         self.tab_prefs = TabPrefs()
         # Start-up journal scan (powerplay_backfill.py): runs on a worker thread, answers on a
         # queue, and live ledger writes wait in `_scan_buffer` until it has been applied.
@@ -880,6 +881,15 @@ class PowerplayController:
         except Exception:
             logger.warning("Could not write the sale-merit log", exc_info=True)
 
+    def _poll_sales_scan(self) -> None:
+        """Main thread (via after() and on every journal event): take the panel notice down once the sale scan has finished."""
+        if self._sales_scan_running:
+            if self._panel_parent is not None:
+                self._panel_parent.after(500, self._poll_sales_scan)
+        elif self._sales_banner:
+            self._sales_banner = False
+            catchup_status.end("Sale merits")
+
     def sale_log_path(self) -> str:
         return self.sale_log.path if self.sale_log is not None else ""
 
@@ -904,6 +914,10 @@ class PowerplayController:
             since = newest - timedelta(days=2) if newest else None
         self._sales_scan_running = True
         self._sales_scan_status = "Reading journals…"
+        self._sales_banner = True
+        catchup_status.begin("Sale merits")      # the panel notice, after a second and a half
+        if self._panel_parent is not None:
+            self._panel_parent.after(500, self._poll_sales_scan)
 
         def work() -> None:
             try:
@@ -992,6 +1006,7 @@ class PowerplayController:
         if cmdr and cmdr != self._cmdr:
             self._switch_cmdr(cmdr)
         self._poll_scan()
+        self._poll_sales_scan()
         self.ledger.touch(entry.get("timestamp"))
         self._tick_cycle()
         for found in self._megaships.feed(entry):
