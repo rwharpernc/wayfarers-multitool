@@ -43,7 +43,7 @@ from .formulas import (
 )
 from .powerplay_clipboard import DEFAULT_TEMPLATE as DEFAULT_CLIPBOARD_TEMPLATE
 from .powerplay_clipboard import PLACEHOLDERS as CLIPBOARD_PLACEHOLDERS
-from . import powerplay_backfill, powerplay_state
+from . import powerplay_backfill, powerplay_state, sale_merits
 from .powerplay_backfill import OP_MEGASHIP, OP_MEGASHIP_MERITS, OP_MERITS, OP_SNAPSHOT, Op, ScanResult
 from .powerplay_ledger import parse_ts as _parse_ts
 from .powerplay_ledger import (
@@ -489,6 +489,12 @@ _DELIVERY_EVENTS = ("PowerplayDeliver", "SearchAndRescue", "DeliverPowerMicroRes
 CONFIG_RATIO_PREFIX = "wfmt_powerplay_ratio_"
 CONFIG_CLIPBOARD_FORMAT = "wfmt_powerplay_clipboard_format"
 CONFIG_BACKFILL_CYCLES = "wfmt_powerplay_backfill_cycles"
+CONFIG_RECORD_SALES = "wfmt_powerplay_record_sales"
+
+
+def record_sales_enabled() -> bool:
+    """Whether each sale made while pledged is written, with the merits that followed it, to the sale-merit log (Settings; on by default)."""
+    return config.get_bool(CONFIG_RECORD_SALES, default=True)
 
 
 def backfill_cycles() -> int:
@@ -541,6 +547,13 @@ def set_clipboard_template(text: object) -> str:
     config.set(CONFIG_CLIPBOARD_FORMAT, value if value.strip() else DEFAULT_CLIPBOARD_TEMPLATE)
     _announce_settings()
     return clipboard_template()
+
+
+def set_record_sales(on: bool) -> bool:
+    """Turn the sale-merit log on or off; returns whether it is on."""
+    config.set(CONFIG_RECORD_SALES, bool(on))
+    _announce_settings()
+    return record_sales_enabled()
 
 
 def set_backfill_cycles(text: object) -> str:
@@ -683,6 +696,11 @@ class PowerplayController:
         # tab (powerplay_ledger.py) - swapped out when the commander changes.
         self.ledger = PowerplayLedger()
         self._megaships = MegaShipTracker()
+        # Sale-merit log (sale_merits.py): each sale made while pledged, with the merits that followed it.
+        self._sales = sale_merits.SaleTracker()
+        self.sale_log: Optional[sale_merits.SaleLog] = None
+        self._sales_scan_status = ""
+        self._sales_scan_running = False
         self.tab_prefs = TabPrefs()
         # Start-up journal scan (powerplay_backfill.py): runs on a worker thread, answers on a
         # queue, and live ledger writes wait in `_scan_buffer` until it has been applied.
@@ -730,10 +748,12 @@ class PowerplayController:
     def start(self, plugin_dir: str) -> None:
         self._plugin_dir = plugin_dir
         self.sessions = SessionManager(SessionStore(plugin_dir))
+        self.sale_log = sale_merits.SaleLog(os.path.join(plugin_dir, sale_merits.LOG_FILENAME))
         # The ledger is per commander and EDMC doesn't say who is active until
         # the first journal event - the load happens in _switch_cmdr().
 
     def flush(self) -> None:
+        self._record_sales(self._sales.flush())
         if self.sessions is not None:
             self.sessions.flush()
         self._persist_ledger()
@@ -743,6 +763,8 @@ class PowerplayController:
     def _switch_cmdr(self, cmdr: str) -> None:
         """Save the previous commander's ledger and load this one's."""
         self._persist_ledger()
+        self._record_sales(self._sales.flush())
+        self._sales = sale_merits.SaleTracker(cmdr)
         self._cmdr = cmdr
         saved = powerplay_state.load_state(self._plugin_dir, cmdr) if self._plugin_dir else None
         data = saved if isinstance(saved, dict) else {}
@@ -845,6 +867,50 @@ class PowerplayController:
             self.ledger.add_megaship_merits(op.key, op.merits, op.ts)
         self._persist_ledger()
 
+    def _record_sales(self, sales: List[sale_merits.Sale]) -> None:
+        """Write finished sales to the sale-merit log (when it is on). A failure here never interferes with the Powerplay panel."""
+        if not sales or self.sale_log is None or not record_sales_enabled():
+            return
+        try:
+            self.sale_log.add(sales)
+        except Exception:
+            logger.warning("Could not write the sale-merit log", exc_info=True)
+
+    def sale_log_path(self) -> str:
+        return self.sale_log.path if self.sale_log is not None else ""
+
+    def sales_scan_status(self) -> str:
+        return self._sales_scan_status
+
+    def rescan_sales(self) -> bool:
+        """Read all of this commander's journals for sales and add the ones not yet in the log (Settings: Rescan journals for sales). False when it cannot start."""
+        if self._sales_scan_running or self.sale_log is None or not self._cmdr:
+            return False
+        from . import journal_scan  # deferred: only needed for EDMC's configured folder
+        folder = journal_scan._journal_folder()
+        if not folder or not os.path.isdir(os.path.expanduser(folder)):
+            self._sales_scan_status = "No journal folder found: set EDMC's Journal directory."
+            return False
+        cmdr, log = self._cmdr, self.sale_log
+        self._sales_scan_running = True
+        self._sales_scan_status = "Reading journals…"
+
+        def work() -> None:
+            try:
+                def progress(done: int, total: int) -> None:
+                    self._sales_scan_status = f"Reading journals… {done} of {total} files"
+                found = sale_merits.scan_journals(folder, cmdr, PowerplayTracker, progress)
+                added = log.add(found)
+                self._sales_scan_status = f"Done: {len(found)} sales found, {added} new added to the log."
+            except Exception:
+                logger.warning("Sale-merit rescan failed", exc_info=True)
+                self._sales_scan_status = "The rescan failed; see the log."
+            finally:
+                self._sales_scan_running = False
+
+        threading.Thread(target=work, name="wfmt-sale-merits-scan", daemon=True).start()
+        return True
+
     def _persist_ledger(self) -> None:
         if self._plugin_dir is None or self._cmdr is None:
             return
@@ -923,6 +989,9 @@ class PowerplayController:
                 self._apply_live(Op(OP_MEGASHIP, found[1].at, system=found[1].system, scan=found[1]))
             else:
                 self._apply_live(Op(OP_MEGASHIP_MERITS, found[3], key=found[1], merits=found[2]))
+
+        if entry.get("event") != "PowerplayMerits":
+            self._record_sales(self._sales.feed(entry, lambda: sale_merits.context_of(self.tracker, system)))
 
         star_pos = entry.get("StarPos")
         if (
@@ -1041,6 +1110,7 @@ class PowerplayController:
             return
 
         activity = self.tracker.classify_current_activity(system)
+        self._record_sales(self._sales.merit(entry, gained, delivery=activity == DELIVERY))
         ts = entry.get("timestamp")
         self.sessions.record_merits(activity, gained, system, ts if isinstance(ts, str) else None)
         if system and isinstance(ts, str):

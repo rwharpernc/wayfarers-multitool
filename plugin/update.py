@@ -68,6 +68,7 @@ _OWN_DATA_FILES: set = {
     "session_credits.json",  # Credits this session: the current login's balance record (session_credits.py)
     "bgs_state.json",  # BGS tick ledger, archive, pinned/hidden tabs (bgs_state.py)
     "powerplay_state.json",  # Powerplay per-system ledger, archive, pinned/hidden tabs (powerplay_state.py)
+    "sale_merits.csv",  # the sale-merit log: each sale made while pledged and the merits that followed it, all commanders (sale_merits.py)
     "mining_hotspots.json",  # Mining's hotspot catalog (mining_hotspots.py)
     "mining_coverage.json",  # Mining's Rhino coverage map (mining_coverage.py)
     "mining_body_cache.json",  # what the Surface Mining Book's Get body info found for each system, per commander (mining_body_cache.py)

@@ -104,6 +104,7 @@ What this does not settle: the live formula. The figures conflict (per profit, p
 ## Open items
 
 - Zero-pay and low-pay hand-ins: the cause is not determined. The journal does not report the hand-in target.
+- The sale-merit log (Powerplay Sessions → Settings, `sale_merits.csv`; [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md) section 10.9) records each sale made while pledged with the merits that followed. Analyzing it is the next step; no result is recorded here yet.
 - Sales of mined goods, exploration data and trade goods: the diminishing-returns reports concern these. They require merits matched to a sale rather than to a `PowerplayDeliver` event. The web reports above leave the current rule open; measuring it needs sales made while pledged, with the merits that follow each one, in systems that qualify (Acquisition or Reinforcement, 40% profit).
 
 ## Sources

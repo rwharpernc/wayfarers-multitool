@@ -114,6 +114,7 @@ Spec: [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md)
 | `powerplay_megaships_tab.py` | The Megaships tab of the Powerplay Sessions window: one row per megaship scanned, cycle by cycle |
 | `powerplay_settings_tab.py` | The Settings tab of the Powerplay Sessions window: merits per CP, the Copy Progress format and the cycles to scan (set only there) |
 | `powerplay_state.py` | JSON persistence for that ledger |
+| `sale_merits.py` | Sale-merit log: pairs each sale made while pledged with the `PowerplayMerits` that follow it (journal timing), writes them to a CSV file without duplicates, and replays journals for a rescan; no Tk |
 | `powerplay_systems_tab.py` | The Systems tab of the Powerplay Sessions window |
 | `powerplay_window.py` | The Powerplay Sessions window (current session, systems, cycles, daily, megaships, history) |
 | `powerplay_overlay.py` | The Powerplay overlay card: the commander's Power, rank, merits and the cycle's merits, the system's state and holder, what merits earned here count as, and the merits and estimated Control Points earned here this session by type; says "No Powerplay Detected in system" in a system without one, and with the look-ahead tick turns to the jump's destination; the pure `build_card`, the controller's `overlay_info`, Settings → Overlays → Powerplay, one Overlay Placement slot |

@@ -89,6 +89,10 @@ check(powerplay.set_backfill_cycles("6") == "6", "the cycles are saved")
 check(powerplay.set_clipboard_template("{system}: {merits}") == "{system}: {merits}", "the Copy Progress format is saved")
 check(powerplay.set_clipboard_template("   ") == powerplay.DEFAULT_CLIPBOARD_TEMPLATE, "and a blank one restores the default")
 
+check(powerplay.record_sales_enabled() is True, "the sale-merit log starts on")
+check(powerplay.set_record_sales(False) is False and saved.get("wfmt_powerplay_record_sales") is False, "turning it off is saved")
+check(powerplay.set_record_sales(True) is True, "and on again")
+
 controller = powerplay.controller
 frame = tk.Frame(root)
 frame.pack(fill="both", expand=True)
@@ -112,6 +116,13 @@ saved["wfmt_powerplay_ratio_" + ACQUISITION] = "9.0"                         # c
 powerplay._announce_settings()
 pump()
 check(var.get() == "9", f"a change made elsewhere shows in the tab: {var.get()}")
+check(tab._record_sales.get() is True, "the tab shows the sale-merit log as on")
+tab._record_sales.set(False)
+tab._parent.update()
+saved["wfmt_powerplay_record_sales"] = True                                    # changed elsewhere
+powerplay._announce_settings()
+pump()
+check(tab._record_sales.get() is True, "a change of the sale-merit switch made elsewhere shows in the tab")
 check(tab.sync in powerplay._settings_listeners, "the tab listens")
 frame.destroy()
 pump()
