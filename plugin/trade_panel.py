@@ -74,6 +74,8 @@ _CFG_PERMIT = "wfmt_trade_route_permit"            # routes: allow systems that 
 _CFG_MIN_SUPPLY = "wfmt_trade_min_supply"          # round trip: least tons the buying station must have
 _CFG_MIN_DEMAND = "wfmt_trade_min_demand"          # round trip: least tons the selling station must want
 _CFG_ROUND_ONLY = "wfmt_trade_roundtrip_commodity"  # round trip: carry only this commodity (blank = anything)
+_CFG_ROUND_START = "wfmt_trade_roundtrip_start"    # round trip: start from this station, "Station, System" (blank = where I am)
+_CFG_ROUND_RANK = "wfmt_trade_roundtrip_rank"      # round trip: "loop" ranks by credits per loop ("" = per hour)
 _CFG_NEAR_RADIUS = "wfmt_trade_near_radius_ly"
 _CFG_ROUND_RADIUS = "wfmt_trade_round_radius_ly"   # round trip: how far to look (0 = from the jump range)
 _SCAN_FIRST_MS = 4000      # first look for unread journals, a few seconds after the panel appears
@@ -134,6 +136,7 @@ _NAME_MAX = 64  # a safety bound on station / system / commodity names; the view
 _PERSIST_EVERY_S = 30.0
 _POLL_MS = 500
 
+_RANK_CHOICES = (("auto", "Profit per hour"), ("loop", "Credits per loop"))
 _PAD_CHOICES = (("auto", "From my ship"), ("small", "Small"), ("medium", "Medium"), ("large", "Large"))
 
 # What the windows let you set, in the order shown: (group, label, setting key, kind, default, low, high, hover tip). The same settings Settings → WFMT → Trade
@@ -152,6 +155,8 @@ REQUIREMENTS = (
     ("Round trip", "Least supply to buy (t)", _CFG_MIN_SUPPLY, "int", _DEFAULT_MIN_STOCK, 0, 1_000_000, "Least supply - the buying station must have at least this many tons"),
     ("Round trip", "Least demand to sell (t)", _CFG_MIN_DEMAND, "int", _DEFAULT_MIN_STOCK, 0, 1_000_000, "Least demand - the selling station must want at least this many tons"),
     ("Round trip", "Search radius (ly, 0 = from jump range)", _CFG_ROUND_RADIUS, "int", 0, 0, 100_000, "Search radius - how far around the start to look for the other station (0 uses twice your jump range)"),
+    ("Round trip", "Start from (Station, System)", _CFG_ROUND_START, "text", "", 0, 0, "Start from - plan the round trip from this station instead of where you are, written Station, System (blank = where I am docked, else the last station I docked at)"),
+    ("Round trip", "Rank pairs by", _CFG_ROUND_RANK, "choice", "auto", 0, _RANK_CHOICES, "Rank pairs by - estimated profit per hour (which counts the flying time), or the credits one full loop earns"),
     ("Round trip", "Carry only this commodity", _CFG_ROUND_ONLY, "text", "", 0, 0, "Carry only - both legs carry only this commodity (blank = anything)"),
     ("Market", "'Near me' search radius (ly)", _CFG_NEAR_RADIUS, "int", _DEFAULT_NEAR_RADIUS_LY, 1, 100_000, "Near me radius - how far from your system the Near me search looks, in light years"),
     ("Market", "Fleet carriers", _CFG_CARRIERS, "bool", True, 0, 0, "Fleet carriers - include fleet and squadron carriers in price results and Best picks (they can jump away)"),
@@ -233,6 +238,7 @@ class TradePanelController:
         self._history = trade_history.HistoryBook()   # sessions saved on request (Save session)
         self._saved_marks: Dict[str, tuple] = {}      # session id -> how it looked when last saved
         self._save_message: Optional[str] = None      # shown at the top of the Session page for a few seconds
+        self._round_rank = trade_roundtrip.RANK_HOUR     # what the last round trip search ranked by
         self._round_only = ""                         # the commodity the last round trip search was limited to
         self._route_label = ""                        # where the route search being run started from
         self._carrier = trade_carrier.CarrierTracker()  # each commander's fleet / squadron carrier cargo space
@@ -1292,9 +1298,17 @@ class TradePanelController:
         """Best back-and-forth pair with the station the route would start from, loaded both ways."""
         if self._job is not None and not self._job.done:
             return
-        start = trade_route_start.round_trip_start(self._home, self._cmdr, self._system, self._station)
+        typed = (config.get_str(_CFG_ROUND_START) or "").strip()
+        start = trade_roundtrip.parse_start(typed)
+        if typed and start is None:
+            self._route_blocks = [Heading("Round trip"), Note(f"Could not read the start \u201c{_clip(typed)}\u201d. Write it as Station, System "
+                                                              "(for example Jameson Memorial, Shinrarta Dezhra), or clear the box to start where you are.", warn=True)]
+            self._refresh()
+            return
         if start is None:
-            self._route_blocks = [Heading("Round trip"), Note("Dock at a station once so WFMT knows where to start.", warn=True)]
+            start = trade_route_start.round_trip_start(self._home, self._cmdr, self._system, self._station)
+        if start is None:
+            self._route_blocks = [Heading("Round trip"), Note("Dock at a station once so WFMT knows where to start, or type one in the Start from box.", warn=True)]
             self._refresh()
             return
         system, station = start
@@ -1309,6 +1323,8 @@ class TradePanelController:
         carriers = config.get_bool(_CFG_CARRIERS, default=True)
         arrival = _cfg_int(_CFG_MAX_ARRIVAL_LS, _DEFAULT_MAX_ARRIVAL_LS, 1, 1_000_000)
         only = (config.get_str(_CFG_ROUND_ONLY) or "").strip()
+        rank = trade_roundtrip.RANK_LOOP if (config.get_str(_CFG_ROUND_RANK) or "").strip().lower() == "loop" else trade_roundtrip.RANK_HOUR
+        self._round_rank = rank
         self._route_blocks, self._next_system = [], None
         self._route_label = f"{station} ({system})"
         self._round_only = only
@@ -1323,7 +1339,7 @@ class TradePanelController:
             trips = trade_roundtrip.find_round_trips(
                 origin, stations, cargo, capital, jump, ship_pad=ship_pad, min_supply=min_supply,
                 min_demand=min_demand, include_ground=ground, include_carriers=carriers, max_arrival_ls=arrival,
-                only=only)
+                only=only, rank=rank)
             return {"trips": trips, "searched": len(stations), "radius": radius}
 
         self._start_job("roundtrip", work)
@@ -1346,7 +1362,8 @@ class TradePanelController:
                                Pair("From", _clip(self._route_label)),
                                *([Pair("Carrying only", _clip(self._round_only))] if self._round_only else []),
                                Note(f"Best of {found.get('searched', 0)} stations within {found.get('radius', 0):.0f} ly, "
-                                    "ranked by estimated profit per hour."), Heading("Pairs, best first", minor=True),
+                                    + ("ranked by credits per loop." if self._round_rank == trade_roundtrip.RANK_LOOP
+                                       else "ranked by estimated profit per hour.")), Heading("Pairs, best first", minor=True),
                                Columns(("Per loop", "ly"))]
         for number, trip in enumerate(trips, start=1):
             blocks.append(Item(f"{number}. {_clip(trip.a.name)} \u21c4 {_clip(trip.b.name)}",

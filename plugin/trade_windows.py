@@ -24,6 +24,7 @@ from .uikit.widgets import FlatButton, ScrollFrame
 DEFAULT_SIZE = (780, 780)
 MIN_SIZE = (520, 420)
 _TEXT_KEY = "wfmt_trade_roundtrip_commodity"       # its box is wider than the number boxes
+_START_KEY = "wfmt_trade_roundtrip_start"          # so is the start station's
 _SUBTITLES = {
     trade_pages.SESSION: "What you have traded this session, your hold and your carrier",
     trade_pages.ROUTES: "The best trade routes from where you are (Spansh)",
@@ -208,7 +209,7 @@ class TradePageWindow:
                 ticks = None
                 continue
             var = tk.StringVar(value=str(value))
-            entry = tk.Entry(panel, textvariable=var, width=8)
+            entry = tk.Entry(panel, textvariable=var, width=34 if key == _START_KEY else 8)
             entry.grid(row=row, column=column * 2 + 1, sticky="w", padx=(0, P.PAD * 2), pady=2)
             add_tooltip(entry, tip)
             commit_entry.bind_commit(entry, var, lambda raw, k=key: str(self._controller.set_requirement(k, raw)))

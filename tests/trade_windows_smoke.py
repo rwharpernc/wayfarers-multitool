@@ -137,7 +137,8 @@ check(captions[0] == "Find routes" and captions[-1] == "Round trip", f"the Route
 fields = routes._fields
 check({"wfmt_trade_max_hops", "wfmt_trade_max_arrival_ls", "wfmt_trade_jump_range_override", "wfmt_trade_route_price_age_h",
        "wfmt_trade_route_permit", "wfmt_trade_include_carriers", "wfmt_trade_include_ground", "wfmt_trade_large_pad",
-       "wfmt_trade_min_supply", "wfmt_trade_min_demand", "wfmt_trade_round_radius_ly", "wfmt_trade_roundtrip_commodity"} <= set(fields),
+       "wfmt_trade_min_supply", "wfmt_trade_min_demand", "wfmt_trade_round_radius_ly", "wfmt_trade_roundtrip_commodity",
+       "wfmt_trade_roundtrip_start", "wfmt_trade_roundtrip_rank"} <= set(fields),
       f"the Routes window has every requirement: {sorted(fields)}")
 var, entry = fields["wfmt_trade_max_hops"]
 var.set("7")
@@ -148,6 +149,11 @@ check(controller.set_requirement("wfmt_trade_max_hops", "99") == "10", "a number
 check(controller.set_requirement("wfmt_trade_jump_range_override", "abc") == "", "a jump range that is not a number is blank")
 check(controller.set_requirement("wfmt_trade_jump_range_override", "24.5") == "24.5", "a jump range is kept")
 check(controller.set_requirement("wfmt_trade_roundtrip_commodity", " Gold ") == "Gold", "a commodity is trimmed")
+check(controller.set_requirement("wfmt_trade_roundtrip_start", "  Jameson Memorial, Shinrarta Dezhra ") == "Jameson Memorial, Shinrarta Dezhra", "a start station is trimmed")
+check(controller.set_requirement("wfmt_trade_roundtrip_rank", "loop") == "loop" and saved.get("wfmt_trade_roundtrip_rank") == "loop", "ranking by credits per loop is saved")
+controller.set_requirement("wfmt_trade_roundtrip_rank", "auto")
+check(saved.get("wfmt_trade_roundtrip_rank") == "" and controller.requirement_value("wfmt_trade_roundtrip_rank") == "auto", "per hour is the stored blank")
+controller.set_requirement("wfmt_trade_roundtrip_start", "")
 tick, _none = fields["wfmt_trade_route_permit"]
 tick.set(True)
 controller.set_requirement("wfmt_trade_route_permit", tick.get())

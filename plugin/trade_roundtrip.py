@@ -219,12 +219,33 @@ def _fits(station: Station, ship_pad: Optional[str]) -> bool:
     return any(station.pads.get(size, 0) > 0 for size in order[order.index(ship_pad):])
 
 
+RANK_HOUR, RANK_LOOP = "hour", "loop"     # what the pairs are ranked by
+
+
+def parse_start(text: str) -> Optional[tuple]:
+    """A start the commander typed -> (system, station), or None when blank or not in a readable form. Accepts
+    `Station, System` and `Station (System)`; a system name never holds a comma or a bracket, so the last one splits it."""
+    value = (text or "").strip()
+    if not value:
+        return None
+    if value.endswith(")") and "(" in value:
+        station, _, system = value[:-1].rpartition("(")
+    elif "," in value:
+        station, _, system = value.rpartition(",")
+    else:
+        return None
+    station, system = station.strip(), system.strip()
+    return (system, station) if station and system else None
+
+
 def find_round_trips(start: Station, others: Sequence[Station], cargo: int, capital: int, jump_range_ly: float,
                      ship_pad: Optional[str] = None, min_supply: int = 0, min_demand: int = 0,
                      include_ground: bool = True, include_carriers: bool = False,
-                     max_arrival_ls: float = 0, limit: int = RESULTS_KEPT, only: str = "") -> List[RoundTrip]:
-    """The best pairs with `start`, each leg loaded and profitable, best estimated profit per hour first.
-    `only` names the one commodity both legs may carry (blank = anything)."""
+                     max_arrival_ls: float = 0, limit: int = RESULTS_KEPT, only: str = "",
+                     rank: str = RANK_HOUR) -> List[RoundTrip]:
+    """The best pairs with `start`, each leg loaded and profitable, best first: by estimated profit per hour, or with
+    `rank` = "loop" by credits per full loop (per hour breaks a tie). `only` names the one commodity both legs may
+    carry (blank = anything)."""
     trips: List[RoundTrip] = []
     for other in others:
         if other is start or (other.name == start.name and other.system == start.system):
@@ -248,7 +269,10 @@ def find_round_trips(start: Station, others: Sequence[Station], cargo: int, capi
         seconds = routes.estimate_hop_seconds(leg_out, jump_range_ly) + routes.estimate_hop_seconds(leg_back, jump_range_ly)
         profit = out.profit + back.profit
         trips.append(RoundTrip(start, other, out, back, gap, profit, int(profit * 3600 / seconds) if seconds else 0))
-    trips.sort(key=lambda t: -t.per_hour)
+    if rank == RANK_LOOP:
+        trips.sort(key=lambda t: (-t.profit, -t.per_hour))
+    else:
+        trips.sort(key=lambda t: -t.per_hour)
     return trips[:max(1, limit)]
 
 

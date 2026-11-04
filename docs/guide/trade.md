@@ -208,7 +208,7 @@ Before a search, the page shows the inputs that will be used (start, ship, cargo
 
 ### Hops
 
-The Routes window has a **Routes** box at the top with the search parameters: **Hops**, **Furthest from the star (ls)**, **Jump range (ly, blank = my ship's)**, **Ignore prices older than (hours)**, and ticks for **Systems that need a permit**, **Fleet carriers**, **Ground facilities** and **Large landing pad only**. Under **Round trip** are **Least supply to buy**, **Least demand to sell**, **Search radius** and **Carry only this commodity**. A box saves on Enter or when focus leaves it; a tick saves at once. These settings exist only in the window, not in Settings → WFMT → Trade (see [Trade settings](#trade-settings) for the complete list and location of each).
+The Routes window has a **Routes** box at the top with the search parameters: **Hops**, **Furthest from the star (ls)**, **Jump range (ly, blank = my ship's)**, **Ignore prices older than (hours)**, and ticks for **Systems that need a permit**, **Fleet carriers**, **Ground facilities** and **Large landing pad only**. Under **Round trip** are **Least supply to buy**, **Least demand to sell**, **Search radius**, **Start from**, **Rank pairs by** and **Carry only this commodity**. A box saves on Enter or when focus leaves it; a tick saves at once. These settings exist only in the window, not in Settings → WFMT → Trade (see [Trade settings](#trade-settings) for the complete list and location of each).
 
 Other Trade settings are also in their windows: **Ship size (landing pad)** in the Routes and Market windows, **Fleet carriers** and **Ground facilities** also in Market, the **'Near me' search radius (ly)** in the Market window, and **Count fines and bounties I pay as a running cost** in the Session window.
 
@@ -226,9 +226,13 @@ Procedure:
 2. For each neighboring station, compute what to carry out and what to bring back.
 3. A pair counts only when both legs make a profit.
 4. Each leg fills the hold with the most profitable commodity first and tops up with the next, limited by supply at the buying station, demand at the selling station and the available credits.
-5. Pairs are ranked by estimated profit per hour, and the top three are shown. Every pair lists, per leg, three commodities (followed by "+N more") with tons, profit, the cost where bought, the sale price where sold (and profit per ton), and the supply and demand behind them.
+5. Pairs are ranked by estimated profit per hour (or, with **Rank pairs by** set to **Credits per loop**, by what one full loop earns), and the top three are shown. Every pair lists, per leg, three commodities (followed by "+N more") with tons, profit, the cost where bought, the sale price where sold (and profit per ton), and the supply and demand behind them.
 
 The same filters as Find routes apply (price age, ground facilities, fleet carriers, ship pad size, distance from the star), plus the **least supply** and **least demand** settings (200 t each by default), which exclude thin markets. The search makes one to three Spansh requests (100 stations each).
+
+**Start from.** Blank starts where you are docked, else at the last station you docked at. To plan from another station (for example one you are flying to), type it as `Station, System` or `Station (System)` in **Start from**. The pair is found among that station's neighbors the same way, and the page names the start. Spansh must hold a recent market for the station; if it has none, the page says so. A start that cannot be read as a station and a system is reported and nothing is searched.
+
+**Rank pairs by.** **Profit per hour** (the default) counts the flying time, so a close pair that pays a little less per loop can win. **Credits per loop** puts the pair that earns the most from one full out-and-back first, however far it is; per hour breaks a tie. Both show the per-loop and per-hour figures.
 
 ### Reading the result
 
@@ -491,6 +495,8 @@ Trade's settings are in two places. A number typed outside its range is set to t
 | Routes and Market | Ship size (landing pad) | From my ship | Small, Medium or Large to override. |
 | Routes, Round trip | Least supply to buy, Least demand to sell | 200 t each | Excludes thin markets. |
 | Routes, Round trip | Search radius (ly, 0 = from jump range) | 0 | 0 uses twice the ship's jump range, between 20 and 100 ly. A value from 5 to 500 is used as given; the search reads at most the nearest 300 stations. |
+| Routes, Round trip | Start from (Station, System) | blank (where I am) | Plan the round trip from this station instead. Written `Station, System` or `Station (System)`. |
+| Routes, Round trip | Rank pairs by | Profit per hour | Or Credits per loop. |
 | Routes, Round trip | Carry only this commodity | blank (anything) | A commodity name (case-insensitive). Both legs of a round trip carry only that commodity. A pair counts only if it trades that commodity at a profit in both directions. |
 | Market | 'Near me' search radius (ly) | 100 (1 to 100,000) | Also the Watch list refresh radius (limited to 5 to 5,000 ly there). |
 | Session | Count fines and bounties I pay as a running cost | Off | Adds a **Fines and bounties paid** line to the costs; only payments made after enabling are counted. |

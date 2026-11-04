@@ -19,6 +19,21 @@ def station(name, market, x=0.0, system=None, ls=100.0, planetary=False, carrier
                       {c: rt.Offer(c, *v) for c, v in market.items()})
 
 
+class ParseStartTests(unittest.TestCase):
+    def test_station_comma_system(self) -> None:
+        self.assertEqual(rt.parse_start("Jameson Memorial, Shinrarta Dezhra"), ("Shinrarta Dezhra", "Jameson Memorial"))
+
+    def test_station_in_brackets(self) -> None:
+        self.assertEqual(rt.parse_start("  Jameson Memorial (Shinrarta Dezhra) "), ("Shinrarta Dezhra", "Jameson Memorial"))
+
+    def test_a_comma_inside_the_station_name_stays_with_the_station(self) -> None:
+        self.assertEqual(rt.parse_start("Ohm City, Port, Sol"), ("Sol", "Ohm City, Port"))
+
+    def test_blank_or_unreadable_gives_none(self) -> None:
+        for text in ("", "   ", "Jameson Memorial", ", Sol", "Orbis ()", None):
+            self.assertIsNone(rt.parse_start(text), text)
+
+
 class BestLoadTests(unittest.TestCase):
     def test_best_commodity_first_then_the_rest_of_the_hold(self) -> None:
         a = station("A", {"Gold": (100, 90, 50, 0), "Tea": (10, 5, 1000, 0)})
@@ -85,6 +100,19 @@ class FindRoundTripsTests(unittest.TestCase):
         trips = rt.find_round_trips(self.start, [near, far], 100, 10**9, 30.0, limit=2)
         self.assertEqual(trips[0].b.name, "Near")             # the far pair pays more per loop but takes far longer
         self.assertGreater(trips[1].profit, trips[0].profit)
+
+    def test_ranked_by_credits_per_loop_when_asked(self) -> None:
+        near = station("Near", {"Gold": (0, 150, 0, 500), "Tea": (20, 15, 500, 0)}, x=5)
+        far = station("Far", {"Gold": (0, 400, 0, 500), "Tea": (20, 15, 500, 0)}, x=600, ls=20000)
+        trips = rt.find_round_trips(self.start, [near, far], 100, 10**9, 30.0, limit=2, rank=rt.RANK_LOOP)
+        self.assertEqual([t.b.name for t in trips], ["Far", "Near"])
+        self.assertGreater(trips[0].profit, trips[1].profit)
+
+    def test_an_unknown_rank_falls_back_to_per_hour(self) -> None:
+        near = station("Near", {"Gold": (0, 150, 0, 500), "Tea": (20, 15, 500, 0)}, x=5)
+        far = station("Far", {"Gold": (0, 400, 0, 500), "Tea": (20, 15, 500, 0)}, x=600, ls=20000)
+        trips = rt.find_round_trips(self.start, [near, far], 100, 10**9, 30.0, limit=2, rank="nonsense")
+        self.assertEqual(trips[0].b.name, "Near")
 
     def test_carriers_ground_pads_and_arrival_distance_are_respected(self) -> None:
         market = {"Gold": (0, 200, 0, 500), "Tea": (20, 15, 500, 0)}

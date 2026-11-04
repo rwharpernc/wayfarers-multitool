@@ -564,6 +564,8 @@ Spansh's planner cannot be asked for a pair that comes back, so the pair is foun
    distance) builds the outbound and return loads. **If either is missing the pair is dropped**: that is the no-empty-leg rule.
    The return trip may spend the outbound profit. Pairs are ranked by estimated profit per hour for the whole loop.
 
+`wfmt_trade_roundtrip_start` ("Station, System" or "Station (System)", blank = where the commander is docked, else the last dock) replaces `round_trip_start`'s answer: `parse_start` splits on the last bracket or comma, and text that does not parse is reported on the page without a search. `wfmt_trade_roundtrip_rank` ("loop", else per hour; stored blank for per hour, as the ship size choice stores From my ship) is passed to `find_round_trips(rank=)`: `RANK_LOOP` sorts by `profit` then `per_hour`, anything else by `per_hour`.
+
 The panel shows the top three (`RESULTS_KEPT`) with what to carry each way, remembers the best pair's destination for
 **Copy next system** and records it in the session's lookups (two hops). Settings: `wfmt_trade_min_supply` and
 `wfmt_trade_min_demand` (default 200 t). `wfmt_trade_roundtrip_commodity` (blank = anything) limits both legs to one commodity:
@@ -661,6 +663,8 @@ Settings → WFMT → Trade (a top-level tab).
 | `wfmt_trade_min_demand` | Round trip: least tons the selling station must want | 200 |
 | `wfmt_trade_round_radius_ly` | Round trip: search radius in ly (0 = twice the jump range, between 20 and 100; otherwise 5 to 500, `trade_roundtrip.search_radius`) | 0 |
 | `wfmt_trade_roundtrip_commodity` | Round trip: carry only this commodity ("" = anything) | "" |
+| `wfmt_trade_roundtrip_start` | Round trip: start from this station, `Station, System` ("" = where I am) | "" |
+| `wfmt_trade_roundtrip_rank` | Round trip: "loop" ranks by credits per loop ("" = per hour) | "" |
 | `wfmt_trade_near_radius_ly` | "Near me" radius | 100 |
 | `wfmt_trade_include_carriers` | Fleet carriers in price results and routes (`allow_player_owned`) | on |
 | `wfmt_trade_include_ground` | Ground facilities in price results and routes (`allow_planetary`) | on |
