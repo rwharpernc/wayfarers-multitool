@@ -51,10 +51,23 @@ Hand-ins (Power commodities and data):
 
 None of the published statements was checked against the game.
 
+## Trade merits: what players report (web research, 2026-11-04)
+
+Searched the web only; no game play. None of this is from Frontier or checked in the game. The Frontier forum blocked automated reading (HTTP 403), so the forum figures below come from search-result summaries and one Steam thread read in full, not from the forum threads themselves.
+
+- **Conditions reported** (Steam thread, 31 January to 2 February 2025, and forum summaries): a trade counts only with a profit of about 40% over the buying price (a 1,000 cr/t purchase must sell for 1,400 or more), in an Acquisition or Reinforcement system. For Acquisition, the goods are said to need buying in a system within range of a supporting Fortified (about 20 ly) or Stronghold (about 30 ly) system; one poster doubted this is stated in the game. Mined goods are said to count only when sold in the system they were mined in.
+- **Amount, by profit:** one tester reported 1 merit per 1,000 cr of profit (22,000 cr gave 22 merits); another, from a spreadsheet, about 0.75 merits per 1,000 cr. A proposal in a forum thread suggested 1 merit per ton plus 1 merit per 15,000 cr of profit; it was a suggestion, not observed behavior.
+- **Amount, by quantity:** the launch-period reports agree that selling one ton at a time paid far more per ton than a full hold: 1 t paid 28 merits, 10 t paid 88 and 100 t paid 276 (one tester); 320 t sold singly paid about 3,500 merits against about 200 sold as one lot (another). A post in the same thread period reports "square root of the quantity". Another Steam post gave 1 unit = 4 merits, 2 = 8 and 10 = 20 and called it a bug. These are launch-period figures; one thread was reported to Frontier's issue tracker, and later reports say the one-ton method was addressed. How it behaves now was not found.
+- **Intended design:** a player summary of a Frontier discussion says normal trading was meant to give one third for tonnage and two thirds for profit, aiming at about 400 merits a trip. Unconfirmed.
+- **Rare goods:** reported as the best earner at launch, then reduced, then switched off in November 2024 together with settlement data and escape pods. Whether they were restored was not found.
+- **Zero-pay deliveries:** one tester reported three trades that met every condition above paying nothing after earlier ones paid. No cause was found, matching the zero-pay hand-ins in the journal analysis.
+
+What this does not settle: the live formula. The figures conflict (per profit, per ton, square root), they date from 2025 or earlier, and no 2026 source on trade merits was found. A number from this list should not be shown in WFMT as an estimate.
+
 ## Open items
 
 - Zero-pay and low-pay hand-ins: the cause is not determined. The journal does not report the hand-in target.
-- Sales of mined goods, exploration data and trade goods: the diminishing-returns reports concern these. They require merits matched to a sale rather than to a `PowerplayDeliver` event.
+- Sales of mined goods, exploration data and trade goods: the diminishing-returns reports concern these. They require merits matched to a sale rather than to a `PowerplayDeliver` event. The web reports above leave the current rule open; measuring it needs sales made while pledged, with the merits that follow each one, in systems that qualify (Acquisition or Reinforcement, 40% profit).
 
 ## Sources
 
