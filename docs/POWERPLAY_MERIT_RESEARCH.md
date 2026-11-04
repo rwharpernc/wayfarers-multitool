@@ -86,6 +86,19 @@ Searched the web only; no game play. None of this is from Frontier or checked in
 
 Reading of the 2026 data: the 40% margin is a threshold, but merits do not rise with profit above it. Two sales with about the same profit and margin paid 62 and 29 merits. The Polymers sale had the largest profit and paid the fewest. The variable that would explain this is unknown. The data points are from one player's journals and have not been verified.
 
+**Inara Powerplay 2.0 guide (read in Chrome, 2026-11-04):** a community guide, updated into 2026, not from Frontier.
+
+- Trade counts for commodities with a profit margin of at least 40% in Reinforcement or Acquisition systems. In Reinforcement the goods can come from anywhere. In Acquisition they must come from an allied Fortified system within 20 ly or a Stronghold within 30 ly. It says the merits are "correlated to the profit-margin", without giving a formula.
+- Mined goods: for Reinforcement and Undermining, they must be mined and sold in the same system. For Acquisition, they must be mined in a Fortified or Stronghold system of your Power and sold in an Acquisition system within 20 or 30 ly. This guide calls the rules convoluted.
+- Rare goods are listed as earning merits when sold in Reinforcement or Acquisition systems after being bought in a system not controlled by your Power. This contradicts the November 2024 forum reports that rares were switched off. The guide may be out of date on this point.
+- Rebalancing update of 30 April 2025: Reinforcement activities get a 35% merit penalty, while Acquisition and Undermining get a 5% bonus. The update of 3 July 2025 added a weekly control-point decay for Reinforcement systems above 25% progress toward the next status. Neither is checked against the game. If the penalty applies to trade, it could contribute to the lower merits per sale seen in 2026 Reinforcement sales.
+
+**Further player reports (provided by the project owner, from web research, unverified):**
+
+- A Frontier post said rare goods would return paying slightly less than normal trading, without needing specific system states.
+- Frontier adjusted the ranks of Commanders who gained unfairly from the one-ton exploit.
+- One Commander sold 300 t of void opals in their own Powerplay system and received no merits, another case of a qualifying-looking sale paying nothing.
+
 What this does not settle: the live formula. The figures conflict (per profit, per ton, square root), most date from 2025 or earlier, and the one 2026 source (March) says the formula changed and was not worked out. A number from this list should not be shown in WFMT as an estimate.
 
 ## Open items
