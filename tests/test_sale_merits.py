@@ -189,6 +189,68 @@ class LogTests(unittest.TestCase):
         self.assertEqual(S.SaleLog(self.path).latest("bocheaux"), at(20))
         self.assertEqual(S.SaleLog(self.path).latest("Someone Else"), "")
 
+    def test_the_rank_and_cycle_are_in_the_row(self):
+        ranked = S.Context(power=ME, system="Ngurii", state="Fortified", holder=ME, activity="reinforcement", rank=12)
+        sale = run([("e", sell(0)), ("m", merit(1, 80))], context=lambda: ranked)[0]
+        row = sale.row()
+        self.assertEqual((row[COLUMN["rank"]], row[COLUMN["cycle"]]), ("12", 101))        # 2026-10-02 is in cycle 101
+        unknown = run([("e", sell(0))])[0].row()
+        self.assertEqual(unknown[COLUMN["rank"]], S.UNKNOWN_RANK)
+
+    def test_the_cycle_follows_the_thursday_boundary(self):
+        self.assertEqual(S.cycle_of("2026-10-01T06:59:59Z"), 100)
+        self.assertEqual(S.cycle_of("2026-10-01T07:00:00Z"), 101)
+        self.assertEqual(S.cycle_of("2026-10-08T07:00:00Z"), 102)
+        self.assertIsNone(S.cycle_of("not a time"))
+
+    def _old_file(self, rank_known=False):
+        """A log as the first version wrote it, without the rank and cycle columns."""
+        old = [name for name in S.COLUMNS if name not in ("rank", "cycle")]
+        sale = self._sales()[0]
+        cells = dict(zip(S.COLUMNS, [str(c) for c in sale.row()]))
+        with open(self.path, "w", newline="", encoding="utf-8") as handle:
+            writer = csv.writer(handle, lineterminator="\n")
+            writer.writerow(old)
+            writer.writerow([cells[name] for name in old])
+
+    def test_an_older_file_is_rewritten_with_the_new_columns(self):
+        self._old_file()
+        log = S.SaleLog(self.path)
+        self.assertEqual(log.add(self._sales()[1:]), 1)
+        with open(self.path, newline="", encoding="utf-8") as handle:
+            rows = list(csv.DictReader(handle))
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0]["cycle"], "101")
+        self.assertEqual(rows[0]["rank"], "")                                  # to be filled by a journal read
+        self.assertEqual(rows[1]["rank"], S.UNKNOWN_RANK)                       # written now, rank not known
+        self.assertEqual(rows[0]["commodity"], "Silver")
+
+    def test_an_older_file_is_migrated_even_when_nothing_new_arrives(self):
+        self._old_file()
+        S.SaleLog(self.path).add([])
+        with open(self.path, newline="", encoding="utf-8") as handle:
+            self.assertEqual(tuple(next(csv.reader(handle))), S.COLUMNS)
+
+    def test_a_blank_rank_is_filled_in_by_a_later_read_and_then_left_alone(self):
+        self._old_file()
+        log = S.SaleLog(self.path)
+        self.assertTrue(log.missing_rank("Bocheaux"))
+        ranked = S.Context(power=ME, system="Ngurii", state="Fortified", holder=ME, activity="reinforcement", rank=9)
+        found = run([("e", sell(0)), ("m", merit(1, 80))], context=lambda: ranked)
+        self.assertEqual(log.add(found), 0)                                    # nothing new, one rank filled
+        self.assertFalse(log.missing_rank("Bocheaux"))
+        with open(self.path, newline="", encoding="utf-8") as handle:
+            self.assertEqual(next(csv.DictReader(handle))["rank"], "9")
+        self.assertEqual(S.SaleLog(self.path).add(found), 0)
+
+    def test_settling_marks_a_rank_the_journals_never_had_as_unknown(self):
+        self._old_file()
+        log = S.SaleLog(self.path)
+        log.settle_rank("bocheaux")
+        self.assertFalse(log.missing_rank("Bocheaux"))
+        with open(self.path, newline="", encoding="utf-8") as handle:
+            self.assertEqual(next(csv.DictReader(handle))["rank"], S.UNKNOWN_RANK)
+
     def test_a_file_that_cannot_be_written_is_survived(self):
         log = S.SaleLog(os.path.join(self.dir.name, "missing", S.LOG_FILENAME))
         self.assertEqual(log.add(self._sales()), 0)
@@ -211,6 +273,12 @@ class ReplayTests(unittest.TestCase):
         self.assertEqual(len(sales), 1)
         self.assertEqual((sales[0].merits, sales[0].state, sales[0].holder, sales[0].activity, sales[0].system),
                          (90, "Fortified", ME, "reinforcement", "Ngurii"))
+
+    def test_the_rank_comes_from_the_journal(self):
+        sales = S.replay_sales(self._journal([sell(0, minute=5)]), "Bocheaux", powerplay.PowerplayTracker)
+        self.assertEqual(sales[0].rank, 10)
+        later = self._journal([{"timestamp": at(0, 3), "event": "PowerplayRank", "Power": ME, "Rank": 11}, sell(0, minute=5)])
+        self.assertEqual(S.replay_sales(later, "Bocheaux", powerplay.PowerplayTracker)[0].rank, 11)
 
     def test_another_commanders_sales_are_not_included(self):
         entries = self._journal([sell(0, minute=5)])

@@ -909,9 +909,10 @@ class PowerplayController:
             return False
         cmdr, log = self._cmdr, self.sale_log
         since = None
-        if not full:
+        if not full and not log.missing_rank(cmdr):      # rows from before the rank column need every journal read once
             newest = _parse_ts(log.latest(cmdr))
             since = newest - timedelta(days=2) if newest else None
+        everything = since is None
         self._sales_scan_running = True
         self._sales_scan_status = "Reading journals…"
         self._sales_banner = True
@@ -925,6 +926,8 @@ class PowerplayController:
                     self._sales_scan_status = f"Reading journals… {done} of {total} files"
                 found = sale_merits.scan_journals(folder, cmdr, PowerplayTracker, progress, since)
                 added = log.add(found)
+                if everything:
+                    log.settle_rank(cmdr)
                 self._sales_scan_status = f"Done: {len(found)} sales found, {added} new added to the log."
             except Exception:
                 logger.warning("Sale-merit rescan failed", exc_info=True)

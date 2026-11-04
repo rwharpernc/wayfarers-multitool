@@ -24,12 +24,17 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple
 
+from .powerplay_ledger import cycle_number, cycle_start_for, parse_ts
+
 FIRST_MERIT_S = 6
 FOLLOW_ON_S = 3
 LOG_FILENAME = "sale_merits.csv"
 
+UNKNOWN_RANK = "?"
+"""What the rank column holds when the journal gave no rank. A blank cell means the rank was not looked up yet (a row written before the column existed)."""
+
 COLUMNS = (
-    "time", "commander", "power", "system", "station", "state", "holder", "activity", "commodity", "tons",
+    "time", "commander", "power", "rank", "cycle", "system", "station", "state", "holder", "activity", "commodity", "tons",
     "sell_price", "avg_paid", "total_sale", "profit", "margin_pct", "merits", "merit_events", "bought_in", "mined", "black_market",
 )
 
@@ -43,6 +48,7 @@ class Context:
     state: str
     holder: str
     activity: str
+    rank: Optional[int] = None
 
 
 @dataclass
@@ -65,6 +71,16 @@ class Sale:
     black_market: bool
     merits: int = 0
     merit_events: int = 0
+    rank: Optional[int] = None
+
+    @property
+    def rank_text(self) -> str:
+        return str(self.rank) if self.rank is not None else UNKNOWN_RANK
+
+    @property
+    def cycle(self) -> Optional[int]:
+        """The Powerplay cycle number the sale was made in (from its time; 101 began on 2026-10-01 07:00 UTC)."""
+        return cycle_of(self.time)
 
     @property
     def profit(self) -> int:
@@ -82,9 +98,15 @@ class Sale:
 
     def row(self) -> List[Any]:
         margin = self.margin_pct
-        return [self.time, self.commander, self.power, self.system, self.station, self.state, self.holder, self.activity, self.commodity,
+        return [self.time, self.commander, self.power, self.rank_text, "" if self.cycle is None else self.cycle, self.system, self.station, self.state, self.holder, self.activity, self.commodity,
                 self.tons, self.sell_price, self.avg_paid, self.total_sale, self.profit, "" if margin is None else margin, self.merits,
                 self.merit_events, self.bought_in, "yes" if self.mined else "no", "yes" if self.black_market else "no"]
+
+
+def cycle_of(time_text: Any) -> Optional[int]:
+    """The Powerplay cycle number for a journal timestamp, or None when it cannot be read."""
+    when = parse_ts(time_text)
+    return cycle_number(cycle_start_for(when)) if when is not None else None
 
 
 def _stamp(value: Any) -> Optional[datetime]:
@@ -195,7 +217,7 @@ class SaleTracker:
         key = _norm(entry.get("Type"))
         return Sale(
             time=str(entry.get("timestamp")), commander=self.commander, power=ctx.power, system=ctx.system, station=self._station,
-            state=ctx.state, holder=ctx.holder, activity=ctx.activity, commodity=name, tons=count,
+            state=ctx.state, holder=ctx.holder, activity=ctx.activity, rank=ctx.rank, commodity=name, tons=count,
             sell_price=_int(entry.get("SellPrice")), avg_paid=_int(entry.get("AvgPricePaid")), total_sale=_int(entry.get("TotalSale")),
             bought_in=self._bought_in.get(key, ""), mined=key in self._mined,
             black_market=bool(entry.get("BlackMarket") or entry.get("IllegalGoods") or entry.get("StolenGoods")),
@@ -203,13 +225,21 @@ class SaleTracker:
 
 
 class SaleLog:
-    """The CSV file. Thread safe, append only, and a sale already in it is never written twice."""
+    """The CSV file. Thread safe, and a sale already in it is never written twice. New sales are appended. A file written before the rank and cycle
+    columns existed is rewritten once with them (the cycle comes from the sale's time; the rank is left blank until a journal rescan fills it in),
+    and a later rescan fills a blank rank in place."""
 
     def __init__(self, path: str) -> None:
         self.path = path
         self._lock = threading.Lock()
-        self._keys: Optional[Set[Tuple[str, str, str, int, int]]] = None
+        self._rows: Optional[Dict[Tuple[str, str, str, int, int], Dict[str, str]]] = None
         self._latest: Dict[str, str] = {}
+        self._old_header = False
+
+    @staticmethod
+    def _key_of(row: Dict[str, str]) -> Tuple[str, str, str, int, int]:
+        return ((row.get("commander") or "").casefold(), row.get("time") or "", (row.get("commodity") or "").casefold(),
+                _int(row.get("tons")), _int(row.get("total_sale")))
 
     def latest(self, commander: str) -> str:
         """The timestamp of the newest sale logged for `commander` (case ignored), or "" when there is none."""
@@ -217,41 +247,97 @@ class SaleLog:
             self._load()
             return self._latest.get(commander.strip().casefold(), "")
 
-    def _load(self) -> Set[Tuple[str, str, str, int, int]]:
-        if self._keys is None:
-            keys: Set[Tuple[str, str, str, int, int]] = set()
+    def missing_rank(self, commander: str) -> bool:
+        """Whether a row of `commander` has a blank rank (written before the column existed), so a full journal read would fill it in."""
+        with self._lock:
+            who = commander.strip().casefold()
+            return any(not row.get("rank") for key, row in self._load().items() if key[0] == who)
+
+    def settle_rank(self, commander: str) -> None:
+        """After a full read: a rank that is still blank is not in the journals; mark it unknown so it is not looked for again."""
+        with self._lock:
+            who = commander.strip().casefold()
+            blank = [row for key, row in self._load().items() if key[0] == who and not row.get("rank")]
+            if blank:
+                for row in blank:
+                    row["rank"] = UNKNOWN_RANK
+                self._rewrite()
+
+    def _load(self) -> Dict[Tuple[str, str, str, int, int], Dict[str, str]]:
+        if self._rows is None:
+            rows: Dict[Tuple[str, str, str, int, int], Dict[str, str]] = {}
             try:
                 with open(self.path, newline="", encoding="utf-8") as handle:
-                    for row in csv.DictReader(handle):
-                        who, when = (row.get("commander") or "").casefold(), row.get("time") or ""
-                        keys.add((who, when, (row.get("commodity") or "").casefold(), _int(row.get("tons")), _int(row.get("total_sale"))))
-                        if when > self._latest.get(who, ""):
-                            self._latest[who] = when
+                    reader = csv.DictReader(handle)
+                    self._old_header = bool(reader.fieldnames) and tuple(reader.fieldnames) != COLUMNS
+                    for row in reader:
+                        row = {name: row.get(name) or "" for name in COLUMNS}
+                        if not row["cycle"]:
+                            cycle = cycle_of(row["time"])
+                            row["cycle"] = "" if cycle is None else str(cycle)
+                        rows[self._key_of(row)] = row
+                        who = row["commander"].casefold()
+                        if row["time"] > self._latest.get(who, ""):
+                            self._latest[who] = row["time"]
             except OSError:
                 pass
-            self._keys = keys
-        return self._keys
+            self._rows = rows
+        return self._rows
+
+    def _rewrite(self) -> bool:
+        """The whole file from memory, through a temporary file, so a failure leaves the old file as it was."""
+        rows = self._load()
+        temporary = self.path + ".tmp"
+        try:
+            with open(temporary, "w", newline="", encoding="utf-8") as handle:
+                writer = csv.writer(handle, lineterminator="\n")
+                writer.writerow(COLUMNS)
+                for row in rows.values():
+                    writer.writerow([row.get(name, "") for name in COLUMNS])
+            os.replace(temporary, self.path)
+        except OSError:
+            return False
+        self._old_header = False
+        return True
 
     def add(self, sales: Iterable[Sale]) -> int:
-        """Append the sales not yet in the file; returns how many were new. A file that cannot be written leaves the log as it was."""
+        """Append the sales not yet in the file (and fill a blank rank of one that is); returns how many were new. A file that cannot be written leaves the log as it was."""
         with self._lock:
-            keys = self._load()
-            new = [sale for sale in sales if sale.key not in keys]
-            if not new:
+            rows = self._load()
+            new: List[Sale] = []
+            filled = False
+            seen: Set[Tuple[str, str, str, int, int]] = set()
+            for sale in sales:
+                if sale.key in seen:
+                    continue
+                seen.add(sale.key)
+                existing = rows.get(sale.key)
+                if existing is None:
+                    new.append(sale)
+                elif not existing.get("rank") and sale.rank is not None:
+                    existing["rank"] = sale.rank_text
+                    filled = True
+            if not new and not filled and not self._old_header:
                 return 0
-            buffer = io.StringIO()
-            writer = csv.writer(buffer, lineterminator="\n")
-            fresh = not os.path.exists(self.path) or os.path.getsize(self.path) == 0
-            if fresh:
-                writer.writerow(COLUMNS)
-            for sale in new:
-                writer.writerow(sale.row())
-            try:
-                with open(self.path, "a", newline="", encoding="utf-8") as handle:
-                    handle.write(buffer.getvalue())
-            except OSError:
-                return 0
-            keys.update(sale.key for sale in new)
+            added = {sale.key: dict(zip(COLUMNS, [str(cell) for cell in sale.row()])) for sale in new}
+            if filled or self._old_header or not os.path.exists(self.path) or os.path.getsize(self.path) == 0:
+                snapshot = dict(rows)
+                rows.update(added)
+                if not self._rewrite():
+                    rows.clear()
+                    rows.update(snapshot)
+                    return 0
+            else:
+                buffer = io.StringIO()
+                writer = csv.writer(buffer, lineterminator="\n")
+                for sale in new:
+                    writer.writerow(sale.row())
+                try:
+                    with open(self.path, "a", newline="", encoding="utf-8") as handle:
+                        handle.write(buffer.getvalue())
+                except OSError:
+                    return 0
+                rows.update(added)
             for sale in new:
                 if sale.time > self._latest.get(sale.commander.casefold(), ""):
                     self._latest[sale.commander.casefold()] = sale.time
@@ -267,7 +353,7 @@ SALE_EVENTS = (
     "Fileheader", "Commander", "LoadGame", "Location", "FSDJump", "CarrierJump", "Docked", "Undocked", "SupercruiseEntry", "MarketBuy",
     "MarketSell", "MiningRefined", "PowerplayMerits", "PowerplayRank", *_PLEDGE_EVENTS, *_DELIVERY_EVENTS,
 )
-DELIVERY = "delivery"   # formulas.DELIVERY; repeated so this module imports nothing from the plugin
+DELIVERY = "delivery"   # formulas.DELIVERY
 NEEDLES = tuple(f'"{name}"' for name in SALE_EVENTS)
 
 
@@ -275,8 +361,9 @@ def context_of(tracker: Any, system: Optional[str]) -> Optional[Context]:
     """The Powerplay tracker's view of `system`, or None when it has none (not pledged, or no Powerplay state there)."""
     if not tracker.my_power or not system or tracker.system_name != system or not tracker.system_state:
         return None
+    rank = tracker.rank if isinstance(tracker.rank, int) and not isinstance(tracker.rank, bool) else None
     return Context(power=tracker.my_power, system=system, state=str(tracker.system_state),
-                   holder=str(tracker.system_controller or ""), activity=str(tracker.system_activity(system)))
+                   holder=str(tracker.system_controller or ""), activity=str(tracker.system_activity(system)), rank=rank)
 
 
 def replay_sales(entries: Iterable[Dict[str, Any]], cmdr: str, tracker_factory: Callable[[], Any]) -> List[Sale]:

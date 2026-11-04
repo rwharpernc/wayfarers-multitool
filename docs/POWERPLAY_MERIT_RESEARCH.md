@@ -125,7 +125,7 @@ What the data does not settle:
 ## Open items
 
 - Zero-pay and low-pay hand-ins: the cause is not determined. The journal does not report the hand-in target.
-- The sale-merit log (Powerplay Sessions → Settings, `sale_merits.csv`; [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md) section 10.9) records each sale made while pledged with the merits that followed. Its first analysis is above. To separate a time effect from the other variables, each row would need the commander's Powerplay rank and the cycle number, and for Acquisition the distance to the source system.
+- The sale-merit log (Powerplay Sessions → Settings, `sale_merits.csv`; [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md) section 10.9) records each sale made while pledged with the merits that followed. Its first analysis is above. The log now records the commander's Powerplay rank and the cycle number on each row, which a time effect needs to be separated from the other variables; for Acquisition the distance to the source system is still missing. The first analysis above was made before these columns existed.
 - Sales of mined goods, exploration data and trade goods: the diminishing-returns reports concern these. They require merits matched to a sale rather than to a `PowerplayDeliver` event. The web reports above leave the current rule open; measuring it needs sales made while pledged, with the merits that follow each one, in systems that qualify (Acquisition or Reinforcement, 40% profit).
 
 ## Sources
