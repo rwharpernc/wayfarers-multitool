@@ -65,6 +65,12 @@ class Station:
     market: Dict[str, Offer] = field(default_factory=dict)
 
 
+POWERPLAY_MARGIN_PCT = 40.0
+"""The profit margin, over the price paid, that a sale of ordinary goods needs to earn Powerplay trade merits. Frontier's in-game text, the Inara guide
+and the forum reports give it, and the sale-merit log agrees (docs/POWERPLAY_MERIT_RESEARCH.md). It is one condition among several: the system must be
+Reinforcement or Acquisition, and for Acquisition the goods must come from an allied Fortified or Stronghold system within 20 or 30 ly."""
+
+
 @dataclass
 class LoadLine:
     """One commodity on a leg, with the prices and stock behind the choice."""
@@ -82,6 +88,16 @@ class LoadLine:
     @property
     def profit(self) -> int:
         return self.tons * self.per_ton
+
+    @property
+    def margin_pct(self) -> Optional[float]:
+        """Profit over what the station you leave charges, in percent (None when that price is not known)."""
+        return self.per_ton * 100.0 / self.buy_price if self.buy_price > 0 else None
+
+    @property
+    def meets_powerplay_margin(self) -> bool:
+        margin = self.margin_pct
+        return margin is not None and margin >= POWERPLAY_MARGIN_PCT
 
 
 @dataclass
@@ -196,14 +212,31 @@ def best_load(source: Station, dest: Station, cargo: int, capital: int, min_supp
 LEG_COMMODITIES_SHOWN = 3     # commodities listed under each leg; the rest are counted
 
 
-def leg_blocks(arrow: str, load: Load, destination: str, clip=lambda text: text) -> List[Block]:
+def margin_note(line: LoadLine, is_rare=None) -> str:
+    """The margin of a commodity and whether it clears the Powerplay 40% line: "margin 62% (40% or more)" or "margin 31% (under 40%)". A rare good
+    has no verdict, because in the owner's journals rare goods earned merits at any margin."""
+    margin = line.margin_pct
+    if margin is None:
+        return ""
+    if is_rare is not None and is_rare(line.name):
+        return f"margin {margin:,.0f}% (rare good: no 40% line seen)"
+    return f"margin {margin:,.0f}% ({'40% or more' if line.meets_powerplay_margin else 'under 40%'})"
+
+
+def leg_blocks(arrow: str, load: Load, destination: str, clip=lambda text: text, margin_marker: bool = False, is_rare=None) -> List[Block]:
     """A leg as page blocks: a summary line, then each commodity (up to LEG_COMMODITIES_SHOWN) with its tons and profit and, beneath,
-    what it costs here, what it sells for there and the supply and demand behind it. `clip` shortens names that come from outside."""
+    what it costs here, what it sells for there and the supply and demand behind it. `clip` shortens names that come from outside.
+    With `margin_marker` (a commander pledged to a Power) each commodity's detail also gives its margin against the Powerplay 40% line;
+    `is_rare(name)` says which goods are rare."""
     blocks: List[Block] = [Note(f"{arrow} to {clip(destination)}: {load.tons} t, {load.profit:+,} cr")]
     for line in load.lines[:LEG_COMMODITIES_SHOWN]:
-        blocks.append(Item(f"{clip(line.name)} \u00d7 {line.tons} t", (f"{line.profit:+,}",),
-                           detail=f"buy {line.buy_price:,} \u2192 sell {line.sell_price:,} ({line.per_ton:+,}/t) \u00b7 "
-                                  f"supply {line.supply:,} / demand {line.demand:,}", indent=1))
+        detail = (f"buy {line.buy_price:,} \u2192 sell {line.sell_price:,} ({line.per_ton:+,}/t) \u00b7 "
+                  f"supply {line.supply:,} / demand {line.demand:,}")
+        if margin_marker:
+            marker = margin_note(line, is_rare)
+            if marker:
+                detail += f" \u00b7 {marker}"
+        blocks.append(Item(f"{clip(line.name)} \u00d7 {line.tons} t", (f"{line.profit:+,}",), detail=detail, indent=1))
     hidden = len(load.lines) - LEG_COMMODITIES_SHOWN
     if hidden > 0:
         blocks.append(Note(f"+{hidden} more commodit{'y' if hidden == 1 else 'ies'}"))

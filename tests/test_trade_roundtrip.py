@@ -176,6 +176,36 @@ class LegDetailTests(unittest.TestCase):
         from plugin.trade_blocks import to_text
         self.assertEqual(to_text(blocks)[-1], "+3 more commodities")
 
+    def test_the_margin_is_profit_over_the_price_paid(self) -> None:
+        gold, tea = self._load().lines
+        self.assertEqual((gold.margin_pct, tea.margin_pct), (100.0, 200.0))
+        self.assertIsNone(rt.LoadLine("Free", 1, 0, 10, 1, 1).margin_pct)
+
+    def test_forty_percent_exactly_clears_the_powerplay_line(self) -> None:
+        self.assertTrue(rt.LoadLine("A", 1, 100, 140, 1, 1).meets_powerplay_margin)
+        self.assertFalse(rt.LoadLine("A", 1, 100, 139, 1, 1).meets_powerplay_margin)
+        self.assertFalse(rt.LoadLine("A", 1, 0, 139, 1, 1).meets_powerplay_margin)
+
+    def test_the_marker_is_off_unless_asked_for(self) -> None:
+        from plugin.trade_blocks import to_text
+        self.assertNotIn("margin", " ".join(to_text(rt.leg_blocks("Out", self._load(), "B"))))
+
+    def test_the_marker_states_the_margin_against_the_forty_percent_line(self) -> None:
+        from plugin.trade_blocks import to_text
+        a = station("A", {"Gold": (100, 0, 50, 0), "Tea": (100, 0, 1000, 0)})
+        b = station("B", {"Gold": (0, 150, 0, 40), "Tea": (0, 108, 0, 1000)})
+        text = " ".join(to_text(rt.leg_blocks("Out", rt.best_load(a, b, cargo=100, capital=10**9), "B", margin_marker=True)))
+        self.assertIn("margin 50% (40% or more)", text)
+        self.assertIn("margin 8% (under 40%)", text)
+
+    def test_a_rare_good_gets_no_verdict(self) -> None:
+        line = rt.LoadLine("Soontill Relics", 10, 100, 120, 1, 1)
+        self.assertEqual(rt.margin_note(line, is_rare=lambda name: True), "margin 20% (rare good: no 40% line seen)")
+        self.assertEqual(rt.margin_note(line, is_rare=lambda name: False), "margin 20% (under 40%)")
+
+    def test_goods_with_no_known_price_get_no_marker(self) -> None:
+        self.assertEqual(rt.margin_note(rt.LoadLine("Free", 1, 0, 10, 1, 1)), "")
+
     def test_a_name_from_outside_goes_through_the_clip(self) -> None:
         from plugin.trade_blocks import to_text
         text = to_text(rt.leg_blocks("Out", self._load(), "S" * 100, clip=lambda t: t[:10]))

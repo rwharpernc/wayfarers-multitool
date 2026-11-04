@@ -20,6 +20,17 @@ from plugin import powerplay_control_lookup as lookup  # noqa: E402
 from plugin import rare_goods  # noqa: E402
 
 
+class IsRareTests(unittest.TestCase):
+    def test_a_rare_good_is_known_whatever_the_case(self) -> None:
+        self.assertTrue(rare_goods.is_rare("Lavian Brandy"))
+        self.assertTrue(rare_goods.is_rare("  lavian BRANDY "))
+
+    def test_ordinary_goods_and_blanks_are_not_rare(self) -> None:
+        self.assertFalse(rare_goods.is_rare("Gold"))
+        self.assertFalse(rare_goods.is_rare(""))
+        self.assertFalse(rare_goods.is_rare(None))
+
+
 class DatasetTests(unittest.TestCase):
     def test_dataset_loads_with_expected_shape(self) -> None:
         self.assertEqual(rare_goods.dataset_size(), 142)

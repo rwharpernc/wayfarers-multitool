@@ -220,6 +220,8 @@ With 2 hops, when the route ends at its starting station and every leg carries c
 
 Spansh's planner returns the best chain, which does not necessarily return to its start. **Round trip** finds the best back-and-forth pair directly.
 
+**Powerplay margin marker.** When you are pledged to a Power, each commodity row of a round trip also shows its margin, the profit over the price paid, against the 40% that Powerplay trade merits need on ordinary goods: `margin 62% (40% or more)` or `margin 31% (under 40%)`. Rare goods read `rare good: no 40% line seen`, because rare goods earned merits at any margin in the project owner's journals. The marker checks only the margin. Merits also need a Reinforcement or Acquisition system (for Acquisition, goods bought in an allied Fortified or Stronghold system within 20 or 30 ly), and WFMT does not estimate how many merits a sale earns. The Routes page has no marker, because Spansh does not give the buying price. If you are not pledged, nothing is added.
+
 Procedure:
 
 1. Request the markets of the nearest stations from Spansh: up to 300, within twice the jump range but never less than 20 ly or more than 100 ly, unless a search radius is set in the Routes window.

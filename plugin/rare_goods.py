@@ -43,6 +43,12 @@ def dataset_size() -> int:
     return len(_load())
 
 
+def is_rare(name: Any) -> bool:
+    """Whether `name` (case ignored) is one of the bundled rare goods."""
+    wanted = str(name or "").strip().casefold()
+    return bool(wanted) and any(str(entry.get("rare", "")).casefold() == wanted for entry in _load())
+
+
 def _distance_ly(a: Sequence[float], b: Dict[str, float]) -> float:
     return math.sqrt((a[0] - b["x"]) ** 2 + (a[1] - b["y"]) ** 2 + (a[2] - b["z"]) ** 2)
 

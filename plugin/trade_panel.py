@@ -38,6 +38,7 @@ from . import trade_journal_scan
 from . import mining_price_finder_dialog as price_finder_dialog
 from . import mining_spansh_client as spansh_prices
 from . import panelkit
+from . import rare_goods
 from . import source_picks
 from . import trade_ledger as ledger_mod
 from . import trade_market as market_mod
@@ -1344,6 +1345,15 @@ class TradePanelController:
 
         self._start_job("roundtrip", work)
 
+    @staticmethod
+    def _powerplay_pledged() -> bool:
+        """Whether the commander is pledged to a Power, so the Powerplay margin marker is worth showing. Anything unexpected means no."""
+        try:
+            from . import powerplay
+            return powerplay.controller.tracker.pledge_status == powerplay.PLEDGED
+        except Exception:
+            return False
+
     def _finish_round_trip(self, job: _Job) -> None:
         if job.error:
             self._route_blocks = [Heading("Round trip"), Note(job.error, warn=True)]
@@ -1358,6 +1368,7 @@ class TradePanelController:
                 Note(f"Looked at {found.get('searched', 0)} stations within {found.get('radius', 0):.0f} ly. Try a "
                      "longer price-age limit, lower minimum supply and demand, or a bigger jump range.")]
             return
+        marker = self._powerplay_pledged()
         blocks: List[Block] = [Heading("Round trip (loaded both ways)"),
                                Pair("From", _clip(self._route_label)),
                                *([Pair("Carrying only", _clip(self._round_only))] if self._round_only else []),
@@ -1371,9 +1382,13 @@ class TradePanelController:
                                detail=f"{_clip(trip.b.system)} \u00b7 {trip.b.arrival_ls:,.0f} ls \u00b7 "
                                       f"~{trip.per_hour:,} cr/hr"))
             for arrow, load, dest in (("Out", trip.out, trip.b), ("Back", trip.back, trip.a)):
-                blocks.extend(trade_roundtrip.leg_blocks(arrow, load, dest.name, _clip))
+                blocks.extend(trade_roundtrip.leg_blocks(arrow, load, dest.name, _clip, margin_marker=marker, is_rare=rare_goods.is_rare))
             blocks.append(Note(f"Both legs: {trip.out.profit:+,} + {trip.back.profit:+,} = {trip.profit:+,} cr per loop", strong=True))
             blocks.append(Note(f"Average per leg: {round(trip.profit / 2):+,} cr \u00d7 2 legs = {trip.profit:+,} cr estimated total earnings per loop", strong=True))
+        if marker:
+            blocks.append(Note("Margin is profit over the price paid. Powerplay trade merits need 40% or more on ordinary goods, and also a Reinforcement or "
+                               "Acquisition system (for Acquisition, goods bought in an allied Fortified or Stronghold system within 20 or 30 ly). "
+                               "The marker checks only the margin, and the amount of merits is not estimated."))
         self._route_blocks = blocks
         best = trips[0]
         self._next_system = best.b.system

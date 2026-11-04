@@ -544,6 +544,8 @@ Each `Load` keeps, besides its `(commodity, tons, profit per ton)` items, a `Loa
 station's supply, the selling station's demand); `leg_blocks` turns a leg into a summary line plus up to three commodity rows with
 the prices and stock beneath, for every pair shown (not only the best).
 
+**Powerplay margin marker.** When the commander is pledged to a Power (`PowerplayController.tracker.pledge_status`, read by `TradePanel._powerplay_pledged`; any error means no), `leg_blocks(..., margin_marker=True)` adds `margin N% (40% or more)` or `margin N% (under 40%)` to each commodity row, and the page ends with a note saying what the marker does and does not check. The margin is `LoadLine.margin_pct` (profit per ton over the price paid, so `(sell - buy) / buy`); the line is `POWERPLAY_MARGIN_PCT` (40, inclusive), which the in-game text, the Inara guide, the forum reports and the sale-merit log agree on ([POWERPLAY_MERIT_RESEARCH.md](POWERPLAY_MERIT_RESEARCH.md)). A rare good (`rare_goods.is_rare`) gets `rare good: no 40% line seen` instead, because it earned merits at any margin in the owner's journals. The marker checks only the margin: the system's state and, for Acquisition, the source system are not known for a station pair, and no amount of merits is estimated. The Routes page (Spansh) has no marker because Spansh gives the profit per ton but not the buying price.
+
 Spansh's planner cannot be asked for a pair that comes back, so the pair is found locally.
 
 1. `fetch_stations` posts to `https://spansh.co.uk/api/stations/search`:
