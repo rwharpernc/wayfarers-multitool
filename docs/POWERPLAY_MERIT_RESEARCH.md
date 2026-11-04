@@ -2,7 +2,7 @@
 
 This page records one research question about Powerplay merit limits, the method used, and the result. No code depends on it. For merit attribution in WFMT, see [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md).
 
-- Checked on: 2026-10-29.
+- Checked on: 2026-10-29 (the web research and the sale-merit log analysis: 2026-11-04).
 - Journals examined: 2025-05-20 to 2026-10-29.
 - The journal figures below come from the project owner's own journal files. They are not reproducible from the repository.
 
@@ -12,6 +12,8 @@ This page records one research question about Powerplay merit limits, the method
 - [Result](#result)
 - [Journal analysis](#journal-analysis)
 - [Published sources](#published-sources)
+- [Trade merits: what players report](#trade-merits-what-players-report-web-research-2026-11-04)
+- [Sale-merit log analysis](#sale-merit-log-analysis-2026-11-04)
 - [Open items](#open-items)
 - [Sources](#sources)
 
@@ -101,10 +103,29 @@ Reading of the 2026 data: the 40% margin is a threshold, but merits do not rise 
 
 What this does not settle: the live formula. The figures conflict (per profit, per ton, square root), most date from 2025 or earlier, and the one 2026 source (March) says the formula changed and was not worked out. A number from this list should not be shown in WFMT as an estimate.
 
+## Sale-merit log analysis (2026-11-04)
+
+Data: 1,115 sales made while pledged in a system with a Powerplay state, from the project owner's journals (2025-05-20 to 2026-11-04, nine commanders, twelve Powers), built by the sale-merit log ([POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md) section 10.9). The figures are not reproducible from the repository. Merits are paired to a sale by time (the first merit event within 6 seconds, then more within 3 seconds of the last), so merits from another source in the same few seconds are counted with the sale. Rare goods are the 142 in `rare_goods.json`; 771 of the sales are rare goods and 344 are ordinary goods.
+
+What the data supports:
+
+- **Ordinary goods need a profit margin of at least 40%.** Of ordinary-goods sales in Acquisition and Reinforcement systems, 89 of 104 at 40% or more paid merits, 1 of 22 between 0% and 40% did, and 0 of 28 sold at a loss did. This agrees with the in-game text, the Inara guide and the forum reports.
+- **Ordinary goods do not pay in Undermining systems.** 1 of 33 sales at 40% or more paid.
+- **Reinforcement:** 72 of 72 ordinary, non-mined sales at 40% or more paid.
+- **Acquisition:** 17 of 32 such sales paid. The source condition (goods bought in an allied Fortified system within 20 ly, or a Stronghold within 30 ly) would explain the others, but the log holds no distances, so it is not confirmed.
+- **Mined goods pay without a purchase cost:** 88 of 117 sales of goods mined earlier in the same journal paid, in all three kinds of system, including Undermining. This agrees with the rule that mined goods must be sold in the system they were mined in; the log does not check the system.
+- **Rare goods pay at any margin.** 116 of 119 sales between 0% and 40% and 38 of 41 sold at a loss paid. The 40% condition did not apply to them. The merits rise strongly with tons and with the value of the sale (correlations of about 0.86 with tons and 0.88 with the total sale among 477 single-event sales in Acquisition and Reinforcement systems), at 20 to 65 merits per ton. This contradicts the reports that rare goods are switched off; they earned merits in these journals.
+
+What the data does not settle:
+
+- **The amount for ordinary goods.** It is not a simple function of profit, margin, price or tons. Gold sold for about 63 million credits of profit paid about 4,050 merits in December 2025; CMM Composite sold for about the same profit paid about 970 in August 2025. Within the 2025 August sales of one commander, merits followed roughly 0.12 times the square root of the profit (titanium at 46.7 million paid 833; CMM Composite at 61 to 64 million paid 955 to 977), but cobalt at 14.8 million paid 826 and does not fit. The level also changed over time: sales of 1,168 t at the same price and nearly the same profit paid 973 merits and, on 20 August 2025, 1,062. A multiplier that changes with time (the cycle, the system state, or a Frontier rebalance) would explain this, and agrees with the March 2026 report that the formula changed. Only 72 clean ordinary sales are available, so none of this is established.
+- **The 35% Reinforcement penalty** in the Inara guide (rebalance of 30 April 2025) was not isolated.
+- **Doubtful rows.** Some sales at a loss show merits in Undermining systems; these are probably merits from another source in the same few seconds. The pairing cannot tell them apart.
+
 ## Open items
 
 - Zero-pay and low-pay hand-ins: the cause is not determined. The journal does not report the hand-in target.
-- The sale-merit log (Powerplay Sessions → Settings, `sale_merits.csv`; [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md) section 10.9) records each sale made while pledged with the merits that followed. Analyzing it is the next step; no result is recorded here yet.
+- The sale-merit log (Powerplay Sessions → Settings, `sale_merits.csv`; [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md) section 10.9) records each sale made while pledged with the merits that followed. Its first analysis is above. To separate a time effect from the other variables, each row would need the commander's Powerplay rank and the cycle number, and for Acquisition the distance to the source system.
 - Sales of mined goods, exploration data and trade goods: the diminishing-returns reports concern these. They require merits matched to a sale rather than to a `PowerplayDeliver` event. The web reports above leave the current rule open; measuring it needs sales made while pledged, with the merits that follow each one, in systems that qualify (Acquisition or Reinforcement, 40% profit).
 
 ## Sources
