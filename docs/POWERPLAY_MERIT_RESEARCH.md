@@ -62,7 +62,31 @@ Searched the web only; no game play. None of this is from Frontier or checked in
 - **Rare goods:** reported as the best earner at launch, then reduced, then switched off in November 2024 together with settlement data and escape pods. Whether they were restored was not found.
 - **Zero-pay deliveries:** one tester reported three trades that met every condition above paying nothing after earlier ones paid. No cause was found, matching the zero-pay hand-ins in the journal analysis.
 
-What this does not settle: the live formula. The figures conflict (per profit, per ton, square root), they date from 2025 or earlier, and no 2026 source on trade merits was found. A number from this list should not be shown in WFMT as an estimate.
+**Frontier forum thread read directly (Chrome, 2026-11-04):** pages 6, 15 and 16 of the Powerplay 2.0 merit-changes thread, 22 November to 21 December 2024. The thread ends on page 16 with its last post on 21 December 2024.
+
+- A Frontier staff reply on 22 November 2024 confirmed settlement data had been switched back on, while rare goods and escape pods stayed off pending investigation. The same day, Frontier announced merit rises of 6x for exploration data and 4x for other sources, and 20x for assignments.
+- A player on 22 November 2024 reported about 58x the merits for selling one ton at a time, and that fast normal trading reached at best about 20% of the one-ton method.
+- On 12 December 2024 a player described trade as "broken", with a logarithmic reduction from 2 t upward, and noted that no patch notes mentioned it. A later player on 14 December reported a weekly assignment not moving after a correct exploration-data sale in a Reinforcement system. These are player claims.
+- Nothing in this thread is from 2025 or 2026; see the later threads below for those. Rare goods are still not shown as restored.
+
+**Trade-merits threads read directly (Chrome, 2026-11-04):**
+
+- *PowerPlay 2.0 Trade Merits* (Frontier forums, January 2025). One tester sold silver in lots of 1 to 40 t as a Li Yong Rui pledge, plotted merits against profit, and proposed Merits = 0.375219 x sqrt(profit in credits), rounded to a multiple of 4. A reply said a margin of at least 40% is needed for a trade to count, and that beyond that the size of the margin does not matter. Another reply said Mahon, Torval, Duval and Li Yong Rui pledges get 50% more merits for large-profit selling in Reinforcement (Mahon, Torval, Patreus and Li Yong Rui for Acquisition). That formula describes the launch behavior in which one-ton sales paid more.
+- *Powerplay Merits: Trade. Eh?* (Frontier forums, 23 March 2026). A reply says the old equation was changed "a few months back" and that no one has worked out the new one. The same thread reports these sales, all above 40% profit, in Reinforcement systems:
+
+  | Goods | Profit (credits) | Margin | Merits |
+  | --- | --- | --- | --- |
+  | 256 Indite, bulk | 1,362,176 | 66% | 83 |
+  | 256 Uraninite, bulk | 761,088 | 263% | 99 |
+  | 512 Polymers, bulk | 4,734,976 | 16,514% | 31 |
+  | Silver (Fortified system) | 7,097,051 | 42% | 62 |
+  | Silver (Stronghold system) | 7,069,825 | 41% | 29 |
+
+  The player concluded that both profit and margin affect merits. Neither fits the square-root formula or a rule that merits rise with profit.
+
+Reading of the 2026 data: the 40% margin is a threshold, but merits do not rise with profit above it. Two sales with about the same profit and margin paid 62 and 29 merits. The Polymers sale had the largest profit and paid the fewest. The variable that would explain this is unknown. The data points are from one player's journals and have not been verified.
+
+What this does not settle: the live formula. The figures conflict (per profit, per ton, square root), most date from 2025 or earlier, and the one 2026 source (March) says the formula changed and was not worked out. A number from this list should not be shown in WFMT as an estimate.
 
 ## Open items
 
