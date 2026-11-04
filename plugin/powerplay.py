@@ -473,7 +473,7 @@ _PLEDGE_EVENT_APPLIERS = {
 # Events that carry PowerplayState/Powers for the current system when it's
 # powerplay-relevant. "Location" is handled separately (it also doubles as
 # the not-pledged checkpoint).
-_SYSTEM_CONTEXT_EVENTS = ("FSDJump", "Docked")
+_SYSTEM_CONTEXT_EVENTS = ("FSDJump", "CarrierJump", "Docked")
 
 # Events that carry a system's full Powerplay standing (state, control
 # progress, reinforcement, undermining) for the per-system ledger. Docked
@@ -702,6 +702,8 @@ class PowerplayController:
         self._sales_scan_status = ""
         self._sales_scan_running = False
         self._sales_caught_up: set = set()
+        self._sales_marks: Dict[str, str] = {}       # per commander: when a sale catch-up last finished (saved with the ledger)
+        self._sales_poll_pending = False
         self._sales_banner = False
         self.tab_prefs = TabPrefs()
         # Start-up journal scan (powerplay_backfill.py): runs on a worker thread, answers on a
@@ -777,9 +779,21 @@ class PowerplayController:
             logger.info("Restored Powerplay ledger for %s: %d system(s), %d archived cycle(s)",
                         cmdr, len(self.ledger.records), len(self.ledger.archive))
         self._start_scan()
-        if record_sales_enabled() and cmdr not in self._sales_caught_up:
-            self._sales_caught_up.add(cmdr)      # once per commander per launch: the live feed and the button cover the rest
-            self.rescan_sales(full=False)
+        mark = data.get("sales_scanned")
+        if isinstance(mark, str) and mark:
+            self._sales_marks[cmdr] = mark
+        self._catch_up_sales()
+
+    def _catch_up_sales(self) -> None:
+        """The automatic sale catch-up, once per commander per launch. A scan that is still busy with another commander is waited for
+        (this is tried again on the next journal event), so a commander is only marked once their scan has actually started."""
+        cmdr = self._cmdr
+        if not cmdr or cmdr in self._sales_caught_up or self.sale_log is None or not record_sales_enabled():
+            return
+        if self._sales_scan_running:
+            return
+        self._sales_caught_up.add(cmdr)      # the live feed and the Settings button cover the rest
+        self.rescan_sales(full=False)
 
     # --- start-up journal scan ------------------------------------------------
 
@@ -881,14 +895,18 @@ class PowerplayController:
         except Exception:
             logger.warning("Could not write the sale-merit log", exc_info=True)
 
-    def _poll_sales_scan(self) -> None:
+    def _poll_sales_scan(self, from_timer: bool = False) -> None:
         """Main thread (via after() and on every journal event): take the panel notice down once the sale scan has finished."""
+        if from_timer:
+            self._sales_poll_pending = False
         if self._sales_scan_running:
-            if self._panel_parent is not None:
-                self._panel_parent.after(500, self._poll_sales_scan)
+            if self._panel_parent is not None and not self._sales_poll_pending:      # one timer chain, however many events arrive
+                self._sales_poll_pending = True
+                self._panel_parent.after(500, lambda: self._poll_sales_scan(True))
         elif self._sales_banner:
             self._sales_banner = False
             catchup_status.end("Sale merits")
+            self._persist_ledger()      # keeps the catch-up marker the scan left
 
     def sale_log_path(self) -> str:
         return self.sale_log.path if self.sale_log is not None else ""
@@ -908,26 +926,29 @@ class PowerplayController:
             self._sales_scan_status = "No journal folder found: set EDMC's Journal directory."
             return False
         cmdr, log = self._cmdr, self.sale_log
-        since = None
-        if not full and not log.missing_rank(cmdr):      # rows from before the rank column need every journal read once
-            newest = _parse_ts(log.latest(cmdr))
-            since = newest - timedelta(days=2) if newest else None
-        everything = since is None
+        started = datetime.now(timezone.utc)
         self._sales_scan_running = True
         self._sales_scan_status = "Reading journals…"
         self._sales_banner = True
         catchup_status.begin("Sale merits")      # the panel notice, after a second and a half
-        if self._panel_parent is not None:
-            self._panel_parent.after(500, self._poll_sales_scan)
+        self._poll_sales_scan()
 
         def work() -> None:
             try:
+                # Decided here, off the Tk thread, because it reads the whole log. Rows from before the rank column need every journal read
+                # once; otherwise the journals written since the last finished catch-up (or the newest logged sale) are enough, two days back.
+                since = None
+                if not full and not log.missing_rank(cmdr):
+                    newest = _parse_ts(self._sales_marks.get(cmdr, "")) or _parse_ts(log.latest(cmdr))
+                    since = newest - timedelta(days=2) if newest else None
+                everything = since is None
                 def progress(done: int, total: int) -> None:
                     self._sales_scan_status = f"Reading journals… {done} of {total} files"
                 found = sale_merits.scan_journals(folder, cmdr, PowerplayTracker, progress, since)
                 added = log.add(found)
                 if everything:
                     log.settle_rank(cmdr)
+                self._sales_marks[cmdr] = started.strftime("%Y-%m-%dT%H:%M:%SZ")
                 self._sales_scan_status = f"Done: {len(found)} sales found, {added} new added to the log."
             except Exception:
                 logger.warning("Sale-merit rescan failed", exc_info=True)
@@ -945,6 +966,7 @@ class PowerplayController:
             "ledger": self.ledger.to_dict(),
             "pinned_systems": self.tab_prefs.pinned,
             "hidden_systems": self.tab_prefs.hidden,
+            **({"sales_scanned": self._sales_marks[self._cmdr]} if self._cmdr in self._sales_marks else {}),
         })
 
     def _record_standing(self, system: Optional[str], entry: Mapping[str, Any]) -> None:
@@ -1010,6 +1032,7 @@ class PowerplayController:
             self._switch_cmdr(cmdr)
         self._poll_scan()
         self._poll_sales_scan()
+        self._catch_up_sales()
         self.ledger.touch(entry.get("timestamp"))
         self._tick_cycle()
         for found in self._megaships.feed(entry):

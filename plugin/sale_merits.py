@@ -162,7 +162,10 @@ class SaleTracker:
             self._station = str(entry.get("StationName") or "")
         elif event == "Location":
             self._station = str(entry.get("StationName") or "") if entry.get("Docked") else ""
-        elif event in ("Undocked", "FSDJump", "CarrierJump", "SupercruiseEntry"):
+        elif event == "CarrierJump":
+            # Jumping aboard a fleet carrier leaves the commander docked at it, and no `Docked` event follows.
+            self._station = str(entry.get("StationName") or "") if entry.get("Docked") else ""
+        elif event in ("Undocked", "FSDJump", "SupercruiseEntry"):
             self._station = ""
         elif event == "MiningRefined":
             self._mined.add(_norm(entry.get("Type")))
@@ -347,7 +350,7 @@ class SaleLog:
 # --- replaying journals ---------------------------------------------------------------------------------
 
 _PLEDGE_EVENTS = ("Powerplay", "PowerplayJoin", "PowerplayLeave", "PowerplayDefect")
-_CONTEXT_EVENTS = ("Location", "FSDJump", "Docked")
+_CONTEXT_EVENTS = ("Location", "FSDJump", "CarrierJump", "Docked")
 _DELIVERY_EVENTS = ("PowerplayDeliver", "SearchAndRescue", "DeliverPowerMicroResources")
 SALE_EVENTS = (
     "Fileheader", "Commander", "LoadGame", "Location", "FSDJump", "CarrierJump", "Docked", "Undocked", "SupercruiseEntry", "MarketBuy",
@@ -445,11 +448,17 @@ def scan_journals(folder: str, cmdr: str, tracker_factory: Callable[[], Any],
     root = os.path.expanduser(folder)
     try:
         names = sorted(name for name in os.listdir(root) if name.startswith("Journal") and name.endswith(".log"))
-        if since is not None:
-            cutoff = since.timestamp()
-            names = [name for name in names if os.path.getmtime(os.path.join(root, name)) >= cutoff]
     except OSError:
         return []
+    if since is not None:
+        cutoff = since.timestamp()
+
+        def written_since(name: str) -> bool:
+            try:
+                return os.path.getmtime(os.path.join(root, name)) >= cutoff
+            except OSError:      # a file that vanished or cannot be read must not stop the scan: keep it, and the read skips it
+                return True
+        names = [name for name in names if written_since(name)]
     found: List[Sale] = []
     for index, name in enumerate(names, 1):
         before = len(found)

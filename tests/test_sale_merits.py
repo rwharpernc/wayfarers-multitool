@@ -142,6 +142,13 @@ class PairingTests(unittest.TestCase):
     def test_black_market_goods_are_marked(self):
         self.assertTrue(run([("e", sell(0, BlackMarket=True))])[0].black_market)
 
+    def test_a_carrier_jump_leaves_the_commander_docked_at_the_carrier(self):
+        jump = {"timestamp": at(0), "event": "CarrierJump", "Docked": True, "StationName": "K7Q-L2B"}
+        sales = run([("e", jump), ("e", sell(1))])
+        self.assertEqual([s.station for s in sales], ["K7Q-L2B"])
+        away = {"timestamp": at(0), "event": "CarrierJump", "Docked": False}
+        self.assertEqual([s.station for s in run([("e", away), ("e", sell(1))])], [""])
+
     def test_a_new_file_starts_fresh(self):
         tracker = S.SaleTracker("Bocheaux")
         tracker.feed(sell(0), lambda: CTX)
@@ -323,8 +330,65 @@ class ReplayTests(unittest.TestCase):
         self.assertEqual([s.time for s in recent], [at(0, 7)])
         self.assertEqual(len(everything), 2)
 
+    def test_a_sale_after_a_carrier_jump_uses_the_system_it_arrived_in(self):
+        jump = {"timestamp": at(0, 2), "event": "CarrierJump", "StarSystem": "Ngurii", "PowerplayState": "Fortified",
+                "ControllingPower": ME, "Powers": [ME], "Docked": True, "StationName": "K7Q-L2B"}
+        start = self._journal([])[:-1]      # the pledge, but still in no system
+        sales = S.replay_sales(start + [jump, sell(5, minute=2)], "Bocheaux", powerplay.PowerplayTracker)
+        self.assertEqual([(s.system, s.station) for s in sales], [("Ngurii", "K7Q-L2B")])
+
+    def test_a_file_whose_time_cannot_be_read_is_still_scanned(self):
+        from datetime import datetime, timezone
+        with tempfile.TemporaryDirectory() as folder:
+            with open(os.path.join(folder, "Journal.2026-10-03T120000.01.log"), "w", encoding="utf-8") as handle:
+                for entry in self._journal([sell(0, minute=7), merit(1, 70, minute=7)]):
+                    handle.write(json.dumps(entry) + "\n")
+            with mock.patch("os.path.getmtime", side_effect=OSError):
+                found = S.scan_journals(folder, "Bocheaux", powerplay.PowerplayTracker, since=datetime.now(timezone.utc))
+        self.assertEqual(len(found), 1)
+
     def test_a_missing_folder_gives_nothing(self):
         self.assertEqual(S.scan_journals("/nonexistent/wfmt-journals", "Bocheaux", powerplay.PowerplayTracker), [])
+
+
+class CatchUpTests(unittest.TestCase):
+    """The controller's automatic sale catch-up and its scan notice."""
+
+    def _controller(self):
+        controller = powerplay.PowerplayController()
+        controller.sale_log = mock.MagicMock()
+        controller._cmdr = "Bocheaux"
+        controller.rescan_sales = mock.MagicMock(return_value=True)
+        return controller
+
+    def test_a_busy_scan_is_waited_for_and_the_commander_is_not_marked_until_it_starts(self):
+        controller = self._controller()
+        controller._sales_scan_running = True
+        with mock.patch.object(powerplay, "record_sales_enabled", return_value=True):
+            controller._catch_up_sales()
+            controller.rescan_sales.assert_not_called()
+            self.assertNotIn("Bocheaux", controller._sales_caught_up)
+            controller._sales_scan_running = False
+            controller._catch_up_sales()
+            controller._catch_up_sales()
+        controller.rescan_sales.assert_called_once_with(full=False)
+        self.assertIn("Bocheaux", controller._sales_caught_up)
+
+    def test_nothing_is_caught_up_while_recording_is_off(self):
+        controller = self._controller()
+        with mock.patch.object(powerplay, "record_sales_enabled", return_value=False):
+            controller._catch_up_sales()
+        controller.rescan_sales.assert_not_called()
+
+    def test_events_during_a_scan_keep_a_single_timer_chain(self):
+        controller = self._controller()
+        controller._panel_parent = mock.MagicMock()
+        controller._sales_scan_running = True
+        for _ in range(5):
+            controller._poll_sales_scan()
+        self.assertEqual(controller._panel_parent.after.call_count, 1)
+        controller._poll_sales_scan(True)       # the timer fires: the next one may be set
+        self.assertEqual(controller._panel_parent.after.call_count, 2)
 
 
 if __name__ == "__main__":

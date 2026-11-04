@@ -641,7 +641,9 @@ class ColonizationWindow:
             return
         asks = [rcc_client.SiteAsk(s.market_id, s.system, s.name, self._address(s)) for s in sites]
         cmdr = self._cmdr
-        job: Dict[str, Any] = {"done": False, "figures": {}, "cancel": False}   # "cancel" is set on the main thread when the window closes
+        # "cancel" is set on the main thread when the window closes; "seen" is each site as it stood when Raven was asked, not when it answered
+        job: Dict[str, Any] = {"done": False, "figures": {}, "cancel": False,
+                               "seen": {s.market_id: (s.remaining_total, s.complete) for s in self._sites.values()}}
         self._raven_busy = True
         self._raven_button.set_enabled(False)
         self._announce(f"Asking Raven Colonial about {len(asks)} site{'s' if len(asks) != 1 else ''}…")
@@ -672,7 +674,7 @@ class ColonizationWindow:
             self._announce("The refresh failed unexpectedly; see the EDMC log.")
             return
         self._raven_figures, self._raven_when, self._raven_cmdr = figures, datetime.now().astimezone(), cmdr
-        self._raven_seen = {s.market_id: (s.remaining_total, s.complete) for s in self._sites.values()}
+        self._raven_seen = job["seen"]
         self._refresh()
         self._announce(view.raven_summary([s for s in self._sites.values() if s.active], figures), ok=True)
 
