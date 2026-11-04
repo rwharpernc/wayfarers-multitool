@@ -208,6 +208,13 @@ class SaleLog:
         self.path = path
         self._lock = threading.Lock()
         self._keys: Optional[Set[Tuple[str, str, str, int, int]]] = None
+        self._latest: Dict[str, str] = {}
+
+    def latest(self, commander: str) -> str:
+        """The timestamp of the newest sale logged for `commander` (case ignored), or "" when there is none."""
+        with self._lock:
+            self._load()
+            return self._latest.get(commander.strip().casefold(), "")
 
     def _load(self) -> Set[Tuple[str, str, str, int, int]]:
         if self._keys is None:
@@ -215,8 +222,10 @@ class SaleLog:
             try:
                 with open(self.path, newline="", encoding="utf-8") as handle:
                     for row in csv.DictReader(handle):
-                        keys.add(((row.get("commander") or "").casefold(), row.get("time") or "", (row.get("commodity") or "").casefold(),
-                                  _int(row.get("tons")), _int(row.get("total_sale"))))
+                        who, when = (row.get("commander") or "").casefold(), row.get("time") or ""
+                        keys.add((who, when, (row.get("commodity") or "").casefold(), _int(row.get("tons")), _int(row.get("total_sale"))))
+                        if when > self._latest.get(who, ""):
+                            self._latest[who] = when
             except OSError:
                 pass
             self._keys = keys
@@ -242,6 +251,9 @@ class SaleLog:
             except OSError:
                 return 0
             keys.update(sale.key for sale in new)
+            for sale in new:
+                if sale.time > self._latest.get(sale.commander.casefold(), ""):
+                    self._latest[sale.commander.casefold()] = sale.time
             return len(new)
 
 
@@ -330,14 +342,17 @@ def _file_entries(path: str) -> Iterable[Dict[str, Any]]:
 
 
 def scan_journals(folder: str, cmdr: str, tracker_factory: Callable[[], Any],
-                  progress: Optional[Callable[[int, int], None]] = None) -> List[Sale]:
+                  progress: Optional[Callable[[int, int], None]] = None, since: Optional[datetime] = None) -> List[Sale]:
     """Every sale of `cmdr` in the Journal*.log files of `folder`, oldest file first. An unreadable folder gives an empty list.
-    `progress(done, total)` is called after each file. Safe on a worker thread."""
+    With `since`, files last written before it are skipped. `progress(done, total)` is called after each file. Safe on a worker thread."""
+    root = os.path.expanduser(folder)
     try:
-        names = sorted(name for name in os.listdir(os.path.expanduser(folder)) if name.startswith("Journal") and name.endswith(".log"))
+        names = sorted(name for name in os.listdir(root) if name.startswith("Journal") and name.endswith(".log"))
+        if since is not None:
+            cutoff = since.timestamp()
+            names = [name for name in names if os.path.getmtime(os.path.join(root, name)) >= cutoff]
     except OSError:
         return []
-    root = os.path.expanduser(folder)
     found: List[Sale] = []
     for index, name in enumerate(names, 1):
         try:

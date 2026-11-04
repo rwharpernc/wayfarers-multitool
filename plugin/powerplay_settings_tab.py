@@ -85,7 +85,7 @@ class SettingsTab:
         path = tk.Frame(body, bg=P.PANE)
         path.pack(fill="x", padx=P.PAD, pady=P.PAD_SM)
         FlatButton(path, "Rescan journals for sales", self._rescan,
-                   tip="Rescan journals for sales - read all of this commander's journals and add the sales not yet in the log (can take a few minutes)").pack(side="left")
+                   tip="Rescan journals for sales - read all of this commander's journals and add the sales not yet in the log (WFMT already catches up on its own at start-up; this reads everything, which can take a minute or more)").pack(side="left")
         tk.Label(path, textvariable=self._sales_status, fg=P.MUTED, bg=P.PANE, anchor="w").pack(side="left", padx=(P.PAD_SM, 0))
         NoteLabel(body, text="File: " + (powerplay.controller.sale_log_path() or "(available once EDMC has started)"), fg=P.FAINT).pack(fill="x")
 

@@ -181,6 +181,14 @@ class LogTests(unittest.TestCase):
         with open(self.path, encoding="utf-8") as handle:
             self.assertEqual(len(handle.readlines()), 3)
 
+    def test_the_newest_sale_of_each_commander_is_known_even_after_a_restart(self):
+        log = S.SaleLog(self.path)
+        self.assertEqual(log.latest("Bocheaux"), "")
+        log.add(self._sales())
+        self.assertEqual(log.latest("BOCHEAUX"), at(20))
+        self.assertEqual(S.SaleLog(self.path).latest("bocheaux"), at(20))
+        self.assertEqual(S.SaleLog(self.path).latest("Someone Else"), "")
+
     def test_a_file_that_cannot_be_written_is_survived(self):
         log = S.SaleLog(os.path.join(self.dir.name, "missing", S.LOG_FILENAME))
         self.assertEqual(log.add(self._sales()), 0)
@@ -230,6 +238,22 @@ class ReplayTests(unittest.TestCase):
             sales = S.scan_journals(folder, "Bocheaux", powerplay.PowerplayTracker, lambda done, total: seen.append((done, total)))
         self.assertEqual([(s.time, s.merits) for s in sales], [(at(0, 5), 70), (at(0, 7), 70)])
         self.assertEqual(seen, [(1, 2), (2, 2)])
+
+    def test_since_skips_journals_last_written_before_it(self):
+        from datetime import datetime, timezone
+        with tempfile.TemporaryDirectory() as folder:
+            for name, minute, age in (("Journal.2026-10-02T120000.01.log", 5, 10 * 86400), ("Journal.2026-10-03T120000.01.log", 7, 0)):
+                path = os.path.join(folder, name)
+                with open(path, "w", encoding="utf-8") as handle:
+                    for entry in self._journal([sell(0, minute=minute), merit(1, 70, minute=minute)]):
+                        handle.write(json.dumps(entry) + "\n")
+                stamp = datetime.now(timezone.utc).timestamp() - age
+                os.utime(path, (stamp, stamp))
+            since = datetime.fromtimestamp(datetime.now(timezone.utc).timestamp() - 86400, timezone.utc)
+            recent = S.scan_journals(folder, "Bocheaux", powerplay.PowerplayTracker, since=since)
+            everything = S.scan_journals(folder, "Bocheaux", powerplay.PowerplayTracker)
+        self.assertEqual([s.time for s in recent], [at(0, 7)])
+        self.assertEqual(len(everything), 2)
 
     def test_a_missing_folder_gives_nothing(self):
         self.assertEqual(S.scan_journals("/nonexistent/wfmt-journals", "Bocheaux", powerplay.PowerplayTracker), [])

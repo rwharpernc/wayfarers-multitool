@@ -701,6 +701,7 @@ class PowerplayController:
         self.sale_log: Optional[sale_merits.SaleLog] = None
         self._sales_scan_status = ""
         self._sales_scan_running = False
+        self._sales_caught_up: set = set()
         self.tab_prefs = TabPrefs()
         # Start-up journal scan (powerplay_backfill.py): runs on a worker thread, answers on a
         # queue, and live ledger writes wait in `_scan_buffer` until it has been applied.
@@ -775,6 +776,9 @@ class PowerplayController:
             logger.info("Restored Powerplay ledger for %s: %d system(s), %d archived cycle(s)",
                         cmdr, len(self.ledger.records), len(self.ledger.archive))
         self._start_scan()
+        if record_sales_enabled() and cmdr not in self._sales_caught_up:
+            self._sales_caught_up.add(cmdr)      # once per commander per launch: the live feed and the button cover the rest
+            self.rescan_sales(full=False)
 
     # --- start-up journal scan ------------------------------------------------
 
@@ -882,8 +886,10 @@ class PowerplayController:
     def sales_scan_status(self) -> str:
         return self._sales_scan_status
 
-    def rescan_sales(self) -> bool:
-        """Read all of this commander's journals for sales and add the ones not yet in the log (Settings: Rescan journals for sales). False when it cannot start."""
+    def rescan_sales(self, full: bool = True) -> bool:
+        """Read this commander's journals for sales and add the ones not yet in the log (Settings: Rescan journals for sales reads them all).
+        With `full` False only the journals written since the newest logged sale (two days earlier, to cover a long session) are read: the automatic catch-up.
+        False when it cannot start."""
         if self._sales_scan_running or self.sale_log is None or not self._cmdr:
             return False
         from . import journal_scan  # deferred: only needed for EDMC's configured folder
@@ -892,6 +898,10 @@ class PowerplayController:
             self._sales_scan_status = "No journal folder found: set EDMC's Journal directory."
             return False
         cmdr, log = self._cmdr, self.sale_log
+        since = None
+        if not full:
+            newest = _parse_ts(log.latest(cmdr))
+            since = newest - timedelta(days=2) if newest else None
         self._sales_scan_running = True
         self._sales_scan_status = "Reading journals…"
 
@@ -899,7 +909,7 @@ class PowerplayController:
             try:
                 def progress(done: int, total: int) -> None:
                     self._sales_scan_status = f"Reading journals… {done} of {total} files"
-                found = sale_merits.scan_journals(folder, cmdr, PowerplayTracker, progress)
+                found = sale_merits.scan_journals(folder, cmdr, PowerplayTracker, progress, since)
                 added = log.add(found)
                 self._sales_scan_status = f"Done: {len(found)} sales found, {added} new added to the log."
             except Exception:
@@ -1438,7 +1448,7 @@ class PowerplayController:
         notebook.add(tab, text="Powerplay")
         nb.Label(
             tab,
-            text=("The merits-per-Control-Point ratios, the Copy Progress format and the cycles to scan are on the Settings tab of the Powerplay Sessions "
+            text=("The merits-per-Control-Point ratios, the Copy Progress format, the cycles to scan and the sale-merit log are on the Settings tab of the Powerplay Sessions "
                   "window (press Report on the Powerplay panel to open it). The Powerplay card on the in-game overlay is set up on the Overlays tab."),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=10)
