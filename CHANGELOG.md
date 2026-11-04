@@ -3,7 +3,7 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
-## 1.5.2 (not yet released; for testing on the `patch/1.5.2` branch)
+## 1.5.2 (not yet released; for testing on the `test/windows-combined` branch)
 
 ### Added
 

@@ -1,6 +1,6 @@
 # Project Status
 
-Scope: the release state, branches, test state and unverified items of Wayfarer's Multitool (WFMT) as of 2026-11-03. The file is kept in Git because Git is the only thing shared between the two test machines, one running Windows and one running Linux.
+Scope: the release state, branches, test state and unverified items of Wayfarer's Multitool (WFMT) as of 2026-11-04. The file is kept in Git because Git is the only thing shared between the two test machines, one running Windows and one running Linux.
 
 ## Release
 
@@ -72,6 +72,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 ## Branches
 
+- 1.5.2 is not yet released. Its work is on the branch `test/windows-combined`, the only branch besides `master`; the earlier feature and patch branches for it were merged into it and deleted. It is merged into `master` when 1.5.2 is released.
 - One long-lived branch exists: `master`. The feature branch `feature/ux-improvements` (version 1.5.0) was merged into it for the 1.5.0 release, and `patch/1.5.1` (version 1.5.1) for the 1.5.1 release.
 - A release is built on a branch named for it (`release/1.3.0` was the last). Releases 1.3.1, 1.3.2 and 1.3.3 were built on `bugfix/1.3.1`, `bugfix/1.3.2` and `bugfix/1.3.3`. Each branch is merged fast-forward into `master` and deleted after the tag is created.
 - A fix to a released version is made on a short branch cut from `master` (for example `bugfix/1.3.4`) and merged back.
@@ -82,6 +83,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 | Date | Release | Result |
 | --- | --- | --- |
+| 2026-11-04 | 1.5.2 (unreleased, `test/windows-combined`) | 4,031 passed, 12 skipped (Docker, Linux) |
 | 2026-11-03 | 1.5.1 | 3,923 passed, 13 skipped (Docker, Linux) |
 | 2026-11-02 | 1.5.0 | 3,894 passed, 13 skipped (Docker, Linux) |
 | 2026-11-01 | 1.4.2 | 3,857 passed, 12 skipped (Docker, Linux) |
