@@ -33,6 +33,7 @@ PER_COMMANDER = {
     "codex_completionist_state.json": "one tally per commander (codex_completionist_state.py)",
     "bgs_state.json": "keyed by commander (bgs_state.py)",
     "powerplay_state.json": "keyed by commander (powerplay_state.py)",
+    "sale_merits.csv": "one file, one commander column on every row; a sale of another commander is never written to it and a rescan reads only the active commander's journals (sale_merits.py)",
     "mining_hotspots.json": "one list per commander (commander_data.py, HotspotRepository.set_commander)",
     "mining_coverage.json": "one map per commander (commander_data.py, CoverageRepository.set_commander)",
     "mining_body_cache.json": "one set of looked-up systems per commander (commander_data.py, mining_body_cache.BodyCache.set_commander)",

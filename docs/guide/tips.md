@@ -23,7 +23,7 @@ Usage notes that are not covered by a single feature guide. Each mode guide has 
 - EDMC passes WFMT only the events that occur while EDMC runs. When EDMC starts, WFMT reads recent journals and catches up without counting any event twice. The look-back period differs by feature (see [If EDMC wasn't running](getting-started.md#if-edmc-wasnt-running)). Data the game does not write cannot be recovered.
 - WFMT uses what the game writes to its journal, plus data from Frontier's servers and community services. Where a figure is uncertain, WFMT marks it. Each mode guide lists these gaps in "What the game does and doesn't tell us".
 - Data is stored per commander. Switching commanders in EDMC switches the data. Overlay choices (enabled cards, positions, appearance) are also per commander. Overlay Placement can copy them from another commander.
-- A gray line under the mode buttons reading *Reading your journals to catch up (...)* indicates that a first-time or long catch-up is running. It ends by itself.
+- An amber line under the mode buttons reading *Reading your journals to catch up (...)* indicates that a first-time or long catch-up is running. It ends by itself.
 - **Linux:**
   - EDMC's **Journal directory** must point at Elite's journal folder inside the Proton or Wine folder.
   - Auto-Honk and the screenshot timer require `xdotool`.

@@ -128,6 +128,7 @@ A window listing the rare commodities nearest to the current system.
 - Deliveries and unattributed merits produce no Control Points.
 - The Rare Goods list is a snapshot. A new rare good requires an update of the list.
 - A megaship scanned without dropping out of supercruise at it first is not named by the journal and is not counted (section 10.6).
+- The merits a sale earns are recorded (section 10.9) but not explained: no source gives the current rule.
 - No daily, weekly or per-delivery merit cap has been found, and WFMT shows none. The evidence is in [POWERPLAY_MERIT_RESEARCH.md](POWERPLAY_MERIT_RESEARCH.md).
 - The Systems tab (section 10) knows only what the commander's own client has seen. The standing of a system updates when the commander jumps in or logs in there. Cycles from before the feature was installed are rebuilt from the journals (section 10.4) only as far back as the journals exist and the scan depth allows.
 
@@ -245,6 +246,20 @@ Tests:
 - `tests/test_powerplay_ledger.py`: cycle boundaries, snapshot parsing, standing changes, merit tallies, rollover and carried baselines, the archive cap, tab ordering, the pin cap, serialization and the per-commander state file.
 - `tests/test_powerplay_backfill.py`: the replay (attribution, commanders kept apart, files and the window), applying ops twice, same-second merits, a gap across a cycle boundary, rebuild and adoption, the scan plan in every mode, empty-cycle rows, the per-day tally (boundaries, archiving, saving, the one-time rebuild), reading real files, and the delivery classification (a hand-in claiming the merit events that follow, a late first merit, the legacy signals ignored once `PowerplayDeliver` is seen).
 - The widgets are not covered by an automated test.
+
+### 10.9 Sale-merit log
+
+Frontier does not publish how a sale earns merits, and the players' reports conflict ([POWERPLAY_MERIT_RESEARCH.md](POWERPLAY_MERIT_RESEARCH.md)). `sale_merits.py` records the data needed to work the rule out. It estimates nothing and shows nothing in the panel.
+
+- **Pairing.** The journal does not link a sale to its merits, so they are paired by time, as for hand-ins and megaship scans. A `MarketSell` claims the first `PowerplayMerits` within `FIRST_MERIT_S` (6) seconds after it, and further merit events within `FOLLOW_ON_S` (3) seconds of the last one claimed. The next `MarketSell`, or any other event after the window, closes the sale. A merit event that a hand-in has claimed (section 2.3) is never taken. The window comes from the owner's journals: of the sales with exactly one merit event within 30 seconds, 97% had it 0 to 4 seconds after the sale.
+- **What is recorded.** Only sales made while pledged, in a system with a Powerplay state (`context_of`). A sale that paid no merits is recorded with 0, because the zero-pay sales are part of the question. Each row has the time, commander, Power, system, station, the system's state and holder, what merits there count as, the commodity, tons, sell price, average price paid, total sale, profit, margin in percent (empty when the cost is 0), the merits and the number of merit events, the system where the commodity was last bought (`MarketBuy`), whether it was mined (a `MiningRefined` of the same commodity earlier in the journal) and whether it was a black-market sale.
+- **File.** `sale_merits.csv` in the plugin folder, one row per sale, for every commander (a column names them). It is append only. A sale is never written twice: its key is commander, time, commodity, tons and total sale, so a live record, a rescan and a restart agree. It is listed in `update.py` `_OWN_DATA_FILES` so an update leaves it alone. A file that cannot be written is logged and skipped, and never interferes with the panel.
+- **Live feed.** `PowerplayController.handle_event` feeds every event except `PowerplayMerits` to the `SaleTracker`; `_handle_merits` passes the merit event with its classification. `flush` and a change of commander write the sale still waiting.
+- **Catch-up.** The first time a commander is seen in a launch (`_switch_cmdr`), a worker thread reads the journals written since two days before that commander's newest logged sale (`SaleLog.latest`), or all of them when the log has none, replays each through a fresh `PowerplayTracker` (`replay_sales`) and adds the sales not yet in the file. The live feed covers the rest of the launch. It runs only when the log is on. It shows `catchup_status` ("Sale merits") while it runs, skips every journal file that holds no `MarketSell` (most do) and sleeps briefly between files and every `YIELD_EVERY` lines so EDMC's window keeps the interpreter.
+- **Rescan.** **Rescan journals for sales** (Settings tab) does the same for every journal. A full run over one commander's 255 sales took about 15 seconds.
+- **Setting.** `wfmt_powerplay_record_sales`, on by default. When off, nothing is written; pairing still runs.
+- **Limits.** Merits from another source within the window (exploration data sold at the same station, for example) are counted as the sale's. The log shows a few such rows: sales at a loss with merits. Treat rows with a negative margin, and rows with several merit events, as doubtful when analyzing.
+- **Tests.** `tests/test_sale_merits.py`: the pairing (window, chaining, next sale, hand-in claim, not pledged, no state), profit and margin, bought-in, mined and station, the CSV (header, no duplicates, an unwritable path) and the replay (state, commander, hand-in, folder scan). The setting is covered by `tests/powerplay_bgs_settings_smoke.py`.
 
 ## 11. The overlay card
 

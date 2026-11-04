@@ -126,7 +126,7 @@ Under the mode buttons, above the page, WFMT shows the following lines in every 
 - **Overlays**: `Overlays shown (click to hide)`, or `Overlays are hidden (click to show)` while hidden. Clicking toggles every WFMT overlay at once.
   - See [Overlay setup](../OVERLAY_SETUP.md#hiding-the-overlays-for-a-while).
   - Windows also has a keyboard shortcut, and both systems have a chat command: see [Shortcuts](shortcuts.md).
-- **Catch-up notice** (gray, shown only while applicable): `Reading your journals to catch up (the names of the tasks). This happens once and can take a minute.` It appears when a journal read (Powerplay, the BGS replay, the Codex rebuild and similar) has run for more than about a second and a half. Nothing is stored; the notice disappears when the reads finish.
+- **Catch-up notice** (amber, shown only while applicable): `Reading your journals to catch up (the names of the tasks). EDMC may be slow to respond until this finishes. It usually takes under a minute.` It appears when a journal read (Powerplay, the sale-merit log, the BGS replay, the Codex rebuild and similar) has run for more than about a second and a half. Nothing is stored; the notice disappears when the reads finish.
 
 ### Pages
 

@@ -28,7 +28,7 @@ class CatchupStatusTests(unittest.TestCase):
         message = C.text(now=100.0 + C.SHOW_AFTER_MS / 1000 + 0.1)
         self.assertIn("Codex", message)
         self.assertIn("Powerplay", message)
-        self.assertIn("once", message)
+        self.assertIn("slow to respond", message)
 
     def test_a_finished_read_goes_away(self) -> None:
         C._running["BGS"] = 100.0

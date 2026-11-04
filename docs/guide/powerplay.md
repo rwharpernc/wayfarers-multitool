@@ -270,4 +270,15 @@ The Powerplay settings are on the **Settings** tab of the **Powerplay Sessions**
 |---|---|---|
 | Section **Control Points: merits per 1 CP** (Acquisition, Reinforcement, Undermining) | 4.0, 2.5, 4.2 | Merits required for 1 Control Point per activity. The defaults are community estimates. A ratio must be above 0; any other value leaves the saved ratio unchanged. |
 | **Copy Progress** format | `[system](link) - N merits (~N CP) - state` | Format of each line copied by **Copy Progress**. Placeholders: `{system}`, `{system_url}`, `{merits}`, `{cp}`, `{state}`. **Reset to default** restores the standard format. A blank format is the default. |
+| **Record sale merits** | On | Writes each sale you make while pledged, in a system with a Powerplay state, to `sale_merits.csv` in the plugin folder with the merits that followed it (see Sale-merit log below). WFMT catches up on sales made while EDMC was closed on its own at start-up; **Rescan journals for sales** reads every journal. |
 | **Cycles to scan** | 4 | Number of cycles back (current cycle included, 1 to 12) that the start-up scan covers for a commander not seen before. |
+
+## Sale-merit log
+
+Frontier does not say how selling goods earns merits, and players' reports disagree. So that the rule can be worked out from real sales, WFMT keeps a spreadsheet file of your own:
+
+- **What it holds.** One row per sale made while you are pledged and in a system with a Powerplay state: the goods, tons, prices, profit, margin, the system's state and holder, and the merits that followed within a few seconds. A sale that earned nothing is a row with 0 merits.
+- **Where.** `sale_merits.csv` in the WFMT plugin folder. Open it in a spreadsheet. The Settings tab shows the path.
+- **Catching up.** WFMT does this by itself: when EDMC starts and a commander is first seen, it reads the journals written since the last logged sale (all of them the first time) in the background, so sales made while EDMC was closed are added. **Rescan journals for sales** (Settings tab) reads every journal; it can take a minute or more. Neither writes a sale twice.
+- **What it is not.** It shows no estimate and nothing in the panel. The merits are matched to a sale by time, so merits from another source in the same few seconds (selling exploration data at the same station, for example) are counted with the sale. Be wary of a row with a loss and merits.
+- **Privacy.** The file stays on your computer. Nothing is sent anywhere.
