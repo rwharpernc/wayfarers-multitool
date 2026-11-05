@@ -20,6 +20,7 @@ Nothing is posted without a button press. The appearance of the Discord posts is
 |---|---|---|
 | **BGS report**: the tick shown in the window, one block per system with the factions, their states and influence, and the commander's activity | BGS mode, **Report** window | **Copy Summary**; the **Discord** menu in the window header: **Copy for Discord**, **Post to Discord**, **Customize post…** |
 | **Powerplay progress**: the session's merits and estimated Control Points per system, and the cycle total | Powerplay mode, **Report** (Powerplay Sessions window) | **Copy Progress**; **Copy for Discord**, **Post to Discord** and **Customize…** in a row above the tabs |
+| **Expedition summary**: the selected expedition's route, exploration and exobiology figures, and the credits its data sales earned | Exploration mode, **Expedition** window, **Log** tab | **Copy summary**; **Copy for Discord**, **Post to Discord** and **Customize…** in the row above the buttons at the foot |
 
 ## Quick start
 
@@ -94,7 +95,7 @@ A webhook belongs to one channel on one server, not to a commander. Its link can
 
 Each report is posted in one layout by default. A dialog selects another layout, switches parts of a post on and off, and saves custom layouts as templates. It changes **Copy for Discord** and **Post to Discord** together; both use the same template. **Copy Summary** and **Copy Progress** are not affected.
 
-**Opening the dialog:** the BGS Report **Discord** menu (**Customize post…**), the **Customize…** button in the Powerplay Sessions window, or **Customize posts…** on the **Settings → WFMT → Discord** tab. A **Report** box at the top switches between the BGS report and Powerplay progress.
+**Opening the dialog:** the BGS Report **Discord** menu (**Customize post…**), the **Customize…** button in the Powerplay Sessions window, the **Customize…** button in the Expedition Log, or **Customize posts…** on the **Settings → WFMT → Discord** tab. A **Report** box at the top switches between the BGS report, Powerplay progress and the Expedition summary.
 
 **Templates.** Selecting a template in the **Template** box makes it the template used for that report's posts immediately.
 
@@ -134,14 +135,28 @@ Each report is posted in one layout by default. A dialog selects another layout,
 | The cycle's total line | The cycle's merits, estimated CP and systems worked |
 | No formatting marks | Bullets without bold or italics |
 
+**Options for the Expedition summary**
+
+| Checkbox | Effect |
+|---|---|
+| Heading with the name, status and time | The title, then the status, the time taken and when it started |
+| Where it started and ended | The `From … to …` line |
+| Exploration figures | Systems, jumps, light-years, bodies scanned, first discoveries, mapped and landings |
+| Exobiology figures | Samples, species analyzed, first footfalls and the genera |
+| What you earned from sales | Credits from exploration data sold, exobiology sold and the total |
+| Unsold data (estimates) | The estimated value of data not yet sold, marked `~` |
+| Ships used | The ships recorded on the expedition |
+| Your notes | The notes you typed on the expedition |
+| No formatting marks | No bold or italics |
+
 **Built-in presets**
 
-| Preset | BGS report | Powerplay progress |
-|---|---|---|
-| **Standard** | Default layout | Default layout |
-| **Compact** | One line per system, without the pending, recovering and active lists | No Inara links, no state, no cycle line |
-| **Detailed** | Standard plus government and allegiance | Standard plus merits per activity |
-| **Plain** | No bold or italics | No bold or italics (links appear as the address in angle brackets) |
+| Preset | BGS report | Powerplay progress | Expedition summary |
+|---|---|---|---|
+| **Standard** | Default layout | Default layout | Default layout (no ships or notes) |
+| **Compact** | One line per system, without the pending, recovering and active lists | No Inara links, no state, no cycle line | Heading and sales only |
+| **Detailed** | Standard plus government and allegiance | Standard plus merits per activity | Standard plus ships and notes |
+| **Plain** | No bold or italics | No bold or italics (links appear as the address in angle brackets) | No bold or italics |
 
 **Settings that cannot be changed.** Every name is escaped, so a faction or system named `@everyone` or `*Raiders*` appears as written. Every post is sent with mentions switched off. Long posts are split under Discord's limit.
 
@@ -204,6 +219,31 @@ CYCLE 12 TOTAL — 3,400 merits · est. 1,360.0 CP · 5 systems worked   (Acquis
 
 Each system name links to its Inara page without a preview card. Posting again in the same session edits the post; a new login starts a new session and a new post.
 
+### Share an expedition
+
+1. Open the Expedition window (Exploration mode) and go to the **Log** tab.
+2. Select the expedition in the table.
+3. Press **Post to Discord** (the row above the buttons at the foot), or **Copy for Discord** to paste it by hand.
+
+The post contains the expedition's name, its status and time, where it started and ended, the exploration and exobiology figures, and the credits its data sales earned. Credits that are not yet sold are estimates, marked `~`:
+
+```
+WFMT Expedition — Example Expedition
+stopped, 4h 30m, started 2026-11-01 10:00 UTC
+From Example System to Sample Reach
+Exploration
+2 systems, 42 jumps, 3,120 ly, 180 bodies scanned (35 first discoveries), 12 mapped, 3 landings
+Exobiology
+9 samples, 3 species analyzed, 1 first footfalls (Bacterium, Fungoida)
+Sales
+Exploration data sold: 2,450,000 cr
+Exobiology sold: 5,100,000 cr
+Total earned: 7,550,000 cr
+Unsold (estimate): ~600,000 cr
+```
+
+Discord shows the headings and the figures in bold. Posting the same expedition again edits the earlier post. The **Detailed** preset adds the ships and the notes; check them before posting, since they are free text and the route names real systems.
+
 ### Copy for Discord without a webhook
 
 1. Open the report and choose **Copy for Discord** (the **Discord** menu in the BGS report; the button in the Powerplay window).
@@ -238,7 +278,7 @@ Enter the thread number in the destination's **Thread ID** ([Set up Discord](#se
 
 - **Post to Discord** sends the report text to the saved webhook address on `discord.com`. **Copy for Discord**, **Test** (which reads and posts nothing) and the plain copy buttons send no report.
 - **The Customize dialog sends nothing.** It reads local data to draw the preview and saves templates on this computer.
-- **Post content:** the report text only. It contains no commander name, but it shows the systems, factions and numbers selected for sharing, which anyone who can read the channel can read.
+- **Post content:** the report text only. It contains no commander name, but it shows the systems, factions and numbers selected for sharing (for an expedition, its name, where it started and ended, and optionally its ships and notes), which anyone who can read the channel can read.
 - **Mentions.** Every post is sent with mentions switched off, and an invisible space is inserted after any `@` in a name. Names containing `*` or `_` are shown as written instead of being formatted.
 - **Link secrecy.** Each commander's destinations are stored in `discord_webhooks.json` in the plugin folder. The file is excluded from Back up my data, is never written to the EDMC log, and is stripped from **Copy diagnostics** if it appears there.
 - The request names WFMT and its version (`WFMT/<version> (discord; +...)`), like every other WFMT request. See [What goes on the internet](internet-and-privacy.md).
@@ -268,4 +308,4 @@ Messages appear on the line at the foot of the window.
 | `Posting failed unexpectedly; see the EDMC log.` | Unexpected error. The log line contains the kind of error, never the link | [Report it](reporting-problems.md) with **Copy diagnostics** |
 | Nothing appears in the channel | The destination may point at a different channel or thread | Open the webhook in Discord and check its channel; check the destination's **Thread ID** |
 
-If **Post to Discord** produces no visible result, the line at the foot of the window states what happened. Sharing is available only in the BGS Report and Powerplay Sessions windows.
+If **Post to Discord** produces no visible result, the line at the foot of the window states what happened. Sharing is available only in the BGS Report, Powerplay Sessions and Expedition Log windows.

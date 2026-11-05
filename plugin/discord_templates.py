@@ -29,8 +29,9 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 STATE_FILENAME = "discord_templates.json"
 BGS = "bgs"
 POWERPLAY = "powerplay"
-REPORTS = (BGS, POWERPLAY)
-REPORT_LABELS = {BGS: "BGS Report", POWERPLAY: "Powerplay progress"}
+EXPEDITION = "expedition"
+REPORTS = (BGS, POWERPLAY, EXPEDITION)
+REPORT_LABELS = {BGS: "BGS Report", POWERPLAY: "Powerplay progress", EXPEDITION: "Expedition summary"}
 NAME_MAX = 40
 MAX_SAVED = 30                   # saved templates for each report
 
@@ -50,6 +51,7 @@ DEFAULTS: Dict[str, Dict[str, Any]] = {
     BGS: {"heading": True, "pinned_star": True, "bold_controller": True, "states": True, "influence": True, "state_lists": True, "activity": True,
           "details": False, "compact": False, "plain": False, "scope": SCOPE_ALL},
     POWERPLAY: {"heading": True, "power": True, "links": True, "cp": True, "state": True, "activities": False, "cycle": True, "plain": False},
+    EXPEDITION: {"heading": True, "route": True, "exploration": True, "exobiology": True, "sales": True, "unsold": True, "ships": False, "notes": False, "plain": False},
 }
 
 # (option, label) in the order the dialog lists them.
@@ -61,6 +63,9 @@ TOGGLES: Dict[str, List[Tuple[str, str]]] = {
     POWERPLAY: [("heading", "Heading"), ("power", "Your Power in the heading"), ("links", "Link each system to Inara"), ("cp", "Estimated Control Points"),
                 ("state", "The system's Powerplay state"), ("activities", "Merits by activity"), ("cycle", "The cycle's total line"),
                 ("plain", "No formatting marks (plain text)")],
+    EXPEDITION: [("heading", "Heading with the name, status and time"), ("route", "Where it started and ended"), ("exploration", "Exploration figures"),
+                 ("exobiology", "Exobiology figures"), ("sales", "What you earned from sales"), ("unsold", "Unsold data (estimates)"),
+                 ("ships", "Ships used"), ("notes", "Your notes"), ("plain", "No formatting marks (plain text)")],
 }
 
 PRESETS: Dict[str, Dict[str, Dict[str, Any]]] = {
@@ -74,6 +79,12 @@ PRESETS: Dict[str, Dict[str, Dict[str, Any]]] = {
         STANDARD: {},
         COMPACT: {"links": False, "state": False, "cycle": False},
         DETAILED: {"activities": True},
+        PLAIN: {"plain": True},
+    },
+    EXPEDITION: {
+        STANDARD: {},
+        COMPACT: {"route": False, "exploration": False, "exobiology": False, "unsold": False},
+        DETAILED: {"ships": True, "notes": True},
         PLAIN: {"plain": True},
     },
 }
