@@ -1,7 +1,7 @@
 """
 The Customize Discord posts dialog: choose how the BGS report and Powerplay progress look when they are copied for Discord or posted, with a live preview and templates you save.
 
-One window with a report choice at the top (BGS Report, Powerplay progress or Expedition summary). For each report it shows a template choice (the built-in presets Standard, Compact, Detailed
+One window with a report choice at the top (BGS Report, Powerplay progress, Expedition summary or Expedition plan). For each report it shows a template choice (the built-in presets Standard, Compact, Detailed
 and Plain, then your own), checkboxes for which parts of the post appear, and a preview of the post made from your current data (made-up example data when there is none yet),
 with how many characters and messages it comes to. Choosing a template makes it the one Copy for Discord and Post to Discord use for that report; changing a checkbox only changes
 the preview until you press Save (over one of your own templates) or Save as (a new name, since the presets cannot be changed). Rename and Delete act on your own templates.
@@ -19,7 +19,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from config import appname, config
 
-from . import bgs_discord, discord_preview, discord_templates as T, expedition_discord, powerplay_discord
+from . import bgs_discord, discord_preview, discord_templates as T, expedition_discord, expedition_plan_discord, powerplay_discord
 from .uikit import dialogs
 from .uikit import palette as P
 from .uikit import style
@@ -69,6 +69,12 @@ def render(report: str, options: Dict[str, Any]) -> Tuple[List[str], bool]:
             if messages:
                 return messages, False
         return bgs_discord.report_messages(bgs_discord.sample_view(), "Example System", [], options), True
+    if report == T.ANNOUNCEMENT:
+        if data:
+            messages = expedition_plan_discord.summary_messages(data[0], options)
+            if messages:
+                return messages, False
+        return expedition_plan_discord.summary_messages(expedition_plan_discord.sample_expedition(), options), True
     if report == T.EXPEDITION:
         if data:
             messages = expedition_discord.summary_messages(data[0], options)
@@ -298,7 +304,7 @@ class CustomizeWindow:
             self._note.configure(text=f"{self._loaded.name} is the template for this report's posts." + ("" if self._loaded.preset else " It is one of your own: change it and press Save."))
         messages, sample = render(self._report, self._options())
         total = sum(len(m) for m in messages)
-        noun = {T.BGS: "tick", T.EXPEDITION: "expedition"}.get(self._report, "session")
+        noun = {T.BGS: "tick", T.EXPEDITION: "expedition", T.ANNOUNCEMENT: "expedition"}.get(self._report, "session")
         source = f"made-up example data (there is no {noun} to show yet)" if sample else f"your current {noun}"
         self._count.configure(text=f"Preview from {source}: {total:,} characters in {len(messages)} message{'s' if len(messages) != 1 else ''} (Discord allows 2,000 in each)")
         self._text.configure(state="normal")
