@@ -108,6 +108,7 @@ Spec: [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md)
 | `powerplay_backfill.py` | Rebuilds the per-system ledger, and the megaship scans, from journal files for cycles played while EDMC was closed |
 | `powerplay_clipboard.py` | Formats the Sessions window's "Copy Progress" text, and builds the per-system progress rows (`progress_rows`) that Copy Progress and the Discord copy and post share |
 | `expedition_discord.py` | The Expedition Log summary as Discord messages: the heading, route, exploration and exobiology figures and the credits from sales, with options chosen by a template, split under Discord's message limit |
+| `expedition_plan_discord.py` | The Expedition planner's plan as a Discord announcement: heading, progress, route ends, next stop and the stops (the next ten, or all), split under Discord's message limit |
 | `powerplay_discord.py` | Powerplay progress as Discord messages: a linked line for each system with merits and estimated CP, and the cycle's total |
 | `powerplay_control_lookup.py` | Spansh lookup of which Power controls a system |
 | `megaship_scans.py` | Megaship scans for the Powerplay cycle: reads the journal (`DataScanned` uplink, `SupercruiseDestinationDrop`, the FSS megaship list, `PowerplayMerits`) to say which megaship was scanned, where, and what it earned; no Tk |

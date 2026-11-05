@@ -8,6 +8,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 ### Added
 
 - **Expedition summary for Discord.** The Expedition Log window has **Copy for Discord**, **Post to Discord** and **Customize…** for the selected expedition. The post gives its name, status and time, where it started and ended, the exploration and exobiology figures, and the credits its data sales earned, with unsold data marked as an estimate. The Customize dialog gains an **Expedition summary** report with the Standard, Compact, Detailed and Plain presets; Detailed adds the ships and notes. Posting the same expedition again edits the earlier post. Nothing is posted without a button press.
+- **Expedition plan announcement for Discord.** The Expedition window has **Copy for Discord**, **Post to Discord** and **Customize…** for the chosen expedition's plan: its name and status, the stops reached, jumps and light-years, the first and last stop, the next stop, and the next ten stops (or every stop). The Customize dialog gains an **Expedition plan** report with the same four presets. Posting again as the expedition progresses edits the earlier post.
 
 ### Fixed
 

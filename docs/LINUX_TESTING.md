@@ -9,7 +9,7 @@ Scope: the checks for testing WFMT on Linux with Elite Dangerous under Steam Pro
 - The window-fit fixes of 2026-10-21 were checked only in a Docker run (a Linux container).
 - 1.5.0 was run on Linux on 2026-11-02, before the release, with no failures (section 7r).
 - 1.5.1 was run on Linux on 2026-11-03, before the release, with no failures (section 7s). Docker: 3,923 passed, 13 skipped.
-- 1.5.3: the Copy next system fix was run on Linux on 2026-11-04 with no major issues (section 7u). Docker: 4,054 passed, 12 skipped on 2026-11-05. The Expedition summary for Discord is not yet run on Linux.
+- 1.5.3: the Copy next system fix was run on Linux on 2026-11-04 with no major issues (section 7u). Docker: 4,066 passed, 12 skipped on 2026-11-05. The Expedition summary for Discord is not yet run on Linux.
 - Seen working (KDE Wayland, Flatpak EDMC): the WFMT Settings panel; the test overlay, Discovery and Notable Bodies overlays.
 - A Flatpak EDMC requires the host-spawn permission in section 0 before overlays draw.
 
@@ -938,3 +938,4 @@ Steps are in [TEST_PLAN.md](TEST_PLAN.md) section 15.
 
 - [x] **Copy next system:** after docking at a leg's destination, the button copies the following destination (never the system you are in), and a loop wraps back to the first stop. Confirm the paste works in the galaxy map under Proton.
 - [ ] **Expedition summary for Discord:** in the Expedition window's Log tab the share row fits, **Copy for Discord** copies the summary, and **Customize…** opens on Expedition summary with a working preview. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
+- [ ] **Expedition plan announcement for Discord:** in the Expedition window's Plan tab the announce row fits, **Copy for Discord** copies the plan, and **Customize…** opens on Expedition plan with a working preview. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
