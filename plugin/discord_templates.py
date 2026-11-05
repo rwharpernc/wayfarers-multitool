@@ -30,8 +30,9 @@ STATE_FILENAME = "discord_templates.json"
 BGS = "bgs"
 POWERPLAY = "powerplay"
 EXPEDITION = "expedition"
-REPORTS = (BGS, POWERPLAY, EXPEDITION)
-REPORT_LABELS = {BGS: "BGS Report", POWERPLAY: "Powerplay progress", EXPEDITION: "Expedition summary"}
+ANNOUNCEMENT = "announcement"
+REPORTS = (BGS, POWERPLAY, EXPEDITION, ANNOUNCEMENT)
+REPORT_LABELS = {BGS: "BGS Report", POWERPLAY: "Powerplay progress", EXPEDITION: "Expedition summary", ANNOUNCEMENT: "Expedition plan"}
 NAME_MAX = 40
 MAX_SAVED = 30                   # saved templates for each report
 
@@ -52,6 +53,7 @@ DEFAULTS: Dict[str, Dict[str, Any]] = {
           "details": False, "compact": False, "plain": False, "scope": SCOPE_ALL},
     POWERPLAY: {"heading": True, "power": True, "links": True, "cp": True, "state": True, "activities": False, "cycle": True, "plain": False},
     EXPEDITION: {"heading": True, "route": True, "exploration": True, "exobiology": True, "sales": True, "unsold": True, "ships": False, "notes": False, "plain": False},
+    ANNOUNCEMENT: {"heading": True, "progress": True, "route": True, "next": True, "stops": True, "short": True, "bodies": True, "notes": False, "plain": False},
 }
 
 # (option, label) in the order the dialog lists them.
@@ -66,6 +68,9 @@ TOGGLES: Dict[str, List[Tuple[str, str]]] = {
     EXPEDITION: [("heading", "Heading with the name, status and time"), ("route", "Where it started and ended"), ("exploration", "Exploration figures"),
                  ("exobiology", "Exobiology figures"), ("sales", "What you earned from sales"), ("unsold", "Unsold data (estimates)"),
                  ("ships", "Ships used"), ("notes", "Your notes"), ("plain", "No formatting marks (plain text)")],
+    ANNOUNCEMENT: [("heading", "Heading with the name and status"), ("progress", "Stops reached, jumps and light-years"), ("route", "First and last stop"),
+                   ("next", "The next stop"), ("stops", "The list of stops"), ("short", "Only the next 10 stops"), ("bodies", "Body names with the stops"),
+                   ("notes", "Notes with the stops"), ("plain", "No formatting marks (plain text)")],
 }
 
 PRESETS: Dict[str, Dict[str, Dict[str, Any]]] = {
@@ -85,6 +90,12 @@ PRESETS: Dict[str, Dict[str, Dict[str, Any]]] = {
         STANDARD: {},
         COMPACT: {"route": False, "exploration": False, "exobiology": False, "unsold": False},
         DETAILED: {"ships": True, "notes": True},
+        PLAIN: {"plain": True},
+    },
+    ANNOUNCEMENT: {
+        STANDARD: {},
+        COMPACT: {"route": False, "stops": False},
+        DETAILED: {"short": False, "notes": True},
         PLAIN: {"plain": True},
     },
 }
