@@ -3,6 +3,17 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## 1.5.3 (unreleased)
+
+### Added
+
+- **Expedition summary for Discord.** The Expedition Log window has **Copy for Discord**, **Post to Discord** and **Customize…** for the selected expedition. The post gives its name, status and time, where it started and ended, the exploration and exobiology figures, and the credits its data sales earned, with unsold data marked as an estimate. The Customize dialog gains an **Expedition summary** report with the Standard, Compact, Detailed and Plain presets; Detailed adds the ships and notes. Posting the same expedition again edits the earlier post. Nothing is posted without a button press.
+
+### Fixed
+
+- The preview line in the Customize Discord posts dialog wraps instead of widening the window.
+- **Copy next system follows the leg you are on.** It always copied the first destination, so after docking there and buying for the next leg it kept copying the system you were in. WFMT now keeps each leg's destination in order and moves on when you dock in the system a leg was heading for: the first destination after you buy at the start, the second once you dock at the first, and so on. It never copies the system you are already in, and a loop (a round trip, or a route that ends where it starts) wraps back to its first stop. The leg is not kept when EDMC restarts, and a new search starts again at the first leg.
+
 ## 1.5.2 (2026-11-04)
 
 ### Added

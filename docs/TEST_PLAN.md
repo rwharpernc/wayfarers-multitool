@@ -1,6 +1,6 @@
-# Test Plan: 1.5.2
+# Test Plan: 1.5.3
 
-Scope: the checks to run in EDMC on the 1.5.2 build and after any release, first on **Windows** and then on **Linux**. Section 14 is new for 1.5.2.
+Scope: the checks to run in EDMC on the 1.5.3 build and after any release, first on **Windows** and then on **Linux**. Section 15 is new for 1.5.3.
 
 - Sections 1 to 4 are the quick pass over the whole release: the Rare Goods Finder, Mining, the Carrier Route window, and the Expedition, Route Planner and overlay basics.
 - The remaining in-game checks for every mode and window are under "Verification in the game" in [TODO.md](TODO.md), which holds the longer wording of each check.
@@ -11,9 +11,10 @@ Scope: the checks to run in EDMC on the 1.5.2 build and after any release, first
 
 | Platform | Automated tests | Checks in the game |
 | --- | --- | --- |
-| **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is verified only by the in-game pass. | Section 12 (1.5.0) passed in the game on 2026-11-02, before that release. Section 13 (1.5.1) passed in the game on 2026-11-03, before the release. Sections 1 to 7 are not recorded for 1.3.0 or later and are open. |
-| **Linux** | 4,031 tests passed in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-11-04 for the 1.5.2 build. Earlier runs: 3,923 passed and 13 skipped on 2026-11-03 for 1.5.1; 3,894 passed and 13 skipped on 2026-11-02 for 1.5.0; 3,857 passed and 12 skipped on 2026-11-01 for 1.4.2; 3,850 and 13 skipped for 1.4.1; 3,805 for the unpublished 1.4.0; 3,731 for 1.3.3; 3,687 for 1.3.2; 3,656 for 1.3.1; 3,639 before 1.3.0; 3,485 on 2026-10-28 before 1.2.0; 3,471 on 2026-10-27 before 1.1.0. | Section 12 (1.5.0) passed in the game on 2026-11-02, before that release. Section 13 (1.5.1) passed in the game on 2026-11-03, before the release. Earlier sections are not recorded for 1.3.0 or later. The last manual passes of them (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
+| **Windows** | The logic tests run natively and pass. The Windows-only code (the overlay, Win32 and WebView2) is verified only by the in-game pass. | Section 12 (1.5.0) passed in the game on 2026-11-02, before that release. Section 13 (1.5.1) passed in the game on 2026-11-03, before the release. Section 15 (1.5.3): the Copy next system check was done in the game on 2026-11-04 with no major issues; the Expedition summary check is open. Sections 1 to 7 are not recorded for 1.3.0 or later and are open. |
+| **Linux** | 4,031 tests passed in the Docker container (Xvfb and a window manager), 12 skipped, run on 2026-11-04 for the 1.5.2 build; 4,054 passed and 12 skipped on 2026-11-05 for the 1.5.3 build (not yet published). Earlier runs: 3,923 passed and 13 skipped on 2026-11-03 for 1.5.1; 3,894 passed and 13 skipped on 2026-11-02 for 1.5.0; 3,857 passed and 12 skipped on 2026-11-01 for 1.4.2; 3,850 and 13 skipped for 1.4.1; 3,805 for the unpublished 1.4.0; 3,731 for 1.3.3; 3,687 for 1.3.2; 3,656 for 1.3.1; 3,639 before 1.3.0; 3,485 on 2026-10-28 before 1.2.0; 3,471 on 2026-10-27 before 1.1.0. | Section 12 (1.5.0) passed in the game on 2026-11-02, before that release. Section 13 (1.5.1) passed in the game on 2026-11-03, before the release. Earlier sections are not recorded for 1.3.0 or later. The last manual passes of them (2026-10-18 and 2026-10-20) were of builds from before the rename; see [STATUS.md](STATUS.md) and [LINUX_TESTING.md](LINUX_TESTING.md). |
 
+- 1.5.3 is not yet published. The Docker tests passed on Linux (4,054 passed, 12 skipped, 2026-11-05). The Copy next system part of section 15 was tested in the game on Windows and on Linux on 2026-11-04 with no major issues; the Expedition summary for Discord is not yet tried in the game.
 - 1.5.2 was released on 2026-11-04. The Docker tests passed on Linux for the build (4,031 passed, 12 skipped, 2026-11-04); no in-game pass of section 14 is recorded.
 - 1.5.1 was released on 2026-11-03. The Docker tests passed on Linux (3,923 passed, 13 skipped), and the in-game pass of section 13 was done on Windows and on Linux on 2026-11-03, before the release, with no failures.
 - 1.5.0 was released on 2026-11-02. The Docker tests passed on Linux (3,894 passed, 13 skipped), and the in-game pass of section 12 was done on Windows and on Linux on 2026-11-02, before the release, with no failures.
@@ -255,3 +256,11 @@ The same checks apply. The differences:
 - The screen size falls back to `xrandr` (through the host from a Flatpak) when the game's files and the overlay's log cannot be read.
 
 Report the distribution, desktop, X11 or Wayland, and native or Flatpak EDMC.
+
+## 15. Added in 1.5.3
+
+Run `npm run deploy` and restart EDMC. The 1.5.3 entry of the changelog has the full list of changes. Linux has its own list in [LINUX_TESTING.md](LINUX_TESTING.md) 7u.
+
+- [x] **Start-up.** After a restart the line under the mode buttons reads `Plugin: v1.5.3`.
+- [x] **Copy next system follows the leg (Trade, Routes window).** Find a route of three or more hops and buy at the start. **Copy next system** copies the first destination. Dock there and buy for the next leg: the button now copies the second destination, never the system you are in. On a loop or a Round trip, after the last stop the button wraps back to the first. A new search starts at the first leg again.
+- [ ] **Expedition summary for Discord (Expedition window, Log tab).** Select an expedition. The row above the bottom buttons shows **Copy for Discord**, **Post to Discord** and **Customize…**, and nothing is cut off at the window's smallest size. **Copy for Discord** copies the summary; paste it into a private Discord channel and check the bold headings and figures. **Customize…** opens on Expedition summary with a preview from the selected expedition; switch to Compact and Detailed and watch the preview change. With a webhook saved to a private test channel, **Post to Discord** posts once, and pressing it again edits that post. With no webhook saved the status line says what to set up.

@@ -6,6 +6,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 | Version | Published | Notes |
 | --- | --- | --- |
+| 1.5.3 | Not yet published | Patch on 1.5.2, built on `work/1.5.3`. Contains the Copy next system fix and the Expedition summary for Discord. Docker tests on Linux: 4,054 passed, 12 skipped. The Copy next system fix was tested in the game on Windows and on Linux on 2026-11-04 with no major issues; the Discord addition has not been tried in the game. |
 | 1.5.2 | 2026-11-04 (tag `v1.5.2`) | Built on `test/windows-combined`. Docker tests on Linux before release: 4,031 passed, 12 skipped. No in-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 14 is recorded. |
 | 1.5.1 | 2026-11-03 (tag `v1.5.1`) | Patch on 1.5.0, built on `patch/1.5.1`. Docker tests on Linux before release: 3,923 passed, 13 skipped. In-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 13 on Windows and on Linux on 2026-11-03, before publication, with no failures. |
 | 1.5.0 | 2026-11-02 (tag `v1.5.0`) | Docker tests on Linux before release: 3,894 passed, 13 skipped. In-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 12 on Windows and on Linux on 2026-11-02, before publication, with no failures. |
@@ -26,6 +27,10 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 ### Contents of each release
 
+- **1.5.3** (not yet published)
+  - Adds Copy for Discord, Post to Discord and Customize… for the selected expedition in the Expedition Log: name, status, route, exploration and exobiology figures, and the credits its data sales earned.
+  - Fixes **Copy next system** on the Trade Routes window: it follows the leg you are on, moving to the next destination once you dock at the previous one, and wraps for loops and round trips.
+  - The updater offers 1.5.3 to installations on 1.5.2 once it is published.
 - **1.5.2**
   - Adds a Powerplay sale-merit log: each sale made while pledged is written with the merits that followed it, with a start-up catch-up from the journals, to `sale_merits.csv`. It only collects data and estimates nothing.
   - Adds a Powerplay margin marker (40% line) to the Trade Round trip, a **Start from** station and a **Rank by** choice for it.
@@ -79,9 +84,9 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 ## Branches
 
-- The work of 1.5.2 was done on the branch `test/windows-combined`, which was merged into `master` for the 1.5.2 release; the earlier feature and patch branches for it were merged into it and deleted. The test branch is kept for the next test build.
-- One long-lived branch exists: `master`. The feature branch `feature/ux-improvements` (version 1.5.0) was merged into it for the 1.5.0 release, and `patch/1.5.1` (version 1.5.1) for the 1.5.1 release.
-- A release is built on a branch named for it (`release/1.3.0` was the last). Releases 1.3.1, 1.3.2 and 1.3.3 were built on `bugfix/1.3.1`, `bugfix/1.3.2` and `bugfix/1.3.3`. Each branch is merged fast-forward into `master` and deleted after the tag is created.
+- Only two branches exist: `master` and `work/1.5.3`, the work toward the next release. The work of 1.5.2 was done on a branch then named `test/windows-combined`, which was merged into `master` for the 1.5.2 release and renamed `work/1.5.3` on 2026-11-05 to carry on with 1.5.3.
+- Earlier, the feature branch `feature/ux-improvements` (version 1.5.0) was merged into it for the 1.5.0 release, and `patch/1.5.1` (version 1.5.1) for the 1.5.1 release.
+- From 1.5.3 on, a release is built on `work/<version>` and merged into `master`. Before that, a release was built on a branch named for it (`release/1.3.0` was the last). Releases 1.3.1, 1.3.2 and 1.3.3 were built on `bugfix/1.3.1`, `bugfix/1.3.2` and `bugfix/1.3.3`. Each branch is merged fast-forward into `master` and deleted after the tag is created.
 - A fix to a released version is made on a short branch cut from `master` (for example `bugfix/1.3.4`) and merged back.
 
 ## Testing
@@ -90,6 +95,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 | Date | Release | Result |
 | --- | --- | --- |
+| 2026-11-05 | 1.5.3 (not yet published) | 4,054 passed, 12 skipped (Docker, Linux) |
 | 2026-11-04 | 1.5.2 | 4,031 passed, 12 skipped (Docker, Linux) |
 | 2026-11-03 | 1.5.1 | 3,923 passed, 13 skipped (Docker, Linux) |
 | 2026-11-02 | 1.5.0 | 3,894 passed, 13 skipped (Docker, Linux) |
@@ -109,7 +115,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 - Tested by the maintainer with a build of the branch being worked on (`npm run deploy`, run by hand).
 - Bugs found are fixed on `master` or on a short bug fix branch.
-- The in-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 12 for 1.5.0 was completed on 2026-11-02 with no failures. The in-game pass of section 13 for 1.5.1 was completed on 2026-11-03 with no failures. No in-game pass of section 14 is recorded for 1.5.2.
+- The in-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 12 for 1.5.0 was completed on 2026-11-02 with no failures. The in-game pass of section 13 for 1.5.1 was completed on 2026-11-03 with no failures. The 1.5.3 build was tested in the game on Windows on 2026-11-04 with no major issues (section 15). No in-game pass of section 14 is recorded for 1.5.2.
 - Native checks made on Windows on 2026-10-23: the display probe read 3840 x 2160 at 125% scaling; the journals confirmed the Mk II jet cone boost of 6x at a neutron star and 3x at a white dwarf (V-0351).
 - Recorded for 1.2.0 (deployed and used on Windows on 2026-10-28; not run on Linux outside the Docker tests):
   - The Colonization Archive (Archive Finished, Show Archive, Restore) works.
@@ -130,7 +136,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 ### Linux
 
-- Manual pass target: CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC. Releases 1.0.0 through 1.4.2 have no manual pass recorded on this setup. The 1.5.0 in-game pass on Linux was completed on 2026-11-02. The 1.5.1 pass (section 7s of `docs/LINUX_TESTING.md`) was completed on 2026-11-03. No pass is recorded for 1.5.2 (section 7t).
+- Manual pass target: CachyOS (Arch-based) with KDE Plasma and a Flatpak EDMC. Releases 1.0.0 through 1.4.2 have no manual pass recorded on this setup. The 1.5.0 in-game pass on Linux was completed on 2026-11-02. The 1.5.1 pass (section 7s of `docs/LINUX_TESTING.md`) was completed on 2026-11-03. The 1.5.3 build was tested on Linux on 2026-11-04 with no major issues (section 7u). No pass is recorded for 1.5.2 (section 7t).
 - The steps and the ordered checks are at the top of `docs/LINUX_TESTING.md` ("Testing: start here").
 - Earlier manual passes:
   - 2026-10-18 (KDE Plasma, Wayland, Flatpak EDMC): completed without recorded problems.

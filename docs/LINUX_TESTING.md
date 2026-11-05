@@ -9,6 +9,7 @@ Scope: the checks for testing WFMT on Linux with Elite Dangerous under Steam Pro
 - The window-fit fixes of 2026-10-21 were checked only in a Docker run (a Linux container).
 - 1.5.0 was run on Linux on 2026-11-02, before the release, with no failures (section 7r).
 - 1.5.1 was run on Linux on 2026-11-03, before the release, with no failures (section 7s). Docker: 3,923 passed, 13 skipped.
+- 1.5.3: the Copy next system fix was run on Linux on 2026-11-04 with no major issues (section 7u). Docker: 4,054 passed, 12 skipped on 2026-11-05. The Expedition summary for Discord is not yet run on Linux.
 - Seen working (KDE Wayland, Flatpak EDMC): the WFMT Settings panel; the test overlay, Discovery and Notable Bodies overlays.
 - A Flatpak EDMC requires the host-spawn permission in section 0 before overlays draw.
 
@@ -206,7 +207,7 @@ These apply to anything the passes did not reach.
 
 1. Install the plugin: the zip from the [releases page](https://github.com/rwharpernc/wayfarers-multitool/releases/latest), or `npm run deploy` (step 4).
    - Restart EDMC.
-   - The line under the mode buttons reads `Plugin: v1.5.2`.
+   - The line under the mode buttons reads `Plugin: v1.5.3`.
    - Complete sections 0 and 1 first.
 2. Fetch the repository and use `master` to obtain the checklist and the test suite:
    - `git fetch --all --tags`, then `git switch master`, then `git pull --rebase`.
@@ -930,3 +931,10 @@ Steps for each are in [TEST_PLAN.md](TEST_PLAN.md) section 14.
 ## Reporting a Failure
 
 Open an issue with the setup line (distribution, desktop, X11 or Wayland, native or Flatpak EDMC), the failing step number and the log excerpt.
+
+## 7u. 1.5.3: Copy Next System Follows the Leg (Run on Linux 2026-11-04) and Expedition Summary for Discord
+
+Steps are in [TEST_PLAN.md](TEST_PLAN.md) section 15.
+
+- [x] **Copy next system:** after docking at a leg's destination, the button copies the following destination (never the system you are in), and a loop wraps back to the first stop. Confirm the paste works in the galaxy map under Proton.
+- [ ] **Expedition summary for Discord:** in the Expedition window's Log tab the share row fits, **Copy for Discord** copies the summary, and **Customize…** opens on Expedition summary with a working preview. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
