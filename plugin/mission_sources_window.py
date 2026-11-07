@@ -10,8 +10,7 @@ import threading
 import tkinter as tk
 from typing import Callable, Dict, List, Optional
 
-from . import mission_sources, panelkit, ship_current, source_picks, trade_ship
-from .uikit import dialogs
+from . import mission_sources, online_lookups, panelkit, ship_current, source_picks, trade_ship
 from .uikit import palette as P
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
@@ -157,7 +156,7 @@ class MissionSourcesWindow:
         if needs and not buying:
             self._shell.set_status("Your Delivery missions' cargo is picked up at the station that gave them, so there is nothing to look up.")
         elif not lookups_enabled():
-            self._shell.set_status("Online lookups are off. Turn them on in Settings > Trade to find sources (it asks Spansh, spansh.co.uk).")
+            self._shell.set_status(online_lookups.needs(_CFG_LOOKUPS))
         elif self._error:
             self._shell.set_status(self._error)
         elif buying and not self._results and not self._busy():
@@ -184,7 +183,7 @@ class MissionSourcesWindow:
         if not needs:
             self._shell.set_status("Your Delivery missions' cargo is picked up at the station that gave them, so there is nothing to look up.")
             return
-        if not lookups_enabled() and not self._offer_lookups():
+        if not lookups_enabled():
             self.refresh()
             return
         if mode == mission_sources.HERE and not here:
@@ -213,16 +212,6 @@ class MissionSourcesWindow:
         self._worker = threading.Thread(target=work, name="WFMT-mission-sources", daemon=True)
         self._worker.start()
         self._shell.window.after(_POLL_MS, self._poll)
-
-    def _offer_lookups(self) -> bool:
-        """Lookups are off by default. Rather than do nothing, ask once whether to turn on the switch Settings > Trade has (the only thing that goes online here)."""
-        if config is None:
-            return False
-        if not dialogs.confirm(self._shell.window, "Turn on online lookups?", "Finding sources asks Spansh (spansh.co.uk) for market prices, a few requests per commodity, "
-                                   "only when you press Find sources.\n\nTurn on Trade's online lookups now? (The same switch as Settings > Trade; you can turn it off there.)"):
-            return False
-        config.set(_CFG_LOOKUPS, True)
-        return True
 
     def _poll(self) -> None:
         if not self.alive:

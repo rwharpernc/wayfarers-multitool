@@ -23,7 +23,7 @@ Exploration mode is one scrolling panel (press **Explore** in the mode row to sh
 | Discovery Alerts, Notable Bodies | Overlays → Discovery, Overlays → Notable Bodies |
 | System targets, Body info, Route, Expedition Log card, Surface Compass, Exobiology cards | Overlays → the page of the same name |
 | Position, colors and connection of each card | Overlays → Overlay Placement, Appearance and Overlay Connection (Overlay Placement can also copy another commander's overlay choices: see [Setting up the overlay](../OVERLAY_SETUP.md#moving-things-around)) |
-| Local star index and the online lookups | General → Online lookups |
+| Every online lookup, and the Local star index | Online (a tab of its own) |
 | Keyboard shortcuts and chat commands | General → Shortcuts |
 
 **Data sources**
@@ -95,7 +95,7 @@ Each task links to the section with the full detail.
 **Find a place to land** ([details](#nearest-place-to-land))
 
 1. Press **Find** in the Nearest place to land section.
-2. Tick the required services, tick **Allow this lookup** and press **Find**.
+2. Tick the required services and press **Find**. If **Nearest place to land** is off in Settings → WFMT → Online, the window says so instead of searching.
 3. Double-click a row to copy its system name.
 
 **Find a point of interest** ([details](#poi-reference))
@@ -183,7 +183,7 @@ They run only on a click and contact Spansh at that time. The position must be k
 - WFMT works without it. Nothing is downloaded unless a button is pressed.
 - The index answers the neutron star search (currently the **Neutron Star** button) from a local file instead of a request.
 
-**Setup.** In **Settings → WFMT → General → Online lookups**, the **Local star index** group has **Download and build**.
+**Setup.** In **Settings → WFMT → Online**, the **Local star index** group has **Download and build**.
 
 1. It downloads one public file from Spansh's download server (about 173 MB, once).
 2. It builds an index of the neutron stars from the file. The index is about 110 MB on disk. Building needs about 300 MB of additional free space during the build, and the downloaded file is deleted afterward.
@@ -322,9 +322,11 @@ The panel shows a **Target**, the buttons **< Prev**, **Next >** and **Copy**, a
 |---|---|
 | Auto-copy next target to clipboard on jump | On |
 | Skip systems already visited this session | On |
-| Skip systems already visited by anyone (EDSM) | Off (adds a network call per advance) |
-| Skip systems already fully scanned in EDSM (adds another network call per candidate) | Off |
-| Confirm off-sequence arrivals against EDSM (catches a target that resolved under a different display name) | Off |
+| **Boxel Survey: skip systems anyone has visited** (EDSM; switched in Settings → WFMT → Online) | Off (adds a network call per advance) |
+| **Boxel Survey: skip systems fully scanned** (EDSM; switched in Settings → WFMT → Online; adds another network call per candidate) | Off |
+| **Boxel Survey: confirm off-sequence arrivals** (EDSM; switched in Settings → WFMT → Online; catches a target that resolved under a different display name) | Off |
+
+The three EDSM options are not on the Boxel Survey tab any more: each shows a one-line note there pointing to the Online tab.
 
 ### Region Sweep
 
@@ -360,11 +362,11 @@ Region Sweep clears several cubes and shows what remains. It keeps a **queue of 
 |---|---|
 | Auto-copy next target to clipboard on jump | On |
 | Skip systems already visited this session | On |
-| Skip systems already visited by anyone (EDSM) | Off. When on, each candidate target is checked with EDSM before it is offered, and systems EDSM already knows are skipped (at most 20 in a row) |
+| **Region Sweep: skip systems anyone has visited** (EDSM; switched in Settings → WFMT → Online) | Off. When on, each candidate target is checked with EDSM before it is offered, and systems EDSM already knows are skipped (at most 20 in a row) |
 | Require a full FSS scan (not just arrival) to mark a system complete | Off |
-| Auto-discover more nearby cubes (EDSM) when the queue is running low | Off. When on, the Discover Nearby lookup runs after a jump once one or fewer cubes still have work left |
+| **Region Sweep: find more nearby cubes** (EDSM; switched in Settings → WFMT → Online) when the queue is running low | Off. When on, the Discover Nearby lookup runs after a jump once one or fewer cubes still have work left |
 
-**Skip systems already visited by anyone (EDSM).** With the box ticked, WFMT asks EDSM about each candidate before showing it as the next target, whether the candidate came from a jump or from **Next >**.
+**Region Sweep: skip systems anyone has visited** (and, for the Boxel Survey sequence, **Boxel Survey: skip systems anyone has visited**). With the box ticked, WFMT asks EDSM about each candidate before showing it as the next target, whether the candidate came from a jump or from **Next >**.
 
 - If EDSM already has the system, WFMT moves to the next candidate in the cube and asks again. It stops after 20 in a row and shows the last candidate; the status line states this.
 - The target (and the clipboard copy) appears when the check is complete. The status line reads `Checking EDSM...` meanwhile.
@@ -439,10 +441,10 @@ Exploration Value is a readout in the **Dashboard** section of the Exploration p
 
 The values are computed locally. The estimate is the value of scanning the body (with the first-discovery multiplier when nobody had found it). The value of scanning and mapping is on the [Body info](#system-targets-and-body-info) card (**Mapped value**) and is counted in the [Expedition Log](#expedition-log).
 
-The readout is on by default (*Show estimated scan value, system age, and current region*, in **Settings → WFMT → Exploration → Exploration Value**). Two further options are on the same page. Both are off by default because they contact the internet.
+The readout is on by default (*Show estimated scan value, system age, and current region*, in **Settings → WFMT → Exploration → Exploration Value**). Two further options contact the internet, so they are off by default and are switched on the Online tab (**Settings → WFMT → Online**); the Exploration Value page has a note pointing there. They show no warning when off.
 
-- *Show ELW rarity comparison when you scan an Earthlike World (Spansh)*. A line `ELW rarity: <body> - 2 known ELWs within 250 ly - a rare find` appears (`not unusual here` when more than 3 are known), after `checking Spansh...`. The count is of Earth-like worlds Spansh lists around the system.
-- *Show EDSM upload status when you select a system on the galaxy map (EDSM)*. A line `EDSM upload status: <system> - already in EDSM` (or `not yet in EDSM`, or `EDSM check unavailable`) appears when a system is selected in the galaxy map. A system is queried once in ten minutes.
+- **Exploration Value: Earth-like world rarity** (Spansh). A line `ELW rarity: <body> - 2 known ELWs within 250 ly - a rare find` appears (`not unusual here` when more than 3 are known), after `checking Spansh...`. The count is of Earth-like worlds Spansh lists around the system.
+- **Exploration Value: EDSM upload status** (EDSM). A line `EDSM upload status: <system> - already in EDSM` (or `not yet in EDSM`, or `EDSM check unavailable`) appears when a system is selected in the galaxy map. A system is queried once in ten minutes.
 
 ## Organic Scanning
 
@@ -844,8 +846,8 @@ System targets and Body info are two cards on the game screen for working a syst
 | **Rows shown** | 3 to 16 rows across all lists; the remaining rows are counted (`+ 3 more`) | 6 |
 | **Also list bodies with life that I have not finished analyzing** | The Life list | On |
 | **Also list the bodies I have finished (mapped, and their life analyzed), so I can see where I left off** | The Done list | On |
-| **Also look up bodies other commanders have scanned (EDSM, once per system)** | See below | Off |
-| **Also look up the life and points of interest other commanders found in the system (Spansh, once per system, on arrival)** | See below | Off |
+| **System targets: bodies other commanders scanned** (EDSM, once per system; switched in Settings → WFMT → Online) | See below | Off |
+| **System targets: life and points of interest others found** (Spansh, once per system, on arrival; switched in Settings → WFMT → Online) | See below | Off |
 | **Test Card** | Draws a made-up system, to view and place the card | |
 
 The card is drawn in lists under the heading, each headed with its count: **To map (n)**, **Life (n)**, **Known (n)** and **Done (n)**.
@@ -860,12 +862,12 @@ The card is drawn in lists under the heading, each headed with its count: **To m
 - A message states when nothing at or above the threshold remains. Before the FSS has found every body it reads `Nothing over 100k to map yet`. Once the game reports every body found it reads `Nothing over 100k left to map or sample`. While the Spansh lookup runs it reads `Looking up data (Spansh)...`. If Spansh has nothing: `Spansh has nothing on this system`. If the lookup failed: `Spansh lookup failed; will retry`. A long message continues on the next line.
 - With the EDSM lookup on, the heading's count gains `· 3 online` for the bodies that came from EDSM.
 - Each row shows the body, a muted tag and distance (`HMC  82k ls`) or the genera once known, and the value on the right.
-- **Also look up bodies other commanders have scanned** (off by default).
+- **System targets: bodies other commanders scanned** (off by default; one setting for the whole installation, switched in Settings → WFMT → Online).
   - After a honk, WFMT asks [EDSM](https://www.edsm.net/) once for the system's planets. It sends only the system name (see [What goes on the internet](internet-and-privacy.md)).
   - It lists the bodies above the threshold with their estimated value, marked `EDSM`, before any local scan.
   - The commander's own scan then replaces the EDSM data, and the Body info card shows such bodies as `From EDSM, not scanned by you`.
   - EDSM does not state who has mapped a body, so a looked-up body stays on the list until the commander maps it.
-- **Also look up the life and points of interest other commanders found in the system** (off by default).
+- **System targets: life and points of interest others found** (off by default; one setting for the whole installation, switched in Settings → WFMT → Online).
   - On arrival in a system (or when ticked while in one), WFMT asks [Spansh](https://spansh.co.uk/) once for the system's record. It sends only the system's number (see [What goes on the internet](internet-and-privacy.md)).
   - The card then shows a **Known** section for the bodies where other commanders found life or a point of interest, before any honk or scan.
     - Life appears as `3 b  Fungoida Setisis x2 +1`, with the reward for the life on the right (`2.6M`).
@@ -921,13 +923,13 @@ On the card, **Scan value** shows `first` after the amount when nobody had disco
 
 | Information | What the game provides | Workaround |
 |---|---|---|
-| A body listed as soon as the honk occurs | The honk gives only a count. A body's class and mass come with its scan (the system scan or a detailed scan), so a body appears when it is scanned. | Scan the bodies, or tick **Also look up bodies other commanders have scanned**. |
+| A body listed as soon as the honk occurs | The honk gives only a count. A body's class and mass come with its scan (the system scan or a detailed scan), so a body appears when it is scanned. | Scan the bodies, or tick **System targets: bodies other commanders scanned** in Settings → WFMT → Online. |
 | Bodies in a system nobody has scanned | The EDSM lookup knows only what other commanders have uploaded. A system nobody has surveyed returns nothing. | Scan the bodies. |
 | Whether a body has been stood on | The scan's `WasFootfalled` states whether anyone has set foot on a landable body. WFMT flags a first footfall (Body info: `First footfall`, and the five times exobiology reward; System targets: `FF` on a life row). The flag reflects the scan made; a body scanned by someone before the commander but not yet footfalled in the data may show as footfalled. | The flag is an indication. The in-game body info is authoritative. |
 | What mapping pays | **Scan value** is the estimated value of scanning (the same estimate as the [Exploration Value](#exploration-value) readout). Body info's **Mapped value** is the estimate of scanning and mapping with an efficient probe run. The System targets list is ranked by the mapped value by default (the scan value if selected in Settings). | The threshold indicates which bodies are worth a probe run. |
 | The kinds of life before mapping | The system scan gives the number of biological signals. The genera are given when the body is mapped. | Map the body. |
 | Remembering a system after a restart, a relog or a later visit | The survey of each system is saved for each commander and merged back on return. For a system with no saved survey, it is rebuilt from the journals that hold the commander's visits (found through the visit history). | None required. Bodies the journals never recorded (a system never scanned) cannot be recovered. |
-| Life and points of interest in a system not scanned | The journal knows only what the commander scanned. Spansh holds what other commanders uploaded. | Tick **Also look up the life and points of interest other commanders found**. A system nobody has scanned shows nothing, and the card reads `Spansh has nothing on this system`. |
+| Life and points of interest in a system not scanned | The journal knows only what the commander scanned. Spansh holds what other commanders uploaded. | Tick **System targets: life and points of interest others found** in Settings → WFMT → Online. A system nobody has scanned shows nothing, and the card reads `Spansh has nothing on this system`. |
 | The visit line immediately after installation | The history is read from the journals once, in the background, and the line waits for it (`Reading your journals for a visit history`). Only journals that still exist are counted, and a relog in the same system is not a second visit. | Wait for the first read to finish. |
 
 **When the cards show.** The cards follow the commander and the situation.
@@ -965,7 +967,7 @@ It opens on the tab that suits the commander's situation, and switches by itself
   - Columns: **Body**, **Type**, a small tag for the classes that matter, **Distance** (light-seconds from the arrival star), **Gravity**, **Landable**, **Atmosphere**, **Temp**, **Scan value**, **Mapped value**, **Bio** and **Geo** (signal counts) and **Status** (what has been done with the body). Clicking a heading sorts by it.
   - Rows are tinted: a green background for nothing left to do, orange text for worth mapping, green text for unfinished biology.
   - Clicking a row shows that body in full (conditions, atmosphere gases, materials, signals, genera, value).
-  - Beside the table: **Worth mapping**, **Life to analyze** and **Found by others** (what Spansh lists in the system, when the lookup under Settings → WFMT → Overlays → System targets is on).
+  - Beside the table: **Worth mapping**, **Life to analyze** and **Found by others** (what Spansh lists in the system, when the lookup under Settings → WFMT → Online (**System targets: life and points of interest others found**) is on).
 - **Surface**: the body the commander is on or near.
   - The location (and the distance of the ship and SRV), the body's conditions and materials.
   - The exobiology: each genus with its possible species and pay (an even share per candidate, as on the Biology card).
@@ -1088,7 +1090,7 @@ Spansh counts a supercharge at any system with a neutron star, even when that st
 
 - **Route overlay.** A plotted route also shows on the [Route overlay](always-on.md#route-overlay), in place of the game's plotted route, until every jump has been made. Each system's star is in a color, and a message shows when the route ends.
   - The overlay's own switch under Settings → WFMT → Overlays → Route determines whether it is drawn.
-  - Its option to mark systems EDSM does not know applies to the neutron route too.
+  - Its option to mark systems EDSM does not know (**Route overlay: systems EDSM does not know**, switched in Settings → WFMT → Online) applies to the neutron route too.
 - **Clearing the route.** **Clear route** in the window, or **Clear Route** in the Route Planner section of the Exploration panel (always present), clears everything the Route overlay follows.
   - That is the route plotted here (the panel line, the window's table) and the route followed from the game, so the card closes.
   - The game's own route is not changed in the game. The overlay follows it again after the next route is plotted in the galaxy map, or after a restart.
@@ -1167,14 +1169,14 @@ The panel section has a line stating the current system and the pad size the shi
 2. Under **I need**, tick the services the place must offer: **Refuel**, **Repair**, **Rearm (restock)** and **Outfitting**. Refuel and Repair are ticked by default. Only stations that offer all the ticked services are listed.
 3. Choose the **Landing pad**: **My ship's pad** (the default), **Any size**, **Medium or larger** or **Large only**. With **My ship's pad** WFMT uses the ship's size from the last loadout (a Python is never sent to an outpost with only small pads). A small ship has no restriction because it fits everywhere.
 4. Keep **Include fleet carriers open to all, updated within** ticked to list carriers, and choose how recent a carrier's record must be: **7 days**, **14 days** (the default), **30 days** or **90 days**. Unticking it leaves carriers out, and the carrier table then reads `Fleet carriers were not asked for`.
-5. Tick **Allow this lookup: pressing Find sends Spansh my position, the pad size and these choices, nothing else**. It is off by default and is the same switch as **Settings → WFMT → Exploration → Nearest place to land**. Nothing is sent before it is ticked.
+5. The lookup is off by default and is switched as **Nearest place to land** in **Settings → WFMT → Online**. While it is off, the window shows `This needs "Nearest place to land" (Spansh), which is off. Turn it on in Settings > Online.` and sends nothing. The Exploration panel row shows the same line.
 6. Press **Find**. The window asks Spansh and fills two tables. An answer is remembered for two minutes, so pressing Find again with the same choices sends no new request.
 
 **Example: low on fuel in deep space**
 
 1. Press **Find**. **From** shows the current system and coordinates.
 2. Keep **Refuel** and **Repair** ticked and **Landing pad** on **My ship's pad**.
-3. Tick **Allow this lookup**, then press **Find**.
+3. Press **Find** (with **Nearest place to land** on in Settings → WFMT → Online).
 4. Read the **Stations** table for the nearest place with a suitable pad (the **Pads** and **Has** columns state what it offers), and the carrier table for carriers open to all. Check a carrier's **Last reported** age.
 5. Double-click the wanted row. Its system name is copied. Paste it into the galaxy map.
 
@@ -1189,7 +1191,7 @@ The panel section has a line stating the current system and the pad size the shi
 
 - **Origin.** The position comes from the journal (`StarPos`, set by each jump), not from a system name, so it works in an uncharted system. If WFMT has not seen a jump this session, it reads the newest journals. If it still has no position, the window reads `Your position is not known yet. Jump to a system or log in first.`
 - **Fleet carriers** are listed only when Spansh states that docking is open to everyone, and only if the record is recent, because carriers jump and change who may dock.
-- **Network.** The lookup is online, and only when Find is pressed, once the box that allows it is ticked. It sends Spansh the position, the pad size and the choices, and nothing about the commander (see [What goes on the internet](internet-and-privacy.md)). If Spansh cannot be reached, the window states this and suggests trying again.
+- **Network.** The lookup is online, and only when Find is pressed, once **Nearest place to land** is on in Settings → WFMT → Online. It sends Spansh the position, the pad size and the choices, and nothing about the commander (see [What goes on the internet](internet-and-privacy.md)). If Spansh cannot be reached, the window states this and suggests trying again.
 - The window remembers the choices, its size and its position.
 
 The limits of this feature are listed in the last section of this guide.

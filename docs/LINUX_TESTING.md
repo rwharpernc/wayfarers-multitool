@@ -50,7 +50,7 @@ Complete sections 0 and 1 first, then run the unit tests and a build (steps 2 to
 - **Added in 1.5.0 (run on Linux on 2026-11-02, before the release; no failures).** The pages-as-windows layout, the settings that moved into their windows, the type-ahead boxes and the darker orange on the light theme: section 7r.
 - **Added in 1.3.3 (not run on Linux).**
   - **Powerplay card.** Requires EDMCModernOverlay. Tick *Enable the Powerplay card* (Settings → WFMT → Overlays → Powerplay) and press **Test Card**. A card appears at the top right. Jump into a Powerplay system and then into one without Powerplay data (the card reads **No Powerplay Detected in system**).
-  - **Look-ahead.** Tick *Look up the system I am jumping to* and start a hyperspace jump. The card turns to the destination (marked *jumping*) and then to the arrival system. Fly a loop twice: the second lap performs no lookup. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 9.
+  - **Look-ahead.** Tick **Powerplay card: the system you are jumping to** (Settings → WFMT → Online) and start a hyperspace jump. The card turns to the destination (marked *jumping*) and then to the arrival system. Fly a loop twice: the second lap performs no lookup. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 9.
 - **Added in 1.3.2 (not run on Linux).**
   - **Windows open on EDMC's monitor.** With two monitors, open a WFMT window not opened before (the Notes window, for example). On Linux, Tk cannot list the monitors, so the window opens centered over the EDMC window and kept on the visible screen. Record which monitor it lands on, under X11 and under Wayland. Drag it to the other monitor, close it and open it again: it reopens there. Then tick *Always open WFMT's windows on EDMC's monitor* (Settings → WFMT → General → Window) and open it again: it opens over the EDMC window.
 - **Added 2026-10-23 (none run on Linux).** The Windows side of each is in [TEST_PLAN.md](TEST_PLAN.md) section 5.
@@ -74,7 +74,7 @@ Complete sections 0 and 1 first, then run the unit tests and a build (steps 2 to
     - Tables use the width.
   - The headless version of this check is in the unit tests (`tests/test_window_fit_*_smoke.py`). They run only from a desktop session, so a failure there is a real Linux finding.
 - **Themed confirmations and prompts** (they replace the operating system's boxes).
-  - Open: Reset Session, Delete session, Reset trade session (three buttons), Paste spot, Delete hotspot, Import Hotspots, Turn on online lookups?, the Raven key prompt (typing is hidden) and Restore my data (Settings, over a Settings page).
+  - Open: Reset Session, Delete session, Reset trade session (three buttons), Paste spot, Delete hotspot, Import Hotspots, the Raven key prompt (typing is hidden) and Restore my data (Settings, over a Settings page).
   - Each dialog:
     - appears centered over its window
     - blocks the window until answered
@@ -121,7 +121,7 @@ Complete sections 0 and 1 first, then run the unit tests and a build (steps 2 to
   - The Space Mining window, the Surface Mining Live window and the HUD show the same *Refining now*, *Run average*, *Hold full in about N min* and *Hold: N of M t* lines.
   - The target box on the Settings card of the Space Mining window takes several names with their own percentages, and its type-ahead works after a comma.
   - Opening Mining History once re-reads old runs in the background.
-- **Local star index** (Settings → WFMT → General → Online lookups → Local star index).
+- **Local star index** (Settings → WFMT → Online → Local star index).
   - **Download and build** downloads about 173 MB into the Flatpak's data folder and builds an index of about 110 MB (about 300 MB free is required while it builds).
     - Progress shows, and **Cancel** works.
     - The finished status shows the systems, size and date.
@@ -322,7 +322,7 @@ These apply to anything the passes did not reach.
   - A list appears under the box.
   - **Down** and **Enter** take an entry. **Escape** closes the list. **Enter** with nothing highlighted adds the stop.
   - The list appears in front of the window on the desktop and Wayland compositor in use, and goes away when the box loses focus.
-  - Tick *Suggest system names from Spansh while typing* and type `outot`: after a pause, systems from Spansh appear.
+  - Tick **System name suggestions while typing** (Settings → WFMT → Online) and type `outot`: after a pause, systems from Spansh appear.
 - [ ] Expedition (Exploration mode, **Expedition** section):
   - **Expedition** opens the window.
   - **New** makes an expedition.
@@ -440,7 +440,7 @@ These apply to anything the passes did not reach.
   - The status line gives a distance and states whether EDSM confirmed it.
   - The second press nearby is much quicker.
   - Settings -> Exploration -> Boxel Survey -> **Systems to request from Spansh** takes a number from 10 to 100.
-- [ ] **Region Sweep, skip systems EDSM knows**: tick **Skip systems already visited by anyone (EDSM)** (Settings -> Exploration -> Region Sweep), add a cube and press **Next >**. The status line reads `Checking EDSM...` and then how many known systems were skipped (or that the check was unavailable, with the candidate shown anyway).
+- [ ] **Region Sweep, skip systems EDSM knows**: tick **Region Sweep: skip systems anyone has visited** (Settings → WFMT → Online), add a cube and press **Next >**. The status line reads `Checking EDSM...` and then how many known systems were skipped (or that the check was unavailable, with the candidate shown anyway).
 - [ ] **POI Reference**: one section with **Find POI** and **Update POI**. Find POI shows a GEC line and a Canonn line, and a paste into the galaxy map gives the nearer system.
 - [ ] **My Codex**: the Codex Completionist section has one button. The window opens on **Overview**. **Not found** has a **Where to look** column. **Backfill Journals** reads the journals.
 - [ ] **Panel order and width**: in every mode the sections are alphabetical, and switching modes or opening the Route Planner and Dashboard never widens EDMC's window (if it does, report the "The WFMT panel widened" line from EDMC's log).
@@ -538,7 +538,7 @@ These apply to anything the passes did not reach.
 
 ## 6d. Trade Mode
 
-Windows was checked as Trade was built. The boxes below are unticked so that the list can be run again. First: Settings → WFMT → Trade, tick **Enable Spansh trade lookups**.
+Windows was checked as Trade was built. The boxes below are unticked so that the list can be run again. First: Settings → WFMT → Online, tick **Trade: routes, prices and best picks**.
 
 - [ ] The **Trade** button appears with the others, and the Trade panel shows its summary over the **Session**, **Routes**, **Market** and **History** buttons. Each of the first three opens its own window, and pressing it again brings that window forward.
 - [ ] **Session**: after docking, the ship and its pad size show. The hold line shows used, capacity and free tons. Buy and sell something: the profit lines appear. Refuel and repair: a **Net profit** headline appears with Fuel and Repairs lines under it. **Reset** clears it.
@@ -627,7 +627,7 @@ No data is shared between commanders.
 
 - [ ] **Mining**: save a hotspot as commander A. Log in as B: the Mining Book shows none of A's. Save one as B, log back in as A: only A's appear. The coverage map follows the same rule.
 - [ ] **Mining Book**:
-  - **Market research** (after ticking *Enable Spansh best price finder*) lists buyers for a system with saved hotspots.
+  - **Market research** (after ticking **Mining: best price finder and Market research**) lists buyers for a system with saved hotspots.
   - **Share line** on a positioned hotspot and **Paste spot** (refused for a spot within 100 m of one saved).
   - **Stops** lines and dashed rings on the map, and `you are here` with the Rhino within 175 m of a deposit.
   - A Depleted mark stays and the card states how long ago (set the refill time on the Surface Mining window's Settings card to see it come off).
@@ -687,7 +687,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, and th
 - [ ] **My Projects (requires the internet):** press **Projects** on the Colony page (or **My Projects** in the **Raven Colonial** menu).
   - A window lists the commander's Raven Colonial projects with building, progress and tons still needed. The subtitle adds up the counted ones.
   - Double-clicking a row changes whether it counts, and the subtitle states that there are unsaved changes.
-  - **More** has Copy Shopping List, the two Open items, Set as My Primary and Save Counted List. The last two ask first and refuse while the master switch is off.
+  - **More** has Copy Shopping List, the two Open items, Set as My Primary and Save Counted List. The last two ask first and refuse while **Colonization: share progress and deliveries** is off.
 - [ ] **Planned Builds (requires the internet):** select a site, press **Planned Builds** (in the **Raven Colonial** menu).
   - A window lists Raven Colonial's sites for its system (building, planned, complete), marks the ones tracked and shows each planned or building site's **Full cost**.
   - Clicking a row names its biggest commodities.
@@ -703,7 +703,7 @@ Written and tried on Windows. The code is platform-neutral Python and Tk, and th
 
 ## 7e-2. Raven Colonial Sharing (Requires a Raven Project for a Site; Windows-Tested Only: Check on Linux)
 
-- [ ] **Settings → Colonization → Raven Colonial** has a master switch and two checkboxes (all off, the two disabled until the master is ticked) and a masked key field. With the master off, Report Complete to Raven refuses.
+- [ ] **Settings → WFMT → Colonization → Raven Colonial** has a note pointing to the Online tab (where **Colonization: share progress and deliveries** is, off) and a masked key field; the Sites window's Raven Colonial strip has the two checkboxes (off, disabled until that switch is ticked). With the switch off, Report Complete to Raven refuses.
 - [ ] With the first on, a delivery at a construction site that Raven has a project for appears on Raven. With it off, nothing is sent.
 - [ ] **Raven Progress** shows Raven's remaining need beside WFMT's for the selected site, including one still being built.
 - [ ] **Test key** (beside the key box) states that the key is accepted, with Raven's name for the commander, or that it was not accepted.
@@ -850,7 +850,7 @@ Keyboard shortcuts are Windows only. The chat commands are the same on both syst
 
 ## 7m. What Pays (Windows-Tested Only: Check on Linux)
 
-- [ ] With *Enable Spansh best price finder* ticked (Settings → WFMT → Mining) and a few saved deposits, **Book** → **What pays** opens a window.
+- [ ] With **Mining: best price finder and Market research** ticked (Settings → WFMT → Online) and a few saved deposits, **Book** → **What pays** opens a window.
   - *Near* holds the current system, and *Within 100 ly* is chosen.
   - The table fills in one commodity at a time and is then ordered best price first.
   - Nothing is cut off at the default size.
@@ -860,7 +860,7 @@ Keyboard shortcuts are Windows only. The chat commands are the same on both syst
 
 ## 7n. Get Body Info and a Body's Size from Status.json (Windows-Tested Only: Check on Linux)
 
-- [ ] With *Enable body lookup* ticked (Settings → Mining), in the current system, **Book** → **Get body info** states that it is asking EDSM and Spansh and then how many landable bodies it listed and added, with sizes and mining-location counts.
+- [ ] With **Mining: Get body info in the Surface Mining Book** ticked (Settings → WFMT → Online), in the current system, **Book** → **Get body info** states that it is asking EDSM and Spansh and then how many landable bodies it listed and added, with sizes and mining-location counts.
   - The Book's body list gains them and nothing already there changes.
   - Straight after starting EDMC with no jump or login yet, it states that Spansh was not asked.
   - With the box unticked it states that the setting must be turned on and queries nothing.
@@ -937,8 +937,9 @@ Open an issue with the setup line (distribution, desktop, X11 or Wayland, native
 Steps are in [TEST_PLAN.md](TEST_PLAN.md) section 15.
 
 - [x] **Copy next system:** after docking at a leg's destination, the button copies the following destination (never the system you are in), and a loop wraps back to the first stop. Confirm the paste works in the galaxy map under Proton.
-- [ ] **Suggestions in more boxes:** a system from your journals suggests in the Expedition System box, the hint shows for letters that match nothing while the Spansh lookup is off, the Round trip **Start from** box offers `Station, System`, and the Materials, Blueprints, Inventory and Stored modules search boxes suggest names. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
+- [ ] **Suggestions in more boxes:** a system from your journals suggests in the Expedition System box, the hint shows for letters that match nothing while **System name suggestions while typing** is off, the Round trip **Start from** box offers `Station, System`, and the Materials, Blueprints, Inventory and Stored modules search boxes suggest names. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
 - [x] **Reset on the Trade panel:** the button row shows **Session**, **Routes**, **Market**, **History** and **Reset** with nothing cut off, and **Reset** offers to save an unsaved session first. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
 - [x] **Ranks (Operations):** the **Ranks** row lists every rank by the game's name with the percent to the next, uses the full panel width and wraps nothing. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
+- [ ] **One place for every online switch (Online tab):** open Settings → WFMT → Online. Untick **Trade: routes, prices and best picks**, press **OK** and confirm the warning appears in Trade → Routes; tick it again and confirm it goes away. **Turn all off** then **OK** leaves every box unticked, and **Reset to defaults** then **OK** leaves only **BGS tick detection (every minute)** ticked. The old checkbox places show a note instead of a checkbox. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
 - [ ] **Expedition summary for Discord:** in the Expedition window's Log tab the share row fits, **Copy for Discord** copies the summary, and **Customize…** opens on Expedition summary with a working preview. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
 - [ ] **Expedition plan announcement for Discord:** in the Expedition window's Plan tab the announce row fits, **Copy for Discord** copies the plan, and **Customize…** opens on Expedition plan with a working preview. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.

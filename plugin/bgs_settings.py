@@ -1,6 +1,6 @@
-"""BGS's display and tuning settings, set in the BGS Report window (the Settings → WFMT → BGS tab keeps tick detection and says where the rest went). The window builds a **Settings** card (`SettingsCard`): the switch that
+"""BGS's display and tuning settings, set in the BGS Report window (the Settings → WFMT → BGS tab says where they went; tick detection is switched in Settings > Online). The window builds a **Settings** card (`SettingsCard`): the switch that
 shows faction states and activity, and how many days of closed ticks to keep. `bgs_panel` registers a listener (`add_listener`) that applies a change (prunes the archive,
-saves, redraws) and updates the Settings tab's own variables. Tick detection, the one network call BGS makes, stays in Settings only: it is a permission.
+saves, redraws). Tick detection, the one network call BGS makes, is switched only in Settings > Online: it is a permission.
 
 The config keys and their readers live here so `bgs_window` can use them without importing `bgs_panel`, which imports the window."""
 from __future__ import annotations
@@ -95,7 +95,7 @@ class SettingsCard(tk.Frame):
         self._entry.grid(row=1, column=3, sticky="w")
         add_tooltip(self._entry, "Keep previous ticks - how many days of closed ticks the report keeps (1 to 90)")
         commit_entry.bind_commit(self._entry, self._days, lambda raw: str(set_archive_days(raw)))
-        tk.Label(self, text="Tick detection (the one lookup BGS makes) is switched on or off in Settings → WFMT → BGS.", fg=P.FAINT, bg=P.CARD,
+        tk.Label(self, text="Tick detection (the one lookup BGS makes) is switched on or off in Settings > Online.", fg=P.FAINT, bg=P.CARD,
                  font=style.font(P.FONT_SMALL), anchor="w").grid(row=2, column=0, columnspan=4, sticky="w", pady=(4, 0))
         add_listener(self.sync)
         self.bind("<Destroy>", lambda _e: _remove_listener(self.sync), add="+")

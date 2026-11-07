@@ -54,7 +54,7 @@ Each decision record uses these fields:
 
 - A plugin runs inside another program on the user's computer.
 - Every lookup is either a switch that starts off or a button that acts only when pressed. Each is listed with what it sends.
-- Where to look: [internet-and-privacy.md](guide/internet-and-privacy.md); `settings_online.py` (the Online lookups page; `tests/test_settings_online.py` fails when an entry names a setting that does not exist).
+- Where to look: [internet-and-privacy.md](guide/internet-and-privacy.md); `online_lookups.py` (the table of every online switch) and `settings_online.py` (the Online tab, the one place that switches them; `tests/test_settings_online.py` fails when an entry names a setting that does not exist or when another page writes one).
 
 ### Pure logic is separate from the screen; tests read the sources
 
@@ -501,7 +501,7 @@ Acknowledgements are in [ATTRIBUTIONS.md](ATTRIBUTIONS.md). The license notices 
 
 - Decision: Trade, Mining and Missions no longer page the main panel with ◀ ▶ arrows. The panel is a short summary with a button for each page, and each button opens that page as a window. The display and tuning settings that belong to a window are set in it and nowhere else. File → Settings → WFMT keeps the permissions and states where the other settings moved.
 - Why: EDMC's main window is small and is sized by the widest row of every plugin. The arrows had already been enlarged once because they were too small to see. A window can be large, can be placed on a second screen and updates alongside the panel. A setting in both Settings and a window gives two places to find it; a single place, saved on change, avoids this.
-- Compatibility: the saved values and config keys did not change, so nothing is migrated or lost. A window cannot turn on a permission (the Raven master switch, the lookups that contact Spansh or EDSM), so granting one remains a deliberate action in Settings.
+- Compatibility: the saved values and config keys did not change, so nothing is migrated or lost. A window cannot turn on a permission (any lookup that contacts another service, including the Raven switch), so granting one remains a deliberate action on the Online tab of Settings.
 - Supersedes: the page arrows (`panelkit.nav_arrow`, no longer present in the code) and the earlier notes about Mining, Trade and Missions pages on the panel.
 - Type-ahead in name boxes belongs to the same release: a box that takes a name that WFMT already holds (bodies, rings, ships, commodity lists) suggests it while typing, from local data only.
 

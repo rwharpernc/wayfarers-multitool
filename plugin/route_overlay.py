@@ -14,7 +14,7 @@ The card says where you are going and in how many jumps, then lists the systems 
 A system is taken off the list as you reach it, and the jump count and the light years follow. A route plotted in the Route Planner replaces the game's plotted route on
 the card until its last jump; with neither, nothing is drawn. Fuel and range are not on this card (the Exploration Dashboard shows them).
 
-Nothing is sent anywhere unless the EDSM option is ticked: the card reads the journal, `NavRoute.json` and EDMC's copy of `Status.json`, and draws through the shared
+Nothing is sent anywhere unless the EDSM option is switched on in Settings > Online: the card reads the journal, `NavRoute.json` and EDMC's copy of `Status.json`, and draws through the shared
 overlay connection (EDMCModernOverlay, which WFMT does not install or launch). Settings-tab-only and off until ticked, like every overlay. Where the card sits is the global
 Overlay Placement setting ("Route and ship status")."""
 
@@ -60,7 +60,7 @@ RESEND_S = 3.0           # an unchanged card is drawn again this often, so it do
 class RouteConfig:
     enabled: bool = False
     rows: int = DEFAULT_ROWS
-    edsm: bool = False          # mark the systems ahead that EDSM does not know (sends their names to EDSM; off until ticked)
+    edsm: bool = False          # mark the systems ahead that EDSM does not know (sends their names to EDSM; off until switched on in Settings > Online)
 
 
 def clamp_rows(value: Any) -> int:
@@ -79,7 +79,6 @@ def load_config() -> RouteConfig:
 def save_config(cfg: RouteConfig) -> None:
     config.set(_CFG_ENABLED, cfg.enabled)
     config.set(_CFG_ROWS, str(cfg.rows))
-    config.set(_CFG_EDSM, cfg.edsm)
 
 
 # --- what the card says (pure) ---------------------------------------------------------------------------------------
@@ -139,7 +138,7 @@ def status_lines(tracker: RouteTracker, low_percent: int = fuel_alerts.DEFAULT_L
     return lines
 
 
-NEW_MARK = " *"                   # after a system's name: EDSM does not know it (only when that option is ticked)
+NEW_MARK = " *"                   # after a system's name: EDSM does not know it (only when that option is switched on)
 CHECK_AHEAD = 30                  # systems asked about at once (the rows shown and a few beyond, so scrolling down the route is already answered)
 
 
@@ -529,7 +528,6 @@ def build_settings(notebook: nb.Notebook) -> None:
 
     _vars["enabled"] = tk.BooleanVar(value=cfg.enabled)
     _vars["rows"] = tk.StringVar(value=str(cfg.rows))
-    _vars["edsm"] = tk.BooleanVar(value=cfg.edsm)
     nb.Checkbutton(frame, text="Enable the Route overlay", variable=_vars["enabled"]).grid(row=2, column=0, sticky=tk.W, padx=10, pady=2)
 
     rows_row = tk.Frame(frame)
@@ -538,10 +536,10 @@ def build_settings(notebook: nb.Notebook) -> None:
     tk.Spinbox(rows_row, from_=ROWS_RANGE[0], to=ROWS_RANGE[1], width=4, textvariable=_vars["rows"]).pack(side=tk.LEFT, padx=4)
     nb.Label(rows_row, text="(the jump count and the light years cover the whole route)").pack(side=tk.LEFT)
 
-    nb.Checkbutton(frame, text="Mark the systems ahead that EDSM does not know yet (asks EDSM; sends the names of the next systems on your route)",
-                   variable=_vars["edsm"]).grid(row=5, column=0, sticky=tk.W, padx=10, pady=2)
+    nb.Label(frame, text="Marking the systems ahead that EDSM does not know yet is switched in Settings > Online.",
+             wraplength=440, justify=tk.LEFT).grid(row=5, column=0, sticky=tk.W, padx=10, pady=2)
     nb.Label(frame, text=("A system EDSM has no record of has not been uploaded by anyone who shares with EDSM, so it may be a first discovery. Such a system gets a * after its "
-                          "name. One request per few minutes at most, with the system names and nothing about you. Off until ticked."),
+                          "name. One request per few minutes at most, with the system names and nothing about you."),
              wraplength=440, justify=tk.LEFT).grid(row=6, column=0, sticky=tk.W, padx=(30, 10), pady=(0, 6))
 
     nb.Label(
@@ -568,7 +566,7 @@ def _test_card() -> None:
     label = _result_label
     look = overlay_appearance.current_look()
     rows = clamp_rows(_vars["rows"].get()) if "rows" in _vars else DEFAULT_ROWS
-    show_edsm = bool(_vars["edsm"].get()) if "edsm" in _vars else False
+    show_edsm = load_config().edsm
 
     def worker() -> None:
         try:
@@ -588,4 +586,4 @@ def _test_card() -> None:
 def save_settings() -> None:
     if not _vars:
         return
-    save_config(RouteConfig(enabled=bool(_vars["enabled"].get()), rows=clamp_rows(_vars["rows"].get()), edsm=bool(_vars["edsm"].get())))   # a card left up simply expires
+    save_config(RouteConfig(enabled=bool(_vars["enabled"].get()), rows=clamp_rows(_vars["rows"].get())))   # a card left up simply expires

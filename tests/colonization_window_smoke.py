@@ -604,7 +604,7 @@ root.update()
 check("unsaved" in PW._window._shell._subtitle.cget("text"), "counting a project changes the list, which is flagged until it is saved")
 check("2 counted need 590 t" in PW._window._shell._subtitle.cget("text"), "the totals follow the counted state")
 check(PW._window._write_key() == "", "writing needs the master switch")
-check("switched off" in PW._window._shell._status.cget("text"), "and says why")
+check("Settings > Online" in PW._window._shell._status.cget("text"), "and says why, and where to turn it on")
 PW.close()
 rcc_client.fetch_active, rcc_client.fetch_hidden, rcc_client.fetch_primary = real_reads
 

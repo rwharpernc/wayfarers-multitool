@@ -4,9 +4,9 @@ It shows your pledged Power, rank and total merits; the merits earned so far in 
 merits earned here now would count as (Acquisition, Reinforcement or Undermining); and the merits and estimated Control Points earned in this system this session,
 by type. The Control Points are estimates from the merits-per-CP ratios in Settings -> Powerplay (the journal never reports them). It reads the same tracker, session
 and cycle ledger as the Powerplay panel, so the figures match it. Off until ticked in Settings -> Overlays -> Powerplay; it shows only in a system with a Powerplay
-state; in a system without one it says "No Powerplay Detected in system". With *Look up the system I am jumping to* ticked, the card turns to the destination as soon as the journal
+state; in a system without one it says "No Powerplay Detected in system". With the look-ahead switched on in Settings > Online, the card turns to the destination as soon as the journal
 says the jump has started, asking Spansh (powerplay_system_lookup.py) for its standing, and to the system you arrive in when the jump ends. Where it sits is the Overlay Placement
-setting ("Powerplay"). Nothing is sent anywhere unless that tick is on, and then only the destination's system id goes to Spansh.
+setting ("Powerplay"). Nothing is sent anywhere unless that switch is on, and then only the destination's system id goes to Spansh.
 """
 
 from __future__ import annotations
@@ -86,7 +86,6 @@ def load_config() -> PowerplayOverlayConfig:
 
 def save_config(cfg: PowerplayOverlayConfig) -> None:
     config.set(_CFG_ENABLED, cfg.enabled)
-    config.set(_CFG_LOOKAHEAD, cfg.lookahead)
 
 
 # --- what the card says (pure) ---------------------------------------------------------------------------------------
@@ -287,7 +286,7 @@ def build_settings(notebook: nb.Notebook) -> None:
               "connection settings are on the Overlay Connection tab), with your Powerplay standing while you are in a system that has Powerplay data: your Power, rank and total merits, the "
               "merits earned in the cycle in progress, the system's state and who holds it, what merits earned here now count as (Acquisition, Reinforcement or Undermining), and the "
               "merits and estimated Control Points you have earned in this system this session, by type. In a system without Powerplay data it says \"No Powerplay Detected in system\". "
-              "Everything comes from your journal, except the look-ahead below, which is off until you tick it."),
+              "Everything comes from your journal, except the look-ahead, which is off until you switch it on in Settings > Online."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
     overlay_link.add(frame)
@@ -296,11 +295,8 @@ def build_settings(notebook: nb.Notebook) -> None:
     nb.Checkbutton(frame, text="Enable the Powerplay card", variable=_vars["enabled"]).grid(row=2, column=0, sticky=tk.W, padx=10, pady=2)
     nb.Label(frame, text="In a system with no Powerplay state the card says so.",
              wraplength=440, justify=tk.LEFT).grid(row=3, column=0, sticky=tk.W, padx=(30, 10), pady=2)
-    _vars["lookahead"] = tk.BooleanVar(value=cfg.lookahead)
-    nb.Checkbutton(frame, text="Look up the system I am jumping to (asks Spansh)", variable=_vars["lookahead"]).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(8, 2))
-    nb.Label(frame, text=("Off, the card shows only the system you are in. On, it turns to the destination as soon as the jump starts (marked jumping) and asks spansh.co.uk for that "
-                          "system's Powerplay standing, sending only the system's id and nothing about you, then shows the system you arrive in. The answer is kept for an hour."),
-             wraplength=440, justify=tk.LEFT).grid(row=5, column=0, sticky=tk.W, padx=(30, 10), pady=(0, 4))
+    nb.Label(frame, text="Looking up the system you are jumping to (Spansh) is switched in Settings > Online.",
+             wraplength=440, justify=tk.LEFT).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(8, 2))
 
     nb.Label(
         frame,
@@ -343,4 +339,4 @@ def _test_card() -> None:
 
 def save_settings() -> None:
     if _vars:
-        save_config(PowerplayOverlayConfig(enabled=bool(_vars["enabled"].get()), lookahead=bool(_vars["lookahead"].get())))
+        save_config(PowerplayOverlayConfig(enabled=bool(_vars["enabled"].get())))

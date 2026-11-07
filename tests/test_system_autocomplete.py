@@ -34,9 +34,10 @@ class AutocompleteTests(unittest.TestCase):
         self.root.geometry("400x200+50+50")
         N.clear()
         SETTINGS.clear()
-        patch = mock.patch.object(N, "config", types.SimpleNamespace(get_bool=lambda key, default=False: SETTINGS.get(key, default)))
-        patch.start()
-        self.addCleanup(patch.stop)
+        for module in (N, A.online_lookups):          # the box and the warning's wording each read the saved switch
+            patch = mock.patch.object(module, "config", types.SimpleNamespace(get_bool=lambda key, default=False: SETTINGS.get(key, default)))
+            patch.start()
+            self.addCleanup(patch.stop)
         self.var = tk.StringVar()
         self.entry = tk.Entry(self.root, textvariable=self.var, width=30)
         self.entry.pack()
@@ -83,7 +84,8 @@ class AutocompleteTests(unittest.TestCase):
         self.type("colon")
         self.assertIsNone(self.box._listbox, "there is no list to take from")
         self.assertIsNotNone(self.box._popup, "the hint is up")
-        self.assertIn("Spansh", A.HINT_TEXT)
+        self.assertIn("Spansh", A.hint_text())
+        self.assertIn("Settings > Online", A.hint_text())
 
     def test_no_hint_for_a_system_that_is_known_one_that_is_too_short_or_with_spansh_on(self):
         N.set_visited(["Sol"])

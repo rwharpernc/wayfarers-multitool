@@ -33,7 +33,7 @@ WFMT combines tools that the Elite Dangerous community has built in various form
 | **What it covers** | Powerplay, exploration and exobiology, mining, trading, missions, on-foot and cargo tracking, colonization, the BGS, sharing reports to Discord |
 | **Where it runs** | Inside [EDMC](https://github.com/EDCD/EDMarketConnector), on Windows and Linux |
 | **Latest release** | **1.5.3**, published 2026-11-04 ([changelog](CHANGELOG.md)) |
-| **Cost and privacy** | Free. On-screen overlays, alerts and online lookups are off until enabled in Settings. [What goes on the internet](docs/guide/internet-and-privacy.md) lists every online lookup |
+| **Cost and privacy** | Free. On-screen overlays, alerts and online lookups are off until enabled. One tab, **Settings → WFMT → Online**, switches every online lookup, and [What goes on the internet](docs/guide/internet-and-privacy.md) lists each one |
 
 ## Download and install
 
@@ -45,7 +45,7 @@ WFMT combines tools that the Elite Dangerous community has built in various form
 
 **Overlay.** Windows provides a built-in overlay for on-screen displays. Linux requires [EDMCModernOverlay](https://github.com/SweetJonnySauce/EDMCModernOverlay).
 
-**Update.** Extract the new ZIP over the existing `Wayfarers-Multitool` folder without deleting the folder first, or enable **Automatically download and install updates** under **Settings → WFMT → General → Updates**.
+**Update.** Extract the new ZIP over the existing `Wayfarers-Multitool` folder without deleting the folder first, or tick **Download and install updates** on the **Online** tab (**Settings → WFMT → Online**).
 
 [Installing WFMT](docs/INSTALL.md) lists the plugin folder of each system, removal, and building from source.
 

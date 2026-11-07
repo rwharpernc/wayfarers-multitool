@@ -40,11 +40,11 @@ from . import (
     __version__, autohonk, bgs_panel, boxel_survey, combat_panel, discord_settings, poi_reference_panel, codex_completionist_panel, colonization_panel, discovery,
     exploration_value, flight_alerts, interdiction, inventory_panel, landing, materials_panel, mining_panel, missions, missions_overlay,
     notable, notes_panel, expedition_panel, expedition_log_panel, expedition_log_overlay, explore_dashboard, route_planner_panel, landing_finder_panel, surface_compass, organic_scan_panel, exobiology_overlay, overlay, overlay_appearance, overlay_placement, overlay_visibility, shortcuts, catchup_status, panelkit, powerplay, powerplay_overlay, route_overlay, targets_overlay, body_info_overlay, ranks_panel, screenshots, ship_builds_panel,
-    credits_ledger, game_mode, session_credits, session_merits, settings_scroll, system_names, trade_panel, trade_watch_panel,
+    credits_ledger, game_mode, session_credits, session_merits, settings_scroll, trade_panel, trade_watch_panel,
 )
 from . import __version__, data_backup, diag_log, issue_report, settings_online
 from .uikit import dialogs, placement, style
-from .update import CONFIG_AUTO_UPDATE, RELEASES_PAGE_URL
+from .update import RELEASES_PAGE_URL
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -131,12 +131,10 @@ _mode_holder: Optional[tk.Frame] = None
 _always_frame: Optional[tk.Frame] = None
 _toggle_off_colors: Tuple[str, str] = ("", "")
 
-_auto_update_var: Optional[tk.BooleanVar] = None
 _fit_height_var: Optional[tk.BooleanVar] = None
 _text_size_var: Optional[tk.StringVar] = None
 _theme_var: Optional[tk.StringVar] = None
 _look_opened: tuple = ("", "")   # the theme and text size the Settings page showed when it was built
-_suggest_var: Optional[tk.BooleanVar] = None
 _windows_on_edmc_var: Optional[tk.BooleanVar] = None
 
 PLUGIN_DISPLAY_NAME = "Wayfarer's Multitool (WFMT)"
@@ -727,7 +725,8 @@ def _build_settings_tabs(tabs: nb.Notebook, page_bg: str) -> None:
         placed.update(features)
         return [feature.build_settings for feature in features]
 
-    _settings_group(tabs, "General", [_create_window_tab, _create_updates_tab, _create_backup_tab, _create_help_tab, settings_online.build_settings, shortcuts.build_settings], page_bg)
+    _settings_group(tabs, "General", [_create_window_tab, _create_updates_tab, _create_backup_tab, _create_help_tab, shortcuts.build_settings], page_bg)
+    settings_scroll.scrolled_page(tabs, settings_online.build_settings, page_bg)       # every online switch, in one place
     for feature in (powerplay, missions):
         for build in settings_of(feature):
             settings_scroll.scrolled_page(tabs, build, page_bg)
@@ -768,7 +767,7 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
     """Window behavior. Everything here is placed with `grid` (never `pack`) - an
     nb.Frame already holds a gridded child, and packing into it makes the whole
     WFMT Settings tab vanish (tests/test_settings_layout.py)."""
-    global _fit_height_var, _suggest_var, _windows_on_edmc_var, _text_size_var, _theme_var, _look_opened
+    global _fit_height_var, _windows_on_edmc_var, _text_size_var, _theme_var, _look_opened
 
     frame = nb.Frame(notebook)
     frame.columnconfigure(0, weight=1)
@@ -788,19 +787,14 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
         wraplength=440, justify=tk.LEFT,
     ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 10))
 
-    _suggest_var = tk.BooleanVar(value=config.get_bool(system_names.CFG_REMOTE, default=False))
-    nb.Checkbutton(
-        frame, text="Suggest system names from Spansh while typing", variable=_suggest_var,
-    ).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(10, 2))
     nb.Label(
         frame,
         text=(
-            "Boxes that take a system name (the Expedition window, the trader finder, Where to buy and others) always suggest the systems you "
-            "have been in and ones WFMT already holds. Ticking this also asks Spansh for matching systems as you type, from the third letter "
-            "and after a short pause. What you have typed so far goes to Spansh, nothing else. Off until you tick it."
+            "Boxes that take a system name (the Expedition window, the trader finder, Where to buy and others) always suggest the systems in your "
+            "journals and ones WFMT already holds. Asking Spansh for other systems as you type is switched in Settings > Online."
         ),
         wraplength=440, justify=tk.LEFT,
-    ).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+    ).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(10, 10))
 
     nb.Label(frame, text="Mode buttons on the main panel", font=("TkDefaultFont", 9, "bold")).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(10, 2))
     nb.Label(
@@ -855,16 +849,12 @@ def _create_window_tab(notebook: nb.Notebook) -> None:
 
 
 def _create_updates_tab(notebook: nb.Notebook) -> None:
-    global _auto_update_var
-
     frame = nb.Frame(notebook)
     frame.columnconfigure(0, weight=1)
     notebook.add(frame, text="Updates")
 
-    _auto_update_var = tk.BooleanVar(value=config.get_bool(CONFIG_AUTO_UPDATE, default=False))
-    nb.Checkbutton(
-        frame, text="Automatically download and install updates", variable=_auto_update_var,
-    ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 2))
+    nb.Label(frame, text="Automatic download and install of updates is switched in Settings > Online.",
+             wraplength=440, justify=tk.LEFT).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 2))
 
     HyperlinkLabel(
         frame, text="Release notes", background=nb.Label().cget("background"), url=RELEASES_PAGE_URL, underline=True,
@@ -1090,10 +1080,6 @@ def save_prefs() -> None:
         config.set(CONFIG_FIT_HEIGHT, bool(_fit_height_var.get()))
         if _fit_height_var.get() and _frame is not None:
             _schedule_window_fit()
-    if _auto_update_var is not None:
-        config.set(CONFIG_AUTO_UPDATE, bool(_auto_update_var.get()))
-    if _suggest_var is not None:
-        config.set(system_names.CFG_REMOTE, bool(_suggest_var.get()))
     if _windows_on_edmc_var is not None:
         config.set(CONFIG_WINDOWS_ON_EDMC, bool(_windows_on_edmc_var.get()))
         placement.set_always(bool(_windows_on_edmc_var.get()))
@@ -1106,6 +1092,7 @@ def save_prefs() -> None:
         except ValueError:
             pass            # a half-typed number keeps the last good value
 
+    settings_online.save_settings()
     overlay.save_settings()
     overlay_placement.save_settings()
     shortcuts.save_settings()

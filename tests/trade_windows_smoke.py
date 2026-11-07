@@ -215,7 +215,7 @@ check(market._view._blocks is not None, "the Market window shows blocks")
 # lookups off: the search windows say so instead of failing
 from plugin import trade_panel as tp  # noqa: E402
 text = " ".join(str(getattr(b, "text", "")) for b in market._view._blocks)
-check("lookups" in text.lower(), f"with lookups off the Market window says so: {text!r}")
+check("settings > online" in text.lower(), f"with lookups off the Market window says so: {text!r}")
 
 market.close()
 pump()

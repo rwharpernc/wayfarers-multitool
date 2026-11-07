@@ -70,7 +70,7 @@ See [Buttons](#buttons).
 
 **Start a Raven Colonial project for a new site**
 
-1. Tick the master switch in **Settings → WFMT → Colonization → Raven Colonial** and save the Raven key there (the key is available at ravencolonial.com/user).
+1. Tick the master switch, **Colonization: share progress and deliveries**, in **Settings → WFMT → Online**, then save the Raven key in **Settings → WFMT → Colonization → Raven Colonial** (the key is available at ravencolonial.com/user).
 2. Dock at the new site. On the Colony page press **Create on Raven**, or in the Sites window select the site and choose **Raven Colonial → Create Project on Raven…**.
 3. In the dialog, select the plan entry (or **None**), the Location, Building and Layout, then press **Create**.
 
@@ -636,20 +636,21 @@ The **Raven Colonial** menu in the Colonization Sites window also opens Raven's 
 
 Sharing is optional and off by default.
 
-- Nothing is sent to Raven Colonial until the **master switch** is ticked in **Settings → WFMT → Colonization → Raven Colonial**.
+- Nothing is sent to Raven Colonial until the **master switch** (**Colonization: share progress and deliveries**) is ticked in **Settings → WFMT → Online**. The Colonization tab shows a note pointing there and holds the key.
 - Clearing the master switch stops every write at once (progress, deliveries, carrier cargo and Report Complete). The other choices are kept for when it is turned on again.
+- While the switch is off, the Raven Colonial strip of the Sites window and the My Projects window show `This needs "Colonization: share progress and deliveries" (Raven Colonial), which is off. Turn it on in Settings > Online.` Nothing is shown while it is on.
 - With the switch on, WFMT shares what happens at a construction site as it happens.
 
 | Setting | Location | What is sent, and when |
 |---|---|---|
-| **Allow WFMT to write to Raven Colonial (master switch)** | Settings → WFMT → Colonization | Nothing by itself. Off by default. The two checkboxes below work only while it is ticked and are grayed while it is not. |
+| **Colonization: share progress and deliveries** (the master switch) | Settings → WFMT → Online | Nothing by itself. Off by default. The two checkboxes below work only while it is ticked and are grayed while it is not. |
 | **Report my construction progress and deliveries** | Sites window, Raven Colonial strip | Requires the key below; with none, nothing is looked up or sent. When the depot's figures change (the `ColonisationConstructionDepot` event): the depot's numbers and how much of each commodity is still needed, which moves *Remaining* on Raven Colonial. When cargo is delivered (`ColonisationContribution`): the commodities and tons, which credit the commander name in Raven's history. Once per project, it also links the commander to the project. |
 | **Also report cargo I move to and from my fleet carrier** | Sites window, Raven Colonial strip | When cargo is transferred at the commander's own fleet carrier: the tons moved, to the carrier as plus and back to the ship as minus. It adds to Raven's carrier record and never replaces it, because WFMT's tally contains only observed moves. Requires the key. |
 | **Raven Colonial key** | Settings → WFMT → Colonization | Required for every write: progress, deliveries, carrier cargo, **Create Project on Raven**, **Report Complete to Raven**, **Mark Plan Entry Demolished**, and **Set as My Primary** and **Save Counted List** in My Projects. With no key WFMT sends nothing. The key is saved per commander on the local computer, shown masked, and sent only to Raven Colonial. |
 
 **In the Sites window.** The Colonization Sites window has a **Raven Colonial** strip across the top. It states what is being reported (for example "Reporting progress and deliveries; a key is saved for this commander") and holds the two reporting checkboxes, **Report my construction progress and deliveries** and **Also report cargo I move to and from my fleet carrier**. These two exist only in the strip, not in Settings. They are grayed, and a click does nothing, while the master switch is off. The choices are kept for when it is on.
 
-**Settings.** The master switch and the **Raven Colonial key** are in Settings → WFMT → Colonization. The master switch is the permission for WFMT to send data to a third-party site, so the window cannot turn it on. When a write first needs the key, the window asks for it to be pasted.
+**Settings.** The master switch is in Settings → WFMT → Online and the **Raven Colonial key** is in Settings → WFMT → Colonization. The master switch is the permission for WFMT to send data to a third-party site, so the window cannot turn it on. When a write first needs the key, the window asks for it to be pasted.
 
 **Obtaining the key.** The Settings page has a link to [ravencolonial.com/user](https://ravencolonial.com/user), where Raven shows the key after sign-in (the page can also reset it). WFMT does not fetch the key.
 
@@ -682,7 +683,7 @@ WFMT's own tracking remains the source of truth for the site. Raven's figures ne
 
 When the commander docks at a construction ship or site for which Raven Colonial has no project, nothing is shared until a project exists. Select the site and choose **Create Project on Raven** in the **Raven Colonial** menu.
 
-- It requires the master switch and the Raven Colonial key (WFMT asks for the key the first time and keeps it once Raven accepts it). It works only for an **active** site; a finished site is refused. With the switch off, the status line points to Settings.
+- It requires the master switch and the Raven Colonial key (WFMT asks for the key the first time and keeps it once Raven accepts it). It works only for an **active** site; a finished site is refused. With the switch off, the status line shows `This needs "Colonization: share progress and deliveries" (Raven Colonial), which is off. Turn it on in Settings > Online.`
 - The Colony page can also offer this when a new site appears (see [Offer to start a Raven project](#the-colony-page)).
 - WFMT first reads the system's plan on Raven Colonial. If a project already exists for the site, WFMT states this and does nothing else. The status line shows progress during the lookup. The message from any button pressed in this menu stays for 30 seconds.
 - The dialog opens centered over the Sites window and inside the screen. If it does not open, the EDMC log has a `Create project:` line stating where the steps stopped.
@@ -701,7 +702,7 @@ When the commander docks at a construction ship or site for which Raven Colonial
 
 **Example: first project in a new system.** The Colony page shows `Raven Colonial has no project for Example Outpost.`
 
-1. Check that **Allow WFMT to write to Raven Colonial (master switch)** is ticked and the key is set in Settings.
+1. Check that **Colonization: share progress and deliveries** is ticked in Settings → WFMT → Online and the key is set in Settings → WFMT → Colonization.
 2. Press **Create on Raven**. The Sites window opens on the site with the Create dialog.
 3. Select the matching **Plan entry** (its Location, Building and Layout fill in), or leave **None** and choose them manually.
 4. Press **Create**. The status line states what succeeded. From then on the deliveries are shared as they happen.

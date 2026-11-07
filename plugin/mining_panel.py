@@ -160,10 +160,6 @@ class MiningPanelController:
         re-querying edsm.net every time."""
 
         # Settings-tab variables, populated in build_settings().
-        self._spansh_hotspot_finder_var: Optional[tk.BooleanVar] = None
-        self._spansh_price_finder_var: Optional[tk.BooleanVar] = None
-        self._edsm_reserve_lookup_var: Optional[tk.BooleanVar] = None
-        self._edsm_body_lookup_var: Optional[tk.BooleanVar] = None
         self._overlay_enabled_var: Optional[tk.BooleanVar] = None
         self._radar_card_var: Optional[tk.BooleanVar] = None
         self._radar_size_var: Optional[tk.StringVar] = None
@@ -262,6 +258,7 @@ class MiningPanelController:
             reserve_lookup=tk.Button(
                 button_bar, text="Reserves",
                 command=lambda: reserve_lookup_dialog.open_reserve_lookup_dialog(self._window_parent())),
+            notice=panelkit.wrap_label(button_bar, text="", anchor="w", fg="#c07000"),      # which lookups' buttons are missing and why; empty (and hidden) when none is
         )
         for button, tip in (
                 (self._buttons.hotspot_finder, "Hotspots - find rings with a confirmed hotspot for a commodity (Spansh)"),
@@ -728,37 +725,17 @@ class MiningPanelController:
         frame.columnconfigure(0, weight=1)
         notebook.add(frame, text="Mining")
 
-        self._spansh_hotspot_finder_var = tk.BooleanVar(value=_cfg_bool(_CFG_SPANSH_HOTSPOT_FINDER_ENABLED, False))
-        self._spansh_price_finder_var = tk.BooleanVar(value=_cfg_bool(_CFG_SPANSH_PRICE_FINDER_ENABLED, False))
-        self._edsm_reserve_lookup_var = tk.BooleanVar(value=_cfg_bool(_CFG_EDSM_RESERVE_LOOKUP_ENABLED, False))
-        self._edsm_body_lookup_var = tk.BooleanVar(value=_cfg_bool(mining_body_lookup.CONFIG_ENABLED, False))
         self._archive_sessions_var = tk.BooleanVar(value=_cfg_bool(_CFG_ARCHIVE_SESSIONS, False))
 
         nb.Label(frame, text=("The display and tuning settings are in the Space Mining and Surface Mining windows (press Space Mining or Surface Mining on the panel): "
                               "session totals, the cargo bar and prospector hints in both; the target commodities in Space Mining; the coverage minimap, stop radius, rig gap "
-                              "and refill time in Surface Mining. This tab keeps the lookups that contact other services, the archive option and the simulation."),
+                              "and refill time in Surface Mining. This tab keeps the archive option and the simulation."),
                  wraplength=440, justify=tk.LEFT).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
 
-        nb.Checkbutton(
-            frame, text="Enable Spansh nearby hotspot finder (Space Mining page - contacts spansh.co.uk)",
-            variable=self._spansh_hotspot_finder_var,
-        ).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(6, 0))
-        nb.Checkbutton(
-            frame, text="Enable Spansh best price finder and Market research in the Surface Mining Book (contacts spansh.co.uk)",
-            variable=self._spansh_price_finder_var,
-        ).grid(row=5, column=0, sticky=tk.W, padx=10)
-        nb.Checkbutton(
-            frame, text=("Enable EDSM ring reserve lookup (Space Mining page - automatically contacts "
-                        "edsm.net when you drop into a ring, once for each ring until EDMC restarts, plus manual search)"),
-            variable=self._edsm_reserve_lookup_var,
-        ).grid(row=6, column=0, sticky=tk.W, padx=10)
+        nb.Label(frame, text="Mining's online lookups (hotspot finder, best price finder, ring reserve lookup and body lookup) are switched in Settings > Online.",
+                 wraplength=440, justify=tk.LEFT).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(6, 0))
         nb.Label(frame, text="The in-game HUD overlay is set up on the Overlays tab (the surface compass is its own tab there).").grid(
             row=7, column=0, sticky=tk.W, padx=10, pady=(6, 0))
-        nb.Checkbutton(
-            frame, text=("Enable body lookup (Surface Mining Book's Get body info button - asks edsm.net and spansh.co.uk for the "
-                        "bodies of your system, sending only its name or id)"),
-            variable=self._edsm_body_lookup_var,
-        ).grid(row=8, column=0, sticky=tk.W, padx=10)
         nb.Checkbutton(
             frame, text="Archive completed mining runs (writes a JSON file per run)",
             variable=self._archive_sessions_var,
@@ -865,12 +842,8 @@ class MiningPanelController:
         threading.Thread(target=worker, name="WFMT-mining-overlay-test", daemon=True).start()
 
     def save_settings(self) -> None:
-        if self._spansh_hotspot_finder_var is None:
+        if self._archive_sessions_var is None:
             return
-        config.set(_CFG_SPANSH_HOTSPOT_FINDER_ENABLED, bool(self._spansh_hotspot_finder_var.get()))
-        config.set(_CFG_SPANSH_PRICE_FINDER_ENABLED, bool(self._spansh_price_finder_var.get()))
-        config.set(_CFG_EDSM_RESERVE_LOOKUP_ENABLED, bool(self._edsm_reserve_lookup_var.get()))
-        config.set(mining_body_lookup.CONFIG_ENABLED, bool(self._edsm_body_lookup_var.get()))
         if self._overlay_enabled_var is not None:
             config.set(_CFG_OVERLAY_ENABLED, bool(self._overlay_enabled_var.get()))
         if self._radar_card_var is not None:

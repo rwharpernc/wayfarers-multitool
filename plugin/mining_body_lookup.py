@@ -28,7 +28,7 @@ plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 CONFIG_ENABLED = "wfmt_mining_edsm_body_lookup_enabled"
-"""Settings > Mining: allow the Book to ask EDSM and Spansh for a system's bodies. The name is from when only EDSM was asked; it is kept so a tick made then still counts."""
+"""Settings > Online: allow the Book to ask EDSM and Spansh for a system's bodies. The name is from when only EDSM was asked; it is kept so a tick made then still counts."""
 
 SPANSH_DUMP_URL = "https://spansh.co.uk/api/dump/"
 SPANSH_TIMEOUT_S = 20

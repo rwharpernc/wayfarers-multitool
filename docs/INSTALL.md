@@ -59,7 +59,7 @@ See [Overlay setup](OVERLAY_SETUP.md).
 ## Update
 
 - Extract the new ZIP over the existing `Wayfarers-Multitool` folder and confirm file replacement. Do not delete the old folder first: saved data is stored inside it.
-- Alternatively, enable **Automatically download and install updates** under **Settings → WFMT → General → Updates**. The option is off by default and follows published releases only (not drafts or pre-releases).
+- Alternatively, tick **Download and install updates** on the **Online** tab (**Settings → WFMT → Online**). The option is off by default and follows published releases only (not drafts or pre-releases).
   - WFMT checks once each time EDMC starts. If a newer release exists, WFMT downloads the ZIP, makes a data backup first if **Back up automatically** is on, keeps a zip of the replaced program files in `backups` (the newest three), and stages the new files.
   - The update takes effect at the next EDMC start. The line under the mode buttons turns orange and states that EDMC must be restarted. Saved data is not changed by an update.
   - [How the updater works](guide/getting-started.md#updating). [The update did not take](guide/troubleshooting.md#the-update-did-not-take).

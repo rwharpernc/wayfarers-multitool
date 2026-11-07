@@ -1,6 +1,6 @@
 # Mining
 
-This guide describes Mine mode: live tracking of ring mining in a ship and surface mining in the Rhino SRV, the Space Mining Book and Surface Mining Book, Mining History, the online lookups, mining alerts and the related settings.
+This guide describes Mine mode: live tracking of ring mining in a ship and surface mining in the Rhino SRV, the Space Mining Book and Surface Mining Book, Mining History, the online lookups (switched in Settings → WFMT → Online), mining alerts and the related settings.
 
 Mine mode provides:
 
@@ -66,7 +66,7 @@ See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
 
 **Find a hotspot.** See [Hotspots: Find Nearby Hotspots](#hotspots-find-nearby-hotspots).
 
-1. Tick *Enable Spansh nearby hotspot finder* in **Settings → WFMT → Mining**.
+1. Tick **Mining: nearby hotspot finder** in **Settings → WFMT → Online**.
 2. Press **Hotspots** (on the panel or in the Space Mining window), select a **Material** and a **Where** distance, and press **Search**.
 3. Select a row and press **Copy system** to copy the system name for the galaxy map.
 
@@ -93,7 +93,7 @@ A run is one trip from `Undocked` to `Docked`. The next undocking starts a new r
 - **Hold**, for example `Hold: 64 of 200 t`.
   - The tons the ship carries, read live from `Status.json` (the `Cargo` event is used until it has reported), and the capacity from the last loadout.
   - The same line is on the HUD overlay.
-  - The ring at the current location is shown with its reserve level once *Enable EDSM ring reserve lookup* is ticked and EDSM knows the ring, for example `Ring: Example 2 A Ring (Metallic) - Reserve: Pristine`. A ring that is not Metallic is shown in red with a reminder that laser mining pays best on Metallic rings. Nothing is shown while the answer is unknown.
+  - The ring at the current location is shown with its reserve level once **Mining: ring reserve lookup** is ticked (Settings → WFMT → Online) and EDSM knows the ring, for example `Ring: Example 2 A Ring (Metallic) - Reserve: Pristine`. A ring that is not Metallic is shown in red with a reminder that laser mining pays best on Metallic rings. Nothing is shown while the answer is unknown.
 - **Asteroids prospected**, with the count of each content grade (for example `Asteroids prospected: 14 (High x3, Medium x6, Low x5)`), and the **materials seen**. A rock prospected again with the same composition is counted once, and the page states the number of repeats ignored (`[2 duplicate(s) ignored]`).
   - Each material in **Materials seen** is on its own line with the number of rocks that held it, the lowest, average and highest percentage seen this run in square brackets, and `Mine via` with the method that usually applies (core, laser surface or sub-surface deposit; laser surface when no other is known). The method hints are a static lookup table in the plugin (`mining_methods.py`).
 - **Last rock**: the latest rock's materials with percentages and its grade, for example `Last rock: Painite 34%, Platinum 12% (High), target: Painite`.
@@ -175,17 +175,17 @@ The panel's buttons sit side by side and wrap onto a second line when they do no
 | **Space Mining** / **Surface Mining** (panel) | Opens that page's window: a radar and the controls on Surface Mining, the live numbers on Space Mining. Suited to a second screen ([the live window](#the-live-window)). | Always |
 | **Book** (Space Mining and Surface Mining windows) | Opens the book for that window: the **Space Mining Book** (rings) from Space Mining, the **Surface Mining Book** (Rhino deposits) from Surface Mining. | Always |
 | **Dashboard** (Mining History; both windows) | Opens every mining run found in the journals, summed (see below). | Always |
-| **Hotspots** (find nearby hotspots) | Opens the Find Nearby Hotspots window. | Panel and Space Mining window, once *Enable Spansh nearby hotspot finder* is ticked |
-| **Prices** (find best price) | Opens the Find Best Price window. | Panel and Space Mining window, once *Enable Spansh best price finder* is ticked (the same switch enables Market research and What pays in the Surface Mining Book) |
-| **Reserves** (check ring reserve level) | Opens the Check Ring Reserve Level window. | Panel and Space Mining window, once *Enable EDSM ring reserve lookup* is ticked |
+| **Hotspots** (find nearby hotspots) | Opens the Find Nearby Hotspots window. | Panel and Space Mining window; needs **Mining: nearby hotspot finder** (Settings → WFMT → Online). The window shows the standard warning while it is off |
+| **Prices** (find best price) | Opens the Find Best Price window. | Panel and Space Mining window; needs **Mining: best price finder and Market research** (Settings → WFMT → Online), the same switch that Market research and What pays use in the Surface Mining Book. The window shows the standard warning while it is off |
+| **Reserves** (check ring reserve level) | Opens the Check Ring Reserve Level window. | Panel and Space Mining window; needs **Mining: ring reserve lookup** (Settings → WFMT → Online). The window shows the standard warning while it is off |
 
-The three online lookups are off by default. See [what goes on the internet](internet-and-privacy.md).
+The online lookups are off by default and are switched on the Online tab (Settings → WFMT → Online). When one of these dialogs needs a lookup that is off, it shows `This needs "<lookup name>" (<service>), which is off. Turn it on in Settings > Online.` See [what goes on the internet](internet-and-privacy.md).
 
 ### Hotspots: Find Nearby Hotspots
 
 1. In **Material**, select or type a mineral (the list holds the known materials; a name not in it is accepted).
 2. In **Where**, choose the distance: within 25, 50, 100 (default), 250, 500 or 1,000 ly.
-3. In **Search from**, type the system to measure from. It starts as the current system; **Here** restores it. System names are suggested from the systems visited, and from Spansh while typing only if *Suggest system names from Spansh while typing* is ticked in Settings → WFMT → General → Window.
+3. In **Search from**, type the system to measure from. It starts as the current system; **Here** restores it. System names are suggested from the systems visited, and from Spansh while typing only if **System name suggestions while typing** is ticked in Settings → WFMT → Online.
 4. Press **Search** (or Enter).
 
 The table lists up to 25 rings that Spansh confirms have a hotspot for that material, nearest first. Columns: **Ring**, **Body**, **System**, **Hotspots** (the number of that material in the ring), **Distance (ly)**, **Arrival (ls)** (distance from the arrival star) and **Reserve level**. Click a heading to sort. Select a row and use **Copy ring**, **Copy body** or **Copy system** in the header, or double-click a row to copy its system.
@@ -194,7 +194,7 @@ Only the system name and the material are sent. A search with no result advises 
 
 **Example: Painite.**
 
-1. Tick *Enable Spansh nearby hotspot finder* in **Settings → WFMT → Mining**, then press **Hotspots** on the Space Mining page.
+1. Tick **Mining: nearby hotspot finder** in **Settings → WFMT → Online**, then press **Hotspots** on the Space Mining page.
 2. Type or select `Painite` in **Material**.
 3. Keep **Where** at 100 ly and **Search from** unchanged (**Here** restores the current system).
 4. Press **Search**. The table lists rings with Painite hotspots, nearest first.
@@ -216,7 +216,7 @@ The table lists up to 25 stations Spansh shows paying the most (or selling cheap
 
 **Example: selling 120 t of Painite.**
 
-1. Tick *Enable Spansh best price finder* in **Settings → WFMT → Mining**, then press **Prices**.
+1. Tick **Mining: best price finder and Market research** in **Settings → WFMT → Online**, then press **Prices**.
 2. Type `Painite` in **Commodity**. **I am selling** is selected by default.
 3. Keep **Where** at 50 ly. **Minimum demand (t)** starts at the tons in the hold if EDMC knows them.
 4. Press **Search**. Read **Price (cr)**, **Demand**, **Pad** and **Arrival (ls)**. A **Pad** of `?`, or one too small for the ship, requires checking before travel.
@@ -232,7 +232,7 @@ The table gives each ring with its **Body**, **Reserve level**, **Ring type** an
 
 **Example.**
 
-1. Tick *Enable EDSM ring reserve lookup* in **Settings → WFMT → Mining**, then press **Reserves**.
+1. Tick **Mining: ring reserve lookup** in **Settings → WFMT → Online**, then press **Reserves**.
 2. Type the system name in **System**. Leave **Body or ring** empty to list every ringed body.
 3. Press **Search**. Each row gives the **Reserve level**, **Ring type** and **Laser mining** note.
 4. If the status line states that EDSM has no ringed body on file, the system has not been recorded.
@@ -650,7 +650,7 @@ Rigs sit around the Rhino, so deposits close together can be worked from one pla
 - It uses only the commander's own records: deposits saved in that system, what has been recorded on the same kind of ground as its scanned bodies, and anything typed into *Also check*.
 - For each commodity it lists the markets that buy it, best price first, with demand, the age of the prices, the distance from the star and the pad size.
 - A system with no records suggests nothing until a commodity is added or a hotspot is saved.
-- It is off until *Enable Spansh best price finder* is ticked (Settings → WFMT → Mining).
+- It is off until **Mining: best price finder and Market research** is ticked (Settings → WFMT → Online); the window says so while it is off.
 - It excludes fleet carriers and markets not updated in 30 days.
 - It sends only the system's name.
 - Prices are the last ones players uploaded.
@@ -670,7 +670,7 @@ The Book's list of bodies comes from the `Scan` events in the journals. A body s
 Privacy and settings:
 
 - It sends only the system's name to EDSM and its id to Spansh (one request each, under the same courtesy rules as other Spansh calls).
-- It is off until *Enable body lookup* is ticked in Settings → WFMT → Mining.
+- It is off until **Mining: Get body info in the Surface Mining Book** is ticked in Settings → WFMT → Online; the Book says so when **Get body info** is pressed while it is off.
 
 Storage:
 
@@ -708,7 +708,7 @@ Storage:
 **Notes.**
 
 - It sends only a commodity's name, the system's name, the distance and the minimum demand.
-- It uses the same *Enable Spansh best price finder* switch (Settings → WFMT → Mining).
+- It uses the same **Mining: best price finder and Market research** switch (Settings → WFMT → Online).
 - It ranks what pays, not what a body holds. The game does not state which commodities a body carries, so a commodity is listed because of the commander's own records and not because of the kind of body.
 
 ### Sharing a deposit
@@ -800,12 +800,12 @@ The in-game Mining displays are set on **Settings → WFMT → Overlays → Mini
   - *Too close for another rig*: the distance used for the Surface Mining page's "far enough" note and the radar's rig bands (0 turns it off; 0 to 2000 m, steps of 5).
   - *Deposit refills after (days)*: 0 (default) means unknown and marks stay; a number from 1 to 90 removes a Depleted mark that long after it was set.
 
-**Settings → WFMT → Mining** holds the switches that permit WFMT to contact other services, the archive option and the simulation:
+**Settings → WFMT → Online** holds the switches that permit WFMT to contact other services (the four Mining lookups below), and **Settings → WFMT → Mining** holds the archive option and the simulation and shows a note pointing to the Online tab:
 
-- *Enable Spansh nearby hotspot finder* (Space Mining page): shows **Hotspots**.
-- *Enable Spansh best price finder and Market research in the Surface Mining Book*: shows **Prices** and enables **Market research** and **What pays**.
-- *Enable EDSM ring reserve lookup* (Space Mining page): shows **Reserves** and looks up each ring dropped into automatically.
-- *Enable body lookup*: enables **Get body info** in the Surface Mining Book (asks edsm.net and spansh.co.uk for the bodies of the system, sending only its name or id).
+- **Mining: nearby hotspot finder** (Space Mining page): lets **Hotspots** search.
+- **Mining: best price finder and Market research**: lets **Prices** search and enables **Market research** and **What pays** in the Surface Mining Book.
+- **Mining: ring reserve lookup** (Space Mining page): lets **Reserves** search and looks up each ring dropped into automatically.
+- **Mining: Get body info in the Surface Mining Book**: enables **Get body info** in the Surface Mining Book (asks edsm.net and spansh.co.uk for the bodies of the system, sending only its name or id).
 - *Archive completed mining runs*: writes a JSON file per run to `mining_sessions/`. A trip with nothing in it writes nothing.
 - **Simulation: Surface Live (pretend Rhino)**: opens the Live window on simulated data (see [Trying the live window without the game](#trying-the-live-window-without-the-game)). The simulation window has no Settings card.
 

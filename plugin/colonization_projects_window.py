@@ -22,10 +22,11 @@ from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set, Tuple
 
 from config import appname, config
 
-from . import panelkit, rcc_client, rcc_keys, rcc_projects as projects
+from . import online_lookups, panelkit, rcc_client, rcc_keys, rcc_projects as projects
 from .uikit import dialogs, palette as P
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
+from .uikit.widgets import NoteLabel
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -53,7 +54,7 @@ _HELP = (
     ("Note", "Primary is your primary project on Raven Colonial. Here marks a site WFMT also tracks from your journal."),
     ("Sync Sites", "A project you delete on Raven Colonial leaves its site active in WFMT, and the Colony panel keeps naming it as the current project. "
                     "Sync Sites lists the active sites with no project here and, once you agree, stops tracking them. Nothing changes on Raven Colonial."),
-    ("Writing", "Saving the list and setting your primary project need your Raven Colonial key and the master switch in Settings → Colonization."),
+    ("Writing", "Saving the list and setting your primary project need your Raven Colonial key and the Raven Colonial switch in Settings > Online."),
 )
 
 _window: Optional["ProjectsWindow"] = None
@@ -124,6 +125,7 @@ class ProjectsWindow:
             ("Set as My Primary…", self._on_set_primary),
             ("Save Counted List…", self._on_save_hidden)],
             tip="More - copy the shopping list, open Raven Colonial pages, set your primary project or save the counted list")
+        self._switch_note = NoteLabel(self._shell.body, "", fg=P.WARN, bg=P.BG, padx=0)     # shown only while the Raven Colonial switch is off
         self._table = DataTable(self._shell.body, _COLUMNS, sortable=False, on_activate=self._toggle_row,
                                 empty_text="No projects yet.")
         self._table.tag_configure("done", foreground=P.MUTED)
@@ -146,6 +148,7 @@ class ProjectsWindow:
         """Read the commander's projects, hidden list and primary project on a worker thread and poll for the answer."""
         if not self.alive:
             return
+        self._show_switch_note()
         cmdr = (self._cmdr() or "").strip()
         self._request_id += 1
         job: Dict[str, Any] = {"id": self._request_id, "done": False, "error": "", "views": [], "hidden": [], "primary": ""}
@@ -190,10 +193,21 @@ class ProjectsWindow:
 
     # --- drawing ---------------------------------------------------------------------------------------
 
+    def _show_switch_note(self) -> None:
+        """Warn above the list, where Set as My Primary and Save Counted List are, while the switch they need is off; nothing while it is on."""
+        text = online_lookups.needs("wfmt_rcc_enabled")
+        if text:
+            self._switch_note.configure(text=text)
+            if not self._switch_note.winfo_ismapped():
+                self._switch_note.pack(fill="x", pady=(0, P.PAD_SM), before=self._table)
+        else:
+            self._switch_note.pack_forget()
+
     def _rows(self) -> List[projects.Row]:
         return projects.rows(self._views, self._hidden, self._primary, self._tracked())
 
     def _render(self) -> None:
+        self._show_switch_note()        # the switch may have changed since the window opened
         shown = self._rows()
         selected = self._table.selection()
         self._table.clear()
@@ -285,7 +299,7 @@ class ProjectsWindow:
         it is kept only once a write has worked."""
         cmdr = self._loaded_for
         if not rcc_keys.enabled():
-            self._shell.set_status("Sending to Raven Colonial is switched off. Turn it on in Settings → Colonization → Raven Colonial.")
+            self._shell.set_status(online_lookups.needs("wfmt_rcc_enabled"))
             return ""
         if not cmdr:
             self._shell.set_status("Refresh first, so WFMT knows which commander this is.")

@@ -178,20 +178,21 @@ With this contract, `ui.py` walks the `FEATURES` tuple, builds each feature into
 
 ### Settings layout
 
-- `ui._build_settings_tabs` builds eleven top-level Settings tabs, sorted alphabetically by label (`_sort_tabs`): BGS, Colonization, Discord, Exploration, General, Mining, Missions, Operations, Overlays, Powerplay and Trade.
-  - General holds the tabs Window, Updates, Backup, Help, Online lookups and Shortcuts.
+- `ui._build_settings_tabs` builds twelve top-level Settings tabs, sorted alphabetically by label (`_sort_tabs`): BGS, Colonization, Discord, Exploration, General, Mining, Missions, Online, Operations, Overlays, Powerplay and Trade.
+  - General holds the tabs Window, Updates, Backup, Help and Shortcuts.
+  - Online switches every online lookup (every checkbox for a feature that contacts another service is there), with **Turn all off** and **Reset to defaults** at the top, the lookups that need no switch, and the Local star index controls.
 - A group is a plain tab holding its own `nb.Notebook` (`_settings_group`). Everything is placed with `grid`.
 - A feature with settings that is not listed lands in an "Other" group.
 - Every page is wrapped by `settings_scroll.scrolled_page`, which caps its visible height (between 260 and 640 px, derived from the screen height less 530 px for the window chrome) and adds a scrollbar beyond it, so a long page cannot push EDMC's Settings window and its OK button off the screen.
 
 **Settings that live in a window**
 
-From 1.5.0 the display and tuning settings of a feature that has windows are set in those windows only. The Settings tab of such a feature keeps its permissions (the switches that allow WFMT to contact Spansh, EDSM or Raven Colonial, the master switch and the key) and a line stating where the remaining settings are.
+From 1.5.0 the display and tuning settings of a feature that has windows are set in those windows only. The Settings tab of such a feature keeps its key and a line stating where the remaining settings are. The switches that allow WFMT to contact Spansh, EDSM, Raven Colonial, the community tick service or GitHub are all on the Online tab (`settings_online.py`, from the table in `online_lookups.py`), and the old place of each shows a one-line note pointing there.
 
 - Each window builds a Settings card, tab or strip from a field list. Every box or tick saves immediately (a box saves when Enter is pressed or focus leaves it). Saved values and config keys are unchanged; no migration is performed.
 - A feature's settings module owns the config keys, readers and savers (`exploration_settings.py`, `colonization_settings.py`, `inventory_settings.py`, `bgs_settings.py`, `mining_window_settings.py`, `missions_display_settings.py`) and provides `add_listener`, so the panel, the Settings tab's variables and every open window redraw when one changes. These modules import nothing from the panel, which avoids a circular import.
 - The cards are drawn by `mining_window_settings.py` (Space Mining and Surface Mining windows), `missions_display_settings.py` (the Display card of the Mission types window), `powerplay_settings_tab.py` (the Settings tab of the Powerplay Sessions window), `inventory_settings_tab.py` (the Settings tab of the Inventory window) and the Trade windows (`trade_windows.py`).
-- A permission is never set from a window. The Colonization strip shows what is reported and holds the progress and carrier-cargo ticks, but cannot turn the master switch on; the ticks are disabled while it is off.
+- A permission is never set from a window. The Colonization strip shows what is reported and holds the progress and carrier-cargo ticks, but cannot turn **Colonization: share progress and deliveries** on (that switch is on the Online tab); the ticks are disabled while it is off.
 
 **Overlays group**
 
@@ -550,7 +551,7 @@ The Operations section is titled Engineering (its collapsed-state key is `wfmt_m
   - It places its own bindtag ahead of the box's, so Enter, Up, Down and Escape are seen first (consumed with "break" only when a suggestion is highlighted or the list is open). The box's own Enter handling still runs otherwise.
 - The list is a borderless Toplevel under the box, colored from the box itself so that it fits both WFMT's dark windows and the themed EDMC panel.
 - Suggestions are `system_names.local()` from two letters: the systems seen by `load.journal_entry`, then sources such as the expedition stops and notes registered with `add_source`.
-- Spansh's `/api/systems/field_values/system_names?q=` answers are added from three letters when `wfmt_system_suggest_spansh` is on (off by default). The call is debounced by 350 ms, runs on a worker thread and is cached by typed start for the session.
+- Spansh's `/api/systems/field_values/system_names?q=` answers are added from three letters when `wfmt_system_suggest_spansh` is on (off by default; switched on the Online tab). The call is debounced by 350 ms, runs on a worker thread and is cached by typed start for the session.
 
 **Name type-ahead** (`name_suggestions.py`)
 
@@ -1022,7 +1023,7 @@ The measures below are implemented in the code.
 
 **Hard limits on one action**
 
-- A skip-check run (Sequence mode, or Region Sweep with *Skip systems already visited by anyone (EDSM)* on) makes at most 20 EDSM lookups.
+- A skip-check run (Sequence mode, or Region Sweep with **Region Sweep: skip systems anyone has visited** on) makes at most 20 EDSM lookups.
 - Random makes one Spansh search (kept in memory for 10 minutes and 5 ly, so repeat clicks make none) and at most 6 EDSM bodies lookups per click.
 - Sequence's automatic "nearest real system" suggestion happens only in response to the user's own clicks, at most once per 3 **Next** clicks in a row with no jump.
 - EDSM nearby-system queries use a 100 ly cube.
@@ -1087,7 +1088,7 @@ The window's filters apply before the number shown:
 Spatial adjacency comes from external sources:
 
 - EDSM's `cube-systems` query, centered on the journal's `StarPos`, supplies nearby real systems.
-- Region Sweep's *Skip systems already visited by anyone (EDSM)* uses `region_sweep_edsm_skip.skip_known_candidates` on a worker thread. The panel polls a result queue, and a newer jump or **Next** press makes an older check stale through a generation number. It steps past candidates that `edsm_client.system_known` reports as known to EDSM, up to 20 per advance, keeps the candidate when a lookup fails, and caches answers (`KnownSystemCache`) for the session.
+- Region Sweep's **Region Sweep: skip systems anyone has visited** uses `region_sweep_edsm_skip.skip_known_candidates` on a worker thread. The panel polls a result queue, and a newer jump or **Next** press makes an older check stale through a generation number. It steps past candidates that `edsm_client.system_known` reports as known to EDSM, up to 20 per advance, keeps the candidate when a lookup fails, and caches answers (`KnownSystemCache`) for the session.
 - Region Sweep does not generate a "next cube"; it tracks completion for cubes it was given by a typed seed, EDSM or Spansh.
 - **Random** asks Spansh for the real systems nearest to the commander, keeps those with no scan data, and confirms one with EDSM. It first checks a local per-commander visited-systems log, because a visit without a scan leaves no trace in either service, so a visited system could otherwise be returned as new.
 
@@ -1557,7 +1558,7 @@ Flow (all off the main thread):
 
 Properties:
 
-- **Opt-in.** Auto-update is off unless enabled in Settings (`wfmt_auto_update`). A `disable-auto-update.txt` file (`DISABLE_SENTINEL`) in the plugin folder disables it.
+- **Opt-in.** Auto-update is off unless enabled on the Online tab of Settings (`wfmt_auto_update`). A `disable-auto-update.txt` file (`DISABLE_SENTINEL`) in the plugin folder disables it.
 - **Staged.** Files are replaced on disk and take effect at the next EDMC start. Nothing reloads running code.
 - **Data files are skipped.** During unpacking, an entry whose path inside the zip is a name in `_OWN_DATA_FILES` is not written. `_OWN_DATA_FILES` and `_OWN_DIRS` also keep listed data out of the pre-update backup. A new data file is added to `_OWN_DATA_FILES` (section 16).
 - **Backups.** The last three (`BACKUPS_KEEP`) update backups are kept as `<date>-<time>.zip`. Only files matching that name are trimmed by the updater; the `pre-restore-` safety zips that share the folder are trimmed by `data_backup.py` (`SAFETY_KEEP`, 5). A backup excludes `_OWN_DATA_FILES`, the folders in `_OWN_DIRS` and `.pyc` / `.pyo` files.

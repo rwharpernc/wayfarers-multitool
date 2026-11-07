@@ -57,7 +57,7 @@ Detail: [Flight Alerts](#flight-alerts).
 
 1. Open **Settings → WFMT → Overlays → Route** and tick **Enable the Route overlay**.
 2. Set **Systems listed** (3 to 20; 8 by default).
-3. Optionally tick **Mark the systems ahead that EDSM does not know yet**.
+3. Optionally tick **Route overlay: systems EDSM does not know** in **Settings → WFMT → Online**.
 4. Press **Test Card** to display a sample route. The test works while the feature is off.
 5. To move it, open **Overlay Placement** and adjust "Route and ship status". The default is the top left.
 
@@ -243,7 +243,7 @@ Sample System 9       WHITE DWARF
 
 1. Open **Settings → WFMT → Overlays → Route**.
 2. Tick **Enable the Route overlay** (off by default). **Systems listed** (3 to 20; 8 by default) sets how many of the next systems the card lists.
-3. Optionally tick **Mark the systems ahead that EDSM does not know yet** (off by default). This is the only online part of the Route overlay: it sends EDSM the names of the next systems on the route and nothing about the commander.
+3. Optionally tick **Route overlay: systems EDSM does not know** in **Settings → WFMT → Online** (off by default, one setting for the whole installation; the Route tab shows a note pointing there). This is the only online part of the Route overlay: it sends EDSM the names of the next systems on the route and nothing about the commander.
    - A listed system with no EDSM record receives a **\*** after its name.
    - A system unknown to EDSM has not been uploaded by any commander sharing with EDSM.
    - If EDSM cannot be reached, nothing is marked and the check is retried after a few minutes. A failed check never marks a system as unknown.

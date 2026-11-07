@@ -2,7 +2,7 @@
 
 Type a material, say how far to look and the system to search from (it starts as the one you are in), then press **Search**. The results fill a table you can sort by any column: the ring and the
 body it circles, the system, how many hotspots of that material the ring has, the distance in light years, the distance from the arrival star and the body's reserve level. Double-click a row, or
-press **Copy system**, **Copy body** or **Copy ring**, to put a name on the clipboard for the galaxy map. Opt-in through "Enable Spansh nearby hotspot finder" in Settings; the network call is
+press **Copy system**, **Copy body** or **Copy ring**, to put a name on the clipboard for the galaxy map. Opt-in through the hotspot finder switch in Settings > Online; the network call is
 `mining_spansh_client.search_ring_hotspots`, and the only thing sent is the system name and the material, when you press Search.
 
 Built on the shared window kit (plugin/uikit), like the Find Best Price window. The lookup runs on a worker thread and the result is picked up by an after() poll, so no widget is touched off the
@@ -22,7 +22,7 @@ from config import appname, config
 from . import mining_location as location
 from . import mining_spansh_client as spansh_client
 from . import spansh_courtesy
-from . import panelkit, system_autocomplete
+from . import online_lookups, panelkit, system_autocomplete
 from .uikit import palette as P
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
@@ -101,6 +101,11 @@ class HotspotFinderWindow:
         self._shell.add_action("Copy body", lambda: self._copy("body"), tip="Copy body - copy the selected result's body name to the clipboard")
         self._shell.add_action("Copy system", lambda: self._copy("system"), tip="Copy system - copy the selected result's system name to the clipboard")
         body = self._shell.body
+        # The warning when the online switch is off: empty and out of the way while it is on (see _refresh_notice)
+        self._notice = tk.Label(body, text="", fg=P.WARN, bg=P.BG, anchor="w", justify="left", wraplength=900)
+        self._notice.pack(fill="x")
+        self._notice.bind("<Configure>", lambda e: self._notice.configure(wraplength=max(e.width, 100)))
+        self._refresh_notice()
 
         first = tk.Frame(body, bg=P.BG)
         first.pack(fill="x", pady=(0, P.PAD_SM))
@@ -138,9 +143,16 @@ class HotspotFinderWindow:
     def alive(self) -> bool:
         return self._shell.alive
 
+    def _refresh_notice(self) -> None:
+        """Show the shared warning while the switch is off and nothing at all while it is on; checked when the window is built and each time it is shown again."""
+        text = online_lookups.needs("wfmt_mining_spansh_hotspot_finder_enabled")
+        self._notice.configure(text=text)
+        self._notice.pack_configure(pady=(0, P.PAD_SM) if text else 0)
+
     def lift(self) -> None:
         self._shell.window.deiconify()
         self._shell.window.lift()
+        self._refresh_notice()
 
     def close(self) -> None:
         self._shell.close()

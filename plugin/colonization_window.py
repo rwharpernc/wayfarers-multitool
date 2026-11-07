@@ -20,7 +20,7 @@ from typing import Any, Callable, Dict, FrozenSet, List, Mapping, Optional, Tupl
 
 from config import appname, config
 
-from . import colonization, diag_log, colonization_archive_window, colonization_builds_window, colonization_buy_window, colonization_carrier, colonization_catchup, colonization_create_dialog, colonization_projects_window, colonization_settings, colonization_view as view, panelkit, rcc_client, rcc_create, rcc_keys
+from . import colonization, diag_log, colonization_archive_window, colonization_builds_window, colonization_buy_window, colonization_carrier, colonization_catchup, colonization_create_dialog, colonization_projects_window, colonization_settings, colonization_view as view, online_lookups, panelkit, rcc_client, rcc_create, rcc_keys
 from .colonization_carrier import CarrierCargo
 from .colonization import Site
 from .colonization_data import SiteRepository
@@ -785,7 +785,7 @@ class ColonizationWindow:
         """The commander's Raven key when a write may go ahead, else "" (with the reason in the status line). Asks for the key when
         none is saved; it is kept only once a write has worked."""
         if not rcc_keys.enabled():
-            self._announce("Sending to Raven Colonial is switched off. Turn it on in Settings → Colonization → Raven Colonial.")
+            self._announce(online_lookups.needs("wfmt_rcc_enabled"))
             return ""
         if site is None:
             self._announce("Select a site on the left first.")
@@ -994,7 +994,7 @@ class ColonizationWindow:
         """Tell Raven Colonial the selected site is finished. Asks first, and sends only the commander's Raven key to the one
         project's `complete` address (see rcc_client.complete_project); nothing else leaves WFMT."""
         if not rcc_keys.enabled():
-            self._announce("Sending to Raven Colonial is switched off. Turn it on in Settings → Colonization → Raven Colonial.")
+            self._announce(online_lookups.needs("wfmt_rcc_enabled"))
             return
         site = self._selected_site()
         if site is None:

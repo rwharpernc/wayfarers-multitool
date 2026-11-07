@@ -40,7 +40,7 @@ Each row names a task, the control to use and the guide section that describes i
 | Find the nearest neutron star or white dwarf | **Neutron Star** and **White Dwarf** in Exploration mode; the optional Local star index makes **Neutron Star** answer without a request | [Neutron Star and White Dwarf](exploration.md#neutron-star-and-white-dwarf-buttons), [The local star index](exploration.md#the-local-star-index) |
 | View earnings by day and over the career | Click the **Credits this session** line (the Credits Ledger) | [The lines under the mode buttons](getting-started.md#the-lines-under-the-mode-buttons) |
 | Back up data, restore it or move it to another computer | **Settings → WFMT → General → Backup** | [Backing up the data](getting-started.md#backing-up-your-data) |
-| Update WFMT | **Settings → WFMT → General → Updates**, or extract the new ZIP over the old folder | [Updating](getting-started.md#updating) |
+| Update WFMT | **Settings → WFMT → Online** (**Download and install updates**), or extract the new ZIP over the old folder | [Updating](getting-started.md#updating) |
 | Report what the game shows where WFMT cannot check it (an engineer's requirements, for example) | **Report engineer data** on the Engineers tab, or **Settings → WFMT → General → Help → Report game data** | [Telling us what the game shows](reporting-problems.md#telling-us-what-the-game-shows-game-data) |
 | Write a detailed diagnostic log | **Settings → WFMT → General → Help → Write a separate diagnostic log** (off until ticked) | [The diagnostic log](reporting-problems.md#the-diagnostic-log) |
 | Report a bug | **Settings → WFMT → General → Help → Report an issue** and **Copy diagnostics** | [Reporting a problem](reporting-problems.md) |
@@ -68,14 +68,14 @@ Each table lists a feature, what it does, the controls and settings that operate
 | Color themes | Navy (the default), Cyan, Amber and Green for WFMT's own windows; open windows change at once and the choice is remembered; EDMC and the overlay cards are not changed | The theme name at the right end of a window's bottom line, or **Settings → WFMT → General → Window** | [Opening the pop-out windows](getting-started.md#opening-the-pop-out-windows) |
 | Table columns fit their content | Short columns stay narrow and long ones take the spare width | Automatic | [Opening the pop-out windows](getting-started.md#opening-the-pop-out-windows) |
 | Back up my data | One zip of everything WFMT has recorded about the play, with a restore (applied at the next start) and an optional automatic backup | **Settings → WFMT → General → Backup**: **Back up my data**, **Restore my data...**, *Back up automatically* | [Backing up the data](getting-started.md#backing-up-your-data) |
-| Automatic updates | Checks GitHub once each time EDMC starts, downloads a newer release and waits for an EDMC restart; a **Release notes** link | **Settings → WFMT → General → Updates** (off by default) | [Updating](getting-started.md#updating) |
+| Automatic updates | Checks GitHub once each time EDMC starts, downloads a newer release and waits for an EDMC restart; a **Release notes** link | **Settings → WFMT → Online** (**Download and install updates**, off by default) | [Updating](getting-started.md#updating) |
 | Report an issue and Copy diagnostics | Opens a GitHub bug report with the versions filled in; copies the newest WFMT log lines (with the commander name and home folder removed) to paste into it | **Settings → WFMT → General → Help** | [Reporting a problem](reporting-problems.md) |
-| Local star index (optional) | A file of neutron stars built from Spansh's public dump so **Neutron Star** answers without a request; **Update** fetches only what changed | **Settings → WFMT → General → Online lookups**: **Download and build**, **Update**, **Cancel**, **Delete** | [The local star index](exploration.md#the-local-star-index) |
+| Local star index (optional) | A file of neutron stars built from Spansh's public dump so **Neutron Star** answers without a request; **Update** fetches only what changed | **Settings → WFMT → Online**: **Download and build**, **Update**, **Cancel**, **Delete** | [The local star index](exploration.md#the-local-star-index) |
 | Help in each window | Most pop-out windows have a **Help** button that explains their columns and buttons | **Help** in the window's header | [Pop-out windows](getting-started.md#pop-out-windows) |
 | Shortcuts | Six actions as Windows key combinations and as `!wf` chat commands (Windows and Linux) | **Settings → WFMT → General → Shortcuts** | [Shortcuts](shortcuts.md) |
 | On-screen overlays | Alerts, cards and diagrams on the game screen: WFMT's built-in overlay on Windows, or EDMCModernOverlay (Windows and Linux), with a drag-and-drop placement editor, color schemes, text size, panel opacity, fonts and a switch to hide them all | **Settings → WFMT → Overlays**; the **Overlays shown** line on the panel hides them | [Overlay setup](../OVERLAY_SETUP.md) |
 | Windows and Linux | Native or Flatpak EDMC, Elite under Proton or Wine | [Download and install](../../README.md#download-and-install) | [Windows and Linux](platforms.md), [WFMT on Linux](linux.md) |
-| Online lookups listed | Every one is opt-in or runs only when a button is pressed, with the address it uses | **Settings → WFMT → General → Online lookups** | [What goes on the internet](internet-and-privacy.md) |
+| Online lookups, switched in one place | Every one is opt-in or runs only when a button is pressed, with the address it uses; one checkbox each, **Turn all off** and **Reset to defaults** | **Settings → WFMT → Online** | [What goes on the internet](internet-and-privacy.md) |
 | Every setting in one place | Each Settings tab, its controls and what they start as | **File → Settings → WFMT** | [Settings](getting-started.md#settings), [Every Overlays tab](../OVERLAY_SETUP.md#every-overlays-tab-in-detail) |
 
 ### Powerplay ([guide](powerplay.md))
@@ -130,7 +130,7 @@ Each table lists a feature, what it does, the controls and settings that operate
 - **Dashboard** (in each window's header) opens Mining History.
 - The windows are the second-screen live view (**Mark center**, **Mark border**, **Add hotspot** and **Import/export** are in the Surface Mining one).
 - **Hotspots**, **Prices** and **Reserves** are the lookups.
-- The display switches, target commodities and tuning are on the Settings card at the top of each window; the lookups that contact other services, the archive option and the simulation are under **Settings → WFMT → Mining**.
+- The display switches, target commodities and tuning are on the Settings card at the top of each window; the lookups that contact other services are switched on **Settings → WFMT → Online**, and the archive option and the simulation are under **Settings → WFMT → Mining**.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
@@ -145,7 +145,7 @@ Each table lists a feature, what it does, the controls and settings that operate
 | Mining alerts | A card for a core asteroid or a rock rich in the target commodity; warnings for low limpets and a nearly full hold while mining | The target commodities on the Settings card of the Space Mining window; **Settings → WFMT → Overlays → Flight Alerts** to switch them on | [Flight Alerts](always-on.md#flight-alerts) |
 | Mining overlay and archive | Live stats on the game screen; an optional JSON file per completed run | **Settings → WFMT → Overlays → Mining**; *Archive completed mining runs* | [Settings](mining.md#settings) |
 | Mining radar over the game | The Surface Live radar drawn on the game screen while the Rhino is out (WFMT's built-in overlay, Windows) | **Settings → WFMT → Overlays → Mining**: *Show the Mining radar over the game*, its size and opacity, **Test radar** | [The radar over the game](mining.md#the-radar-over-the-game) |
-| Opt-in lookups | Nearby hotspots and best price (Spansh), ring reserve level (EDSM) | Tick them under **Settings → WFMT → Mining**, then **Hotspots**, **Prices**, **Reserves** | [The buttons](mining.md#the-buttons) |
+| Opt-in lookups | Nearby hotspots and best price (Spansh), ring reserve level (EDSM) | Tick them under **Settings → WFMT → Online**, then **Hotspots**, **Prices**, **Reserves** | [The buttons](mining.md#the-buttons) |
 
 ### Trade ([guide](trade.md))
 
@@ -156,7 +156,7 @@ Each table lists a feature, what it does, the controls and settings that operate
 - Routes: **Find routes**, **Cancel**, **Hops**, **Round trip**, **Copy next system**.
 - Market: **Sell**/**Buy**, **Near me**/**Galaxy**, **Best picks**, **Price finder**.
 - Watch list: **Watch**, **Refresh**.
-- The Spansh lookups and the carrier choice are under **Settings → WFMT → Trade**; the route requirements, the Near me radius and ship size are set in the Routes and Market windows, and *Count fines and bounties* in Session.
+- The Spansh lookups are switched on **Settings → WFMT → Online** and the carrier choice is under **Settings → WFMT → Trade**; the route requirements, the Near me radius and ship size are set in the Routes and Market windows, and *Count fines and bounties* in Session.
 
 | Feature | What it does | How to use it | Deep dive |
 |---|---|---|---|
@@ -207,7 +207,7 @@ Each table lists a feature, what it does, the controls and settings that operate
 | Colonization Sites window | Every site's shopping list, progress and totals, and the carrier's part | **Dashboard**; **Rescan Journals** if a load did not register | [The Sites window](colonization.md#the-colonization-sites-window) |
 | Where to buy | The closest places to buy a commodity, or a whole list, with, for a list, a suggested shopping trip in flying order with a next-stop card, and the price and stock at each stop | Click a commodity row, press **Where to Buy**, then **Find nearest** or **Find all** (**Stop** while it runs) | [Where to buy](colonization.md#where-to-buy), [Suggested route](colonization.md#suggested-route) |
 | My Projects | Every active project on Raven Colonial, across systems, with totals and trips | **Projects** | [My Projects](colonization.md#my-projects) |
-| Planned Builds and Raven Colonial | Links, starting a Raven project for a site, and opt-in sharing of progress and deliveries | **Raven Colonial** menu in the Sites window; **Settings → WFMT → Colonization** (master switch and the Raven key); the two reporting ticks are on the Raven Colonial strip of the Sites window | [Planned builds](colonization.md#planned-builds), [Starting a project](colonization.md#starting-a-project-on-raven-colonial) |
+| Planned Builds and Raven Colonial | Links, starting a Raven project for a site, and opt-in sharing of progress and deliveries | **Raven Colonial** menu in the Sites window; **Settings → WFMT → Online** (**Colonization: share progress and deliveries**); **Settings → WFMT → Colonization** (the Raven key); the two reporting ticks are on the Raven Colonial strip of the Sites window | [Planned builds](colonization.md#planned-builds), [Starting a project](colonization.md#starting-a-project-on-raven-colonial) |
 | Shopping list overlay | Shown at the market, the carrier or a construction site; a List choice (All, To buy or To haul) picks which rows it shows | The options under Settings → WFMT → Overlays → Colonization (*Always show*, automatic showing, rows, *List*) | [The overlay](colonization.md#the-shopping-list-on-the-overlay) |
 | Colonization Archive | Finished sites put away for reference, with how they ended, their dates and the commodities they needed; restore or remove them | **Manage Sites → Archive Finished**, then **Show Archive** | [The archive](colonization.md#the-archive) |
 | Colonization History | What was delivered over time, by day, commodity and site | **History** | [History](colonization.md#history) |
@@ -221,7 +221,7 @@ Each table lists a feature, what it does, the controls and settings that operate
 | Faction states | The factions in this system and what the activity does to each since the last tick | Automatic | [The panel](bgs.md#the-panel), [What it counts](bgs.md#what-it-counts) |
 | BGS Report | A tab per system acted in, per tick, with an archive | **Report**; the drop-down picks an earlier tick | [The BGS Report window](bgs.md#the-bgs-report-window) |
 | Share a tick to Discord | The tick as Discord messages, copied to paste or posted to the webhook | **Report**, then the **Discord** menu | [Sharing reports to Discord](discord.md) |
-| Tick detection | Optional detection of the server tick from a community service | **Settings → WFMT → BGS** (the other BGS settings are on the Settings card of the BGS Report window) | [Tick detection](bgs.md#tick-detection-and-the-internet) |
+| Tick detection | Optional detection of the server tick from a community service | **Settings → WFMT → Online** (**BGS tick detection (every minute)**; the other BGS settings are on the Settings card of the BGS Report window) | [Tick detection](bgs.md#tick-detection-and-the-internet) |
 
 ### Always on, in any mode ([guide](always-on.md))
 

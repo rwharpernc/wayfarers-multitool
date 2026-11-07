@@ -183,7 +183,7 @@ WFMT detects the symptom directly:
 
 `RegionSweepQueue.advance_cube()` continues to the next incomplete, non-empty cube when the current cube completes. This requires the queue not to run empty.
 
-The option **Auto-discover more nearby cubes (EDSM) when the queue is running low** (Settings → Exploration → Boxel Survey, Region Sweep section, default off, `wfmt_boxel_sweep_auto_discover`) adds cubes:
+The option **Region Sweep: find more nearby cubes** (Settings → WFMT → Online, default off, `wfmt_boxel_sweep_auto_discover`) adds cubes:
 
 - After every jump while Region Sweep is active, `RegionSweepController._maybe_auto_discover()` counts the queued cubes with incomplete work (`_AUTO_DISCOVER_LOW_WATER_MARK = 1`).
 - At or below that count, it runs the same EDSM `cube-systems` lookup as **Discover Nearby Cubes (EDSM)** (section 3.2) and merges the new cubes into the queue.
@@ -241,7 +241,7 @@ The stats line of the main panel reflects the boxel of the live journal `system`
 - **E3: a resolved candidate can be displayed under a different name in the game.** The procedural string still resolves for search and plot, so sequence walking is not affected. The cause has not been determined. It matters for any feature that verifies a candidate against EDSM by display name.
 - **E4: arrival at a renamed candidate may not trigger auto-advance.**
   - `on_jump()` advances only when the `StarSystem` string of the journal matches the stored procedural candidate. WFMT has no `SystemAddress` tracking to match on instead.
-  - The option **Confirm off-sequence arrivals against EDSM** (Settings → Boxel Survey, default off, `wfmt_boxel_confirm_alias_arrival`) treats a non-matching arrival as a possible E3 case.
+  - The option **Boxel Survey: confirm off-sequence arrivals** (Settings → WFMT → Online, default off, `wfmt_boxel_confirm_alias_arrival`) treats a non-matching arrival as a possible E3 case.
   - `BoxelSurveyController._maybe_confirm_alias_arrival()` resolves the real coordinates of the pending target through `edsm_client.systems_coords()` and compares them with the `StarPos` of the arrival.
   - A match within `ALIAS_ARRIVAL_COORD_TOLERANCE_LY` (0.5 ly) is treated as arrival at the target under a different name. The walker advances and a status message names both systems.
   - The option is opt-in because it sends an EDSM lookup on every off-sequence jump while a target is pending, including jumps unrelated to the boxel.

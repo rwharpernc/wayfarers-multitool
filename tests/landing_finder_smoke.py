@@ -133,8 +133,8 @@ check("medium pad" in w._shell._subtitle.cget("text") if hasattr(w._shell, "_sub
 
 w._find()
 pump()
-check(asked == [] and "Tick the box" in w._shell._status.cget("text"), f"nothing is sent until the box is ticked: {asked} {w._shell._status.cget('text')!r}")
-w._allowed.set(True)
+check(asked == [] and "Settings > Online" in w._shell._status.cget("text"), f"nothing is sent while the lookup is off, and the status says where to turn it on: {asked} {w._shell._status.cget('text')!r}")
+saved["wfmt_landing_finder_allowed"] = True            # switched on in Settings > Online
 w._find()
 check(wait_for(lambda: not w._busy), "the lookup finishes")
 pump()
@@ -146,7 +146,6 @@ w._copy_system("s0")
 check(root.clipboard_get() == "Far Sys", f"double-click copies a station's system: {root.clipboard_get()!r}")
 w._copy_system("c0")
 check(root.clipboard_get() == "Carrier Sys", "and a carrier's")
-check(saved.get("wfmt_landing_finder_allowed") is True, "ticking the box is remembered")
 
 w._service_vars["Refuel"].set(False)
 w._service_vars["Outfitting"].set(True)

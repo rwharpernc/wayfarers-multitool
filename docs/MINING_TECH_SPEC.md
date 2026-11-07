@@ -370,7 +370,7 @@ Two details shared with [Trade mode](TRADE_TECH_SPEC.md):
 - The config keys are in `mining_window_settings` (the panel imports them).
 - `value` and `set_value` read and save a field with the same clamping as the Settings tab (`mining_stops.clamp_radius`, `clamp_rig_gap`, `clamp_refill_days`). `set_target` and `target_status` do the same for the target commodities.
 - Every change is announced to listeners: each open card updates itself, and the listener of the panel (`_on_window_setting`) redraws.
-- The lookup switches, the body lookup, the archive option and the simulation remain in Settings. The Settings → WFMT → Mining tab states where the rest of the settings are.
+- The lookup switches and the body lookup are on the Online tab of Settings; the archive option and the simulation remain on the Mining tab, which states where the rest of the settings are.
 
 **Panel.** The Mining panel has no pages and no arrows. `mining_render.render_summary` draws a few lines for the ring run and a few for the Rhino, both at once, then the buttons. A button for each page (`mining_pages.PAGE_ORDER`) opens the Live window of that page (`mining_live_window`, which also takes `actions`: the Book and Dashboard buttons of the page). `_page_for_panel` (Surface Mining while the surface repository is active or an SRV is out, otherwise Space Mining) selects which side the overlay and the Prices suggestions follow.
 
@@ -391,7 +391,7 @@ Set on the **Settings** card of the windows only (keys begin `wfmt_mining_`; see
 
 Under **File → Settings → WFMT → Mining**:
 
-- The three lookups (`wfmt_mining_spansh_hotspot_finder_enabled`, `wfmt_mining_spansh_price_finder_enabled`, `wfmt_mining_edsm_reserve_lookup_enabled`), the body lookup (`wfmt_mining_edsm_body_lookup_enabled`) and run archiving (`wfmt_mining_archive_sessions`); all off. They contact other services or write files, so they remain in Settings.
+- Run archiving (`wfmt_mining_archive_sessions`; off). The three lookups (`wfmt_mining_spansh_hotspot_finder_enabled`, `wfmt_mining_spansh_price_finder_enabled`, `wfmt_mining_edsm_reserve_lookup_enabled`) and the body lookup (`wfmt_mining_edsm_body_lookup_enabled`) contact other services, so they are switched only on the Online tab (Settings → WFMT → Online); the Mining tab shows a note pointing there, and each dialog shows `online_lookups.needs` while its lookup is off.
 - The Known Surface Hotspots list (add, edit, delete, import, export) at the bottom of the tab, and the Simulation button.
 
 Elsewhere:

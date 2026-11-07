@@ -164,8 +164,8 @@ No installation is required. A Flatpak EDMC has the following limits:
 
 - **Back up my data** (Settings → WFMT → General → Backup) and **Back up automatically** write to a chosen folder, which must be outside the plugin folder. A Flatpak EDMC can write only to folders it has been granted: choose its own data folder, or grant a folder with `flatpak override --user --filesystem=<folder> io.edcd.EDMarketConnector`. A manual backup shows the line `Saved N files (size) to <path>` or the reason it failed. The file is named `WFMT-data-<date>.zip`. The backup has not been tried on Linux.
 - **Restore my data...** requires the same folder permission to read the zip. The restore is applied at the next EDMC start.
-- **The Local star index** (General → Online lookups) downloads one file from Spansh (about 173 MB) and builds an index in the plugin folder, which needs about 300 MB free during the build. The index is optional.
-- **Automatic updates** (General → Updates) work as on Windows. The update takes effect when EDMC is restarted.
+- **The Local star index** (Settings → WFMT → Online) downloads one file from Spansh (about 173 MB) and builds an index in the plugin folder, which needs about 300 MB free during the build. The index is optional.
+- **Automatic updates** (Settings → WFMT → Online) work as on Windows. The update takes effect when EDMC is restarted.
 - **Sounds** (the Inventory pickup sound, Flight Alerts and the shortcut confirmation) require `canberra-gtk-play` or `paplay` on the system. The option is grayed out without one. WFMT looks for the player inside the Flatpak's own environment, not on the host, so with a Flatpak EDMC the sounds can be unavailable although the system has a player.
 - **Keyboard shortcuts** are not available on Linux. Use the chat commands (`!wf overlays` and the others) after enabling them under General → Shortcuts.
 

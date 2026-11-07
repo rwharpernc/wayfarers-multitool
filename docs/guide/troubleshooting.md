@@ -19,7 +19,7 @@ Check first whether the feature is switched off. Every on-screen display, every 
 | A Route Planner route on the Route overlay card | The route is plotted in the Route Planner, and **Enable the Route overlay** is ticked (it does not turn the card on by itself) | Exploration panel, and Settings → WFMT → Overlays → Route |
 | Automatic copying of the next system by the Route Planner | **Copy the next system to the clipboard automatically** (one tickbox, on the Exploration panel and in the plotter) | Exploration panel (Route Planner) |
 | Automatic backups | **Back up automatically** and a folder | Settings → WFMT → General → Backup |
-| My Powerplay standing in this system, or the next one, on the game screen | **Enable the Powerplay card** (and, for the system being jumped to, **Look up the system I am jumping to**) | Settings → WFMT → Overlays → Powerplay |
+| My Powerplay standing in this system, or the next one, on the game screen | **Enable the Powerplay card** (and, for the system being jumped to, **Powerplay card: the system you are jumping to**, which is on the Online tab) | Settings → WFMT → Overlays → Powerplay, and Settings → WFMT → Online |
 | The running expedition's totals on the game screen | **Enable the Expedition Log card** (and press Start in the Expedition window) | Settings → WFMT → Overlays → Expedition Log |
 | What is left to map and sample in a system | **Enable the System targets card** | Settings → WFMT → Overlays → System targets |
 | A card describing the targeted or nearby body | **Enable the Body info card** | Settings → WFMT → Overlays → Body info |
@@ -33,20 +33,21 @@ Check first whether the feature is switched off. Every on-screen display, every 
 | "Screenshot saved" message on the game screen | **Show a notification on the in-game overlay when a screenshot is saved** | Settings → WFMT → Overlays → Screenshots |
 | The Colonization shopping list appears by itself at markets | **Also show the shopping list automatically**, or tick **Always show the shopping list, whatever screen you are on** to keep it up on every screen (with neither ticked it does not show) | Settings → WFMT → Overlays → Colonization |
 | Auto-Honk | **Enable Auto-Honk** or the **Auto-Honk** button | Settings → WFMT → Exploration → Auto-Honk |
-| **Find sources** (Missions) and **Best picks** (Trade) | **Enable Spansh trade lookups**; Find sources asks to turn it on when pressed | Settings → WFMT → Trade |
-| Routes and Market in Trade | **Enable Spansh trade lookups** ([details](#the-lookup-buttons-are-grayed-out-or-there-is-no-commodity-box)) | Settings → WFMT → Trade |
-| The **Hotspots**, **Prices** or **Reserves** buttons in Mine mode | **Enable Spansh nearby hotspot finder**, **Enable Spansh best price finder**, **Enable EDSM ring reserve lookup** (each separately) | Settings → WFMT → Mining |
-| ELW rarity or EDSM upload status in Exploration | The two options under Exploration Value | Settings → WFMT → Exploration → Exploration Value |
+| **Find sources** (Missions) and **Best picks** (Trade) | **Trade: routes, prices and best picks**; both show a warning while it is off | Settings → WFMT → Online |
+| Routes and Market in Trade | **Trade: routes, prices and best picks** ([details](#the-lookup-buttons-are-grayed-out-or-there-is-no-commodity-box)) | Settings → WFMT → Online |
+| The **Hotspots**, **Prices** or **Reserves** buttons in Mine mode | **Mining: nearby hotspot finder**, **Mining: best price finder and Market research**, **Mining: ring reserve lookup** (each separately) | Settings → WFMT → Online |
+| ELW rarity or EDSM upload status in Exploration | **Exploration Value: Earth-like world rarity** and **Exploration Value: EDSM upload status** | Settings → WFMT → Online |
 | Fleet carriers or surface ports missing from "where to buy" results | the filters in the Where to Buy window: **Exclude fleet carriers**, **Exclude surface ports**, **Only stations with enough stock**, **Only stations with a shipyard** and **Arrival within** (all off, so everything is included, by default) | Where to Buy window (the **Where to Buy** button in the Colonization Sites window) |
-| Raven Colonial not updating | The master switch and the two options under it ([steps](#raven-colonial-doesnt-update-as-i-deliver)) | Settings → WFMT → Colonization → Raven Colonial |
+| Raven Colonial not updating | The master switch (**Colonization: share progress and deliveries**) and the two options under it ([steps](#raven-colonial-doesnt-update-as-i-deliver)) | Settings → WFMT → Online, and the Raven Colonial strip of the Sites window |
 | Something else is wrong | **Report an issue**, then **Copy diagnostics** to paste the log lines into it; for a hard-to-pin-down problem tick **Write a separate diagnostic log (off by default)** first ([how](reporting-problems.md)) | Settings → WFMT → General → Help |
-| WFMT never updates itself | **Automatically download and install updates** (see also [the update did not take](#the-update-did-not-take)) | Settings → WFMT → General → Updates |
-| **Neutron Star** asks Spansh every time | Install the optional Local star index, and leave **Use the local index for Neutron Star when it is installed** ticked | Settings → WFMT → General → Online lookups |
+| WFMT never updates itself | **Download and install updates** (see also [the update did not take](#the-update-did-not-take)) | Settings → WFMT → Online |
+| **Neutron Star** asks Spansh every time | Install the optional Local star index, and leave **Use the local index for Neutron Star when it is installed** ticked | Settings → WFMT → Online |
 | Chat commands such as `!wf overlays` do nothing | **Chat commands** | Settings → WFMT → General → Shortcuts |
 | Prices and routes near the commander are for the wrong ship size | **Ship size (landing pad)** | The Routes window and the Market window (Trade) |
 
 Notes:
 
+- **"This needs ... which is off. Turn it on in Settings > Online."** A feature that cannot work without an online lookup shows this line where it is used, only while that lookup is off. Tick the named lookup on **Settings → WFMT → Online** and select **OK**. **Turn all off** on that tab unticks every lookup, so use **Reset to defaults** to put the boxes back as WFMT ships them.
 - **Test buttons work when a feature is off.** A passing **Test** shows that the overlay is reachable and does not show that the live feature is on.
 - **Settings are per computer.** An option set on one computer does not apply on another.
 - **Overlay settings are per commander.** The enabled cards, their positions and their appearance are saved for the active commander.
@@ -148,7 +149,7 @@ After a manual **Back up my data** the Backup tab says `Saved N files (size) to 
 
 ### The update did not take
 
-Automatic updates are off until **Automatically download and install updates** (Settings → WFMT → General → Updates) is ticked. With the tick on:
+Automatic updates are off until **Download and install updates** (Settings → WFMT → Online) is ticked. With the tick on:
 
 - **WFMT looks once, when EDMC starts**, and ignores a draft or a pre-release. If a release came out while EDMC was already running, restart EDMC to look again.
 - **A downloaded update waits for a restart.** The line under the mode buttons turns orange and reads *vX.Y.Z download - Restart EDMC*. Until EDMC starts again nothing has changed.
@@ -158,7 +159,7 @@ Automatic updates are off until **Automatically download and install updates** (
 
 ### The Local star index will not download or build
 
-On **Settings → WFMT → General → Online lookups**, the Local star index line says what went wrong.
+On **Settings → WFMT → Online**, the Local star index line says what went wrong.
 
 - **Not enough room:** the first download needs about 173 MB and building needs about 300 MB more while it works. Free some space and press **Download and build** again; a download that was cut off carries on from where it stopped.
 - **Spansh is not answering:** see the next entry.
@@ -318,7 +319,7 @@ The checklist is in [Setting up the overlay](../OVERLAY_SETUP.md#if-nothing-show
 
 ### Find sources does nothing, or says it does not know where I am
 
-It needs **Enable Spansh trade lookups** (Settings → WFMT → Trade); the window asks to turn it on.
+It needs **Trade: routes, prices and best picks** (Settings → WFMT → Online). While it is off the window shows `This needs "Trade: routes, prices and best picks" (Spansh), which is off. Turn it on in Settings > Online.` It does not ask to turn the lookup on.
 
 - "From where I am" uses the current system from EDMC, then from the newest journal, so a jump is not required first.
 - If neither knows, it falls back to the turn-in system and says so.
@@ -345,9 +346,12 @@ The journal only records cargo transferred to the carrier, so WFMT's carrier fig
 WFMT sends nothing to Raven Colonial until sharing is turned on. It is **off by default**, and it is separate from the Raven features
 that only read (Planned Builds, Raven Progress and the quick links work without it). If deliveries never reach Raven, a disabled switch is the first cause to check.
 
-In **Settings → WFMT → Colonization → Raven Colonial**:
+In **Settings → WFMT → Online**:
 
-1. Tick **Allow WFMT to write to Raven Colonial (master switch)**.
+1. Tick **Colonization: share progress and deliveries** (the master switch).
+
+Then, in **Settings → WFMT → Colonization → Raven Colonial**:
+
 2. Paste the key from [ravencolonial.com/user](https://ravencolonial.com/user) and press **Test key**. Raven answers with the commander name when the key is accepted. With no key, nothing is sent.
 3. Press **OK** in Settings.
 
@@ -378,7 +382,7 @@ A site that is only *planned* on Raven, or one for which no project was started,
 
 The status line at the bottom of the Colonization Sites window says which step Raven refused.
 
-- **"No Raven Colonial key is saved", or switched off:** select the master switch and paste the key in Settings → Colonization → Raven Colonial.
+- **"No Raven Colonial key is saved", or switched off:** tick **Colonization: share progress and deliveries** (the master switch) in Settings → WFMT → Online and paste the key in Settings → WFMT → Colonization → Raven Colonial.
 - **"WFMT does not know this system's address yet":** dock at the site once (or be in that system) so the game reports it, then try again.
 - **"Raven Colonial did not accept the key (or this commander may not change that)":** check the key with **Test key**. A system locked to another architect may also refuse.
 - **The project was made but linking the commander, making it primary or attaching the carrier failed:** the project exists. Open **My Projects** and use **Set as My Primary**, or fix the rest on ravencolonial.com.
@@ -458,7 +462,7 @@ EDMC's **Journal directory** isn't set, or points at the wrong place. See
 
 ### The lookup buttons are grayed out, or there is no Commodity box
 
-The Spansh lookups are off until **Enable Spansh trade lookups** is ticked under **Settings → WFMT → Trade**. The
+The Spansh lookups are off until **Trade: routes, prices and best picks** is ticked under **Settings → WFMT → Online**. The
 Commodity box only appears in the Market window, and only once lookups are on.
 
 ### I can't tell whether it's searching for a place to buy or to sell

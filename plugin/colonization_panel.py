@@ -168,7 +168,6 @@ class ColonizationController:
         self._last_reason = ""
         self._overlay_lock = threading.Lock()
         self._overlay_enabled_var: Optional[tk.BooleanVar] = None
-        self._rcc_enabled_var: Optional[tk.BooleanVar] = None
         self._rcc_key_var: Optional[tk.StringVar] = None
         self._rcc_key_result: Optional[tk.Label] = None
         self._right_panel_var: Optional[tk.BooleanVar] = None
@@ -817,19 +816,18 @@ class ColonizationController:
             row=3, column=0, sticky=tk.W, padx=10, pady=(0, 4))
         nb.Label(
             frame,
-            text=("Optional, and nothing is written to Raven Colonial (ravencolonial.com), a community planning site, until you tick the "
-                  "master switch. Then WFMT can share your construction progress as it happens: the site's depot figures and the "
+            text=("Optional, and nothing is written to Raven Colonial (ravencolonial.com), a community planning site, until you switch it on in "
+                  "Settings > Online. Then WFMT can share your construction progress as it happens: the site's depot figures and the "
                   "deliveries you make. It needs your Raven key (below), only sends live events, needs Raven to already have a project "
                   "for the site (Create Project on Raven makes one), and uses your commander name. If another tool also reports your deliveries to Raven, turn one "
-                  "of them off or they are counted twice. The same switch and key let you start a project for a site (Create Project on "
+                  "of them off or they are counted twice. The same switch (in Settings > Online) and key let you start a project for a site (Create Project on "
                   "Raven), set your primary project and save your counted list (My Projects), and report a finished build. Planned "
                   "Builds, My Projects (to look at) and Raven Progress only read from Raven; they need neither the switch nor a key."),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=4, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-        self._rcc_enabled_var = tk.BooleanVar(value=rcc_keys.enabled())
-        nb.Checkbutton(frame, text="Allow WFMT to write to Raven Colonial (master switch)",
-                       variable=self._rcc_enabled_var).grid(row=5, column=0, sticky=tk.W, padx=10, pady=(0, 2))
-        nb.Label(frame, text=("What is reported once this is on (construction progress and deliveries, and fleet carrier cargo) is chosen on the Raven Colonial "
+        nb.Label(frame, text="Writing to Raven Colonial is switched in Settings > Online.",
+                 wraplength=440, justify=tk.LEFT).grid(row=5, column=0, sticky=tk.W, padx=10, pady=(0, 2))
+        nb.Label(frame, text=("What is reported once writing is on (construction progress and deliveries, and fleet carrier cargo) is chosen on the Raven Colonial "
                               "strip at the top of the Colonization Sites window, which also says what is being reported."),
                  wraplength=440, justify=tk.LEFT).grid(row=6, column=0, sticky=tk.W, padx=(30, 10), pady=(0, 2))
         key_row = tk.Frame(frame)
@@ -967,8 +965,6 @@ class ColonizationController:
         threading.Thread(target=worker, name="WFMT-colonization-overlay-test", daemon=True).start()
 
     def save_settings(self) -> None:
-        if self._rcc_enabled_var is not None:
-            config.set(rcc_keys.CFG_ENABLED, self._rcc_enabled_var.get())
         if self._rcc_key_var is not None and self._cmdr:
             rcc_keys.keys.set(self._cmdr, self._rcc_key_var.get())
         colonization_settings.announce()        # an open Sites window shows the Raven choices now saved

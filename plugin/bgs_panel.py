@@ -38,7 +38,7 @@ import tkinter as tk
 import myNotebook as nb
 from config import appname, config
 
-from . import catchup_status, bgs_format, bgs_journal, bgs_ledger, bgs_settings, bgs_state, bgs_tick_client, bgs_window, panelkit, platform_support
+from . import catchup_status, bgs_format, bgs_journal, bgs_ledger, bgs_settings, bgs_state, bgs_tick_client, bgs_window, online_lookups, panelkit, platform_support
 from .bgs_ledger import PeriodView, TickLedger
 from .bgs_tracker import snapshot_key
 
@@ -48,7 +48,6 @@ logger = logging.getLogger(f"{appname}.{plugin_name}")
 PANEL_PLACEMENT = "bgs"
 
 _CFG_ENABLED = bgs_settings.CFG_ENABLED
-_CFG_TICK_ENABLED = bgs_settings.CFG_TICK_ENABLED
 _CFG_ARCHIVE_DAYS = bgs_settings.CFG_ARCHIVE_DAYS
 
 DEFAULT_ARCHIVE_DAYS = bgs_settings.DEFAULT_ARCHIVE_DAYS
@@ -85,6 +84,7 @@ class BgsController:
         self._tick_generation = 0
         self._tick_poll_started = False
         self._tick_status_text = "Tick check: not yet run."
+        self._tick_warning_shown = False   # the status line currently holds the "tick detection is off" warning
 
         self._backfill_queue: "queue.Queue[Tuple[int, str, Optional[TickLedger], set, Optional[Dict[str, Any]]]]" = queue.Queue()
         self._repair: Optional[Tuple[str, str, Dict[str, Tuple[str, str]]]] = None
@@ -100,7 +100,6 @@ class BgsController:
         self._current_system_var: Optional[tk.StringVar] = None
         self._tick_status_var: Optional[tk.StringVar] = None
         bgs_settings.add_listener(self._on_window_setting)
-        self._tick_enabled_var: Optional[tk.BooleanVar] = None
 
     # --- lifecycle / persistence -----------------------------------------
 
@@ -113,6 +112,7 @@ class BgsController:
         self._persist()
         self._refresh_display()
         self._reconcile_tick()
+        self._sync_tick_notice()
 
     def start(self, plugin_dir: str) -> None:
         self._plugin_dir = plugin_dir
@@ -250,9 +250,20 @@ class BgsController:
     def _schedule_tick_check(self) -> None:
         if self._parent is None:
             return
+        self._sync_tick_notice()
         if tick_enabled():
             self._start_tick_check()
         self._parent.after(_TICK_POLL_INTERVAL_MS, self._schedule_tick_check)
+
+    def _sync_tick_notice(self) -> None:
+        """The tick line says tick detection is off while it is, and goes back to its normal text when the switch is on again. Called on each check and as soon
+        as the switch is changed in Settings > Online, so the line is never a minute behind."""
+        if tick_enabled():
+            if self._tick_warning_shown:
+                self._tick_warning_shown = False
+                self._set_tick_status("Tick check: not yet run.")
+        else:
+            self._show_tick_off()
 
     def _start_tick_check(self) -> None:
         self._tick_generation += 1
@@ -400,6 +411,17 @@ class BgsController:
         self._persist()
         self._refresh_display()
 
+    @property
+    def _tick_off_text(self) -> str:
+        """The shared warning while tick detection is switched off in Settings > Online, else an empty string."""
+        return online_lookups.needs("wfmt_bgs_tick_enabled")
+
+    def _show_tick_off(self) -> None:
+        text = self._tick_off_text
+        if text and self._tick_status_text != text:
+            self._tick_warning_shown = True
+            self._set_tick_status(text)
+
     def _set_tick_status(self, text: str) -> None:
         self._tick_status_text = text
         if self._tick_status_var is not None:
@@ -414,6 +436,7 @@ class BgsController:
             row=0, column=0, columnspan=3, sticky=tk.W,
         )
 
+        self._show_tick_off()
         self._tick_status_var = tk.StringVar(value=self._tick_status_text)
         panelkit.wrap_label(parent, textvariable=self._tick_status_var, anchor="w", fg="gray", font=panelkit.view_fonts()["small"]).grid(
             row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0),
@@ -477,8 +500,6 @@ class BgsController:
         frame.columnconfigure(1, weight=1)
         notebook.add(frame, text="BGS")
 
-        self._tick_enabled_var = tk.BooleanVar(value=tick_enabled())
-
         nb.Label(frame, text="BGS Tracking", font=("TkDefaultFont", 9, "bold")).grid(
             row=0, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(10, 4),
         )
@@ -502,21 +523,8 @@ class BgsController:
         nb.Label(frame, text=("Whether BGS shows faction states and activity, and how many days of closed ticks it keeps, are on the Settings card at the top of the BGS "
                               "Report window (press Report on the BGS panel to open it)."),
                  wraplength=440, justify=tk.LEFT).grid(row=2, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 4))
-        nb.Checkbutton(
-            frame, text="Detect BGS ticks (polls tick.infomancer.uk every 60s)",
-            variable=self._tick_enabled_var,
-        ).grid(row=3, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 4))
-        nb.Label(
-            frame,
-            text=(
-                "Tick detection is the only network call this mode makes - a community-run, "
-                "third-party service (not Frontier's own). It is what resets the totals each "
-                "tick and tells WFMT which journal entries to replay. Turn it off to keep this "
-                "mode fully local; the totals then just keep accumulating without ever "
-                "resetting on their own."
-            ),
-            wraplength=440, justify=tk.LEFT, foreground="gray",
-        ).grid(row=4, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 8))
+        nb.Label(frame, text="BGS tick detection is switched in Settings > Online.", wraplength=440, justify=tk.LEFT).grid(
+            row=3, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 8))
 
         if platform_support.IS_LINUX:
             # Rebuilding the tick's totals needs EDMC's Journal directory, which has no default on Linux.
@@ -524,12 +532,6 @@ class BgsController:
             if advice:
                 nb.Label(frame, text=advice, wraplength=440, justify=tk.LEFT, foreground="#c07000").grid(
                     row=6, column=0, columnspan=2, sticky=tk.W, padx=10, pady=(0, 8))
-
-    def save_settings(self) -> None:
-        if self._tick_enabled_var is None:
-            return
-        config.set(_CFG_TICK_ENABLED, self._tick_enabled_var.get())
-        self._apply_setting_change()
 
 
 controller = BgsController()
@@ -555,5 +557,6 @@ def build_settings(notebook: nb.Notebook) -> None:
     controller.build_settings(notebook)
 
 
-def save_settings() -> None:
-    controller.save_settings()
+def online_changed() -> None:
+    """The BGS tick-detection switch (Settings > Online) was saved: start or stop the tick poller to match it, and redraw."""
+    controller._apply_setting_change()

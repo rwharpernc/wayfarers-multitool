@@ -276,9 +276,6 @@ class BoxelSurveyController:
         self._autocopy_var: Optional[tk.BooleanVar] = None
         self._random_count_var: Optional[tk.StringVar] = None
         self._skip_visited_var: Optional[tk.BooleanVar] = None
-        self._skip_edsm_visited_var: Optional[tk.BooleanVar] = None
-        self._skip_edsm_scanned_var: Optional[tk.BooleanVar] = None
-        self._confirm_alias_arrival_var: Optional[tk.BooleanVar] = None
         self._export_status_var: Optional[tk.StringVar] = None
 
     # --- lifecycle ----------------------------------------------------------
@@ -1245,9 +1242,6 @@ class BoxelSurveyController:
 
         self._autocopy_var = tk.BooleanVar(value=autocopy_enabled())
         self._skip_visited_var = tk.BooleanVar(value=skip_visited_enabled())
-        self._skip_edsm_visited_var = tk.BooleanVar(value=skip_edsm_visited_enabled())
-        self._skip_edsm_scanned_var = tk.BooleanVar(value=skip_edsm_scanned_enabled())
-        self._confirm_alias_arrival_var = tk.BooleanVar(value=confirm_alias_arrival_enabled())
 
         nb.Label(frame, text="Boxel Survey", font=("TkDefaultFont", 9, "bold")).grid(
             row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4),
@@ -1261,19 +1255,15 @@ class BoxelSurveyController:
         nb.Checkbutton(
             frame, text="Skip systems already visited this session", variable=self._skip_visited_var,
         ).grid(row=2, column=0, sticky=tk.W, padx=10)
-        nb.Checkbutton(
-            frame, text="Skip systems already visited by anyone (EDSM)", variable=self._skip_edsm_visited_var,
-        ).grid(row=3, column=0, sticky=tk.W, padx=10)
-        nb.Checkbutton(
-            frame, text="Skip systems already fully scanned in EDSM (adds another network call per candidate)",
-            variable=self._skip_edsm_scanned_var,
-        ).grid(row=4, column=0, sticky=tk.W, padx=10)
-        nb.Checkbutton(
-            frame,
-            text="Confirm off-sequence arrivals against EDSM (catches a target that resolved under a"
-                 " different display name)",
-            variable=self._confirm_alias_arrival_var,
-        ).grid(row=5, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+        nb.Label(frame, text="Skipping systems already visited by anyone (EDSM) is switched in Settings > Online.", wraplength=440, justify=tk.LEFT).grid(
+            row=3, column=0, sticky=tk.W, padx=10,
+        )
+        nb.Label(frame, text="Skipping systems already fully scanned in EDSM is switched in Settings > Online.", wraplength=440, justify=tk.LEFT).grid(
+            row=4, column=0, sticky=tk.W, padx=10,
+        )
+        nb.Label(frame, text="Confirming off-sequence arrivals against EDSM is switched in Settings > Online.", wraplength=440, justify=tk.LEFT).grid(
+            row=5, column=0, sticky=tk.W, padx=10, pady=(0, 10),
+        )
 
         # Export Survey Log - moved off the main panel (2026-09-19, R.W.
         # Harper) since it's an occasional action, not something that needs
@@ -1333,9 +1323,6 @@ class BoxelSurveyController:
             return
         config.set(_CFG_AUTOCOPY, self._autocopy_var.get())
         config.set(_CFG_SKIP_VISITED, self._skip_visited_var.get())
-        config.set(_CFG_SKIP_EDSM_VISITED, self._skip_edsm_visited_var.get())
-        config.set(_CFG_SKIP_EDSM_SCANNED, self._skip_edsm_scanned_var.get())
-        config.set(_CFG_CONFIRM_ALIAS_ARRIVAL, self._confirm_alias_arrival_var.get())
         if self._random_count_var is not None:
             try:
                 chosen = int(self._random_count_var.get())

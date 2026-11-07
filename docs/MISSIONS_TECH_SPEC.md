@@ -16,7 +16,7 @@ WFMT is journal-first: it uses the information the game writes to its journal fi
 ### 1.1 Not included
 
 - **Exact kill counts.** The journal does not report per-mission kill progress, so progress is an estimate (section 5).
-- **Network access for the missions themselves.** The panel, the Missions window and the overlay use only the journal. The one exception is the Source commodities window (section 10), which queries Spansh only when **Find sources** is pressed and only when the online lookups of Trade are switched on.
+- **Network access for the missions themselves.** The panel, the Missions window and the overlay use only the journal. The one exception is the Source commodities window (section 10), which queries Spansh only when **Find sources** is pressed and only when the online lookups of Trade are switched on (Settings → WFMT → Online). While they are off the window shows the standard warning (`online_lookups.needs`); it no longer asks to turn them on.
 - **Mission planning.** The feature does not suggest missions or routes.
 - **Colonization missions.** They are excluded from every page (section 4).
 

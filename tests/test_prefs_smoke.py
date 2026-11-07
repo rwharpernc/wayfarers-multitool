@@ -25,13 +25,14 @@ class PrefsSmokeTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("SETTINGS BUILT OK", result.stdout)
         self.assertIn("Window", result.stdout)  # the window-behavior tab (auto height fit)
-        # Grouped layout: eleven top-level tabs, and the merged Exploration pages are all there.
-        self.assertIn("SETTINGS BUILT OK: 11 top-level tabs", result.stdout)
+        # Grouped layout: twelve top-level tabs, and the merged Exploration pages are all there.
+        self.assertIn("SETTINGS BUILT OK: 12 top-level tabs", result.stdout)
         # Every page is wrapped in a scroller capped in height, so a long page can't push OK off the screen.
         self.assertIn("PAGES OVER HEIGHT CAP: 0 of 44", result.stdout)
         for leaf in ("Exploration > POI Reference", "Exploration > Auto-Honk", "Operations > Inventory", "Exploration > Expedition",
-                     "Exploration > Nearest place to land", "General > Online lookups"):
+                     "Exploration > Nearest place to land"):
             self.assertIn(leaf, result.stdout)
+        self.assertIn("; Online;", result.stdout)             # the Online tab: every online switch, in one place, a top-level tab with no group
         # Every overlay setting and toggle is under one Overlays tab, a subtab per feature that draws on the overlay.
         for leaf in ("Overlays > Overlay Connection", "Overlays > Overlay Placement", "Overlays > Appearance", "Overlays > Colonization",
                      "Overlays > Discovery", "Overlays > Inventory", "Overlays > Interdiction Warning",

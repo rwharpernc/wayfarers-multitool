@@ -2,7 +2,7 @@
 
 The lookup is `landing_finder.py` and the window `landing_finder_window.py`. This module is the journal hook and the controller: it remembers the position (`StarPos`) and the ship (`Loadout`)
 the commander last had, reads them back from the newest journals when EDMC starts in the middle of a session, and opens the window. It does nothing online by itself: the search runs only when
-Find is pressed in the window and its box is ticked.
+Find is pressed in the window and the lookup is switched on in Settings > Online.
 """
 from __future__ import annotations
 
@@ -12,9 +12,9 @@ import tkinter as tk
 from typing import Any, Dict, Optional, Tuple
 
 import myNotebook as nb
-from config import appname, config
+from config import appname
 
-from . import landing_finder, landing_finder_window, panelkit, restore
+from . import landing_finder, landing_finder_window, online_lookups, panelkit, restore
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -31,6 +31,7 @@ class FinderController:
         self.tracker = landing_finder.Tracker()
         self._parent: Optional[tk.Misc] = None
         self._summary: Optional[tk.StringVar] = None
+        self._notice: Optional[tk.Label] = None
 
     # --- what the window asks ---------------------------------------------------------------------------------------
     def position(self) -> Optional[Tuple[float, float, float]]:
@@ -63,8 +64,20 @@ class FinderController:
                 self.tracker.ship = found.ship
             self._changed()
 
+    def _show_notice(self) -> None:
+        """The off-switch warning under Find; hidden while the lookup is on."""
+        text = online_lookups.needs(landing_finder_window.CONFIG_ALLOWED)
+        if self._notice is None:
+            return
+        if text:
+            self._notice.configure(text=text)
+            self._notice.grid()
+        else:
+            self._notice.grid_remove()
+
     def _changed(self) -> None:
         try:
+            self._show_notice()
             if self._summary is not None:
                 self._summary.set(summary_text(self.tracker))
         except tk.TclError:
@@ -80,6 +93,9 @@ class FinderController:
         button = tk.Button(body, text="Find", command=self._open)
         button.grid(row=2, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.add_tooltip(button, "Find the nearest station that can take your ship (repair, refuel, rearm), and fleet carriers open to all. Online, only when you press Find in the window.")
+        self._notice = panelkit.wrap_label(body, min_wrap=_WRAP_PX, anchor="w")
+        self._notice.grid(row=3, column=0, columnspan=3, sticky=tk.W)
+        self._show_notice()
 
     def _open(self) -> None:
         if self._parent is not None:
@@ -88,7 +104,7 @@ class FinderController:
     def stop(self) -> None:
         landing_finder_window.close()
 
-    # --- Settings tab (the switch that is also ticked in the window) --------------------------------------------------
+    # --- Settings tab (the lookup's switch lives in Settings > Online) --------------------------------------------------
     def build_settings(self, notebook: nb.Notebook) -> None:
         frame = nb.Frame(notebook)
         frame.columnconfigure(0, weight=1)
@@ -100,18 +116,8 @@ class FinderController:
                   "to everyone. It asks Spansh, and only when you press Find in that window."),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-        self._settings_allowed = tk.BooleanVar(value=landing_finder_window.allowed())
-        nb.Checkbutton(frame, text="Allow this lookup: pressing Find sends Spansh my position, the pad size and my choices, nothing else",
-                       variable=self._settings_allowed).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-        nb.Label(frame, text="This is the same switch as the tick in the window. Off by default.", wraplength=440, justify=tk.LEFT).grid(
-            row=3, column=0, sticky=tk.W, padx=10, pady=(0, 10))
-
-    def save_settings(self) -> None:
-        var = getattr(self, "_settings_allowed", None)
-        if var is None:
-            return
-        config.set(landing_finder_window.CONFIG_ALLOWED, bool(var.get()))
-        landing_finder_window.sync_allowed()
+        nb.Label(frame, text="The Spansh lookup is switched in Settings > Online.", wraplength=440, justify=tk.LEFT).grid(
+            row=2, column=0, sticky=tk.W, padx=10, pady=(0, 10))
 
 
 def summary_text(tracker: landing_finder.Tracker) -> str:
@@ -135,10 +141,6 @@ def build_panel(parent: tk.Frame) -> None:
 
 def build_settings(notebook: nb.Notebook) -> None:
     controller.build_settings(notebook)
-
-
-def save_settings() -> None:
-    controller.save_settings()
 
 
 def start(plugin_dir: str) -> None:

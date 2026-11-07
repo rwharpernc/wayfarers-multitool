@@ -92,7 +92,7 @@ strip = C.RavenStrip(frame, lambda: cmdr[0])
 strip.pack(fill="x")
 pump()
 check(str(strip._progress_box.cget("state")) == "disabled" and str(strip._carrier_box.cget("state")) == "disabled", "with the master switch off the ticks are grayed out")
-check("Settings" in strip._state.cget("text") and "Nothing is sent" in strip._state.cget("text"), f"and the strip says nothing is sent and where to change it: {strip._state.cget('text')!r}")
+check("Settings > Online" in strip._state.cget("text") and "off" in strip._state.cget("text"), f"and the strip says it is off and where to turn it on: {strip._state.cget('text')!r}")
 
 saved[rcc_keys.CFG_ENABLED] = True                                          # the master switch turned on in Settings (which keeps it)
 C.announce()

@@ -148,9 +148,7 @@ class RegionSweepController:
         # Settings-tab vars.
         self._autocopy_var: Optional[tk.BooleanVar] = None
         self._skip_visited_var: Optional[tk.BooleanVar] = None
-        self._skip_edsm_visited_var: Optional[tk.BooleanVar] = None
         self._complete_on_fss_var: Optional[tk.BooleanVar] = None
-        self._auto_discover_var: Optional[tk.BooleanVar] = None
 
     # --- lifecycle -----------------------------------------------------
 
@@ -722,9 +720,7 @@ class RegionSweepController:
 
         self._autocopy_var = tk.BooleanVar(value=autocopy_enabled())
         self._skip_visited_var = tk.BooleanVar(value=skip_visited_enabled())
-        self._skip_edsm_visited_var = tk.BooleanVar(value=skip_edsm_visited_enabled())
         self._complete_on_fss_var = tk.BooleanVar(value=complete_on_fss_enabled())
-        self._auto_discover_var = tk.BooleanVar(value=auto_discover_enabled())
 
         nb.Label(frame, text="Region Sweep", font=("TkDefaultFont", 9, "bold")).grid(
             row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4),
@@ -735,24 +731,20 @@ class RegionSweepController:
         nb.Checkbutton(
             frame, text="Skip systems already visited this session", variable=self._skip_visited_var,
         ).grid(row=2, column=0, sticky=tk.W, padx=10)
-        nb.Checkbutton(
-            frame, text="Skip systems already visited by anyone (EDSM)", variable=self._skip_edsm_visited_var,
-        ).grid(row=3, column=0, sticky=tk.W, padx=10)
+        nb.Label(frame, text="Skipping systems already visited by anyone (EDSM) is switched in Settings > Online.", wraplength=440, justify=tk.LEFT).grid(
+            row=3, column=0, sticky=tk.W, padx=10,
+        )
         nb.Checkbutton(
             frame, text="Require a full FSS scan (not just arrival) to mark a system complete",
             variable=self._complete_on_fss_var,
         ).grid(row=4, column=0, sticky=tk.W, padx=10)
-        nb.Checkbutton(
-            frame,
-            text="Auto-discover more nearby cubes (EDSM) when the queue is running low",
-            variable=self._auto_discover_var,
-        ).grid(row=5, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+        nb.Label(frame, text="Auto-discovering more nearby cubes (EDSM) is switched in Settings > Online.", wraplength=440, justify=tk.LEFT).grid(
+            row=5, column=0, sticky=tk.W, padx=10, pady=(0, 10),
+        )
 
     def save_settings(self) -> None:
         if self._autocopy_var is None:
             return
         config.set(_CFG_AUTOCOPY, self._autocopy_var.get())
         config.set(_CFG_SKIP_VISITED, self._skip_visited_var.get())
-        config.set(_CFG_SKIP_EDSM_VISITED, self._skip_edsm_visited_var.get())
         config.set(_CFG_COMPLETE_ON_FSS, self._complete_on_fss_var.get())
-        config.set(_CFG_AUTO_DISCOVER, self._auto_discover_var.get())

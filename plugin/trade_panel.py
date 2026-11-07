@@ -7,7 +7,7 @@ the journal dispatch. Three pages, in trade_pages.PAGE_ORDER:
   and what the docked station would pay for it (trade_market.py). Works offline.
 - Routes: the most profitable routes from where you are, from Spansh's trade-route
   planner (trade_spansh_client.py), and the best back-and-forth pair
-  (trade_roundtrip.py). Needs the lookups turned on in Settings.
+  (trade_roundtrip.py). Needs the lookups turned on in Settings > Online.
 - Market: where to sell or buy a commodity, near you and galaxy-wide, and a button
   for the best-price finder Mine mode already has (it works for any commodity).
 
@@ -34,6 +34,7 @@ import myNotebook as nb
 from config import appname, config
 
 from . import inventory_names
+from . import online_lookups
 from . import trade_journal_scan
 from . import mining_price_finder_dialog as price_finder_dialog
 from . import mining_spansh_client as spansh_prices
@@ -289,7 +290,6 @@ class TradePanelController:
         self._typed = ""                                  # what was in it when the window was closed
 
         # Settings variables
-        self._lookups_var: Optional[tk.BooleanVar] = None
         self._carrier_mode_vars: Dict[str, tk.StringVar] = {}  # commander -> their carrier choice
 
     # --- lifecycle -----------------------------------------------------------
@@ -828,8 +828,8 @@ class TradePanelController:
 
     @staticmethod
     def _lookups_off_blocks() -> List[Block]:
-        return [Note("Spansh lookups are off.", warn=True),
-                Note("Turn them on in Settings > WFMT > Trade.")]
+        # One shared wording; shown only while the switch is off, and the pages rebuild their blocks on every refresh.
+        return [Note(online_lookups.needs(_CFG_LOOKUPS_ENABLED), warn=True)]
 
     def _route_start(self) -> Optional[tuple[str, str]]:
         """(system, station) a route starts from: where we are docked, else the last station we docked at.
@@ -1527,13 +1527,12 @@ class TradePanelController:
             text=(
                 "Trade mode's Session page works offline from your journal. The Routes and Market pages ask "
                 "Spansh (spansh.co.uk) for trade routes and prices when you press their buttons - a real "
-                "outbound network call, so they are off until you turn them on here."
+                "outbound network call, so they are off until you turn them on in Settings > Online."
             ),
             wraplength=440, justify=tk.LEFT,
         ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 6))
 
-        self._lookups_var = tk.BooleanVar(value=lookups_enabled())
-        nb.Checkbutton(frame, text="Enable Spansh trade lookups", variable=self._lookups_var).grid(
+        nb.Label(frame, text="Trade's Spansh lookups are switched in Settings > Online.", wraplength=440, justify=tk.LEFT).grid(
             row=1, column=0, sticky=tk.W, padx=10, pady=2)
 
         nb.Label(
@@ -1576,9 +1575,6 @@ class TradePanelController:
                 nb.Radiobutton(row, text=text, variable=var, value=value).pack(side=tk.LEFT, padx=(0, 4))
 
     def save_settings(self) -> None:
-        if self._lookups_var is None:
-            return
-        config.set(_CFG_LOOKUPS_ENABLED, bool(self._lookups_var.get()))
         for name, var in self._carrier_mode_vars.items():
             config.set(self._carrier_cfg_key(name), var.get() if var.get() in trade_carrier.MODES else trade_carrier.AUTO)
         self._refresh()

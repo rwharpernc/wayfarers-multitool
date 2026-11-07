@@ -11,7 +11,7 @@ Scope: open work items and open in-game checks. Items are listed once.
 
 ### Local star index: neutron stars
 
-- Built: the Online lookups page has a Local star index group.
+- Built: the Online tab has a Local star index group.
   - It downloads Spansh's `systems_neutron.json.gz` on request.
   - It builds a local index (about 110 MB) used by Neutron Star, with the Spansh search as fallback.
   - Update fetches the 1-day or 1-week file and merges it. The full file is fetched only when the index is more than a week behind, after 20 updates, or when the base file is more than 60 days old.
@@ -88,6 +88,7 @@ The items below are implemented and covered by unit tests, and have not all been
 - Linux passes of earlier builds were made on 2026-10-18 and 2026-10-20 (see [STATUS.md](STATUS.md)). Items that do not end in "Then Linux" do not require a Linux check.
 - Items that end in "Then Linux" also require the Linux checklist ([LINUX_TESTING.md](LINUX_TESTING.md)).
 - [ ] **1.5.3: Suggestions in more boxes** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 15): journal systems under every system box and the hint, the Round trip **Start from** box, and the search boxes of Materials, Blueprints, Inventory and Stored modules.
+- [ ] **1.5.3: One place for every online switch** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 15)
 - [x] **1.5.3: Reset on the Trade panel, Ranks in Operations** (done on Windows and on Linux 2026-11-07, before the release). Trade: press **Reset** beside History and confirm it offers to save an unsaved session first. Operations: open **Ranks** and confirm each rank name and percent matches the game's commander screen, including the Exploration rank names and the navy ranks; promote or log in as another commander and confirm the table follows.
 - [ ] **1.5.2: Rename Site, Anduliga Fire Works, more landing places, Donation & Rescue missions, item names, 18 blueprints, Ship planner modules, two landing pads** (Windows, then Linux; steps in [TEST_PLAN.md](TEST_PLAN.md) section 14 and [LINUX_TESTING.md](LINUX_TESTING.md) 7t). Rename Site is the one feature to try in the real windows; the rest are data and wording changes covered by tests.
 - [x] **1.5.1: Combat Record, materials this session, ship names** (done on Windows and Linux 2026-11-03, before the release; steps in [TEST_PLAN.md](TEST_PLAN.md) section 13 and [LINUX_TESTING.md](LINUX_TESTING.md) 7s). The Combat Record row and window count kills, PvP kills, deaths and rewards per ship and per session, read the older journals once without counting anything twice, and name every ship as the game does. The Engineering row's table shows what is held and what was picked up this session. Trade and the Expedition Log show proper ship names.
@@ -191,7 +192,7 @@ The items below are implemented and covered by unit tests, and have not all been
   - With the Route overlay on:
     - The plotted route replaces the game's route on its card: titled *Neutron route*, a neutron star picked out, a refuel marked, the jumps and light-years left and the next supercharge on the right, moving on after each jump.
     - The game's route returns after the last jump.
-    - With Settings -> Overlays -> Route -> *Mark the systems ahead that EDSM does not know yet* ticked, a system EDSM lacks gets a star on the neutron card too. Most neutron-route systems are known, because Spansh routes only through systems it has.
+    - With **Route overlay: systems EDSM does not know** ticked in Settings → WFMT → Online, a system EDSM lacks gets a star on the neutron card too. Most neutron-route systems are known, because Spansh routes only through systems it has.
   - Test each option (injections, exclude secondary stars, refuel every scoopable, the algorithms) and a loadout change after plotting.
   - Then Linux.
 - [ ] **Route Planner: white dwarfs and fuel scoop.**
@@ -359,13 +360,13 @@ The items below are implemented and covered by unit tests, and have not all been
 - [ ] **Surface mining on a body never scanned, and Get body info.** Land on a body with no `Scan` event in the journals and launch the Rhino.
   - The ground trail starts on the Live radar.
   - **Mark center** and **Mark border** mark (the body's name and size come from `Status.json`).
-  - Tick *Enable body lookup* (Settings → Mining), open **Book** and press **Get body info**.
+  - Tick **Mining: Get body info in the Surface Mining Book** (Settings → WFMT → Online), open **Book** and press **Get body info**.
     - The system's landable bodies appear in the list with their kinds, sizes and mining-location counts. The counts come from Spansh and require a jump or login since EDMC started.
     - The status line states how many were added.
   - A body the journals did give keeps its own data.
   - FSS-scanning a body fills its mining-location count.
   - Restart EDMC (or jump away and back). The body list returns at once, and `mining_body_cache.json` appears beside the plugin with no commander in its name.
-- [ ] **What pays.** Tick *Enable Spansh best price finder*, save deposits of two or three materials, open **Book** then **What pays**.
+- [ ] **What pays.** Tick **Mining: best price finder and Market research** (Settings → WFMT → Online), save deposits of two or three materials, open **Book** then **What pays**.
   - Compare the ranking with Spansh's price search for the same commodities.
   - A commodity nobody pays for is reported as such.
   - *Near* and *Within* change the answer.
@@ -381,7 +382,7 @@ The items below are implemented and covered by unit tests, and have not all been
   - Set *Deposit refills after (days)* on the Surface Mining window's Settings card to 14, edit `depleted_at` in `mining_hotspots.json` to 15 days ago and reopen the Book. The mark is gone and the card reads `Assumed refilled`.
   - Press Mark depleted again with no mining. The card reads `Still depleted at ...; look again in 7 d`.
   - The dialog's Edit keeps these dates.
-- [ ] **Surface Mining Book: Market research.** Tick *Enable Spansh best price finder*, open the Book on a system with saved hotspots, press **Market research**.
+- [ ] **Surface Mining Book: Market research.** Tick **Mining: best price finder and Market research** (Settings → WFMT → Online), open the Book on a system with saved hotspots, press **Market research**.
   - Compare the buyers with the in-game market (price, demand, pad size).
   - A system with no records reports so and suggests nothing.
   - Test the *Also check* box with a misspelled name.
@@ -484,12 +485,12 @@ The items below are implemented and covered by unit tests, and have not all been
 - [ ] **Powerplay card:** Settings → WFMT → Overlays → Powerplay, tick *Enable the Powerplay card* and press **Test Card**. A card headed *Sample System* with *Rank 12* appears at the top right, showing **Your Power**, Total merits, the Cycle merits, System, Held by, *Merits here count as* and the Reinforcement and Delivery/Donation rows, and clears after a few seconds.
 - [ ] **Powerplay card in a Powerplay system:** jump into a system with a Powerplay state. The card shows the commander's Power and rank, the system's state and holder, what merits there count as, and nothing under *Earned here* until merits are earned. After merits are earned, it lists each type with merits and, except for Delivery and Unattributed, the estimated Control Points (they match the Powerplay panel).
 - [ ] **No Powerplay Detected:** jump to a system with no Powerplay state (a populated system with no Power presence, for example). The card is headed with the system's name and reads **No Powerplay Detected in system**. After EDMC starts mid-session and before the first jump, the card stays blank.
-- [ ] **Look-ahead:** tick *Look up the system I am jumping to* and start a hyperspace jump to a Powerplay system. The card turns to the destination as soon as the jump charges (marked *jumping*, `Looking up Powerplay…` for a moment, then its state, holder, what merits there count as and, when the lookup is fresh, a control progress percentage) and to the arrival system when the jump ends. A jump to a system with no Powerplay data reads **No Powerplay Detected in system**. A cancelled jump, or an interdiction out of a jump, puts the card back on the current system. With the tick off, the card never turns to the destination and nothing is sent to Spansh.
+- [ ] **Look-ahead:** tick **Powerplay card: the system you are jumping to** (Settings → WFMT → Online) and start a hyperspace jump to a Powerplay system. The card turns to the destination as soon as the jump charges (marked *jumping*, `Looking up Powerplay…` for a moment, then its state, holder, what merits there count as and, when the lookup is fresh, a control progress percentage) and to the arrival system when the jump ends. A jump to a system with no Powerplay data reads **No Powerplay Detected in system**. A cancelled jump, or an interdiction out of a jump, puts the card back on the current system. With the lookup off, the card never turns to the destination and nothing is sent to Spansh.
 - [ ] **Loop route:** with the look-ahead on, fly a loop of Powerplay systems twice. The second lap's destinations show at once, without `Looking up…`, and the log shows no new Spansh request for them (only systems not arrived in within the hour are queried). A destination's percentage disappears ten minutes after the card first showed it.
 
 ### Exploration and survey
 
-- [ ] **Local star index.** Settings → WFMT → General → Online lookups → Local star index: press **Download and build**.
+- [ ] **Local star index.** Settings → WFMT → Online → Local star index: press **Download and build**.
   - Check the progress.
   - **Cancel** stops the download (a cancelled download resumes at the next press).
   - Check the free-space message with little disk space left.
@@ -538,7 +539,7 @@ The items below are implemented and covered by unit tests, and have not all been
   - A second press within 5 ly is much quicker (the Spansh list is cached for 10 minutes) and offers a different system.
   - **Settings → Exploration → Boxel Survey → Systems to request from Spansh** changes how many systems are requested.
   - Then Linux.
-- [ ] **Region Sweep: skip systems EDSM knows.** Tick **Skip systems already visited by anyone (EDSM)** in Settings → Exploration → Region Sweep, add a cube and press **Next >** (or jump).
+- [ ] **Region Sweep: skip systems EDSM knows.** Tick **Region Sweep: skip systems anyone has visited** in Settings → WFMT → Online, add a cube and press **Next >** (or jump).
   - The status line reads `Checking EDSM...`, then `Skipped N systems already known to EDSM - next: <name>` when it stepped past some. A run of known systems stops at 20 and states so.
   - Offline, it reads `EDSM check unavailable - showing candidate anyway` and offers the candidate.
   - Then Linux.
@@ -547,7 +548,7 @@ The items below are implemented and covered by unit tests, and have not all been
   - It then shows `First visit here` in a system never entered, and `Been here N times before · last <date> · you scanned here` in one that was.
   - A relog in the same system adds no visit. Jumping away and back adds one.
   - `system_history.json` appears and is not shared with a second commander.
-- [ ] **System targets, what others found (Spansh).** Tick the Spansh option under Settings → Overlays → System targets, then jump to a system others have surveyed (one with biology).
+- [ ] **System targets, what others found (Spansh).** Tick **System targets: life and points of interest others found** in Settings → WFMT → Online, then jump to a system others have surveyed (one with biology).
   - The card shows a Known section and a `Known (Spansh)` line before a honk, with rewards that match the in-game signals.
   - Scanning a body with life moves it to the Life list.
   - A system nobody has scanned shows no Known section and the usual `Nothing ... to map yet`.
@@ -684,7 +685,6 @@ The items below are implemented and covered by unit tests, and have not all been
     - Paste spot and Delete hotspot (Surface Mining Book)
     - Import Hotspots
     - Report to Raven Colonial and the Raven key prompt (typing is hidden)
-    - Turn on online lookups? (Missions)
     - Clear the record (Organic Scanning)
     - Restore my data (Settings → General → Backup, a dialog over a Settings page)
   - Then Linux: the dialog blocks its window, appears without a flash, and opens over a window on a second monitor.
@@ -764,7 +764,7 @@ The items below are implemented and covered by unit tests, and have not all been
   - Check Down, Enter and Escape.
   - Enter with nothing highlighted still acts.
   - The list matches the EDMC theme in the main panel boxes.
-  - Then enable Settings → WFMT → General → Window → *Suggest system names from Spansh while typing* and type `outot`.
+  - Then tick **System name suggestions while typing** in Settings → WFMT → Online and type `outot`.
 - [ ] **Notes.** Verify quick add, the window, **Here**, deletion with confirmation, and the count shown when jumping into a system that has notes. The EDMC window does not become wider.
 - [ ] **Help tab** (Settings → General → Help).
   - **Report an issue** opens the prefilled form (requires the issue template on GitHub).

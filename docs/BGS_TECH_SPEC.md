@@ -42,7 +42,7 @@ BGS tracking records what the commander does to the Background Simulation (BGS).
 | `bgs_format.py` | Shared wording (panel, window, Copy Summary). Clips every journal-sourced name. |
 | `bgs_state.py` | Per-commander JSON (`bgs_state.json`): `ledger` (current period) and `archive` (closed periods, newest first). Written to a temporary file and moved with `os.replace`. |
 | `bgs_tick_client.py` | Synchronous HTTP client, the only network call: `fetch_latest_tick()`. |
-| `bgs_panel.py` | Controller, main-panel widgets and the Settings tab (tick detection only). Feeds live events to the ledger, polls the tick (`queue.Queue`, generation counter, `threading.Thread`, `after()`), runs the journal replay on a worker thread, and archives on a new tick. |
+| `bgs_panel.py` | Controller, main-panel widgets and the Settings tab (a note pointing to the Online tab, where tick detection is switched). Feeds live events to the ledger, polls the tick (`queue.Queue`, generation counter, `threading.Thread`, `after()`), runs the journal replay on a worker thread, and archives on a new tick. |
 | `bgs_settings.py` | The Settings card of the Report window and the config keys and readers for the display switch and the days of ticks kept (see "Settings in the report window"). |
 | `bgs_window.py` | Report window (`uikit`): a tick drop-down and one tab per system, each with a table of factions and a table of the commander's actions. Tabs are the last 6 systems plus the pinned ones. |
 
@@ -142,7 +142,7 @@ Trade profit is `trade_sell_credits - trade_buy_credits`. It is net credits tran
 
 ## 4. Settings in the report window
 
-The switch that shows faction states and activity, and the number of days of ticks to keep, are set only on the **Settings** card at the top of the BGS Report window (`bgs_settings.SettingsCard`). The Settings → WFMT → BGS tab contains tick detection and refers to the card. The config keys and readers are in `bgs_settings` (`bgs_panel` imports them). `set_enabled` and `set_archive_days` save with the same clamping as the Settings tab (1 to 90 days). Every change is announced to listeners: a card follows a change made in another card, and `BgsController._on_window_setting` applies it (prunes the archive, saves, redraws, reconciles the tick poll). Tick detection is set only in Settings.
+The switch that shows faction states and activity, and the number of days of ticks to keep, are set only on the **Settings** card at the top of the BGS Report window (`bgs_settings.SettingsCard`). The Settings → WFMT → BGS tab only refers to the card and to the Online tab, where tick detection is switched. The config keys and readers are in `bgs_settings` (`bgs_panel` imports them). `set_enabled` and `set_archive_days` save with the same clamping as the Settings tab (1 to 90 days). Every change is announced to listeners: a card follows a change made in another card, and `BgsController._on_window_setting` applies it (prunes the archive, saves, redraws, reconciles the tick poll). Tick detection (`wfmt_bgs_tick_enabled`, on by default) is set only on the Online tab of Settings, and the tick line shows `online_lookups.needs` while it is off.
 
 ## 5. Known gaps
 

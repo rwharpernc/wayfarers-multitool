@@ -126,15 +126,15 @@ The repository is developed on both operating systems. Each machine builds and i
   - A page taller than `settings_scroll.height_cap` receives a scrollbar. The cap is the screen height less 530 pixels, limited to 260 to 640 pixels.
   - Features keep calling `notebook.add(frame, text=...)`.
   - Plain `tk.Frame` rows on a Settings page are recolored to the page color by `ui._match_page_background`.
-- Placement of a new feature's Settings: `ui._build_settings_tabs` defines the tabs: General, Powerplay, Missions, Exploration, Mining, Trade, BGS, Colonization, Discord, Operations and Overlays. The tabs are sorted (`ui._sort_tabs`).
+- Placement of a new feature's Settings: `ui._build_settings_tabs` defines the tabs: General, Online, Powerplay, Missions, Exploration, Mining, Trade, BGS, Colonization, Discord, Operations and Overlays. The tabs are sorted (`ui._sort_tabs`).
   - Add the feature to the correct group in that function.
   - Overlay drawing belongs in the Overlays group (a `build_overlay_settings`, or the whole tab for an overlay feature), with its place registered in `overlay_placement.SLOTS`.
   - A feature with a `build_settings` that is not listed receives a tab under "Other".
   - `_stacked_page` places two small pages on one tab. The stack accepts `add(frame, text=...)` like a notebook, so each `build_settings(notebook)` is unchanged.
 - Since 1.5.0, a setting that belongs to a window is set in that window.
-  - The window builds a card, tab or strip from a field list and saves each change at once. The config key is shared with the feature's Settings tab, which keeps only permissions (lookups that contact another service, the Raven master switch and key) and a line stating where the other settings moved.
+  - The window builds a card, tab or strip from a field list and saves each change at once. The config key is shared with the feature's Settings tab, which keeps only the Raven key and a line stating where the other settings moved (every switch for a lookup that contacts another service is on the Online tab, with a pointer where it used to be).
   - Keys, readers and savers are placed in a small `*_settings.py` module that imports nothing from the panel and provides `add_listener`, so the panel, the Settings tab and every open window redraw together. Examples: `mining_window_settings.py`, `bgs_settings.py`, `exploration_settings.py`.
-  - A window never grants a permission. It displays the permission state and disables the controls that depend on it.
+  - A window never grants a permission. It displays the permission state and disables the controls that depend on it. Every permission to contact another service is switched only on the Online tab.
   - A page of a mode is a window opened from a button, not an arrow that pages the panel. A test for the window is placed in `tests/*_smoke.py` with a `test_*.py` wrapper that runs it headless.
 - Name boxes use type-ahead: `system_autocomplete` for systems (the session's, the journals' through `system_history.py`, and Spansh when ticked), `commodity_autocomplete` for one commodity, `name_suggestions` for bodies, rings, ships, comma-separated commodities and any list of names (`attach_names`). A new box that takes a name WFMT can list gets one; `tests/test_field_suggestions_wired.py` lists the ones that have it.
 - `monitor.logfile` (EDMC) is a `str` or a `pathlib.Path` depending on the EDMC version. Wrap it in `str()` before comparing or saving it to JSON.
@@ -233,6 +233,10 @@ Screens and windows are not covered by automated tests beyond the smoke scripts.
    - A line that matches the game's text on purpose carries a `game spelling` comment, which the test accepts.
 8. Colors in WFMT windows come from `plugin/uikit/palette.py` and are read when a widget is built (`P.BG`), not captured at import time or as a default argument. Use `None` as the default and `x or P.TOKEN` inside the function, or store a token name. `tests/test_window_themes.py` checks the contrast of every theme. Text that must not follow the text-size setting uses `style.font(spec, scaled=False)`.
 9. Renaming a saved file, settings key or saved field requires a migration: add it to `plugin/legacy_names.py` (with a test). The migration runs at start-up.
+10. A new online lookup (anything that makes WFMT contact another service) is added to `LOOKUPS` in `plugin/online_lookups.py`, with its default and the group it belongs under.
+    - It is switched only on the Online tab (`plugin/settings_online.py`). A feature never writes the setting and never shows its own checkbox for it; where its old checkbox would have been it shows only a one-line pointer to Settings → WFMT → Online.
+    - A feature that cannot work without the lookup shows `online_lookups.needs(<key>)` where it is used. The line is empty while the lookup is on, so the warning appears only when something is wrong. An extra that only improves a feature shows nothing.
+    - `tests/test_settings_online.py` enforces the table and that the Online tab is the single writer.
 
 ### Third-party material
 

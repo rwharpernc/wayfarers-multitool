@@ -107,6 +107,7 @@ Other messages in the block:
 - `Last tick: 2026-10-25 14:03 UTC`
 - `New tick at ... — totals reset, previous tick archived.`
 - `Tick check failed (will retry): ...`
+- `This needs "BGS tick detection (every minute)" (tick.infomancer.uk), which is off. Turn it on in Settings > Online.` (shown only while the switch is off; nothing is shown while it is on)
 
 The first check runs 3 seconds after the panel is built, then once every 60 seconds.
 
@@ -191,7 +192,7 @@ Tabs show the last 6 systems visited (the current system first), each with its f
 
 ## Tick detection and the internet
 
-WFMT requests the latest tick time from a community tick-time service (`tick.infomancer.uk`) once every 60 seconds. This is the only internet connection BGS makes. It is a request for the latest tick time; no information about the commander or play is sent. It is switched on or off in Settings (see [Settings](#settings)).
+WFMT requests the latest tick time from a community tick-time service (`tick.infomancer.uk`) once every 60 seconds. This is the only internet connection BGS makes. It is a request for the latest tick time; no information about the commander or play is sent. It is switched on or off on the Online tab of Settings, as **BGS tick detection (every minute)** (see [Settings](#settings)). It ships on.
 
 With tick detection off, the totals never reset on their own and the journals are not replayed, because WFMT does not know when the tick occurred.
 
@@ -216,6 +217,6 @@ WFMT knows only what Elite Dangerous writes to its journal files. The BGS tick t
 |---|---|---|---|
 | Settings card at the top of the BGS Report window | **Show BGS faction states and activity** | On | Switches BGS tracking on or off. The change applies when the box is ticked or cleared. |
 | Settings card at the top of the BGS Report window | **Keep previous ticks for (days, 1 to 90)** | 7 | Number of days closed ticks stay in the archive. The value applies when Enter is pressed or the box loses focus. |
-| Settings -> WFMT -> BGS | **Detect BGS ticks (polls tick.infomancer.uk every 60s)** | On | Switches tick detection on or off. Off: totals never reset on their own and journals are not replayed. This setting remains in File > Settings because it controls the one network request BGS makes. |
+| Settings → WFMT → Online | **BGS tick detection (every minute)** | On | Switches tick detection on or off. Off: totals never reset on their own and journals are not replayed. This setting stays in File > Settings (the BGS tab there shows a note pointing to the Online tab) because it controls the one network request BGS makes. **Turn all off** on that tab also turns it off, and **Reset to defaults** turns it back on. |
 
 Further detail: [BGS specification](../BGS_TECH_SPEC.md).

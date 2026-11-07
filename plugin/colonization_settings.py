@@ -2,8 +2,8 @@
 
 Two choices sit inside the master switch: *Report my construction progress and deliveries* and *Also report cargo I move to and from my fleet carrier*. They are set only here. The window draws them as a strip (`RavenStrip`) that says plainly what is on.
 
-What stays in Settings: **the master switch** ("Allow WFMT to write to Raven Colonial") and **the key**. The master switch is the consent to send anything to a third-party site,
-so it is given only where that is explained in full; the strip's two ticks are grayed out while it is off and cannot turn it on. The key is a secret; the window already asks for it
+What stays in Settings: **the key** (Colonization tab). **The master switch** ("Colonization: share progress and deliveries") is on the Settings > Online tab. The master switch is the consent
+to send anything to a third-party site, so it is given only where that is explained in full; the strip's two ticks are grayed out while it is off and cannot turn it on. The key is a secret; the window already asks for it
 the first time a write needs it. 
 The config keys live here so `colonization_window` can use them without importing `colonization_panel`, which imports the window."""
 from __future__ import annotations
@@ -13,7 +13,7 @@ from typing import Callable, List
 
 from config import config
 
-from . import rcc_keys
+from . import online_lookups, rcc_keys
 from .uikit import palette as P
 from .uikit import style
 from .uikit.tooltip import add_tooltip
@@ -44,6 +44,11 @@ def announce() -> None:
 
 def master_on() -> bool:
     return rcc_keys.enabled()
+
+
+def online_changed() -> None:
+    """Settings > Online switched Raven Colonial: tell an open Sites window so its strip re-reads the master switch (it reads the saved value itself)."""
+    announce()
 
 
 def progress_chosen() -> bool:
@@ -111,9 +116,9 @@ class RavenStrip(tk.Frame):
             box.configure(state=tk.NORMAL if on else tk.DISABLED)
         cmdr = self._commander()
         if not on:
-            text = "Nothing is sent to Raven Colonial. Turn on the master switch in Settings → WFMT → Colonization to report."
+            text = online_lookups.needs("wfmt_rcc_enabled")        # the one shared wording; never empty while the switch is off
         else:
             key = "a key is saved for this commander" if cmdr and rcc_keys.keys.get(cmdr) else "no key yet: you are asked for it when a write needs it"
             sent = [name for name, chosen in (("progress and deliveries", progress_chosen()), ("fleet carrier cargo", carrier_chosen())) if chosen]
             text = ("Reporting " + " and ".join(sent) + "; " if sent else "Writes are allowed but nothing is being reported; ") + key + "."
-        self._state.configure(text=text)
+        self._state.configure(text=text, fg=P.MUTED if on else P.WARN)

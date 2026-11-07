@@ -171,6 +171,7 @@ class OverlayProfileTests(unittest.TestCase):
 SHARED_BY_DESIGN = {
     "wfmt_diag_log_enabled": "the separate diagnostic log: a choice about this installation, for troubleshooting, not about a commander",
     "wfmt_discord_enabled": "the master switch for posting reports to Discord: a choice about this installation (destinations are saved for each commander, in discord_webhooks.json)",
+    "wfmt_powerplay_overlay_lookahead": "an online switch: it is set on the Online tab for the whole installation, with every other lookup",
     "wfmt_overlay_host": "the overlay's connection: a machine fact",
     "wfmt_overlay_port": "the overlay's connection: a machine fact",
     "wfmt_overlay_backend": "which overlay program draws: a machine fact",
@@ -225,7 +226,7 @@ class EveryOverlaySettingIsClassifiedTests(unittest.TestCase):
         self.assertEqual(sorted(missing), [], "a new overlay setting: add it to overlay_profile._FIXED, or to SHARED_BY_DESIGN with a reason")
 
     def test_the_flight_alert_and_target_choices_are_per_commander(self):
-        for key in ("wfmt_flight_mining", "wfmt_flight_limpets_low", "wfmt_flight_hold_percent", "wfmt_targets_known"):
+        for key in ("wfmt_flight_mining", "wfmt_flight_limpets_low", "wfmt_flight_hold_percent"):
             self.assertIn(key, P.profile_keys())
 
     def test_nothing_is_both_swapped_and_shared(self):

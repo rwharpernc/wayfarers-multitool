@@ -3,7 +3,7 @@ The What pays window: the commodities you could surface-mine, ranked by the best
 
 Opened from the Surface Mining Book. The commodities come from the commander's own records (mining_what_pays.candidates); the prices come from one Spansh station search per commodity (the
 best sell price within the chosen distance of the chosen system), asked one after another on a worker thread with a short pause between them and stopped at the first failure. Opt-in: it uses
-the "Enable Spansh best price finder" setting, since it asks the same service for the same kind of data, and it sends only a commodity's name, the system's name, the distance and a minimum demand (the
+the best price finder switch in Settings > Online, since it asks the same service for the same kind of data, and it sends only a commodity's name, the system's name, the distance and a minimum demand (the
 tons of that commodity in the hold when EDMC knows them, else 1). Fleet carriers are left out, the same way as in the price finder (`pays.NO_CARRIERS`). The table
 fills in as answers arrive and is ordered best price first when it finishes; **Copy report** puts the same ranking on the clipboard. It ranks what pays, not what a body holds: the game does
 not say which commodities a body carries. Built on the shared window kit (plugin/uikit). `search_stations` is a module-level name so tests can replace it.
@@ -27,7 +27,7 @@ from . import mining_price_finder_dialog as price_finder
 from . import mining_spansh_client as spansh_client
 from . import spansh_courtesy
 from . import mining_what_pays as pays
-from . import panelkit, system_autocomplete
+from . import online_lookups, panelkit, system_autocomplete
 from .mining_body_survey import SurveyedBody
 from .uikit import palette as P
 from .uikit import style
@@ -40,7 +40,7 @@ plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 CONFIG_ENABLED = "wfmt_mining_spansh_price_finder_enabled"
-"""The same switch as the price finder and Market research (Settings > Mining)."""
+"""The same switch as the price finder and Market research (Settings > Online)."""
 CONFIG_GEOMETRY = "wfmt_mining_what_pays_geometry"
 DEFAULT_SIZE = (1180, 620)
 MIN_SIZE = (900, 440)
@@ -128,6 +128,11 @@ class WhatPaysWindow:
         self._shell.add_help("What pays help", _HELP)
         self._shell.add_action("Copy report", self._copy_report, tip="Copy report - copy the ranked list as text to the clipboard")
         body = self._shell.body
+        # The warning when the online switch is off: empty and out of the way while it is on (see _refresh_notice)
+        self._notice = tk.Label(body, text="", fg=P.WARN, bg=P.BG, anchor="w", justify="left", wraplength=900)
+        self._notice.pack(fill="x")
+        self._notice.bind("<Configure>", lambda e: self._notice.configure(wraplength=max(e.width, 100)))
+        self._refresh_notice()
         first = tk.Frame(body, bg=P.BG)
         first.pack(fill="x", pady=(0, P.PAD_SM))
         tk.Label(first, text="Near", fg=P.MUTED, bg=P.BG).pack(side="left")
@@ -160,9 +165,16 @@ class WhatPaysWindow:
     def alive(self) -> bool:
         return self._shell.alive
 
+    def _refresh_notice(self) -> None:
+        """Show the shared warning while the switch is off and nothing at all while it is on; checked when the window is built and each time it is shown again."""
+        text = online_lookups.needs("wfmt_mining_spansh_price_finder_enabled")
+        self._notice.configure(text=text)
+        self._notice.pack_configure(pady=(0, P.PAD_SM) if text else 0)
+
     def lift(self) -> None:
         self._shell.window.deiconify()
         self._shell.window.lift()
+        self._refresh_notice()
 
     def close(self) -> None:
         self._shell.close()

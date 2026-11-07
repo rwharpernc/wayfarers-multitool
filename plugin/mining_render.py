@@ -17,7 +17,7 @@ import dataclasses
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from . import mining_alerts, panelkit
+from . import mining_alerts, online_lookups, panelkit
 from . import mining_bearing as bearing
 from . import mining_coverage as coverage
 from . import mining_coverage_render as coverage_render
@@ -76,6 +76,7 @@ class PanelButtons:
     hotspot_finder: tk.Button
     price_finder: tk.Button
     reserve_lookup: tk.Button
+    notice: Optional[tk.Label] = None      # the warning for a lookup this page offers but whose switch is off (its button is hidden, so this is where the user would look)
 
 
 def format_counts(counts: Dict[str, int], with_mine_via: bool = False) -> str:
@@ -321,7 +322,7 @@ BUTTON_ORDER = ("space", "surface", "hotspot_finder", "price_finder", "reserve_l
 simply left out. Book and Dashboard, and the controls that act on the ground (Mark center, Mark border, Add hotspot, Import/export), live in the windows (`mining_live_window.py`), not on the panel."""
 
 
-def place_button_bar(buttons: Optional[PanelButtons], row: int, shown: Iterable[str]) -> None:
+def place_button_bar(buttons: Optional[PanelButtons], row: int, shown: Iterable[str], notice: str = "") -> None:
     """Puts the buttons named in `shown` side by side in one row at `row` of the
     content frame (and hides the rest), instead of stacking one per row. The buttons
     live in `buttons.bar`, which is placed once; inside it each button keeps a fixed
@@ -343,6 +344,30 @@ def place_button_bar(buttons: Optional[PanelButtons], row: int, shown: Iterable[
             buttons.bar.grid_remove()
     elif buttons.bar.grid_info().get("row") != row:
         buttons.bar.grid(row=row, column=0, sticky="w", padx=6, pady=(2, 6))
+    label = buttons.notice
+    if label is not None:                                 # touched only when it changes, like the buttons
+        if notice:
+            if str(label.cget("text")) != notice:
+                label.configure(text=notice)
+            if not label.grid_info():
+                label.grid(row=99, column=0, columnspan=6, sticky="w", pady=(4, 0))
+        elif label.grid_info():
+            label.grid_remove()
+
+
+_LOOKUP_KEYS = (("hotspot_finder", "wfmt_mining_spansh_hotspot_finder_enabled"), ("price_finder", "wfmt_mining_spansh_price_finder_enabled"),
+                ("reserve_lookup", "wfmt_mining_edsm_reserve_lookup_enabled"))
+
+
+def _off_notice(*, hotspot_finder: bool = False, price_finder: bool = False, reserve_lookup: bool = False) -> str:
+    """The warning for the lookups this page offers whose switch is off (their buttons are hidden), in the one wording every off switch uses; "" when none is."""
+    offered = {"hotspot_finder": hotspot_finder, "price_finder": price_finder, "reserve_lookup": reserve_lookup}
+    return online_lookups.needs_any([key for name, key in _LOOKUP_KEYS if offered[name]])
+
+
+def place_bar(buttons: Optional[PanelButtons], row: int, settings: PanelSettings, **offered: bool) -> None:
+    """The button bar for a page that offers the lookups named in `offered`: the buttons whose switch is on, and a warning for the rest."""
+    place_button_bar(buttons, row, _shown_buttons(settings, **offered), _off_notice(**offered))
 
 
 def _shown_buttons(settings: PanelSettings, *, hotspot_finder: bool = False, price_finder: bool = False, reserve_lookup: bool = False) -> List[str]:
@@ -419,7 +444,7 @@ def render_summary(content: tk.Frame, wrap: int, buttons: Optional[PanelButtons]
             add_line(content, row, wrap, "Rhino: not deployed.")
             row += 1
 
-    place_button_bar(buttons, row, _shown_buttons(settings, hotspot_finder=True, price_finder=True, reserve_lookup=True))
+    place_bar(buttons, row, settings, hotspot_finder=True, price_finder=True, reserve_lookup=True)
 
 
 def render_space_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelButtons], settings: PanelSettings) -> None:
@@ -437,8 +462,7 @@ def render_space_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelBut
         # pre-commander-detection - both are on-demand lookups that don't
         # need an active run, unlike the hotspot finder (which searches
         # relative to the reference system tracked from journal events).
-        place_button_bar(buttons, row, _shown_buttons(
-            settings, price_finder=True, reserve_lookup=True))
+        place_bar(buttons, row, settings, price_finder=True, reserve_lookup=True)
         return
 
     if not run.has_data():
@@ -449,8 +473,7 @@ def render_space_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelBut
             add_line(content, row, wrap, text)
             row += 1
         row = render_ring_caution(content, wrap, row, settings.edsm_reserve_lookup_enabled)
-        place_button_bar(buttons, row, _shown_buttons(
-            settings, hotspot_finder=True, price_finder=True, reserve_lookup=True))
+        place_bar(buttons, row, settings, hotspot_finder=True, price_finder=True, reserve_lookup=True)
         return
 
     if run.is_paused:
@@ -504,8 +527,7 @@ def render_space_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelBut
             add_line(content, row, wrap, text)
             row += 1
 
-    place_button_bar(buttons, row, _shown_buttons(
-        settings, hotspot_finder=True, price_finder=True, reserve_lookup=True))
+    place_bar(buttons, row, settings, hotspot_finder=True, price_finder=True, reserve_lookup=True)
 
 
 def render_surface_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelButtons], settings: PanelSettings,
@@ -522,7 +544,7 @@ def render_surface_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelB
         # The Mining Book / Import/Export Hotspots stay available
         # even pre-commander-detection: mining_hotspots.py's list isn't
         # per-commander, so neither needs anything from `run`.
-        place_button_bar(buttons, row, _shown_buttons(settings, price_finder=True))
+        place_bar(buttons, row, settings, price_finder=True)
         return
 
     is_active = repo.is_active
@@ -585,7 +607,7 @@ def render_surface_mining(content: tk.Frame, wrap: int, buttons: Optional[PanelB
         row = render_site_lines(content, row, wrap, current_system, current_body, matches, settings.rig_gap_m, src)
         row = render_rig_line(content, row, wrap, src, src.rig_gap_override if src.rig_gap_override is not None else settings.rig_gap_m)
 
-    place_button_bar(buttons, row, _shown_buttons(settings, price_finder=True))
+    place_bar(buttons, row, settings, price_finder=True)
 
 
 def render_rig_line(content: tk.Frame, row: int, wrap: int, src: mining_sources.Sources, rig_gap_m: int = 0) -> int:

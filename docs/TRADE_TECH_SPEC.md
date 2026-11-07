@@ -39,7 +39,7 @@ Each Trade window shows the requirements of its `PAGE_GROUPS` entry: Routes the 
 | Routes | No (Spansh) | The most profitable trade route from the current location |
 | Market | No (Spansh) | Where a commodity sells best, near the current system and anywhere |
 
-Everything that contacts a web service is **off until enabled** in Settings and runs only when a button is
+Everything that contacts a web service is **off until enabled** (on the Online tab of Settings) and runs only when a button is
 pressed. The Session page never touches the network.
 
 ## 2. Modules
@@ -648,13 +648,13 @@ The **Best picks** button on the Market page runs `source_picks.find` for the co
 
 ## 10. Settings, config keys and files
 
-The keys below are set in the windows named in the guide's Trade settings table (`docs/guide/trade.md`), except `wfmt_trade_lookups_enabled` and the carrier choice, which are on the Settings tab.
+The keys below are set in the windows named in the guide's Trade settings table (`docs/guide/trade.md`), except `wfmt_trade_lookups_enabled`, which is switched only on the Online tab (Settings → WFMT → Online, **Trade: routes, prices and best picks**), and the carrier choice, which is on the Trade Settings tab. The Trade tab shows a note pointing to the Online tab.
 
 Settings → WFMT → Trade (a top-level tab).
 
 | Config key | Meaning | Default |
 |---|---|---|
-| `wfmt_trade_lookups_enabled` | Allow the Spansh lookups | off |
+| `wfmt_trade_lookups_enabled` | Allow the Spansh lookups (Online tab; where a window needs it while it is off it shows `online_lookups.needs`) | off |
 | `wfmt_trade_max_hops` | Route hops (1 to 10) | 3 |
 | `wfmt_trade_max_arrival_ls` | Furthest a station may be from its star | 5000 |
 | `wfmt_trade_large_pad` | Always require a large pad on routes | off |
@@ -697,7 +697,7 @@ Files in the plugin folder (all are commander data and must survive updates; see
 
 Follows TECHNICAL.md section 11 ("Keeping API traffic low").
 
-- **Opt-in and button-driven.** No lookup runs without the Settings switch and a button press.
+- **Opt-in and button-driven.** No lookup runs without the Online-tab switch and a button press.
 - **One job at a time.** `_Job` runs a single background lookup; starting another while one runs does nothing.
   Unlike other features there is no generation counter: a result is consumed by the one waiting job and
   `Cancel` sets its `threading.Event`. Results reach Tk only through `_poll_job` (an `after(500)` poller), never
@@ -788,7 +788,7 @@ the refresh uses the "Near me" radius held to 5 to 5,000 ly (`trade_watch_panel.
   subprocess, skipped without a display): no label asks for more than the width available, unchanged
   blocks are not redrawn, and a table's number columns end at the same place.
 
-The tests run without EDMC or a display. The Settings tab is built by `tests/test_prefs_smoke.py` (eleven
+The tests run without EDMC or a display. The Settings tab is built by `tests/test_prefs_smoke.py` (twelve
 top-level tabs).
 
 The History window is also drawn in a real Tk window by `tests/trade_history_window_smoke.py` (run by

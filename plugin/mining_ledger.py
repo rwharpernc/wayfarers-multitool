@@ -40,7 +40,7 @@ from . import mining_what_pays_dialog as what_pays
 from . import mining_share as share
 from . import mining_stops as stops
 from . import mining_surface as surface_mining
-from . import panelkit
+from . import online_lookups, panelkit
 from .mining_body_survey import system_body_survey
 from .uikit import dialogs
 from .uikit import palette as P
@@ -118,6 +118,11 @@ class MiningBook:
         self._selected_spot: Optional[hotspots.Hotspot] = None
         self._rates = mining_ground.OwnRates([])
 
+        # Get body info cannot work with its switch off, so say so here while it is off (empty and out of the way while it is on; see _refresh_notice)
+        self._notice = tk.Label(self._shell.body, text="", fg=P.WARN, bg=P.BG, anchor="w", justify="left", wraplength=900)
+        self._notice.pack(fill="x")
+        self._notice.bind("<Configure>", lambda e: self._notice.configure(wraplength=max(e.width, 100)))
+
         panes = tk.PanedWindow(self._shell.body, orient="horizontal", bg=P.BG, bd=0, sashwidth=6, sashrelief="flat", opaqueresize=True)
         panes.pack(fill="both", expand=True, pady=(0, P.PAD_SM))
         self._panes = panes
@@ -189,6 +194,13 @@ class MiningBook:
     def lift(self) -> None:
         self._shell.window.deiconify()
         self._shell.window.lift()
+        self._refresh_notice()
+
+    def _refresh_notice(self) -> None:
+        """The shared warning for the body lookup switch while it is off, nothing while it is on."""
+        text = online_lookups.needs(body_lookup.CONFIG_ENABLED)
+        self._notice.configure(text=text)
+        self._notice.pack_configure(pady=(0, P.PAD_SM) if text else 0)
 
     def close(self) -> None:
         hotspots.hotspot_repository.remove_listener(self._on_repo_changed)
@@ -268,6 +280,7 @@ class MiningBook:
         hotspot where they still exist."""
         if not self.alive:
             return
+        self._refresh_notice()
         hotspots.hotspot_repository.settle_depletion(notify=False)   # marks that came due while the Book was shut
         saved = hotspots.hotspot_repository.all()
         surface = surface_mining.surface_mining_repository
@@ -652,7 +665,7 @@ class MiningBook:
     def _market_research(self) -> None:
         """Markets in the selected body's system (else the current one) that buy what you could mine there."""
         if not market_research.enabled():
-            self._shell.set_status("Turn on Enable Spansh best price finder in Settings > Mining to use Market research")
+            self._shell.set_status(online_lookups.needs(market_research.CONFIG_ENABLED))
             return
         surface = surface_mining.surface_mining_repository
         current = surface.current_system or system_body_survey.current_system
@@ -666,7 +679,7 @@ class MiningBook:
     def _get_body_info(self) -> None:
         """Ask EDSM and Spansh for the current system's landable bodies (kind, volcanism, size and mining-location count) and add what the journals never gave, for a body scanned in a session whose journal is gone."""
         if not body_lookup.enabled():
-            self._shell.set_status("Turn on Enable body lookup in Settings > Mining to use Get body info")
+            self._shell.set_status(online_lookups.needs(body_lookup.CONFIG_ENABLED))
             return
         surface = surface_mining.surface_mining_repository
         system = surface.current_system or system_body_survey.current_system or mining_location.current_system()
@@ -703,7 +716,7 @@ class MiningBook:
     def _what_pays(self) -> None:
         """The commodities you could mine, ranked by the best price Spansh shows, within a distance of the system you are in."""
         if not what_pays.enabled():
-            self._shell.set_status("Turn on Enable Spansh best price finder in Settings > Mining to use What pays")
+            self._shell.set_status(online_lookups.needs(what_pays.CONFIG_ENABLED))
             return
         surface = surface_mining.surface_mining_repository
         current = surface.current_system or system_body_survey.current_system or ""

@@ -2,8 +2,8 @@
 
 Type a system (it starts as the one you are in) and, if you want one body, its name or a ring's name (it starts as the ring you are in); leave the name empty to list every ringed body in the system.
 The results fill a table: the ring, the body it circles, the body's reserve level (Pristine, Major, Common, Low, Depleted) and the ring's type, with a note on each ring that is not Metallic, since
-premium laser-mined yields are usually best on Metallic rings. Double-click a row, or press **Copy system** or **Copy ring**, to put a name on the clipboard. Opt-in through "Enable EDSM ring
-reserve lookup" in Settings; the network call is in the shared `edsm_client.py` (`system_bodies()`), and the only thing sent is the system name, when you press Search.
+premium laser-mined yields are usually best on Metallic rings. Double-click a row, or press **Copy system** or **Copy ring**, to put a name on the clipboard. Opt-in through the ring
+reserve lookup switch in Settings > Online; the network call is in the shared `edsm_client.py` (`system_bodies()`), and the only thing sent is the system name, when you press Search.
 
 The passive counterpart is the ring-caution line on the Space Mining page (`mining_render.py`), fed automatically on every drop into a ring; `parse_ringed_bodies` and `find_body_or_ring` below
 are shared with it (`mining_panel.py`). This window is for looking a ring up by name without flying there. Built on the shared window kit (plugin/uikit); the lookup runs on a worker thread and the
@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from config import appname, config
 
-from . import edsm_client, name_suggestions, panelkit, system_autocomplete
+from . import edsm_client, name_suggestions, online_lookups, panelkit, system_autocomplete
 from . import mining_location as location
 from . import mining_rings_data
 from . import mining_space as space_mining
@@ -154,6 +154,11 @@ class ReserveWindow:
         self._shell.add_action("Copy ring", lambda: self._copy("ring"), tip="Copy ring - copy the selected result's ring name to the clipboard")
         self._shell.add_action("Copy system", lambda: self._copy("system"), tip="Copy system - copy the selected result's system name to the clipboard")
         body = self._shell.body
+        # The warning when the online switch is off: empty and out of the way while it is on (see _refresh_notice)
+        self._notice = tk.Label(body, text="", fg=P.WARN, bg=P.BG, anchor="w", justify="left", wraplength=900)
+        self._notice.pack(fill="x")
+        self._notice.bind("<Configure>", lambda e: self._notice.configure(wraplength=max(e.width, 100)))
+        self._refresh_notice()
 
         first = tk.Frame(body, bg=P.BG)
         first.pack(fill="x", pady=(0, P.PAD_SM))
@@ -191,9 +196,16 @@ class ReserveWindow:
     def alive(self) -> bool:
         return self._shell.alive
 
+    def _refresh_notice(self) -> None:
+        """Show the shared warning while the switch is off and nothing at all while it is on; checked when the window is built and each time it is shown again."""
+        text = online_lookups.needs("wfmt_mining_edsm_reserve_lookup_enabled")
+        self._notice.configure(text=text)
+        self._notice.pack_configure(pady=(0, P.PAD_SM) if text else 0)
+
     def lift(self) -> None:
         self._shell.window.deiconify()
         self._shell.window.lift()
+        self._refresh_notice()
 
     def close(self) -> None:
         self._shell.close()

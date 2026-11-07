@@ -4,7 +4,7 @@ A collapsible "Watch list" row shows each watched commodity's best buy and sell 
 (asks Spansh for the best prices near the system you are in) and a WATCH button that opens the window (`trade_watch_window.py`) to
 add, remove and read every price with where and when it was seen. Prices come from two places (`trade_watch_data.py`): the markets
 you open (`Market.json`, read when the game writes the `Market` event; nothing is sent anywhere) and, only when you press REFRESH
-with Trade's lookups turned on in Settings, Spansh. The list is kept per commander and never leaves the computer."""
+with Trade's lookups turned on in Settings > Online, Spansh. The list is kept per commander and never leaves the computer."""
 from __future__ import annotations
 
 import logging
@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Mapping, Optional, Tuple
 
 from config import appname, config
 
-from . import panelkit, trade_market, trade_watch_data, trade_watch_lookup, trade_watch_window
+from . import online_lookups, panelkit, trade_market, trade_watch_data, trade_watch_lookup, trade_watch_window
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -125,6 +125,8 @@ class WatchController:
         try:
             text, suffix = self.summary()
             self._summary_var.set(text)
+            if self._status_var is not None and not self.status:
+                self._status_var.set(self.shown_status())     # the off-switch warning re-checks whenever the list redraws
             if self._section is not None:
                 self._section.set_title_suffix(suffix)   # type: ignore[attr-defined]
         except tk.TclError:
@@ -146,7 +148,7 @@ class WatchController:
         self._refresh_button = tk.Button(body, text="Refresh", command=self.refresh)
         self._refresh_button.grid(row=3, column=0, sticky=tk.W, pady=(4, 0))
         panelkit.add_tooltip(self._refresh_button, "Ask Spansh for the best buy and sell price of each watched commodity near this "
-                                                   "system (needs Trade lookups turned on in Settings)")
+                                                   "system (needs Trade lookups turned on in Settings > Online)")
         watch = tk.Button(body, text="Watch", command=self._open_window)
         watch.grid(row=3, column=1, sticky=tk.W, padx=(4, 0), pady=(4, 0))
         panelkit.add_tooltip(watch, "Open the watch list window: add or remove commodities and read every price")
@@ -163,7 +165,7 @@ class WatchController:
         if self._running:
             return "A refresh is already running."
         if not lookups_enabled():
-            return "Turn on Trade lookups in Settings (Trade tab) to ask Spansh."
+            return online_lookups.needs(_CFG_LOOKUPS)
         if not book.ready:
             return "Log in first."
         if not book.watched():
@@ -214,6 +216,10 @@ class WatchController:
         else:
             self.say(f"Updated from Spansh near {trade_watch_data.clip(reference, 30)}.")
         trade_watch_window.refresh()
+
+    def shown_status(self) -> str:
+        """The last thing said about a refresh, else the warning that the switch is off (empty while it is on)."""
+        return self.status or online_lookups.needs(_CFG_LOOKUPS)
 
     def say(self, text: str) -> None:
         self.status = text

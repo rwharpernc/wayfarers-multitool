@@ -97,10 +97,10 @@ Every overlay setting is under **File → Settings → WFMT → Overlays**: a ta
 | **Mining** | The mining stats, and the **Mining radar**: the Surface Live radar drawn over the game while the Rhino is out (WFMT's built-in overlay only: EDMCModernOverlay cannot draw a picture), with its size, background opacity and a **Test radar** button (see [the Mining guide](guide/mining.md#the-live-window)) | **Test HUD**, **Test radar** |
 | **Missions** | The missions card (rows to show, next jump, urgent limit) | **Test Card** |
 | **Notable Bodies** | Alerts for bodies worth a look, with a tick for each rule | **Test Notable** |
-| **Route** | The route card (how many systems to list, whether to mark systems EDSM does not know) | **Test Card** |
+| **Route** | The route card (how many systems to list; marking systems EDSM does not know is switched in Settings → WFMT → Online) | **Test Card** |
 | **Screenshots** | The "screenshot saved" message | **Test Overlay** |
 | **Surface Compass** | The arrow, name and distance pointing at a hotspot or a mark on the planet the commander is on | **Test Compass** |
-| **System targets** | The list of bodies to map and sample (value threshold, what the value is judged by, rows, life list, and the EDSM and Spansh lookups of what others found) | **Test Card** |
+| **System targets** | The list of bodies to map and sample (value threshold, what the value is judged by, rows, life list; the EDSM and Spansh lookups of what others found are switched in Settings → WFMT → Online) | **Test Card** |
 
 The test buttons work while the feature is switched off and report whether the overlay could be reached. A feature's other settings (what it tracks, how it behaves) are on its own tab elsewhere in Settings; only the overlay settings are here.
 
@@ -179,7 +179,7 @@ Four ticks, all off: *Enable the Bio status card (progress, current species, dis
 
 ### Powerplay
 
-*Enable the Powerplay card* (off); *Look up the system I am jumping to (asks Spansh)* (off); **Test Card**. In a system without a Powerplay state the card says **No Powerplay Detected in system**. With the look-ahead ticked it turns to the jump's destination as soon as the journal says the jump has started, using a Spansh lookup of the destination's id (see [What goes on the internet](guide/internet-and-privacy.md)). It lists the commander's Power, rank, total merits and the merits of the cycle in progress; the system's state and who holds it; what merits earned here now count as (Acquisition, Reinforcement or Undermining, a best guess as on the Powerplay panel); and the merits and estimated Control Points earned in this system this session, by type. The Control Points use the ratios on the Powerplay tab. See [Powerplay](guide/powerplay.md).
+*Enable the Powerplay card* (off); **Test Card**; the look-ahead lookup (**Powerplay card: the system you are jumping to**, off) is switched in Settings → WFMT → Online, and the tab shows a note saying so. In a system without a Powerplay state the card says **No Powerplay Detected in system**. With the look-ahead on it turns to the jump's destination as soon as the journal says the jump has started, using a Spansh lookup of the destination's id (see [What goes on the internet](guide/internet-and-privacy.md)). It lists the commander's Power, rank, total merits and the merits of the cycle in progress; the system's state and who holds it; what merits earned here now count as (Acquisition, Reinforcement or Undermining, a best guess as on the Powerplay panel); and the merits and estimated Control Points earned in this system this session, by type. The Control Points use the ratios on the Powerplay tab. See [Powerplay](guide/powerplay.md).
 
 ### Flight Alerts
 
@@ -235,7 +235,7 @@ If several bodies match at once the cards take turns. See [Notable Bodies](guide
 
 ### Route
 
-*Enable the Route overlay* (off); **Systems listed** (3 to 20; 8; the jump count and the light years cover the whole route); *Mark the systems ahead that EDSM does not know yet (asks EDSM; sends the names of the next systems on the route)* (off; a system EDSM has no record of gets a `*`); **Test Card**. The card follows the route plotted in the game, or the Route Planner's route when there is one. It is shown while the ship is in one of the route's systems; if the ship jumps off it, the card clears until a new route is plotted. See [Route overlay](guide/always-on.md#route-overlay).
+*Enable the Route overlay* (off); **Systems listed** (3 to 20; 8; the jump count and the light years cover the whole route); **Test Card**. With **Route overlay: systems EDSM does not know** ticked in Settings → WFMT → Online (off; it asks EDSM and sends the names of the next systems on the route), a system EDSM has no record of gets a `*`; the Route tab shows a note pointing there. The card follows the route plotted in the game, or the Route Planner's route when there is one. It is shown while the ship is in one of the route's systems; if the ship jumps off it, the card clears until a new route is plotted. See [Route overlay](guide/always-on.md#route-overlay).
 
 ### Screenshots
 
@@ -247,7 +247,7 @@ If several bodies match at once the cards take turns. See [Notable Bodies](guide
 
 ### System targets
 
-*Enable the System targets card* (off); *List bodies worth at least [n] credits, judged by* **Mapped value (what scanning and mapping pays)** (the starting choice) or **Scan value (what scanning alone pays)** (the threshold is 0 to 50,000,000; 100,000 to start); **Rows shown** (3 to 16; 6; the rest are counted); *Also list bodies with life that I have not finished analyzing* (on); *Also list the bodies I have finished (mapped, and their life analyzed), so I can see where I left off* (on); *Also look up bodies other commanders have scanned (EDSM, once per system)* (off); *Also look up the life and points of interest other commanders found in the system (Spansh, once per system, on arrival)* (off); **Test Card**. See [System targets and Body info](guide/exploration.md#system-targets-and-body-info).
+*Enable the System targets card* (off); *List bodies worth at least [n] credits, judged by* **Mapped value (what scanning and mapping pays)** (the starting choice) or **Scan value (what scanning alone pays)** (the threshold is 0 to 50,000,000; 100,000 to start); **Rows shown** (3 to 16; 6; the rest are counted); *Also list bodies with life that I have not finished analyzing* (on); *Also list the bodies I have finished (mapped, and their life analyzed), so I can see where I left off* (on); **Test Card**. The two lookups (**System targets: bodies other commanders scanned** (EDSM, once per system) and **System targets: life and points of interest others found** (Spansh, once per system, on arrival), both off) are switched in Settings → WFMT → Online; the tab shows a note pointing there. See [System targets and Body info](guide/exploration.md#system-targets-and-body-info).
 
 ## Moving things around
 
@@ -259,6 +259,7 @@ Where each display goes is set once, for every WFMT overlay, on **Settings → W
 - A card can be off for one commander and on for another.
 - The first time a commander is seen, that commander starts with a copy of the choices already in place, so nothing moves.
 - A commander's choices are filed when Settings are saved and when the commander changes (log in as another commander, or restart EDMC).
+- The three overlay lookups (System targets, Route and Powerplay) are one setting for the whole installation, switched in Settings → WFMT → Online, not per commander.
 - Which overlay draws (the built-in one or EDMCModernOverlay), its host and port and the shortcut keys describe the computer, so they are shared.
 - Choices saved when EDMC does not yet know the commander go to the first commander it sees.
 - **To copy another commander's choices:** play the commander who should receive them, open the **Overlay Placement** tab, pick the other commander next to **Copy all overlay layouts and settings from** (the row shows once a second commander has been seen), press **Copy**, then **OK** in Settings. Everything in the list above is replaced with the other commander's, including turning off cards they do not use; **Cancel** changes nothing, and the other commander is not touched. Machine settings (the overlay connection, the hide hotkey) are not copied.

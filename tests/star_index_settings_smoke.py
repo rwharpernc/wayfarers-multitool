@@ -1,4 +1,4 @@
-"""Builds Settings -> General -> Online lookups (plugin/settings_online.py) with its Local star index group in a real Tk window, presses the buttons against a fake server and a temporary folder, and
+"""Builds Settings -> Online (plugin/settings_online.py) with its Local star index group in a real Tk window, presses the buttons against a fake server and a temporary folder, and
 checks the status text, which buttons are enabled and that the tick is saved. Run by test_star_index_settings_smoke in a subprocess. Exits 0 if everything holds, 1 if not, 77 if Tk is unavailable."""
 import os
 import sys
@@ -93,12 +93,12 @@ try:
         courtesy = spansh_courtesy.Courtesy(opener=server, clock=lambda: 0.0, sleep=lambda seconds: None)
         job = star_index_job.StarIndexJob(folder, courtesy=courtesy, free_space=lambda directory: 10 ** 12)
 
-        # The whole Online lookups page builds, with the group at the bottom.
+        # The whole Online page builds, with the group at the bottom.
         notebook = ttk.Notebook(root)
         with mock.patch.object(star_index_settings, "build_group", wraps=lambda parent, row: (star_index_settings.StarIndexGroup(parent, row, job), row + 5)) as built:
             settings_online.build_settings(notebook)
             root.update()
-        check(built.called, "the Online lookups page builds the Local star index group")
+        check(built.called, "the Online page builds the Local star index group")
         page = root.nametowidget(notebook.tabs()[0])
         labels = [w.cget("text") for w in page.winfo_children() if isinstance(w, tk.Label)]
         check(any("Local star index" in t for t in labels), "the group has its heading")

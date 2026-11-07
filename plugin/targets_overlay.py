@@ -97,10 +97,8 @@ def save_config(cfg: TargetsConfig) -> None:
     config.set(_CFG_THRESHOLD, str(cfg.threshold))
     config.set(_CFG_ROWS, str(cfg.rows))
     config.set(_CFG_LIFE, cfg.life)
-    config.set(_CFG_ONLINE, cfg.online)
     config.set(_CFG_DONE, cfg.done)
-    config.set(_CFG_BASIS, cfg.basis)
-    config.set(_CFG_KNOWN, cfg.known)
+    config.set(_CFG_BASIS, cfg.basis)   # the two lookup switches are owned by Settings > Online
 
 
 # --- what the card says (pure) ---------------------------------------------------------------------------------------
@@ -370,7 +368,7 @@ def build_settings(notebook: nb.Notebook) -> None:
         text=("A card on your in-game overlay, through the overlay (WFMT's built-in one on Windows, or EDMCModernOverlay: a separate, optional helper WFMT does not install or launch; its connection "
               "settings are on the Overlay Connection tab). After you scan bodies in a system it lists the ones worth mapping that you have not mapped yet, "
               "and the ones with life that you have not finished analyzing, until you do. It goes when you leave the system. The value is an estimate: what scanning "
-              "and then mapping a body pays (or, if you choose, the scan alone), from the published formula; the game's own figure is the truth. Everything comes from your journal; nothing is sent anywhere unless you tick the EDSM lookup further down."),
+              "and then mapping a body pays (or, if you choose, the scan alone), from the published formula; the game's own figure is the truth. Everything comes from your journal; nothing is sent anywhere unless you switch a lookup on in Settings > Online."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
     overlay_link.add(frame)
@@ -378,8 +376,6 @@ def build_settings(notebook: nb.Notebook) -> None:
     _vars["enabled"] = tk.BooleanVar(value=cfg.enabled)
     _vars["life"] = tk.BooleanVar(value=cfg.life)
     _vars["done"] = tk.BooleanVar(value=cfg.done)
-    _vars["online"] = tk.BooleanVar(value=cfg.online)
-    _vars["known"] = tk.BooleanVar(value=cfg.known)
     _vars["threshold"] = tk.StringVar(value=f"{cfg.threshold}")
     _vars["rows"] = tk.StringVar(value=str(cfg.rows))
     nb.Checkbutton(frame, text="Enable the System targets card", variable=_vars["enabled"]).grid(row=2, column=0, sticky=tk.W, padx=10, pady=2)
@@ -403,16 +399,16 @@ def build_settings(notebook: nb.Notebook) -> None:
 
     nb.Checkbutton(frame, text="Also list the bodies I have finished (mapped, and their life analyzed), so I can see where I left off", variable=_vars["done"]).grid(
         row=6, column=0, sticky=tk.W, padx=(30, 10), pady=2)
-    nb.Checkbutton(frame, text="Also look up bodies other commanders have scanned (EDSM, once per system)",
-                   variable=_vars["online"]).grid(row=7, column=0, sticky=tk.W, padx=(30, 10), pady=2)
-    nb.Checkbutton(frame, text="Also look up the life and points of interest other commanders found in the system (Spansh, once per system, on arrival)",
-                   variable=_vars["known"]).grid(row=8, column=0, sticky=tk.W, padx=(30, 10), pady=2)
+    nb.Label(frame, text="The EDSM lookup of bodies other commanders have scanned is switched in Settings > Online.",
+             wraplength=440, justify=tk.LEFT).grid(row=7, column=0, sticky=tk.W, padx=(30, 10), pady=2)
+    nb.Label(frame, text="The Spansh lookup of life and points of interest other commanders found is switched in Settings > Online.",
+             wraplength=440, justify=tk.LEFT).grid(row=8, column=0, sticky=tk.W, padx=(30, 10), pady=2)
 
     nb.Label(
         frame,
         text=("What WFMT cannot know: a body appears only after you have scanned it (the system scan or a detailed scan), because the journal gives its "
-              "class and mass then, unless you tick the EDSM lookup above, which asks EDSM once per system after the honk (it sends only the system name) and adds the planets other commanders have already scanned. The list is rebuilt from your newest journal when EDMC starts in the middle of a system. Life counts come from the "
-              "signal counts the scans give; the genera are known only after you map the body. The Spansh lookup (the line above) lists, as Known, the bodies other commanders "
+              "class and mass then, unless you switch the EDSM lookup on in Settings > Online, which asks EDSM once per system after the honk (it sends only the system name) and adds the planets other commanders have already scanned. The list is rebuilt from your newest journal when EDMC starts in the middle of a system. Life counts come from the "
+              "signal counts the scans give; the genera are known only after you map the body. The Spansh lookup (switched in Settings > Online) lists, as Known, the bodies other commanders "
               "found life or a point of interest on (a wreck, a beacon, a Guardian site) with the reward for the life, and replaces the 'Nothing to map' line when there are any; it sends only the system's number."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=9, column=0, sticky=tk.W, padx=10, pady=(6, 4))
@@ -429,7 +425,6 @@ def build_settings(notebook: nb.Notebook) -> None:
 def _typed() -> TargetsConfig:
     return TargetsConfig(enabled=bool(_vars["enabled"].get()), threshold=_clamp(_vars["threshold"].get(), *THRESHOLD_RANGE, DEFAULT_THRESHOLD),
                          rows=_clamp(_vars["rows"].get(), *ROWS_RANGE, DEFAULT_ROWS), life=bool(_vars["life"].get()), done=bool(_vars["done"].get()),
-                         online=bool(_vars["online"].get()), known=bool(_vars["known"].get()),
                          basis=next((key for key, label in BASIS_LABELS.items() if label == _vars["basis"].get()), DEFAULT_BASIS))
 
 
@@ -460,4 +455,8 @@ def _test_card() -> None:
 def save_settings() -> None:
     if _vars:
         save_config(_typed())   # a card left up simply expires
-        _look_up_sites()        # ticked while in a system: look it up now rather than at the next arrival
+
+
+def online_changed() -> None:
+    """Settings > Online switched a lookup: when the Spansh one is on and you are in a system, look it up now rather than at the next arrival."""
+    _look_up_sites()

@@ -138,9 +138,9 @@ check(len(book.sightings("Gold")) == 1, "a market that trades none of them chang
 
 # --- the Spansh refresh --------------------------------------------------------------------------------------------------------------------
 saved["wfmt_trade_lookups_enabled"] = False
-check("lookups" in panel.refresh_blocker(), f"a refresh is refused with lookups off: {panel.refresh_blocker()!r}")
+check("Settings > Online" in panel.refresh_blocker(), f"a refresh is refused with lookups off: {panel.refresh_blocker()!r}")
 panel.refresh()
-check(not panel.running and "lookups" in panel.status, f"and it says why: {panel.status!r}")
+check(not panel.running and "Settings > Online" in panel.status, f"and it says why: {panel.status!r}")
 
 saved["wfmt_trade_lookups_enabled"] = True
 asked = []

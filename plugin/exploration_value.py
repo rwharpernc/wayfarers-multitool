@@ -163,8 +163,6 @@ class ExplorationValueController:
         self._parent: Optional[tk.Frame] = None
 
         self._enabled_var: Optional[tk.BooleanVar] = None
-        self._elw_rarity_enabled_var: Optional[tk.BooleanVar] = None
-        self._edsm_upload_enabled_var: Optional[tk.BooleanVar] = None
 
         # Worker-thread + queue.Queue + after()-polling plumbing, same
         # pattern as boxel_survey.py's own EDSM lookups - workers must
@@ -481,8 +479,6 @@ class ExplorationValueController:
         notebook.add(frame, text="Exploration Value")
 
         self._enabled_var = tk.BooleanVar(value=enabled())
-        self._elw_rarity_enabled_var = tk.BooleanVar(value=elw_rarity_enabled())
-        self._edsm_upload_enabled_var = tk.BooleanVar(value=edsm_upload_enabled())
 
         nb.Label(frame, text="Exploration Value", font=("TkDefaultFont", 9, "bold")).grid(
             row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4),
@@ -501,31 +497,17 @@ class ExplorationValueController:
             frame, text="Show estimated scan value, system age, and current region", variable=self._enabled_var,
         ).grid(row=2, column=0, sticky=tk.W, padx=10, pady=(0, 10))
 
-        nb.Label(
-            frame,
-            text=(
-                "The two options below each make a live network call (Spansh/EDSM) — off by "
-                "default, unlike the passive estimate above."
-            ),
-            wraplength=440, justify=tk.LEFT,
-        ).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-        nb.Checkbutton(
-            frame,
-            text="Show ELW rarity comparison when you scan an Earthlike World (Spansh)",
-            variable=self._elw_rarity_enabled_var,
-        ).grid(row=4, column=0, sticky=tk.W, padx=10)
-        nb.Checkbutton(
-            frame,
-            text="Show EDSM upload status when you select a system on the galaxy map (EDSM)",
-            variable=self._edsm_upload_enabled_var,
-        ).grid(row=5, column=0, sticky=tk.W, padx=10, pady=(0, 10))
+        nb.Label(frame, text="The ELW rarity comparison (Spansh) is switched in Settings > Online.", wraplength=440, justify=tk.LEFT).grid(
+            row=3, column=0, sticky=tk.W, padx=10, pady=(0, 4),
+        )
+        nb.Label(frame, text="The EDSM upload status is switched in Settings > Online.", wraplength=440, justify=tk.LEFT).grid(
+            row=4, column=0, sticky=tk.W, padx=10, pady=(0, 10),
+        )
 
     def save_settings(self) -> None:
         if self._enabled_var is None:
             return
         config.set(_CFG_ENABLED, self._enabled_var.get())
-        config.set(_CFG_ELW_RARITY_ENABLED, self._elw_rarity_enabled_var.get())
-        config.set(_CFG_EDSM_UPLOAD_ENABLED, self._edsm_upload_enabled_var.get())
         self._refresh_enabled_display()
 
 

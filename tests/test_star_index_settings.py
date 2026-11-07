@@ -91,10 +91,11 @@ class DescriptionTests(unittest.TestCase):
             self.assertIn(needed, text)
 
     def test_the_settings_page_lists_the_download_among_the_button_only_lookups(self):
-        with open(os.path.join(os.path.dirname(__file__), "..", "plugin", "settings_online.py"), encoding="utf-8") as handle:
-            source = handle.read()
-        self.assertIn("Local star index", source)
-        self.assertIn("build_group", source)
+        plugin = os.path.join(os.path.dirname(__file__), "..", "plugin")
+        with open(os.path.join(plugin, "online_lookups.py"), encoding="utf-8") as handle:
+            self.assertIn("Local star index", handle.read())          # listed among the lookups that run only when a button is pressed
+        with open(os.path.join(plugin, "settings_online.py"), encoding="utf-8") as handle:
+            self.assertIn("build_group", handle.read())               # and its controls are on the page
 
 
 if __name__ == "__main__":

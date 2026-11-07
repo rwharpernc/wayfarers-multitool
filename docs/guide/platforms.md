@@ -29,8 +29,8 @@ The Settings tabs for Auto-Honk, the screenshot auto-timer and the sound options
 | Keyboard shortcuts (Mark center, Mark border, radar range, Live window, hide overlays) | Yes (Ctrl+Alt+Shift plus a key) | No. Chat commands work on both systems |
 | Chat commands (`!wf center` and the others, typed in Elite's chat) | Yes | Yes |
 | Overlay included in converted screenshots | Yes (built-in overlay) | No |
-| Self-update (Settings → WFMT → General → Updates) and the data backup before it | Yes | Yes |
-| **Local star index** (Settings → WFMT → General → Online lookups): download, update and delete | Yes | Yes. About 300 MB of free space is needed while the index is built (110 MB afterwards) in the plugin folder. For a Flatpak EDMC the plugin folder is inside its own data folder, which it can write to |
+| Self-update (Settings → WFMT → Online) and the data backup before it | Yes | Yes |
+| **Local star index** (Settings → WFMT → Online): download, update and delete | Yes | Yes. About 300 MB of free space is needed while the index is built (110 MB afterwards) in the plugin folder. For a Flatpak EDMC the plugin folder is inside its own data folder, which it can write to |
 | Screen size detection for overlay placement | Elite's window (built-in overlay), `DisplaySettings.xml`, or the operating system's hardware resolution | EDMCModernOverlay's log, `DisplaySettings.xml` (a Flatpak requires permission 5), then `xrandr`. Display scaling cannot be read and is set manually ([Overlay Placement](../OVERLAY_SETUP.md#moving-things-around)) |
 | Overlay **Corners**, **Keep showing when Elite is not the window in front**, and Windows capture-tool detection | Yes (built-in overlay) | No (built-in overlay features) |
 | Credits line, Credits Ledger, Settings, windows and their Help buttons | Yes | Yes (journal data; the Journal directory must be set) |

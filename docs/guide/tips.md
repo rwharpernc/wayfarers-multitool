@@ -7,7 +7,7 @@ Usage notes that are not covered by a single feature guide. Each mode guide has 
 - Restart EDMC after installing or updating. The WFMT panel appears only after a restart.
 - Extract the ZIP over the existing `Wayfarers-Multitool` folder. Saved data is stored in that folder.
 - Use the ZIP from the **Releases** page (Assets), not the **Code → Download ZIP** button.
-- Automatic updates are off by default (Settings → WFMT → General → Updates). A downloaded update takes effect after a restart: the version line under the mode buttons turns orange and reads *Restart EDMC*.
+- Automatic updates are off by default (**Download and install updates**, Settings → WFMT → Online). A downloaded update takes effect after a restart: the version line under the mode buttons turns orange and reads *Restart EDMC*.
 - Select **OK** in EDMC's Settings window to keep a change.
 
 ## Data and backups
@@ -82,7 +82,7 @@ Usage notes that are not covered by a single feature guide. Each mode guide has 
 - The **In Cargo** figures come from the game's `Cargo.json`, read again shortly after any event that can change the hold.
 - **Raven Colonial** (ravencolonial.com) is optional.
   - Planned Builds, My Projects (viewing), Raven Progress, Refresh from Raven and the page links only read data or open the browser.
-  - Sending data to Raven is off until the master switch is selected in Settings and a Raven key is saved. This covers progress sharing, **Create Project on Raven**, **Report Complete to Raven**, **Mark Plan Entry Demolished**, and **Set as My Primary** and **Save Counted List** in My Projects.
+  - Sending data to Raven is off until **Colonization: share progress and deliveries** is ticked in Settings → WFMT → Online and a Raven key is saved. This covers progress sharing, **Create Project on Raven**, **Report Complete to Raven**, **Mark Plan Entry Demolished**, and **Set as My Primary** and **Save Counted List** in My Projects.
   - **Create Project on Raven** (in the Colonization Sites window) creates a project when Raven has none for the site.
   - **Test key** checks the key.
 - **Shopping-list overlay:**

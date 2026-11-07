@@ -116,7 +116,7 @@ Buttons on the bottom row:
 | **Merits here count as** | The activity merits earned in this system would be filed as: Acquisition, Reinforcement or Undermining. The attribution is inferred from the state and the holder, as on the page. |
 | Merit rows | One row per type of merit earned in this system this session, with the merits and, except for Delivery and Unattributed, the estimated Control Points (from the ratios on the Sessions window's Settings tab). |
 
-**Look-ahead.** The checkbox **Look up the system I am jumping to (asks Spansh)** is off until ticked. See [What goes on the internet](internet-and-privacy.md).
+**Look-ahead.** The lookup **Powerplay card: the system you are jumping to** is off until ticked in Settings → WFMT → Online (one setting for the whole installation, not per commander). See [What goes on the internet](internet-and-privacy.md).
 
 - When the journal reports that a jump has started, the card shows the destination, with `jumping` beside its name.
 - The destination view shows the state, the holder and what merits there would count as (**Merits there count as**).

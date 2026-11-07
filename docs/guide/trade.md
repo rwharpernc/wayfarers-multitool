@@ -59,7 +59,7 @@ See [Trade History](#trade-history-saving-sessions) and [Worked example: review 
 
 **Find the best route or price**
 
-1. Tick **Enable Spansh trade lookups** in **Settings → WFMT → Trade**.
+1. Tick **Trade: routes, prices and best picks** in **Settings → WFMT → Online**.
 2. For a route, open the **Routes** page and press **Find routes** (or **Round trip** for a back-and-forth pair).
 3. For a price, open the **Market** page, choose **Sell** or **Buy**, select a commodity, then press **Near me**, **Galaxy** or **Best picks**.
 
@@ -181,7 +181,7 @@ Header buttons: **Help** explains the figures. **Copy summary** copies a plain-t
 
 ## Routes
 
-Requires the Spansh lookups to be enabled (Settings → WFMT → Trade).
+Requires **Trade: routes, prices and best picks** to be on (Settings → WFMT → Online). While it is off, the window shows `This needs "Trade: routes, prices and best picks" (Spansh), which is off. Turn it on in Settings > Online.`
 
 **Find routes** asks Spansh for the most profitable trade route from the current position.
 
@@ -200,7 +200,7 @@ Before a search, the page shows the inputs that will be used (start, ship, cargo
 
 ### Worked example: find a route
 
-1. Tick **Enable Spansh trade lookups** in **Settings → WFMT → Trade**.
+1. Tick **Trade: routes, prices and best picks** in **Settings → WFMT → Online**.
 2. Open the **Routes** page. Check the listed inputs: start, ship, cargo, jump range and budget.
 3. Press **Hops** until it reads `Hops: 3`, then press **Find routes**.
 4. The page states whether the search is in Spansh's queue or being calculated. **Cancel** stops the search.
@@ -247,11 +247,11 @@ While waiting, the page states whether the search is in Spansh's queue or being 
 
 ## Market
 
-Requires the Spansh lookups to be enabled.
+Requires **Trade: routes, prices and best picks** to be on (Settings → WFMT → Online); while it is off the window shows the same warning.
 
 Market finds where to sell or buy a commodity.
 
-The **Commodity** box, the **Sell** / **Buy** buttons beside **I want to**, and the search buttons (**Near me**, **Galaxy**, **Best picks**, **Price finder**, after **Then search**) work only when the Spansh lookups are enabled. Otherwise they are disabled and the window directs to Settings → WFMT → Trade.
+The **Commodity** box, the **Sell** / **Buy** buttons beside **I want to**, and the search buttons (**Near me**, **Galaxy**, **Best picks**, **Price finder**, after **Then search**) work only when **Trade: routes, prices and best picks** is on. Otherwise they are disabled and the window shows the warning that points to Settings → WFMT → Online.
 
 1. Choose **Sell** or **Buy** with the **I want to** buttons under the Commodity box (the lit button is selected). The choice is remembered.
 2. Select a commodity. Click the **Commodity** box and type. Enter in the box runs **Near me**. Suggestions list first the cargo carried and what the docked station buys, then every commodity.
@@ -305,7 +305,7 @@ The same four picks for a mission's cargo are in Mission mode ([Source commoditi
 
 ### Price finder
 
-**Price finder** opens the finder that Mining's **Prices** button also uses ([Find Best Price](mining.md#prices-find-best-price)), for any commodity, to buy or sell, with its own **Where** distance drop-down. The button is disabled until Trade's Spansh lookups are enabled. Its suggestions list the cargo carried and what the docked station buys first, then every commodity. The finder always excludes fleet carriers and requests only markets updated in the last 30 days, regardless of the Trade settings.
+**Price finder** opens the finder that Mining's **Prices** button also uses ([Find Best Price](mining.md#prices-find-best-price)), for any commodity, to buy or sell, with its own **Where** distance drop-down. The button is disabled until **Trade: routes, prices and best picks** is on (Settings → WFMT → Online). Its suggestions list the cargo carried and what the docked station buys first, then every commodity. The finder always excludes fleet carriers and requests only markets updated in the last 30 days, regardless of the Trade settings.
 
 Prices are only as recent as the last player who docked at the station. Markets older than 30 days are ignored.
 
@@ -317,7 +317,7 @@ The watch list tracks selected commodities and shows the best price to buy and t
 - **The two tables.** The top table lists every watched commodity with **Commodity**, **Buy (cr/t)**, **Buy at**, **Sell (cr/t)** and **Sell at**. Selecting a row fills the lower table with where it was seen: **From** (`Seen` for a market that was opened, `Spansh: buy` or `Spansh: sell`), **Station**, **System**, **Buy (cr/t)**, **Stock**, **Sell (cr/t)**, **Demand**, **ly** and **Age**. The window's **Help** button explains them.
 - **Where prices come from.** Each time a station's commodity market is opened in the game, WFMT reads it and keeps the buy price (what the station charges), the sell price (what it pays), the stock and the demand of each watched commodity, for the newest 12 stations. This requires no setting and sends nothing.
 - **Refresh from Spansh.** **Refresh** on the row (or **Refresh from Spansh** in the window) asks Spansh for the cheapest station to buy and the dearest to sell each watched commodity, within the "Near me" radius of the current system.
-  - It requires *Enable Spansh trade lookups* in Settings.
+  - It requires **Trade: routes, prices and best picks** (Settings → WFMT → Online); while it is off the list shows the standard warning.
   - It sends only the commodity names and the system name, never the commander name.
   - Fleet carriers are excluded because they move.
   - The answer is kept until EDMC closes. The search radius is the "Near me" radius, limited to 5 to 5,000 ly.
@@ -476,11 +476,11 @@ Copying these files between computers is not needed.
 
 Trade's settings are in two places. A number typed outside its range is set to the nearest limit, a box saves on Enter or when focus leaves it, and a tick saves at once.
 
-**In Settings → WFMT → Trade:**
+**In Settings → WFMT → Online and Settings → WFMT → Trade:**
 
 | Setting | Default | Notes |
 |---|---|---|
-| Enable Spansh trade lookups | Off | The Routes and Market windows do nothing without it. It is the permission to contact Spansh, so it is in Settings. |
+| **Trade: routes, prices and best picks** | Off | The Routes and Market windows do nothing without it. It is the permission to contact Spansh, so it is on the Online tab (Settings → WFMT → Online), not in Settings → WFMT → Trade, which shows a note pointing there. |
 | Carrier choice, per commander | Auto | See [above](#your-fleet-carrier-and-squadron-carrier). |
 
 **In the windows:**

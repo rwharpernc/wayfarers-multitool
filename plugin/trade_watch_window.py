@@ -200,7 +200,7 @@ class WatchWindow:
             self._picked = None
         self._fill_seen()
         self._remove_button.set_enabled(self._picked is not None)
-        note = self._controller.status or ""
+        note = self._controller.shown_status()
         self._shell.set_status(note)
 
     def _fill_seen(self) -> None:

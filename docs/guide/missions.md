@@ -39,7 +39,7 @@ The window remembers its size and position. While open, it updates the time left
 
 ### Find where to buy the cargo for a mission
 
-1. Tick **Enable Spansh trade lookups** in Settings → WFMT → Trade (off by default). If it is off, the Source commodities window asks whether to enable it when **Find sources** is pressed.
+1. Tick **Trade: routes, prices and best picks** in Settings → WFMT → Online (off by default). While it is off, the Source commodities window shows `This needs "Trade: routes, prices and best picks" (Spansh), which is off. Turn it on in Settings > Online.` when **Find sources** is pressed; it no longer offers to turn the lookup on.
 2. Press **Find sources** at the bottom of the Missions panel, or **Sources** in the Missions window.
 3. Choose **From where I am** or **From the turn-in system**, then press **Find sources** in the Source commodities window.
 4. Wait for the rows to fill (`Asking Spansh... 2 of 5 done`), select a row and press **Copy system**. Paste the name into the galaxy map.
@@ -185,7 +185,7 @@ WFMT uses only what Elite Dangerous writes to its journal files. Missions need n
 | Every kill counted | Wing and on-foot kills are often missing from the journal until the mission completes, so counts run low. WFMT marks them with `~`. Combat-zone kills are recorded as combat bonds, not bounties. WFMT counts them, but they carry no ship type, so an on-foot combat-zone kill can be counted as a ship kill. | `~` means "at least this many". The game's mission screen is authoritative. |
 | Active missions after restarting EDMC mid-game | The game lists active missions only in its login event. WFMT derives the list from the last two weeks of journals (the latest login list plus missions accepted, completed, abandoned or failed since). A mission that expired without a journal entry can show until the next login. | Log in again to obtain the game's list. |
 | Exact cargo mission progress | The game reports `CargoDepot` (collected, delivered and total) when cargo is collected or handed in, including by a wing-mate. Progress made before WFMT's two-week window, or without an event since, is unknown. | The card shows progress once the game has reported any. |
-| Where to buy a mission's cargo, offline | WFMT asks Spansh. This requires the Trade online lookups to be enabled and a button press. | Enable the switch in Settings → WFMT → Trade. |
+| Where to buy a mission's cargo, offline | WFMT asks Spansh. This requires **Trade: routes, prices and best picks** to be on and a button press. | Turn it on in Settings → WFMT → Online. |
 | Progress on a source and return mission before hand-in | The game writes nothing until then. | WFMT shows the hold against the requirement (`36/60 held`). Cargo in a carrier does not count. |
 | Missions for the next jump on the overlay when a route is plotted | The game names the targeted system (`FSDTarget`), not the whole route, so only the next hop is NEXT. | Target each hop as it is reached. |
 | Missions accepted long ago | WFMT reads only the last two weeks of journals at start-up. A mission still active but accepted earlier is not found. | Check the game's mission board. |
@@ -273,7 +273,7 @@ A Delivery mission (for example "Deliver 132 units of Personal Weapons") is supp
 Behavior:
 
 - The landing pad size, "Near me" radius, carriers and ground settings from Trade apply.
-- The search requires **Enable Spansh trade lookups** in Settings → WFMT → Trade (off by default). If it is off, the window asks whether to enable it, and nothing is searched until the answer is yes.
+- The search requires **Trade: routes, prices and best picks** in Settings → WFMT → Online (off by default). If it is off, the window shows the standard warning and nothing is searched. It does not ask to turn the lookup on; only the Online tab changes it.
 - Nothing is searched until the button is pressed.
 - If no mission needs cargo to be found, the window says so.
 - At most twelve commodities are listed, largest need first.

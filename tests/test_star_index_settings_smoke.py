@@ -1,4 +1,4 @@
-"""Builds the Local star index group on the Online lookups page in a real Tk window and runs the buttons against a fake server (tests/star_index_settings_smoke.py). Skipped when Tk has no display.
+"""Builds the Local star index group on the Online page in a real Tk window and runs the buttons against a fake server (tests/star_index_settings_smoke.py). Skipped when Tk has no display.
 Run with: python -m unittest discover -s tests"""
 
 from __future__ import annotations

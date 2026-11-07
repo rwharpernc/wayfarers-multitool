@@ -1,10 +1,10 @@
 """The Nearest place to land window: the closest stations that can take your ship and give you what you need, and the fleet carriers that let anyone dock.
 
 It starts from the position the journal last gave and the pad your ship needs, so in deep space the answer is one press away. Pick what you need (fuel, repairs, rearming, outfitting), whether fleet carriers should be
-listed and how fresh their records must be, tick that the lookup may go online, and press **Find**. Stations are listed nearest first with the pads and the wanted services; carriers are listed only when Spansh says
+listed and how fresh their records must be, and press **Find**. Stations are listed nearest first with the pads and the wanted services; carriers are listed only when Spansh says
 docking is open to everyone, with how long ago it last had a report of each (carriers jump and change access, so an old record is a guess). Double-click a row to copy its system name for the galaxy map.
 
-The only thing that goes online is the search: your position (three numbers), the pad size, the services and the carrier freshness, to Spansh, when you press Find (`landing_finder.py`). It does not run until the box saying so is ticked
+The only thing that goes online is the search: your position (three numbers), the pad size, the services and the carrier freshness, to Spansh, when you press Find (`landing_finder.py`). It does not run until the lookup is switched on in Settings > Online
 and never on its own. Built on the shared window kit (plugin/uikit); the lookup runs on a worker thread and the result is picked up by an after() poll, so no widget is touched off the main thread. `find_places` is a module-level
 name so tests can replace it."""
 from __future__ import annotations
@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from config import appname, config
 
-from . import landing_finder, panelkit
+from . import landing_finder, online_lookups, panelkit
 from .uikit import palette as P
 from .uikit import style
 from .uikit.shell import WindowShell
@@ -84,14 +84,8 @@ def close() -> None:
 
 
 def allowed() -> bool:
-    """Whether the online lookup is switched on (the window's own tick and Settings → Exploration → Nearest place to land are the one switch)."""
+    """Whether the online lookup is switched on (the switch is in Settings > Online)."""
     return config.get_bool(CONFIG_ALLOWED, default=False)
-
-
-def sync_allowed() -> None:
-    """After Settings changed the switch: an open window's tick follows it."""
-    if _window is not None and _window.alive:
-        _window.set_allowed(allowed())
 
 
 def saved_services() -> List[str]:
@@ -154,13 +148,13 @@ class LandingFinderWindow:
 
         ask = tk.Frame(body, bg=P.BG)
         ask.pack(fill="x", pady=(0, P.PAD_SM))
-        self._allowed = tk.BooleanVar(value=config.get_bool(CONFIG_ALLOWED, default=False))
         # The button is packed first so a long label wraps beside it instead of pushing it out of the window.
         self._find_button = FlatButton(ask, "Find", self._find, kind="accent",
-                                       tip="Find - ask Spansh for the nearest stations and fleet carriers that suit your choices (needs the tick box)")
+                                       tip="Find - ask Spansh for the nearest stations and fleet carriers that suit your choices (needs the lookup switched on in Settings > Online)")
         self._find_button.pack(side="right")
-        tk.Checkbutton(ask, text="Allow this lookup: pressing Find sends Spansh my position, the pad size and these choices, nothing else", variable=self._allowed,
-                       command=self._save_choices, wraplength=560, justify="left").pack(side="left")
+        # The off-switch warning: empty while the lookup is on, re-read by refresh().
+        self._lookup_note = tk.Label(ask, text=online_lookups.needs(CONFIG_ALLOWED), fg=P.WARN, bg=P.BG, wraplength=560, justify="left")
+        self._lookup_note.pack(side="left")
 
         self._station_heading = tk.Label(body, text="", fg=P.MUTED, bg=P.BG, anchor="w", font=style.font(P.FONT_BOLD))
         self._station_heading.pack(fill="x")
@@ -192,6 +186,7 @@ class LandingFinderWindow:
     def refresh(self) -> None:
         if not self.alive:
             return
+        self._lookup_note.configure(text=online_lookups.needs(CONFIG_ALLOWED))
         self._from.configure(text=position_text(self._ctx.position(), self._ctx.system()))
         pad = landing_finder.ship_pad(self._ctx.ship())
         self._shell.set_subtitle(f"Your ship needs a {pad} pad" if pad else "Your ship is not known: no pad restriction unless you choose one")
@@ -211,12 +206,8 @@ class LandingFinderWindow:
         digits = "".join(ch for ch in self._fresh.get() if ch.isdigit())
         return int(digits) if digits and int(digits) in landing_finder.FRESH_CHOICES else landing_finder.DEFAULT_FRESH_DAYS
 
-    def set_allowed(self, value: bool) -> None:
-        self._allowed.set(value)
-
     def _save_choices(self) -> None:
         try:
-            config.set(CONFIG_ALLOWED, bool(self._allowed.get()))
             config.set(CONFIG_SERVICES, ",".join(self._chosen_services()))
             config.set(CONFIG_PAD, self._chosen_pad())
             config.set(CONFIG_CARRIERS, bool(self._carriers.get()))
@@ -230,8 +221,8 @@ class LandingFinderWindow:
         if self._busy:
             return
         self._save_choices()
-        if not self._allowed.get():
-            self._say("Tick the box above to allow the lookup first: it sends Spansh your position, the pad size and these choices when you press Find.")
+        if not allowed():
+            self._say(online_lookups.needs(CONFIG_ALLOWED))
             return
         position = self._ctx.position()
         if position is None:

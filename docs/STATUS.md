@@ -30,6 +30,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 - **1.5.3** (not yet published)
   - Adds a Ranks section to Operations: every Pilots Federation and navy rank by the game's own name, with the percent toward the next rank. The rank names are now one shared table (`ranks.py`) that the engineer invitation checks also read.
   - Suggests, in every system box, each system in the playing commander's journals (with a hint when the Spansh lookup that finds the rest is off), and adds suggestions to the Round trip **Start from** box and to the search and filter boxes of Materials, Blueprints, Inventory and Stored modules.
+  - Adds an Online tab to Settings (**Settings → WFMT → Online**), the one place that switches every online lookup, with **Turn all off** and **Reset to defaults**. It replaces the read-only Online lookups page and the per-feature checkboxes (each old place now shows a note pointing to the tab); the overlay lookups become one setting for the installation; a feature that needs a lookup that is off says so where it is used; the Mission sources window no longer asks to turn lookups on.
   - Adds a Reset button to the Trade panel, beside History, that does what the Session page's Reset does.
   - Adds Copy for Discord, Post to Discord and Customize… for the selected expedition in the Expedition Log: name, status, route, exploration and exobiology figures, and the credits its data sales earned.
   - Adds the same three buttons to the Expedition window for an announcement of the chosen expedition's plan: progress, next stop and stops.
@@ -64,7 +65,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
   - Three engineer requirements (Wellington Beck, Kit Fowler, Hero Ferrari) match Frontier's update 18.08.
 - **1.3.3**
   - Powerplay overlay card (Settings → Overlays → Powerplay): the commander's Power, rank and merits, the cycle's merits, the system's state and holder, what merits there count as, and the merits and estimated Control Points earned there this session. The card shows **No Powerplay Detected in system** where the game gives no Powerplay data.
-  - Opt-in look-ahead (**Look up the system I am jumping to**, which queries Spansh) that turns the card to a jump's destination. Arrivals are remembered from the journal. The destination's control progress is shown only while under ten minutes old.
+  - Opt-in look-ahead (**Powerplay card: the system you are jumping to**, which queries Spansh) that turns the card to a jump's destination. Arrivals are remembered from the journal. The destination's control progress is shown only while under ten minutes old.
   - The Powerplay merit cap research page.
 - **1.3.2**
   - Mode buttons have full names (Powerplay, BGS, Explore, Mining, Trade, Missions, Operations, Colony). Every panel and window button has a Mixed Case name and a tooltip. Rows of panel buttons wrap instead of widening EDMC's window.

@@ -2,7 +2,7 @@
 The Market Research window: which markets in a system buy what you could surface-mine there.
 
 Opened from the Surface Mining Book. The commodities come from the commander's own records (mining_market_research.plan); the markets come from one Spansh request for the system
-(mining_spansh_client.search_system_stations). Opt-in: it uses the "Enable Spansh best price finder" setting, since it asks the same service for the same kind of data, and it sends only the
+(mining_spansh_client.search_system_stations). Opt-in: it follows the best price finder switch in Settings > Online, since it asks the same service for the same kind of data, and it sends only the
 system's name. The results are a table grouped by commodity (why it was looked for in the group's row, then the markets that buy it, best price first, with price, demand, how old the price
 is, the distance from the star, the pads and the kind of station); **Copy report** puts the same findings on the clipboard as text. The request runs on a worker thread and is picked up by an
 after() poll, so no widget is touched off the main thread. Built on the shared window kit (plugin/uikit). `search_stations` is a module-level name so tests can replace it.
@@ -22,7 +22,7 @@ from . import mining_hotspots as hotspots
 from . import mining_market_research as research
 from . import mining_spansh_client as spansh_client
 from . import spansh_courtesy
-from . import panelkit
+from . import online_lookups, panelkit
 from .mining_body_survey import SurveyedBody
 from .mining_names import normalize
 from .uikit import palette as P
@@ -35,7 +35,7 @@ plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 CONFIG_ENABLED = "wfmt_mining_spansh_price_finder_enabled"
-"""The same switch as the price finder (Settings > Mining)."""
+"""The same switch as the price finder (Settings > Online)."""
 
 _BUYERS_SHOWN = 4
 _MARKET_DAYS = 30
@@ -152,6 +152,11 @@ class MarketResearchWindow:
         self._shell.window.protocol("WM_DELETE_WINDOW", self.close)
         self._shell.add_action("Copy report", self._copy_report, tip="Copy report - copy the findings as text to the clipboard")
         body = self._shell.body
+        # The warning when the online switch is off: empty and out of the way while it is on (see _refresh_notice)
+        self._notice = tk.Label(body, text="", fg=P.WARN, bg=P.BG, anchor="w", justify="left", wraplength=900)
+        self._notice.pack(fill="x")
+        self._notice.bind("<Configure>", lambda e: self._notice.configure(wraplength=max(e.width, 100)))
+        self._refresh_notice()
         row = tk.Frame(body, bg=P.BG)
         row.pack(fill="x", pady=(0, P.PAD_SM))
         tk.Label(row, text="Also check", fg=P.MUTED, bg=P.BG).pack(side="left")
@@ -175,9 +180,16 @@ class MarketResearchWindow:
     def alive(self) -> bool:
         return self._shell.alive
 
+    def _refresh_notice(self) -> None:
+        """Show the shared warning while the switch is off and nothing at all while it is on; checked when the window is built and each time it is shown again."""
+        text = online_lookups.needs("wfmt_mining_spansh_price_finder_enabled")
+        self._notice.configure(text=text)
+        self._notice.pack_configure(pady=(0, P.PAD_SM) if text else 0)
+
     def lift(self) -> None:
         self._shell.window.deiconify()
         self._shell.window.lift()
+        self._refresh_notice()
 
     def close(self) -> None:
         self._shell.close()

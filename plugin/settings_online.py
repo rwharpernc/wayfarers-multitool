@@ -1,87 +1,112 @@
-"""Settings → General → Online lookups: every switch that lets WFMT contact another service, with whether it is on now and where to change it.
+"""Settings → Online: every switch that lets WFMT contact another service, in one place, grouped by the service it asks.
 
-WFMT reads your journal and files on your own computer; anything that asks the internet is its own opt-in switch on the page of the feature it belongs
-to (the full list with what each sends is in docs/guide/internet-and-privacy.md). The switches are spread over a dozen pages, so this page lists them in one
-place. The list is a read-out of what is saved, not another set of controls: change a switch where it lives. The one set of controls on the page is the local star index (`star_index_settings.py`). A new online switch is added to `LOOKUPS`;
-`tests/test_settings_online.py` fails when an entry names a setting the code does not have.
+WFMT reads your journal and files on your own computer; anything that asks the internet is a switch here and nowhere else (what each one sends is in
+docs/guide/internet-and-privacy.md). The page has a checkbox for each, **Turn all off** (every lookup off in one press, and automatic updates and BGS tick
+detection with them) and **Reset to defaults** (every switch back to how WFMT ships). Both only set the boxes; **OK** or **Apply** in EDMC's Settings
+saves them, like every other setting. The features read the saved settings exactly as before, so nothing else about them changed. Some features need more than
+the saved value when a switch changes (the BGS tick poller): they list a function in `HOOKS` that is called when the box was changed. The one other set of
+controls on the page is the local star index (`star_index_settings.py`). `tests/test_settings_online.py` fails when an entry names a setting the code does not have.
 """
 from __future__ import annotations
 
+import importlib
+import logging
 import tkinter as tk
-from typing import List, Tuple
+from typing import Callable, Dict
 
 import myNotebook as nb
 from config import config
 
 from . import star_index_settings
+from .online_lookups import BUTTON_ONLY, GROUPS, LOOKUPS, defaults
 
-# (what it does, who it asks, the saved setting, on when never changed, where to change it)
-LOOKUPS: Tuple[Tuple[str, str, str, bool, str], ...] = (
-    ("BGS tick detection (every minute)", "tick.infomancer.uk", "wfmt_bgs_tick_enabled", True, "BGS"),
-    ("Exploration Value: Earth-like world rarity", "Spansh", "wfmt_exploration_value_elw_rarity_enabled", False, "Exploration > Exploration Value"),
-    ("Exploration Value: EDSM upload status", "EDSM", "wfmt_exploration_value_edsm_upload_enabled", False, "Exploration > Exploration Value"),
-    ("Boxel Survey: skip systems anyone has visited", "EDSM", "wfmt_boxel_skip_edsm_visited", False, "Exploration > Boxel Survey"),
-    ("Boxel Survey: skip systems fully scanned", "EDSM", "wfmt_boxel_skip_edsm_scanned", False, "Exploration > Boxel Survey"),
-    ("Boxel Survey: confirm off-sequence arrivals", "EDSM", "wfmt_boxel_confirm_alias_arrival", False, "Exploration > Boxel Survey"),
-    ("Region Sweep: skip systems anyone has visited", "EDSM", "wfmt_boxel_sweep_skip_edsm_visited", False, "Exploration > Boxel Survey"),
-    ("Region Sweep: find more nearby cubes", "EDSM", "wfmt_boxel_sweep_auto_discover", False, "Exploration > Boxel Survey"),
-    ("Nearest place to land", "Spansh", "wfmt_landing_finder_allowed", False, "Exploration > Nearest place to land"),
-    ("Mining: nearby hotspot finder", "Spansh", "wfmt_mining_spansh_hotspot_finder_enabled", False, "Mining"),
-    ("Mining: best price finder and Market research", "Spansh", "wfmt_mining_spansh_price_finder_enabled", False, "Mining"),
-    ("Mining: ring reserve lookup", "EDSM", "wfmt_mining_edsm_reserve_lookup_enabled", False, "Mining"),
-    ("Mining: Get body info in the Surface Mining Book", "EDSM and Spansh", "wfmt_mining_edsm_body_lookup_enabled", False, "Mining"),
-    ("Trade: routes, prices and best picks", "Spansh", "wfmt_trade_lookups_enabled", False, "Trade"),
-    ("System targets: bodies other commanders scanned", "EDSM", "wfmt_targets_online", False, "Overlays > System targets"),
-    ("System targets: life and points of interest others found", "Spansh", "wfmt_targets_known", False, "Overlays > System targets"),
-    ("Route overlay: systems EDSM does not know", "EDSM", "wfmt_route_edsm", False, "Overlays > Route"),
-    ("Powerplay card: the system you are jumping to", "Spansh", "wfmt_powerplay_overlay_lookahead", False, "Overlays > Powerplay"),
-    ("Colonization: share progress and deliveries", "Raven Colonial", "wfmt_rcc_enabled", False, "Colonization"),
-    ("System name suggestions while typing", "Spansh", "wfmt_system_suggest_spansh", False, "General > Window"),
-    ("Download and install updates", "GitHub", "wfmt_auto_update", False, "General > Updates"),
-)
+logger = logging.getLogger(__name__)
 
-# Lookups with no switch because they run only when a button is pressed, listed so the page is the whole picture.
-BUTTON_ONLY: Tuple[Tuple[str, str], ...] = (
-    ("Rare Goods Finder window (it asks when you open it, with no switch)", "Spansh"),
-    ("Codex \"Not found\" tab (it asks when you open it, with no switch)", "Canonn"),
-    ("Find Nearest POI (Exploration panel)", "edastro.com GEC and Canonn"),
-    ("Where to buy, Find sources, the Raven Colonial menu, Report an issue", "Spansh, Raven Colonial, GitHub (your browser)"),
-    ("Random (undiscovered system, Exploration panel)", "Spansh and EDSM"),
-    ("Route Planner (Generate route, also opened by the Expedition window's Neutron route button, and the star lookups for the neutron stops ahead that follow), and the Expedition window's Road to Riches and Exomastery", "Spansh"),
-    ("Local star index: the Download and build and Update buttons below (nothing is downloaded unless you press one; the N.S. button asks nothing once the index is installed)", "Spansh's download server"),
-    ("Route Planner, only with *Mark white dwarfs the route passes* ticked: the names of the route's systems, after the route is plotted", "EDSM"),
-    ("Post to Discord (BGS report, Powerplay progress; you save a webhook link for each commander on the Discord tab, and nothing is posted until you press the button)", "Discord, to your own webhook"),
-)
+# saved setting -> "module.function" called after the box was changed and saved, for a switch that needs more than the saved value (a poller to start or stop).
+# The modules are imported when needed, so this page stays light. Filled for the features whose switch used to do more than write the setting.
+HOOKS: Dict[str, str] = {
+    "wfmt_bgs_tick_enabled": "bgs_panel.online_changed",                    # starts or stops the tick poller and redraws the BGS section
+    "wfmt_targets_known": "targets_overlay.online_changed",                  # starts the Spansh lookup at once when you are already in a system
+    "wfmt_rcc_enabled": "colonization_settings.online_changed",              # an open Colonization Sites window re-reads the master switch
+}
+
+_vars: Dict[str, tk.BooleanVar] = {}
 
 
-def states() -> List[Tuple[str, str, bool, str]]:
-    """(what, service, on now, where) for every lookup, from what is saved."""
-    return [(what, service, bool(config.get_bool(key, default=default)), where) for what, service, key, default, where in LOOKUPS]
+def turn_all_off() -> None:
+    """Untick every box. Nothing is saved until Settings is applied."""
+    for var in _vars.values():
+        var.set(False)
+
+
+def reset_defaults() -> None:
+    """Put every box back to how WFMT ships. Nothing is saved until Settings is applied."""
+    for key, var in _vars.items():
+        var.set(defaults()[key])
+
+
+def save_settings() -> None:
+    """Write every box that was built, and call the hook of each one that changed."""
+    for _what, _service, key, default, _where in LOOKUPS:
+        var = _vars.get(key)
+        if var is None:
+            continue
+        wanted = bool(var.get())
+        changed = wanted != bool(config.get_bool(key, default=default))
+        config.set(key, wanted)
+        if changed:
+            _call_hook(key)
+
+
+def _call_hook(key: str) -> None:
+    target = HOOKS.get(key)
+    if not target:
+        return
+    module_name, _, function = target.partition(".")
+    try:
+        hook: Callable[[], None] = getattr(importlib.import_module(f"{__package__}.{module_name}"), function)
+        hook()
+    except Exception:
+        logger.warning("The change to %s could not be applied at once; it takes effect when EDMC restarts", key, exc_info=True)
 
 
 def build_settings(notebook: nb.Notebook) -> None:
     frame = nb.Frame(notebook)
     frame.columnconfigure(0, weight=1)
-    notebook.add(frame, text="Online lookups")
-    nb.Label(frame, text="Online lookups", font=("TkDefaultFont", 9, "bold")).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
+    notebook.add(frame, text="Online")
+    _vars.clear()
+    nb.Label(frame, text="Online", font=("TkDefaultFont", 9, "bold")).grid(row=0, column=0, sticky=tk.W, padx=10, pady=(10, 4))
     nb.Label(
         frame,
-        text=("WFMT reads your journal and game files on this computer. Everything that asks another service is a switch of its own, on the page of the feature it "
-              "belongs to, and this page lists them all. It only shows what is saved now; change a switch on the page named at the end of its line. What each one sends "
-              "is in the guide under internet and privacy. The local star index, at the bottom, is the one thing here with controls."),
+        text=("WFMT reads your journal and game files on this computer. Everything that asks another service is a switch on this page and nowhere else, grouped by who is "
+              "asked. Each is off unless noted. What each one sends is in the guide under internet and privacy."),
         wraplength=440, justify=tk.LEFT,
     ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 6))
-    table = tk.Frame(frame)
-    table.grid(row=2, column=0, sticky=tk.W, padx=10)
-    for column, heading in enumerate(("", "Lookup", "Asks", "Where to change it")):
-        nb.Label(table, text=heading, font=("TkDefaultFont", 9, "bold")).grid(row=0, column=column, sticky=tk.W, padx=(0, 10))
-    for row, (what, service, on, where) in enumerate(states(), 1):
-        nb.Label(table, text="On" if on else "Off", foreground="#c07000" if on else "#2e7d32", width=4, anchor=tk.W).grid(row=row, column=0, sticky=tk.W, padx=(0, 10))
-        nb.Label(table, text=what).grid(row=row, column=1, sticky=tk.W, padx=(0, 10))
-        nb.Label(table, text=service).grid(row=row, column=2, sticky=tk.W, padx=(0, 10))
-        nb.Label(table, text=where).grid(row=row, column=3, sticky=tk.W)
-    nb.Label(frame, text="Only when you open or press something (no switch):", font=("TkDefaultFont", 9, "bold")).grid(row=3, column=0, sticky=tk.W, padx=10, pady=(10, 2))
-    for offset, (what, service) in enumerate(BUTTON_ONLY):
-        nb.Label(frame, text=f"{what} ({service})", wraplength=440, justify=tk.LEFT).grid(row=4 + offset, column=0, sticky=tk.W, padx=10)
-    star_index_settings.build_group(frame, 4 + len(BUTTON_ONLY))
-    nb.Label(frame, text="").grid(row=9 + len(BUTTON_ONLY), column=0, pady=4)
+    buttons = tk.Frame(frame)
+    buttons.grid(row=2, column=0, sticky=tk.W, padx=10, pady=(0, 4))
+    nb.Button(buttons, text="Turn all off", command=turn_all_off).pack(side=tk.LEFT)
+    nb.Button(buttons, text="Reset to defaults", command=reset_defaults).pack(side=tk.LEFT, padx=(6, 0))
+    row = 3
+    for title, services, note in GROUPS:
+        entries = [entry for entry in LOOKUPS if entry[1] in services]
+        if not entries:
+            continue
+        nb.Label(frame, text=title, font=("TkDefaultFont", 9, "bold")).grid(row=row, column=0, sticky=tk.W, padx=10, pady=(10, 0))
+        nb.Label(frame, text=note, wraplength=440, justify=tk.LEFT, foreground="gray").grid(row=row + 1, column=0, sticky=tk.W, padx=10)
+        row += 2
+        for what, service, key, default, where in entries:
+            var = tk.BooleanVar(value=bool(config.get_bool(key, default=default)))
+            _vars[key] = var
+            line = tk.Frame(frame)
+            line.grid(row=row, column=0, sticky=tk.W, padx=(24, 10))
+            nb.Checkbutton(line, text=what, variable=var).pack(side=tk.LEFT)
+            used = f"({service}; {where})" if service == "EDSM and Spansh" else f"({where})"      # a lookup that asks two services says so
+            nb.Label(line, text=used, foreground="gray").pack(side=tk.LEFT, padx=(6, 0))
+            row += 1
+    nb.Label(frame, text="Only when you open or press something (no switch):", font=("TkDefaultFont", 9, "bold")).grid(row=row, column=0, sticky=tk.W, padx=10, pady=(12, 2))
+    row += 1
+    for what, service in BUTTON_ONLY:
+        nb.Label(frame, text=f"{what} ({service})", wraplength=440, justify=tk.LEFT).grid(row=row, column=0, sticky=tk.W, padx=10)
+        row += 1
+    star_index_settings.build_group(frame, row)
+    nb.Label(frame, text="").grid(row=row + 6, column=0, pady=4)

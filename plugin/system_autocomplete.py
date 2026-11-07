@@ -7,7 +7,7 @@ the box.
 The suggestions are the systems you have been in (this session, and every one in your journals: `system_history.py`) and the names WFMT already
 holds, from two letters on, and, when **Suggest system names from Spansh while typing** is ticked (Settings → Window), systems from Spansh's search,
 from three letters on, after a short pause (see `system_names.py`). The Spansh call runs on a worker thread, so typing never waits for it. When that
-option is off and nothing matches, the list says where to turn it on instead of staying blank.
+option is off (Settings → Online) and nothing matches, the list says where to turn it on instead of staying blank.
 """
 from __future__ import annotations
 
@@ -20,18 +20,22 @@ from typing import Callable, List, Optional, Tuple
 
 from config import appname
 
-from . import system_names
+from . import online_lookups, system_names
 from .uikit.widgets import suggestions
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 MAX_ROWS = 8
-HINT_TEXT = "No match in your journals. To look up other systems, tick Suggest system names from Spansh in Settings > Window."
 DEBOUNCE_MS = 350
 POLL_MS = 150
 _IGNORED_KEYS = {"Return", "Escape", "Up", "Down", "Tab", "Shift_L", "Shift_R", "Control_L", "Control_R", "Alt_L", "Alt_R", "Left", "Right",
                  "Home", "End", "Caps_Lock", "ISO_Left_Tab"}
+
+
+def hint_text() -> str:
+    """What the list says when nothing matches and the Spansh lookup is off: where to turn it on, in the one wording every off switch uses ("" when it is on)."""
+    return f"No match in your journals. {online_lookups.needs(system_names.CFG_REMOTE)}".strip()
 
 
 def attach(entry: tk.Entry, var: Optional[tk.StringVar] = None, on_pick: Optional[Callable[[], None]] = None,
@@ -166,7 +170,7 @@ class Autocomplete:
         popup.overrideredirect(True)
         popup.configure(bg=fg)
         width = max(self._entry.winfo_width(), 160)
-        tk.Label(popup, text=HINT_TEXT, bg=bg, fg=fg, justify="left", anchor="w", wraplength=width - 12).pack(padx=1, pady=1, fill="both")
+        tk.Label(popup, text=hint_text(), bg=bg, fg=fg, justify="left", anchor="w", wraplength=width - 12).pack(padx=1, pady=1, fill="both")
         popup.update_idletasks()
         popup.geometry(f"{width}x{popup.winfo_reqheight()}+{self._entry.winfo_rootx()}+{self._entry.winfo_rooty() + self._entry.winfo_height()}")
         popup.lift()
