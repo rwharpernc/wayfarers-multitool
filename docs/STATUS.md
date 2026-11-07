@@ -1,12 +1,12 @@
 # Project Status
 
-Scope: the release state, branches, test state and unverified items of Wayfarer's Multitool (WFMT) as of 2026-11-04. The file is kept in Git because Git is the only thing shared between the two test machines, one running Windows and one running Linux.
+Scope: the release state, branches, test state and unverified items of Wayfarer's Multitool (WFMT) as of 2026-11-07. The file is kept in Git because Git is the only thing shared between the two test machines, one running Windows and one running Linux.
 
 ## Release
 
 | Version | Published | Notes |
 | --- | --- | --- |
-| 1.5.3 | Not yet published | Patch on 1.5.2, built on `work/1.5.3`. Contains the Copy next system fix and Discord sharing for the Expedition Log and the Expedition plan. Docker tests on Linux: 4,066 passed, 12 skipped. The Copy next system fix was tested in the game on Windows and on Linux on 2026-11-04 with no major issues; the Discord addition has not been tried in the game. |
+| 1.5.3 | Not yet published | Patch on 1.5.2, built on `work/1.5.3`. Contains the Ranks section in Operations, a Reset button on the Trade panel, the Copy next system fix and Discord sharing for the Expedition Log and the Expedition plan. Docker tests on Linux: 4,092 run, 13 skipped, no failures (2026-11-07). The Copy next system fix was tested in the game on Windows and on Linux on 2026-11-04 with no major issues; the Ranks section, the Trade Reset button and the Discord additions have not been tried in the game. |
 | 1.5.2 | 2026-11-04 (tag `v1.5.2`) | Built on `test/windows-combined`. Docker tests on Linux before release: 4,031 passed, 12 skipped. No in-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 14 is recorded. |
 | 1.5.1 | 2026-11-03 (tag `v1.5.1`) | Patch on 1.5.0, built on `patch/1.5.1`. Docker tests on Linux before release: 3,923 passed, 13 skipped. In-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 13 on Windows and on Linux on 2026-11-03, before publication, with no failures. |
 | 1.5.0 | 2026-11-02 (tag `v1.5.0`) | Docker tests on Linux before release: 3,894 passed, 13 skipped. In-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 12 on Windows and on Linux on 2026-11-02, before publication, with no failures. |
@@ -28,6 +28,8 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 ### Contents of each release
 
 - **1.5.3** (not yet published)
+  - Adds a Ranks section to Operations: every Pilots Federation and navy rank by the game's own name, with the percent toward the next rank. The rank names are now one shared table (`ranks.py`) that the engineer invitation checks also read.
+  - Adds a Reset button to the Trade panel, beside History, that does what the Session page's Reset does.
   - Adds Copy for Discord, Post to Discord and Customize… for the selected expedition in the Expedition Log: name, status, route, exploration and exobiology figures, and the credits its data sales earned.
   - Adds the same three buttons to the Expedition window for an announcement of the chosen expedition's plan: progress, next stop and stops.
   - Fixes **Copy next system** on the Trade Routes window: it follows the leg you are on, moving to the next destination once you dock at the previous one, and wraps for loops and round trips.
