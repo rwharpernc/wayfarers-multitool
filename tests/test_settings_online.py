@@ -86,6 +86,7 @@ class OnlineLookupsPageTests(unittest.TestCase):
 
     def test_the_page_has_its_two_buttons_and_the_hooks_are_called_on_a_change(self) -> None:
         text = _source("settings_online.py")
+        self.assertIn("def turn_all_on", text)
         self.assertIn("def turn_all_off", text)
         self.assertIn("def reset_defaults", text)
         self.assertIn("_call_hook(key)", text)

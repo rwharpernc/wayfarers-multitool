@@ -180,7 +180,7 @@ With this contract, `ui.py` walks the `FEATURES` tuple, builds each feature into
 
 - `ui._build_settings_tabs` builds twelve top-level Settings tabs, sorted alphabetically by label (`_sort_tabs`): BGS, Colonization, Discord, Exploration, General, Mining, Missions, Online, Operations, Overlays, Powerplay and Trade.
   - General holds the tabs Window, Updates, Backup, Help and Shortcuts.
-  - Online switches every online lookup (every checkbox for a feature that contacts another service is there), with **Turn all off** and **Reset to defaults** at the top, the lookups that need no switch, and the Local star index controls.
+  - Online switches every online lookup (every checkbox for a feature that contacts another service is there), with **Turn all on**, **Turn all off** and **Reset to defaults** at the top, the lookups that need no switch, and the Local star index controls.
 - A group is a plain tab holding its own `nb.Notebook` (`_settings_group`). Everything is placed with `grid`.
 - A feature with settings that is not listed lands in an "Other" group.
 - Every page is wrapped by `settings_scroll.scrolled_page`, which caps its visible height (between 260 and 640 px, derived from the screen height less 530 px for the window chrome) and adds a scrollbar beyond it, so a long page cannot push EDMC's Settings window and its OK button off the screen.

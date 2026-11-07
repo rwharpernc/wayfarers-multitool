@@ -75,7 +75,7 @@ Each table lists a feature, what it does, the controls and settings that operate
 | Shortcuts | Six actions as Windows key combinations and as `!wf` chat commands (Windows and Linux) | **Settings → WFMT → General → Shortcuts** | [Shortcuts](shortcuts.md) |
 | On-screen overlays | Alerts, cards and diagrams on the game screen: WFMT's built-in overlay on Windows, or EDMCModernOverlay (Windows and Linux), with a drag-and-drop placement editor, color schemes, text size, panel opacity, fonts and a switch to hide them all | **Settings → WFMT → Overlays**; the **Overlays shown** line on the panel hides them | [Overlay setup](../OVERLAY_SETUP.md) |
 | Windows and Linux | Native or Flatpak EDMC, Elite under Proton or Wine | [Download and install](../../README.md#download-and-install) | [Windows and Linux](platforms.md), [WFMT on Linux](linux.md) |
-| Online lookups, switched in one place | Every one is opt-in or runs only when a button is pressed, with the address it uses; one checkbox each, **Turn all off** and **Reset to defaults** | **Settings → WFMT → Online** | [What goes on the internet](internet-and-privacy.md) |
+| Online lookups, switched in one place | Every one is opt-in or runs only when a button is pressed, with the address it uses; one checkbox each, **Turn all on**, **Turn all off** and **Reset to defaults** | **Settings → WFMT → Online** | [What goes on the internet](internet-and-privacy.md) |
 | Every setting in one place | Each Settings tab, its controls and what they start as | **File → Settings → WFMT** | [Settings](getting-started.md#settings), [Every Overlays tab](../OVERLAY_SETUP.md#every-overlays-tab-in-detail) |
 
 ### Powerplay ([guide](powerplay.md))

@@ -1,5 +1,5 @@
 """
-Builds the Online page of Settings with EDMC stubbed and fails if a lookup has no checkbox, Turn all off or Reset to defaults do not set the boxes, saving does not
+Builds the Online page of Settings with EDMC stubbed and fails if a lookup has no checkbox, Turn all on, Turn all off or Reset to defaults do not set the boxes, saving does not
 write every switch, or a change hook runs when its switch did not change. Skipped when Tk has no display.
 Run with: python -m unittest discover -s tests
 """

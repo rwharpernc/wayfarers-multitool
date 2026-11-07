@@ -1,5 +1,5 @@
 """Builds Settings -> Online (plugin/settings_online.py) in a real Tk window with EDMC stubbed and checks that every lookup has a checkbox under its service, that
-Turn all off and Reset to defaults set the boxes, that saving writes every switch, and that a change hook runs once for a switch that changed and not for one that did not.
+Turn all on, Turn all off and Reset to defaults set the boxes, that saving writes every switch, and that a change hook runs once for a switch that changed and not for one that did not.
 Run by test_online_settings_smoke in a subprocess so the stand-ins never leak into other tests. Exits 0 if everything holds, 1 if not, 77 if Tk is unavailable."""
 import os
 import sys
@@ -102,7 +102,7 @@ check(len(boxes) == len(online_lookups.LOOKUPS) == 21, f"a checkbox for each loo
 check({str(b.cget("text")) for b in boxes} == {entry[0] for entry in online_lookups.LOOKUPS}, "each box carries the lookup's own name")
 for heading in ("Spansh", "EDSM", "Raven Colonial", "Community tick service", "GitHub"):
     check(heading in texts, f"the {heading} heading is on the page")
-check("Turn all off" in buttons and "Reset to defaults" in buttons, f"the two buttons: {buttons}")
+check({"Turn all on", "Turn all off", "Reset to defaults"} <= set(buttons), f"the three buttons: {buttons}")
 check(settings_online._vars["wfmt_trade_lookups_enabled"].get() is True, "a switch that was on shows on")
 check(settings_online._vars["wfmt_bgs_tick_enabled"].get() is True, "tick detection ships on")
 check(sum(1 for v in settings_online._vars.values() if v.get()) == 2, "and nothing else is on")
@@ -121,6 +121,13 @@ check({k: v.get() for k, v in settings_online._vars.items()} == online_lookups.d
 settings_online.save_settings()
 check(saved["wfmt_bgs_tick_enabled"] is True and saved["wfmt_trade_lookups_enabled"] is False, "and saving keeps tick detection on and the rest off")
 check(calls == ["changed", "changed"], f"the hook ran for tick detection coming back on: {calls}")
+
+settings_online.turn_all_on()
+check(all(v.get() for v in settings_online._vars.values()), "Turn all on ticks every box, automatic updates included")
+check(saved["wfmt_auto_update"] is False, "and saves nothing by itself")
+settings_online.save_settings()
+check(all(saved[entry[2]] is True for entry in online_lookups.LOOKUPS), "saving writes every switch, all on")
+check(calls == ["changed", "changed"], f"tick detection was already on, so its hook did not run again: {calls}")
 
 root.destroy()
 if problems:

@@ -1,8 +1,8 @@
 """Settings → Online: every switch that lets WFMT contact another service, in one place, grouped by the service it asks.
 
 WFMT reads your journal and files on your own computer; anything that asks the internet is a switch here and nowhere else (what each one sends is in
-docs/guide/internet-and-privacy.md). The page has a checkbox for each, **Turn all off** (every lookup off in one press, and automatic updates and BGS tick
-detection with them) and **Reset to defaults** (every switch back to how WFMT ships). Both only set the boxes; **OK** or **Apply** in EDMC's Settings
+docs/guide/internet-and-privacy.md). The page has a checkbox for each, **Turn all on** (every lookup on in one press, automatic updates included), **Turn all off** (every lookup off in one press, and
+automatic updates and BGS tick detection with them) and **Reset to defaults** (every switch back to how WFMT ships). Both only set the boxes; **OK** or **Apply** in EDMC's Settings
 saves them, like every other setting. The features read the saved settings exactly as before, so nothing else about them changed. Some features need more than
 the saved value when a switch changes (the BGS tick poller): they list a function in `HOOKS` that is called when the box was changed. The one other set of
 controls on the page is the local star index (`star_index_settings.py`). `tests/test_settings_online.py` fails when an entry names a setting the code does not have.
@@ -31,6 +31,12 @@ HOOKS: Dict[str, str] = {
 }
 
 _vars: Dict[str, tk.BooleanVar] = {}
+
+
+def turn_all_on() -> None:
+    """Tick every box, automatic updates included. Nothing is saved until Settings is applied."""
+    for var in _vars.values():
+        var.set(True)
 
 
 def turn_all_off() -> None:
@@ -84,7 +90,8 @@ def build_settings(notebook: nb.Notebook) -> None:
     ).grid(row=1, column=0, sticky=tk.W, padx=10, pady=(0, 6))
     buttons = tk.Frame(frame)
     buttons.grid(row=2, column=0, sticky=tk.W, padx=10, pady=(0, 4))
-    nb.Button(buttons, text="Turn all off", command=turn_all_off).pack(side=tk.LEFT)
+    nb.Button(buttons, text="Turn all on", command=turn_all_on).pack(side=tk.LEFT)
+    nb.Button(buttons, text="Turn all off", command=turn_all_off).pack(side=tk.LEFT, padx=(6, 0))
     nb.Button(buttons, text="Reset to defaults", command=reset_defaults).pack(side=tk.LEFT, padx=(6, 0))
     row = 3
     for title, services, note in GROUPS:
