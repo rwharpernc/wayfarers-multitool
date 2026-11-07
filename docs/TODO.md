@@ -48,7 +48,7 @@ Scope: open work items and open in-game checks. Items are listed once.
 - Not assessed without play: the Surface (Rhino) tools, the radar over the game, the overlay layouts, and the amount of information in the Space and Surface Mining windows and the panel summary. The checklist below covers these.
 - *After limpets* does not subtract fuel, repairs or ammunition. The journal records them, but they are not tied to a run as launches are.
 - Planned for 1.6.0 (surface mining), in this order. Nothing is built yet.
-  - **Find saved deposits in another system.** The Surface Mining Book's left pane already has an *Other systems* group. Add a system box above it that suggests names while typing, and a *Back to <current system>* link. Saving a deposit always goes to the current system.
+  - **Find saved deposits in another system.** Built on `feature/surface-book-other-systems`: the Surface Mining Book's left pane has a *Go to a system* box (suggestions from your deposits and journals, Enter to go) and a *Back to <current system>* button. Saving a deposit always goes to the current system. Open check: see the first check below.
   - **Show what a deposit is worth.**
     - Each deposit row shows its tons-left estimate times the best price (for example `~38 t · ~19M cr`).
     - Each body in the left pane is tagged with its best known material (for example `best: Painite 520k`), from the commander's own records on that kind of ground times the price. The wording says *your records*, because the game does not state what an unvisited body carries.
@@ -386,6 +386,13 @@ The items below are implemented and covered by unit tests, and have not all been
   - The radar, its range buttons, **Mark center**, **Mark border**, **Add hotspot** and **Save map** work on the pretend ground.
   - Nothing pressed changes the commander's own deposits or marks.
   - The window closes with its close button while Settings is still open.
+- [ ] **Surface Mining Book: Go to a system.** Save deposits in two systems, then open the Book in a third.
+  - Type the first letters of one of the two in the box under *Bodies*: the suggestions list it, and the arrow lists both.
+  - Enter shows that system's bodies. The subtitle reads `Viewing <system>`, the status line says Add hotspot still saves to the system you are in, and *Back to <your system>* appears.
+  - A body there selects, with its deposits, map and Share line. Set a material filter and the list narrows.
+  - A name you never visited says there are no saved deposits and changes nothing.
+  - *Back*, *This system* and jumping into the system on show each return to the current system and hide the button.
+  - Then Linux.
 - [ ] **Surface Mining Book: refilling marks, stops, you are here.** In the Rhino on a body with several saved deposits (some with rigs and positions):
   - Check the **Stops** lines above the hotspots, the dashed rings on the map at 1x/2x/4x and the `stop N` tags. Changing the Stop radius on the Surface Mining window's Settings card changes them.
   - Standing within 175 m of a deposit selects it and marks `you are here`, and Mark depleted there takes one click.

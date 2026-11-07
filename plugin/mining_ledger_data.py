@@ -27,6 +27,7 @@ ANY_RIGS = "Any rigs"
 UNNUMBERED = "Unnumbered"
 GROUP_SAVED_HERE = "Saved, not scanned this session"
 GROUP_OTHER_SYSTEMS = "Other systems"
+GROUP_SAVED_IN_SYSTEM = "Saved deposits"
 GROUP_JOURNAL = "From your journals"
 
 
@@ -167,6 +168,39 @@ def build_body_groups(current_system: Optional[str],
         if from_journal:
             groups.append(("journal", GROUP_JOURNAL, from_journal))
     return groups
+
+
+def systems_with_deposits(saved: Sequence[hotspots.Hotspot], journal: Optional[Mapping[str, Mapping]] = None) -> list[str]:
+    """The systems the Book can show: those with a saved deposit and those the journals show mining in, each once (the first spelling met), A to Z.
+    These are the names the system box suggests."""
+    seen: dict[str, str] = {}
+    for name in [spot.system for spot in saved] + [rec.get("system", "") for rec in (journal or {}).values()]:
+        clean = " ".join(str(name or "").split())
+        if clean:
+            seen.setdefault(clean.casefold(), clean)
+    return sorted(seen.values(), key=str.casefold)
+
+
+def match_system(typed: str, names: Sequence[str]) -> Optional[str]:
+    """The known spelling of the system typed in the box (case and extra spaces ignored), None when it is not one of `names`."""
+    wanted = " ".join(str(typed or "").split()).casefold()
+    if not wanted:
+        return None
+    return next((name for name in names if " ".join(name.split()).casefold() == wanted), None)
+
+
+def build_system_groups(system: str,
+                        saved: Sequence[hotspots.Hotspot],
+                        material: str = ALL_MATERIALS,
+                        rigs: Optional[int] = None,
+                        journal: Optional[Mapping[str, Mapping]] = None) -> list[tuple[str, str, list[BodyEntry]]]:
+    """The groups for looking at a system other than the one you are in: its saved deposits' bodies, then (with no filter) the bodies the journals show worked there.
+    The scan survey belongs to the current system, so it plays no part. The filters work as in `build_body_groups`."""
+    wanted = _norm(system)
+    here = [spot for spot in saved if _norm(spot.system) == wanted]
+    worked = {key: rec for key, rec in (journal or {}).items() if _norm(rec.get("system", "")) == wanted}
+    groups = build_body_groups(system, [], here, material, rigs, None, worked)
+    return [(key, GROUP_SAVED_IN_SYSTEM if key == "saved-here" else heading, entries) for key, heading, entries in groups]
 
 
 def materials_in(saved: Sequence[hotspots.Hotspot]) -> list[str]:

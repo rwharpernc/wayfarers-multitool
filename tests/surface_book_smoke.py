@@ -114,6 +114,33 @@ history.ready = True
 book._journal_tick()
 check("Finished reading" in status() or "Reading" not in status(), f"the notice is replaced when the read ends: {status()!r}")
 
+# The system box: look at another system's deposits, then go back
+check(book._back.winfo_manager() == "", "Back is hidden while the system you are in is shown")
+check(book._known_systems() == ["Sys A", "Sys B", "Sys C"], f"the box suggests the systems with deposits or journal mining: {book._known_systems()}")
+book._system_var.set("sys c")
+book._go_to_system()
+root.update()
+check(book._viewing == "Sys C", f"typing a known system (any case) shows it: {book._viewing}")
+check(book._entries and all(e.system == "Sys C" for e in book._entries.values()), f"only that system's bodies are listed: {list(book._entries)}")
+check(book._body_entry is not None and book._body_entry.body == "Sys C 2 c", f"its first body is selected: {book._body_entry}")
+check(book._back.winfo_manager() != "", "Back shows while another system is on show")
+if hasattr(book._shell, "_subtitle"):
+    check("Viewing Sys C" in book._shell._subtitle.cget("text"), "the subtitle says which system is on show")
+book._system_var.set("sys a")
+book._go_to_system()
+root.update()
+check(book._viewing == "Sys A" and {e.body for e in book._entries.values()} == {"Sys A 3 a"}, f"a system known only from the journals can be shown: {list(book._entries)}")
+book._system_var.set("Atlantis")
+book._go_to_system()
+check(book._viewing == "Sys A" and "No saved deposits" in status(), f"an unknown name says so and leaves the view alone: {status()!r}")
+book._back_to_current()
+root.update()
+check(book._viewing is None and book._system_var.get() == "" and book._back.winfo_manager() == "", "Back returns to the system you are in and clears the box")
+book._system_var.set("Sys C")
+book._go_to_system()
+book._find_here()
+check(book._viewing is None, "This system leaves the other system")
+
 book.close()
 root.destroy()
 if problems:

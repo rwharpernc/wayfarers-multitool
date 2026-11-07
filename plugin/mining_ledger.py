@@ -48,7 +48,7 @@ from .uikit import style
 from .uikit.mapview import MapCircle, MapMarker, MapView
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
-from .uikit.widgets import Card, Combobox, FlatButton, FoldList, Pill, StatTile, TileRow, clip, section_header
+from .uikit.widgets import Card, Combobox, FlatButton, FoldList, Pill, StatTile, SuggestEntry, TileRow, clip, section_header
 
 plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
@@ -117,6 +117,7 @@ class MiningBook:
         self._spot_by_key: dict[str, hotspots.Hotspot] = {}
         self._selected_spot: Optional[hotspots.Hotspot] = None
         self._rates = mining_ground.OwnRates([])
+        self._viewing: Optional[str] = None        # another system's deposits are on show (None: the system you are in)
 
         # Get body info cannot work with its switch off, so say so here while it is off (empty and out of the way while it is on; see _refresh_notice)
         self._notice = tk.Label(self._shell.body, text="", fg=P.WARN, bg=P.BG, anchor="w", justify="left", wraplength=900)
@@ -129,6 +130,14 @@ class MiningBook:
 
         left = tk.Frame(panes, bg=P.PANE)
         section_header(left, "Bodies").pack(fill="x")
+        # Look at another system's deposits: type a name (suggestions are the systems you have deposits or mining in), Enter to go; Back returns to the system you are in
+        goto_row = tk.Frame(left, bg=P.PANE, padx=P.PAD, pady=P.PAD_SM)
+        goto_row.pack(fill="x")
+        tk.Label(goto_row, text="Go to a system", fg=P.MUTED, bg=P.PANE, anchor="w").pack(fill="x")
+        self._system_var = tk.StringVar()
+        self._system_box = SuggestEntry(goto_row, self._system_var, self._known_systems, self._go_to_system, width=22)
+        self._system_box.pack(fill="x")
+        self._back = FlatButton(goto_row, "Back", self._back_to_current, tip="Back - return to the system you are in")
         filter_row = tk.Frame(left, bg=P.PANE, padx=P.PAD, pady=P.PAD_SM)
         filter_row.pack(fill="x")
         self._material = Combobox(filter_row, state="readonly", values=[data.ALL_MATERIALS])
@@ -244,7 +253,54 @@ class MiningBook:
         surface = surface_mining.surface_mining_repository
         current_system = surface.current_system or system_body_survey.current_system
         reading = self._reading_text()
-        self._shell.set_subtitle((current_system or "No system yet") + (f"  ·  {reading}" if reading else ""))
+        shown = f"Viewing {self._viewing}  ·  you are in {current_system or 'no system yet'}" if self._viewing else (current_system or "No system yet")
+        self._shell.set_subtitle(shown + (f"  ·  {reading}" if reading else ""))
+
+    # --- another system ---------------------------------------------------------
+    @staticmethod
+    def _known_systems() -> list[str]:
+        return data.systems_with_deposits(hotspots.hotspot_repository.all(), mining_history.history.bodies())
+
+    @staticmethod
+    def _current_system() -> Optional[str]:
+        return surface_mining.surface_mining_repository.current_system or system_body_survey.current_system
+
+    def _show_back(self, current_system: Optional[str]) -> None:
+        """The Back button is there only while another system is on show."""
+        if self._viewing:
+            self._back.configure(text=f"Back to {clip(current_system, 24)}" if current_system else "Back")
+            if not self._back.winfo_manager():
+                self._back.pack(fill="x", pady=(P.PAD_SM, 0))
+        else:
+            self._back.pack_forget()
+
+    def _go_to_system(self) -> None:
+        """Show the deposits of the system typed in the box (Enter or a picked suggestion)."""
+        typed = " ".join(self._system_var.get().split())
+        if not typed:
+            return
+        name = data.match_system(typed, self._known_systems())
+        if name is None:
+            self._shell.set_status(f"No saved deposits or mining in your journals for {typed}.")
+            return
+        current = self._current_system()
+        if current and name.casefold() == current.casefold():
+            self._back_to_current()
+            return
+        self._viewing = name
+        self._system_var.set(name)
+        self._body_entry = None
+        self.refresh(select_current=True)
+        self._shell.set_status(f"Showing {name}. Add hotspot still saves to {current or 'the system you are in'}.")
+
+    def _back_to_current(self) -> None:
+        """Leave the other system and show the one you are in again."""
+        self._viewing = None
+        self._system_var.set("")
+        self._body_entry = None
+        self.refresh(select_current=True)
+        current = self._current_system()
+        self._shell.set_status(f"Back in {current}." if current else "Back to the system you are in.")
 
     def _find_here(self) -> None:
         """Go to the body in the system you are in that you have worked (saved hotspots, tons refined, or mining locations found); say so when there is none."""
@@ -255,6 +311,8 @@ class MiningBook:
             return
         for box in (self._material, self._rigs):                 # a filter would hide the match
             box.current(0)
+        self._viewing = None                                     # this button is about the system you are in
+        self._system_var.set("")
         self.refresh()
         here = [e for e in self._entries.values() if e.system.casefold() == system.casefold() and (e.saved_count or e.refined_tons or e.mining_signal_count)]
         if not here:
@@ -285,8 +343,12 @@ class MiningBook:
         saved = hotspots.hotspot_repository.all()
         surface = surface_mining.surface_mining_repository
         current_system = surface.current_system or system_body_survey.current_system
+        if self._viewing and current_system and self._viewing.casefold() == current_system.casefold():
+            self._viewing = None                                  # you jumped to the system on show: it is the current one now
+        viewing = self._viewing
         self._journal_sig = self._journal_signature()
         self._show_subtitle()
+        self._show_back(current_system)
 
         # Your own rates: rebuilt from the saved hotspots on every refresh
         # (one cheap pass), counting hotspots saved before they carried a
@@ -306,8 +368,11 @@ class MiningBook:
         if self._rigs.get() not in rig_labels:
             self._rigs.current(0)
 
-        groups = data.build_body_groups(current_system, surveyed, saved,
-                                        self._material.get(), data.rigs_from_label(self._rigs.get()), self._rates, mining_history.history.bodies())
+        if viewing:
+            groups = data.build_system_groups(viewing, saved, self._material.get(), data.rigs_from_label(self._rigs.get()), mining_history.history.bodies())
+        else:
+            groups = data.build_body_groups(current_system, surveyed, saved,
+                                            self._material.get(), data.rigs_from_label(self._rigs.get()), self._rates, mining_history.history.bodies())
         self._entries = {}
         self._group_of: dict[str, str] = {}
         rows_by_group = []
@@ -316,7 +381,7 @@ class MiningBook:
             for entry in entries:
                 self._entries[entry.key] = entry
                 self._group_of[entry.key] = group_key
-                title = entry.short_name if group_key not in ("other-systems", "journal") else f"{entry.system} · {entry.short_name}" if entry.system else entry.body
+                title = entry.short_name if viewing or group_key not in ("other-systems", "journal") else f"{entry.system} · {entry.short_name}" if entry.system else entry.body
                 bits = []
                 if entry.rate_pct is not None:
                     bits.append(f"{entry.rate_pct:.0f}% of your recorded deposits here are {self._material.get()}")

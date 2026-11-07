@@ -571,6 +571,17 @@ About the **From your journals** group:
 
 **This system** (header button) goes to the body worked in the current system (saved hotspots, tons refined or mining locations found), or reads `You have not worked this system yet.`
 
+### Looking at another system
+
+**Go to a system** (top of the left pane) shows the deposits of a system other than the one you are in, for planning a trip.
+
+- Type a name and press **Enter**, or pick a suggestion. The suggestions are the systems in which you have saved a deposit or mined, as the journals show; nothing is fetched. The arrow beside the box lists them all.
+- The left pane then lists that system's bodies: those with saved deposits, and (with no filter set) the bodies the journals show mined there. The material and rigs filters work as usual. The subtitle reads `Viewing <system>  ·  you are in <system>`.
+- **Back to <your system>** (it appears under the box while another system is on show) returns to the system you are in. So does **This system**, and so does jumping to the system on show.
+- A name that is not on the list leaves the view as it was and says so in the status line.
+- **Add hotspot** still saves to the system you are in. A pasted spot goes to the system it names.
+- Stops, the radar and the tons-left estimates are as for any body. Stops need the body's radius, which WFMT has only for a body visited this session, so a body in another system shows none.
+
 ### The three panes
 
 - **Left, Bodies.** Two filters on top: a material (`All materials` or any saved material) and a number of rigs (`Any rigs`, `1 rigs`, and so on for the saved counts). Under them the bodies are grouped: one group per planet class among the bodies scanned in the current system (with the number of mining locations the scan found and the tons refined there), then **Saved, not scanned this session** (saved bodies in this system that the journals show no scan of), **Other systems** (saved bodies elsewhere) and **From your journals**. A pill shows the number of hotspots saved on a body. Clicking a group heading folds it. With a material filter, a scanned body also remains when the commander's own records show that material on its kind of ground, highest share first, and a line gives the percentage of recorded deposits there that are that material. The **From your journals** group is hidden while a filter is on.

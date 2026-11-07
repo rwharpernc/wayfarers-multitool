@@ -79,6 +79,48 @@ class BodyGroupTests(unittest.TestCase):
         self.assertEqual(len(keys), len(set(keys)))
 
 
+class OtherSystemTests(unittest.TestCase):
+    JOURNAL = {
+        "sol 3 a": {"body": "Sol 3 a", "system": "Sol", "locations": 3, "class": "Rocky body", "tons": 40},
+        "sol 5": {"body": "Sol 5", "system": "Sol", "locations": 0, "class": "", "tons": 10},
+        "alpha 1": {"body": "Alpha 1", "system": "Alpha", "locations": 2, "class": "", "tons": 0},
+    }
+
+    def test_systems_come_from_saved_deposits_and_the_journals_each_once(self) -> None:
+        saved = [_spot("Sol 3 a", system="Sol"), _spot("sol 4", system="SOL"), _spot(f"{SYSTEM} 9 z")]
+        names = data.systems_with_deposits(saved, self.JOURNAL)
+        self.assertEqual(names, ["Alpha", SYSTEM, "Sol"])
+
+    def test_no_systems_without_records(self) -> None:
+        self.assertEqual(data.systems_with_deposits([], None), [])
+
+    def test_a_blank_system_name_is_skipped(self) -> None:
+        self.assertEqual(data.systems_with_deposits([_spot("x", system=" ")], {}), [])
+
+    def test_matching_a_typed_name_ignores_case_and_spacing_and_returns_the_known_spelling(self) -> None:
+        self.assertEqual(data.match_system("  sol ", ["Alpha", "Sol"]), "Sol")
+        self.assertIsNone(data.match_system("Sola", ["Alpha", "Sol"]))
+        self.assertIsNone(data.match_system("", ["Sol"]))
+
+    def test_another_systems_groups_hold_only_that_systems_bodies(self) -> None:
+        saved = [_spot("Sol 3 a", system="Sol"), _spot(f"{SYSTEM} 9 z"), _spot("Alpha 1", system="Alpha")]
+        groups = data.build_system_groups("Sol", saved, journal=self.JOURNAL)
+        self.assertEqual([g[0] for g in groups], ["saved-here", "journal"])
+        self.assertEqual([g[1] for g in groups], [data.GROUP_SAVED_IN_SYSTEM, data.GROUP_JOURNAL])
+        self.assertEqual([e.body for e in groups[0][2]], ["Sol 3 a"])
+        self.assertEqual([e.body for e in groups[1][2]], ["Sol 5"])     # Sol 3 a is already listed with its deposits
+
+    def test_the_other_systems_groups_obey_the_material_and_rigs_filters(self) -> None:
+        saved = [_spot("Sol 3 a", "Painite", system="Sol", rigs=4), _spot("Sol 4", "Monazite", system="Sol", rigs=2)]
+        painite = data.build_system_groups("Sol", saved, "Painite", None, self.JOURNAL)
+        self.assertEqual([e.body for g in painite for e in g[2]], ["Sol 3 a"])
+        two_rigs = data.build_system_groups("Sol", saved, rigs=2, journal=self.JOURNAL)
+        self.assertEqual([e.body for g in two_rigs for e in g[2]], ["Sol 4"])     # a filter hides the journal group
+
+    def test_a_system_with_nothing_has_no_groups(self) -> None:
+        self.assertEqual(data.build_system_groups("Nowhere", [_spot("Sol 3 a", system="Sol")], journal=self.JOURNAL), [])
+
+
 class RigsFilterTests(unittest.TestCase):
     def test_rigs_filter_keeps_only_bodies_with_that_rig_count(self) -> None:
         saved = [_spot(f"{SYSTEM} 6 a", rigs=4), _spot(f"{SYSTEM} 7 a", rigs=3)]
