@@ -23,8 +23,8 @@ from typing import Any, Dict, List, Mapping, Optional, Tuple
 
 from . import commander_data, journal_files, ranks as rank_table
 
-# The ranks an invitation can ask for. The names are `ranks.py`'s (index 8 is Elite, 13 is Elite V); only these five ladders are read here.
-RANK_NAMES: Dict[str, Tuple[str, ...]] = {key: rank_table.names(key) for key in ("Combat", "Trade", "Explore", "Federation", "Empire")}
+# The ranks an invitation can ask for. The names are `ranks.py`'s (index 8 is Elite, 13 is Elite V); only these five ladders are read here, and a key the table lacks fails at import.
+RANK_NAMES: Dict[str, Tuple[str, ...]] = {key: rank_table.NAMES[key] for key in ("Combat", "Trade", "Explore", "Federation", "Empire")}
 RANKS = tuple(RANK_NAMES)
 
 # Our name -> (Statistics section, key). Each is a lifetime number.

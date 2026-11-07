@@ -14,6 +14,7 @@ of a ladder is shown as `Rank <number>` instead of being guessed.
 """
 from __future__ import annotations
 
+import math
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 ELITE_TIERS: Tuple[str, ...] = ("Elite I", "Elite II", "Elite III", "Elite IV", "Elite V")
@@ -39,6 +40,7 @@ LADDERS: Tuple[Ladder, ...] = (
 )
 
 KEYS: Tuple[str, ...] = tuple(key for key, _label, _names in LADDERS)
+NAMES: Dict[str, Tuple[str, ...]] = {key: ladder_names for key, _label, ladder_names in LADDERS}   # strict: a misspelled key is a KeyError, not an empty ladder
 MAX_TEXT = "max"
 
 
@@ -58,9 +60,16 @@ def _whole(value: Any) -> Optional[int]:
         return None
     if isinstance(value, int):
         return value
-    if isinstance(value, float) and value == int(value):
+    if isinstance(value, float) and value.is_integer():       # False for inf and nan, which int() would raise on
         return int(value)
     return None
+
+
+def _number(value: Any) -> Optional[float]:
+    """A journal number that may carry a fraction (a progress figure): a finite int or float, or None for anything else."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    return float(value) if math.isfinite(value) else None
 
 
 def rank_name(key: str, index: int) -> str:
@@ -70,37 +79,38 @@ def rank_name(key: str, index: int) -> str:
 
 
 def is_top(key: str, index: int) -> bool:
-    """True on the last rank of a ladder: nothing is left to progress toward."""
+    """True on the last rank of a ladder: nothing is left to progress toward. A rank past the end is one WFMT does not know, so it is not the top."""
     ladder_names = names(key)
-    return bool(ladder_names) and index >= len(ladder_names) - 1
+    return bool(ladder_names) and index == len(ladder_names) - 1
 
 
 def percent(progress: Any) -> int:
-    """The journal's progress toward the next rank, kept within 0 to 100."""
-    value = _whole(progress)
-    return 0 if value is None else max(0, min(100, value))
+    """The journal's progress toward the next rank, rounded to a whole percent and kept within 0 to 100."""
+    value = _number(progress)
+    return 0 if value is None else max(0, min(100, int(round(value))))
 
 
-def values_from_entry(entry: Mapping[str, Any]) -> Dict[str, int]:
-    """The ladders a `Rank`, `Progress` or `Promotion` event carries, as {journal key: number}. Anything that is not a whole number is left out."""
-    found: Dict[str, int] = {}
+def values_from_entry(entry: Mapping[str, Any], whole: bool = True) -> Dict[str, Any]:
+    """The ladders a `Rank`, `Progress` or `Promotion` event carries, as {journal key: number}. A rank must be a whole number (`whole`); a progress figure
+    may carry a fraction. Anything else is left out."""
+    found: Dict[str, Any] = {}
     for key in KEYS:
-        number = _whole(entry.get(key))
+        number = _whole(entry.get(key)) if whole else _number(entry.get(key))
         if number is not None:
             found[key] = number
     return found
 
 
-def values_from_state(state: Any) -> Tuple[Dict[str, int], Dict[str, int]]:
+def values_from_state(state: Any) -> Tuple[Dict[str, int], Dict[str, Any]]:
     """(ranks, progress) from EDMC's own state, which holds `Rank` as {ladder: (rank, progress)} once it has seen the game's Rank and Progress events."""
     ranks: Dict[str, int] = {}
-    progress: Dict[str, int] = {}
+    progress: Dict[str, Any] = {}
     held = state.get("Rank") if isinstance(state, Mapping) else None
     if isinstance(held, Mapping):
         for key in KEYS:
             pair = held.get(key)
             if isinstance(pair, (tuple, list)) and len(pair) == 2:
-                rank, done = _whole(pair[0]), _whole(pair[1])
+                rank, done = _whole(pair[0]), _number(pair[1])
                 if rank is not None:
                     ranks[key] = rank
                     if done is not None:
@@ -108,7 +118,7 @@ def values_from_state(state: Any) -> Tuple[Dict[str, int], Dict[str, int]]:
     return ranks, progress
 
 
-def table_rows(ranks: Mapping[str, int], progress: Mapping[str, int]) -> List[Tuple[str, str, str]]:
+def table_rows(ranks: Mapping[str, int], progress: Mapping[str, Any]) -> List[Tuple[str, str, str]]:
     """(ladder, rank name, percent to the next rank) for each ladder whose rank is known. The last rank of a ladder reads `max`."""
     rows: List[Tuple[str, str, str]] = []
     for key, label, _names in LADDERS:
@@ -130,29 +140,30 @@ class RankBook:
     def __init__(self) -> None:
         self.cmdr = ""
         self.ranks: Dict[str, int] = {}
-        self.progress: Dict[str, int] = {}
+        self.progress: Dict[str, Any] = {}
+        self._seeded = False
 
     def take(self, entry: Mapping[str, Any], cmdr: str, state: Any = None) -> bool:
         """Take one journal event. Returns True when what is held changed."""
         before = (self.cmdr, dict(self.ranks), dict(self.progress))
-        switched = bool(cmdr) and cmdr != self.cmdr
-        from_another = switched and bool(self.cmdr)                  # the first commander seen is not a switch: EDMC's state is theirs
-        if switched:
-            self.cmdr, self.ranks, self.progress = cmdr, {}, {}       # nothing of the last commander's may show on this one's table
+        from_another = bool(cmdr) and bool(self.cmdr) and cmdr != self.cmdr
+        if bool(cmdr) and cmdr != self.cmdr:
+            self.cmdr, self.ranks, self.progress, self._seeded = cmdr, {}, {}, False     # nothing of the last commander's may show on this one's table
+        if self.cmdr and not self._seeded:
+            self._seeded = True                      # once per commander, on their first event, and before it is applied
+            if not from_another:                     # after a switch EDMC's state may still be the last commander's: wait for their own Rank
+                held_ranks, held_progress = values_from_state(state)    # EDMC started after the login: its state already has them
+                self.ranks.update(held_ranks)
+                self.progress.update(held_progress)
         event = entry.get("event")
-        found = values_from_entry(entry) if event in ("Rank", "Progress", "Promotion") else {}
         if event == "Rank":
-            self.ranks.update(found)
+            self.ranks.update(values_from_entry(entry))
         elif event == "Progress":
-            self.progress.update(found)
+            self.progress.update(values_from_entry(entry, whole=False))
         elif event == "Promotion":
-            for key, number in found.items():
+            for key, number in values_from_entry(entry).items():
                 self.ranks[key] = number
-                self.progress[key] = 0                                 # a promotion starts the next rank at 0 percent
-        if not self.ranks and not from_another:
-            held_ranks, held_progress = values_from_state(state)       # EDMC started after the login: its state still has them
-            self.ranks.update(held_ranks)
-            self.progress.update(held_progress)
+                self.progress[key] = 0               # a promotion starts the next rank at 0 percent
         return before != (self.cmdr, self.ranks, self.progress)
 
     def rows(self) -> List[Tuple[str, str, str]]:
