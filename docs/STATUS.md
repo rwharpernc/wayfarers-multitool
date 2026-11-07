@@ -6,7 +6,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 | Version | Published | Notes |
 | --- | --- | --- |
-| 1.5.3 | Not yet published | Patch on 1.5.2, built on `work/1.5.3`. Contains the Ranks section in Operations, a Reset button on the Trade panel, the Copy next system fix and Discord sharing for the Expedition Log and the Expedition plan. Docker tests on Linux: 4,092 run, 13 skipped, no failures (2026-11-07). The Copy next system fix was tested in the game on Windows and on Linux on 2026-11-04 with no major issues; the Ranks section and the Trade Reset button were tested in the game on Windows and on Linux on 2026-11-07; the Expedition Discord posts have been only partly tested in the game, and testing by other commanders is welcome. |
+| 1.5.3 | 2026-11-07 (tag `v1.5.3`) | Patch on 1.5.2, built on `work/1.5.3`. Contains the Online tab (one place for every online switch), suggestions in more boxes, the Ranks section in Operations, a Reset button on the Trade panel, full-width Settings text, the Copy next system fix and Discord sharing for the Expedition Log and the Expedition plan. Docker tests on Linux before release: 4,129 run, 13 skipped, no failures (2026-11-07). The Copy next system fix was tested in the game on Windows and on Linux on 2026-11-04 with no major issues; the Ranks section and the Trade Reset button were tested in the game on Windows and on Linux on 2026-11-07; the Expedition Discord posts have been only partly tested in the game, and testing by other commanders is welcome. The Online tab (with **Turn all on**), the suggestions in more boxes and the full-width Settings text have not been tried in the game: their checks are open in [TEST_PLAN.md](TEST_PLAN.md) section 15. |
 | 1.5.2 | 2026-11-04 (tag `v1.5.2`) | Built on `test/windows-combined`. Docker tests on Linux before release: 4,031 passed, 12 skipped. No in-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 14 is recorded. |
 | 1.5.1 | 2026-11-03 (tag `v1.5.1`) | Patch on 1.5.0, built on `patch/1.5.1`. Docker tests on Linux before release: 3,923 passed, 13 skipped. In-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 13 on Windows and on Linux on 2026-11-03, before publication, with no failures. |
 | 1.5.0 | 2026-11-02 (tag `v1.5.0`) | Docker tests on Linux before release: 3,894 passed, 13 skipped. In-game pass of [TEST_PLAN.md](TEST_PLAN.md) section 12 on Windows and on Linux on 2026-11-02, before publication, with no failures. |
@@ -21,21 +21,22 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 | 1.0.0 | 2026-10-26 | First release. Contains everything built up to 2026-10-26. |
 
 - The project was renamed Wayfarer's Multitool (WFMT) and its version history restarted at 1.0.0 on 2026-10-21.
-- The latest published release is 1.5.2. The repository is public.
+- The latest published release is 1.5.3. The repository is public.
 - The in-app updater and the README "latest release" link read GitHub's public releases API.
 - The full list of changes for each version is in [CHANGELOG.md](../CHANGELOG.md).
 
 ### Contents of each release
 
-- **1.5.3** (not yet published)
+- **1.5.3**
   - Adds a Ranks section to Operations: every Pilots Federation and navy rank by the game's own name, with the percent toward the next rank. The rank names are now one shared table (`ranks.py`) that the engineer invitation checks also read.
   - Suggests, in every system box, each system in the playing commander's journals (with a hint when the Spansh lookup that finds the rest is off), and adds suggestions to the Round trip **Start from** box and to the search and filter boxes of Materials, Blueprints, Inventory and Stored modules.
   - Adds an Online tab to Settings (**Settings → WFMT → Online**), the one place that switches every online lookup, with **Turn all on**, **Turn all off** and **Reset to defaults**. It replaces the read-only Online lookups page and the per-feature checkboxes (each old place now shows a note pointing to the tab); the overlay lookups become one setting for the installation; a feature that needs a lookup that is off says so where it is used; the Mission sources window no longer asks to turn lookups on.
+  - Settings descriptions wrap to the full width of the page instead of a fixed narrow column, and follow the window when it is resized.
   - Adds a Reset button to the Trade panel, beside History, that does what the Session page's Reset does.
   - Adds Copy for Discord, Post to Discord and Customize… for the selected expedition in the Expedition Log: name, status, route, exploration and exobiology figures, and the credits its data sales earned.
   - Adds the same three buttons to the Expedition window for an announcement of the chosen expedition's plan: progress, next stop and stops.
   - Fixes **Copy next system** on the Trade Routes window: it follows the leg you are on, moving to the next destination once you dock at the previous one, and wraps for loops and round trips.
-  - The updater offers 1.5.3 to installations on 1.5.2 once it is published.
+  - The updater offers 1.5.3 to installations on 1.5.2.
 - **1.5.2**
   - Adds a Powerplay sale-merit log: each sale made while pledged is written with the merits that followed it, with a start-up catch-up from the journals, to `sale_merits.csv`. It only collects data and estimates nothing.
   - Adds a Powerplay margin marker (40% line) to the Trade Round trip, a **Start from** station and a **Rank by** choice for it.
@@ -100,7 +101,8 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 | Date | Release | Result |
 | --- | --- | --- |
-| 2026-11-05 | 1.5.3 (not yet published) | 4,066 passed, 12 skipped (Docker, Linux) |
+| 2026-11-07 | 1.5.3 | 4,129 run, 13 skipped, no failures (Docker, Linux) |
+| 2026-11-05 | 1.5.3 (before Ranks, Reset and the Online tab) | 4,066 passed, 12 skipped (Docker, Linux) |
 | 2026-11-04 | 1.5.2 | 4,031 passed, 12 skipped (Docker, Linux) |
 | 2026-11-03 | 1.5.1 | 3,923 passed, 13 skipped (Docker, Linux) |
 | 2026-11-02 | 1.5.0 | 3,894 passed, 13 skipped (Docker, Linux) |

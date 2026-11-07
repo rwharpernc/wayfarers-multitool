@@ -9,7 +9,7 @@ Scope: the checks for testing WFMT on Linux with Elite Dangerous under Steam Pro
 - The window-fit fixes of 2026-10-21 were checked only in a Docker run (a Linux container).
 - 1.5.0 was run on Linux on 2026-11-02, before the release, with no failures (section 7r).
 - 1.5.1 was run on Linux on 2026-11-03, before the release, with no failures (section 7s). Docker: 3,923 passed, 13 skipped.
-- 1.5.3: the Copy next system fix was run on Linux on 2026-11-04 with no major issues (section 7u). Docker: 4,092 run, 13 skipped, no failures on 2026-11-07. Ranks and the Trade Reset button were run on Linux on 2026-11-07; the Expedition Discord posts are not yet run on Linux (they have been only partly tested in the game, and testing by other commanders is welcome).
+- 1.5.3: the Copy next system fix was run on Linux on 2026-11-04 with no major issues (section 7u). Docker: 4,129 run, 13 skipped, no failures on 2026-11-07 (released that day). Ranks and the Trade Reset button were run on Linux on 2026-11-07; the Online tab, the suggestions in more boxes and the Expedition Discord posts are not yet run on Linux (they have been only partly tested in the game, and testing by other commanders is welcome).
 - Seen working (KDE Wayland, Flatpak EDMC): the WFMT Settings panel; the test overlay, Discovery and Notable Bodies overlays.
 - A Flatpak EDMC requires the host-spawn permission in section 0 before overlays draw.
 
