@@ -39,7 +39,7 @@ from ttkHyperlinkLabel import HyperlinkLabel
 from . import (
     __version__, autohonk, bgs_panel, boxel_survey, combat_panel, discord_settings, poi_reference_panel, codex_completionist_panel, colonization_panel, discovery,
     exploration_value, flight_alerts, interdiction, inventory_panel, landing, materials_panel, mining_panel, missions, missions_overlay,
-    notable, notes_panel, expedition_panel, expedition_log_panel, expedition_log_overlay, explore_dashboard, route_planner_panel, landing_finder_panel, surface_compass, organic_scan_panel, exobiology_overlay, overlay, overlay_appearance, overlay_placement, overlay_visibility, shortcuts, catchup_status, panelkit, powerplay, powerplay_overlay, route_overlay, targets_overlay, body_info_overlay, screenshots, ship_builds_panel,
+    notable, notes_panel, expedition_panel, expedition_log_panel, expedition_log_overlay, explore_dashboard, route_planner_panel, landing_finder_panel, surface_compass, organic_scan_panel, exobiology_overlay, overlay, overlay_appearance, overlay_placement, overlay_visibility, shortcuts, catchup_status, panelkit, powerplay, powerplay_overlay, route_overlay, targets_overlay, body_info_overlay, ranks_panel, screenshots, ship_builds_panel,
     credits_ledger, game_mode, session_credits, session_merits, settings_scroll, system_names, trade_panel, trade_watch_panel,
 )
 from . import __version__, data_backup, diag_log, issue_report, settings_online
@@ -62,8 +62,8 @@ FEATURES = (
     autohonk, discovery, boxel_survey, codex_completionist_panel, surface_compass, explore_dashboard,
     expedition_panel, expedition_log_panel, exploration_value, landing_finder_panel,
     notes_panel, organic_scan_panel, poi_reference_panel, route_planner_panel, notable,
-    # Operations: Combat Record, Engineering (the Materials module), Inventory, Screenshots, Ship Builds.
-    combat_panel, materials_panel, inventory_panel, screenshots, ship_builds_panel,
+    # Operations: Combat Record, Engineering (the Materials module), Inventory, Ranks, Screenshots, Ship Builds.
+    combat_panel, materials_panel, inventory_panel, ranks_panel, screenshots, ship_builds_panel,
     colonization_panel,
     mining_panel,
     trade_panel, trade_watch_panel,
@@ -108,7 +108,7 @@ _MODE_TOOLTIPS = {
     "mining": "Mine - space and surface (SRV) mining, and your own catalogue of mining hotspots",
     "trade": "Trade - what you bought and sold this session, the value of your hold, and Spansh route and price lookups",
     "missions": "Mission - every mission you have in one view, with kill-progress bars for massacres",
-    "fieldops": "Operations - screenshots, backpack/locker/cargo and saved ship builds",
+    "fieldops": "Operations - your ranks, screenshots, backpack/locker/cargo and saved ship builds",
     "colonization": "Colony - the project you are building now (progress, what is left, trips); history is in the History window",
 }
 _DEFAULT_PANEL_MODE = PANEL_MODES[0][0]

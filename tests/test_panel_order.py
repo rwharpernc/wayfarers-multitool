@@ -28,6 +28,7 @@ NAMES = {
     "combat_panel": ("fieldops", "Combat Record"),
     "inventory_panel": ("fieldops", "Inventory"),
     "materials_panel": ("fieldops", "Engineering"),
+    "ranks_panel": ("fieldops", "Ranks"),
     "screenshots": ("fieldops", "Screenshots"),
     "ship_builds_panel": ("fieldops", "Ship Builds"),
     "trade_panel": ("trade", "Trade"),

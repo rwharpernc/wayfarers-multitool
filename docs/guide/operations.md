@@ -1,6 +1,6 @@
 # Operations
 
-This page describes the Operations mode: screenshots, inventory, engineering materials (with blueprints, wishlist, ship planner and engineers), saved ship builds and the combat record. Colonization is a separate mode: see [Colonization](colonization.md).
+This page describes the Operations mode: screenshots, inventory, engineering materials (with blueprints, wishlist, ship planner and engineers), saved ship builds, the combat record and your ranks. Colonization is a separate mode: see [Colonization](colonization.md).
 
 **Data sources:**
 
@@ -18,6 +18,7 @@ This page describes the Operations mode: screenshots, inventory, engineering mat
 - [Engineering](#engineering-blueprints-and-a-wishlist) (including the [Ship planner](#engineering-blueprints-and-a-wishlist))
 - [Ship Builds](#ship-builds)
 - [Combat Record](#combat-record)
+- [Ranks](#ranks)
 - [What the game does and doesn't tell us](#what-the-game-does-and-doesnt-tell-us-and-how-to-work-around-it)
 
 ## How to
@@ -62,6 +63,10 @@ Common tasks, each with a link to the full description.
 1. Open the **Combat Record** row. A small table shows the **Kills**, **Deaths** and **K/D** of **This session** and **All time**. **Kills** includes PvP kills, as K/D does. While the journals are being read, the **All time** row reads `...`.
 2. Press **Combat**.
 3. Select the **This session**, **All time** or **Sessions** tab. Every tab splits the figures by ship.
+
+**See your ranks** (details: [Ranks](#ranks))
+
+1. Open the **Ranks** row. Each rank you hold is listed by the game's name, with the percent toward the next rank.
 
 **Plan the engineering of a whole ship** (details: the Ship planner in [Engineering](#engineering-blueprints-and-a-wishlist))
 
@@ -501,6 +506,23 @@ Counts the commander's kills and deaths, split by ship, for the session being pl
 
 Nothing is sent anywhere. The record is the file `combat_record.json`, kept per commander and included in the data backup. There is no Settings tab.
 
+## Ranks
+
+Lists every rank the commander holds, by the name the game shows, with the percent of the way to the next rank. One table is shown for the commander who is playing; another commander starts empty, so nothing of one shows on the other.
+
+**What is shown:**
+
+| Row | Ladder |
+|---|---|
+| **Combat**, **Trade**, **Exploration**, **CQC**, **Mercenary**, **Exobiologist** | The six Pilots Federation ladders. Each has nine ranks ending in `Elite`, then five more steps, `Elite I` to `Elite V` |
+| **Federation**, **Empire** | The two navies, each with 14 ranks above `None` |
+
+- The **To next** column is the percent toward the next rank, as the game reports it. The last rank of a ladder (`Elite V`, `Admiral` or `King`) reads `max`, because nothing is left to climb.
+- A promotion updates the row at once and starts the new rank at 0%.
+- A ladder the game has not reported is left out. A rank the game reports beyond the names WFMT knows (a rank added by a later game update) reads `Rank` and its number, not a guess.
+
+**Where it comes from:** the journal's `Rank` (where you stand), `Progress` (the percent) and `Promotion` events, which the game writes at every login. If EDMC started after the login, EDMC's own copy of them is used. Nothing is saved, so the section fills in at the next login.
+
 ## What the game does and doesn't tell us, and how to work around it
 
 WFMT uses only what Elite Dangerous writes to its journal files, plus what Frontier's servers give a signed-in EDMC (for the Carrier Locker). Where WFMT cannot be certain, it states so. See [How WFMT knows what it knows](README.md#how-wfmt-knows-what-it-knows).
@@ -513,6 +535,7 @@ WFMT uses only what Elite Dangerous writes to its journal files, plus what Front
 | The backpack capacity is reported | The game does not report it. WFMT uses a **built-in table** by suit and the Extra Backpack Capacity mod. The table does not include the engineering grade and has no figure for the Flight Suit | Enter the real number for each suit loadout in the Inventory settings |
 | The Backpack is known at login | After a login already on foot, the game has not yet reported it (the tab reads `Not yet synced this session`) | Loot, resupply or disembark to refresh it |
 | The Carrier Locker is live | It comes from **Frontier's servers**, not the journal. EDMC must be signed in to Frontier. The Carrier Locker tab is labeled `Carrier Locker — from CAPI, may lag 15–30 min` | Sign EDMC in. The locker is hidden until real data arrives |
+| Rank names are in the journal | The journal sends rank **numbers**, not names, and Frontier has not published the list. WFMT's names come from community references, checked against real journals; one source disagrees on the fifth Exploration rank, and WFMT uses the name the game shows | Report a name that differs from the game's |
 | The Rhino's cargo capacity | No journal field for the fitted capacity is known to WFMT, so the bar shows the count with no limit | Read the tons, not a percentage |
 | Materials are correct as soon as EDMC starts | The game writes the full list only at **login**. Between logins WFMT follows each change, and after a restart it shows the counts from the last session until the next login list arrives (the window states this) | Log in to the game, or start EDMC before the game |
 | Materials that could not be carried are counted | At the limit, the game discards what cannot be carried. WFMT never counts above the limit | None; the login list corrects any difference |

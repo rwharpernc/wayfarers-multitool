@@ -7,6 +7,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Added
 
+- **Ranks in Operations.** A new **Ranks** row lists every rank you hold, by the game's own name, with the percent toward the next rank: Combat, Trade, Exploration, CQC, Mercenary, Exobiologist, Federation and Empire. The top rank of a ladder (`Elite V`, `Admiral`, `King`) reads `max`. It follows the journal's `Rank`, `Progress` and `Promotion` events, so a promotion shows at once, and a different commander starts with an empty table. The rank names now come from one table (`ranks.py`) that the engineers' invitation checks share.
 - **Reset on the Trade panel.** A **Reset** button now sits beside History under the Trade summary, so the session tally can be restarted without opening the Session window. It does what the Session page's Reset does, including the offer to save an unsaved session first.
 
 ## 1.5.2 (2026-11-04)

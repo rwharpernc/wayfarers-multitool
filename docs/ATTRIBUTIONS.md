@@ -372,6 +372,10 @@ Data was taken from several sources in this section. Each entry states what was 
   - **Credit:** EDMC's built-in screenshot handling and [EDMC-Screenshot](https://github.com/NoFoolLikeOne/EDMC-Screenshot).
   - **Use in WFMT:** reference.
   - **Code:** none taken.
+- **Pilots Federation and navy rank names**
+  - **Credit:** the journal reference at [elite-journal.readthedocs.io](https://elite-journal.readthedocs.io/en/latest/Appendix.html) and the Elite Dangerous community wiki's rank tables.
+  - **Use in WFMT:** the names of the ranks and how many each ladder has, for the Ranks section of Operations and the engineers' invitation checks. Facts only. Where sources differed (Exploration's fifth rank) the name the game shows was used.
+  - **Code:** none taken.
 
 ## Overlays
 

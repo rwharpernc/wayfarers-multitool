@@ -1261,6 +1261,11 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
   - `combat_record.json` is per commander (`commander_data.py`). `through` is the timestamp of the newest event counted and `seen` the fingerprints of the events at that second, so an event read from the journal and received live is counted once, while two different events of one second are both counted.
   - At start-up (and when the commander changes) a worker thread reads the commander's journals: all of them the first time, afterwards the files changed since `scan`. Events that arrive meanwhile wait in order and are applied afterwards. The vessel at the end of the journal being written carries into live counting.
   - `combat_window.py` polls the record's `revision`, since the worker also changes the record.
+- The Ranks section turns the journal's rank numbers into the game's names (`ranks.py`; no Tk). `Rank` gives each ladder's rank from 0, `Progress` the percent toward the next, and `Promotion` a new rank (which starts at 0%).
+  - The Pilots Federation ladders have nine names (the last is `Elite`) and the prestige tiers `Elite I` to `Elite V` at 9 to 13 (a real journal holds a Trade rank of 13); the Federation and Empire navies have 15 names. The journal calls Exploration `Explore` and Mercenary `Soldier`. A number past a ladder's end reads `Rank <number>`.
+  - The names come from community references and were checked against real journals. Where they differ the game's wording is used: the journal reference calls the fifth Exploration rank `Explorer`, the wiki, TrueAchievements and GamePur say `Trailblazer`.
+  - `RankBook` holds one commander's ranks and a different commander starts empty. When EDMC started after the login, EDMC's own `state["Rank"]` fills the table. Nothing is saved: the game sends `Rank` and `Progress` at every login. `engineer_requirements.py` reads its names from the same table.
+  - A long rank name wraps in the table (`StatRows.show(..., wrap=)`) so the panel stays narrow.
 
 **Build costs**
 

@@ -119,6 +119,8 @@ Spec: [POWERPLAY_TECH_SPEC.md](POWERPLAY_TECH_SPEC.md)
 | `powerplay_window.py` | The Powerplay Sessions window (current session, systems, cycles, daily, megaships, history) |
 | `powerplay_overlay.py` | The Powerplay overlay card: the commander's Power, rank, merits and the cycle's merits, the system's state and holder, what merits earned here count as, and the merits and estimated Control Points earned here this session by type; says "No Powerplay Detected in system" in a system without one, and with the look-ahead tick turns to the jump's destination; the pure `build_card`, the controller's `overlay_info`, Settings → Overlays → Powerplay, one Overlay Placement slot |
 | `powerplay_system_lookup.py` | A system's Powerplay standing (state, holder, Powers, control progress) from Spansh's system API, for the Powerplay card's look at a jump's destination: one request per system on a thread through `spansh_courtesy`, answers kept an hour (a failure two minutes); no Tk |
+| `ranks.py` | The game's ranks, no Tk: the name of every rank on the six Pilots Federation ladders and the two navies, the percent toward the next, and `RankBook`, which takes the `Rank`, `Progress` and `Promotion` events (or EDMC's state) per commander |
+| `ranks_panel.py` | The Ranks section of Operations: the journal events, the commander and the table |
 | `rare_goods.py` | Finds the nearest rare commodities to the current system (data in `rare_goods.json`) |
 | `rare_goods_window.py` | The Rare Goods Finder window |
 | `session.py` | Merit tallies for the current game login |

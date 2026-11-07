@@ -21,19 +21,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Mapping, Optional, Tuple
 
-from . import commander_data, journal_files
+from . import commander_data, journal_files, ranks as rank_table
 
-_ELITE = ("Elite", "Elite I", "Elite II", "Elite III", "Elite IV", "Elite V")    # the journal goes on past Elite: 8 is Elite, 13 is Elite V
-
-RANK_NAMES: Dict[str, Tuple[str, ...]] = {
-    "Combat": ("Harmless", "Mostly Harmless", "Novice", "Competent", "Expert", "Master", "Dangerous", "Deadly") + _ELITE,
-    "Trade": ("Penniless", "Mostly Penniless", "Peddler", "Dealer", "Merchant", "Broker", "Entrepreneur", "Tycoon") + _ELITE,
-    "Explore": ("Aimless", "Mostly Aimless", "Scout", "Surveyor", "Trailblazer", "Pathfinder", "Ranger", "Pioneer") + _ELITE,
-    "Federation": ("None", "Recruit", "Cadet", "Midshipman", "Petty Officer", "Chief Petty Officer", "Warrant Officer", "Ensign", "Lieutenant",
-                   "Lieutenant Commander", "Post Commander", "Post Captain", "Rear Admiral", "Vice Admiral", "Admiral"),
-    "Empire": ("None", "Outsider", "Serf", "Master", "Squire", "Knight", "Lord", "Baron", "Viscount", "Count", "Earl", "Marquis", "Duke", "Prince",
-               "King"),
-}
+# The ranks an invitation can ask for. The names are `ranks.py`'s (index 8 is Elite, 13 is Elite V); only these five ladders are read here.
+RANK_NAMES: Dict[str, Tuple[str, ...]] = {key: rank_table.names(key) for key in ("Combat", "Trade", "Explore", "Federation", "Empire")}
 RANKS = tuple(RANK_NAMES)
 
 # Our name -> (Statistics section, key). Each is a lifetime number.

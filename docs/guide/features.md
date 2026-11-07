@@ -194,6 +194,7 @@ Each table lists a feature, what it does, the controls and settings that operate
 | Material trader finder | The closest Raw, Manufactured or Encoded trader, with distance and pad filters | **Find a trader** in the Materials window | [Materials](operations.md#materials) |
 | Ship Builds | Builds from Coriolis, EDSY or Spansh, kept by link | **Ships** | [Ship Builds](operations.md#ship-builds) |
 | Combat Record | Kills, PvP kills, deaths and rewards, per ship, for this session, every session and in total | **Combat** | [Combat Record](operations.md#combat-record) |
+| Ranks | Every Pilots Federation and navy rank by the game's own name, with the percent toward the next | The **Ranks** row | [Ranks](operations.md#ranks) |
 
 ### Colonization ([guide](colonization.md))
 
