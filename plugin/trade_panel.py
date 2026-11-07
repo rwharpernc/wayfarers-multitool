@@ -269,7 +269,9 @@ class TradePanelController:
 
         # Lookup results (text lines kept until the next search) and the running job.
         self._route_blocks: List[Block] = []
-        self._next_system: Optional[str] = None
+        self._route_stops: List[str] = []             # destination system of each leg, in order
+        self._route_leg = 0                           # legs finished: index of the stop to copy next
+        self._route_loop = False                      # a loop wraps back to its first stop after the last
         self._sell: Dict[str, List[trade_prices.Offer]] = {}   # scope ("near" / "galaxy") -> ranked offers
         self._sell_for: Optional[tuple] = None                  # (commodity, tons, pad, side) those offers were ranked for
         side = (config.get_str(_CFG_MARKET_SIDE) or trade_prices.SELL).lower()
@@ -371,6 +373,7 @@ class TradePanelController:
         if system:
             self._system = system
         self._station = station or None
+        self._advance_leg(event, self._system)
         if isinstance(state, dict):
             cargo = state.get("Cargo")
             if isinstance(cargo, dict):
@@ -458,7 +461,7 @@ class TradePanelController:
         self._cargo, self._hold_split, self._capacity = {}, (0, 0), 0
         self._ship, self._credits, self._jump_range = None, 0, 0.0
         self._market, self._market_station = {}, None
-        self._route_blocks, self._next_system = [], None
+        self._route_blocks, self._route_stops, self._route_leg = [], [], 0
         self._sell, self._sell_for, self._sell_error, self._pad_dropped, self._picks = {}, None, None, {}, None
 
     def _read_hold_split(self, entry: Dict[str, Any]) -> None:
@@ -669,7 +672,7 @@ class TradePanelController:
             return self._routes_blocks(busy), [
                 ("Cancel" if busy else "Find routes", self._cancel_job if busy else self._find_routes,
                  busy or lookups_enabled()),
-                ("Copy next system", self._copy_next_system, bool(self._next_system) and not busy),
+                ("Copy next system", self._copy_next_system, bool(self._next_stop()) and not busy),
                 (f"Hops: {self._route_hops()}", self._cycle_hops, lookups_enabled() and not busy),
                 ("Round trip", self._find_round_trip, lookups_enabled() and not busy)]
         can_search = lookups_enabled() and not busy
@@ -1130,8 +1133,36 @@ class TradePanelController:
         self._refresh()
 
     def _copy_next_system(self) -> None:
-        if self._next_system and self._parent is not None:
-            panelkit.copy_to_clipboard(self._parent, self._next_system)
+        stop = self._next_stop()
+        if stop and self._parent is not None:
+            panelkit.copy_to_clipboard(self._parent, stop)
+
+    def _next_stop(self) -> Optional[str]:
+        """The system to fly to next: the first stop from the current leg on that is not the system we are already in.
+        Leg 1 (just bought at the start) gives the first destination, leg 2 the second, and so on; a loop wraps round."""
+        stops = self._route_stops
+        if not stops:
+            return None
+        here = (self._system or "").casefold()
+        count = len(stops)
+        for step in range(count if self._route_loop else max(0, count - self._route_leg)):
+            index = self._route_leg + step
+            stop = stops[index % count]
+            if stop and stop.casefold() != here:
+                return stop
+        return None
+
+    def _advance_leg(self, event: Any, system: Optional[str]) -> None:
+        """Docking in the system a leg was heading for finishes that leg, so the next copy gives the one after it."""
+        stops = self._route_stops
+        if event != "Docked" or not stops or not system:
+            return
+        if self._route_loop:
+            self._route_leg %= len(stops)
+        if self._route_leg < len(stops) and stops[self._route_leg].casefold() == system.casefold():
+            self._route_leg += 1
+            if self._route_loop:
+                self._route_leg %= len(stops)
 
     def _cancel_job(self) -> None:
         if self._job is not None:
@@ -1162,7 +1193,7 @@ class TradePanelController:
             allow_player_owned=config.get_bool(_CFG_CARRIERS, default=True),
             allow_permit=config.get_bool(_CFG_PERMIT, default=False),
         )
-        self._route_blocks, self._next_system = [], None
+        self._route_blocks, self._route_stops, self._route_leg = [], [], 0
         self._route_label = f"{start[1]} ({start[0]})"
         holder: Dict[str, _Job] = {}
 
@@ -1328,7 +1359,7 @@ class TradePanelController:
         only = (config.get_str(_CFG_ROUND_ONLY) or "").strip()
         rank = trade_roundtrip.RANK_LOOP if (config.get_str(_CFG_ROUND_RANK) or "").strip().lower() == "loop" else trade_roundtrip.RANK_HOUR
         self._round_rank = rank
-        self._route_blocks, self._next_system = [], None
+        self._route_blocks, self._route_stops, self._route_leg = [], [], 0
         self._route_label = f"{station} ({system})"
         self._round_only = only
 
@@ -1393,7 +1424,7 @@ class TradePanelController:
                                "The marker checks only the margin, and the amount of merits is not estimated."))
         self._route_blocks = blocks
         best = trips[0]
-        self._next_system = best.b.system
+        self._route_stops, self._route_leg, self._route_loop = [best.b.system, best.a.system], 0, True
         if self._ledger is not None:
             ledger_mod.add_route(self._ledger, {
                 "t": self._now(), "start": self._route_label, "total": best.profit,
@@ -1445,7 +1476,8 @@ class TradePanelController:
         elif len(hops) == 2:
             blocks.append(Note("Not a back-and-forth pair: the second hop ends at a third station."))
         self._route_blocks = blocks
-        self._next_system = hops[0].dest_system if hops[0].dest_system != "?" else None
+        self._route_stops = [hop.dest_system for hop in hops if hop.dest_system != "?"]
+        self._route_leg, self._route_loop = 0, loop and not empty_leg
         if self._ledger is not None:
             ledger_mod.add_route(self._ledger, {
                 "t": self._now(), "start": self._route_label, "total": total,

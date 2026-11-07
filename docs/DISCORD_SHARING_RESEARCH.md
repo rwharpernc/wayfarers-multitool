@@ -39,6 +39,8 @@ Recorded 2026-10-29.
 | --- | --- | --- | --- |
 | BGS report | **Copy Summary**: every period and system as plain text, starting `WFMT BGS Report` | The **Discord** menu of the BGS Report window: **Copy for Discord**, **Post to Discord**, **Customize post…** (the tick shown in the window) | `bgs_format.py` (`summary_text`), `bgs_discord.py`, `bgs_window.py` |
 | Powerplay progress | **Copy Progress**: one line per system visited this session, from a template with the placeholders `{system}`, `{system_url}`, `{merits}`, `{cp}` and `{state}` (default `[{system}]({system_url}) - {merits} merits (~{cp} CP) - {state}`) | Buttons **Customize…**, **Copy for Discord** and **Post to Discord** in the Powerplay Sessions window | `powerplay_clipboard.py`, `powerplay_discord.py`, `powerplay_window.py` |
+| Expedition summary | **Copy summary**: the selected expedition's recorded figures as plain lines (`expedition_log.py` `facts_lines`) | Buttons **Copy for Discord**, **Post to Discord** and **Customize…** in a row above the buttons at the foot of the Expedition Log window (the selected expedition); the key is the expedition's id, so posting it again edits the earlier post | `expedition_log.py`, `expedition_discord.py`, `expedition_log_window.py` |
+| Expedition plan (announcement) | **Copy list**: the stops as a plain list (`expedition.py` `to_text`) | Buttons **Copy for Discord**, **Post to Discord** and **Customize…** in the Expedition window's Plan tab (the chosen expedition); the key is the expedition's id | `expedition.py`, `expedition_plan_discord.py`, `expedition_window.py` |
 
 Shared code: `discord_format.py` (escaping, bold, italic, links, code blocks, Discord timestamps, splitting at 2,000 characters), `discord_client.py` (webhook requests), `discord_share.py` (copy and post for the report windows), `discord_webhooks.py` (destinations), `discord_settings.py` (Settings tab), `discord_customize.py`, `discord_templates.py` and `discord_preview.py` (customizing).
 
@@ -48,9 +50,7 @@ The following reports have no Discord output in the code. The data each holds is
 
 | Report | Existing data and copy function |
 | --- | --- |
-| Exploration and exobiology sales | The Expedition Log keeps each expedition's totals, including credits from exploration data sales and exobiology sales, and the Log window can copy what an expedition recorded (`expedition_log.py` `facts_lines`, `expedition_log_window.py`). |
 | Carrier movement | `carrier_jump_timer.py` reads the jump request (destination system, body and departure time), a cancellation and the completed jump from the journal for the Carrier jump countdown on the Flight Alerts card. |
-| Expedition announcements | The Expedition planner holds the name, the stops, the next stop and each stop reached, and can copy the stop list and the next stop's name (`expedition.py`). It has no announcement text. |
 | Colonization sites | The Colonization Sites window has **Copy Shopping List** (plain text, biggest first). `rcc_client.build_page_url(build_id)` and `system_page_url(system)` build Raven Colonial links. |
 
 The Mining Book has a separate one-line **Share line** for a hotspot, intended for pasting into Discord or another Mining Book (`mining_ledger.py`).
@@ -86,13 +86,13 @@ WFMT sends `content` and `allowed_mentions` only; it sends no embeds, `username`
 
 ## Customizing posts
 
-Implemented in `discord_customize.py`, `discord_templates.py` and `discord_preview.py`, with options read by `bgs_discord.py` and `powerplay_discord.py`.
+Implemented in `discord_customize.py`, `discord_templates.py` and `discord_preview.py`, with options read by `bgs_discord.py`, `powerplay_discord.py`, `expedition_discord.py` and `expedition_plan_discord.py`.
 
 - **Templates.** A template is data: a name, the report it is for and its options. The built-in presets Standard, Compact, Detailed and Plain cannot be changed or deleted. Standard reproduces the layout the posts had before templates existed. A commander's own templates are saved by name in `discord_templates.json`. Templates are shared by every commander, and the chosen template for each report applies to the installation. A report falls back to Standard when its chosen template is deleted.
 - **Template actions.** Save, Save as, Rename and Delete; there is no Duplicate, since Save as serves that purpose. The template shown in the box is the one **Copy for Discord** and **Post to Discord** use for that report.
 - **Preview.** Rendered from the current tick or session; example data, labeled as such, is used when none exists. A counter shows characters and message count.
 - **Safety.** Escaping and the 2,000-character splitting are applied regardless of options, and no option enables a mention.
-- **Entry points.** **Customize post…** in the BGS Report's **Discord** menu, **Customize…** in the Powerplay Sessions window, and **Customize posts…** on the Discord Settings tab. The dialog has a **Report** box that switches between the two reports.
+- **Entry points.** **Customize post…** in the BGS Report's **Discord** menu, **Customize…** in the Powerplay Sessions window, **Customize…** in the Expedition Log and Expedition windows, and **Customize posts…** on the Discord Settings tab. The dialog has a **Report** box that switches between the four reports.
 - **Window size.** Default 860 x 780, minimum 720 x 640.
 
 Options by report (default is the Standard value):
@@ -118,6 +118,24 @@ Options by report (default is the Standard value):
 | Powerplay | `activities` | Merits by activity | off | off | on | off |
 | Powerplay | `cycle` | The cycle's total line | on | off | on | on |
 | Powerplay | `plain` | No formatting marks (plain text) | off | off | off | on |
+| Expedition | `heading` | Heading with the name, status and time | on | on | on | on |
+| Expedition | `route` | Where it started and ended | on | off | on | on |
+| Expedition | `exploration` | Exploration figures | on | off | on | on |
+| Expedition | `exobiology` | Exobiology figures | on | off | on | on |
+| Expedition | `sales` | What you earned from sales | on | on | on | on |
+| Expedition | `unsold` | Unsold data (estimates) | on | off | on | on |
+| Expedition | `ships` | Ships used | off | off | on | off |
+| Expedition | `notes` | Your notes | off | off | on | off |
+| Expedition | `plain` | No formatting marks (plain text) | off | off | off | on |
+| Plan | `heading` | Heading with the name and status | on | on | on | on |
+| Plan | `progress` | Stops reached, jumps and light-years | on | on | on | on |
+| Plan | `route` | First and last stop | on | off | on | on |
+| Plan | `next` | The next stop | on | on | on | on |
+| Plan | `stops` | The list of stops | on | off | on | on |
+| Plan | `short` | Only the next 10 stops | on | on | off | on |
+| Plan | `bodies` | Body names with the stops | on | on | on | on |
+| Plan | `notes` | Notes with the stops | off | off | on | off |
+| Plan | `plain` | No formatting marks (plain text) | off | off | off | on |
 
 Not implemented: typed header, row and footer templates; embeds; a template for each destination; Import and Export of templates; a Discord time tag option in the dialog.
 

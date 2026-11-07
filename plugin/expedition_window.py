@@ -9,7 +9,8 @@ you are in); **Up** and **Down** reorder by hand and **Mark visited** ticks a st
 Tools: **From plotted route** adds the systems of the route plotted in the game (`NavRoute.json`, with their positions); **Import CSV** reads
 system, body and note columns (a one-column list works too); **Locate and reorder** asks EDSM for the positions of the unvisited stops that have none
 and puts them in nearest-neighbor order from where you are (this is the one thing here that goes online, and it sends only system names); **Copy list**
-and **Export CSV** share the plan; **Copy next** puts the next stop's name on the clipboard.
+and **Export CSV** share the plan; **Copy next** puts the next stop's name on the clipboard; **Copy for Discord**, **Post to Discord** and **Customize…**
+announce the plan to Discord (`expedition_plan_discord.py`).
 
 Built on the shared window kit (plugin/uikit). Module-level show/refresh/close and saved geometry follow notes_window.py. The file dialogs, the EDSM
 lookup and the journal folder are module-level names so tests can replace them."""
@@ -26,7 +27,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from config import appname, config
 
-from . import edsm_client, expedition, exploration_settings, name_suggestions, expedition_plan_dialog, journal_files, panelkit, spansh_planners, system_autocomplete
+from . import discord_customize, discord_share, discord_templates, edsm_client, expedition, expedition_plan_discord, exploration_settings, name_suggestions, expedition_plan_dialog, journal_files, panelkit, spansh_planners, system_autocomplete
 from .uikit import palette as P
 from .uikit import style
 from .uikit.shell import WindowShell
@@ -239,6 +240,15 @@ class ExpeditionWindow:
                 ("Export CSV", self._export_csv, "Export CSV - save the chosen expedition's stops to a CSV file"),
                 ("Copy next", self._copy_next, "Copy next - copy the next unvisited stop's system name to the clipboard")):
             FlatButton(tools, text, command, tip=tip).pack(side="left", padx=(0, 6))
+        share = tk.Frame(body, bg=P.BG)
+        share.pack(fill="x", pady=(P.PAD_SM, 0))
+        tk.Label(share, text="Announce the chosen expedition", fg=P.MUTED, bg=P.BG).pack(side="left", padx=(0, P.PAD_SM))
+        for text, command, tip in (
+                ("Copy for Discord", self._on_copy_discord, "Copy for Discord - copy the chosen expedition's plan, formatted for pasting into Discord"),
+                ("Post to Discord", self._on_post_discord, "Post to Discord - send the chosen expedition's plan to your Discord webhook"),
+                ("Customize…", self._on_customize_discord, "Customize - choose how the Discord plan is worded and laid out")):
+            FlatButton(share, text, command, tip=tip).pack(side="left", padx=(0, 6))
+        discord_customize.register_data(discord_templates.ANNOUNCEMENT, self._customize_data)      # the dialog's preview uses the chosen expedition
 
         book.add_listener(self._on_book_changed)
         self.refresh()
@@ -254,6 +264,7 @@ class ExpeditionWindow:
         self._shell.window.lift()
 
     def close(self) -> None:
+        discord_customize.unregister_data(discord_templates.ANNOUNCEMENT, self._customize_data)
         self._book.remove_listener(self._on_book_changed)
         self._shell.close()
 
@@ -682,6 +693,38 @@ class ExpeditionWindow:
         e = self._need_expedition()
         if e is not None:
             self._say("Copied the list." if panelkit.copy_to_clipboard(self._shell.window, self._book.to_text(e)) else "Could not reach the clipboard.")
+
+    def _discord_messages(self, e: expedition.Expedition) -> List[str]:
+        return expedition_plan_discord.summary_messages(e, discord_templates.templates.chosen(discord_templates.ANNOUNCEMENT).options)
+
+    def _customize_data(self) -> Optional[tuple]:
+        """What the Customize dialog's preview is made from: the chosen expedition (None when none is chosen)."""
+        e = self.current()
+        return (e,) if e is not None else None
+
+    def _on_customize_discord(self) -> None:
+        discord_customize.show(self._shell.window, discord_templates.ANNOUNCEMENT)
+
+    def _on_copy_discord(self) -> None:
+        e = self._need_expedition()
+        if e is None:
+            return
+        messages = self._discord_messages(e)
+        if not messages:
+            self._say("Add some stops first: there is nothing to announce.")
+        elif discord_share.copy_for_discord(self._shell.window, messages):
+            self._say("Copied for Discord" + (f" ({len(messages)} messages: paste each one on its own)." if len(messages) > 1 else "."))
+
+    def _on_post_discord(self) -> None:
+        e = self._need_expedition()
+        if e is None:
+            return
+        messages = self._discord_messages(e)
+        if not messages:
+            self._say("Add some stops first: there is nothing to announce.")
+            return
+        self._say("Posting to Discord...")
+        discord_share.post_choosing(self._shell.window, messages, expedition_plan_discord.report_key(e), lambda text, ok: self.alive and self._say(text))
 
     def _copy_next(self) -> None:
         self._say("Copied the next stop." if self._ctx.copy_next() else "There is no next stop to copy.")

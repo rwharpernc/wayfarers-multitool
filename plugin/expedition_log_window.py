@@ -4,7 +4,7 @@ A table lists every expedition (newest first) with its dates and its headline to
 it started and ended (UTC), where it started and ended, the ships used, and notes. **Start** begins a new expedition now (in the ship and system you are in; the one
 running is stopped), **Pause** pauses the running one or resumes the paused one, **Stop** ends the running one, **Resume** carries on counting one that was stopped, the **Start from my last** buttons begin one just after your last sale (any, Discovery Data or Exobiology Data), **Reset** clears an expedition's totals and starts it counting
 again from now, **Rescan** works its totals out again from your own journals between its start and its end (which fills in an expedition that missed events, or one given
-an earlier start), **Delete** removes it from the archive, **Copy summary** puts what it recorded on the clipboard and **Export CSV** writes the whole archive for a
+an earlier start), **Delete** removes it from the archive, **Copy summary** puts what it recorded on the clipboard, **Copy for Discord** and **Post to Discord** share it with Discord (**Customize…** sets how it looks) and **Export CSV** writes the whole archive for a
 spreadsheet. Reset and Delete ask for a second press.
 
 Built on the shared window kit (plugin/uikit). Module-level show/refresh/close and saved geometry follow expedition_window.py. The file dialog and the journal folder are
@@ -23,7 +23,7 @@ from typing import Any, Callable, Optional
 
 from config import appname, config
 
-from . import expedition_log, journal_files, system_autocomplete
+from . import discord_customize, discord_share, discord_templates, expedition_discord, expedition_log, journal_files, system_autocomplete
 from .uikit import palette as P
 from .uikit import style
 from .uikit.shell import WindowShell
@@ -191,6 +191,16 @@ class LogWindow:
                 ("Export CSV", self._export, "normal", "Export CSV - save every expedition in the archive to a CSV file")):
             FlatButton(buttons, text, command, kind=kind, tip=tip).pack(side="left", padx=(0, 6))
 
+        share = tk.Frame(body, bg=P.BG)      # a row of its own, above the buttons: that row has no room for more at a narrow width
+        share.pack(side="bottom", fill="x", pady=(P.PAD_SM, 0), before=scroll)
+        tk.Label(share, text="Share the selected expedition", fg=P.MUTED, bg=P.BG).pack(side="left", padx=(0, P.PAD_SM))
+        for text, command, tip in (
+                ("Copy for Discord", self._on_copy_discord, "Copy for Discord - copy the selected expedition's summary, formatted for pasting into Discord"),
+                ("Post to Discord", self._on_post_discord, "Post to Discord - send the selected expedition's summary to your Discord webhook"),
+                ("Customize…", self._on_customize_discord, "Customize - choose how the Discord summary is worded and laid out")):
+            FlatButton(share, text, command, tip=tip).pack(side="left", padx=(0, 6))
+        discord_customize.register_data(discord_templates.EXPEDITION, self._customize_data)      # the dialog's preview uses the selected expedition
+
         book.add_listener(self._on_book_changed)
         self.refresh()
         self._poll()
@@ -205,6 +215,7 @@ class LogWindow:
         self._shell.window.lift()
 
     def close(self) -> None:
+        discord_customize.unregister_data(discord_templates.EXPEDITION, self._customize_data)
         self._book.remove_listener(self._on_book_changed)
         self._shell.close()
 
@@ -415,6 +426,33 @@ class LogWindow:
         self._shell.window.clipboard_clear()
         self._shell.window.clipboard_append("\n".join(expedition_log.facts_lines(run)))
         self._say(f"Copied {run.name}'s summary.")
+
+    def _discord_messages(self, run: expedition_log.Run) -> list:
+        return expedition_discord.summary_messages(run, discord_templates.templates.chosen(discord_templates.EXPEDITION).options)
+
+    def _customize_data(self) -> Optional[tuple]:
+        """What the Customize dialog's preview is made from: the selected expedition (None when none is selected)."""
+        run = self.current()
+        return (run,) if run is not None else None
+
+    def _on_customize_discord(self) -> None:
+        discord_customize.show(self._shell.window, discord_templates.EXPEDITION)
+
+    def _on_copy_discord(self) -> None:
+        run = self._need_run()
+        if run is None:
+            return
+        messages = self._discord_messages(run)
+        if discord_share.copy_for_discord(self._shell.window, messages):
+            self._shell.set_status("Copied for Discord" + (f" ({len(messages)} messages: paste each one on its own)." if len(messages) > 1 else "."), ok=True)
+
+    def _on_post_discord(self) -> None:
+        run = self._need_run()
+        if run is None:
+            return
+        self._shell.set_status("Posting to Discord...")
+        discord_share.post_choosing(self._shell.window, self._discord_messages(run), expedition_discord.report_key(run),
+                                    lambda text, ok: self.alive and self._shell.set_status(text, ok=ok))
 
     def _export(self) -> None:
         runs = self._book.runs()

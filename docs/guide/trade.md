@@ -204,7 +204,7 @@ Before a search, the page shows the inputs that will be used (start, ship, cargo
 2. Open the **Routes** page. Check the listed inputs: start, ship, cargo, jump range and budget.
 3. Press **Hops** until it reads `Hops: 3`, then press **Find routes**.
 4. The page states whether the search is in Spansh's queue or being calculated. **Cancel** stops the search.
-5. Read **Total profit** and **Est. profit / hour**, then each numbered hop. **Copy next system** copies the first destination for the galaxy map.
+5. Read **Total profit** and **Est. profit / hour**, then each numbered hop. **Copy next system** copies the destination of the leg you are on for the galaxy map: the first destination after you buy at the start, the second once you dock at the first, and so on. It never copies the system you are already in.
 
 ### Hops
 
@@ -243,7 +243,7 @@ While waiting, the page states whether the search is in Spansh's queue or being 
 - **Total profit** and **Est. profit / hour** (a rough figure derived from the jump range), then **Hops**.
 - Each hop, numbered: the two stations, then the hop's **Profit**, the **Total** so far (so the last hop's Total is the route's profit) and the distance in light years; beneath them the destination system and its distance from the star, the best commodity with tons, and the supply at the buying station and the demand at the selling one. A **Whole route** row under the last hop sums the profit of all hops, repeats that figure under **Total**, and gives the distance flown. A bold line below reads `Average per leg: +1,067 cr × 3 legs = +3,200 cr estimated total earnings`. In a **Round trip**, each pair ends with `Both legs: out + back = per loop` and an average line for its two legs. Gains are green and losses red.
 
-**Copy next system** copies the first destination for the galaxy map.
+**Copy next system** copies the destination of the leg you are on for the galaxy map: the first destination after you buy at the start, the second once you dock at the first, and so on. It never copies the system you are already in.
 
 ## Market
 

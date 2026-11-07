@@ -3,12 +3,19 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
-## Unreleased
+## 1.5.3 (unreleased)
 
 ### Added
 
 - **Ranks in Operations.** A new **Ranks** row lists every rank you hold, by the game's own name, with the percent toward the next rank: Combat, Trade, Exploration, CQC, Mercenary, Exobiologist, Federation and Empire. The top rank of a ladder (`Elite V`, `Admiral`, `King`) reads `max`. It follows the journal's `Rank`, `Progress` and `Promotion` events, so a promotion shows at once, and a different commander starts with an empty table. The rank names now come from one table (`ranks.py`) that the engineers' invitation checks share.
 - **Reset on the Trade panel.** A **Reset** button now sits beside History under the Trade summary, so the session tally can be restarted without opening the Session window. It does what the Session page's Reset does, including the offer to save an unsaved session first.
+- **Expedition summary for Discord.** The Expedition Log window has **Copy for Discord**, **Post to Discord** and **Customize…** for the selected expedition. The post gives its name, status and time, where it started and ended, the exploration and exobiology figures, and the credits its data sales earned, with unsold data marked as an estimate. The Customize dialog gains an **Expedition summary** report with the Standard, Compact, Detailed and Plain presets; Detailed adds the ships and notes. Posting the same expedition again edits the earlier post. Nothing is posted without a button press.
+- **Expedition plan announcement for Discord.** The Expedition window has **Copy for Discord**, **Post to Discord** and **Customize…** for the chosen expedition's plan: its name and status, the stops reached, jumps and light-years, the first and last stop, the next stop, and the next ten stops (or every stop). The Customize dialog gains an **Expedition plan** report with the same four presets. Posting again as the expedition progresses edits the earlier post.
+
+### Fixed
+
+- The preview line in the Customize Discord posts dialog wraps instead of widening the window.
+- **Copy next system follows the leg you are on.** It always copied the first destination, so after docking there and buying for the next leg it kept copying the system you were in. WFMT now keeps each leg's destination in order and moves on when you dock in the system a leg was heading for: the first destination after you buy at the start, the second once you dock at the first, and so on. It never copies the system you are already in, and a loop (a round trip, or a route that ends where it starts) wraps back to its first stop. The leg is not kept when EDMC restarts, and a new search starts again at the first leg.
 
 ## 1.5.2 (2026-11-04)
 

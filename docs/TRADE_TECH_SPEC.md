@@ -517,7 +517,7 @@ Hops default to 3, arrival distance to 5,000 ls.
 to station, then three figures: the hop's profit, the running total and the distance in ly; under them the system, ls, best commodity and
 the supply and demand). A **Whole route** item under the last hop adds them up, and a bold note gives the average per leg times the number
 of legs, which is the estimated total earnings (`_finish_routes`). A Round trip pair ends with a `Both legs: out + back = per loop` note and the same kind of
-average line (`_finish_round_trip`). The first hop's destination system is remembered for **Copy next system**.
+average line (`_finish_round_trip`). Each hop's destination system is kept in order (`_route_stops`) with a leg counter (`_route_leg`) for **Copy next system**: docking in the system the current leg was heading for (`_advance_leg`) moves on to the next, a stop equal to the current system is skipped (`_next_stop`), and a loop wraps back to the first stop. The leg is not saved across an EDMC restart, and a new search resets it.
 
 ### 8.1 Route filters and the time estimate
 
@@ -568,7 +568,7 @@ Spansh's planner cannot be asked for a pair that comes back, so the pair is foun
 
 `wfmt_trade_roundtrip_start` ("Station, System" or "Station (System)", blank = where the commander is docked, else the last dock) replaces `round_trip_start`'s answer: `parse_start` splits on the last bracket or comma, and text that does not parse is reported on the page without a search. `wfmt_trade_roundtrip_rank` ("loop", else per hour; stored blank for per hour, as the ship size choice stores From my ship) is passed to `find_round_trips(rank=)`: `RANK_LOOP` sorts by `profit` then `per_hour`, anything else by `per_hour`.
 
-The panel shows the top three (`RESULTS_KEPT`) with what to carry each way, remembers the best pair's destination for
+The panel shows the top three (`RESULTS_KEPT`) with what to carry each way, remembers the best pair (both stations' systems, as a loop) for
 **Copy next system** and records it in the session's lookups (two hops). Settings: `wfmt_trade_min_supply` and
 `wfmt_trade_min_demand` (default 200 t). `wfmt_trade_roundtrip_commodity` (blank = anything) limits both legs to one commodity:
 `best_load` and `find_round_trips` take `only`, matched ignoring case, so a pair must trade it both ways to count. The Routes window's box suggests commodity names as you type (a `CommodityEntry`, the Market box's type-ahead; local, nothing fetched). Tested by `tests/test_trade_roundtrip.py`.
