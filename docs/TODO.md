@@ -47,6 +47,16 @@ Scope: open work items and open in-game checks. Items are listed once.
 - A desk review (2026-10-21) compared the Space and Surface Mining windows, Mining History, the Mining Books, the live window and the guide with what the journal offers. Coverage found: the run's ore, limpets, rates, hold, targets, missions, sales, history, hotspots, prices and reserve lookups. Profit, the time until the hold is full and the price against the galactic average are built (checks below).
 - Not assessed without play: the Surface (Rhino) tools, the radar over the game, the overlay layouts, and the amount of information in the Space and Surface Mining windows and the panel summary. The checklist below covers these.
 - *After limpets* does not subtract fuel, repairs or ammunition. The journal records them, but they are not tied to a run as launches are.
+- Planned for 1.6.0 (surface mining), in this order. Nothing is built yet.
+  - **Find saved deposits in another system.** The Surface Mining Book's left pane already has an *Other systems* group. Add a system box above it that suggests names while typing, and a *Back to <current system>* link. Saving a deposit always goes to the current system.
+  - **Show what a deposit is worth.**
+    - Each deposit row shows its tons-left estimate times the best price (for example `~38 t · ~19M cr`).
+    - Each body in the left pane is tagged with its best known material (for example `best: Painite 520k`), from the commander's own records on that kind of ground times the price. The wording says *your records*, because the game does not state what an unvisited body carries.
+    - **Stops** can be sorted by rigs or by credits. Credits is the default once prices are known; rigs is the fallback and the other choice.
+    - What pays appears in the Book as a collapsible strip. The window keeps the full table.
+  - **Keep the prices without a button press.** The Book refreshes the best price of each commodity it shows, at most once an hour. It uses the existing *Mining: best price finder and Market research* switch and the same requests What pays makes, so the privacy page needs no new entry. With the switch off the Book shows no prices and says why.
+  - **Rig-spot suggestions (experimental).** Inside the circle given by Mark center and Mark border, show spots one rig gap apart in a hex pattern, leave out spots already covered by a placed rig's band, number them on the radar and point an arrow at the nearest free one. Hidden until the rig gap is entered (it depends on the *Rig placed and the rig bands* check below). The label says the border is a circle, not the deposit's true outline.
+  - Checks to add when built: the value figures against a hand calculation from the market; prices absent with the switch off; the other-system box and its back link; the suggested spots against a real rig placed at one of them.
 
 ### Window layout on real screens, and table text caps
 
