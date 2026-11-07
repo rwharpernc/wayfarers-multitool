@@ -31,6 +31,7 @@ Scope: open work items and open in-game checks. Items are listed once.
 
 ### Expedition page and workflow
 
+- Planned for 1.6.0, branch `feature/expedition-simplify`: simplify planning and running an expedition. One expedition with a Route, Places or Free kind chosen in a single New expedition step, one set of controls, and two tabs (Current and History) in place of Plan, Route and Log; the saved files do not change. Design: [EXPEDITION_TECH_SPEC.md](EXPEDITION_TECH_SPEC.md) (for review, nothing built yet). Next: the implementation plan.
 - Built:
   - The Route Planner window's **Start expedition** creates an expedition from the route, starts it and starts a linked Expedition Log run (a setting).
   - **Review expedition** opens the Expedition window on it.
