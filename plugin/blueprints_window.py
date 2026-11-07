@@ -27,7 +27,7 @@ from config import appname, config
 
 from . import blueprint_needs as needs_mod
 from . import blueprint_wishlist as wishlist_mod
-from . import blueprints, engineer_guides_data, engineer_path, engineers, ingredient_sources, issue_report, stored_modules
+from . import blueprints, engineer_guides_data, engineer_path, engineers, ingredient_sources, issue_report, name_suggestions, stored_modules
 from .powerplay_clipboard import inara_system_url
 from .odyssey_plan_tab import UpgradePlanTab
 from .ship_plan_tab import ShipPlanTab
@@ -251,7 +251,9 @@ class BlueprintsWindow:
         filters.pack(fill="x", pady=(0, P.PAD_SM))
         tk.Label(filters, text="Search", fg=P.MUTED, bg=P.PANE).pack(side="left")
         self._query = tk.StringVar()
-        tk.Entry(filters, textvariable=self._query, width=26).pack(side="left", padx=(P.PAD_SM, P.PAD))
+        search = tk.Entry(filters, textvariable=self._query, width=26)
+        search.pack(side="left", padx=(P.PAD_SM, P.PAD))
+        name_suggestions.attach_names(search, self._query, blueprints.search_names)       # blueprint names and module types
         self._query.trace_add("write", lambda *_: self._search_later())
         tk.Label(filters, text="Module", fg=P.MUTED, bg=P.PANE).pack(side="left")
         self._type = tk.StringVar(value=ALL)

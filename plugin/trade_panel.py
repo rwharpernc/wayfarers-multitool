@@ -50,6 +50,7 @@ from . import trade_history_window
 from . import trade_commodities
 from . import trade_pages
 from . import trade_prices
+from . import system_names
 from . import trade_roundtrip
 from . import trade_ship
 from . import trade_windows
@@ -1121,6 +1122,12 @@ class TradePanelController:
         self._book.put(self._cmdr, rebuilt)
         self._save(force=True)
         self._say(f"Rebuilt from the journals since {since.replace('T', ' ').rstrip('Z')} UTC. Check the totals, then Save session.")
+
+    def start_suggestions(self, text: str) -> List[str]:
+        """What the Round trip start box offers for `text`: the stations this commander has traded at, then the systems WFMT holds (no network)."""
+        home = self._home.get(trade_route_start.key_for(self._cmdr)) if self._cmdr else None
+        logs = [(self._ledger or {}).get("log") or []] + [s.get("log") or [] for s in reversed(self._history.sessions)]
+        return trade_roundtrip.start_suggestions(text, trade_roundtrip.known_starts(home, logs), system_names.suggest_local)
 
     def _route_hops(self) -> int:
         return _cfg_int(_CFG_MAX_HOPS, _DEFAULT_MAX_HOPS, 1, 10)

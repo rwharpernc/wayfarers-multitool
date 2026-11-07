@@ -319,10 +319,10 @@ Most WFMT settings are in EDMC's Settings window: **File → Settings → WFMT**
 
 Every box that takes a system name suggests systems from the second letter. This covers an expedition stop, the Expedition planner's start and end, the trader finder's *Search from*, Colonization's *Around*, a mining hotspot or ring reserve, a note, a waypoint and a Boxel Survey seed.
 
-- **Suggestions:** systems visited in the current session first, then systems WFMT already holds (expedition stops, notes).
+- **Suggestions:** systems visited in the current session first, then systems WFMT already holds (expedition stops, notes), then every system in the playing commander's journals, from the second letter. The journals are read once in the background the first time (the Sol and Colonia you visited last year are there), and nothing is fetched. Another commander's systems are never suggested.
 - **Keys:** **Down** and **Up** move through the list, **Enter** or a click selects the highlighted entry, and **Escape** closes the list. **Enter** with nothing highlighted performs the box's normal action (adds the stop, runs the search).
 - **Other names:** the same keys work in other boxes that take a name WFMT can list, and all suggestions are local (nothing is fetched). The **Body** and **Ring** boxes (Add hotspot, Expedition stops, Surface marks, Notes, the ring reserve lookup, Add a ring) suggest the bodies and rings WFMT knows in the system typed beside them. The **Ship** box of a ship build suggests ships. A single commodity box (such as **Carry only this commodity** in the Routes window) suggests commodities. A box that takes several commodities separated by commas (the **Also check** boxes of the mining price lookups, the **Hotspots** box of Add a ring) suggests the entry being typed.
-- **Systems not yet visited:** tick **Suggest system names from Spansh while typing** under Settings → WFMT → General → Window. It is off by default; when ticked, the letters typed so far (from the third) are sent to Spansh ([what goes on the internet](internet-and-privacy.md)).
+- **Systems not yet visited:** tick **Suggest system names from Spansh while typing** under Settings → WFMT → General → Window. It is off by default; when ticked, the letters typed so far (from the third) are sent to Spansh ([what goes on the internet](internet-and-privacy.md)). While it is off, a system that is in none of your lists shows a one-line hint under the box saying where to turn it on.
 
 ### What you can and can't switch off
 

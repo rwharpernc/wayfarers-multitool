@@ -11,7 +11,7 @@ from typing import Any, List, Optional
 
 from config import appname, config
 
-from . import material_trader_window, materials
+from . import material_trader_window, materials, name_suggestions
 from .uikit import palette as P
 from .uikit.shell import WindowShell
 from .uikit.table import Column, DataTable
@@ -99,7 +99,9 @@ class MaterialsWindow:
         filters.pack(fill="x", pady=(0, P.PAD_SM))
         tk.Label(filters, text="Search", fg=P.MUTED, bg=P.BG).pack(side="left")
         self._query = tk.StringVar()
-        tk.Entry(filters, textvariable=self._query, width=18).pack(side="left", padx=(P.PAD_SM, P.PAD))
+        search = tk.Entry(filters, textvariable=self._query, width=18)
+        search.pack(side="left", padx=(P.PAD_SM, P.PAD))
+        name_suggestions.attach_names(search, self._query, lambda: [held.material.name for held in self._book.held()])      # the materials in the table
         self._kind = tk.StringVar(value=ALL)
         self._grade = tk.StringVar(value=ALL)
         for label, variable, values in (("Type", self._kind, (ALL, *materials.TYPES)),

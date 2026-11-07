@@ -9,7 +9,7 @@ from __future__ import annotations
 import tkinter as tk
 from typing import Callable
 
-from . import stored_modules
+from . import name_suggestions, stored_modules
 from .uikit import palette as P
 from .uikit.table import Column, DataTable
 from .uikit.widgets import NoteLabel
@@ -40,7 +40,9 @@ class StoredModulesTab:
         filters.pack(fill="x", pady=(0, P.PAD_SM))
         tk.Label(filters, text="Filter", fg=P.MUTED, bg=P.PANE).pack(side="left")
         self._query = tk.StringVar()
-        tk.Entry(filters, textvariable=self._query, width=26).pack(side="left", padx=(P.PAD_SM, P.PAD))
+        box = tk.Entry(filters, textvariable=self._query, width=26)
+        box.pack(side="left", padx=(P.PAD_SM, P.PAD))
+        name_suggestions.attach_names(box, self._query, self._module_names)       # the modules in storage
         self._query.trace_add("write", lambda *_: self._filter_later())
         self._count = tk.Label(filters, text="", fg=P.MUTED, bg=P.PANE, anchor="w")
         self._count.pack(side="left")
@@ -63,6 +65,10 @@ class StoredModulesTab:
         if self._seen[:1] != (self._book.revision,) or self._seen[1] != self._get_cmdr():
             self.refresh()
         self._parent.after(POLL_MS, self._poll)
+
+    def _module_names(self) -> list:
+        cmdr = self._get_cmdr()
+        return [module["n"] for module in self._book.modules(cmdr)] if cmdr else []
 
     def _filter_later(self) -> None:
         if self._job is not None:

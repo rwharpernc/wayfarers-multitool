@@ -136,7 +136,7 @@ The repository is developed on both operating systems. Each machine builds and i
   - Keys, readers and savers are placed in a small `*_settings.py` module that imports nothing from the panel and provides `add_listener`, so the panel, the Settings tab and every open window redraw together. Examples: `mining_window_settings.py`, `bgs_settings.py`, `exploration_settings.py`.
   - A window never grants a permission. It displays the permission state and disables the controls that depend on it.
   - A page of a mode is a window opened from a button, not an arrow that pages the panel. A test for the window is placed in `tests/*_smoke.py` with a `test_*.py` wrapper that runs it headless.
-- Name boxes use type-ahead: `system_autocomplete` for systems, `commodity_autocomplete` for one commodity, `name_suggestions` for bodies, rings, ships and comma-separated commodities.
+- Name boxes use type-ahead: `system_autocomplete` for systems (the session's, the journals' through `system_history.py`, and Spansh when ticked), `commodity_autocomplete` for one commodity, `name_suggestions` for bodies, rings, ships, comma-separated commodities and any list of names (`attach_names`). A new box that takes a name WFMT can list gets one; `tests/test_field_suggestions_wired.py` lists the ones that have it.
 - `monitor.logfile` (EDMC) is a `str` or a `pathlib.Path` depending on the EDMC version. Wrap it in `str()` before comparing or saving it to JSON.
 - Background threads never touch a Tk widget. Results are passed back with a queue and `after()`.
 - A Settings tab that does not appear indicates an exception while building it. EDMC logs `Failed for Plugin "WFMT"`.

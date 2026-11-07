@@ -15,6 +15,7 @@ from config import appname, config
 
 from .inventory import SHIP_LOCKER_CAPACITY, WARNING_THRESHOLD, InventoryTracker, TRACKED_CATEGORIES
 from .inventory_names import display_name
+from . import name_suggestions
 from .inventory_settings_tab import SettingsTab
 from .inventory_suit import SuitState
 from .uikit import palette as P
@@ -122,7 +123,10 @@ class InventoryWindow:
         tk.Label(filter_bar, text="Filter:", fg=P.MUTED, bg=P.BG).pack(side="left", padx=(0, 6))
         self._filter_var = tk.StringVar()
         self._filter_var.trace_add("write", lambda *_args: self.refresh())
-        tk.Entry(filter_bar, textvariable=self._filter_var).pack(side="left", fill="x", expand=True)
+        filter_box = tk.Entry(filter_bar, textvariable=self._filter_var)
+        filter_box.pack(side="left", fill="x", expand=True)
+        self._item_names: list = []        # the items shown on the tabs, kept by refresh() for the box's suggestions
+        name_suggestions.attach_names(filter_box, self._filter_var, lambda: self._item_names)
         FlatButton(filter_bar, "Clear filter", self._clear_filter, tip="Clear filter - empty the filter box and show every item").pack(side="left", padx=(6, 0))
 
         self._tab_bar = Tabs(self._shell.body)
@@ -155,6 +159,7 @@ class InventoryWindow:
             return
 
         snapshot = self._tracker.snapshot()
+        self._item_names = sorted({display_name(name) for store in snapshot.values() for items in store.values() for name in items})
         self._shell.set_subtitle(f"Suit: {self._suit.display_name}")
 
         capacities = {

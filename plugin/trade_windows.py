@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from config import config
 
-from . import commit_entry, trade_pages, trade_prices
+from . import commit_entry, system_autocomplete, trade_pages, trade_prices
 from .trade_commodity_entry import CommodityEntry
 from .trade_view import BlockView
 from .uikit import palette as P
@@ -212,6 +212,8 @@ class TradePageWindow:
             entry = tk.Entry(panel, textvariable=var, width=34 if key == _START_KEY else 8)
             entry.grid(row=row, column=column * 2 + 1, sticky="w", padx=(0, P.PAD * 2), pady=2)
             add_tooltip(entry, tip)
+            if key == _START_KEY:
+                system_autocomplete.attach(entry, var, provider=self._controller.start_suggestions)      # Station, System: the stations you have traded at, then systems
             commit_entry.bind_commit(entry, var, lambda raw, k=key: str(self._controller.set_requirement(k, raw)))
             self._fields[key] = (var, entry)
             column += 1

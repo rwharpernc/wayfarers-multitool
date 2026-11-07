@@ -72,6 +72,41 @@ class AutocompleteTests(unittest.TestCase):
         self.type("point")
         self.assertEqual(self.shown(), ["Beagle Point"])               # a name that merely contains it still comes up
 
+    def test_the_systems_in_the_journals_are_suggested_after_the_sessions_own(self):
+        N.set_visited(["Sol", "Solitude", "Solar Plexus"])
+        N.remember("Soho")
+        self.type("so")
+        self.assertEqual(self.shown(), ["Soho", "Sol", "Solar Plexus", "Solitude"])
+
+    def test_with_spansh_off_a_system_that_is_nowhere_says_where_to_turn_it_on(self):
+        N.set_visited(["Sol"])
+        self.type("colon")
+        self.assertIsNone(self.box._listbox, "there is no list to take from")
+        self.assertIsNotNone(self.box._popup, "the hint is up")
+        self.assertIn("Spansh", A.HINT_TEXT)
+
+    def test_no_hint_for_a_system_that_is_known_one_that_is_too_short_or_with_spansh_on(self):
+        N.set_visited(["Sol"])
+        self.type("Sol")                                   # typed in full: found, so nothing to explain
+        self.assertIsNone(self.box._popup)
+        self.type("sol")                                   # other capitals: the list offers the right spelling, not a hint
+        self.assertEqual(self.shown(), ["Sol"])
+        self.type("co")                                    # too short to look anything up
+        self.assertIsNone(self.box._popup)
+        SETTINGS[N.CFG_REMOTE] = True
+        self.type("colonx")                                # the lookup is on, so no hint (the answer arrives on its own)
+        self.assertIsNone(self.box._popup)
+
+    def test_the_hint_gives_way_to_a_list_and_a_list_to_the_hint(self):
+        N.set_visited(["Colonia"])
+        self.type("colx")
+        self.assertIsNotNone(self.box._popup)
+        self.type("colo")
+        self.assertEqual(self.shown(), ["Colonia"])
+        self.type("coloz")
+        self.assertIsNone(self.box._listbox)
+        self.assertIsNotNone(self.box._popup)
+
     def test_down_and_enter_take_a_suggestion_and_do_not_also_run_the_boxs_own_enter(self):
         N.remember("Sol")
         N.remember("Solitude")

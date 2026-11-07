@@ -19,6 +19,57 @@ def station(name, market, x=0.0, system=None, ls=100.0, planetary=False, carrier
                       {c: rt.Offer(c, *v) for c, v in market.items()})
 
 
+SYSTEMS = ["Sol", "Solitude", "Colonia"]
+
+
+def systems_for(typed):
+    return [name for name in SYSTEMS if name.casefold().startswith(typed.casefold())] if len(typed) >= 2 else []
+
+
+class StartSuggestionTests(unittest.TestCase):
+    KNOWN = [("Daedalus", "Sol"), ("Jameson Memorial", "Shinrarta Dezhra"), ("Trader's Rest", "Sol")]
+
+    def test_before_the_comma_the_stations_you_have_traded_at_come_as_station_comma_system(self) -> None:
+        self.assertEqual(rt.start_suggestions("dae", self.KNOWN, systems_for), ["Daedalus, Sol"])
+        self.assertEqual(rt.start_suggestions("rest", self.KNOWN, systems_for), ["Trader's Rest, Sol"], "a name that only contains it still comes up")
+
+    def test_starting_with_it_comes_before_containing_it(self) -> None:
+        known = [("Port Lord", "A"), ("Lord Port", "B")]
+        self.assertEqual(rt.start_suggestions("lord", known, systems_for), ["Lord Port, B", "Port Lord, A"])
+
+    def test_after_the_comma_the_systems_are_offered_with_the_station_kept(self) -> None:
+        self.assertEqual(rt.start_suggestions("Daedalus, so", self.KNOWN, systems_for), ["Daedalus, Sol", "Daedalus, Solitude"])
+        self.assertEqual(rt.start_suggestions("Daedalus,so", self.KNOWN, systems_for), ["Daedalus, Sol", "Daedalus, Solitude"])
+        self.assertEqual(rt.start_suggestions("Daedalus, ", self.KNOWN, systems_for), [])
+        self.assertEqual(rt.start_suggestions(", so", self.KNOWN, systems_for), [], "no station written yet")
+
+    def test_what_is_offered_reads_back_through_parse_start(self) -> None:
+        for offered in rt.start_suggestions("jam", self.KNOWN, systems_for) + rt.start_suggestions("Daedalus, col", self.KNOWN, systems_for):
+            self.assertIsNotNone(rt.parse_start(offered), offered)
+
+    def test_nothing_known_offers_nothing_and_the_limit_is_kept(self) -> None:
+        self.assertEqual(rt.start_suggestions("dae", [], systems_for), [])
+        many = [(f"Station {n}", "Sol") for n in range(40)]
+        self.assertEqual(len(rt.start_suggestions("station", many, systems_for, limit=5)), 5)
+
+
+class KnownStartsTests(unittest.TestCase):
+    def test_the_remembered_start_leads_then_each_log_newest_first_each_pair_once(self) -> None:
+        home = {"station": "Daedalus", "system": "Sol"}
+        newer = [{"stn": "Old Port", "sys": "Wolf 359"}, {"stn": "Jameson Memorial", "sys": "Shinrarta Dezhra"}]
+        older = [{"stn": "Daedalus", "sys": "SOL"}, {"stn": "Hutton Orbital", "sys": "Alpha Centauri"}]
+        self.assertEqual(rt.known_starts(home, [newer, older]),
+                         [("Daedalus", "Sol"), ("Jameson Memorial", "Shinrarta Dezhra"), ("Old Port", "Wolf 359"), ("Hutton Orbital", "Alpha Centauri")])
+
+    def test_fleet_carriers_and_incomplete_entries_are_left_out(self) -> None:
+        log = [{"stn": "K5V-23L", "sys": "Sol"}, {"stn": "Daedalus"}, {"sys": "Sol"}, "junk", {"stn": "Daedalus", "sys": "Sol"}]
+        self.assertEqual(rt.known_starts(None, [log]), [("Daedalus", "Sol")])
+
+    def test_nothing_gives_an_empty_list(self) -> None:
+        self.assertEqual(rt.known_starts(None, []), [])
+        self.assertEqual(rt.known_starts({}, [[]]), [])
+
+
 class ParseStartTests(unittest.TestCase):
     def test_station_comma_system(self) -> None:
         self.assertEqual(rt.parse_start("Jameson Memorial, Shinrarta Dezhra"), ("Shinrarta Dezhra", "Jameson Memorial"))

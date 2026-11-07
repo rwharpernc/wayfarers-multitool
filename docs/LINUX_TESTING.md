@@ -937,6 +937,7 @@ Open an issue with the setup line (distribution, desktop, X11 or Wayland, native
 Steps are in [TEST_PLAN.md](TEST_PLAN.md) section 15.
 
 - [x] **Copy next system:** after docking at a leg's destination, the button copies the following destination (never the system you are in), and a loop wraps back to the first stop. Confirm the paste works in the galaxy map under Proton.
+- [ ] **Suggestions in more boxes:** a system from your journals suggests in the Expedition System box, the hint shows for letters that match nothing while the Spansh lookup is off, the Round trip **Start from** box offers `Station, System`, and the Materials, Blueprints, Inventory and Stored modules search boxes suggest names. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
 - [x] **Reset on the Trade panel:** the button row shows **Session**, **Routes**, **Market**, **History** and **Reset** with nothing cut off, and **Reset** offers to save an unsaved session first. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
 - [x] **Ranks (Operations):** the **Ranks** row lists every rank by the game's name with the percent to the next, uses the full panel width and wraps nothing. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.
 - [ ] **Expedition summary for Discord:** in the Expedition window's Log tab the share row fits, **Copy for Discord** copies the summary, and **Customize…** opens on Expedition summary with a working preview. Steps: [TEST_PLAN.md](TEST_PLAN.md) section 15.

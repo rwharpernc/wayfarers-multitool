@@ -4,9 +4,10 @@ through it, Enter (or a click) takes the highlighted one, Escape closes it. Ente
 so a box that adds or searches on Enter still does. The box itself is not changed, so it keeps its place and its look: the list takes its colors from
 the box.
 
-The suggestions are the systems you have been in and the names WFMT already holds, from two letters on, and, when **Suggest system names from Spansh
-while typing** is ticked (Settings → Window), systems from Spansh's search, from three letters on, after a short pause (see `system_names.py`). The
-Spansh call runs on a worker thread, so typing never waits for it.
+The suggestions are the systems you have been in (this session, and every one in your journals: `system_history.py`) and the names WFMT already
+holds, from two letters on, and, when **Suggest system names from Spansh while typing** is ticked (Settings → Window), systems from Spansh's search,
+from three letters on, after a short pause (see `system_names.py`). The Spansh call runs on a worker thread, so typing never waits for it. When that
+option is off and nothing matches, the list says where to turn it on instead of staying blank.
 """
 from __future__ import annotations
 
@@ -26,6 +27,7 @@ plugin_name = os.path.basename(os.path.dirname(__file__))
 logger = logging.getLogger(f"{appname}.{plugin_name}")
 
 MAX_ROWS = 8
+HINT_TEXT = "No match in your journals. To look up other systems, tick Suggest system names from Spansh in Settings > Window."
 DEBOUNCE_MS = 350
 POLL_MS = 150
 _IGNORED_KEYS = {"Return", "Escape", "Up", "Down", "Tab", "Shift_L", "Shift_R", "Control_L", "Control_R", "Alt_L", "Alt_R", "Left", "Right",
@@ -90,6 +92,10 @@ class Autocomplete:
             if system_names.key(name) not in seen:
                 seen.add(system_names.key(name))
                 out.append(name)
+        for name in system_names.visited_matches(text, limit=MAX_ROWS * 2):       # the journals' systems, after the ones above
+            if system_names.key(name) not in seen:
+                seen.add(system_names.key(name))
+                out.append(name)
         if len(out) == 1 and system_names.key(out[0]) == system_names.key(text) and out[0] == text:
             return []
         return out[:MAX_ROWS * 2]
@@ -142,8 +148,29 @@ class Autocomplete:
         items = self.matches()
         if items:
             self._show(items)
+        elif self._wants_hint():
+            self._show_hint()
         else:
             self.close()
+
+    def _wants_hint(self) -> bool:
+        """A system box, typing enough to look up, nothing found, and the Spansh lookup is off: say how to turn it on."""
+        text = self._text()
+        return (self._provider is None and not system_names.remote_enabled() and len(text) >= system_names.MIN_REMOTE_CHARS
+                and not system_names.knows(text))      # a name typed in full is found, so it has no "no match" to explain
+
+    def _show_hint(self) -> None:
+        self.close()
+        bg, fg, _select_bg, _select_fg = self._colors()
+        popup = tk.Toplevel(self._entry)
+        popup.overrideredirect(True)
+        popup.configure(bg=fg)
+        width = max(self._entry.winfo_width(), 160)
+        tk.Label(popup, text=HINT_TEXT, bg=bg, fg=fg, justify="left", anchor="w", wraplength=width - 12).pack(padx=1, pady=1, fill="both")
+        popup.update_idletasks()
+        popup.geometry(f"{width}x{popup.winfo_reqheight()}+{self._entry.winfo_rootx()}+{self._entry.winfo_rooty() + self._entry.winfo_height()}")
+        popup.lift()
+        self._popup = popup            # no list, so there is nothing to highlight or take
 
     def _colors(self) -> Tuple[str, str, str, str]:
         def pick(option: str, fallback: str) -> str:
@@ -154,6 +181,8 @@ class Autocomplete:
         return pick("bg", "white"), pick("fg", "black"), pick("selectbackground", "#3399ff"), pick("selectforeground", "white")
 
     def _show(self, items: List[str]) -> None:
+        if self._popup is not None and self._listbox is None:
+            self.close()                # the hint is up: replace it with the list
         bg, fg, select_bg, select_fg = self._colors()
         if self._popup is None:
             popup = tk.Toplevel(self._entry)

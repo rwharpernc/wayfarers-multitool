@@ -1,8 +1,9 @@
 """
 Where the suggestions for a system-name box come from.
 
-- **Local** (always on, no network): the systems you have been in this session (most recent first) and the names other parts of WFMT register
-  with `add_source`: expedition stops, system notes. Nothing leaves the computer.
+- **Local** (always on, no network): the systems you have been in this session (most recent first), the names other parts of WFMT register
+  with `add_source` (expedition stops, system notes), and every system in the playing commander's journals (`system_history.py`, which calls `set_visited`).
+  Nothing leaves the computer.
 - **Spansh** (only when **Suggest system names from Spansh while typing** is ticked in Settings → Window, off until you tick it): the part of the
   name typed so far goes to Spansh's system-name search, which returns up to 20 systems that match. It is a real outbound call made as you type
   (after a short pause, from the third character), so it is opt-in and listed on the internet page. The answers are kept in memory for the
@@ -14,6 +15,7 @@ at most 20 names. `values` is used; a damaged answer gives no suggestions rather
 """
 from __future__ import annotations
 
+import bisect
 import json
 import logging
 import os
@@ -43,6 +45,8 @@ _USER_AGENT = http_identity.user_agent("system-name-suggestions")
 _recent: "OrderedDict[str, str]" = OrderedDict()      # name_key -> name, most recent last
 _sources: List[Callable[[], Iterable[str]]] = []
 _cache: "OrderedDict[str, List[str]]" = OrderedDict()  # typed start (case-folded) -> names Spansh gave
+_visited_keys: List[str] = []                         # the playing commander's journal systems, sorted by key, so a typed start is found by bisection
+_visited_names: List[str] = []
 _lock = threading.Lock()
 
 
@@ -64,6 +68,66 @@ def remember(name: str) -> None:
         _recent[key(clean)] = clean
         while len(_recent) > MAX_REMEMBERED:
             _recent.popitem(last=False)
+
+
+def set_visited(names: Iterable[str]) -> None:
+    """Replace the playing commander's journal systems (from `system_history.py`). Sorted once here, so each key press only bisects."""
+    unique: Dict[str, str] = {}
+    for name in names:
+        if str(name or "").strip():
+            unique.setdefault(key(name), " ".join(str(name).split())[:MAX_NAME])      # the first spelling given is the one shown
+    pairs = sorted(unique.items())
+    with _lock:
+        _visited_keys[:] = [k for k, _name in pairs]
+        _visited_names[:] = [name for _k, name in pairs]
+
+
+def visited_matches(typed: str, limit: int = 16) -> List[str]:
+    """Journal systems that start with `typed`, A to Z, at most `limit`. Costs a bisection, however many systems there are."""
+    text = key(typed)
+    if not text:
+        return []
+    with _lock:
+        position = bisect.bisect_left(_visited_keys, text)
+        found: List[str] = []
+        while position < len(_visited_keys) and _visited_keys[position].startswith(text) and len(found) < limit:
+            found.append(_visited_names[position])
+            position += 1
+    return found
+
+
+def suggest_local(typed: str, limit: int = 16) -> List[str]:
+    """Systems WFMT holds for `typed` with no network, for a box that is not a plain system box (the Round trip start, `Station, System`): the session's and
+    the registered sources' names that start with it, then those that contain it, then the journals' systems that start with it."""
+    text = key(typed)
+    if len(text) < MIN_LOCAL_CHARS:
+        return []
+    pool = local()
+    out: List[str] = []
+    seen = set()
+    for wanted in (lambda k: k.startswith(text), lambda k: text in k):
+        for name in pool:
+            folded = key(name)
+            if folded not in seen and wanted(folded):
+                seen.add(folded)
+                out.append(name)
+    for name in visited_matches(text, limit):
+        if key(name) not in seen:
+            seen.add(key(name))
+            out.append(name)
+    return out[:limit]
+
+
+def knows(typed: str) -> bool:
+    """True when `typed` is exactly a system WFMT holds (this session, a registered source, or the journals), whatever its capitals."""
+    text = key(typed)
+    if not text:
+        return False
+    with _lock:
+        position = bisect.bisect_left(_visited_keys, text)
+        if position < len(_visited_keys) and _visited_keys[position] == text:
+            return True
+    return any(key(name) == text for name in local())
 
 
 def add_source(source: Callable[[], Iterable[str]]) -> None:
@@ -141,4 +205,6 @@ def clear() -> None:
     with _lock:
         _recent.clear()
         _cache.clear()
+        _visited_keys.clear()
+        _visited_names.clear()
     del _sources[:]

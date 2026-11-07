@@ -29,6 +29,7 @@ Scope: the release state, branches, test state and unverified items of Wayfarer'
 
 - **1.5.3** (not yet published)
   - Adds a Ranks section to Operations: every Pilots Federation and navy rank by the game's own name, with the percent toward the next rank. The rank names are now one shared table (`ranks.py`) that the engineer invitation checks also read.
+  - Suggests, in every system box, each system in the playing commander's journals (with a hint when the Spansh lookup that finds the rest is off), and adds suggestions to the Round trip **Start from** box and to the search and filter boxes of Materials, Blueprints, Inventory and Stored modules.
   - Adds a Reset button to the Trade panel, beside History, that does what the Session page's Reset does.
   - Adds Copy for Discord, Post to Discord and Customize… for the selected expedition in the Expedition Log: name, status, route, exploration and exobiology figures, and the credits its data sales earned.
   - Adds the same three buttons to the Expedition window for an announcement of the chosen expedition's plan: progress, next stop and stops.

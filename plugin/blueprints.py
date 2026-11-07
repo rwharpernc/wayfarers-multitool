@@ -129,6 +129,11 @@ def types() -> List[str]:
     return sorted({b.type for b in ALL}, key=str.casefold)
 
 
+def search_names() -> List[str]:
+    """What the Blueprints search box can suggest: every module type and every blueprint name, A to Z, each once."""
+    return sorted({b.type for b in ALL} | {b.name for b in ALL}, key=str.casefold)
+
+
 def names_for(kind: str) -> List[str]:
     """The blueprint names of a module type, A to Z."""
     return sorted({b.name for b in ALL if b.type == kind}, key=str.casefold)

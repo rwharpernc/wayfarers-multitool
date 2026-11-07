@@ -15,7 +15,8 @@ import json
 import math
 import urllib.request
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Sequence
+import re
+from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tuple
 
 from . import http_identity, spansh_courtesy
 from . import trade_spansh_client as routes
@@ -269,6 +270,52 @@ def parse_start(text: str) -> Optional[tuple]:
         return None
     station, system = station.strip(), system.strip()
     return (system, station) if station and system else None
+
+
+_CARRIER_CALLSIGN = re.compile(r"^[A-Z0-9]{3}-[A-Z0-9]{3}$")      # a fleet carrier's station name is its callsign, and a carrier is never a route start
+
+
+def known_starts(home: Optional[Dict[str, str]], logs: Iterable[Iterable[Dict[str, Any]]]) -> List[Tuple[str, str]]:
+    """The (station, system) pairs the commander has been at, most recent first, each once: their remembered start, then each log's entries from the
+    newest back (`logs` goes newest first; the trade log keeps `stn` and `sys` on an entry). Carriers are left out."""
+    pairs: List[Tuple[str, str]] = []
+    seen = set()
+
+    def add(station: Any, system: Any) -> None:
+        station, system = " ".join(str(station or "").split()), " ".join(str(system or "").split())
+        key = (station.casefold(), system.casefold())
+        if station and system and key not in seen and not _CARRIER_CALLSIGN.match(station):
+            seen.add(key)
+            pairs.append((station, system))
+
+    if home:
+        add(home.get("station"), home.get("system"))
+    for log in logs:
+        for item in reversed(list(log)):
+            if isinstance(item, dict):
+                add(item.get("stn"), item.get("sys"))
+    return pairs
+
+
+def start_suggestions(text: str, known: Sequence[Tuple[str, str]], systems_for: Callable[[str], List[str]], limit: int = 16) -> List[str]:
+    """What the Round trip start box offers for what is typed, in the form it reads (`Station, System`). Before the comma: the stations in `known` that
+    start with it, then those that contain it. After it: `systems_for(the part typed)`, each kept with the station already written."""
+    value = " ".join((text or "").split())
+    if "," in value:
+        station, _, tail = value.rpartition(",")
+        station = station.strip()
+        return [f"{station}, {system}" for system in systems_for(tail.strip())][:limit] if station else []
+    needle = value.casefold()
+    starts: List[str] = []
+    contains: List[str] = []
+    for station, system in known:
+        combined = f"{station}, {system}"
+        folded = combined.casefold()
+        if not needle or folded.startswith(needle):
+            starts.append(combined)
+        elif needle in folded:
+            contains.append(combined)
+    return (starts + contains)[:limit]
 
 
 def find_round_trips(start: Station, others: Sequence[Station], cargo: int, capital: int, jump_range_ly: float,

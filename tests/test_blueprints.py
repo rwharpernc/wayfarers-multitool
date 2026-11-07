@@ -13,6 +13,16 @@ from plugin.inventory_names_fdevids import FDEVIDS_DISPLAY_NAMES  # noqa: E402
 from plugin.materials import CATALOG  # noqa: E402
 
 
+class SearchNamesTests(unittest.TestCase):
+    def test_the_search_box_offers_every_module_type_and_blueprint_name_once_a_to_z(self) -> None:
+        names = B.search_names()
+        self.assertEqual(names, sorted(set(names), key=str.casefold))
+        for kind in B.types():
+            self.assertIn(kind, names)
+        for blueprint in B.ALL[:50]:
+            self.assertIn(blueprint.name, names)
+
+
 class DataTests(unittest.TestCase):
     def test_the_whole_table_is_there(self):
         from plugin.blueprints_data import BLUEPRINT_ROWS

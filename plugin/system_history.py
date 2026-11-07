@@ -6,6 +6,8 @@ visits, the first and last, whether they scanned anything there, and which journ
 whole folder). Only journals that are finished (every one but the newest) are saved; what is happening now is kept in memory and rebuilt from the newest
 journal when EDMC starts, so nothing is counted twice. A later start reads only the journals written since.
 
+The systems themselves also feed the suggestions under every system box (`system_names.py`), with no network, for the commander who is playing.
+
 Saved in `system_history.json` beside the plugin, one record per commander (`commander_data.py`); nothing is sent anywhere. The journals of another
 commander are skipped. No Tk, no overlay.
 """
@@ -113,7 +115,30 @@ class SystemHistory:
             self._cmdr, self._live, self._live_tail = cmdr, {}, ""
             self._stamps = set()
             self.ready = False
+        self._publish()                # the saved systems suggest straight away, before the read below brings in the newest journals
         self.build(cmdr)
+
+    def names(self) -> List[str]:
+        """Every system this commander has been in (saved and this session's), each once, whatever its capitals."""
+        with self._lock:
+            payload = self._payload()
+            records = list(payload["systems"].values()) if payload else []
+            records += list(self._live.values())
+        found: Dict[str, str] = {}
+        for record in records:
+            name = record.get("name") if isinstance(record, dict) else None
+            if isinstance(name, str) and name.strip():
+                found.setdefault(name.casefold(), name)
+        return list(found.values())
+
+    def _publish(self) -> None:
+        """Hand the playing commander's systems to the system-name boxes (`system_names.py`) for their suggestions. Only this commander's: it is called for
+        the commander who is playing, and replaces the list when another one takes over."""
+        try:
+            from . import system_names
+        except ImportError:        # unit tests outside EDMC
+            return
+        system_names.set_visited(self.names())
 
     def _payload(self) -> Optional[Dict[str, Any]]:
         if not self._cmdr:
@@ -193,6 +218,7 @@ class SystemHistory:
                 self._thread.start()
             elif commander_data.key_for(cmdr) == commander_data.key_for(self._cmdr):
                 self.ready = True
+                self._publish()
 
     def _read_all(self, cmdr: str, folder: Optional[str]) -> None:
         paths = journal_files.files_modified_since(0.0, folder)
