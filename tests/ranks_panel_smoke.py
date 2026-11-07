@@ -97,8 +97,11 @@ PROGRESS = {"event": "Progress", "Combat": 99, "Trade": 100, "Explore": 98, "Sol
 
 saved["wfmt_ranks_collapsed"] = False
 panel = ranks_panel.RanksController()
+root.geometry("480x500")
+root.deiconify()
 host = tk.Frame(root)
-host.pack()
+host.columnconfigure(1, weight=1)          # as ui.py builds each feature's frame
+host.pack(fill="x")
 panel.build_panel(host)
 pump()
 check(panel._note_var.get() == "(waiting for commander login)" and panel._note.winfo_manager() == "grid", f"before a commander: {panel._note_var.get()!r}")
@@ -117,14 +120,18 @@ check(rows[1:] == [["Combat", "Expert", "99%"], ["Trade", "Elite V", "max"], ["E
                    ["Mercenary", "Rookie", "94%"], ["Exobiologist", "Geneticist", "98%"], ["Federation", "Post Captain", "100%"], ["Empire", "Duke", "100%"]],
       f"every ladder, by the game's names: {rows[1:]}")
 check(panel._note.winfo_manager() == "", "the waiting note is gone once there are ranks")
-width = max(host.winfo_reqwidth(), panel._rows.winfo_reqwidth())
-check(width <= 260, f"the longest names ask for {width} px")
+pump()
+labels = [c for c in panel._rows.winfo_children() if isinstance(c, tk.Label)]
+check(all(int(str(c.cget("wraplength"))) == 0 for c in labels), "no rank name is set to wrap")
+check(panel._rows.winfo_width() >= host.winfo_width() - 4, f"the table fills the panel: {panel._rows.winfo_width()} px of {host.winfo_width()}")
+width = panel._rows.winfo_width()
 
 panel.handle_event({"event": "Rank", "Federation": 9, "Exobiologist": 4, "Soldier": 3, "Empire": 6}, "Bocheaux", "Sol", None, {})
 panel.handle_event({"event": "Progress", "Federation": 100}, "Bocheaux", "Sol", None, {})
 pump()
-worst = max(host.winfo_reqwidth(), panel._rows.winfo_reqwidth())
-check(worst <= 260, f"the longest rank names ask for {worst} px")
+pump()
+long_names = [c for c in panel._rows.winfo_children() if isinstance(c, tk.Label) and c.cget("text") in ("Lieutenant Commander", "Semi Professional")]
+check(len(long_names) == 1 and int(str(long_names[0].cget("wraplength"))) == 0, f"Lieutenant Commander is shown unwrapped: {len(long_names)} found")
 panel.handle_event({"event": "Promotion", "Combat": 5}, "Bocheaux", "Sol", None, {})
 pump()
 check(["Combat", "Master", "0%"] in grid_rows(panel._rows), "a promotion shows at once, at 0%")
@@ -145,4 +152,4 @@ root.destroy()
 if problems:
     print("\n".join(problems))
     sys.exit(1)
-print(f"RANKS PANEL OK (panel {width} px wide)")
+print(f"RANKS PANEL OK (table {width} px wide)")

@@ -1265,7 +1265,7 @@ Data-layer modules keep per-commander state and announce changes through `Notifi
   - The Pilots Federation ladders have nine names (the last is `Elite`) and the prestige tiers `Elite I` to `Elite V` at 9 to 13 (a real journal holds a Trade rank of 13); the Federation and Empire navies have 15 names. The journal calls Exploration `Explore` and Mercenary `Soldier`. A number past a ladder's end reads `Rank <number>`.
   - The names come from community references and were checked against real journals. Where they differ the game's wording is used: the journal reference calls the fifth Exploration rank `Explorer`, the wiki, TrueAchievements and GamePur say `Trailblazer`.
   - `RankBook` holds one commander's ranks and a different commander starts empty. When EDMC started after the login, EDMC's own `state["Rank"]` fills the table: once, on a commander's first event and before that event is applied, and never after a switch from another commander, whose state may still be in it. Nothing is saved: the game sends `Rank` and `Progress` at every login. `engineer_requirements.py` reads its names from the same table.
-  - A long rank name wraps in the table (`StatRows.show(..., wrap=)`) so the panel stays narrow.
+  - The table takes the panel's full width (the body and the table are `sticky="ew"`, and the label column takes the spare room), so a long rank name such as `Lieutenant Commander` stays on one line.
 
 **Build costs**
 

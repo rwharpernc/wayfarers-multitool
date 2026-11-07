@@ -26,7 +26,6 @@ PANEL_PLACEMENT = "fieldops"
 HEADER = ("", "Rank", "To next")
 _WAITING_TEXT = "(waiting for the game's rank report: it is sent at login)"
 _NO_CMDR_TEXT = "(waiting for commander login)"
-_NAME_WRAP_PX = 85         # a long rank name (Lieutenant Commander, Chief Petty Officer) breaks onto a second line instead of widening the panel
 
 
 class RanksController:
@@ -55,15 +54,17 @@ class RanksController:
             self._rows.show(None, [])
             return
         self._note.grid_remove()
-        self._rows.show(HEADER, rows, wrap={1: _NAME_WRAP_PX})
+        self._rows.show(HEADER, rows)
 
     def build_panel(self, parent: tk.Frame) -> None:
         self._note_var = tk.StringVar(value=_NO_CMDR_TEXT)
         body = panelkit.collapsible_section(parent, "Ranks", "wfmt_ranks_collapsed")
+        body.grid_configure(sticky="ew")      # the table uses the panel's full width, so no rank name has to wrap; the section helper leaves a body as narrow as its content
+        body.columnconfigure(0, weight=1)
         self._note = panelkit.wrap_label(body, textvariable=self._note_var, anchor="w")
         self._note.grid(row=0, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
         self._rows = panelkit.StatRows(body)
-        self._rows.grid(row=1, column=0, columnspan=3, sticky=tk.W, pady=(2, 0))
+        self._rows.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(2, 0))
         self.refresh()
 
 

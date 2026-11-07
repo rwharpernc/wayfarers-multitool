@@ -132,10 +132,9 @@ class StatRows(tk.Frame):
         self._shown: Optional[tuple] = None
         self.columnconfigure(0, weight=1)
 
-    def show(self, header: Optional[Sequence[str]], rows: Sequence[Sequence[str]], wrap: Optional[Dict[int, int]] = None) -> None:
-        """`header`: the value columns' headings (the first, over the labels, is left empty), or None. `rows`: (label, value, value...).
-        `wrap`: {column: pixels} for a value column whose text may be long (a rank name): it breaks onto a second line at that width instead of widening the panel."""
-        key = (tuple(header or ()), tuple(tuple(row) for row in rows), tuple(sorted((wrap or {}).items())))
+    def show(self, header: Optional[Sequence[str]], rows: Sequence[Sequence[str]]) -> None:
+        """`header`: the value columns' headings (the first, over the labels, is left empty), or None. `rows`: (label, value, value...)."""
+        key = (tuple(header or ()), tuple(tuple(row) for row in rows))
         if key == self._shown:
             return
         self._shown = key
@@ -153,8 +152,7 @@ class StatRows(tk.Frame):
             tk.Label(self, text=label.strip(), font=fonts["normal"], anchor="w", justify=tk.LEFT).grid(
                 row=row, column=0, sticky="w", padx=((len(label) - len(label.lstrip())) * self.INDENT, 0))
             for column, text in enumerate(cells[1:], start=1):
-                options = {"wraplength": wrap[column], "justify": tk.RIGHT} if wrap and column in wrap else {}
-                tk.Label(self, text=str(text), font=fonts["bold"], anchor="e", **options).grid(row=row, column=column, sticky="e", padx=(self.GAP, 0))
+                tk.Label(self, text=str(text), font=fonts["bold"], anchor="e").grid(row=row, column=column, sticky="e", padx=(self.GAP, 0))
             row += 1
 
 
