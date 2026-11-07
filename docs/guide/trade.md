@@ -2,7 +2,7 @@
 
 This guide describes Trade mode: the running profit after fuel and repairs, unsold cargo, the ship hold and fleet carrier space, saved sessions, Spansh route and price lookups, and the commodity watch list.
 
-The Trade panel shows a summary (net profit and hold) and four buttons: **Session**, **Routes**, **Market** and **History**. The first three each open a window of their own, and WFMT remembers where each was left. **History** opens the Trade History window.
+The Trade panel shows a summary (net profit and hold) and five buttons: **Session**, **Routes**, **Market**, **History** and **Reset**. The first three each open a window of their own, and WFMT remembers where each was left. **History** opens the Trade History window. **Reset** does the same as **Reset** on the Session page (see below).
 
 | Page | Purpose | Needs internet |
 |---|---|---|

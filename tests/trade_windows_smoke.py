@@ -110,10 +110,10 @@ host.pack()
 controller.build_panel(host)
 pump()
 panel_buttons = {str(b.cget("text")): b for b in buttons_of(host)}
-check(set(panel_buttons) == {"Session", "Routes", "Market", "History"}, f"the panel's buttons: {sorted(panel_buttons)}")
+check(set(panel_buttons) == {"Session", "Routes", "Market", "History", "Reset"}, f"the panel's buttons: {sorted(panel_buttons)}")
 check(not any("\u25c0" in str(b.cget("text")) or "\u25b6" in str(b.cget("text")) for b in buttons_of(host)), "no page arrows are left")
 button_rows = {b.winfo_y() for b in buttons_of(host)}
-check(len(button_rows) == 1, f"the four buttons are in one row, not {len(button_rows)}: {sorted(button_rows)}")
+check(len(button_rows) == 1, f"the five buttons are in one row, not {len(button_rows)}: {sorted(button_rows)}")
 check(host.winfo_reqwidth() <= 260, f"the panel asks for {host.winfo_reqwidth()} px")
 
 for page in (trade_pages.SESSION, trade_pages.ROUTES, trade_pages.MARKET):

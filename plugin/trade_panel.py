@@ -116,6 +116,7 @@ PAGE_BUTTON_TIPS = {
     "Routes": "Routes - open the trade routes window (Spansh)",
     "Market": "Market - open the window that finds where to sell or buy a commodity (Spansh)",
     "History": BUTTON_TIPS["History"],
+    "Reset": BUTTON_TIPS["Reset"],
 }
 
 _PANEL_ROW_PX = 216   # the default main-panel width, used until the window reports its own
@@ -518,7 +519,7 @@ class TradePanelController:
     # --- panel chrome ----------------------------------------------------------
 
     def build_panel(self, parent: tk.Frame) -> None:
-        """A short summary (net profit and the hold) over one button for each of Trade's pages, each of which opens its own window."""
+        """A short summary (net profit and the hold) over one button for each of Trade's pages, each of which opens its own window, and History and Reset."""
         parent.columnconfigure(0, weight=1)
         self._parent = parent
 
@@ -531,12 +532,13 @@ class TradePanelController:
         for number, (text, command) in enumerate(((trade_pages.SESSION, lambda: self._open_page(trade_pages.SESSION)),
                                                   (trade_pages.ROUTES, lambda: self._open_page(trade_pages.ROUTES)),
                                                   (trade_pages.MARKET, lambda: self._open_page(trade_pages.MARKET)),
-                                                  ("History", self._open_history))):
+                                                  ("History", self._open_history),
+                                                  ("Reset", self._reset_ledger))):
             button = tk.Button(rows, text=text, command=command)
             button.pack(side=tk.LEFT, padx=(0 if number == 0 else 4, 0))
             panelkit.add_tooltip(button, PAGE_BUTTON_TIPS[text])
             made.append(button)
-        # One row: EDMC clips what is wider than its window, so the padding (then the font) narrows until all four fit.
+        # One row: EDMC clips what is wider than its window, so the padding (then the font) narrows until all five fit.
         panelkit.fit_button_row(made, panelkit._row_cap_px or _PANEL_ROW_PX)
 
         self._refresh()

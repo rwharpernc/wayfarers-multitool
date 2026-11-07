@@ -3,6 +3,12 @@
 All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 `docs/ATTRIBUTIONS.md` for acknowledgements.
 
+## Unreleased
+
+### Added
+
+- **Reset on the Trade panel.** A **Reset** button now sits beside History under the Trade summary, so the session tally can be restarted without opening the Session window. It does what the Session page's Reset does, including the offer to save an unsaved session first.
+
 ## 1.5.2 (2026-11-04)
 
 ### Added
