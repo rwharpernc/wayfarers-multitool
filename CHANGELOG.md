@@ -16,6 +16,7 @@ All notable changes to Wayfarer's Multitool (WFMT) are documented here. See
 
 ### Fixed
 
+- **Settings descriptions use the whole page.** The help text on every Settings page wrapped at a fixed 440 pixels, so on a wide window it showed as a narrow column down the left. It now wraps to the width of the page and follows the window when it is resized. Labels that share a row with a control or another label are left as they were.
 - The preview line in the Customize Discord posts dialog wraps instead of widening the window.
 - **Copy next system follows the leg you are on.** It always copied the first destination, so after docking there and buying for the next leg it kept copying the system you were in. WFMT now keeps each leg's destination in order and moves on when you dock in the system a leg was heading for: the first destination after you buy at the start, the second once you dock at the first, and so on. It never copies the system you are already in, and a loop (a round trip, or a route that ends where it starts) wraps back to its first stop. The leg is not kept when EDMC restarts, and a new search starts again at the first leg.
 
