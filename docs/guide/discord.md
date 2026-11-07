@@ -12,6 +12,8 @@ WFMT shares a report in three ways:
 
 Nothing is posted without a button press. The appearance of the Discord posts is configurable: see [Customize post appearance](#customize-post-appearance).
 
+**Feedback welcome on the expedition posts.** The **Expedition summary** and **Expedition plan** posts are new in 1.5.3 and have been only partly tested in the game. **Copy for Discord** needs no webhook, so it is the easy way to try one: select an expedition, press it and paste the result into a private channel. If a figure is wrong or missing, the layout is cut off at a small window size, a preset reads badly, or a second **Post to Discord** adds a new post instead of editing the first, please say so ([how to report a problem](reporting-problems.md)); a post that reads well or poorly for a way of playing other than the maintainer's is as useful to hear.
+
 **On this page:** [Shareable content](#shareable-content) · [Quick start](#quick-start) · [Set up Discord](#set-up-discord-make-a-webhook) · [Set up WFMT](#set-up-wfmt) · [Webhooks, commanders and channels](#webhooks-commanders-and-channels) · [Common questions](#common-questions) · [Customize post appearance](#customize-post-appearance) · [Examples](#examples) · [Sharing somewhere that is not Discord](#sharing-somewhere-that-is-not-discord) · [What is sent, and who can see it](#what-is-sent-and-who-can-see-it) · [Changing or removing a destination](#changing-or-removing-a-destination) · [When something goes wrong](#when-something-goes-wrong)
 
 ## Shareable content
